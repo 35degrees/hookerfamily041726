@@ -1,1 +1,13 @@
 @import 'tailwindcss';
+
+@theme {
+	--font-inter: 'Inter Variable', sans-serif;
+	--font-lora: 'Lora Variable', Georgia, serif;
+	--font-source: 'Source Sans Pro', sans-serif;
+}
+body {
+	font-family: var(--font-inter);
+}
+.tabular-figs {
+	font-variant-numeric: lining-nums tabular-nums;
+}

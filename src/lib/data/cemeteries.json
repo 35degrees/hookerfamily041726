@@ -1,0 +1,15 @@
+[
+	{
+		"id": "CEM003",
+		"name": "Ancient Burying Ground",
+		"city": "Hartford",
+		"state": "Connecticut",
+		"gps": {
+			"latitude": 41.7627,
+			"longitude": -72.6743
+		},
+		"founded": 1640,
+		"visitable": true,
+		"notes": "Adjacent to Center Church. Earliest surviving identifiable gravestone dates to 1648. Resting place of many Hartford founders including Rev. Thomas Hooker (exact location unknown)."
+	}
+]
