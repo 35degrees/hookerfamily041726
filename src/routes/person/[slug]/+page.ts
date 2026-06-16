@@ -1,4 +1,6 @@
 import { error } from '@sveltejs/kit';
+import institutionsData from '$lib/data/institutions.json';
+import type { Institution } from '$lib/types/institution';
 import searchIndex from '$lib/data/search-index.json';
 import peopleData from '$lib/data/people.json';
 import cemeteriesData from '$lib/data/cemeteries.json';
@@ -90,6 +92,11 @@ export const load: PageLoad = async ({ params, fetch }) => {
 		byId[p.id] = p;
 	}
 
+	const institutionsById: Record<string, Institution> = {};
+	for (const inst of institutionsData as Institution[]) {
+		institutionsById[inst.id] = inst;
+	}
+
 	// Resolve burial cemetery if available
 	let burialCemetery: Cemetery | null = null;
 	const cemeteryId = person.burial?.cemetery_id;
@@ -161,6 +168,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
 		burialCemetery,
 		childrenTotal,
 		childrenDiedYoung,
-		crossConnections: resolvedCrossConnections
+		crossConnections: resolvedCrossConnections,
+		institutionsById
 	};
 };

@@ -58,8 +58,8 @@
 		generationLabels={data.generationLabels}
 		burialCemetery={data.burialCemetery}
 		crossConnections={data.crossConnections}
+		institutionsById={data.institutionsById}
 	/>
-
 	{#if childrenTotal > 0}
 		<div class="connector connector-children" class:connector-no-label={isEasterEgg}>
 			{#if !isEasterEgg}

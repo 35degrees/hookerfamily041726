@@ -129,7 +129,9 @@ export interface InstitutionRef {
 
 export interface LandmarkRef {
 	landmark_id: string;
-	landmark_blurb: string | null;
+	landmark_blurb?: string | null; // v18 canonical
+	relationship?: string | null; // drift (e.g. H03408)
+	notes?: string | null; // drift (e.g. H03408)
 }
 
 export interface StatueRef {
@@ -165,6 +167,8 @@ export interface Person {
 	sources: Source[];
 	research_sources: ResearchSource[];
 	research_notes: string | null;
+	education: Education[];
+	career: Career[];
 	institutions: InstitutionRef[];
 	landmarks: LandmarkRef[];
 	statues?: StatueRef[];
@@ -177,4 +181,21 @@ export interface Person {
 	number_of_marriages?: number | null;
 	cross_reference?: string | null;
 	naming_inspiration?: unknown[];
+}
+
+export interface Education {
+	institution_id: string | null;
+	school_name: string | null;
+	dates: string | null;
+	type: string | null;
+	notes: string | null;
+}
+
+export interface Career {
+	role: string | null;
+	organization: string | null;
+	location?: string | null;
+	start_year: number | null;
+	end_year: number | null;
+	notes: string | null;
 }

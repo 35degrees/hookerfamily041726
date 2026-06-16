@@ -2,6 +2,8 @@
 	import type { Person } from '$lib/types/person';
 	import type { SpouseEntry } from '$lib/types/neighborhood';
 	import type { Cemetery } from '$lib/types/cemetery';
+	import type { Institution } from '$lib/types/institution';
+	import RightColumn from './RightColumn.svelte';
 	import PersonBox from './PersonBox.svelte';
 	import NarrativeBlocks from './NarrativeBlocks.svelte';
 	import { formatDate, formatLocationShort, buildMapUrl } from '$lib/utils/dates';
@@ -18,6 +20,7 @@
 			display_label: string;
 			slug: string | null;
 		}>;
+		institutionsById?: Record<string, Institution>;
 	};
 
 	let {
@@ -25,7 +28,8 @@
 		spouses,
 		generationLabels = [],
 		burialCemetery = null,
-		crossConnections = []
+		crossConnections = [],
+		institutionsById = {}
 	}: Props = $props();
 
 	let photoUrl = $derived(person.bio?.photo_url ?? person.name?.photo_url ?? null);
@@ -41,26 +45,6 @@
 	// True when the header has 4 lines (name + 2 generation labels + notable_blurb).
 	// In that case, use tighter spacing so the extra line doesn't bulldoze.
 	let headerIsCrowded = $derived(generationLabels.length >= 2 && !!person.notable?.notable_blurb);
-
-	let burialMapUrl = $derived.by(() => {
-		if (!burialCemetery) return null;
-		if (burialCemetery.gps) return buildMapUrl(burialCemetery.gps);
-		return buildMapUrl({
-			city: burialCemetery.city,
-			state: burialCemetery.state,
-			country: burialCemetery.country
-		});
-	});
-
-	let burialLocation = $derived(
-		burialCemetery
-			? formatLocationShort({
-					city: burialCemetery.city,
-					state: burialCemetery.state,
-					country: burialCemetery.country
-				})
-			: null
-	);
 
 	// === Carved card geometry ===
 	const CHIP_W_NORMAL = 220;
@@ -126,7 +110,7 @@
 <!-- Wrapper provides positioning context for chips as siblings of carved card.
      min-height keeps the card at 580px when there's no footer to extend it. -->
 <div
-	class="featured-card-wrap relative w-4xl"
+	class="featured-card-wrap relative w-[925px]"
 	style="
         min-height: 580px;
         filter:
@@ -147,6 +131,9 @@
 				<div class="name-block" class:tight-stack={headerIsCrowded}>
 					<h1 class="text-2xl leading-tight font-medium text-stone-900">
 						{person.bio?.display_name ?? person.name?.display_name}
+						<span class="ml-2 align-middle font-mono text-sm font-normal text-stone-400"
+							>{person.id}</span
+						>
 					</h1>
 					{#if generationLabels.length > 0}
 						{#each generationLabels as label (label)}
@@ -169,7 +156,7 @@
 
 			<!-- Content row: minmax(0, 1fr) + overflow-hidden allows NB body expansion
 			     without growing the row. Any overflow is clipped, keeping card height stable. -->
-			<div class="content grid grid-cols-[25%_55%_20%] gap-6 overflow-hidden p-6">
+			<div class="content grid grid-cols-[23%_55%_22%] gap-4 overflow-hidden p-6">
 				<div class="portrait-column space-y-4">
 					{#if photoUrl}
 						<img
@@ -237,7 +224,9 @@
 					<NarrativeBlocks blocks={person.narrative_blocks ?? []} />
 				</div>
 
-				<div class="entities"></div>
+				<div class="-ml-1">
+					<RightColumn {person} {institutionsById} {burialCemetery} />
+				</div>
 			</div>
 		</div>
 

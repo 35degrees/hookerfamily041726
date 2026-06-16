@@ -59,21 +59,21 @@
 							{block.category}
 						</div>
 					{/if}
-					<div class="flex items-center justify-between gap-3">
-						<h3 class="flex-1 text-base font-semibold text-blue-900 transition-colors select-none">
+					<div class="flex items-center gap-2">
+						<h3 class="text-base font-semibold text-blue-900 transition-colors select-none">
 							{block.header}
 						</h3>
 						<span
-							class="mb-2 flex h-6 w-6 shrink-0 items-center justify-center text-lg text-slate-500"
+							class="flex h-6 w-6 shrink-0 items-center justify-center text-lg text-slate-500"
 							aria-hidden="true"
 						>
-							{openKey === key ? '−' : '+'}
+							{openKey === key ? '' : '+'}
 						</span>
 					</div>
 				</button>
 				{#if openKey === key}
-					<div class="pt-2 pb-1" transition:slide={{ duration: 220, axis: 'y' }}>
-						<p class="text-sm leading-relaxed text-stone-700 select-none">
+					<div class="pt-1 pr-8 pb-1.5" transition:slide={{ duration: 220, axis: 'y' }}>
+						<p class="text-[13.5px] leading-relaxed text-stone-700 select-none">
 							{block.body}
 						</p>
 					</div>
