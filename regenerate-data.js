@@ -11,6 +11,7 @@
  *   static/data/search-index.json       compact rows: {id,slug,n,by,dy,g,t,sx,st,ci,hd,td,ee}
  *   static/data/cemeteries.json         passthrough
  *   static/data/institutions.json       passthrough
+ *   static/data/stats.json              corpus tallies (total, thomas/talcott descendants)
  *   static/data/person/<slug>.json      self-contained page payload per person
  *                                       (focus record + family graph + bounded
  *                                       relative context + resolved cemetery/
@@ -399,6 +400,18 @@ function main() {
 	if (data.institutions) W(join(CONFIG.dataDir, 'institutions.json'), data.institutions);
 	W(CONFIG.redirectsFile, redirects);
 
+	// 5b) stats.json — corpus tallies computed at build time so the client ships
+	// the number, never counts. Strict === true so null/undefined never count.
+	let thomasDescendants = 0;
+	let talcottDescendants = 0;
+	for (const p of people) {
+		const c = p.classification || {};
+		if (c.is_thomas_descendant === true) thomasDescendants++;
+		if (c.is_talcott_descendant === true) talcottDescendants++;
+	}
+	const stats = { total: people.length, thomasDescendants, talcottDescendants };
+	W(join(CONFIG.dataDir, 'stats.json'), stats);
+
 	// 6) per-person page payloads — one self-contained file per slug.
 	// Each bakes everything /person/[slug] needs (focus record, family graph, a
 	// bounded `context` of relatives, resolved burial cemetery + institutions +
@@ -428,6 +441,7 @@ function main() {
 	log(`  search-index.json      ${searchIndex.length} rows`);
 	log(`  person/                ${pgCount} page payloads`);
 	log(`  redirects.json         ${Object.keys(redirects).length} entries`);
+	log(`  stats.json             thomas ${thomasDescendants} / talcott ${talcottDescendants}`);
 }
 
 main();
