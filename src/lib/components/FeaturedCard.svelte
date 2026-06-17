@@ -261,7 +261,9 @@
 								{:else}
 									<span class="font-medium text-stone-700">{cc.link_text}</span>
 								{/if}
-								<span class="text-stone-600"> — {cc.display_label}</span>
+								{#if cc.display_label}
+									<span class="text-stone-600"> — {cc.display_label}</span>
+								{/if}
 							</div>
 						{/each}
 					</div>

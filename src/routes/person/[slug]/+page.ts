@@ -1,9 +1,5 @@
 import { error } from '@sveltejs/kit';
-import institutionsData from '$lib/data/institutions.json';
 import type { Institution } from '$lib/types/institution';
-import searchIndex from '$lib/data/search-index.json';
-import peopleData from '$lib/data/people.json';
-import cemeteriesData from '$lib/data/cemeteries.json';
 import type { PageLoad } from './$types';
 import type { Neighborhood, PersonCompact } from '$lib/types/neighborhood';
 import type { Person } from '$lib/types/person';
@@ -76,34 +72,34 @@ function diedYoung(person: Person | undefined): boolean {
 	return death - birth <= 12;
 }
 
+type CrossConnection = {
+	type: string;
+	related_id: string;
+	link_text: string;
+	display_label: string;
+	slug: string | null;
+};
+
+// Self-contained payload built by regenerate-data.js (static/data/person/<slug>.json).
+// One small fetch carries everything this card needs — no people.json / search-index
+// ship to the client. `context` is the bounded set of relatives the enrich /
+// diedYoung / computeGenerationLabels logic below reads off `byId`.
+type PersonPayload = {
+	person: Person;
+	neighborhood: Neighborhood;
+	context: Record<string, Person>;
+	burialCemetery: Cemetery | null;
+	institutionsById: Record<string, Institution>;
+	crossConnections: CrossConnection[];
+};
+
 export const load: PageLoad = async ({ params, fetch }) => {
-	const entry = searchIndex.find((p) => p.slug === params.slug);
-	if (!entry) throw error(404, 'Person not found');
+	const res = await fetch(`/data/person/${params.slug}.json`);
+	if (!res.ok) throw error(404, 'Person not found');
+	const payload: PersonPayload = await res.json();
 
-	const res = await fetch(`/data/neighborhoods/${entry.id}.json`);
-	if (!res.ok) throw error(404, 'Neighborhood not found');
-	const neighborhood: Neighborhood = await res.json();
-
-	const person = peopleData.find((p) => p.id === entry.id) as Person | undefined;
-	if (!person) throw error(404, 'Person data not found');
-
-	const byId: Record<string, Person> = {};
-	for (const p of peopleData as Person[]) {
-		byId[p.id] = p;
-	}
-
-	const institutionsById: Record<string, Institution> = {};
-	for (const inst of institutionsData as Institution[]) {
-		institutionsById[inst.id] = inst;
-	}
-
-	// Resolve burial cemetery if available
-	let burialCemetery: Cemetery | null = null;
-	const cemeteryId = person.burial?.cemetery_id;
-	if (cemeteryId) {
-		const found = (cemeteriesData as Cemetery[]).find((c) => c.id === cemeteryId);
-		if (found) burialCemetery = found;
-	}
+	const { person, neighborhood, burialCemetery, institutionsById, crossConnections } = payload;
+	const byId = payload.context;
 
 	const enrichedNeighborhood: Neighborhood = {
 		...neighborhood,
@@ -149,17 +145,6 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	const childrenTotal = allChildren.length;
 	const childrenDiedYoung = allChildren.filter((c) => diedYoung(byId[c.id])).length;
 	const generationLabels = computeGenerationLabels(person, byId);
-	const resolvedCrossConnections = (person.cross_connections ?? []).map((cc: any) => {
-		const target = byId[cc.related_id];
-		const entry = searchIndex.find((p) => p.id === cc.related_id);
-		return {
-			type: cc.type,
-			related_id: cc.related_id,
-			link_text: cc.link_text,
-			display_label: cc.display_label,
-			slug: entry?.slug ?? null
-		};
-	});
 
 	return {
 		neighborhood: enrichedNeighborhood,
@@ -168,7 +153,7 @@ export const load: PageLoad = async ({ params, fetch }) => {
 		burialCemetery,
 		childrenTotal,
 		childrenDiedYoung,
-		crossConnections: resolvedCrossConnections,
+		crossConnections,
 		institutionsById
 	};
 };

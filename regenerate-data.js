@@ -7,11 +7,14 @@
  *   node regenerate-data.js [path/to/canonical.json]
  *
  * Emits (paths relative to repo root, overridable via the CONFIG block):
- *   src/lib/data/people.json            full records, research_notes stripped
- *   src/lib/data/search-index.json      compact rows: {id,slug,n,by,dy,g,t,sx,st,ci,hd,td,ee}
- *   src/lib/data/cemeteries.json        passthrough
- *   src/lib/data/institutions.json      passthrough
- *   static/data/neighborhoods/<id>.json one family graph per person
+ *   static/data/people.json             full records, research_notes stripped
+ *   static/data/search-index.json       compact rows: {id,slug,n,by,dy,g,t,sx,st,ci,hd,td,ee}
+ *   static/data/cemeteries.json         passthrough
+ *   static/data/institutions.json       passthrough
+ *   static/data/person/<slug>.json      self-contained page payload per person
+ *                                       (focus record + family graph + bounded
+ *                                       relative context + resolved cemetery/
+ *                                       institutions/cross-connection slugs)
  *   static/data/redirects.json          { oldSlug|oldId -> currentSlug } for merges/renames
  *
  * Slug rule (validated against the canonical, June 2026):
@@ -41,8 +44,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const CONFIG = {
 	input: process.argv[2] || resolve(__dirname, 'canonical.json'),
 	repoRoot: resolve(__dirname),
-	dataDir: 'src/lib/data',
-	neighborhoodsDir: 'static/data/neighborhoods',
+	dataDir: 'static/data',
+	personDir: 'static/data/person', // one self-contained page payload per slug
 	redirectsFile: 'static/data/redirects.json',
 	// Fields removed from the CLIENT people.json only (canonical keeps everything).
 	// research_notes is the approved strip. The others are FLAGGED candidates —
@@ -55,8 +58,18 @@ const CONFIG = {
 };
 
 const GENERATIONAL = new Set([
-	'jr', 'jr.', 'sr', 'sr.',
-	'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii'
+	'jr',
+	'jr.',
+	'sr',
+	'sr.',
+	'i',
+	'ii',
+	'iii',
+	'iv',
+	'v',
+	'vi',
+	'vii',
+	'viii'
 ]);
 const MARRIED_IN = new Set(['I', 'X', 'U']); // prefixes whose surname is the maiden name
 
@@ -111,8 +124,7 @@ function isPlaceholder(p) {
 // Base slug (pre-collision). Returns { base, sticky }.
 function baseSlug(p) {
 	if (isPlaceholder(p)) {
-		const desc =
-			slugify((bioOf(p).display_name || 'unnamed').split(/[([]/)[0]) || 'unnamed';
+		const desc = slugify((bioOf(p).display_name || 'unnamed').split(/[([]/)[0]) || 'unnamed';
 		return { base: `${desc}-${p.id.toLowerCase()}`, sticky: true }; // ID-anchored => stable
 	}
 	const f = slugify(firstName(p));
@@ -122,8 +134,7 @@ function baseSlug(p) {
 	// guard against a surname that already ends with the suffix token
 	if (sufSlug && s.endsWith('-' + sufSlug)) sufSlug = null;
 	const yr = birthYear(p);
-	const base =
-		[f, s, sufSlug].filter(Boolean).join('-') + (yr ? `-${yr}` : '');
+	const base = [f, s, sufSlug].filter(Boolean).join('-') + (yr ? `-${yr}` : '');
 	return { base, sticky: Boolean(yr) };
 }
 
@@ -240,6 +251,85 @@ function neighborhood(p, byId, slugMap) {
 }
 
 // ---------------------------------------------------------------------------
+// per-person page payload (self-contained: one fetch renders the card)
+// ---------------------------------------------------------------------------
+
+// Every institution_id referenced anywhere in the focus record (institutions[],
+// education[], career[], documents[], …). Deep scan so we never miss a ref.
+function collectInstitutionIds(obj, acc) {
+	if (!obj || typeof obj !== 'object') return acc;
+	if (Array.isArray(obj)) {
+		for (const x of obj) collectInstitutionIds(x, acc);
+		return acc;
+	}
+	for (const [k, v] of Object.entries(obj)) {
+		if (k === 'institution_id' && typeof v === 'string') acc.add(v);
+		else collectInstitutionIds(v, acc);
+	}
+	return acc;
+}
+
+// The minimal set of people whose FULL records the page's enrich / diedYoung /
+// computeGenerationLabels logic reads off `byId`: neighborhood members plus the
+// focus's children's spouses (needed for the in-law generation label).
+function contextIds(p, byId) {
+	const ids = new Set([p.id]);
+	const add = (id) => {
+		if (id && byId[id]) ids.add(id);
+	};
+	for (const m of p.marriages || []) {
+		add(m.spouse_id);
+		for (const cid of m.children_ids || []) {
+			add(cid);
+			const child = byId[cid];
+			if (!child) continue;
+			for (const cm of child.marriages || []) add(cm.spouse_id); // children's spouses
+			for (const gcId of childrenOf(child)) add(gcId); // grandchildren
+		}
+	}
+	const par = p.parents || {};
+	add(par.father_id);
+	add(par.mother_id);
+	for (const pid of [par.father_id, par.mother_id]) {
+		const gpar = pid && byId[pid] ? byId[pid].parents || {} : {};
+		add(gpar.father_id);
+		add(gpar.mother_id);
+	}
+	return ids;
+}
+
+// Builds the self-contained payload that /person/[slug] fetches.
+// `clientById` are the stripped client records (research_notes etc. removed).
+function personPayload(p, byId, clientById, slugMap, cemById, instById) {
+	const context = {};
+	for (const id of contextIds(p, byId)) context[id] = clientById[id];
+
+	const instIds = collectInstitutionIds(p, new Set());
+	const institutionsById = {};
+	for (const id of instIds) if (instById[id]) institutionsById[id] = instById[id];
+
+	const cemeteryId = p.burial && p.burial.cemetery_id;
+	const burialCemetery = (cemeteryId && cemById[cemeteryId]) || null;
+
+	const crossConnections = (p.cross_connections || []).map((cc) => ({
+		type: cc.type,
+		related_id: cc.related_id,
+		link_text: cc.link_text,
+		display_label: cc.display_label ?? '',
+		slug: slugMap.get(cc.related_id) ?? null
+	}));
+
+	return {
+		person: clientById[p.id],
+		neighborhood: neighborhood(p, byId, slugMap),
+		context,
+		burialCemetery,
+		institutionsById,
+		crossConnections
+	};
+}
+
+// ---------------------------------------------------------------------------
 // main
 // ---------------------------------------------------------------------------
 function main() {
@@ -268,7 +358,9 @@ function main() {
 		});
 	}
 	const sticky = [...stickyOf.values()].filter(Boolean).length;
-	log(`  slugs: ${sticky} sticky / ${people.length - sticky} provisional, ${collisions} collision suffixes`);
+	log(
+		`  slugs: ${sticky} sticky / ${people.length - sticky} provisional, ${collisions} collision suffixes`
+	);
 
 	// 2) people.json — full records, slug written, research_notes (etc.) stripped
 	const clientPeople = people.map((p) => {
@@ -307,24 +399,34 @@ function main() {
 	if (data.institutions) W(join(CONFIG.dataDir, 'institutions.json'), data.institutions);
 	W(CONFIG.redirectsFile, redirects);
 
-	// 6) per-person neighborhood files.
+	// 6) per-person page payloads — one self-contained file per slug.
+	// Each bakes everything /person/[slug] needs (focus record, family graph, a
+	// bounded `context` of relatives, resolved burial cemetery + institutions +
+	// cross-connection slugs) so the page makes ONE small fetch and never ships
+	// the 22 MB people.json or 2.5 MB search-index to the client.
 	// ONLY_IDS=H00007,X00126 regenerates just those (incremental rebuild / testing);
 	// a full run clears the stale dir first.
+	const clientById = Object.fromEntries(clientPeople.map((p) => [p.id, p]));
+	const cemById = Object.fromEntries((data.cemeteries || []).map((c) => [c.id, c]));
+	const instById = Object.fromEntries((data.institutions || []).map((i) => [i.id, i]));
+
 	const only = process.env.ONLY_IDS ? new Set(process.env.ONLY_IDS.split(',')) : null;
-	const nbDir = join(CONFIG.repoRoot, CONFIG.neighborhoodsDir);
-	if (!only && existsSync(nbDir)) rmSync(nbDir, { recursive: true, force: true });
-	mkdirSync(nbDir, { recursive: true });
-	let nbCount = 0;
+	const personDir = join(CONFIG.repoRoot, CONFIG.personDir);
+	if (!only && existsSync(personDir)) rmSync(personDir, { recursive: true, force: true });
+	mkdirSync(personDir, { recursive: true });
+	let pgCount = 0;
 	for (const p of people) {
 		if (only && !only.has(p.id)) continue;
-		writeFileSync(join(nbDir, `${p.id}.json`), JSON.stringify(neighborhood(p, byId, slugMap)));
-		nbCount++;
+		const slug = slugMap.get(p.id);
+		const payload = personPayload(p, byId, clientById, slugMap, cemById, instById);
+		writeFileSync(join(personDir, `${slug}.json`), JSON.stringify(payload));
+		pgCount++;
 	}
 
 	log('Done.');
 	log(`  people.json            ${clientPeople.length} records (research_notes stripped)`);
 	log(`  search-index.json      ${searchIndex.length} rows`);
-	log(`  neighborhoods/         ${nbCount} files`);
+	log(`  person/                ${pgCount} page payloads`);
 	log(`  redirects.json         ${Object.keys(redirects).length} entries`);
 }
 
