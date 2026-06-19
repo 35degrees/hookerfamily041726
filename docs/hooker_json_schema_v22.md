@@ -15,38 +15,25 @@ Read this addendum on turn 1, immediately after the v21 body. Re-read v21 §0 ev
 
 ---
 
-## §A. CURRENT PROJECT STATE (supersedes v21 §18)
+## §A. CURRENT PROJECT STATE — COMPUTE LIVE, never read counts from this doc
 
-**As of Monday, June 15, 2026, 7:00 PM (post Stage 6Y-750):**
+**Array counts and ID high-water marks are deliberately NOT recorded here.** They go
+stale the instant any entry is added, so any number written in this document is wrong
+by the next batch and is a confusion hazard for both humans and Claude Code.
 
-| Array | Count |
-|---|---|
-| People | **14,729** |
-| Wars | 16 (WAR001–WAR016) |
-| Notable stories | 545 |
-| Artworks | 104 |
-| Cemeteries | 903 |
-| Institutions | 166 |
-| Landmarks | 119 |
-| Documents | 29 |
-| **Videos** | **17** (new array — see §1) |
-| Statues | 8 |
+**The single source of truth for counts and IDs is the live `canonical.json`:**
+- **Total people / array counts** → `validate.py canonical.json` reports the live count
+  on every run; or `len(T['people'])`.
+- **Next free ID for any prefix** → computed live at allocation time. `process_tasks.py`'s
+  `new_person` calls `next_x_id()`, which recomputes the true X maximum from the live
+  file every call. Other prefixes follow the same rule: scan the live file, take the
+  max of the numeric portion (`int(re.sub(r'\\D','',id))` — never lexically, because
+  IDs use mixed zero-padding), add 1.
 
-### Current ID high-water marks (recompute from the LIVE file before allocating — see §D.1)
-
-| Prefix | High-water | Prefix | High-water |
-|---|---|---|---|
-| H | H05319 | CEM | CEM920 |
-| HD | HD6614 | LM | LM157 |
-| I | I01856 | INST | INST174 |
-| X | X03383 | ART | ART105 |
-| TD | TD0440 | VID | VID017 |
-| | | STAT | STAT008 |
-| | | DOC | DOC029 |
-| | | WAR | WAR016 |
-| | | BTL | BTL085 |
-
-> **These are documented snapshots, not allocation sources.** Per §D.1, every new ID must be computed from the live file's true maximum at allocation time, because IDs use mixed zero-padding (some LM are 3-digit, some 4-digit) and because multi-entry batches advance the maximum mid-script. Treating the numbers above as "next free" caused repeated collisions in stage 6Y-749 (see §D.1).
+**Rule:** never trust a documented count or high-water number. Recompute from the live
+file before allocating. (This is the lesson of the 6Y-749 collisions — see §D.1. The
+allocator already does this correctly; this section exists so no one re-introduces a
+stale table to trust by mistake.)
 
 ### Recent build (v21 → v22, stages 6Y-643 → 6Y-750)
 
