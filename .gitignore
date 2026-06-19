@@ -1,23 +1,46 @@
-node_modules
+# ─────────────────────────────────────────────────────────────────────────────
+# .gitignore — Hooker Descendants repo
+#
+# KEY PRINCIPLE: version the SOURCE, ignore the BUILD OUTPUT.
+# canonical.json is the source of truth and IS committed. Everything under
+# static/data/ is REGENERATED from canonical.json by regenerate-data.js in
+# seconds — versioning 14,792 generated payload files would bloat the repo and
+# make every push slow for zero benefit. So we ignore the generated artifacts
+# and keep the repo small and fast to push.
+# ─────────────────────────────────────────────────────────────────────────────
 
-# Output
-.output
-.vercel
-.netlify
-.wrangler
-/.svelte-kit
-/build
+# --- generated data artifacts (rebuilt by `node regenerate-data.js canonical.json`) ---
+static/data/people.json
+static/data/search-index.json
+static/data/stats.json
+static/data/redirects.json
+static/data/cemeteries.json
+static/data/institutions.json
+# the 14,792 per-person page payloads — pure build output
+static/data/person/
 
-# OS
+# Keep canonical.json itself TRACKED (it's the source). Do NOT ignore it.
+# Keep src/, scripts, docs, package.json TRACKED.
+
+# --- node / build ---
+node_modules/
+.svelte-kit/
+build/
+dist/
+.vercel/
+.netlify/
+
+# --- working / scratch (data batches) ---
+# only if you ever use a preview draft; not the source
+canonical_draft.json
+*.bak
+*_backup.json
+# validate.py's git-HEAD baseline scratch file
+/tmp/baseline.json
+
+# --- editor / OS ---
 .DS_Store
-Thumbs.db
-
-# Env
+.vscode/
+*.log
 .env
 .env.*
-!.env.example
-!.env.test
-
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
