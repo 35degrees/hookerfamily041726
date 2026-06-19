@@ -38,6 +38,8 @@ canonical_draft.json
 # validate.py's git-HEAD baseline scratch file
 /tmp/baseline.json
 tasks.tsv
+tasks.csv
+tasks-complete.csv
 update-steps.txt
 blurb_worklist.tsv
 nb_worklist.tsv
