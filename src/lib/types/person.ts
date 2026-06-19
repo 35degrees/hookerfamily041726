@@ -8,6 +8,7 @@ export interface Name {
 	married_names: string[];
 	nickname: string | null;
 	display_name: string;
+	bio_blurb?: string | null;
 	photo_url?: string | null;
 	photo_notes: string | null;
 	notes?: string | null;

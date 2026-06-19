@@ -41,9 +41,13 @@
 	let deathLocation = $derived(formatLocationShort(person.death));
 	let deathMapUrl = $derived(buildMapUrl(person.death));
 
-	// True when the header has 4 lines (name + 2 generation labels + notable_blurb).
+	// Header blurb: notable people use notable_blurb; non-notable people fall back to
+	// bio_blurb (e.g. HD3249 "Documentary artist of the Tuskegee Airmen").
+	let blurb = $derived(person.notable?.notable_blurb ?? person.bio?.bio_blurb ?? null);
+
+	// True when the header has 4 lines (name + 2 generation labels + blurb).
 	// In that case, use tighter spacing so the extra line doesn't bulldoze.
-	let headerIsCrowded = $derived(generationLabels.length >= 2 && !!person.notable?.notable_blurb);
+	let headerIsCrowded = $derived(generationLabels.length >= 2 && !!blurb);
 
 	// === Carved card geometry ===
 	const CHIP_W_NORMAL = 220;
@@ -157,9 +161,9 @@
 							</div>
 						{/each}
 					{/if}
-					{#if person.notable?.notable_blurb}
+					{#if blurb}
 						<div class="mt-0.5 -mb-2 font-source text-sm leading-tight text-slate-600 opacity-80">
-							{person.notable.notable_blurb}
+							{blurb}
 						</div>
 					{/if}
 				</div>
