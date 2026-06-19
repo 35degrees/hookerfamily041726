@@ -20,7 +20,9 @@
 			.slice(0, MAX_DISPLAYED)
 			.map((block, index) => ({
 				block,
-				key: block.number ?? `idx-${index}`
+				// Index-inclusive so two blocks sharing a `number` can't collide and
+				// abort the keyed render. Also drives the expanded-block state below.
+				key: `${block.number ?? 'b'}-${index}`
 			}))
 	);
 

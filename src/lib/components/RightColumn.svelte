@@ -91,7 +91,9 @@
 			<div class="text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 				Affiliations
 			</div>
-			{#each person.institutions as ref (ref.institution_id)}
+			<!-- Index key: a person can list the same institution twice as DISTINCT roles
+			     (e.g. Yale student, then Yale tutor) — show both, never collide. -->
+			{#each person.institutions as ref, i (i)}
 				<div class="space-y-0.5">
 					<div
 						class="line-clamp-2 text-[13px] leading-snug font-medium text-slate-800"
@@ -164,7 +166,7 @@
 			<div class="text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 				Landmarks
 			</div>
-			{#each person.landmarks as lm (lm.landmark_id)}
+			{#each person.landmarks as lm, i (i)}
 				<div class="space-y-0.5">
 					<div
 						class="line-clamp-2 text-[13px] leading-snug font-medium text-slate-800"
@@ -191,7 +193,7 @@
 			<div class="text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 				Artworks
 			</div>
-			{#each person.artworks as art (art.artwork_id)}
+			{#each person.artworks as art, i (i)}
 				<div
 					class="line-clamp-2 text-[13px] leading-snug font-medium text-slate-800"
 					title={art.artwork_id}
@@ -208,7 +210,7 @@
 			<div class="text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 				Documents
 			</div>
-			{#each person.documents as doc (doc)}
+			{#each person.documents as doc, i (i)}
 				<div class="line-clamp-2 text-[13px] leading-snug font-medium text-slate-800" title={doc}>
 					{doc}
 				</div>

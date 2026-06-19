@@ -2,24 +2,79 @@
 	import type { PageData } from './$types';
 	import PersonBox from '$lib/components/PersonBox.svelte';
 	import FeaturedCard from '$lib/components/FeaturedCard.svelte';
+	import { untrack } from 'svelte';
+	import { flip } from 'svelte/animate';
+	import { prefersReducedMotion } from 'svelte/motion';
 	import { cardinalWord, cardinalWordLower, possessive } from '$lib/utils/dates';
+	import { page } from '$app/state';
+	import { featured } from '$lib/state/featured.svelte';
+	import { loadFeatured, warmPersonLinks } from '$lib/state/navigate';
+	import { buildRoster } from '$lib/data/roster';
+	import { send, growFrom, shrinkTo, enterBox } from '$lib/transitions/flight';
+
 	let { data }: { data: PageData } = $props();
 
-	const hasParents = $derived(
-		!!(data.neighborhood.parents.father || data.neighborhood.parents.mother)
-	);
+	// Mirror cold-load data into the featured-person singleton and read the page
+	// back out of it (Steps 1–2). SSR: effects don't run, so `current` is null and
+	// we fall back to `data`. Client: $effect.pre re-syncs BEFORE the DOM update.
+	$effect.pre(() => featured.set(data));
+	const f = $derived(featured.current ?? data);
 
-	const childrenTotal = $derived(data.childrenTotal ?? 0);
-	const childrenDiedYoung = $derived(data.childrenDiedYoung ?? 0);
-	const isEasterEgg = $derived(data.person.classification?.is_easter_egg ?? false);
+	// Dev guard: f is one atomic FeaturedData, so neighborhood and person must
+	// describe the same focal id. If this logs, a warm focus left them out of sync.
+	$effect(() => {
+		if (import.meta.env.DEV && f.neighborhood.focus.id !== f.person.id) {
+			console.error(
+				`[featured] focus mismatch: neighborhood=${f.neighborhood.focus.id} person=${f.person.id}`
+			);
+		}
+	});
 
-	const focalFirstName = $derived(
-		data.person.bio?.first_name ?? data.person.name?.first_name ?? null
-	);
+	// popstate reconcile (Step 2): back/forward across shallow history changes the
+	// URL without re-running load. Track ONLY page.url; read state under untrack.
+	$effect(() => {
+		const slug = page.url.pathname.split('/')[2];
+		if (!slug) return;
+		untrack(() => {
+			if (featured.current?.person.slug === slug) return;
+			if (data.person.slug === slug) featured.set(data);
+			else void loadFeatured(slug);
+		});
+	});
 
-	const parentsLabel = $derived(
-		focalFirstName ? `${possessive(focalFirstName)} parents` : 'Parents'
-	);
+	// Re-focus choreography (DESIGN "RESOLVED ARCHITECTURE"): one roster per focus,
+	// each person in exactly one role-zone, keyed by person id. Zoom is fixed at 1
+	// for now; buildRoster/zone-rendering are already zoom-parameterized so z2/z3
+	// slot into the same seams. Transitions are NOT wired yet — this milestone is
+	// structure + notch docking only.
+	const zoom = 1;
+	const roster = $derived(buildRoster(f, zoom));
+
+	// Intra-zone reshuffle (e.g. died-young reorder) uses flip; snap under reduced motion.
+	const flipMs = $derived(prefersReducedMotion.current ? 0 : 420);
+
+	// The card morphs via transform (no layout effect), so without this the children
+	// row's Y would snap/jerk to the new card's height. Bind the current card's
+	// natural height and give the slot an explicit, CSS-transitioned height — the row
+	// then GLIDES in lockstep with the morph. `mounted` keeps SSR/hydration content-
+	// sized (no explicit height until the client measures), avoiding a 0-height flash.
+	let cardHeight = $state(0);
+	let mounted = $state(false);
+	$effect(() => {
+		mounted = true;
+	});
+
+	// Spouse chips, lifted out of FeaturedCard to dock into the carved notch. The
+	// card still carves the notch from the same spouse count, so geometry matches.
+	const useCompact = $derived(roster.spouses.length >= 3);
+
+	const hasParents = $derived(roster.parents.length > 0);
+	const childrenTotal = $derived(roster.children.length);
+	const childrenDiedYoung = $derived(roster.children.filter((c) => c.dy_young).length);
+	const isEasterEgg = $derived(f.person.classification?.is_easter_egg ?? false);
+
+	const focalFirstName = $derived(f.person.bio?.first_name ?? f.person.name?.first_name ?? null);
+	const parentsLabel = $derived(focalFirstName ? `${possessive(focalFirstName)} parents` : 'Parents');
 
 	const childrenLabel = $derived.by(() => {
 		if (childrenTotal === 0) return null;
@@ -34,14 +89,21 @@
 	});
 </script>
 
-<div class="page-container">
+<div class="page-container" use:warmPersonLinks>
 	<div class="parents-slot">
-		{#if data.neighborhood.parents.father}
-			<PersonBox person={data.neighborhood.parents.father} relation="parent" />
-		{/if}
-		{#if data.neighborhood.parents.mother}
-			<PersonBox person={data.neighborhood.parents.mother} relation="parent" />
-		{/if}
+		{#each roster.parents as parent (parent.id)}
+			<!-- data-flight-id lets a shrinking card find this box; ancestors fly UP. -->
+			<div
+				class="flight"
+				data-flight-dir="up"
+				data-flight-id={parent.id}
+				in:enterBox={{ id: parent.id, dir: 'up' }}
+				out:send={{ key: parent.id }}
+				animate:flip={{ duration: flipMs }}
+			>
+				<PersonBox person={parent} relation="parent" />
+			</div>
+		{/each}
 	</div>
 
 	<div class="connector connector-parents">
@@ -52,14 +114,45 @@
 		{/if}
 	</div>
 
-	<FeaturedCard
-		person={data.person}
-		spouses={data.neighborhood.spouses}
-		generationLabels={data.generationLabels}
-		burialCemetery={data.burialCemetery}
-		crossConnections={data.crossConnections}
-		institutionsById={data.institutionsById}
-	/>
+	<!-- Featured slot: a single grid cell so the leaving + entering cards overlap
+	     (no layout doubling) during the morph. The card is a keyed single-item list
+	     so it's created/destroyed on focus change — its send/receive pair with the
+	     box that the same person occupies on the other side (child→featured, old
+	     featured→parent), giving the card↔box content cross-dissolve. -->
+	<div class="featured-slot" style={mounted && cardHeight ? `height: ${cardHeight}px` : ''}>
+		{#each [f] as cur (cur.person.id)}
+			<div
+				class="featured-flight"
+				data-flight-dir="lateral"
+				bind:clientHeight={cardHeight}
+				in:growFrom
+				out:shrinkTo={{ id: cur.person.id }}
+			>
+				<FeaturedCard
+					person={cur.person}
+					spouses={cur.neighborhood.spouses}
+					generationLabels={cur.generationLabels}
+					burialCemetery={cur.burialCemetery}
+					crossConnections={cur.crossConnections}
+					institutionsById={cur.institutionsById}
+				/>
+			</div>
+		{/each}
+		<!-- Spouse chips: NOT yet animated (spouse-swap is the next milestone). -->
+		{#if roster.spouses.length > 0}
+			<div class="spouse-notch flex gap-2">
+				{#each roster.spouses as chip (chip.spouse.id)}
+					<PersonBox
+						person={chip.spouse}
+						relation="spouse"
+						marriageYear={chip.year}
+						compact={useCompact}
+					/>
+				{/each}
+			</div>
+		{/if}
+	</div>
+
 	{#if childrenTotal > 0}
 		<div class="connector connector-children" class:connector-no-label={isEasterEgg}>
 			{#if !isEasterEgg}
@@ -73,10 +166,18 @@
 	{/if}
 
 	<div class="children-slot">
-		{#each data.neighborhood.spouses as marriage (marriage.spouse?.id ?? marriage.order)}
-			{#each marriage.children as child (child.id)}
+		{#each roster.children as child (child.id)}
+			<!-- data-flight-id lets a shrinking card find this box; descendants fly DOWN. -->
+			<div
+				class="flight"
+				data-flight-dir="down"
+				data-flight-id={child.id}
+				in:enterBox={{ id: child.id, dir: 'down' }}
+				out:send={{ key: child.id }}
+				animate:flip={{ duration: flipMs }}
+			>
 				<PersonBox person={child} relation="child" dimmed={child.dy_young} />
-			{/each}
+			</div>
 		{/each}
 	</div>
 </div>
@@ -91,6 +192,42 @@
 		padding-bottom: 80px;
 		padding-left: 32px;
 		padding-right: 32px;
+	}
+
+	/* The slot is exactly the card's bounding box (so the absolutely-positioned
+	   spouse chips dock to the carved notch), AND a single grid cell so the leaving
+	   and entering cards overlap there during the morph instead of stacking. */
+	.featured-slot {
+		position: relative;
+		width: max-content;
+		display: grid;
+		justify-items: center;
+		align-items: start; /* don't stretch cards to the explicit (gliding) slot height */
+		overflow: visible; /* a taller leaving card overflows invisibly while it flies away */
+		/* Glide the slot height between focuses so the children row moves in lockstep
+		   with the card morph instead of snapping. cubic-bezier ≈ cubicOut. */
+		transition: height 540ms cubic-bezier(0.33, 1, 0.68, 1);
+	}
+	.featured-slot > .featured-flight {
+		grid-area: 1 / 1;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.featured-slot {
+			transition: none;
+		}
+	}
+	.spouse-notch {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 1;
+	}
+
+	/* Flight wrappers are the keyed-each children that carry send/receive + flip.
+	   They size to the PersonBox inside and otherwise don't affect layout. */
+	.flight {
+		display: flex;
 	}
 
 	.parents-slot {
@@ -146,11 +283,5 @@
 
 	.connector-children .connector-line.connector-line-full {
 		height: 50px;
-	}
-
-	.cross-connections {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 4px 24px;
 	}
 </style>

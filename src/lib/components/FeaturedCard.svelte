@@ -1,10 +1,9 @@
 <script lang="ts">
 	import type { Person } from '$lib/types/person';
-	import type { SpouseEntry } from '$lib/types/neighborhood';
+	import type { SpouseEntry, PersonCompact } from '$lib/types/neighborhood';
 	import type { Cemetery } from '$lib/types/cemetery';
 	import type { Institution } from '$lib/types/institution';
 	import RightColumn from './RightColumn.svelte';
-	import PersonBox from './PersonBox.svelte';
 	import NarrativeBlocks from './NarrativeBlocks.svelte';
 	import { formatDate, formatLocationShort, buildMapUrl } from '$lib/utils/dates';
 
@@ -56,11 +55,23 @@
 	const CHIP_ZONE_HEIGHT_NORMAL = 90;
 	const CHIP_ZONE_HEIGHT_COMPACT = 78;
 
-	let chipZoneHeight = $derived(useCompact ? CHIP_ZONE_HEIGHT_COMPACT : CHIP_ZONE_HEIGHT_NORMAL);
+	// One chip per UNIQUE spouse person: a repeated spouse id can't collide the
+	// keyed each, and a stable id key lets the chip↔card morph fire on navigation.
+	let spouseChips = $derived.by(() => {
+		const seen = new Set<string>();
+		const out: { spouse: PersonCompact; year: number | null }[] = [];
+		for (const m of spouses) {
+			if (!m.spouse || seen.has(m.spouse.id)) continue;
+			seen.add(m.spouse.id);
+			out.push({ spouse: m.spouse, year: m.year });
+		}
+		return out;
+	});
 
-	let chipCount = $derived(spouses.filter((s) => s.spouse).length);
+	let chipCount = $derived(spouseChips.length);
 	let useCompact = $derived(chipCount >= 3);
 	let chipWidth = $derived(useCompact ? CHIP_W_COMPACT : CHIP_W_NORMAL);
+	let chipZoneHeight = $derived(useCompact ? CHIP_ZONE_HEIGHT_COMPACT : CHIP_ZONE_HEIGHT_NORMAL);
 
 	let chipZoneWidth = $derived.by(() => {
 		if (chipCount === 0) return 0;
@@ -136,7 +147,7 @@
 						>
 					</h1>
 					{#if generationLabels.length > 0}
-						{#each generationLabels as label (label)}
+						{#each generationLabels as label, i (i)}
 							<div
 								class="leading-tight font-medium text-blue-900"
 								class:text-sm={!label.includes(' / ')}
@@ -250,7 +261,9 @@
 
 					<!-- Right: two-column CC grid -->
 					<div class="cross-connections grid grid-cols-2 items-start gap-x-6 gap-y-1">
-						{#each crossConnections as cc (cc.related_id)}
+						<!-- Index key: a CC id can recur as two distinct directional facts
+						     (e.g. "first student of X" AND "was his teacher") — show both. -->
+						{#each crossConnections as cc, i (i)}
 							<div class="cc-row text-[12px] leading-snug">
 								{#if cc.slug}
 									<a
@@ -272,22 +285,9 @@
 		{/if}
 	</article>
 
-	<!-- Spouse chips: SIBLING of article, positioned in the carved notch.
-	     Not affected by article's clip-path. -->
-	{#if chipCount > 0}
-		<div class="absolute top-0 right-0 flex gap-2">
-			{#each spouses as marriage (marriage.spouse?.id ?? marriage.order)}
-				{#if marriage.spouse}
-					<PersonBox
-						person={marriage.spouse}
-						relation="spouse"
-						marriageYear={marriage.year}
-						compact={useCompact}
-					/>
-				{/if}
-			{/each}
-		</div>
-	{/if}
+	<!-- Spouse chips are rendered by the PAGE (lifted out so chip and card are
+	     peers for the crossfade — see DESIGN "Re-focus choreography"). This card
+	     still CARVES the notch from chipCount; the page docks the chips into it. -->
 </div>
 
 <style>
