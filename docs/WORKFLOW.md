@@ -228,3 +228,74 @@ It's the one-glance "what was this person" — an index line, not a teaser.
 
 The test: strip the blurb to its nouns. Is what's left a role (or set of roles)?
 If yes, keep. If you had to keep a verb or clause to make it mean anything, kill it.
+
+---
+
+## 9. The Google Sheets research surface (the daily editing tool)
+
+Editing tab/comma-separated text by hand is miserable. The task sheet is EDITED in
+**Google Sheets** (a real spreadsheet — wide cells, comfortable for all-day
+research), and only EXPORTED to a file for processing.
+
+**Columns** (Sam fills the first three; Code fills status/slug/proposed):
+`person_id | field | value_or_angle | status | slug | proposed | decision`
+
+**The daily loop:**
+1. Research all day in a Google Sheet. Append rows as found. Run nothing.
+2. End of session: **File → Download → Comma-separated values (.csv)** (preferred —
+   long text and commas in a cell survive) OR Tab-separated (.tsv). Drop it in the
+   repo root as `tasks.csv` (or `tasks.tsv`).
+3. Hand it to Code: it processes, fills status/slug/proposed, writes the file back.
+4. Re-open / re-import the returned file in Sheets to review, OR just click the
+   `slug` links to eyeball each card in the UX.
+5. Next day: fresh sheet (or clear rows), repeat.
+
+`process_tasks.py` auto-detects: `.csv` → comma delimiter, anything else → tab. CSV
+is preferred because quoted cells preserve commas AND newlines — so a cell can hold
+a longer phrase without breaking columns.
+
+**Hard limit on cell contents:** structured values (dates, blurbs, `name="..."
+gender=...`) belong in cells. A *full page of raw prose* does NOT — even CSV gets
+unwieldy. Long raw text → the distillation channel below.
+
+---
+
+## 10. Creating new people (`new_person`) — the two-step
+
+Creating an entry needs its allocated id before you can link it, so it's TWO batches:
+
+**Batch 1 — create.** One `new_person` row per person. `person_id` column is
+ignored (id is allocated). value:
+`name="Full Name" gender=male|female searchable=false notable=false [last=... maiden=... easter_egg=false]`
+New orbit/parent entries default `searchable=false, notable=false, easter_egg=false`.
+Code returns the allocated id (e.g. `X03426`) in the `proposed` column.
+
+**Batch 2 — link + enrich.** Using the returned ids: `parents father=ID mother=ID`
+on the child, plus `birth_date` / `death_date` / `bio_blurb` / `photo_url` rows on
+the new people. Parent-linking wires bidirectionally.
+
+**After creating:** run `validate.py` on a new entry to confirm the skeleton passes
+schema. If a marriage/parent placeholder (`father_research_notes`) is now redundant,
+clear it explicitly: `field_set parents.father_research_notes=null`.
+
+A new entry is a MINIMAL skeleton — enrich it with normal task rows; don't expect
+every array to pre-exist.
+
+---
+
+## 11. Raw-text distillation (paste to Code in chat, NOT the sheet)
+
+The highest-value content workflow: hand Code a wall of raw text (a paragraph, a
+page, a search-result dump with citations) and have it DISTILL — never use verbatim.
+
+**How:** paste the text to Code in chat with a one-line target:
+> "Distill bio_blurb + NBs + any valid CC/education/career for <ID> from this text.
+>  Don't use it verbatim — follow the WORKFLOW blurb doctrine and NB rules. Strip
+>  citation markers and biographical padding. Land everything in tasks.csv as
+>  `proposed` for my approval. [paste text]"
+
+**Rules Code follows when distilling:**
+- Extract ROLES for the blurb (noun phrases), the specific human moments for NBs (one per facet), real institutional/career parallels for CCs — per the doctrine in §0–§4.
+- Citations/URLs are SOURCES TO VERIFY, never content to quote. Strip `[[1]]` markers, "his connection to the year X" padding, and any scaffolding.
+- NB prose lands as `proposed` / `nb_angle` for Sam's approval — never auto-written (two-pass rule).
+- Flag uncertainty; don't fabricate to fill a slot. Null beats weak.

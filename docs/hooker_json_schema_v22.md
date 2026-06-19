@@ -245,3 +245,51 @@ Sam pushed back hard, twice, on NBs that were watered down ("not Disney parent s
 ---
 
 *Prepared as a surgical v22 addendum to schema v21. No version-changelog narration is carried into the schema body. Schema v21 remains fully in force; this document records only the deltas. Re-read v21 §0 every 3 turns; v21 §5/§6 and this addendum's §B every 10 turns.*
+
+---
+
+## §E. NEW-ENTRY MINIMAL SKELETON (added 2026-06, for `new_person` creation)
+
+When an entry is created programmatically (via `process_tasks.py new_person` — used
+for orbit/parent entries that don't yet exist), it is born as a **minimal valid
+skeleton** and enriched by subsequent task rows. The skeleton is:
+
+```json
+{
+  "id": "X#####",                      // allocated from live X high-water + 1
+  "bio": {
+    "display_name": "Full Name",
+    "first_name": "...",
+    "last_name": "...",
+    "married_names": []                // maiden_name added for married-in women
+  },
+  "gender": "male" | "female" | null,  // top-level; drives Wife/Husband/Spouse label
+  "birth": {}, "death": {},            // filled later via birth_date/death_date rows
+  "parents": {},                       // {father_id, mother_id} dict, never a list
+  "marriages": [],
+  "narrative_blocks": [],
+  "tags": [],
+  "cross_connections": [],
+  "classification": {
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,            // true only for notable parents-of-spouses / orbit
+    "is_searchable": false,            // new orbit/parent entries default non-searchable
+    "include_in_path_calculation": false
+  },
+  "notable": { "is_notable": false },
+  "is_placeholder": false
+}
+```
+
+Notes:
+- **Defaults for a plain parent/orbit entry:** `is_searchable=false`, `is_notable=false`,
+  `is_easter_egg=false`. These are *entries*, not easter eggs — an easter egg requires
+  documented multi-person connection per the Jalapeño Rule (v21/§B.4).
+- Fields not in the skeleton (`artworks`, `quotes`, `sources`, `residence`, etc.) are
+  added only when a task row populates them — absence is valid for a stub-tier entry.
+- After creation, run `validate.py` on the new id to confirm the skeleton passes; if
+  the frontend payload builder (`regenerate-data.js`) needs a key the skeleton omits,
+  add it to the `make_new_person` skeleton rather than hand-patching each entry.
+- Generation is NEVER hand-set on a descendant — it derives from the parent link via
+  `derive_generations.py`. New non-descendant orbit entries have no generation.

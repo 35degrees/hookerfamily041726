@@ -63,6 +63,7 @@ RECOGNIZED_FIELDS = {
     'career_set',       # value = index=N role="..." org="..."  (replace one career row in place)
     'education_set',    # value = index=N ...kv...                (replace one education row in place)
     'nb_replace',       # value = old="<exact header>" new="<corrected angle/header|body>"
+    'new_person',       # CREATE a new entry. value = name="..." gender=... [searchable=false notable=false ...]
 }
 # Destroy = the ONLY paths that may remove/overwrite existing content. The guard
 # authorizes a loss only when one of these names the exact target.
@@ -350,6 +351,65 @@ def apply_destroy(field, val, p, allowed_removals):
     return "FLAG unknown destroy field", False
 
 
+def next_x_id(people):
+    """Compute the next free X##### id from the live list (recompute each call)."""
+    mx = 0
+    for p in people:
+        m = re.match(r'^X(\d+)$', p['id'])
+        if m:
+            mx = max(mx, int(m.group(1)))
+    return f"X{mx+1:05d}"
+
+
+def make_new_person(val, people, tp):
+    """Create a minimal valid NEW entry. value = name="Full Name" [gender=male|female]
+       [searchable=false] [notable=false] [easter_egg=false] [first="..." last="..." maiden="..."].
+       Returns (status, new_id|None). The entry is a clean skeleton; enrich it with
+       normal task rows (birth_date, photo_url, bio_blurb, parents, nb_angle, ...) in
+       the SAME batch by referencing the returned id."""
+    kv = parse_kv(val)
+    name = kv.get('name')
+    if not name:
+        return "FLAG new_person needs name=\"Full Name\"", None
+    new_id = next_x_id(people)
+    parts = name.split()
+    first = kv.get('first') or (parts[0] if parts else name)
+    last = kv.get('last') or (parts[-1] if len(parts) > 1 else '')
+    def as_bool(k, default):
+        v = kv.get(k)
+        return default if v is None else (v.lower() in ('true', '1', 'yes'))
+    searchable = as_bool('searchable', False)   # new orbit/parent entries default non-searchable
+    notable = as_bool('notable', False)
+    easter = as_bool('easter_egg', False)
+    bio = {'display_name': name, 'first_name': first, 'last_name': last, 'married_names': []}
+    if kv.get('maiden'): bio['maiden_name'] = kv['maiden']
+    if kv.get('gender'): pass  # gender lives at top level, set below
+    person = {
+        'id': new_id,
+        'bio': bio,
+        'gender': kv.get('gender'),
+        'birth': {}, 'death': {},
+        'parents': {},
+        'marriages': [],
+        'narrative_blocks': [],
+        'tags': [],
+        'cross_connections': [],
+        'classification': {
+            'is_thomas_descendant': False,
+            'is_talcott_descendant': False,
+            'is_easter_egg': easter,
+            'is_searchable': searchable,
+            'include_in_path_calculation': False,
+        },
+        'notable': {'is_notable': notable},
+        'is_placeholder': False,
+    }
+    people.append(person)
+    tp[new_id] = person
+    flags = f"searchable={searchable} notable={notable} easter_egg={easter}"
+    return f"OK created {new_id} '{name}' ({flags})", new_id
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('tasks')
@@ -363,8 +423,12 @@ def main():
     snap = snapshot(people)
     allowed_removals = set()
 
-    with open(args.tasks) as f:
-        rows = list(csv.DictReader(f, delimiter='\t'))
+    # Auto-detect delimiter: .csv -> comma (long text in quoted cells, even with
+    # newlines, survives — best for Google Sheets exports with prose). Otherwise
+    # tab. Either way, csv module handles quoting so embedded commas/quotes are safe.
+    delim = ',' if args.tasks.lower().endswith('.csv') else '\t'
+    with open(args.tasks, newline='') as f:
+        rows = list(csv.DictReader(f, delimiter=delim))
 
     for r in rows:
         pid = (r.get('person_id') or '').strip()
@@ -376,6 +440,13 @@ def main():
             r['status'] = f"FLAG BLOCKED: unknown field '{field}'"; continue
         if field == 'question':
             r['status'] = "-> (answer in chat; no JSON change)"; continue
+        if field == 'new_person':
+            # creates an entry; person_id column is IGNORED (id is allocated).
+            r['status'], new_id = make_new_person(val, people, tp)
+            if new_id:
+                r['slug'] = '/person/' + slugify(tp[new_id])
+                r['proposed'] = f"new id = {new_id}"   # so Sam can reference it in later rows
+            continue
         if pid not in tp:
             r['status'] = f"FLAG BLOCKED: person {pid} not in tree"; continue
         p = tp[pid]
@@ -402,7 +473,7 @@ def main():
 
     fieldnames = ['person_id','field','value_or_angle','status','slug','proposed','decision']
     with open(args.tasks, 'w', newline='') as f:
-        w = csv.DictWriter(f, fieldnames=fieldnames, delimiter='\t', extrasaction='ignore')
+        w = csv.DictWriter(f, fieldnames=fieldnames, delimiter=delim, extrasaction='ignore')
         w.writeheader()
         for r in rows: w.writerow(r)
 

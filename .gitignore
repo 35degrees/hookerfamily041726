@@ -37,6 +37,11 @@ canonical_draft.json
 *_backup.json
 # validate.py's git-HEAD baseline scratch file
 /tmp/baseline.json
+tasks.tsv
+update-steps.txt
+blurb_worklist.tsv
+nb_worklist.tsv
+gender_worklist.tsv
 
 # --- editor / OS ---
 .DS_Store
