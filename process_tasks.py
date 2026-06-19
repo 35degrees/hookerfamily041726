@@ -64,6 +64,9 @@ RECOGNIZED_FIELDS = {
     'education_set',    # value = index=N ...kv...                (replace one education row in place)
     'nb_replace',       # value = old="<exact header>" new="<corrected angle/header|body>"
     'new_person',       # CREATE a new entry. value = name="..." gender=... [searchable=false notable=false ...]
+    'cemetery',         # create-or-link a CEM + wire burial. value = name="..." city="..." state="..." lat=.. lng=.. [cem_id=CEM### to link existing]
+    'video',            # create-or-link a VID + backlink. value = title="..." url=... platform=youtube summary="3-4 word chip" [notes="..."] [vid_id=VID### to link]
+    'landmark',         # create-or-link a LM + backlink. value = name="..." type=... city="..." state="..." [lat= lng=] [url=] [photo_url=] [blurb="person-side ≤... line"] [lm_id=LM### to link]
 }
 # Destroy = the ONLY paths that may remove/overwrite existing content. The guard
 # authorizes a loss only when one of these names the exact target.
@@ -73,7 +76,8 @@ DESTROY_FIELDS = {'tag_remove','nb_remove','cc_remove','blurb_remove','nb_replac
 
 def slugify(p):
     b = p.get('bio') or {}
-    first = (b.get('first_name') or (b.get('display_name') or '').split()[:1] or [''])[0]
+    # full first name: if first_name is set use it whole; else first word of display_name
+    first = b.get('first_name') or ((b.get('display_name') or '').split() or [''])[0]
     prefix = (re.match(r'^[A-Z]+', p['id']) or [''])[0]
     if prefix in ('I', 'X', 'U'):
         last = b.get('maiden_name') or b.get('last_name') or ''
@@ -410,6 +414,170 @@ def make_new_person(val, people, tp):
     return f"OK created {new_id} '{name}' ({flags})", new_id
 
 
+def apply_cemetery(val, p, T):
+    """Create-or-link a cemetery and wire the person's burial bidirectionally.
+       value = name="..." city="..." state="..." lat=.. lng=.. [country=..] [founded=YYYY]
+               [cem_id=CEM### to LINK an existing cemetery instead of creating]
+               [plot="plot notes"]
+       If cem_id is given, links to that existing CEM. Otherwise, if a CEM with the
+       same name+city already exists, links to it (no duplicate); else creates a new
+       CEM### from the live max."""
+    kv = parse_kv(val)
+    cems = T.setdefault('cemeteries', [])
+    cem_id = kv.get('cem_id')
+
+    if not cem_id:
+        # dedupe: same name + city = same cemetery, link don't duplicate
+        nm = (kv.get('name') or '').strip().lower()
+        ci = (kv.get('city') or '').strip().lower()
+        for c in cems:
+            if (c.get('name') or '').strip().lower() == nm and nm and \
+               (c.get('city') or '').strip().lower() == ci:
+                cem_id = c['id']
+                break
+
+    created = False
+    if not cem_id:
+        if not kv.get('name'):
+            return "FLAG cemetery needs name=\"...\" (or cem_id= to link existing)", False
+        mx = 0
+        for c in cems:
+            m = re.match(r'^CEM(\d+)$', c.get('id', ''))
+            if m: mx = max(mx, int(m.group(1)))
+        cem_id = f"CEM{mx+1:03d}"
+        rec = {'id': cem_id, 'name': kv['name'], 'hooker_connections': []}
+        if kv.get('city'): rec['city'] = kv['city']
+        if kv.get('state'): rec['state'] = kv['state']
+        if kv.get('country'): rec['country'] = kv['country']
+        if kv.get('lat') and kv.get('lng'):
+            rec['gps'] = {'latitude': float(kv['lat']), 'longitude': float(kv['lng'])}
+        if kv.get('founded'):
+            try: rec['founded'] = int(kv['founded'])
+            except ValueError: pass
+        cems.append(rec)
+        created = True
+    else:
+        if cem_id not in {c['id'] for c in cems}:
+            return f"FLAG cemetery cem_id={cem_id} not found", False
+        rec = next(c for c in cems if c['id'] == cem_id)
+
+    # wire the person's burial -> cemetery
+    burial = p.setdefault('burial', {})
+    burial['cemetery_id'] = cem_id
+    if kv.get('plot'): burial['plot_notes'] = kv['plot']
+    # wire cemetery -> person (bidirectional backlink)
+    conns = rec.setdefault('hooker_connections', [])
+    if p['id'] not in conns:
+        conns.append(p['id'])
+
+    verb = f"created {cem_id}" if created else f"linked {cem_id}"
+    gps = " +gps" if rec.get('gps') else ""
+    return f"OK cemetery {verb} '{rec.get('name')}'{gps}; burial wired (bidirectional)", True
+
+
+def apply_video(val, p, T):
+    """Create-or-link a top-level VID and wire the person backlink.
+       value = title="..." url=... platform=youtube summary="3-4 word chip noun phrase"
+               [notes="..."] [vid_id=VID### to link existing]
+       summary is the RightColumn chip label (title-case noun phrase, no trailing punctuation)."""
+    kv = parse_kv(val)
+    vids = T.setdefault('videos', [])
+    vid_id = kv.get('vid_id')
+    created = False
+    if not vid_id:
+        url = kv.get('url')
+        # dedupe by url
+        for v in vids:
+            if url and v.get('url') == url:
+                vid_id = v['id']; break
+    if not vid_id:
+        if not kv.get('title') or not kv.get('url'):
+            return "FLAG video needs title=\"...\" url=... (or vid_id= to link)", False
+        if not kv.get('summary'):
+            return "FLAG video needs summary=\"3-4 word chip\" (RightColumn label)", False
+        mx = 0
+        for v in vids:
+            m = re.match(r'^VID(\d+)$', v.get('id', ''))
+            if m: mx = max(mx, int(m.group(1)))
+        vid_id = f"VID{mx+1:03d}"
+        rec = {'id': vid_id, 'title': kv['title'], 'url': kv['url'],
+               'platform': kv.get('platform', 'youtube'),
+               'summary': kv['summary'], 'person_ids': []}
+        if kv.get('notes'): rec['notes'] = kv['notes']
+        vids.append(rec); created = True
+    else:
+        if vid_id not in {v['id'] for v in vids}:
+            return f"FLAG video vid_id={vid_id} not found", False
+        rec = next(v for v in vids if v['id'] == vid_id)
+    # top-level person_ids
+    if p['id'] not in rec.setdefault('person_ids', []):
+        rec['person_ids'].append(p['id'])
+    # person-side backlink
+    pv = p.setdefault('videos', [])
+    if not any((x.get('video_id') if isinstance(x, dict) else x) == vid_id for x in pv):
+        pv.append({'video_id': vid_id})
+    verb = f"created {vid_id}" if created else f"linked {vid_id}"
+    return f"OK video {verb} '{rec.get('summary')}'; backlink wired (bidirectional)", True
+
+
+def apply_landmark(val, p, T):
+    """Create-or-link a top-level LM and wire the person backlink.
+       value = name="..." type=... city="..." state="..." [country=..] [lat= lng=]
+               [url=external] [photo_url=] [nrhp=true] [visitable=true]
+               [blurb="person-side one-line context"] [lm_id=LM### to link existing]
+       NOTE the two URL kinds: url= is the EXTERNAL reference; photo_url= is the image."""
+    kv = parse_kv(val)
+    lms = T.setdefault('landmarks', [])
+    lm_id = kv.get('lm_id')
+    created = False
+    if not lm_id:
+        nm = (kv.get('name') or '').strip().lower()
+        ci = (kv.get('city') or '').strip().lower()
+        for l in lms:
+            if (l.get('primary_name') or '').strip().lower() == nm and nm and \
+               ((l.get('location') or {}).get('city') or '').strip().lower() == ci:
+                lm_id = l['id']; break
+    if not lm_id:
+        if not kv.get('name'):
+            return "FLAG landmark needs name=\"...\" (or lm_id= to link)", False
+        mx = 0
+        for l in lms:
+            m = re.match(r'^LM(\d+)$', l.get('id', ''))
+            if m: mx = max(mx, int(m.group(1)))
+        lm_id = f"LM{mx+1:03d}"
+        loc = {}
+        for k in ('address', 'city', 'state', 'country'):
+            if kv.get(k): loc[k] = kv[k]
+        rec = {'id': lm_id, 'primary_name': kv['name'], 'person_ids': []}
+        if kv.get('type'): rec['type'] = kv['type']
+        if loc: rec['location'] = loc
+        if kv.get('lat') and kv.get('lng'):
+            rec.setdefault('location', {})['gps'] = {'latitude': float(kv['lat']), 'longitude': float(kv['lng'])}
+        if kv.get('url'): rec['url'] = kv['url']               # external reference
+        if kv.get('photo_url'): rec['photo_url'] = kv['photo_url']   # image
+        if kv.get('nrhp'): rec['nrhp'] = (kv['nrhp'].lower() in ('true', '1', 'yes'))
+        if kv.get('visitable'): rec['visitable'] = (kv['visitable'].lower() in ('true', '1', 'yes'))
+        lms.append(rec); created = True
+    else:
+        if lm_id not in {l['id'] for l in lms}:
+            return f"FLAG landmark lm_id={lm_id} not found", False
+        rec = next(l for l in lms if l['id'] == lm_id)
+    if p['id'] not in rec.setdefault('person_ids', []):
+        rec['person_ids'].append(p['id'])
+    # person-side backlink (with optional landmark_blurb)
+    pl = p.setdefault('landmarks', [])
+    if not any((x.get('landmark_id') if isinstance(x, dict) else x) == lm_id for x in pl):
+        entry = {'landmark_id': lm_id}
+        if kv.get('blurb'): entry['landmark_blurb'] = kv['blurb']
+        pl.append(entry)
+    verb = f"created {lm_id}" if created else f"linked {lm_id}"
+    urls = []
+    if rec.get('url'): urls.append('url')
+    if rec.get('photo_url'): urls.append('photo')
+    u = f" (+{'/'.join(urls)})" if urls else ""
+    return f"OK landmark {verb} '{rec.get('primary_name')}'{u}; backlink wired (bidirectional)", True
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('tasks')
@@ -451,6 +619,15 @@ def main():
             r['status'] = f"FLAG BLOCKED: person {pid} not in tree"; continue
         p = tp[pid]
         r['slug'] = '/person/' + slugify(p)
+        if field == 'cemetery':
+            r['status'], _ = apply_cemetery(val, p, T)
+            continue
+        if field == 'video':
+            r['status'], _ = apply_video(val, p, T)
+            continue
+        if field == 'landmark':
+            r['status'], _ = apply_landmark(val, p, T)
+            continue
         if field in DESTROY_FIELDS:
             r['status'], _ = apply_destroy(field, val, p, allowed_removals)
         elif field in ('nb_angle', 'nb_full'):

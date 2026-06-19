@@ -299,3 +299,46 @@ page, a search-result dump with citations) and have it DISTILL — never use ver
 - Citations/URLs are SOURCES TO VERIFY, never content to quote. Strip `[[1]]` markers, "his connection to the year X" padding, and any scaffolding.
 - NB prose lands as `proposed` / `nb_angle` for Sam's approval — never auto-written (two-pass rule).
 - Flag uncertainty; don't fabricate to fill a slot. Null beats weak.
+
+---
+
+## 12. Pasting a source block (FindAGrave, obituary, bio) — Code extracts, you don't tweezer
+
+The most common real input: a copied block from FindAGrave / an obituary / a bio page
+with dates, burial, coordinates, etc. **Do NOT hand-convert it into CSV rows** — that's
+slow and error-prone. Paste the WHOLE block to Code in chat with the target id, and Code
+extracts the fields and runs them. This preserves the old paste-and-go habit.
+
+**How:**
+> "For <ID> (<name>), here's their FindAGrave data — extract birth_date, death_date,
+>  and create/link the cemetery with its coordinates, then process. [paste the block]"
+
+Code parses dates ("24 Jul 1845" → 1845-07-24), the cemetery name + city/state, and the
+coordinates, and emits the right task rows (`birth_date`, `death_date`, `cemetery ...`).
+Same for obituaries (career, NBs) and bio pages (distill per §11).
+
+**This is the division of labor:** structured multi-person edits → Google Sheets/CSV;
+a source block for one person → paste to Code, it does the extraction.
+
+---
+
+## 13. Top-level media/place records — cemetery, video, landmark
+
+These create-or-link a top-level record AND wire the person backlink bidirectionally.
+All dedupe (same name+city, or same url) so re-running links instead of duplicating.
+Code fills these from a pasted source; you rarely hand-write them.
+
+**cemetery** — `name="..." city="..." state="..." lat=.. lng=.. [country=..] [founded=YYYY] [plot="..."] [cem_id=CEM### to link existing]`
+  Creates a CEM###, sets `gps`, wires `person.burial.cemetery_id` ↔ `cemetery.hooker_connections[]`.
+
+**video** — `title="..." url=... platform=youtube summary="3-4 word chip" [notes="..."] [vid_id=VID### to link]`
+  - `summary` is REQUIRED: the RightColumn chip label — a 3-4 word title-case noun phrase, no trailing punctuation (e.g. "Cowboy Song Recording", "Memorial Tribute"). Distinct from `title` (the full, possibly long, source title).
+  - Wires `video.person_ids[]` ↔ `person.videos[].video_id`.
+
+**landmark** — `name="..." type=... city="..." state="..." [lat= lng=] [url=EXTERNAL] [photo_url=IMAGE] [nrhp=true] [visitable=true] [blurb="person-side one-line"] [lm_id=LM### to link]`
+  - **TWO URL kinds, kept distinct:** `url=` is the EXTERNAL reference link; `photo_url=` is the image. Don't conflate them.
+  - `blurb=` becomes the person-side `landmark_blurb` (a one-line contextual note on the person's card, e.g. "His father lived here, opposite the Giles Hooker house").
+  - Wires `landmark.person_ids[]` ↔ `person.landmarks[].landmark_id`.
+
+All three: pass `cem_id` / `vid_id` / `lm_id` to LINK an existing record instead of
+creating a new one (e.g. a second person buried in an already-recorded cemetery).
