@@ -8,7 +8,7 @@
 
 	let { blocks }: Props = $props();
 
-	const MAX_DISPLAYED = 5;
+	const MAX_DISPLAYED = 6;
 
 	let sortedBlocks = $derived(
 		[...blocks]
@@ -46,7 +46,7 @@
 </script>
 
 {#if sortedBlocks.length > 0}
-	<div class="narrative-blocks space-y-3">
+	<div class="narrative-blocks space-y-2">
 		{#each sortedBlocks as { block, key } (key)}
 			<div class="block">
 				<button
