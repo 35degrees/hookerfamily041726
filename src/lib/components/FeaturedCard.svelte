@@ -86,22 +86,28 @@
 	// Should match the spouse chip's rounded-lg (8px) so the chip docks visually.
 	const CORNER_R = 8;
 
+	// The FLAT silhouette: a plain rounded rectangle, no notch (4 rounded outer corners).
+	// It's the resting shape when there are no chips, AND it's exposed as --flat-shape so a
+	// card can morph to a COMPLETE solid rounded card while flying — the notch would otherwise
+	// make the growing/shrinking cards animate around a corner cutout and read as a blur. The
+	// page swaps to it via a .flat class during the transition (see +page.svelte). 8px rounding
+	// is preserved, so the cards never square off mid-flight.
+	const flatShape = `shape(
+            from ${CORNER_R}px 0,
+            line to calc(100% - ${CORNER_R}px) 0,
+            curve to 100% ${CORNER_R}px with 100% 0,
+            line to 100% calc(100% - ${CORNER_R}px),
+            curve to calc(100% - ${CORNER_R}px) 100% with 100% 100%,
+            line to ${CORNER_R}px 100%,
+            curve to 0 calc(100% - ${CORNER_R}px) with 0 100%,
+            line to 0 ${CORNER_R}px,
+            curve to ${CORNER_R}px 0 with 0 0
+        )`;
+
 	let clipPath = $derived.by(() => {
 		const r = CORNER_R;
-		if (chipCount === 0) {
-			// Simple rounded rectangle when no chips (4 outer rounded corners)
-			return `shape(
-            from ${r}px 0,
-            line to calc(100% - ${r}px) 0,
-            curve to 100% ${r}px with 100% 0,
-            line to 100% calc(100% - ${r}px),
-            curve to calc(100% - ${r}px) 100% with 100% 100%,
-            line to ${r}px 100%,
-            curve to 0 calc(100% - ${r}px) with 0 100%,
-            line to 0 ${r}px,
-            curve to ${r}px 0 with 0 0
-        )`;
-		}
+		// No chips → the flat silhouette IS the resting shape (also reused while flying).
+		if (chipCount === 0) return flatShape;
 		const cw = chipZoneWidth;
 		const ch = chipZoneHeight;
 		return `shape(
@@ -135,7 +141,10 @@
 >
 	<!-- The CARVED CARD: clip-path creates the notch silhouette.
 	     No fixed height here — it grows naturally to fit card-top (580px) + footer (auto). -->
-	<article class="featured-card relative w-full bg-white" style="clip-path: {clipPath};">
+	<article
+		class="featured-card relative w-full bg-white"
+		style="clip-path: {clipPath}; --flat-shape: {flatShape};"
+	>
 		<!-- Fixed-height TOP region: header + content area, always exactly 580px tall.
 		     This is the "main card" that stays consistent regardless of NB expansion. -->
 		<div class="card-top grid h-[580px] grid-rows-[minmax(70px,auto)_minmax(0,1fr)]">

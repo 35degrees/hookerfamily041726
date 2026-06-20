@@ -14,7 +14,7 @@
 import { pushState } from '$app/navigation';
 import { featured } from './featured.svelte';
 import { fetchFeatured } from '$lib/data/buildFeatured';
-import { captureFlightOrigin, captureExiting } from '$lib/transitions/flight';
+import { captureFlightOrigin, captureFlightKind } from '$lib/transitions/flight';
 
 /** Fetch a person and set them as featured. No history change. False if not found. */
 export async function loadFeatured(slug: string): Promise<boolean> {
@@ -33,10 +33,6 @@ export async function focusPerson(slug: string): Promise<void> {
 		return;
 	}
 	pushState(`/person/${slug}`, {});
-	// This click's transitions have been created (they read the captured exiting id
-	// during the flush); clear it after the frame so a later back/forward nav — which
-	// captures nothing — can't reuse a stale id and hide-then-fade an unrelated box.
-	requestAnimationFrame(() => captureExiting(null));
 }
 
 const isModified = (e: MouseEvent) => e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
@@ -56,11 +52,13 @@ export function warmPersonLinks(node: HTMLElement) {
 		const match = href?.match(/^\/person\/([^/?#]+)$/);
 		if (!match) return; // not an internal person link — leave it to the browser
 		event.preventDefault();
-		// Capture, at click time (outside any reactive effect): the clicked box's rect
-		// (so the card flies from its true position) and the focus we're leaving (so
-		// its destination box is held hidden until the shrinking card lands on it).
+		// Capture the clicked box's rect at CLICK time (outside any reactive effect) so the
+		// card flies from its true on-screen position before any state change or reflow.
 		captureFlightOrigin(anchor.getBoundingClientRect());
-		captureExiting(featured.current?.person.id ?? null);
+		// Tag the flight kind so the card picks the right speed: a clicked spouse chip is a
+		// brisk in-corner swap; everything else (parent/child boxes, cross-links) travels at
+		// the near-original parent/child speed.
+		captureFlightKind(anchor.getAttribute('data-relation') === 'spouse' ? 'spouse' : 'relative');
 		void focusPerson(decodeURIComponent(match[1]));
 	}
 	node.addEventListener('click', onClick);

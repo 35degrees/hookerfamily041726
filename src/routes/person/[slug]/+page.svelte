@@ -10,7 +10,7 @@
 	import { featured } from '$lib/state/featured.svelte';
 	import { loadFeatured, warmPersonLinks } from '$lib/state/navigate';
 	import { buildRoster } from '$lib/data/roster';
-	import { send, growFrom, shrinkTo, enterBox } from '$lib/transitions/flight';
+	import { send, growFrom, shrinkTo, markPending } from '$lib/transitions/flight';
 
 	let { data }: { data: PageData } = $props();
 
@@ -64,6 +64,53 @@
 		mounted = true;
 	});
 
+	// ── Flight landing: the single source of truth for "the featured card has arrived" ──
+	// `featuredLanded` is driven by the featured card's REAL transition lifecycle events, not a
+	// timer: false the instant a card starts flying in, true at `introend` (growFrom actually
+	// finished). Everything that should wait for the card to land keys off this — killing the
+	// intermittent flicker the old fixed clocks caused (they guessed the distance-scaled landing).
+	let featuredLanded = $state(true); // true at rest / cold load (intros don't replay on hydrate)
+
+	// Notch suppression: a carved notch makes the growing/shrinking cards animate around a corner
+	// cutout — a blur, not a discrete object. So while a card flies we flatten it to a COMPLETE
+	// rounded card (--flat-shape) via a `.flat` class on the flight wrapper. Lifecycle events fire
+	// PER-ELEMENT, the only way to reach the OUTGOING card (its props freeze on removal). Reduced
+	// motion skips it, so a 0ms "flight" can't strand a card notch-less.
+	function onIncomingStart(node: HTMLElement) {
+		if (prefersReducedMotion.current) return;
+		node.classList.add('flat'); // suppress notch → solid rectangle for the flight
+		featuredLanded = false; // hold entering destination boxes hidden until we land
+	}
+	function onIncomingLand(node: HTMLElement) {
+		node.classList.remove('flat'); // re-form the notch ON the real landing (no timer)
+		featuredLanded = true; // → triggers the gentle box/chip reveal below
+	}
+	function onOutgoingStart(node: HTMLElement) {
+		if (prefersReducedMotion.current) return;
+		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
+	}
+
+	// Reveal every box held pending (in:markPending) the moment the card LANDS — gently, with a
+	// short fade — rather than on a clock. Edge-detected (false→true only) so a stray re-run while
+	// a flight is starting can't reveal boxes early. Tied to the cause (landing), not a guess.
+	let prevLanded = true;
+	$effect(() => {
+		const landed = featuredLanded;
+		untrack(() => {
+			if (landed && !prevLanded) {
+				for (const el of document.querySelectorAll<HTMLElement>('[data-pending]')) {
+					delete el.dataset.pending;
+					el.style.opacity = '';
+					if (!prefersReducedMotion.current) {
+						// Tight fade so chips/boxes appear AS the card settles, not a beat after.
+						el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, easing: 'ease-out' });
+					}
+				}
+			}
+			prevLanded = landed;
+		});
+	});
+
 	// Spouse chips, lifted out of FeaturedCard to dock into the carved notch. The
 	// card still carves the notch from the same spouse count, so geometry matches.
 	const useCompact = $derived(roster.spouses.length >= 3);
@@ -97,7 +144,7 @@
 				class="flight"
 				data-flight-dir="up"
 				data-flight-id={parent.id}
-				in:enterBox={{ id: parent.id, dir: 'up' }}
+				in:markPending
 				out:send={{ key: parent.id }}
 				animate:flip={{ duration: flipMs }}
 			>
@@ -106,7 +153,7 @@
 		{/each}
 	</div>
 
-	<div class="connector connector-parents">
+	<div class="connector connector-parents" class:landed={featuredLanded}>
 		{#if hasParents}
 			<div class="connector-line"></div>
 			<span class="connector-label">{parentsLabel}</span>
@@ -120,6 +167,45 @@
 	     box that the same person occupies on the other side (child→featured, old
 	     featured→parent), giving the card↔box content cross-dissolve. -->
 	<div class="featured-slot" style={mounted && cardHeight ? `height: ${cardHeight}px` : ''}>
+		<!-- Spouse chips: dock into the carved notch and swap LATERALLY. Clicking a chip
+		     makes that spouse featured — their card growFroms the click-captured chip rect
+		     (warmPersonLinks already captures it on any /person link), while the previous
+		     focus shrinkTos onto its NEW chip here, located via data-flight-id.
+
+		     ORDER MATTERS: this block is rendered BEFORE the featured {#each} on purpose.
+		     The outgoing card's out:shrinkTo resolves its destination with a LIVE
+		     querySelector at outro-config time, so the destination box must already be
+		     mounted by then. Svelte runs block effects in source order, so an earlier
+		     block mounts first — which is exactly why child→featured worked (its parent
+		     destination sits in .parents-slot, above this slot) and spouse-swap did NOT
+		     (the chip used to render AFTER the card → not yet mounted → box null →
+		     shrinkTo silently degraded to duration:0, a fade). Moving the notch ahead of
+		     the card makes the new chip mount first, so shrinkTo measures a real rect.
+		     The notch is position:absolute; z-index:1, so source order has no visual or
+		     stacking effect — chips still paint on top and dock into the carved notch.
+
+		     Kept always mounted (no {#if}) so a chip's LOCAL outro still fires when the
+		     set empties to zero — matching the parents/children slots. -->
+		<div class="spouse-notch flex gap-2">
+			{#each roster.spouses as chip (chip.spouse.id)}
+				<!-- data-flight-id lets a shrinking card land on this chip; spouses fly LATERAL. -->
+				<div
+					class="flight"
+					data-flight-dir="lateral"
+					data-flight-id={chip.spouse.id}
+					in:markPending
+					out:send={{ key: chip.spouse.id }}
+					animate:flip={{ duration: flipMs }}
+				>
+					<PersonBox
+						person={chip.spouse}
+						relation="spouse"
+						marriageYear={chip.year}
+						compact={useCompact}
+					/>
+				</div>
+			{/each}
+		</div>
 		{#each [f] as cur (cur.person.id)}
 			<div
 				class="featured-flight"
@@ -127,6 +213,9 @@
 				bind:clientHeight={cardHeight}
 				in:growFrom
 				out:shrinkTo={{ id: cur.person.id }}
+				onintrostart={(e) => onIncomingStart(e.currentTarget)}
+				onintroend={(e) => onIncomingLand(e.currentTarget)}
+				onoutrostart={(e) => onOutgoingStart(e.currentTarget)}
 			>
 				<FeaturedCard
 					person={cur.person}
@@ -138,23 +227,14 @@
 				/>
 			</div>
 		{/each}
-		<!-- Spouse chips: NOT yet animated (spouse-swap is the next milestone). -->
-		{#if roster.spouses.length > 0}
-			<div class="spouse-notch flex gap-2">
-				{#each roster.spouses as chip (chip.spouse.id)}
-					<PersonBox
-						person={chip.spouse}
-						relation="spouse"
-						marriageYear={chip.year}
-						compact={useCompact}
-					/>
-				{/each}
-			</div>
-		{/if}
 	</div>
 
 	{#if childrenTotal > 0}
-		<div class="connector connector-children" class:connector-no-label={isEasterEgg}>
+		<div
+			class="connector connector-children"
+			class:connector-no-label={isEasterEgg}
+			class:landed={featuredLanded}
+		>
 			{#if !isEasterEgg}
 				<div class="connector-line"></div>
 				<span class="connector-label">{childrenLabel}</span>
@@ -172,7 +252,7 @@
 				class="flight"
 				data-flight-dir="down"
 				data-flight-id={child.id}
-				in:enterBox={{ id: child.id, dir: 'down' }}
+				in:markPending
 				out:send={{ key: child.id }}
 				animate:flip={{ duration: flipMs }}
 			>
@@ -212,6 +292,18 @@
 		grid-area: 1 / 1;
 	}
 
+	/* While a card flies (.flat added by transition lifecycle events) it renders as a
+	   COMPLETE solid rounded card: the carved notch is swapped for the card's own --flat-shape
+	   so the two cards don't animate around a corner cutout and blur together. The 8px rounding
+	   is preserved (it's a rounded rectangle, not `none`); !important beats the article's inline
+	   clip-path; it reverts the instant .flat is removed (notch re-forms, masked by the chips). */
+	/* `.flat` is added at RUNTIME (classList, not markup) and `.featured-card` lives in the
+	   child component, so both must be :global or Svelte tree-shakes this rule as "unused" and
+	   silently strips it. `.featured-flight` stays scoped, keeping the rule bound to this page. */
+	.featured-flight:global(.flat) :global(.featured-card) {
+		clip-path: var(--flat-shape) !important;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.featured-slot {
 			transition: none;
@@ -245,8 +337,16 @@
 		align-items: center;
 		gap: 4px;
 		padding: 6px 0;
+		opacity: 0; /* hidden during flight — the lines+label are scaffolding for the LANDED page */
+		min-height: 70px; /* Reserve space even when empty (e.g., no parents) — no layout shift */
+	}
+	/* The connector + its label fade in as ONE unit WITH the parent/child/spouse boxes, on the
+	   card's landing (featuredLanded → true). Transition lives on .landed so the reveal is a
+	   gentle 150ms fade (matching the boxes' WAAPI fade) while flight-start hide is instant
+	   (removing .landed drops the transition → snaps to opacity 0, no stale-label fade-out). */
+	.connector.landed {
 		opacity: 0.75;
-		min-height: 70px; /* Reserve space even when empty (e.g., no parents) */
+		transition: opacity 150ms ease-out;
 	}
 
 	.connector-line {

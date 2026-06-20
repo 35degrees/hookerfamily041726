@@ -28,14 +28,15 @@ export function captureFlightOrigin(rect: DOMRect | null): void {
 	flightOrigin = rect;
 }
 
-// The focus we're leaving, captured at click time (NON-reactive — a plain module
-// value, NOT $state). It must never be written inside a reactive effect: the exit
-// transition reads it once when it's created, it is not a render dependency.
-// (Writing it from set() inside $effect.pre caused effect_update_depth_exceeded.)
-let exitingId: string | null = null;
+// The KIND of the current flight, captured at click time alongside the origin rect. Spouse
+// swaps and parent/child clicks now run at DIFFERENT speeds (a spouse swap is a short in-corner
+// morph; a parent/child click is a real-distance travel that was never meant to be slowed), and
+// distance can't tell them apart (a docked chip is ~as far from the card's top-left as a child
+// box). So the click handler tags the flight; growFrom + shrinkTo pick their durations from it.
+let flightKind: 'spouse' | 'relative' = 'relative';
 
-export function captureExiting(id: string | null): void {
-	exitingId = id;
+export function captureFlightKind(kind: 'spouse' | 'relative'): void {
+	flightKind = kind;
 }
 
 /**
@@ -57,24 +58,35 @@ export function growFrom(node: Element) {
 	const distance = Math.hypot(dx, dy);
 
 	return {
-		// Slower/followable (you asked to be able to track the card), distance-scaled.
-		duration: Math.min(720, Math.max(420, 260 + distance * 0.4)),
+		// Distance-scaled, but the FLOOR/SLOPE depend on the flight kind (see flightKind):
+		//   spouse swap  → ≈ original baseline, a touch faster (brisk in-corner morph)
+		//   parent/child → ≈ 5% over original (nearly original; never meant to be slowed)
+		duration:
+			flightKind === 'spouse'
+				? Math.min(685, Math.max(400, 250 + distance * 0.38))
+				: Math.min(755, Math.max(440, 273 + distance * 0.42)),
 		easing: cubicOut,
 		// u = 1 - t: at the start the card exactly overlays the clicked box; settles to identity.
+		// z-index 2 + explicit opacity 1: the clicked subject is the HERO — it rides ON TOP
+		// (above the outgoing card AND the z-index:1 spouse notch) and NEVER fades, so the
+		// user tracks one solid object continuously from chip to featured. Svelte strips the
+		// animation styles on completion, so z-index reverts to auto and chips re-dock on top.
 		css: (_t: number, u: number) =>
-			`transform-origin: top left; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`
+			`z-index: 2; opacity: 1; transform-origin: top left; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`
 	};
 }
 
-// Exit pair (card shrinkTo + box hold-reveal) share one duration so they stay in
-// lockstep: the box must stay hidden for exactly as long as the card is flying.
-const EXIT_MS = 540;
+// The leaving card's flight duration, matched to growFrom's two regimes (spouse brisk,
+// parent/child near-original). No longer shared with any box-reveal clock — destination boxes
+// reveal on the incoming card's ACTUAL landing event, not a fraction of this; see +page.svelte.
+const SPOUSE_EXIT_MS = 510;
+const RELATIVE_EXIT_MS = 565;
 
 /**
  * `out:shrinkTo` — mirror of growFrom for the LEAVING card. Flies the card as one
  * element to its destination box's TRUE rect (the box the old focus becomes,
  * found by data-flight-id), so it lands exactly on the box instead of overshooting.
- * Stays opaque while travelling, cross-fades over the last fifth as the box reveals.
+ * Stays opaque while travelling, fades over the last fifth as it docks.
  */
 export function shrinkTo(node: Element, params: { id: string }) {
 	if (prefersReducedMotion.current) return { duration: 0 };
@@ -88,44 +100,35 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	const sy = box.height / card.height;
 
 	return {
-		duration: EXIT_MS,
+		duration: flightKind === 'spouse' ? SPOUSE_EXIT_MS : RELATIVE_EXIT_MS,
 		easing: cubicOut,
 		// out: t 1→0, u = 1-t. Identity at the start; overlays the box at the end.
+		// z-index 0: the demoting card is the SIDESHOW — it passes UNDERNEATH the incoming
+		// hero (z-index 2) and the notch (z-index 1), quietly shrinking into its corner chip.
+		// It still cross-fades over the last fifth as its destination box reveals.
 		css: (t: number, u: number) =>
-			`transform-origin: top left; opacity: ${Math.min(1, t / 0.2)}; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`
+			`z-index: 0; transform-origin: top left; opacity: ${Math.min(1, t / 0.2)}; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`
 	};
 }
 
 /**
- * `in:enterBox` — entry for boxes. The box that the old focus is becoming (id ===
- * exitingId) stays HIDDEN until the shrinking card lands on it, then fades in over
- * the last fifth (no separate pop — the card becomes the box). Every other new box
- * does a soft directional fly-in (ancestors from above, descendants from below).
+ * `in:markPending` — entry hook for destination boxes (parents, children, spouse chips).
+ *
+ * Replaces the old `enterBox` CLOCK (which revealed boxes at a fixed fraction of EXIT_MS and
+ * so RACED the distance-scaled card flight — the intermittent flicker). A Svelte `in:` runs
+ * ONLY for elements that actually enter, so this fires for newly-arriving boxes but NOT for
+ * persisting ones (e.g. children shared across a spouse swap keep their element and never
+ * re-run it). It does no animation of its own (duration 0): it just hides the box and flags
+ * it `data-pending`. The page then fades every pending box in on the featured card's REAL
+ * landing event (introend) — reveal tied to the cause, not a timer. Reduced motion: no-op,
+ * so boxes appear immediately.
  */
-export function enterBox(node: Element, params: { id: string; dir: string }) {
+export function markPending(node: Element) {
 	if (prefersReducedMotion.current) return { duration: 0 };
-
-	// Read-once at transition time (non-reactive). The box the old focus becomes
-	// is held hidden until the shrinking card lands on it.
-	if (params.id === exitingId) {
-		return {
-			duration: EXIT_MS,
-			easing: cubicOut,
-			css: (t: number) => `opacity: ${t < 0.8 ? 0 : (t - 0.8) / 0.2};`
-		};
-	}
-
-	const D = 28;
-	const dx = params.dir === 'lateral' ? D : 0;
-	const dy = params.dir === 'up' ? -D : params.dir === 'down' ? D : 0;
-	const base = getComputedStyle(node).transform;
-	const t0 = base === 'none' ? '' : base;
-	return {
-		duration: 300,
-		easing: cubicOut,
-		css: (t: number, u: number) =>
-			`opacity: ${t}; transform: ${t0} translate(${u * dx}px, ${u * dy}px) scale(${0.96 + 0.04 * t});`
-	};
+	const el = node as HTMLElement;
+	el.style.opacity = '0';
+	el.dataset.pending = '';
+	return { duration: 0 };
 }
 
 export const [send, receive] = crossfade({
