@@ -59,12 +59,13 @@ export function growFrom(node: Element) {
 
 	return {
 		// Distance-scaled, but the FLOOR/SLOPE depend on the flight kind (see flightKind):
-		//   spouse swap  → ≈ original baseline, a touch faster (brisk in-corner morph)
-		//   parent/child → ≈ 5% over original (nearly original; never meant to be slowed)
+		//   spouse swap  → 10% quicker than the prior tuning (brisk in-corner morph)
+		//   parent/child → 20% quicker (they read as too slow at the prior tuning)
+		// Every coefficient below is the prior value × (spouse 0.9 / relative 0.8).
 		duration:
 			flightKind === 'spouse'
-				? Math.min(685, Math.max(400, 250 + distance * 0.38))
-				: Math.min(755, Math.max(440, 273 + distance * 0.42)),
+				? Math.min(617, Math.max(360, 225 + distance * 0.342))
+				: Math.min(604, Math.max(352, 218 + distance * 0.336)),
 		easing: cubicOut,
 		// u = 1 - t: at the start the card exactly overlays the clicked box; settles to identity.
 		// z-index 2 + explicit opacity 1: the clicked subject is the HERO — it rides ON TOP
@@ -76,11 +77,12 @@ export function growFrom(node: Element) {
 	};
 }
 
-// The leaving card's flight duration, matched to growFrom's two regimes (spouse brisk,
-// parent/child near-original). No longer shared with any box-reveal clock — destination boxes
-// reveal on the incoming card's ACTUAL landing event, not a fraction of this; see +page.svelte.
-const SPOUSE_EXIT_MS = 510;
-const RELATIVE_EXIT_MS = 565;
+// The leaving card's flight duration, matched to growFrom's two regimes so grow + shrink stay in
+// lockstep when sped up (spouse −10%, parent/child −20% vs the prior tuning). No longer shared
+// with any box-reveal clock — destination boxes reveal on the incoming card's ACTUAL landing
+// event, not a fraction of this; see +page.svelte.
+const SPOUSE_EXIT_MS = 459;
+const RELATIVE_EXIT_MS = 452;
 
 /**
  * `out:shrinkTo` — mirror of growFrom for the LEAVING card. Flies the card as one
@@ -129,6 +131,37 @@ export function markPending(node: Element) {
 	el.style.opacity = '0';
 	el.dataset.pending = '';
 	return { duration: 0 };
+}
+
+/**
+ * `in:slideChip` — entrance for a spouse chip docking into the carved notch. NOT a
+ * fade-in-place: the chip (most visibly the just-demoted previous focus) enters from
+ * BELOW-RIGHT and travels up-and-left into its top-right resting spot, matching the
+ * directional-motion language the parent/child relatives speak.
+ *
+ * Decoupled from the landing reveal (markPending / featuredLanded): a `delay` starts it
+ * PARTWAY through the swap flight — ~40% sooner than the old land-and-fade — so the chip
+ * is already arriving before the featured card firmly settles, then finishes just after
+ * the card docks. (This re-introduces a small fixed clock, but only for the chip, and the
+ * early start is now the GOAL — not a reveal racing the card's landing.)
+ *
+ * MUST be applied to an INNER wrapper, never the .flight box that carries data-flight-id:
+ * the outgoing card's shrinkTo reads that box's getBoundingClientRect at flight start to
+ * know where to land, and a transform on it would send the card to the wrong place. A
+ * transform on a DESCENDANT leaves the ancestor's border box (hence its rect) untouched.
+ * Reduced motion: instant (duration 0), so the chip just appears.
+ */
+const CHIP_SLIDE = 24; // px: starts +CHIP_SLIDE down-and-right, settles up-and-left to 0
+export function slideChip(_node: Element) {
+	if (prefersReducedMotion.current) return { duration: 0 };
+	return {
+		delay: 200, // begin partway through the swap flight — ~40% sooner than land-and-fade
+		duration: 260,
+		easing: cubicOut,
+		// u = 1 - t: offset down-and-right + transparent at the start; settles to rest, opaque.
+		css: (t: number, u: number) =>
+			`opacity: ${t}; transform: translate(${u * CHIP_SLIDE}px, ${u * CHIP_SLIDE}px);`
+	};
 }
 
 export const [send, receive] = crossfade({

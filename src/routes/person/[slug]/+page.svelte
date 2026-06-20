@@ -10,7 +10,7 @@
 	import { featured } from '$lib/state/featured.svelte';
 	import { loadFeatured, warmPersonLinks } from '$lib/state/navigate';
 	import { buildRoster } from '$lib/data/roster';
-	import { send, growFrom, shrinkTo, markPending } from '$lib/transitions/flight';
+	import { send, growFrom, shrinkTo, markPending, slideChip } from '$lib/transitions/flight';
 
 	let { data }: { data: PageData } = $props();
 
@@ -188,21 +188,25 @@
 		     set empties to zero — matching the parents/children slots. -->
 		<div class="spouse-notch flex gap-2">
 			{#each roster.spouses as chip (chip.spouse.id)}
-				<!-- data-flight-id lets a shrinking card land on this chip; spouses fly LATERAL. -->
+				<!-- data-flight-id lets a shrinking card land on this chip; spouses fly LATERAL.
+				     The .flight box stays UNTRANSFORMED so shrinkTo can read its true rect; the
+				     directional entrance (slideChip) lives on the inner wrapper so the chip can
+				     slide up-and-left into place without corrupting that measurement. -->
 				<div
 					class="flight"
 					data-flight-dir="lateral"
 					data-flight-id={chip.spouse.id}
-					in:markPending
 					out:send={{ key: chip.spouse.id }}
 					animate:flip={{ duration: flipMs }}
 				>
-					<PersonBox
-						person={chip.spouse}
-						relation="spouse"
-						marriageYear={chip.year}
-						compact={useCompact}
-					/>
+					<div class="chip-slide" in:slideChip>
+						<PersonBox
+							person={chip.spouse}
+							relation="spouse"
+							marriageYear={chip.year}
+							compact={useCompact}
+						/>
+					</div>
 				</div>
 			{/each}
 		</div>
@@ -319,6 +323,13 @@
 	/* Flight wrappers are the keyed-each children that carry send/receive + flip.
 	   They size to the PersonBox inside and otherwise don't affect layout. */
 	.flight {
+		display: flex;
+	}
+
+	/* Inner wrapper for a spouse chip's directional entrance (in:slideChip). Tightly wraps
+	   the PersonBox like .flight does, so the chip's resting size/position is unchanged; only
+	   this element is transformed during the slide, keeping the .flight box's rect true. */
+	.chip-slide {
 		display: flex;
 	}
 
