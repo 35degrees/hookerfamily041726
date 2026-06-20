@@ -1,17 +1,15 @@
 /**
- * flight — the shared crossfade pair for the single-subject morph
+ * flight — the transitions for the single-subject re-focus morph
  * (DESIGN: "Page transitions" under MOTION LANGUAGE).
  *
- * A person box leaving the DOM (`out:send`) and the element the SAME person
- * enters (`in:receive`) are matched by person-id key; Svelte flies the real DOM
- * element between the two rects. So a clicked spouse chip grows into the featured
- * card, and the previous focus shrinks back into its new box — the live carved
- * card (clip-path + wrapper drop-shadow) travels intact.
- *
- * Used `|global` at the call sites so a box nested inside the keyed FeaturedCard
- * still animates when its ancestor block is the thing being replaced.
+ * The FEATURED CARD morphs as one element: `in:growFrom` flies it from the clicked box's
+ * click-captured rect to center; `out:shrinkTo` flies the previous focus down into its new box.
+ * Each RELATIVE box leaves via `out:flyOut` (a direct outro — no crossfade pairing, since nothing
+ * `in:receive`s) which pins it out of flow at its true click-captured rect and fades it in the
+ * navigation's pan direction; entering relatives gate on the card landing via `in:markPending`.
+ * Click-time captures (origin rect, flight kind, clicked id, pan direction, rect snapshot) live at
+ * the top of this file and are read by the transitions during the flush, then cleared one frame on.
  */
-import { crossfade } from 'svelte/transition';
 import { cubicOut } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
 
@@ -37,6 +35,50 @@ let flightKind: 'spouse' | 'relative' = 'relative';
 
 export function captureFlightKind(kind: 'spouse' | 'relative'): void {
 	flightKind = kind;
+}
+
+// ── Path A captures (parent/child/spouse rows no longer use animate:flip — we pin leavers
+// ourselves, at the TRUE click-time positions, so Svelte's fix() can't mis-pin them) ──
+
+// BUG 1 — the box the user clicked. It becomes the featured card via growFrom, so its OLD box
+// must NOT also run a leaving animation (the "ghost"). Captured as its data-flight-id.
+let clickedId: string | null = null;
+export function captureClicked(id: string | null): void {
+	clickedId = id;
+}
+
+// BUG 2 — the navigation's PAN direction (parent→down, child→up, spouse→lateral). The whole
+// scene pans one way, so every leaver drifts toward/through center, not by its static zone.
+let panDir: 'up' | 'down' | 'lateral' = 'lateral';
+export function capturePanDir(dir: 'up' | 'down' | 'lateral'): void {
+	panDir = dir;
+}
+
+// BUG 3 — a snapshot of every relative box's TRUE on-screen rect, taken at CLICK time BEFORE
+// any state change/reflow, keyed by data-flight-id. A leaver pins itself position:fixed at its
+// snapshot rect for the whole out-transition, so it leaves layout flow at the RIGHT spot and the
+// incoming boxes settle without being shoved. This is why animate:flip had to go: its fix() runs
+// AFTER the new boxes are inserted (each.js), so it measured — and pinned — the shoved position.
+type PinRect = { left: number; top: number; width: number; height: number };
+let rectSnapshot = new Map<string, PinRect>();
+export function captureRects(boxes: Iterable<Element>): void {
+	const next = new Map<string, PinRect>();
+	for (const node of boxes) {
+		const el = node as HTMLElement;
+		const id = el.dataset.flightId;
+		if (!id) continue;
+		const r = el.getBoundingClientRect();
+		next.set(id, { left: r.left, top: r.top, width: r.width, height: r.height });
+	}
+	rectSnapshot = next;
+}
+
+// Clear the per-navigation captures one frame after the transition flush consumed them, so a
+// later nav with NO click (back/forward) can't reuse a stale id / direction / pinned rect.
+export function clearFlightCaptures(): void {
+	clickedId = null;
+	panDir = 'lateral';
+	rectSnapshot = new Map();
 }
 
 /**
@@ -164,33 +206,45 @@ export function slideChip(_node: Element) {
 	};
 }
 
-export const [send, receive] = crossfade({
-	// Distance-scaled: a farther flight takes a little longer. Clamped so it never
-	// drags, and snapped to 0 under prefers-reduced-motion (Tier 1 accessibility).
-	duration: (distance: number) => {
-		if (prefersReducedMotion.current) return 0;
-		return Math.min(560, Math.max(240, 160 + distance * 0.25));
-	},
-	easing: cubicOut,
-	// No counterpart this navigation (a box whose person isn't visible on the other
-	// side — e.g. old grandparents exiting, or a child's own children arriving):
-	// a soft directional fly + scale/fade. Direction comes from the element's
-	// data-flight-dir (ancestors up, descendants down, spouse lateral), per the
-	// SPATIAL NAVIGATION flyover spec. Existing transform is preserved (reference).
-	fallback: (node: Element) => {
-		if (prefersReducedMotion.current) return { duration: 0 };
-		const dir = (node as HTMLElement).dataset.flightDir ?? 'lateral';
-		const D = 28;
-		const dx = dir === 'lateral' ? D : 0;
-		const dy = dir === 'up' ? -D : dir === 'down' ? D : 0;
-		const base = getComputedStyle(node).transform;
-		const t0 = base === 'none' ? '' : base;
-		return {
-			duration: 300,
-			easing: cubicOut,
-			// u = 1 - t: offset/shrink at the start, settle to identity at the end.
-			css: (t: number, u: number) =>
-				`opacity: ${t}; transform: ${t0} translate(${u * dx}px, ${u * dy}px) scale(${0.96 + 0.04 * t});`
-		};
+/**
+ * `out:flyOut` — the leaving transition for a relative box. A DIRECT out-transition, not a
+ * crossfade `send`: there is never an `in:receive` to pair with, and crossfade's deferred pairing
+ * kept a `duration:0`-suppressed leaver RENDERED for the whole morph (the ghost — the clicked box
+ * lingering as a static, full-opacity duplicate that re-flowed to center). A direct outro returning
+ * `{duration:0}` removes the element on the spot. Three click-captured signals shape it:
+ *   BUG 1 — if this key is the clicked person, remove it instantly: it's becoming the featured card
+ *           via the morph, and a second leaving copy is the ghost.
+ *   BUG 3 — pin position:fixed at the TRUE click-time rect so it leaves layout flow at the right
+ *           spot (incoming boxes settle without being shoved). Replaces flip's fix(), which
+ *           mis-pinned at the post-insertion position.
+ *   BUG 2 — drift in the navigation's PAN direction (camera pan) while fading.
+ */
+export function flyOut(_node: Element, params: { key: string }) {
+	if (prefersReducedMotion.current) return { duration: 0 };
+	// BUG 3: pin at the pre-reflow viewport rect so the box leaves layout flow at the right spot
+	// (incoming boxes settle without being shoved). Replaces flip's fix(), which mis-pinned.
+	const snap = rectSnapshot.get(params.key);
+	const pin = snap
+		? `position: fixed; left: ${snap.left}px; top: ${snap.top}px; width: ${snap.width}px; height: ${snap.height}px; margin: 0; `
+		: '';
+	// BUG 1: the clicked box is becoming the featured card via the morph. It LEAVES the children
+	// each while the SAME id enters the featured each — a key collision that makes a duration:0
+	// outro fail to remove it, so it lingers as a static, full-opacity duplicate (the ghost +
+	// teleport). We can't rely on removal, so we PIN it out of flow and force it INVISIBLE for the
+	// whole flight: opacity 0 the entire time, so the only thing the user tracks is the morphing
+	// card. (Pinned in the same flush as the siblings → no separate reflow, no sideways shove.)
+	if (params.key === clickedId) {
+		return { duration: 360, easing: cubicOut, css: () => `${pin}opacity: 0;` };
 	}
-});
+	// BUG 2: pan direction (parent→down, child→up, spouse→lateral), shared by all leavers.
+	const D = 28;
+	const dx = panDir === 'lateral' ? D : 0;
+	const dy = panDir === 'up' ? -D : panDir === 'down' ? D : 0;
+	return {
+		duration: 300,
+		easing: cubicOut,
+		// u = 1 - t: in place + opaque at the start, drifts to the pan offset + fades as it goes.
+		css: (t: number, u: number) =>
+			`${pin}opacity: ${t}; transform: translate(${u * dx}px, ${u * dy}px) scale(${0.96 + 0.04 * t});`
+	};
+}

@@ -10,7 +10,7 @@
 	import { featured } from '$lib/state/featured.svelte';
 	import { loadFeatured, warmPersonLinks } from '$lib/state/navigate';
 	import { buildRoster } from '$lib/data/roster';
-	import { send, growFrom, shrinkTo, markPending, slideChip } from '$lib/transitions/flight';
+	import { flyOut, growFrom, shrinkTo, markPending } from '$lib/transitions/flight';
 
 	let { data }: { data: PageData } = $props();
 
@@ -50,7 +50,9 @@
 	const zoom = 1;
 	const roster = $derived(buildRoster(f, zoom));
 
-	// Intra-zone reshuffle (e.g. died-young reorder) uses flip; snap under reduced motion.
+	// animate:flip glides SURVIVORS (e.g. children shared across a spouse swap) to their new
+	// positions. Its fix() mis-pins LEAVERS (measured post-insertion), but flyOut's WAAPI
+	// position:fixed pin overrides that, so leavers still land at their true click-captured rect.
 	const flipMs = $derived(prefersReducedMotion.current ? 0 : 420);
 
 	// The card morphs via transform (no layout effect), so without this the children
@@ -139,13 +141,15 @@
 <div class="page-container" use:warmPersonLinks>
 	<div class="parents-slot">
 		{#each roster.parents as parent (parent.id)}
-			<!-- data-flight-id lets a shrinking card find this box; ancestors fly UP. -->
+			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors;
+			     on leave, out:flyOut pins this box position:fixed at its click-captured rect, which
+			     OVERRIDES flip's (post-insertion, wrong) fix() pin so leavers don't teleport. -->
 			<div
 				class="flight"
 				data-flight-dir="up"
 				data-flight-id={parent.id}
 				in:markPending
-				out:send={{ key: parent.id }}
+				out:flyOut={{ key: parent.id }}
 				animate:flip={{ duration: flipMs }}
 			>
 				<PersonBox person={parent} relation="parent" />
@@ -189,17 +193,23 @@
 		<div class="spouse-notch flex gap-2">
 			{#each roster.spouses as chip (chip.spouse.id)}
 				<!-- data-flight-id lets a shrinking card land on this chip; spouses fly LATERAL.
-				     The .flight box stays UNTRANSFORMED so shrinkTo can read its true rect; the
-				     directional entrance (slideChip) lives on the inner wrapper so the chip can
-				     slide up-and-left into place without corrupting that measurement. -->
+				     The .flight box stays UNTRANSFORMED so shrinkTo can read its true rect. The
+				     ENTRANCE gates on the card LANDING (in:markPending → revealed by the
+				     featuredLanded effect), same as parent/child boxes — otherwise the new chip
+				     flashes in early, gets covered by the rising card, and blinks back. (The
+				     up-and-left slide-in is deferred tuning; for now it reveals with the gentle
+				     landing fade.) animate:flip glides surviving chips; out:flyOut pins a LEAVING
+				     chip position:fixed at its click-captured rect (overriding flip's fix()), so it
+				     can't be flung from the notch. -->
 				<div
 					class="flight"
 					data-flight-dir="lateral"
 					data-flight-id={chip.spouse.id}
-					out:send={{ key: chip.spouse.id }}
+					in:markPending
+					out:flyOut={{ key: chip.spouse.id }}
 					animate:flip={{ duration: flipMs }}
 				>
-					<div class="chip-slide" in:slideChip>
+					<div class="chip-slide">
 						<PersonBox
 							person={chip.spouse}
 							relation="spouse"
@@ -251,13 +261,15 @@
 
 	<div class="children-slot">
 		{#each roster.children as child (child.id)}
-			<!-- data-flight-id lets a shrinking card find this box; descendants fly DOWN. -->
+			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors
+			     (children shared across a spouse swap); out:flyOut pins a LEAVER position:fixed at
+			     its click-captured rect, overriding flip's fix() (see parents). -->
 			<div
 				class="flight"
 				data-flight-dir="down"
 				data-flight-id={child.id}
 				in:markPending
-				out:send={{ key: child.id }}
+				out:flyOut={{ key: child.id }}
 				animate:flip={{ duration: flipMs }}
 			>
 				<PersonBox person={child} relation="child" dimmed={child.dy_young} />
@@ -320,8 +332,9 @@
 		z-index: 1;
 	}
 
-	/* Flight wrappers are the keyed-each children that carry send/receive + flip.
-	   They size to the PersonBox inside and otherwise don't affect layout. */
+	/* Flight wrappers are the keyed-each children that carry animate:flip (survivors glide) and
+	   out:flyOut (leavers pin out of flow at their click-captured rect). They size to the PersonBox
+	   inside and otherwise don't affect layout. */
 	.flight {
 		display: flex;
 	}
