@@ -19,6 +19,7 @@ import {
 	captureFlightKind,
 	captureClicked,
 	capturePanDir,
+	capturePivot,
 	captureRects,
 	clearFlightCaptures
 } from '$lib/transitions/flight';
@@ -70,21 +71,22 @@ export function warmPersonLinks(node: HTMLElement) {
 		// the near-original parent/child speed.
 		const relation = anchor.getAttribute('data-relation');
 		captureFlightKind(relation === 'spouse' ? 'spouse' : 'relative');
-		const clickedBox = anchor.closest('[data-flight-id]');
 		// BUG 1: remember which box was clicked so flyOut keeps it invisible — it's becoming the
-		// featured card via the morph, and a second visible copy is the ghost.
-		captureClicked(clickedBox?.getAttribute('data-flight-id') ?? null);
+		// featured card via the morph, and a second visible copy is the ghost. (No imperative hide
+		// here: the clicked chip stays VISIBLE through the fetch, then the growFrom card — which
+		// starts exactly on its rect, z-index above it — covers its spot, and flyOut takes it
+		// invisible the same frame. Hiding it at click instead left its spot blank during the fetch.)
+		captureClicked(anchor.closest('[data-flight-id]')?.getAttribute('data-flight-id') ?? null);
+		// PIVOT: the focus we're LEAVING becomes a relative of the new focus; its box is where the
+		// demoted card lands. Captured so the reveal can hold THAT box until landing while every
+		// other incoming box reveals early (closing the bare-screen gap).
+		capturePivot(featured.current?.person.id ?? null);
 		// BUG 2: the clicked relation sets the whole scene's pan direction (parent→down, child→up,
 		// spouse→lateral) — all leaving relatives flow that one way as the generations pan.
 		capturePanDir(relation === 'parent' ? 'down' : relation === 'child' ? 'up' : 'lateral');
 		// BUG 3: snapshot every relative box's rect NOW — before focusPerson changes state and the
 		// rows reflow — so each leaver can pin itself out of flow at its true pre-reflow position.
 		captureRects(node.querySelectorAll('[data-flight-id]'));
-		// Hide the clicked box NOW — opacity only, no position change, so it doesn't reflow its
-		// row — to kill the 1–2 frame flash before flyOut takes over and pins it invisible + out
-		// of flow for the rest of the flight. It's becoming the featured card; the morph is the
-		// only copy the user should track.
-		if (clickedBox instanceof HTMLElement) clickedBox.style.opacity = '0';
 		void focusPerson(decodeURIComponent(match[1]));
 	}
 	node.addEventListener('click', onClick);

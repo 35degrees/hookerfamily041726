@@ -54,6 +54,18 @@ export function capturePanDir(dir: 'up' | 'down' | 'lateral'): void {
 	panDir = dir;
 }
 
+// The PIVOT — the box the demoted card shrinks INTO (the focus we're leaving, which becomes a
+// relative of the new focus). Captured at click as the OLD featured id. Every OTHER incoming box
+// can reveal EARLY (overlapping the outgoing fade, so the screen never goes bare); the pivot must
+// wait for the card to LAND on it, or it doubles (its box + the shrinking card on screen at once).
+let pivotId: string | null = null;
+export function capturePivot(id: string | null): void {
+	pivotId = id;
+}
+export function getPivotId(): string | null {
+	return pivotId;
+}
+
 // BUG 3 — a snapshot of every relative box's TRUE on-screen rect, taken at CLICK time BEFORE
 // any state change/reflow, keyed by data-flight-id. A leaver pins itself position:fixed at its
 // snapshot rect for the whole out-transition, so it leaves layout flow at the RIGHT spot and the
@@ -78,6 +90,7 @@ export function captureRects(boxes: Iterable<Element>): void {
 export function clearFlightCaptures(): void {
 	clickedId = null;
 	panDir = 'lateral';
+	pivotId = null;
 	rectSnapshot = new Map();
 }
 

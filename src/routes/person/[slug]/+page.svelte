@@ -10,7 +10,7 @@
 	import { featured } from '$lib/state/featured.svelte';
 	import { loadFeatured, warmPersonLinks } from '$lib/state/navigate';
 	import { buildRoster } from '$lib/data/roster';
-	import { flyOut, growFrom, shrinkTo, markPending } from '$lib/transitions/flight';
+	import { flyOut, growFrom, shrinkTo, markPending, getPivotId } from '$lib/transitions/flight';
 
 	let { data }: { data: PageData } = $props();
 
@@ -78,37 +78,46 @@
 	// rounded card (--flat-shape) via a `.flat` class on the flight wrapper. Lifecycle events fire
 	// PER-ELEMENT, the only way to reach the OUTGOING card (its props freeze on removal). Reduced
 	// motion skips it, so a 0ms "flight" can't strand a card notch-less.
+	// Fade a held-pending box (in:markPending) into view. `accept` decides which pending boxes to
+	// take now — used to reveal everyone EXCEPT the pivot early, then the pivot on landing.
+	function revealPending(accept: (el: HTMLElement) => boolean) {
+		for (const el of document.querySelectorAll<HTMLElement>('[data-pending]')) {
+			if (!accept(el)) continue;
+			delete el.dataset.pending;
+			el.style.opacity = '';
+			if (!prefersReducedMotion.current) {
+				el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180, easing: 'ease-out' });
+			}
+		}
+	}
+
 	function onIncomingStart(node: HTMLElement) {
 		if (prefersReducedMotion.current) return;
 		node.classList.add('flat'); // suppress notch → solid rectangle for the flight
-		featuredLanded = false; // hold entering destination boxes hidden until we land
+		featuredLanded = false; // hold the PIVOT box hidden until we land (see reveal below)
+		// Close the bare-screen gap: reveal every incoming box NOW — as the outgoing ones fade —
+		// EXCEPT the pivot (the box the demoting card shrinks into). Revealing the pivot here would
+		// double it (its box + the shrinking card on screen together); it waits for landing instead.
+		const pivot = getPivotId();
+		revealPending((el) => el.dataset.flightId !== pivot);
 	}
 	function onIncomingLand(node: HTMLElement) {
 		node.classList.remove('flat'); // re-form the notch ON the real landing (no timer)
-		featuredLanded = true; // → triggers the gentle box/chip reveal below
+		featuredLanded = true; // → reveals the pivot box (the card has now landed on it)
 	}
 	function onOutgoingStart(node: HTMLElement) {
 		if (prefersReducedMotion.current) return;
 		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
 	}
 
-	// Reveal every box held pending (in:markPending) the moment the card LANDS — gently, with a
-	// short fade — rather than on a clock. Edge-detected (false→true only) so a stray re-run while
-	// a flight is starting can't reveal boxes early. Tied to the cause (landing), not a guess.
+	// Reveal the PIVOT box the moment the card LANDS — the card becomes the box, no double. (Every
+	// OTHER box already revealed early in onIncomingStart.) Edge-detected (false→true only) so a
+	// stray re-run while a flight is starting can't reveal it early.
 	let prevLanded = true;
 	$effect(() => {
 		const landed = featuredLanded;
 		untrack(() => {
-			if (landed && !prevLanded) {
-				for (const el of document.querySelectorAll<HTMLElement>('[data-pending]')) {
-					delete el.dataset.pending;
-					el.style.opacity = '';
-					if (!prefersReducedMotion.current) {
-						// Tight fade so chips/boxes appear AS the card settles, not a beat after.
-						el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150, easing: 'ease-out' });
-					}
-				}
-			}
+			if (landed && !prevLanded) revealPending(() => true); // whatever's still pending = the pivot
 			prevLanded = landed;
 		});
 	});
