@@ -84,7 +84,7 @@ def sentence_count(body: str) -> int:
     abbreviations (Mr. Dr. Gen. initials) before splitting on . ! ?"""
     b = re.sub(r'(\d)\.(\d)', r'\1_\2', body)
     b = re.sub(r'\b(?:[A-Z]\.\s?){2,}', 'ABBR ', b)
-    b = re.sub(r'\b([A-Z]\.|Mr|Mrs|Dr|St|Gen|Gov|Rev|Jr|Sr|Co|vs)\.', r'\1', b)
+    b = re.sub(r'\b([A-Z]\.|Mr|Mrs|Mme|Mlle|Messrs|Dr|St|Ste|Gen|Gov|Rev|Jr|Sr|Co|Esq|vs)\.', r'\1', b)
     return len([s for s in re.split(r'[.!?]+', b) if s.strip()])
 
 
