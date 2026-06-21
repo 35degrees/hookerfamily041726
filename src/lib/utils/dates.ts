@@ -186,14 +186,34 @@ export function buildMapUrl(
 	input:
 		| { city?: string | null; state?: string | null; country?: string | null }
 		| { latitude: number; longitude: number }
+		| string
 		| null
 ): string | null {
 	if (!input) return null;
 
-	// GPS coords: use zoomed-in view
+	// String input — handle BEFORE the `in` check below, which throws a TypeError when run
+	// against a non-object. A string-form gps ("41.76,-71.35") was tearing down the card render
+	// from inside a $derived. A "lat,lng" string → zoom-17 pin; anything else → place query.
+	if (typeof input === 'string') {
+		const s = input.trim();
+		if (!s) return null;
+		const m = s.match(/^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/);
+		if (m) return `https://www.google.com/maps/@${parseFloat(m[1])},${parseFloat(m[2])},17z`;
+		return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s)}`;
+	}
+
+	// Anything that isn't a plain object now degrades to null rather than throwing.
+	if (typeof input !== 'object' || Array.isArray(input)) return null;
+
+	// GPS coords: zoomed-in view (zoom 17 ≈ neighborhood level). Require finite numbers so a
+	// malformed coord falls through to null instead of building a broken "@NaN,NaN" URL.
 	if ('latitude' in input && 'longitude' in input) {
-		// zoom 17 = neighborhood level, good for pinpointing cemeteries
-		return `https://www.google.com/maps/@${input.latitude},${input.longitude},17z`;
+		const lat = Number(input.latitude);
+		const lng = Number(input.longitude);
+		if (Number.isFinite(lat) && Number.isFinite(lng)) {
+			return `https://www.google.com/maps/@${lat},${lng},17z`;
+		}
+		return null;
 	}
 
 	// Text-based: use search (zoom controlled by Google based on query specificity)
