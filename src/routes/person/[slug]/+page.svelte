@@ -94,16 +94,33 @@
 	function onIncomingStart(node: HTMLElement) {
 		if (prefersReducedMotion.current) return;
 		node.classList.add('flat'); // suppress notch → solid rectangle for the flight
-		featuredLanded = false; // hold the PIVOT box hidden until we land (see reveal below)
-		// Close the bare-screen gap: reveal every incoming box NOW — as the outgoing ones fade —
-		// EXCEPT the pivot (the box the demoting card shrinks into). Revealing the pivot here would
-		// double it (its box + the shrinking card on screen together); it waits for landing instead.
+		featuredLanded = false; // hold the PIVOT + spouse chips hidden until we land (see reveal below)
+		// Close the bare-screen gap: reveal the incoming PARENT and CHILD boxes NOW — as the outgoing
+		// ones fade — so the screen above and below the card is never bare. Two kinds of box are HELD
+		// instead, both revealed on landing:
+		//   • the PIVOT (the box the demoting card shrinks into) — revealing it here would double it
+		//     (its box + the shrinking card on screen at once); the seam watch reveals it as the old
+		//     card docks.
+		//   • the SPOUSE CHIPS (data-flight-dir="lateral") — they dock into the notch in the hero
+		//     card's OWN top-right corner, directly under the card's flight path. Revealed early they
+		//     flash in, get covered by the rising card, then re-emerge — the exact bug this gate
+		//     prevents. They wait for the card to land (the featuredLanded effect reveals them).
 		const pivot = getPivotId();
-		revealPending((el) => el.dataset.flightId !== pivot);
+		revealPending((el) => el.dataset.flightId !== pivot && el.dataset.flightDir !== 'lateral');
 	}
+	// Spouse-chip reveal fade — quicker than the default box fade (180ms) so the chips settle into the
+	// notch with less lag AFTER the hero lands. NOT an earlier start (that would be a mid-flight rise,
+	// the flash-then-cover bug); the chips are still gated on landing, they just resolve faster once there.
+	const CHIP_REVEAL_MS = 120;
 	function onIncomingLand(node: HTMLElement) {
 		node.classList.remove('flat'); // re-form the notch ON the real landing (no timer)
-		featuredLanded = true; // → reveals the pivot box (the card has now landed on it)
+		// Reveal the spouse chips PROMPTLY here, in the introend handler itself — the hero's transform
+		// has just hit identity, so the notch is in its final spot and a chip can never be caught under
+		// the still-flying card. Doing it here (with the quicker CHIP_REVEAL_MS fade) instead of waiting
+		// for the featuredLanded $effect to schedule + run shaves the post-landing lag, so the chips
+		// appear sooner. Still strictly gated on landing → CHIPS-SOON stays green.
+		revealPending((el) => el.dataset.flightDir === 'lateral', CHIP_REVEAL_MS);
+		featuredLanded = true; // → reveals the pivot box + any remaining pending boxes (safety-net effect)
 	}
 	function onOutgoingStart(node: HTMLElement) {
 		if (prefersReducedMotion.current) return;
