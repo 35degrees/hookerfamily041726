@@ -199,6 +199,52 @@ export function markPending(node: Element) {
 }
 
 /**
+ * `in:morphIn` — entrance for a PARENT box (Phase 2: the couple promotes together). A person who
+ * changes zone WITH an on-screen ORIGIN — most visibly the hero's spouse promoting to the father
+ * slot on a child click — MORPHS as a discrete card from its old box's click-captured rect up into
+ * the parent slot, the same way the featured card grows from the clicked chip. A parent with NO
+ * on-screen origin this navigation slides UP from below into its slot (a directional entrance, not
+ * a fade-in-place). The PIVOT (the demoted hero) is excluded: the demoted CARD already morphs into
+ * that slot via shrinkTo, so here the box just hides like markPending and the seam cross-dissolve
+ * reveals it. Reduced motion: instant.
+ */
+export function morphIn(node: Element, params: { id: string }) {
+	if (prefersReducedMotion.current) return { duration: 0 };
+	const el = node as HTMLElement;
+	// Pivot: the demoted card morphs into this slot; hold the box hidden until that hand-off reveals it.
+	if (params.id === pivotId) {
+		el.style.opacity = '0';
+		el.dataset.pending = '';
+		return { duration: 0 };
+	}
+	const dest = node.getBoundingClientRect();
+	const old = rectSnapshot.get(params.id);
+	if (old && dest.width && dest.height) {
+		// MORPH from the person's old on-screen box (e.g. the father's spouse-chip) — a discrete card.
+		const dx = old.left - dest.left;
+		const dy = old.top - dest.top;
+		const sx = old.width / dest.width;
+		const sy = old.height / dest.height;
+		return {
+			duration: 360,
+			easing: cubicOut,
+			// z-index 1: above the leaving chips, below the hero card (z-index 2). Solid (opacity 1)
+			// so the user tracks one object lifting out of its chip and into the slot.
+			css: (_t: number, u: number) =>
+				`z-index: 1; opacity: 1; transform-origin: top left; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`
+		};
+	}
+	// No on-screen origin → slide UP from below into the slot, fading in.
+	const D = 40;
+	return {
+		duration: 300,
+		easing: cubicOut,
+		// u = 1 - t: starts offset DOWN + transparent, settles up to rest, opaque.
+		css: (t: number, u: number) => `opacity: ${t}; transform: translate(0px, ${u * D}px);`
+	};
+}
+
+/**
  * `in:slideChip` — entrance for a spouse chip docking into the carved notch. NOT a
  * fade-in-place: the chip (most visibly the just-demoted previous focus) enters from
  * BELOW-RIGHT and travels up-and-left into its top-right resting spot, matching the

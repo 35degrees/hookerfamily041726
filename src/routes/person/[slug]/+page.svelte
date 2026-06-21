@@ -10,7 +10,7 @@
 	import { featured } from '$lib/state/featured.svelte';
 	import { loadFeatured, warmPersonLinks } from '$lib/state/navigate';
 	import { buildRoster } from '$lib/data/roster';
-	import { flyOut, growFrom, shrinkTo, markPending, getPivotId } from '$lib/transitions/flight';
+	import { flyOut, growFrom, shrinkTo, markPending, morphIn, getPivotId } from '$lib/transitions/flight';
 
 	let { data }: { data: PageData } = $props();
 
@@ -173,7 +173,7 @@
 				class="flight"
 				data-flight-dir="up"
 				data-flight-id={parent.id}
-				in:markPending
+				in:morphIn={{ id: parent.id }}
 				out:flyOut={{ key: parent.id }}
 				animate:flip={{ duration: flipMs }}
 			>
