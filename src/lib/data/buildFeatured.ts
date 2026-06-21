@@ -83,12 +83,16 @@ function enrich<T extends PersonCompact>(compact: T, byId: Record<string, Person
 	};
 }
 
+// died-young = age at death ≤ 15. ONE source of truth, consumed three ways: the child-box dimming
+// (PersonBox dimmed={dy_young}), the "(N died young)" connector count (childrenDiedYoung below), and
+// the roster-time sort partition that drops died-young children to the END of the children row
+// (buildRoster). Raised from ≤12 → ≤15 deliberately: 13–15-at-death now count as died-young tree-wide.
 function diedYoung(person: Person | undefined): boolean {
 	if (!person) return false;
 	const birth = person.birth?.year;
 	const death = person.death?.year;
 	if (!birth || !death) return false;
-	return death - birth <= 12;
+	return death - birth <= 15;
 }
 
 // A person box keyed by id must have unique ids — the same person can't truly be

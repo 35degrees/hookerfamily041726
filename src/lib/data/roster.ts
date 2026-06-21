@@ -43,14 +43,30 @@ export function buildRoster(f: FeaturedData, _zoom: number): Roster {
 		if (p && take(p.id)) parents.push(p);
 	}
 
-	// Children keep their per-marriage, died-young-last order from buildFeatured;
-	// the seen-set drops any cross-marriage duplicate so child.id stays unique.
+	// Children: flatten across ALL marriages into the single hero-card row, then sort GLOBALLY. The
+	// hero row is "all the hero's kids in life order", not a per-marriage chronicle — the per-spouse
+	// view appears naturally when you click a spouse (their payload lists only that spouse's kids). The
+	// seen-set drops any cross-marriage duplicate so child.id stays unique. (buildFeatured still does a
+	// per-marriage died-young-last partition upstream; it's now redundant — we re-sort the whole row
+	// here — but left untouched as harmless.)
 	const children: PersonCompact[] = [];
 	for (const m of f.neighborhood.spouses) {
 		for (const c of m.children) {
 			if (take(c.id)) children.push(c);
 		}
 	}
+	// Global order, four groups in sequence (stable sort keeps input order within an undated group):
+	//   dated-alive (birth ascending) → undated-alive → dated-died-young (birth ascending) → undated-
+	//   died-young. `by` (birth year) and `dy_young` ride on the compacts (regenerate-data.js sets `by`;
+	//   buildFeatured sets `dy_young`). A missing birth year sorts LAST within its alive/young group.
+	const groupRank = (c: PersonCompact) => (c.dy_young ? 2 : 0) + (c.by == null ? 1 : 0);
+	children.sort((a, b) => {
+		const ra = groupRank(a);
+		const rb = groupRank(b);
+		if (ra !== rb) return ra - rb;
+		if (a.by == null || b.by == null) return 0; // same group, both undated → keep stable order
+		return a.by - b.by; // birth year ascending
+	});
 
 	return { featured: f.person, parents, spouses, children };
 }
