@@ -120,7 +120,7 @@ export function growFrom(node: Element) {
 		duration:
 			flightKind === 'spouse'
 				? Math.min(617, Math.max(360, 225 + distance * 0.342))
-				: Math.min(604, Math.max(352, 218 + distance * 0.336)),
+				: Math.min(604, Math.max(410, 218 + distance * 0.336)), // parent→hero floor 352→410
 		easing: cubicOut,
 		// u = 1 - t: at the start the card exactly overlays the clicked box; settles to identity.
 		// z-index 2 + explicit opacity 1: the clicked subject is the HERO — it rides ON TOP
@@ -136,8 +136,9 @@ export function growFrom(node: Element) {
 // lockstep when sped up (spouse −10%, parent/child −20% vs the prior tuning). No longer shared
 // with any box-reveal clock — destination boxes reveal on the incoming card's ACTUAL landing
 // event, not a fraction of this; see +page.svelte.
-const SPOUSE_EXIT_MS = 459;
-const RELATIVE_EXIT_MS = 452;
+// Demoted-card morph durations — slowed ~20% (was 459 / 452) so the morph reads less rushed.
+const SPOUSE_EXIT_MS = 551;
+const RELATIVE_EXIT_MS = 542;
 
 /**
  * `out:shrinkTo` — mirror of growFrom for the LEAVING card. Flies the card as one
@@ -147,33 +148,32 @@ const RELATIVE_EXIT_MS = 452;
  */
 export function shrinkTo(node: Element, params: { id: string }) {
 	if (prefersReducedMotion.current) return { duration: 0 };
-	// Resolve the destination LAZILY, on the first css sample — NOT synchronously here. Svelte
-	// builds an out-transition's keyframes AFTER the DOM flush (inside the dummy animation's
-	// onfinish), so by the time css runs, the destination box is mounted — even when it's a CHILD
-	// box (the children-slot renders AFTER this featured slot). Resolving synchronously here meant
-	// a child destination (parent-click) wasn't mounted yet → querySelector null → the demoted card
-	// silently vanished instead of morphing down. Deferring deletes that mount-order fragility: the
-	// lookup now always runs once everything is on the page.
-	let m: { dx: number; dy: number; sx: number; sy: number } | null | undefined;
-	const resolve = () => {
-		if (m !== undefined) return m;
-		const card = node.getBoundingClientRect();
-		const box = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
-		if (!box || !card.width || !card.height) return (m = null);
-		return (m = { dx: box.left - card.left, dy: box.top - card.top, sx: box.width / card.width, sy: box.height / card.height });
-	};
+	const el = node as HTMLElement;
+	const card = node.getBoundingClientRect(); // the card's START rect (center) — stable through the flight
+	if (!card.width || !card.height) return { duration: 0 };
 	return {
 		duration: flightKind === 'spouse' ? SPOUSE_EXIT_MS : RELATIVE_EXIT_MS,
 		easing: cubicOut,
-		// out: t 1→0, u = 1-t. Identity at the start; overlays the box at the end.
-		// z-index 0: the demoting card is the SIDESHOW — it passes UNDERNEATH the incoming hero
-		// (z-index 2) and the notch (z-index 1), quietly shrinking into its new box. It still
-		// cross-fades over the last fifth as its destination box reveals. No destination (a rare
-		// back/forward nav where the old focus isn't a relative of the new one) → just fade.
-		css: (t: number, u: number) => {
-			const d = resolve();
-			if (!d) return `opacity: ${Math.min(1, t / 0.2)};`;
-			return `z-index: 0; transform-origin: top left; opacity: ${Math.min(1, t / 0.2)}; transform: translate(${u * d.dx}px, ${u * d.dy}px) scale(${1 - u * (1 - d.sx)}, ${1 - u * (1 - d.sy)});`;
+		// TICK, not css: the destination box can MOVE during the flight. When the new hero's card is a
+		// different height, the featured-slot height glide shifts the children/parent rows — e.g. on
+		// X00126 (9 children) → father X03175 (1 child) the destination's bottom rises ~118px mid-
+		// flight. A css transition resolves the destination ONCE (early) and the card lands on that
+		// stale spot, ending ~116px BELOW the settled box (the overshoot). Re-querying the box EVERY
+		// frame makes the card track it to its FINAL position — it nestles in from above, never below.
+		// (Re-querying also keeps the Phase-1 mount-order fix: a not-yet-mounted child box just yields
+		// no transform that frame.) z-index 0: passes under the hero (z 2) and notch (z 1). Opacity
+		// cross-fades over the last fifth as the destination box reveals (see onOutgoingStart watch).
+		tick: (t: number, u: number) => {
+			el.style.zIndex = '0';
+			el.style.opacity = String(Math.min(1, t / 0.2));
+			const box = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
+			if (!box || !box.width) return;
+			const dx = box.left - card.left;
+			const dy = box.top - card.top;
+			const sx = box.width / card.width;
+			const sy = box.height / card.height;
+			el.style.transformOrigin = 'top left';
+			el.style.transform = `translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)})`;
 		}
 	};
 }
@@ -234,8 +234,8 @@ export function morphIn(node: Element, params: { id: string }) {
 				`z-index: 1; opacity: 1; transform-origin: top left; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`
 		};
 	}
-	// No on-screen origin → slide UP from below into the slot, fading in.
-	const D = 40;
+	// No on-screen origin → slide UP from below into the slot, fading in. 150px so the rise reads.
+	const D = 150;
 	return {
 		duration: 300,
 		easing: cubicOut,
