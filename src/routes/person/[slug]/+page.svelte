@@ -79,14 +79,14 @@
 	// PER-ELEMENT, the only way to reach the OUTGOING card (its props freeze on removal). Reduced
 	// motion skips it, so a 0ms "flight" can't strand a card notch-less.
 	// Fade a held-pending box (in:markPending) into view. `accept` decides which pending boxes to
-	// take now — used to reveal everyone EXCEPT the pivot early, then the pivot on landing.
-	function revealPending(accept: (el: HTMLElement) => boolean) {
+	// take now — used to reveal everyone EXCEPT the pivot early, then the pivot as the card docks.
+	function revealPending(accept: (el: HTMLElement) => boolean, fadeMs = 180) {
 		for (const el of document.querySelectorAll<HTMLElement>('[data-pending]')) {
 			if (!accept(el)) continue;
 			delete el.dataset.pending;
 			el.style.opacity = '';
 			if (!prefersReducedMotion.current) {
-				el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180, easing: 'ease-out' });
+				el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: fadeMs, easing: 'ease-out' });
 			}
 		}
 	}
@@ -108,16 +108,32 @@
 	function onOutgoingStart(node: HTMLElement) {
 		if (prefersReducedMotion.current) return;
 		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
+		// Hand off to the pivot box AS this demoted card fades into its slot — a cross-dissolve, not
+		// a seam. Rather than guess a timer, WATCH the card's own opacity: the instant it begins
+		// fading (it has reached and is docking into its slot), fade the pivot box in to take its
+		// place. Tying the reveal to the card's fade (not the incoming card's separate landing clock)
+		// keeps the destination continuously covered — no bare frame at either end of the morph.
+		const pivot = getPivotId();
+		const watch = () => {
+			// Start the box's fade-in the instant the card begins fading (op dips below ~1), and run
+			// it over a window close to the card's own fade so the two cross-dissolve evenly — the
+			// composite at the destination stays high the whole hand-off.
+			if (!node.isConnected || +getComputedStyle(node).opacity < 0.99) {
+				revealPending((el) => el.dataset.flightId === pivot, 170);
+				return;
+			}
+			requestAnimationFrame(watch);
+		};
+		requestAnimationFrame(watch);
 	}
 
-	// Reveal the PIVOT box the moment the card LANDS — the card becomes the box, no double. (Every
-	// OTHER box already revealed early in onIncomingStart.) Edge-detected (false→true only) so a
-	// stray re-run while a flight is starting can't reveal it early.
+	// Safety net: if anything is still pending when the incoming card lands (e.g. the demoted card's
+	// fade-watch never fired), reveal it. Normally the pivot is already revealed by onOutgoingStart.
 	let prevLanded = true;
 	$effect(() => {
 		const landed = featuredLanded;
 		untrack(() => {
-			if (landed && !prevLanded) revealPending(() => true); // whatever's still pending = the pivot
+			if (landed && !prevLanded) revealPending(() => true);
 			prevLanded = landed;
 		});
 	});
