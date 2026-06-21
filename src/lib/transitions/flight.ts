@@ -147,24 +147,34 @@ const RELATIVE_EXIT_MS = 452;
  */
 export function shrinkTo(node: Element, params: { id: string }) {
 	if (prefersReducedMotion.current) return { duration: 0 };
-	const card = node.getBoundingClientRect();
-	const box = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
-	if (!box || !card.width || !card.height) return { duration: 0 };
-
-	const dx = box.left - card.left;
-	const dy = box.top - card.top;
-	const sx = box.width / card.width;
-	const sy = box.height / card.height;
-
+	// Resolve the destination LAZILY, on the first css sample — NOT synchronously here. Svelte
+	// builds an out-transition's keyframes AFTER the DOM flush (inside the dummy animation's
+	// onfinish), so by the time css runs, the destination box is mounted — even when it's a CHILD
+	// box (the children-slot renders AFTER this featured slot). Resolving synchronously here meant
+	// a child destination (parent-click) wasn't mounted yet → querySelector null → the demoted card
+	// silently vanished instead of morphing down. Deferring deletes that mount-order fragility: the
+	// lookup now always runs once everything is on the page.
+	let m: { dx: number; dy: number; sx: number; sy: number } | null | undefined;
+	const resolve = () => {
+		if (m !== undefined) return m;
+		const card = node.getBoundingClientRect();
+		const box = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
+		if (!box || !card.width || !card.height) return (m = null);
+		return (m = { dx: box.left - card.left, dy: box.top - card.top, sx: box.width / card.width, sy: box.height / card.height });
+	};
 	return {
 		duration: flightKind === 'spouse' ? SPOUSE_EXIT_MS : RELATIVE_EXIT_MS,
 		easing: cubicOut,
 		// out: t 1→0, u = 1-t. Identity at the start; overlays the box at the end.
-		// z-index 0: the demoting card is the SIDESHOW — it passes UNDERNEATH the incoming
-		// hero (z-index 2) and the notch (z-index 1), quietly shrinking into its corner chip.
-		// It still cross-fades over the last fifth as its destination box reveals.
-		css: (t: number, u: number) =>
-			`z-index: 0; transform-origin: top left; opacity: ${Math.min(1, t / 0.2)}; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`
+		// z-index 0: the demoting card is the SIDESHOW — it passes UNDERNEATH the incoming hero
+		// (z-index 2) and the notch (z-index 1), quietly shrinking into its new box. It still
+		// cross-fades over the last fifth as its destination box reveals. No destination (a rare
+		// back/forward nav where the old focus isn't a relative of the new one) → just fade.
+		css: (t: number, u: number) => {
+			const d = resolve();
+			if (!d) return `opacity: ${Math.min(1, t / 0.2)};`;
+			return `z-index: 0; transform-origin: top left; opacity: ${Math.min(1, t / 0.2)}; transform: translate(${u * d.dx}px, ${u * d.dy}px) scale(${1 - u * (1 - d.sx)}, ${1 - u * (1 - d.sy)});`;
+		}
 	};
 }
 
