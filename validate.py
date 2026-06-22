@@ -35,7 +35,7 @@ from collections import Counter, defaultdict
 NB_CATEGORY = {
     'career','military','education','religion','family','character','politics',
     'law','social_reform','death','legacy','marriage','crime','literature',
-    'science','business','arts','music',
+    'science','business','arts','music','sports',
 }
 NOTABLE_CATEGORY = {
     'politics','military','law','religion','education','arts','science','business',
