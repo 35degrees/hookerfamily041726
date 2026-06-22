@@ -84,7 +84,9 @@ def sentence_count(body: str) -> int:
     abbreviations (Mr. Dr. Gen. initials) before splitting on . ! ?"""
     b = re.sub(r'(\d)\.(\d)', r'\1_\2', body)
     b = re.sub(r'\b(?:[A-Z]\.\s?){2,}', 'ABBR ', b)
-    b = re.sub(r'\b([A-Z]\.|Mr|Mrs|Mme|Mlle|Messrs|Dr|St|Ste|Gen|Gov|Rev|Jr|Sr|Co|Esq|vs)\.', r'\1', b)
+    # 'vs'/'v' protect legal-citation periods ("Brom and Bett v. Ashley") — \b ensures the bare
+    # 'v' only matches a standalone citation token, never the v inside words like "Nov."
+    b = re.sub(r'\b([A-Z]\.|Mr|Mrs|Mme|Mlle|Messrs|Dr|St|Ste|Gen|Gov|Rev|Jr|Sr|Co|Esq|vs|v)\.', r'\1', b)
     # Count only fragments with real content — a trailing closing quote / stray punctuation after
     # the final period (e.g. a body ending ...backed.') is not a sentence.
     return len([s for s in re.split(r'[.!?]+', b) if re.search(r'[A-Za-z0-9]', s)])
