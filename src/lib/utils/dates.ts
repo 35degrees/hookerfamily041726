@@ -21,14 +21,19 @@ const MONTHS = [
  * Treats month:1, day:1 as a year-only placeholder.
  */
 export function formatDate(dl: DateLocation | null | undefined): string {
-	if (!dl || dl.year === null) return '';
+	// Assemble from present parts ONLY — month/day may be null OR absent (undefined). Use `== null`
+	// (matches both) and guard the month lookup so a missing/out-of-range part can never render the
+	// literal "undefined" (the old `=== null` checks let undefined fall through to MONTHS[NaN]).
+	if (!dl || dl.year == null) return '';
+	const year = String(dl.year);
 
-	const isYearOnly = dl.month === 1 && dl.day === 1;
-	if (isYearOnly || dl.month === null) return String(dl.year);
+	// month:1, day:1 is the year-only placeholder convention; a missing month is year-only too.
+	if (dl.month == null || (dl.month === 1 && dl.day === 1)) return year;
 
 	const monthName = MONTHS[dl.month - 1];
-	if (dl.day === null) return `${monthName} ${dl.year}`;
-	return `${monthName} ${dl.day}, ${dl.year}`;
+	if (!monthName) return year; // out-of-range month → year alone, never "undefined"
+	if (dl.day == null) return `${monthName} ${year}`;
+	return `${monthName} ${dl.day}, ${year}`;
 }
 
 /**
