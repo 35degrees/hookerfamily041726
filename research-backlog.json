@@ -1,7 +1,7 @@
 {
  "_meta": {
   "generated": "pre-retire snapshot of is_placeholder=true entries with recoverable names",
-  "total": 426,
+  "total": 422,
   "note": "Research worklist. is_placeholder is being retired; this preserves the stub-enrichment backlog. Sort by has_leads to prioritize entries that already have scaffolding to build on."
  },
  "entries": [
@@ -24,7 +24,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "thomas-brace-h01022"
+   "old_slug": "thomas-brace-h01022",
+   "new_slug": "thomas-brace-1764"
   },
   {
    "person_id": "H01023",
@@ -45,7 +46,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "henry-brace-iv-h01023"
+   "old_slug": "henry-brace-iv-h01023",
+   "new_slug": "henry-brace-iv-1766"
   },
   {
    "person_id": "H01024",
@@ -65,7 +67,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "edmund-brace-h01024"
+   "old_slug": "edmund-brace-h01024",
+   "new_slug": "edmund-brace-1768"
   },
   {
    "person_id": "H01026",
@@ -85,7 +88,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "abigail-elizabeth-brace-h01026"
+   "old_slug": "abigail-elizabeth-brace-h01026",
+   "new_slug": "abigail-elizabeth-brace-1772"
   },
   {
    "person_id": "H01030",
@@ -106,7 +110,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "betsey-brace-h01030"
+   "old_slug": "betsey-brace-h01030",
+   "new_slug": "betsey-brace-1778"
   },
   {
    "person_id": "H01032",
@@ -127,7 +132,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "edmond-hooker-brace-h01032"
+   "old_slug": "edmond-hooker-brace-h01032",
+   "new_slug": "edmond-hooker-brace-1782"
   },
   {
    "person_id": "H01033",
@@ -147,7 +153,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "jonathan-brace-h01033"
+   "old_slug": "jonathan-brace-h01033",
+   "new_slug": "jonathan-brace-1784"
   },
   {
    "person_id": "H01034",
@@ -168,7 +175,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "orin-brace-h01034"
+   "old_slug": "orin-brace-h01034",
+   "new_slug": "orin-brace-1786"
   },
   {
    "person_id": "H01036",
@@ -188,7 +196,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "vina-brace-h01036"
+   "old_slug": "vina-brace-h01036",
+   "new_slug": "vina-brace-1791"
   },
   {
    "person_id": "H01413",
@@ -209,7 +218,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "charles-hooker-h01413"
+   "old_slug": "charles-hooker-h01413",
+   "new_slug": "charles-hooker-1797"
   },
   {
    "person_id": "H02751",
@@ -230,7 +240,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ann-thompson-hooker-h02751"
+   "old_slug": "ann-thompson-hooker-h02751",
+   "new_slug": "ann-hooker-1813"
   },
   {
    "person_id": "H02752",
@@ -251,7 +262,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "almira-hooker-h02752"
+   "old_slug": "almira-hooker-h02752",
+   "new_slug": "almira-hooker-1819"
   },
   {
    "person_id": "H02757",
@@ -272,7 +284,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "worthington-hooker-h02757"
+   "old_slug": "worthington-hooker-h02757",
+   "new_slug": "worthington-hooker-1823"
   },
   {
    "person_id": "H02758",
@@ -293,7 +306,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "sarah-judd-hooker-h02758"
+   "old_slug": "sarah-judd-hooker-h02758",
+   "new_slug": "sarah-hooker-1825"
   },
   {
    "person_id": "H02761",
@@ -314,7 +328,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "charles-thompson-hooker-h02761"
+   "old_slug": "charles-thompson-hooker-h02761",
+   "new_slug": "charles-hooker-1834"
   },
   {
    "person_id": "H03341",
@@ -335,7 +350,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "edmund-lloyd-vail-h03341"
+   "old_slug": "edmund-lloyd-vail-h03341",
+   "new_slug": "edmund-vail-1858"
   },
   {
    "person_id": "H03345",
@@ -356,7 +372,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "walter-scott-vail-h03345"
+   "old_slug": "walter-scott-vail-h03345",
+   "new_slug": "walter-vail-1867"
   },
   {
    "person_id": "H03351",
@@ -377,7 +394,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "henry-ensign-olcott-h03351"
+   "old_slug": "henry-ensign-olcott-h03351",
+   "new_slug": "henry-olcott-1871"
   },
   {
    "person_id": "H04343",
@@ -398,7 +416,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "charles-hooker-kingsley-h04343"
+   "old_slug": "charles-hooker-kingsley-h04343",
+   "new_slug": "charles-kingsley-1832"
   },
   {
    "person_id": "H04346",
@@ -419,7 +438,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "allen-thompson-hooker-h04346"
+   "old_slug": "allen-thompson-hooker-h04346",
+   "new_slug": "allen-hooker-1834"
   },
   {
    "person_id": "H04347",
@@ -440,7 +460,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "henry-chester-hooker-h04347"
+   "old_slug": "henry-chester-hooker-h04347",
+   "new_slug": "henry-hooker-1835-2"
   },
   {
    "person_id": "H04350",
@@ -461,7 +482,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "worthington-hooker-h04350"
+   "old_slug": "worthington-hooker-h04350",
+   "new_slug": "worthington-hooker-1846"
   },
   {
    "person_id": "H04353",
@@ -482,7 +504,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "junia-maria-chapman-h04353"
+   "old_slug": "junia-maria-chapman-h04353",
+   "new_slug": "junia-chapman-1828"
   },
   {
    "person_id": "H04355",
@@ -503,7 +526,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "anson-hooker-chapman-h04355"
+   "old_slug": "anson-hooker-chapman-h04355",
+   "new_slug": "anson-chapman-1838"
   },
   {
    "person_id": "H04369",
@@ -524,7 +548,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "edward-hooker-smith-h04369"
+   "old_slug": "edward-hooker-smith-h04369",
+   "new_slug": "edward-smith-1866"
   },
   {
    "person_id": "H05237",
@@ -545,7 +570,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "louisa-bridgeman-h05237"
+   "old_slug": "louisa-bridgeman-h05237",
+   "new_slug": "louisa-bridgeman-1848"
   },
   {
    "person_id": "H05238",
@@ -566,7 +592,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "louisa-bridgeman-h05238"
+   "old_slug": "louisa-bridgeman-h05238",
+   "new_slug": "louisa-bridgeman-1851"
   },
   {
    "person_id": "H05239",
@@ -587,7 +614,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "charles-kingsley-drury-h05239"
+   "old_slug": "charles-kingsley-drury-h05239",
+   "new_slug": "charles-drury-1850"
   },
   {
    "person_id": "H05240",
@@ -608,7 +636,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-hooker-drury-h05240"
+   "old_slug": "mary-hooker-drury-h05240",
+   "new_slug": "mary-drury-1857"
   },
   {
    "person_id": "H05245",
@@ -629,7 +658,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "charles-hooker-kingsley-h05245"
+   "old_slug": "charles-hooker-kingsley-h05245",
+   "new_slug": "charles-kingsley-1864"
   },
   {
    "person_id": "H05247",
@@ -650,7 +680,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ellen-munson-kingsley-h05247"
+   "old_slug": "ellen-munson-kingsley-h05247",
+   "new_slug": "ellen-kingsley-1868"
   },
   {
    "person_id": "H05249",
@@ -671,7 +702,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lucy-maria-bradley-h05249"
+   "old_slug": "lucy-maria-bradley-h05249",
+   "new_slug": "lucy-bradley-1880"
   },
   {
    "person_id": "H05251",
@@ -691,7 +723,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "anna-worthington-hooker-h05251"
+   "old_slug": "anna-worthington-hooker-h05251",
+   "new_slug": "anna-hooker-1870"
   },
   {
    "person_id": "H05252",
@@ -712,7 +745,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "edward-festus-hooker-h05252"
+   "old_slug": "edward-festus-hooker-h05252",
+   "new_slug": "edward-hooker-1876-2"
   },
   {
    "person_id": "H05253",
@@ -732,7 +766,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "charles-strong-hooker-h05253"
+   "old_slug": "charles-strong-hooker-h05253",
+   "new_slug": "charles-hooker-1878"
   },
   {
    "person_id": "H05254",
@@ -753,7 +788,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "cornelia-almira-hooker-h05254"
+   "old_slug": "cornelia-almira-hooker-h05254",
+   "new_slug": "cornelia-hooker-1879"
   },
   {
    "person_id": "H05256",
@@ -774,7 +810,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "george-hooker-knight-h05256"
+   "old_slug": "george-hooker-knight-h05256",
+   "new_slug": "george-knight-1876"
   },
   {
    "person_id": "H05258",
@@ -795,7 +832,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "albert-jewett-hooker-h05258"
+   "old_slug": "albert-jewett-hooker-h05258",
+   "new_slug": "albert-hooker-1890"
   },
   {
    "person_id": "H05259",
@@ -816,7 +854,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "earl-drury-hooker-h05259"
+   "old_slug": "earl-drury-hooker-h05259",
+   "new_slug": "earl-hooker-1892"
   },
   {
    "person_id": "H05260",
@@ -837,7 +876,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "bessie-may-hooker-h05260"
+   "old_slug": "bessie-may-hooker-h05260",
+   "new_slug": "bessie-hooker-1873"
   },
   {
    "person_id": "H05262",
@@ -858,7 +898,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "charles-worcester-hooker-h05262"
+   "old_slug": "charles-worcester-hooker-h05262",
+   "new_slug": "charles-hooker-1883"
   },
   {
    "person_id": "H05264",
@@ -879,7 +920,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "william-brian-hooker-h05264"
+   "old_slug": "william-brian-hooker-h05264",
+   "new_slug": "william-hooker-1880"
   },
   {
    "person_id": "H05265",
@@ -900,7 +942,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "joan-culbertson-hooker-h05265"
+   "old_slug": "joan-culbertson-hooker-h05265",
+   "new_slug": "joan-hooker-1884"
   },
   {
    "person_id": "H05266",
@@ -921,95 +964,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "duncan-collins-hooker-h05266"
-  },
-  {
-   "person_id": "HD3140",
-   "prefix": "HD",
-   "display_name": "Strong daughter 1",
-   "birth_year": null,
-   "death_year": null,
-   "nb_count": 0,
-   "has_career": false,
-   "has_education": false,
-   "has_parents": true,
-   "has_marriages": false,
-   "is_thomas_descendant": true,
-   "is_talcott_descendant": false,
-   "research_notes_chars": 92,
-   "has_leads": true,
-   "gaps": [
-    "no_birth_year",
-    "no_narrative",
-    "no_career_or_edu"
-   ],
-   "old_slug": "strong-daughter-1-hd3140"
-  },
-  {
-   "person_id": "HD3141",
-   "prefix": "HD",
-   "display_name": "Strong daughter 2",
-   "birth_year": null,
-   "death_year": null,
-   "nb_count": 0,
-   "has_career": false,
-   "has_education": false,
-   "has_parents": true,
-   "has_marriages": false,
-   "is_thomas_descendant": true,
-   "is_talcott_descendant": false,
-   "research_notes_chars": 93,
-   "has_leads": true,
-   "gaps": [
-    "no_birth_year",
-    "no_narrative",
-    "no_career_or_edu"
-   ],
-   "old_slug": "strong-daughter-2-hd3141"
-  },
-  {
-   "person_id": "HD3302",
-   "prefix": "HD",
-   "display_name": "Rockefeller daughter (Justin + Indré, elder)",
-   "birth_year": null,
-   "death_year": null,
-   "nb_count": 0,
-   "has_career": false,
-   "has_education": false,
-   "has_parents": true,
-   "has_marriages": false,
-   "is_thomas_descendant": true,
-   "is_talcott_descendant": true,
-   "research_notes_chars": 188,
-   "has_leads": true,
-   "gaps": [
-    "no_birth_year",
-    "no_narrative",
-    "no_career_or_edu"
-   ],
-   "old_slug": "rockefeller-daughter-hd3302"
-  },
-  {
-   "person_id": "HD3303",
-   "prefix": "HD",
-   "display_name": "Rockefeller daughter (Justin + Indré, younger)",
-   "birth_year": null,
-   "death_year": null,
-   "nb_count": 0,
-   "has_career": false,
-   "has_education": false,
-   "has_parents": true,
-   "has_marriages": false,
-   "is_thomas_descendant": true,
-   "is_talcott_descendant": true,
-   "research_notes_chars": 190,
-   "has_leads": true,
-   "gaps": [
-    "no_birth_year",
-    "no_narrative",
-    "no_career_or_edu"
-   ],
-   "old_slug": "rockefeller-daughter-hd3303"
+   "old_slug": "duncan-collins-hooker-h05266",
+   "new_slug": "duncan-hooker-1885"
   },
   {
    "person_id": "HD3398",
@@ -1030,7 +986,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-hooker-hd3398"
+   "old_slug": "mary-hooker-hd3398",
+   "new_slug": "mary-hooker-2014"
   },
   {
    "person_id": "HD3399",
@@ -1051,7 +1008,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "teri-hooker-hd3399"
+   "old_slug": "teri-hooker-hd3399",
+   "new_slug": "teri-hooker-2016"
   },
   {
    "person_id": "HD3418",
@@ -1073,7 +1031,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "james-cheney-olcott-hd3418"
+   "old_slug": "james-cheney-olcott-hd3418",
+   "new_slug": "james-olcott"
   },
   {
    "person_id": "HD3788",
@@ -1094,7 +1053,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "harriet-cowles-waller-hd3788"
+   "old_slug": "harriet-cowles-waller-hd3788",
+   "new_slug": "harriet-cowles-1912"
   },
   {
    "person_id": "HD3789",
@@ -1115,7 +1075,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "dwight-whittlesey-cowles-hd3789"
+   "old_slug": "dwight-whittlesey-cowles-hd3789",
+   "new_slug": "dwight-cowles-1874"
   },
   {
    "person_id": "HD3997",
@@ -1136,7 +1097,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-mansfield-hd3997"
+   "old_slug": "mary-mansfield-hd3997",
+   "new_slug": "mary-mansfield-1813"
   },
   {
    "person_id": "HD4296",
@@ -1158,7 +1120,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "chester-lybarger-hd4296"
+   "old_slug": "chester-lybarger-hd4296",
+   "new_slug": "chester-lybarger"
   },
   {
    "person_id": "HD4297",
@@ -1180,7 +1143,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "joseph-young-hd4297"
+   "old_slug": "joseph-young-hd4297",
+   "new_slug": "joseph-young"
   },
   {
    "person_id": "HD4298",
@@ -1202,7 +1166,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "noble-young-hd4298"
+   "old_slug": "noble-young-hd4298",
+   "new_slug": "noble-young"
   },
   {
    "person_id": "HD4299",
@@ -1224,7 +1189,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "leah-young-hd4299"
+   "old_slug": "leah-young-hd4299",
+   "new_slug": "leah-young"
   },
   {
    "person_id": "HD4300",
@@ -1246,7 +1212,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "austin-young-hd4300"
+   "old_slug": "austin-young-hd4300",
+   "new_slug": "austin-young"
   },
   {
    "person_id": "HD4301",
@@ -1268,7 +1235,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "reno-young-hd4301"
+   "old_slug": "reno-young-hd4301",
+   "new_slug": "reno-young"
   },
   {
    "person_id": "HD4302",
@@ -1290,7 +1258,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "david-young-hd4302"
+   "old_slug": "david-young-hd4302",
+   "new_slug": "david-young"
   },
   {
    "person_id": "HD4303",
@@ -1312,7 +1281,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "paul-young-hd4303"
+   "old_slug": "paul-young-hd4303",
+   "new_slug": "paul-young"
   },
   {
    "person_id": "HD4304",
@@ -1334,7 +1304,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lois-stanley-hd4304"
+   "old_slug": "lois-stanley-hd4304",
+   "new_slug": "lois-stanley"
   },
   {
    "person_id": "HD4305",
@@ -1356,7 +1327,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "dortha-free-hd4305"
+   "old_slug": "dortha-free-hd4305",
+   "new_slug": "dortha-free"
   },
   {
    "person_id": "I00216",
@@ -1378,7 +1350,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "marjorie-scott-trotter-stanley-i00216"
+   "old_slug": "marjorie-scott-trotter-stanley-i00216",
+   "new_slug": "marjorie-trotter"
   },
   {
    "person_id": "I00246",
@@ -1399,7 +1372,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "harry-page-guyton-i00246"
+   "old_slug": "harry-page-guyton-i00246",
+   "new_slug": "harry-guyton-1855"
   },
   {
    "person_id": "I00342",
@@ -1421,7 +1395,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "florence-mcandrews-ward-i00342"
+   "old_slug": "florence-mcandrews-ward-i00342",
+   "new_slug": "florence-mcandrews"
   },
   {
    "person_id": "I00343",
@@ -1442,7 +1417,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "harold-emmett-booth-i00343"
+   "old_slug": "harold-emmett-booth-i00343",
+   "new_slug": "harold-booth-1909"
   },
   {
    "person_id": "I00350",
@@ -1464,7 +1440,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "cornelia-field-vail-i00350"
+   "old_slug": "cornelia-field-vail-i00350",
+   "new_slug": "cornelia-field"
   },
   {
    "person_id": "I00351",
@@ -1486,7 +1463,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "george-winfield-snow-i00351"
+   "old_slug": "george-winfield-snow-i00351",
+   "new_slug": "george-snow"
   },
   {
    "person_id": "I00354",
@@ -1508,7 +1486,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "william-j-nichols-i00354"
+   "old_slug": "william-j-nichols-i00354",
+   "new_slug": "william-nichols"
   },
   {
    "person_id": "T01020",
@@ -1529,7 +1508,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "samuel-wright-t01020"
+   "old_slug": "samuel-wright-t01020",
+   "new_slug": "samuel-wright-1737"
   },
   {
    "person_id": "T01021",
@@ -1550,7 +1530,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "josiah-wright-t01021"
+   "old_slug": "josiah-wright-t01021",
+   "new_slug": "josiah-wright-1738"
   },
   {
    "person_id": "T01022",
@@ -1571,7 +1552,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "abigail-wright-t01022"
+   "old_slug": "abigail-wright-t01022",
+   "new_slug": "abigail-wright-1740"
   },
   {
    "person_id": "T01023",
@@ -1592,7 +1574,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mehitabel-wright-t01023"
+   "old_slug": "mehitabel-wright-t01023",
+   "new_slug": "mehitabel-wright-1742"
   },
   {
    "person_id": "T01024",
@@ -1613,7 +1596,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "hezekiah-wright-t01024"
+   "old_slug": "hezekiah-wright-t01024",
+   "new_slug": "hezekiah-wright-1744"
   },
   {
    "person_id": "T01025",
@@ -1634,7 +1618,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "david-wright-t01025"
+   "old_slug": "david-wright-t01025",
+   "new_slug": "david-wright-1745"
   },
   {
    "person_id": "T01026",
@@ -1655,7 +1640,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "sarah-wright-t01026"
+   "old_slug": "sarah-wright-t01026",
+   "new_slug": "sarah-wright-1748"
   },
   {
    "person_id": "T01027",
@@ -1676,7 +1662,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "isaac-wright-t01027"
+   "old_slug": "isaac-wright-t01027",
+   "new_slug": "isaac-wright-1753"
   },
   {
    "person_id": "T01039",
@@ -1697,7 +1684,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "jerusha-talcott-t01039"
+   "old_slug": "jerusha-talcott-t01039",
+   "new_slug": "jerusha-talcott-1783"
   },
   {
    "person_id": "T01040",
@@ -1718,7 +1706,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "benjamin-talcott-t01040"
+   "old_slug": "benjamin-talcott-t01040",
+   "new_slug": "benjamin-talcott-1789"
   },
   {
    "person_id": "T01041",
@@ -1739,7 +1728,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "hannah-talcott-t01041"
+   "old_slug": "hannah-talcott-t01041",
+   "new_slug": "hannah-talcott-1804"
   },
   {
    "person_id": "T01042",
@@ -1760,7 +1750,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elijah-talcott-t01042"
+   "old_slug": "elijah-talcott-t01042",
+   "new_slug": "elijah-talcott-1784"
   },
   {
    "person_id": "T01043",
@@ -1780,7 +1771,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "deacon-flavel-talcott-t01043"
+   "old_slug": "deacon-flavel-talcott-t01043",
+   "new_slug": "flavel-talcott-1786"
   },
   {
    "person_id": "T01044",
@@ -1800,7 +1792,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "rev-hart-talcott-t01044"
+   "old_slug": "rev-hart-talcott-t01044",
+   "new_slug": "hart-talcott-1787"
   },
   {
    "person_id": "T01045",
@@ -1821,7 +1814,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "rebecca-talcott-stone-t01045"
+   "old_slug": "rebecca-talcott-stone-t01045",
+   "new_slug": "rebecca-stone-1789"
   },
   {
    "person_id": "T01046",
@@ -1842,7 +1836,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "asa-talcott-t01046"
+   "old_slug": "asa-talcott-t01046",
+   "new_slug": "asa-talcott-1793"
   },
   {
    "person_id": "T01047",
@@ -1862,7 +1857,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "dr-william-olmstead-talcott-t01047"
+   "old_slug": "dr-william-olmstead-talcott-t01047",
+   "new_slug": "william-talcott-1794"
   },
   {
    "person_id": "T01048",
@@ -1882,7 +1878,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "julius-talcott-t01048"
+   "old_slug": "julius-talcott-t01048",
+   "new_slug": "julius-talcott-1796"
   },
   {
    "person_id": "T01049",
@@ -1903,7 +1900,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "wealthy-talcott-t01049"
+   "old_slug": "wealthy-talcott-t01049",
+   "new_slug": "wealthy-talcott-1806"
   },
   {
    "person_id": "T01050",
@@ -1924,7 +1922,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "luna-talcott-t01050"
+   "old_slug": "luna-talcott-t01050",
+   "new_slug": "luna-talcott-1808"
   },
   {
    "person_id": "T01051",
@@ -1945,7 +1944,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lura-talcott-t01051"
+   "old_slug": "lura-talcott-t01051",
+   "new_slug": "lura-talcott-1808"
   },
   {
    "person_id": "T01061",
@@ -1966,7 +1966,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "hannah-talcott-t01061"
+   "old_slug": "hannah-talcott-t01061",
+   "new_slug": "hannah-talcott-1791"
   },
   {
    "person_id": "T01064",
@@ -1987,7 +1988,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "joel-talcott-t01064"
+   "old_slug": "joel-talcott-t01064",
+   "new_slug": "joel-talcott-1797"
   },
   {
    "person_id": "T01065",
@@ -2008,7 +2010,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "allyn-talcott-t01065"
+   "old_slug": "allyn-talcott-t01065",
+   "new_slug": "allyn-talcott-1800"
   },
   {
    "person_id": "T01066",
@@ -2029,7 +2032,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "clement-talcott-t01066"
+   "old_slug": "clement-talcott-t01066",
+   "new_slug": "clement-talcott-1802"
   },
   {
    "person_id": "T01067",
@@ -2050,7 +2054,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "belinda-talcott-t01067"
+   "old_slug": "belinda-talcott-t01067",
+   "new_slug": "belinda-talcott-1804"
   },
   {
    "person_id": "T01068",
@@ -2071,7 +2076,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "eunice-talcott-t01068"
+   "old_slug": "eunice-talcott-t01068",
+   "new_slug": "eunice-talcott-1807"
   },
   {
    "person_id": "T01089",
@@ -2092,7 +2098,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "samuel-howard-t01089"
+   "old_slug": "samuel-howard-t01089",
+   "new_slug": "samuel-howard-1790"
   },
   {
    "person_id": "T01090",
@@ -2113,7 +2120,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ulysses-howard-t01090"
+   "old_slug": "ulysses-howard-t01090",
+   "new_slug": "ulysses-howard-1791"
   },
   {
    "person_id": "T01091",
@@ -2134,7 +2142,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "rachel-bingham-t01091"
+   "old_slug": "rachel-bingham-t01091",
+   "new_slug": "rachel-bingham-1794"
   },
   {
    "person_id": "T01092",
@@ -2155,7 +2164,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "talcott-howard-t01092"
+   "old_slug": "talcott-howard-t01092",
+   "new_slug": "talcott-howard-1796"
   },
   {
    "person_id": "T01093",
@@ -2176,7 +2186,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "emily-veazey-t01093"
+   "old_slug": "emily-veazey-t01093",
+   "new_slug": "emily-veazey-1798"
   },
   {
    "person_id": "T01174",
@@ -2197,7 +2208,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "nathaniel-hubbard-talcott-t01174"
+   "old_slug": "nathaniel-hubbard-talcott-t01174",
+   "new_slug": "nathaniel-hubbard-talcott-1816"
   },
   {
    "person_id": "T01175",
@@ -2217,7 +2229,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "james-morris-talcott-t01175"
+   "old_slug": "james-morris-talcott-t01175",
+   "new_slug": "james-morris-talcott-1817"
   },
   {
    "person_id": "T01176",
@@ -2238,7 +2251,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "william-flavel-talcott-t01176"
+   "old_slug": "william-flavel-talcott-t01176",
+   "new_slug": "william-flavel-talcott-1819"
   },
   {
    "person_id": "T01177",
@@ -2259,7 +2273,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "samuel-olmsted-talcott-t01177"
+   "old_slug": "samuel-olmsted-talcott-t01177",
+   "new_slug": "samuel-olmsted-talcott-1821"
   },
   {
    "person_id": "T01178",
@@ -2280,7 +2295,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "philander-parmele-talcott-t01178"
+   "old_slug": "philander-parmele-talcott-t01178",
+   "new_slug": "philander-parmele-talcott-1823"
   },
   {
    "person_id": "T01179",
@@ -2301,7 +2317,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elizabeth-ann-perrin-t01179"
+   "old_slug": "elizabeth-ann-perrin-t01179",
+   "new_slug": "elizabeth-ann-perrin-1825"
   },
   {
    "person_id": "T01180",
@@ -2322,7 +2339,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "royal-talcott-t01180"
+   "old_slug": "royal-talcott-t01180",
+   "new_slug": "royal-talcott-1828"
   },
   {
    "person_id": "T01181",
@@ -2343,7 +2361,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "william-hart-talcott-t01181"
+   "old_slug": "william-hart-talcott-t01181",
+   "new_slug": "william-hart-talcott-1822"
   },
   {
    "person_id": "T01182",
@@ -2364,7 +2383,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "susan-maria-talcott-t01182"
+   "old_slug": "susan-maria-talcott-t01182",
+   "new_slug": "susan-maria-talcott-1823"
   },
   {
    "person_id": "T01183",
@@ -2385,7 +2405,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "henry-warner-talcott-t01183"
+   "old_slug": "henry-warner-talcott-t01183",
+   "new_slug": "henry-warner-talcott-1827"
   },
   {
    "person_id": "T01184",
@@ -2406,7 +2427,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elizabeth-parthenia-talcott-t01184"
+   "old_slug": "elizabeth-parthenia-talcott-t01184",
+   "new_slug": "elizabeth-parthenia-talcott-1829"
   },
   {
    "person_id": "T01185",
@@ -2427,7 +2449,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "clarina-rebecca-talcott-t01185"
+   "old_slug": "clarina-rebecca-talcott-t01185",
+   "new_slug": "clarina-rebecca-talcott-1833"
   },
   {
    "person_id": "T01186",
@@ -2448,7 +2471,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "edward-olmstead-talcott-t01186"
+   "old_slug": "edward-olmstead-talcott-t01186",
+   "new_slug": "edward-olmstead-talcott-1835"
   },
   {
    "person_id": "T01187",
@@ -2469,7 +2493,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "sarah-w-talcott-t01187"
+   "old_slug": "sarah-w-talcott-t01187",
+   "new_slug": "sarah-talcott-1830"
   },
   {
    "person_id": "T01189",
@@ -2490,7 +2515,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "edward-charles-talcott-t01189"
+   "old_slug": "edward-charles-talcott-t01189",
+   "new_slug": "edward-charles-talcott-1824"
   },
   {
    "person_id": "T01190",
@@ -2511,7 +2537,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "parthenia-maria-talcott-t01190"
+   "old_slug": "parthenia-maria-talcott-t01190",
+   "new_slug": "parthenia-maria-talcott-1826"
   },
   {
    "person_id": "T01191",
@@ -2532,7 +2559,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elijah-julius-talcott-t01191"
+   "old_slug": "elijah-julius-talcott-t01191",
+   "new_slug": "elijah-julius-talcott-1828"
   },
   {
    "person_id": "T01192",
@@ -2553,7 +2581,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "eliza-jane-talcott-t01192"
+   "old_slug": "eliza-jane-talcott-t01192",
+   "new_slug": "eliza-jane-talcott-1830"
   },
   {
    "person_id": "T01193",
@@ -2574,7 +2603,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "harriet-talcott-t01193"
+   "old_slug": "harriet-talcott-t01193",
+   "new_slug": "harriet-talcott-1819"
   },
   {
    "person_id": "T01194",
@@ -2595,7 +2625,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "caroline-talcott-t01194"
+   "old_slug": "caroline-talcott-t01194",
+   "new_slug": "caroline-talcott-1823"
   },
   {
    "person_id": "T01195",
@@ -2616,7 +2647,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "samuel-tudor-talcott-t01195"
+   "old_slug": "samuel-tudor-talcott-t01195",
+   "new_slug": "samuel-tudor-talcott-1825"
   },
   {
    "person_id": "T01196",
@@ -2637,7 +2669,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "samuel-tudor-talcott-t01196"
+   "old_slug": "samuel-tudor-talcott-t01196",
+   "new_slug": "samuel-tudor-talcott-1829"
   },
   {
    "person_id": "T01197",
@@ -2658,7 +2691,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "harriette-talcott-t01197"
+   "old_slug": "harriette-talcott-t01197",
+   "new_slug": "harriette-talcott-1830"
   },
   {
    "person_id": "T01198",
@@ -2679,7 +2713,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "henriette-talcott-t01198"
+   "old_slug": "henriette-talcott-t01198",
+   "new_slug": "henriette-talcott-1830"
   },
   {
    "person_id": "T01211",
@@ -2700,7 +2735,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "edward-talcott-t01211"
+   "old_slug": "edward-talcott-t01211",
+   "new_slug": "edward-talcott-1831-2"
   },
   {
    "person_id": "T01212",
@@ -2721,7 +2757,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "susan-bull-talcott-t01212"
+   "old_slug": "susan-bull-talcott-t01212",
+   "new_slug": "susan-talcott-1833"
   },
   {
    "person_id": "T01214",
@@ -2742,7 +2779,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lora-elizabeth-talcott-t01214"
+   "old_slug": "lora-elizabeth-talcott-t01214",
+   "new_slug": "lora-talcott-1838"
   },
   {
    "person_id": "T01215",
@@ -2763,7 +2801,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "maria-talcott-t01215"
+   "old_slug": "maria-talcott-t01215",
+   "new_slug": "maria-talcott-1839"
   },
   {
    "person_id": "T01216",
@@ -2784,7 +2823,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-talcott-t01216"
+   "old_slug": "mary-talcott-t01216",
+   "new_slug": "mary-talcott-1846"
   },
   {
    "person_id": "T01376",
@@ -2805,7 +2845,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "n-flavel-talcott-t01376"
+   "old_slug": "n-flavel-talcott-t01376",
+   "new_slug": "n-flavel-talcott-1848"
   },
   {
    "person_id": "T01377",
@@ -2826,7 +2867,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "abbie-ann-talcott-t01377"
+   "old_slug": "abbie-ann-talcott-t01377",
+   "new_slug": "abbie-ann-talcott-1853"
   },
   {
    "person_id": "T01467",
@@ -2848,7 +2890,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "edith-talcott-t01467"
+   "old_slug": "edith-talcott-t01467",
+   "new_slug": "edith-talcott"
   },
   {
    "person_id": "T01933",
@@ -2870,7 +2913,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "hooker-talcott-t01933"
+   "old_slug": "hooker-talcott-t01933",
+   "new_slug": "hooker-talcott"
   },
   {
    "person_id": "T01934",
@@ -2892,7 +2936,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "talcott-mcmillan-t01934"
+   "old_slug": "talcott-mcmillan-t01934",
+   "new_slug": "talcott-mcmillan"
   },
   {
    "person_id": "T02182",
@@ -2913,7 +2958,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "joseph-abbott-talcott-t02182"
+   "old_slug": "joseph-abbott-talcott-t02182",
+   "new_slug": "joseph-abbott-talcott-1815"
   },
   {
    "person_id": "T02183",
@@ -2933,7 +2979,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "anson-f-talcott-t02183"
+   "old_slug": "anson-f-talcott-t02183",
+   "new_slug": "anson-f-talcott-1817"
   },
   {
    "person_id": "T02184",
@@ -2954,7 +3001,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "norman-w-talcott-t02184"
+   "old_slug": "norman-w-talcott-t02184",
+   "new_slug": "norman-w-talcott-1819"
   },
   {
    "person_id": "T02185",
@@ -2975,7 +3023,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "george-a-talcott-t02185"
+   "old_slug": "george-a-talcott-t02185",
+   "new_slug": "george-a-talcott-1821"
   },
   {
    "person_id": "T02186",
@@ -2996,7 +3045,8 @@
     "no_birth_year",
     "no_career_or_edu"
    ],
-   "old_slug": "hiram-w-talcott-t02186"
+   "old_slug": "hiram-w-talcott-t02186",
+   "new_slug": "hiram-w-talcott"
   },
   {
    "person_id": "T02187",
@@ -3017,7 +3067,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lucius-talcott-t02187"
+   "old_slug": "lucius-talcott-t02187",
+   "new_slug": "lucius-talcott-1826"
   },
   {
    "person_id": "T02188",
@@ -3038,7 +3089,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "charlotte-a-talcott-t02188"
+   "old_slug": "charlotte-a-talcott-t02188",
+   "new_slug": "charlotte-a-talcott-1828"
   },
   {
    "person_id": "T02189",
@@ -3059,7 +3111,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "emily-talcott-t02189"
+   "old_slug": "emily-talcott-t02189",
+   "new_slug": "emily-talcott-1831"
   },
   {
    "person_id": "T02191",
@@ -3080,7 +3133,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lydia-m-talcott-t02191"
+   "old_slug": "lydia-m-talcott-t02191",
+   "new_slug": "lydia-m-talcott-1835"
   },
   {
    "person_id": "T02193",
@@ -3101,7 +3155,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "cynthia-talcott-t02193"
+   "old_slug": "cynthia-talcott-t02193",
+   "new_slug": "cynthia-talcott-1902"
   },
   {
    "person_id": "T02194",
@@ -3122,7 +3177,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "iolanda-talcott-t02194"
+   "old_slug": "iolanda-talcott-t02194",
+   "new_slug": "iolanda-talcott-1907"
   },
   {
    "person_id": "T02198",
@@ -3143,7 +3199,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elizabeth-griswold-t02198"
+   "old_slug": "elizabeth-griswold-t02198",
+   "new_slug": "elizabeth-griswold-1784"
   },
   {
    "person_id": "T02199",
@@ -3164,7 +3221,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "aurelia-griswold-parmenter-t02199"
+   "old_slug": "aurelia-griswold-parmenter-t02199",
+   "new_slug": "aurelia-parmenter-1789"
   },
   {
    "person_id": "T02200",
@@ -3184,7 +3242,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "talcott-griswold-t02200"
+   "old_slug": "talcott-griswold-t02200",
+   "new_slug": "talcott-griswold-1791"
   },
   {
    "person_id": "T02203",
@@ -3205,7 +3264,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "charlotte-griswold-sawyer-t02203"
+   "old_slug": "charlotte-griswold-sawyer-t02203",
+   "new_slug": "charlotte-sawyer-1797"
   },
   {
    "person_id": "T02204",
@@ -3226,7 +3286,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "emily-griswold-richards-t02204"
+   "old_slug": "emily-griswold-richards-t02204",
+   "new_slug": "emily-richards-1800"
   },
   {
    "person_id": "T02205",
@@ -3247,7 +3308,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "adeline-griswold-sawyer-t02205"
+   "old_slug": "adeline-griswold-sawyer-t02205",
+   "new_slug": "adeline-sawyer-1802"
   },
   {
    "person_id": "T02206",
@@ -3268,7 +3330,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "melitta-griswold-munn-t02206"
+   "old_slug": "melitta-griswold-munn-t02206",
+   "new_slug": "melitta-munn-1805"
   },
   {
    "person_id": "T02207",
@@ -3289,7 +3352,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "philena-ann-clark-reynolds-t02207"
+   "old_slug": "philena-ann-clark-reynolds-t02207",
+   "new_slug": "philena-ann-reynolds-1820"
   },
   {
    "person_id": "T02208",
@@ -3310,7 +3374,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "john-wrisley-clark-t02208"
+   "old_slug": "john-wrisley-clark-t02208",
+   "new_slug": "john-wrisley-clark-1829"
   },
   {
    "person_id": "T02209",
@@ -3331,7 +3396,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "theophilus-lyman-griswold-t02209"
+   "old_slug": "theophilus-lyman-griswold-t02209",
+   "new_slug": "theophilus-lyman-griswold-1829"
   },
   {
    "person_id": "T02210",
@@ -3352,7 +3418,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-ellen-burrows-griswold-t02210"
+   "old_slug": "mary-ellen-burrows-griswold-t02210",
+   "new_slug": "mary-ellen-griswold-1835"
   },
   {
    "person_id": "T02211",
@@ -3373,7 +3440,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "bela-talcott-t02211"
+   "old_slug": "bela-talcott-t02211",
+   "new_slug": "bela-talcott-1797"
   },
   {
    "person_id": "T02212",
@@ -3394,7 +3462,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "betsey-talcott-griswold-t02212"
+   "old_slug": "betsey-talcott-griswold-t02212",
+   "new_slug": "betsey-griswold-1799"
   },
   {
    "person_id": "T02214",
@@ -3415,7 +3484,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "bartsheba-williams-talcott-cotter-t02214"
+   "old_slug": "bartsheba-williams-talcott-cotter-t02214",
+   "new_slug": "bartsheba-williams-cotter-1804"
   },
   {
    "person_id": "T02217",
@@ -3436,7 +3506,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "anna-talcott-t02217"
+   "old_slug": "anna-talcott-t02217",
+   "new_slug": "anna-talcott-1799"
   },
   {
    "person_id": "T02218",
@@ -3457,7 +3528,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "twin-son-1-talcott-t02218"
+   "old_slug": "twin-son-1-talcott-t02218",
+   "new_slug": "twin-son-1-talcott-1802"
   },
   {
    "person_id": "T02219",
@@ -3478,7 +3550,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "twin-son-2-talcott-t02219"
+   "old_slug": "twin-son-2-talcott-t02219",
+   "new_slug": "twin-son-2-talcott-1803"
   },
   {
    "person_id": "T02220",
@@ -3499,7 +3572,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elizabeth-lyman-talcott-t02220"
+   "old_slug": "elizabeth-lyman-talcott-t02220",
+   "new_slug": "elizabeth-lyman-talcott-1804"
   },
   {
    "person_id": "T02221",
@@ -3520,7 +3594,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "olive-talcott-t02221"
+   "old_slug": "olive-talcott-t02221",
+   "new_slug": "olive-talcott-1807"
   },
   {
    "person_id": "T02222",
@@ -3541,7 +3616,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "harriet-martha-ann-talcott-t02222"
+   "old_slug": "harriet-martha-ann-talcott-t02222",
+   "new_slug": "harriet-martha-ann-talcott-1823"
   },
   {
    "person_id": "T02231",
@@ -3562,7 +3638,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "phebe-ward-t02231"
+   "old_slug": "phebe-ward-t02231",
+   "new_slug": "phebe-ward-1829"
   },
   {
    "person_id": "T02232",
@@ -3583,7 +3660,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "john-howard-ward-t02232"
+   "old_slug": "john-howard-ward-t02232",
+   "new_slug": "john-howard-ward-1833"
   },
   {
    "person_id": "T02233",
@@ -3604,7 +3682,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "catherine-bertha-ward-t02233"
+   "old_slug": "catherine-bertha-ward-t02233",
+   "new_slug": "catherine-bertha-ward-1834"
   },
   {
    "person_id": "T02234",
@@ -3625,7 +3704,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "rachel-lorain-ward-t02234"
+   "old_slug": "rachel-lorain-ward-t02234",
+   "new_slug": "rachel-lorain-ward-1837"
   },
   {
    "person_id": "T02235",
@@ -3646,7 +3726,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "eliza-mcpherson-ward-t02235"
+   "old_slug": "eliza-mcpherson-ward-t02235",
+   "new_slug": "eliza-ward-1839"
   },
   {
    "person_id": "T02237",
@@ -3667,7 +3748,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "arthur-ward-t02237"
+   "old_slug": "arthur-ward-t02237",
+   "new_slug": "arthur-ward-1844"
   },
   {
    "person_id": "T02238",
@@ -3688,7 +3770,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "julia-gertrude-ward-t02238"
+   "old_slug": "julia-gertrude-ward-t02238",
+   "new_slug": "julia-gertrude-ward-1848"
   },
   {
    "person_id": "T02239",
@@ -3709,7 +3792,8 @@
     "no_birth_year",
     "no_career_or_edu"
    ],
-   "old_slug": "morgan-bulkeley-ward-t02239"
+   "old_slug": "morgan-bulkeley-ward-t02239",
+   "new_slug": "morgan-bulkeley-ward"
   },
   {
    "person_id": "T02240",
@@ -3730,7 +3814,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "aurora-smith-t02240"
+   "old_slug": "aurora-smith-t02240",
+   "new_slug": "aurora-smith-1792"
   },
   {
    "person_id": "T02241",
@@ -3751,7 +3836,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "olive-smith-t02241"
+   "old_slug": "olive-smith-t02241",
+   "new_slug": "olive-smith-1798"
   },
   {
    "person_id": "T02242",
@@ -3772,7 +3858,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "warren-smith-t02242"
+   "old_slug": "warren-smith-t02242",
+   "new_slug": "warren-smith-1800"
   },
   {
    "person_id": "T02244",
@@ -3793,7 +3880,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-taylor-t02244"
+   "old_slug": "mary-taylor-t02244",
+   "new_slug": "mary-smith-1807"
   },
   {
    "person_id": "T02246",
@@ -3814,7 +3902,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "zolvah-smith-t02246"
+   "old_slug": "zolvah-smith-t02246",
+   "new_slug": "zolvah-smith-1813"
   },
   {
    "person_id": "T02248",
@@ -3836,7 +3925,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "infant-daughter-smith-t02248"
+   "old_slug": "infant-daughter-smith-t02248",
+   "new_slug": "infant-daughter-smith"
   },
   {
    "person_id": "T02249",
@@ -3858,7 +3948,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "infant-son-smith-t02249"
+   "old_slug": "infant-son-smith-t02249",
+   "new_slug": "infant-son-smith"
   },
   {
    "person_id": "T02251",
@@ -3879,7 +3970,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "helen-m-smith-bly-t02251"
+   "old_slug": "helen-m-smith-bly-t02251",
+   "new_slug": "helen-m-bly-1835"
   },
   {
    "person_id": "T02252",
@@ -3900,7 +3992,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "adelia-h-smith-carey-t02252"
+   "old_slug": "adelia-h-smith-carey-t02252",
+   "new_slug": "adelia-h-carey-1840"
   },
   {
    "person_id": "T02253",
@@ -3921,7 +4014,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "alexander-keeney-t02253"
+   "old_slug": "alexander-keeney-t02253",
+   "new_slug": "alexander-keeney-1796"
   },
   {
    "person_id": "T02254",
@@ -3942,7 +4036,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "chester-keeney-t02254"
+   "old_slug": "chester-keeney-t02254",
+   "new_slug": "chester-keeney-1797"
   },
   {
    "person_id": "T02255",
@@ -3963,7 +4058,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "george-keeney-t02255"
+   "old_slug": "george-keeney-t02255",
+   "new_slug": "george-keeney-1800"
   },
   {
    "person_id": "T02257",
@@ -3984,7 +4080,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "eli-keeney-t02257"
+   "old_slug": "eli-keeney-t02257",
+   "new_slug": "eli-keeney-1804"
   },
   {
    "person_id": "T02259",
@@ -4005,7 +4102,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "benjamin-keeney-t02259"
+   "old_slug": "benjamin-keeney-t02259",
+   "new_slug": "benjamin-keeney-1810"
   },
   {
    "person_id": "T02260",
@@ -4026,7 +4124,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "amelia-smith-t02260"
+   "old_slug": "amelia-smith-t02260",
+   "new_slug": "amelia-smith-1798"
   },
   {
    "person_id": "T02261",
@@ -4047,7 +4146,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-talcott-t02261"
+   "old_slug": "mary-talcott-t02261",
+   "new_slug": "mary-talcott-1802"
   },
   {
    "person_id": "T02262",
@@ -4067,7 +4167,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "rachel-howard-case-t02262"
+   "old_slug": "rachel-howard-case-t02262",
+   "new_slug": "rachel-howard-case-1806"
   },
   {
    "person_id": "T02265",
@@ -4087,7 +4188,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "rosanna-miles-t02265"
+   "old_slug": "rosanna-miles-t02265",
+   "new_slug": "rosanna-miles-1811"
   },
   {
    "person_id": "T02266",
@@ -4108,7 +4210,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "emeline-tracy-t02266"
+   "old_slug": "emeline-tracy-t02266",
+   "new_slug": "emeline-tracy-1815"
   },
   {
    "person_id": "T02270",
@@ -4128,7 +4231,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "william-henry-talcott-t02270"
+   "old_slug": "william-henry-talcott-t02270",
+   "new_slug": "william-henry-talcott-1832"
   },
   {
    "person_id": "T02271",
@@ -4149,7 +4253,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-elizabeth-talcott-t02271"
+   "old_slug": "mary-elizabeth-talcott-t02271",
+   "new_slug": "mary-elizabeth-talcott-1836"
   },
   {
    "person_id": "T02272",
@@ -4170,7 +4275,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "sarah-talcott-t02272"
+   "old_slug": "sarah-talcott-t02272",
+   "new_slug": "sarah-talcott-1841"
   },
   {
    "person_id": "TD0067",
@@ -4192,7 +4298,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "anthony-t-enders-td0067"
+   "old_slug": "anthony-t-enders-td0067",
+   "new_slug": "anthony-enders"
   },
   {
    "person_id": "TD0073",
@@ -4210,7 +4317,8 @@
    "research_notes_chars": 989,
    "has_leads": true,
    "gaps": [],
-   "old_slug": "jeanne-stanley-oakes-td0073"
+   "old_slug": "jeanne-stanley-oakes-td0073",
+   "new_slug": "jeanne-stanley-1913"
   },
   {
    "person_id": "TD0074",
@@ -4228,7 +4336,8 @@
    "research_notes_chars": 1688,
    "has_leads": true,
    "gaps": [],
-   "old_slug": "talcott-stanley-td0074"
+   "old_slug": "talcott-stanley-td0074",
+   "new_slug": "talcott-stanley-1918"
   },
   {
    "person_id": "TD0075",
@@ -4248,7 +4357,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "elizabeth-stanley-td0075"
+   "old_slug": "elizabeth-stanley-td0075",
+   "new_slug": "elizabeth-stanley-1921"
   },
   {
    "person_id": "TD0121",
@@ -4269,7 +4379,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "betsy-hobart-td0121"
+   "old_slug": "betsy-hobart-td0121",
+   "new_slug": "betsy-hobart-1805"
   },
   {
    "person_id": "TD0122",
@@ -4290,7 +4401,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "james-hobart-jr-td0122"
+   "old_slug": "james-hobart-jr-td0122",
+   "new_slug": "james-hobart-jr-1807"
   },
   {
    "person_id": "TD0123",
@@ -4312,7 +4424,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "samuel-hobart-td0123"
+   "old_slug": "samuel-hobart-td0123",
+   "new_slug": "samuel-hobart"
   },
   {
    "person_id": "TD0124",
@@ -4332,7 +4445,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "emeline-hobart-evans-td0124"
+   "old_slug": "emeline-hobart-evans-td0124",
+   "new_slug": "emeline-evans-1811"
   },
   {
    "person_id": "TD0125",
@@ -4354,7 +4468,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-hobart-kinney-td0125"
+   "old_slug": "mary-hobart-kinney-td0125",
+   "new_slug": "mary-kinney"
   },
   {
    "person_id": "TD0126",
@@ -4376,7 +4491,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "pamelia-hobart-child-td0126"
+   "old_slug": "pamelia-hobart-child-td0126",
+   "new_slug": "pamelia-child"
   },
   {
    "person_id": "TD0127",
@@ -4397,7 +4513,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "harriet-n-hobart-td0127"
+   "old_slug": "harriet-n-hobart-td0127",
+   "new_slug": "harriet-hobart-1816"
   },
   {
    "person_id": "TD0130",
@@ -4418,7 +4535,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "hannah-hobart-craven-td0130"
+   "old_slug": "hannah-hobart-craven-td0130",
+   "new_slug": "hannah-craven-1824"
   },
   {
    "person_id": "TD0131",
@@ -4438,7 +4556,8 @@
    "gaps": [
     "no_narrative"
    ],
-   "old_slug": "timothy-dwight-hobart-td0131"
+   "old_slug": "timothy-dwight-hobart-td0131",
+   "new_slug": "timothy-hobart-1826"
   },
   {
    "person_id": "TD0132",
@@ -4459,7 +4578,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "isaac-watts-hobart-td0132"
+   "old_slug": "isaac-watts-hobart-td0132",
+   "new_slug": "isaac-hobart-1829"
   },
   {
    "person_id": "TD0135",
@@ -4480,7 +4600,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "fredrick-able-hobart-td0135"
+   "old_slug": "fredrick-able-hobart-td0135",
+   "new_slug": "fredrick-hobart-1898"
   },
   {
    "person_id": "TD0136",
@@ -4501,7 +4622,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "laura-prescott-hobart-fatheree-td0136"
+   "old_slug": "laura-prescott-hobart-fatheree-td0136",
+   "new_slug": "laura-fatheree-1899"
   },
   {
    "person_id": "TD0142",
@@ -4522,7 +4644,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-perrin-dewey-td0142"
+   "old_slug": "mary-perrin-dewey-td0142",
+   "new_slug": "mary-dewey-1839"
   },
   {
    "person_id": "TD0143",
@@ -4543,7 +4666,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "frances-isabella-dewey-fifield-td0143"
+   "old_slug": "frances-isabella-dewey-fifield-td0143",
+   "new_slug": "frances-fifield-1849"
   },
   {
    "person_id": "TD0144",
@@ -4564,7 +4688,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "william-tarbox-dewey-td0144"
+   "old_slug": "william-tarbox-dewey-td0144",
+   "new_slug": "william-dewey-1852"
   },
   {
    "person_id": "TD0145",
@@ -4585,7 +4710,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "jennie-dewey-blackwell-td0145"
+   "old_slug": "jennie-dewey-blackwell-td0145",
+   "new_slug": "jennie-blackwell-1854"
   },
   {
    "person_id": "TD0146",
@@ -4606,7 +4732,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-grace-dewey-td0146"
+   "old_slug": "mary-grace-dewey-td0146",
+   "new_slug": "mary-dewey-1858"
   },
   {
    "person_id": "TD0147",
@@ -4627,7 +4754,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "george-perrin-dewey-td0147"
+   "old_slug": "george-perrin-dewey-td0147",
+   "new_slug": "george-dewey-1860"
   },
   {
    "person_id": "TD0148",
@@ -4648,7 +4776,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "gertrude-dewey-mccuen-td0148"
+   "old_slug": "gertrude-dewey-mccuen-td0148",
+   "new_slug": "gertrude-mccuen-1862"
   },
   {
    "person_id": "TD0149",
@@ -4669,7 +4798,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "charles-robert-dewey-td0149"
+   "old_slug": "charles-robert-dewey-td0149",
+   "new_slug": "charles-dewey-1867"
   },
   {
    "person_id": "TD0152",
@@ -4690,7 +4820,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "margaret-dewey-howland-td0152"
+   "old_slug": "margaret-dewey-howland-td0152",
+   "new_slug": "margaret-howland-1875"
   },
   {
    "person_id": "TD0153",
@@ -4711,7 +4842,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "julius-edward-dewey-td0153"
+   "old_slug": "julius-edward-dewey-td0153",
+   "new_slug": "julius-dewey-1878"
   },
   {
    "person_id": "TD0154",
@@ -4732,7 +4864,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "edward-bradley-dewey-td0154"
+   "old_slug": "edward-bradley-dewey-td0154",
+   "new_slug": "edward-dewey-1891"
   },
   {
    "person_id": "TD0155",
@@ -4753,7 +4886,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "theodore-macrae-dewey-td0155"
+   "old_slug": "theodore-macrae-dewey-td0155",
+   "new_slug": "theodore-dewey-1895"
   },
   {
    "person_id": "TD0158",
@@ -4774,7 +4908,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-e-evans-td0158"
+   "old_slug": "mary-e-evans-td0158",
+   "new_slug": "mary-evans-1834"
   },
   {
    "person_id": "TD0159",
@@ -4795,7 +4930,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ira-evans-td0159"
+   "old_slug": "ira-evans-td0159",
+   "new_slug": "ira-evans-1836"
   },
   {
    "person_id": "TD0161",
@@ -4816,7 +4952,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "j-annette-evans-td0161"
+   "old_slug": "j-annette-evans-td0161",
+   "new_slug": "j-evans-1840"
   },
   {
    "person_id": "TD0164",
@@ -4836,7 +4973,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "william-dwight-evans-td0164"
+   "old_slug": "william-dwight-evans-td0164",
+   "new_slug": "william-evans-1849"
   },
   {
    "person_id": "TD0168",
@@ -4857,7 +4995,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "roma-evans-ives-td0168"
+   "old_slug": "roma-evans-ives-td0168",
+   "new_slug": "roma-ives-1900"
   },
   {
    "person_id": "TD0169",
@@ -4878,7 +5017,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "h-leslie-evans-td0169"
+   "old_slug": "h-leslie-evans-td0169",
+   "new_slug": "h-evans-1903"
   },
   {
    "person_id": "TD0171",
@@ -4899,7 +5039,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-caroline-perrin-pollard-td0171"
+   "old_slug": "mary-caroline-perrin-pollard-td0171",
+   "new_slug": "mary-pollard-1837"
   },
   {
    "person_id": "TD0173",
@@ -4920,7 +5061,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "amanda-l-perrin-td0173"
+   "old_slug": "amanda-l-perrin-td0173",
+   "new_slug": "amanda-perrin-1839"
   },
   {
    "person_id": "TD0175",
@@ -4941,7 +5083,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "william-niven-perrin-td0175"
+   "old_slug": "william-niven-perrin-td0175",
+   "new_slug": "william-perrin-1864"
   },
   {
    "person_id": "TD0177",
@@ -4962,7 +5105,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "john-tindall-perrin-td0177"
+   "old_slug": "john-tindall-perrin-td0177",
+   "new_slug": "john-perrin-1869"
   },
   {
    "person_id": "TD0178",
@@ -4983,7 +5127,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "james-austin-perrin-td0178"
+   "old_slug": "james-austin-perrin-td0178",
+   "new_slug": "james-perrin-1870"
   },
   {
    "person_id": "TD0179",
@@ -5004,7 +5149,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "clara-amanda-alvira-frizzell-thompson-td0179"
+   "old_slug": "clara-amanda-alvira-frizzell-thompson-td0179",
+   "new_slug": "clara-thompson-1891"
   },
   {
    "person_id": "TD0180",
@@ -5025,7 +5171,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "francis-niven-frizzell-td0180"
+   "old_slug": "francis-niven-frizzell-td0180",
+   "new_slug": "francis-frizzell-1892"
   },
   {
    "person_id": "TD0181",
@@ -5046,7 +5193,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lillie-irene-frizzell-johnson-td0181"
+   "old_slug": "lillie-irene-frizzell-johnson-td0181",
+   "new_slug": "lillie-johnson-1897"
   },
   {
    "person_id": "TD0182",
@@ -5067,7 +5215,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "garland-frizzell-td0182"
+   "old_slug": "garland-frizzell-td0182",
+   "new_slug": "garland-frizzell-1897"
   },
   {
    "person_id": "TD0183",
@@ -5088,7 +5237,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "james-austin-frizzell-td0183"
+   "old_slug": "james-austin-frizzell-td0183",
+   "new_slug": "james-frizzell-1899"
   },
   {
    "person_id": "TD0257",
@@ -5110,7 +5260,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "anna-howell-jones-td0257"
+   "old_slug": "anna-howell-jones-td0257",
+   "new_slug": "anna-jones"
   },
   {
    "person_id": "TD0258",
@@ -5132,7 +5283,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elizabeth-jones-td0258"
+   "old_slug": "elizabeth-jones-td0258",
+   "new_slug": "elizabeth-jones"
   },
   {
    "person_id": "TD0259",
@@ -5154,7 +5306,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ellen-a-jones-td0259"
+   "old_slug": "ellen-a-jones-td0259",
+   "new_slug": "ellen-jones"
   },
   {
    "person_id": "TD0261",
@@ -5175,7 +5328,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-elizabeth-huntington-td0261"
+   "old_slug": "mary-elizabeth-huntington-td0261",
+   "new_slug": "mary-huntington-1811"
   },
   {
    "person_id": "TD0267",
@@ -5196,7 +5350,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "emily-ritchey-douthitt-td0267"
+   "old_slug": "emily-ritchey-douthitt-td0267",
+   "new_slug": "emily-douthitt-1834"
   },
   {
    "person_id": "TD0268",
@@ -5217,7 +5372,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "angelina-elizabeth-ritchey-sadler-td0268"
+   "old_slug": "angelina-elizabeth-ritchey-sadler-td0268",
+   "new_slug": "angelina-sadler-1837"
   },
   {
    "person_id": "TD0269",
@@ -5238,7 +5394,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "augustus-ritchey-td0269"
+   "old_slug": "augustus-ritchey-td0269",
+   "new_slug": "augustus-ritchey-1839"
   },
   {
    "person_id": "TD0270",
@@ -5259,7 +5416,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-louisa-ritchey-hess-td0270"
+   "old_slug": "mary-louisa-ritchey-hess-td0270",
+   "new_slug": "mary-hess-1842"
   },
   {
    "person_id": "TD0271",
@@ -5280,7 +5438,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "james-lawrence-ritchey-td0271"
+   "old_slug": "james-lawrence-ritchey-td0271",
+   "new_slug": "james-ritchey-1844"
   },
   {
    "person_id": "TD0273",
@@ -5301,7 +5460,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "eliza-huntington-snyder-td0273"
+   "old_slug": "eliza-huntington-snyder-td0273",
+   "new_slug": "eliza-snyder-1853"
   },
   {
    "person_id": "TD0274",
@@ -5322,7 +5482,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "thomas-hendricks-huntington-td0274"
+   "old_slug": "thomas-hendricks-huntington-td0274",
+   "new_slug": "thomas-huntington-1854"
   },
   {
    "person_id": "TD0275",
@@ -5343,7 +5504,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "abbie-huntington-becker-td0275"
+   "old_slug": "abbie-huntington-becker-td0275",
+   "new_slug": "abbie-becker-1856"
   },
   {
    "person_id": "TD0276",
@@ -5364,7 +5526,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "maggie-huntington-allen-td0276"
+   "old_slug": "maggie-huntington-allen-td0276",
+   "new_slug": "maggie-allen-1859"
   },
   {
    "person_id": "TD0281",
@@ -5385,7 +5548,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "abbie-huntington-taylor-td0281"
+   "old_slug": "abbie-huntington-taylor-td0281",
+   "new_slug": "abbie-taylor-1888"
   },
   {
    "person_id": "TD0282",
@@ -5406,7 +5570,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ben-ferris-huntington-td0282"
+   "old_slug": "ben-ferris-huntington-td0282",
+   "new_slug": "ben-huntington-1891"
   },
   {
    "person_id": "TD0283",
@@ -5427,7 +5592,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "walter-huntington-td0283"
+   "old_slug": "walter-huntington-td0283",
+   "new_slug": "walter-huntington-1893"
   },
   {
    "person_id": "TD0284",
@@ -5448,7 +5614,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "olive-a-huntington-td0284"
+   "old_slug": "olive-a-huntington-td0284",
+   "new_slug": "olive-huntington-1893"
   },
   {
    "person_id": "TD0285",
@@ -5469,7 +5636,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ruth-somers-huntington-td0285"
+   "old_slug": "ruth-somers-huntington-td0285",
+   "new_slug": "ruth-huntington-1898"
   },
   {
    "person_id": "TD0286",
@@ -5490,7 +5658,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "george-frederick-huntington-sr-td0286"
+   "old_slug": "george-frederick-huntington-sr-td0286",
+   "new_slug": "george-huntington-sr-1902"
   },
   {
    "person_id": "TD0287",
@@ -5511,7 +5680,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "dorothy-louise-huntington-shelden-td0287"
+   "old_slug": "dorothy-louise-huntington-shelden-td0287",
+   "new_slug": "dorothy-shelden-1900"
   },
   {
    "person_id": "TD0288",
@@ -5532,7 +5702,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "dolores-estelle-huntington-nace-td0288"
+   "old_slug": "dolores-estelle-huntington-nace-td0288",
+   "new_slug": "dolores-nace-1901"
   },
   {
    "person_id": "TD0290",
@@ -5553,7 +5724,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "joseph-henry-joe-huntington-td0290"
+   "old_slug": "joseph-henry-joe-huntington-td0290",
+   "new_slug": "joseph-huntington-1911"
   },
   {
    "person_id": "TD0291",
@@ -5574,7 +5746,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ralph-edwards-huntington-td0291"
+   "old_slug": "ralph-edwards-huntington-td0291",
+   "new_slug": "ralph-huntington-1915"
   },
   {
    "person_id": "TD0292",
@@ -5595,7 +5768,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "jessie-r-coen-td0292"
+   "old_slug": "jessie-r-coen-td0292",
+   "new_slug": "jessie-coen-1872"
   },
   {
    "person_id": "TD0293",
@@ -5616,7 +5790,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "james-thomas-coen-td0293"
+   "old_slug": "james-thomas-coen-td0293",
+   "new_slug": "james-coen-1874"
   },
   {
    "person_id": "TD0294",
@@ -5637,7 +5812,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ella-rae-coen-td0294"
+   "old_slug": "ella-rae-coen-td0294",
+   "new_slug": "ella-coen-1876"
   },
   {
    "person_id": "TD0295",
@@ -5658,7 +5834,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "latha-coen-td0295"
+   "old_slug": "latha-coen-td0295",
+   "new_slug": "latha-coen-1880"
   },
   {
    "person_id": "TD0296",
@@ -5679,7 +5856,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "fannie-coen-td0296"
+   "old_slug": "fannie-coen-td0296",
+   "new_slug": "fannie-coen-1881"
   },
   {
    "person_id": "TD0297",
@@ -5700,7 +5878,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "case-louise-coen-wallace-td0297"
+   "old_slug": "case-louise-coen-wallace-td0297",
+   "new_slug": "case-wallace-1884"
   },
   {
    "person_id": "TD0298",
@@ -5721,7 +5900,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "septimus-huntington-td0298"
+   "old_slug": "septimus-huntington-td0298",
+   "new_slug": "septimus-huntington-1773"
   },
   {
    "person_id": "TD0299",
@@ -5742,7 +5922,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "george-washington-huntington-td0299"
+   "old_slug": "george-washington-huntington-td0299",
+   "new_slug": "george-huntington-1776"
   },
   {
    "person_id": "TD0300",
@@ -5763,7 +5944,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "hannah-huntington-td0300"
+   "old_slug": "hannah-huntington-td0300",
+   "new_slug": "hannah-huntington-1779"
   },
   {
    "person_id": "TD0301",
@@ -5784,7 +5966,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "henry-huntington-td0301"
+   "old_slug": "henry-huntington-td0301",
+   "new_slug": "henry-huntington-1781"
   },
   {
    "person_id": "TD0303",
@@ -5805,7 +5988,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mercy-penelope-huntington-td0303"
+   "old_slug": "mercy-penelope-huntington-td0303",
+   "new_slug": "mercy-huntington-1788"
   },
   {
    "person_id": "TD0304",
@@ -5826,7 +6010,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "james-huntington-td0304"
+   "old_slug": "james-huntington-td0304",
+   "new_slug": "james-huntington-1790"
   },
   {
    "person_id": "X01249",
@@ -5848,7 +6033,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-drake-x01249"
+   "old_slug": "mary-drake-x01249",
+   "new_slug": "mary-drake"
   },
   {
    "person_id": "X01254",
@@ -5870,7 +6056,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "florence-anna-whitney-x01254"
+   "old_slug": "florence-anna-whitney-x01254",
+   "new_slug": "florence-whitney"
   },
   {
    "person_id": "X02035",
@@ -5890,7 +6077,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "frederick-law-olmsted-x02035"
+   "old_slug": "frederick-law-olmsted-x02035",
+   "new_slug": "frederick-law-olmsted-1822"
   },
   {
    "person_id": "X02134",
@@ -5911,7 +6099,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "hannah-hawkins-buckingham-x02134"
+   "old_slug": "hannah-hawkins-buckingham-x02134",
+   "new_slug": "hannah-hawkins-1606"
   },
   {
    "person_id": "X02367",
@@ -5932,7 +6121,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "albert-norris-x02367"
+   "old_slug": "albert-norris-x02367",
+   "new_slug": "albert-norris-1935"
   },
   {
    "person_id": "X02376",
@@ -5953,7 +6143,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "maria-gillis-bradley-dewey-x02376"
+   "old_slug": "maria-gillis-bradley-dewey-x02376",
+   "new_slug": "maria-bradley-1866"
   },
   {
    "person_id": "X02378",
@@ -5974,7 +6165,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "murray-montague-tucker-x02378"
+   "old_slug": "murray-montague-tucker-x02378",
+   "new_slug": "murray-tucker-1888"
   },
   {
    "person_id": "X02386",
@@ -5996,7 +6188,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "jessie-m-stewart-evans-x02386"
+   "old_slug": "jessie-m-stewart-evans-x02386",
+   "new_slug": "jessie-stewart"
   },
   {
    "person_id": "X02387",
@@ -6017,7 +6210,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "josephine-willa-taylor-evans-x02387"
+   "old_slug": "josephine-willa-taylor-evans-x02387",
+   "new_slug": "josephine-taylor-1876"
   },
   {
    "person_id": "X02471",
@@ -6039,7 +6233,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "isabel-greene-low-x02471"
+   "old_slug": "isabel-greene-low-x02471",
+   "new_slug": "isabel-low"
   },
   {
    "person_id": "X02472",
@@ -6061,7 +6256,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "deborah-gillett-x02472"
+   "old_slug": "deborah-gillett-x02472",
+   "new_slug": "deborah-gillett"
   },
   {
    "person_id": "X02476",
@@ -6083,7 +6279,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "anna-maria-hoover-x02476"
+   "old_slug": "anna-maria-hoover-x02476",
+   "new_slug": "anna-hoover"
   },
   {
    "person_id": "X02477",
@@ -6105,7 +6302,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elizabeth-alden-x02477"
+   "old_slug": "elizabeth-alden-x02477",
+   "new_slug": "elizabeth-alden"
   },
   {
    "person_id": "X02479",
@@ -6127,7 +6325,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "thomas-m-mcmillan-jr-x02479"
+   "old_slug": "thomas-m-mcmillan-jr-x02479",
+   "new_slug": "thomas-mcmillan-jr"
   },
   {
    "person_id": "X02480",
@@ -6149,7 +6348,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "wealthy-strong-x02480"
+   "old_slug": "wealthy-strong-x02480",
+   "new_slug": "wealthy-strong"
   },
   {
    "person_id": "X02481",
@@ -6171,7 +6371,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "parthenia-brainard-x02481"
+   "old_slug": "parthenia-brainard-x02481",
+   "new_slug": "parthenia-brainard"
   },
   {
    "person_id": "X02482",
@@ -6193,7 +6394,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "clarina-warner-x02482"
+   "old_slug": "clarina-warner-x02482",
+   "new_slug": "clarina-warner"
   },
   {
    "person_id": "X02483",
@@ -6215,7 +6417,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "maria-schoonmaker-x02483"
+   "old_slug": "maria-schoonmaker-x02483",
+   "new_slug": "maria-schoonmaker"
   },
   {
    "person_id": "X02484",
@@ -6237,7 +6440,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "betsey-t-chapman-x02484"
+   "old_slug": "betsey-t-chapman-x02484",
+   "new_slug": "betsey-chapman"
   },
   {
    "person_id": "X02485",
@@ -6259,7 +6463,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "rev-enoch-s-huntington-x02485"
+   "old_slug": "rev-enoch-s-huntington-x02485",
+   "new_slug": "rev-huntington"
   },
   {
    "person_id": "X02486",
@@ -6281,7 +6486,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "harriet-smith-x02486"
+   "old_slug": "harriet-smith-x02486",
+   "new_slug": "harriet-smith"
   },
   {
    "person_id": "X02487",
@@ -6303,7 +6509,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "sophia-e-keeney-x02487"
+   "old_slug": "sophia-e-keeney-x02487",
+   "new_slug": "sophia-keeney"
   },
   {
    "person_id": "X02489",
@@ -6325,7 +6532,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "marguerite-sundheim-x02489"
+   "old_slug": "marguerite-sundheim-x02489",
+   "new_slug": "marguerite-sundheim"
   },
   {
    "person_id": "X02491",
@@ -6347,7 +6555,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "samuel-baker-x02491"
+   "old_slug": "samuel-baker-x02491",
+   "new_slug": "samuel-baker"
   },
   {
    "person_id": "X02492",
@@ -6369,7 +6578,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "aurelia-wells-x02492"
+   "old_slug": "aurelia-wells-x02492",
+   "new_slug": "aurelia-wells"
   },
   {
    "person_id": "X02493",
@@ -6391,7 +6601,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "polly-cadwell-x02493"
+   "old_slug": "polly-cadwell-x02493",
+   "new_slug": "polly-cadwell"
   },
   {
    "person_id": "X02494",
@@ -6413,7 +6624,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "clarissa-graham-x02494"
+   "old_slug": "clarissa-graham-x02494",
+   "new_slug": "clarissa-graham"
   },
   {
    "person_id": "X02495",
@@ -6435,7 +6647,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "joseph-bugley-x02495"
+   "old_slug": "joseph-bugley-x02495",
+   "new_slug": "joseph-bugley"
   },
   {
    "person_id": "X02496",
@@ -6457,7 +6670,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "pollard-merrill-x02496"
+   "old_slug": "pollard-merrill-x02496",
+   "new_slug": "pollard-merrill"
   },
   {
    "person_id": "X02497",
@@ -6479,7 +6693,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "richard-van-cortland-emerson-x02497"
+   "old_slug": "richard-van-cortland-emerson-x02497",
+   "new_slug": "richard-emerson"
   },
   {
    "person_id": "X02498",
@@ -6501,7 +6716,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "thomas-hambleton-x02498"
+   "old_slug": "thomas-hambleton-x02498",
+   "new_slug": "thomas-hambleton"
   },
   {
    "person_id": "X02499",
@@ -6523,7 +6739,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "midge-w-barclay-x02499"
+   "old_slug": "midge-w-barclay-x02499",
+   "new_slug": "midge-barclay"
   },
   {
    "person_id": "X02500",
@@ -6545,7 +6762,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lizzie-hollerith-x02500"
+   "old_slug": "lizzie-hollerith-x02500",
+   "new_slug": "lizzie-hollerith"
   },
   {
    "person_id": "X02501",
@@ -6567,7 +6785,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "rev-melissa-kaye-hollerith-x02501"
+   "old_slug": "rev-melissa-kaye-hollerith-x02501",
+   "new_slug": "rev-hollerith"
   },
   {
    "person_id": "X02503",
@@ -6589,7 +6808,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "samuel-reed-x02503"
+   "old_slug": "samuel-reed-x02503",
+   "new_slug": "samuel-reed"
   },
   {
    "person_id": "X02506",
@@ -6611,7 +6831,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "joseph-huntof-northampton-ma-x02506"
+   "old_slug": "joseph-huntof-northampton-ma-x02506",
+   "new_slug": "joseph-ma"
   },
   {
    "person_id": "X02507",
@@ -6633,7 +6854,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "abigail-mather-x02507"
+   "old_slug": "abigail-mather-x02507",
+   "new_slug": "abigail-mather"
   },
   {
    "person_id": "X02508",
@@ -6655,7 +6877,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "naomi-olmstead-x02508"
+   "old_slug": "naomi-olmstead-x02508",
+   "new_slug": "naomi-olmstead"
   },
   {
    "person_id": "X02509",
@@ -6677,7 +6900,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "albert-porter-x02509"
+   "old_slug": "albert-porter-x02509",
+   "new_slug": "albert-porter"
   },
   {
    "person_id": "X02510",
@@ -6699,7 +6923,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "prescott-arnold-x02510"
+   "old_slug": "prescott-arnold-x02510",
+   "new_slug": "prescott-arnold"
   },
   {
    "person_id": "X02511",
@@ -6721,7 +6946,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elizabeth-jane-lamphier-x02511"
+   "old_slug": "elizabeth-jane-lamphier-x02511",
+   "new_slug": "elizabeth-lamphier"
   },
   {
    "person_id": "X02512",
@@ -6743,7 +6969,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "annette-sophia-belden-x02512"
+   "old_slug": "annette-sophia-belden-x02512",
+   "new_slug": "annette-belden"
   },
   {
    "person_id": "X02513",
@@ -6765,7 +6992,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ella-mulford-conklin-x02513"
+   "old_slug": "ella-mulford-conklin-x02513",
+   "new_slug": "ella-conklin"
   },
   {
    "person_id": "X02514",
@@ -6787,7 +7015,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ellen-rogers-x02514"
+   "old_slug": "ellen-rogers-x02514",
+   "new_slug": "ellen-rogers"
   },
   {
    "person_id": "X02515",
@@ -6809,7 +7038,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "leonard-kuhn-x02515"
+   "old_slug": "leonard-kuhn-x02515",
+   "new_slug": "leonard-kuhn"
   },
   {
    "person_id": "X02517",
@@ -6831,7 +7061,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "james-flint-of-lafayette-township-x02517"
+   "old_slug": "james-flint-of-lafayette-township-x02517",
+   "new_slug": "james-township"
   },
   {
    "person_id": "X02518",
@@ -6853,7 +7084,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "r-moore-x02518"
+   "old_slug": "r-moore-x02518",
+   "new_slug": "r-moore"
   },
   {
    "person_id": "X02519",
@@ -6875,7 +7107,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "laura-butler-coffin-x02519"
+   "old_slug": "laura-butler-coffin-x02519",
+   "new_slug": "laura-coffin"
   },
   {
    "person_id": "X02520",
@@ -6897,7 +7130,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "diane-nickerson-howard-x02520"
+   "old_slug": "diane-nickerson-howard-x02520",
+   "new_slug": "diane-howard"
   },
   {
    "person_id": "X02521",
@@ -6919,7 +7153,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "pamela-howard-x02521"
+   "old_slug": "pamela-howard-x02521",
+   "new_slug": "pamela-howard"
   },
   {
    "person_id": "X02522",
@@ -6941,7 +7176,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "alison-howard-x02522"
+   "old_slug": "alison-howard-x02522",
+   "new_slug": "alison-howard"
   },
   {
    "person_id": "X02523",
@@ -6963,7 +7199,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lemuel-bacon-x02523"
+   "old_slug": "lemuel-bacon-x02523",
+   "new_slug": "lemuel-bacon"
   },
   {
    "person_id": "X02525",
@@ -6985,7 +7222,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "alice-gordon-x02525"
+   "old_slug": "alice-gordon-x02525",
+   "new_slug": "alice-gordon"
   },
   {
    "person_id": "X02526",
@@ -7007,7 +7245,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "augusta-moore-x02526"
+   "old_slug": "augusta-moore-x02526",
+   "new_slug": "augusta-moore"
   },
   {
    "person_id": "X02527",
@@ -7029,7 +7268,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "loren-c-johnson-x02527"
+   "old_slug": "loren-c-johnson-x02527",
+   "new_slug": "loren-johnson"
   },
   {
    "person_id": "X02528",
@@ -7051,7 +7291,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "clarence-s-monaghan-x02528"
+   "old_slug": "clarence-s-monaghan-x02528",
+   "new_slug": "clarence-monaghan"
   },
   {
    "person_id": "X02529",
@@ -7073,7 +7314,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ronald-e-haylett-x02529"
+   "old_slug": "ronald-e-haylett-x02529",
+   "new_slug": "ronald-haylett"
   },
   {
    "person_id": "X02531",
@@ -7095,7 +7337,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "louisa-hannah-smith-x02531"
+   "old_slug": "louisa-hannah-smith-x02531",
+   "new_slug": "louisa-smith"
   },
   {
    "person_id": "X02532",
@@ -7117,7 +7360,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "harriet-owen-x02532"
+   "old_slug": "harriet-owen-x02532",
+   "new_slug": "harriet-owen"
   },
   {
    "person_id": "X02534",
@@ -7139,7 +7383,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elida-w-wright-x02534"
+   "old_slug": "elida-w-wright-x02534",
+   "new_slug": "elida-wright"
   },
   {
    "person_id": "X02535",
@@ -7161,7 +7406,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "margery-cordelia-cooper-x02535"
+   "old_slug": "margery-cordelia-cooper-x02535",
+   "new_slug": "margery-cooper"
   },
   {
    "person_id": "X02538",
@@ -7183,7 +7429,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "thomas-bunn-x02538"
+   "old_slug": "thomas-bunn-x02538",
+   "new_slug": "thomas-bunn"
   },
   {
    "person_id": "X02544",
@@ -7205,7 +7452,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "horace-fox-x02544"
+   "old_slug": "horace-fox-x02544",
+   "new_slug": "horace-fox"
   },
   {
    "person_id": "X02545",
@@ -7227,7 +7475,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elizabeth-spickerman-x02545"
+   "old_slug": "elizabeth-spickerman-x02545",
+   "new_slug": "elizabeth-spickerman"
   },
   {
    "person_id": "X02546",
@@ -7249,7 +7498,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "hon-amary-kinney-of-terre-haute-ia-x02546"
+   "old_slug": "hon-amary-kinney-of-terre-haute-ia-x02546",
+   "new_slug": "hon-ia"
   },
   {
    "person_id": "X02547",
@@ -7271,7 +7521,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "rev-rufus-child-x02547"
+   "old_slug": "rev-rufus-child-x02547",
+   "new_slug": "rev-child"
   },
   {
    "person_id": "X02548",
@@ -7293,7 +7544,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "rev-george-craven-x02548"
+   "old_slug": "rev-george-craven-x02548",
+   "new_slug": "rev-craven"
   },
   {
    "person_id": "X02551",
@@ -7315,7 +7567,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mrs-sarah-bullard-x02551"
+   "old_slug": "mrs-sarah-bullard-x02551",
+   "new_slug": "sarah-jalapeno"
   },
   {
    "person_id": "X02552",
@@ -7337,7 +7590,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "jonathan-stokes-x02552"
+   "old_slug": "jonathan-stokes-x02552",
+   "new_slug": "jonathan-stokes"
   },
   {
    "person_id": "X02554",
@@ -7359,7 +7613,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lucinda-hull-x02554"
+   "old_slug": "lucinda-hull-x02554",
+   "new_slug": "lucinda-hull"
   },
   {
    "person_id": "X02555",
@@ -7381,7 +7636,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "truman-munger-x02555"
+   "old_slug": "truman-munger-x02555",
+   "new_slug": "truman-munger"
   },
   {
    "person_id": "X02556",
@@ -7403,7 +7659,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "julius-murray-x02556"
+   "old_slug": "julius-murray-x02556",
+   "new_slug": "julius-murray"
   },
   {
    "person_id": "X02557",
@@ -7425,7 +7682,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "harvey-h-dowd-x02557"
+   "old_slug": "harvey-h-dowd-x02557",
+   "new_slug": "harvey-dowd"
   },
   {
    "person_id": "X02558",
@@ -7447,7 +7705,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "morris-davis-x02558"
+   "old_slug": "morris-davis-x02558",
+   "new_slug": "morris-davis"
   },
   {
    "person_id": "X02559",
@@ -7469,7 +7728,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "sally-a-griswold-x02559"
+   "old_slug": "sally-a-griswold-x02559",
+   "new_slug": "sally-griswold"
   },
   {
    "person_id": "X02560",
@@ -7491,7 +7751,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "justin-i-shepard-x02560"
+   "old_slug": "justin-i-shepard-x02560",
+   "new_slug": "justin-shepard"
   },
   {
    "person_id": "X02561",
@@ -7513,7 +7774,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "clarissa-hull-x02561"
+   "old_slug": "clarissa-hull-x02561",
+   "new_slug": "clarissa-hull"
   },
   {
    "person_id": "X02562",
@@ -7535,7 +7797,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "sally-munger-x02562"
+   "old_slug": "sally-munger-x02562",
+   "new_slug": "sally-munger"
   },
   {
    "person_id": "X02563",
@@ -7555,7 +7818,8 @@
    "gaps": [
     "no_career_or_edu"
    ],
-   "old_slug": "emily-dickinson-x02563"
+   "old_slug": "emily-dickinson-x02563",
+   "new_slug": "emily-dickinson-1830"
   },
   {
    "person_id": "X02564",
@@ -7577,7 +7841,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "jared-whitford-x02564"
+   "old_slug": "jared-whitford-x02564",
+   "new_slug": "jared-whitford"
   },
   {
    "person_id": "X02565",
@@ -7599,7 +7864,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lucinda-wells-norton-x02565"
+   "old_slug": "lucinda-wells-norton-x02565",
+   "new_slug": "lucinda-norton"
   },
   {
    "person_id": "X02573",
@@ -7621,7 +7887,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-paine-norton-x02573"
+   "old_slug": "mary-paine-norton-x02573",
+   "new_slug": "mary-paine"
   },
   {
    "person_id": "X02574",
@@ -7643,7 +7910,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-ann-mulliken-norton-x02574"
+   "old_slug": "mary-ann-mulliken-norton-x02574",
+   "new_slug": "mary-norton-2"
   },
   {
    "person_id": "X02577",
@@ -7665,7 +7933,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "roxanna-chatfield-norton-x02577"
+   "old_slug": "roxanna-chatfield-norton-x02577",
+   "new_slug": "roxanna-chatfield"
   },
   {
    "person_id": "X02580",
@@ -7687,7 +7956,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "sarah-crane-norton-x02580"
+   "old_slug": "sarah-crane-norton-x02580",
+   "new_slug": "sarah-crane"
   },
   {
    "person_id": "X02581",
@@ -7709,7 +7979,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "orpha-foster-norton-x02581"
+   "old_slug": "orpha-foster-norton-x02581",
+   "new_slug": "orpha-foster"
   },
   {
    "person_id": "X02582",
@@ -7731,7 +8002,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "alfred-blatchley-x02582"
+   "old_slug": "alfred-blatchley-x02582",
+   "new_slug": "alfred-blatchley"
   },
   {
    "person_id": "X02583",
@@ -7753,7 +8025,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lucinda-foster-norton-x02583"
+   "old_slug": "lucinda-foster-norton-x02583",
+   "new_slug": "lucinda-foster"
   },
   {
    "person_id": "X02584",
@@ -7775,7 +8048,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "eliza-rowley-norton-x02584"
+   "old_slug": "eliza-rowley-norton-x02584",
+   "new_slug": "eliza-rowley"
   },
   {
    "person_id": "X02585",
@@ -7797,7 +8071,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "clark-hessington-x02585"
+   "old_slug": "clark-hessington-x02585",
+   "new_slug": "clark-hessington"
   },
   {
    "person_id": "X02586",
@@ -7819,7 +8094,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "manley-wilcox-x02586"
+   "old_slug": "manley-wilcox-x02586",
+   "new_slug": "manley-wilcox"
   },
   {
    "person_id": "X02587",
@@ -7841,7 +8117,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "richard-hull-x02587"
+   "old_slug": "richard-hull-x02587",
+   "new_slug": "richard-hull"
   },
   {
    "person_id": "X02588",
@@ -7863,7 +8140,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "frances-hill-norton-x02588"
+   "old_slug": "frances-hill-norton-x02588",
+   "new_slug": "frances-hill"
   },
   {
    "person_id": "X02589",
@@ -7885,7 +8163,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "achsah-crampton-evarts-x02589"
+   "old_slug": "achsah-crampton-evarts-x02589",
+   "new_slug": "achsah-crampton"
   },
   {
    "person_id": "X02590",
@@ -7907,7 +8186,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "emeline-a-wright-evarts-x02590"
+   "old_slug": "emeline-a-wright-evarts-x02590",
+   "new_slug": "emeline-wright"
   },
   {
    "person_id": "X02594",
@@ -7929,7 +8209,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "james-b-smith-x02594"
+   "old_slug": "james-b-smith-x02594",
+   "new_slug": "james-smith-2"
   },
   {
    "person_id": "X02599",
@@ -7951,7 +8232,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "olive-stone-norton-x02599"
+   "old_slug": "olive-stone-norton-x02599",
+   "new_slug": "olive-stone"
   },
   {
    "person_id": "X02601",
@@ -7973,7 +8255,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "sidney-o-hale-x02601"
+   "old_slug": "sidney-o-hale-x02601",
+   "new_slug": "sidney-hale"
   },
   {
    "person_id": "X02602",
@@ -7995,7 +8278,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-ann-leete-blatchley-x02602"
+   "old_slug": "mary-ann-leete-blatchley-x02602",
+   "new_slug": "mary-blatchley"
   },
   {
    "person_id": "X02603",
@@ -8017,7 +8301,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "marietta-field-blatchley-x02603"
+   "old_slug": "marietta-field-blatchley-x02603",
+   "new_slug": "marietta-field"
   },
   {
    "person_id": "X02604",
@@ -8039,7 +8324,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "louisa-j-bergman-blatchley-x02604"
+   "old_slug": "louisa-j-bergman-blatchley-x02604",
+   "new_slug": "louisa-blatchley"
   },
   {
    "person_id": "X02605",
@@ -8061,7 +8347,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "sally-roberts-norton-x02605"
+   "old_slug": "sally-roberts-norton-x02605",
+   "new_slug": "sally-roberts"
   },
   {
    "person_id": "X02606",
@@ -8083,7 +8370,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "mary-ann-lucas-norton-x02606"
+   "old_slug": "mary-ann-lucas-norton-x02606",
+   "new_slug": "mary-lucas"
   },
   {
    "person_id": "X02607",
@@ -8105,7 +8393,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "hannah-j-warren-norton-x02607"
+   "old_slug": "hannah-j-warren-norton-x02607",
+   "new_slug": "hannah-warren"
   },
   {
    "person_id": "X02608",
@@ -8127,7 +8416,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "eleanor-miller-norton-x02608"
+   "old_slug": "eleanor-miller-norton-x02608",
+   "new_slug": "eleanor-miller"
   },
   {
    "person_id": "X02609",
@@ -8149,7 +8439,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "nelson-nettleton-x02609"
+   "old_slug": "nelson-nettleton-x02609",
+   "new_slug": "nelson-nettleton"
   },
   {
    "person_id": "X02611",
@@ -8171,7 +8462,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "susan-dolph-norton-x02611"
+   "old_slug": "susan-dolph-norton-x02611",
+   "new_slug": "susan-dolph"
   },
   {
    "person_id": "X02612",
@@ -8193,7 +8485,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "almira-johnson-norton-x02612"
+   "old_slug": "almira-johnson-norton-x02612",
+   "new_slug": "almira-johnson"
   },
   {
    "person_id": "X02613",
@@ -8215,7 +8508,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "lucian-beers-x02613"
+   "old_slug": "lucian-beers-x02613",
+   "new_slug": "lucian-beers"
   },
   {
    "person_id": "X02615",
@@ -8237,7 +8531,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "henry-b-stannard-x02615"
+   "old_slug": "henry-b-stannard-x02615",
+   "new_slug": "henry-stannard"
   },
   {
    "person_id": "X02616",
@@ -8259,7 +8554,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "ruggles-g-nichols-x02616"
+   "old_slug": "ruggles-g-nichols-x02616",
+   "new_slug": "ruggles-nichols"
   },
   {
    "person_id": "X02617",
@@ -8281,7 +8577,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "susan-truman-norton-x02617"
+   "old_slug": "susan-truman-norton-x02617",
+   "new_slug": "susan-truman"
   },
   {
    "person_id": "X02618",
@@ -8303,7 +8600,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "alonson-bryan-x02618"
+   "old_slug": "alonson-bryan-x02618",
+   "new_slug": "alonson-bryan"
   },
   {
    "person_id": "X02624",
@@ -8325,7 +8623,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "william-andrew-bacon-x02624"
+   "old_slug": "william-andrew-bacon-x02624",
+   "new_slug": "william-bacon"
   },
   {
    "person_id": "X02629",
@@ -8347,7 +8646,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "raphael-ward-benton-x02629"
+   "old_slug": "raphael-ward-benton-x02629",
+   "new_slug": "raphael-benton"
   },
   {
    "person_id": "X02630",
@@ -8369,7 +8669,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "edwin-a-leete-x02630"
+   "old_slug": "edwin-a-leete-x02630",
+   "new_slug": "edwin-leete"
   },
   {
    "person_id": "X02631",
@@ -8391,7 +8692,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "jane-e-francis-hotchkiss-x02631"
+   "old_slug": "jane-e-francis-hotchkiss-x02631",
+   "new_slug": "jane-francis"
   },
   {
    "person_id": "X02633",
@@ -8413,7 +8715,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "john-dowd-x02633"
+   "old_slug": "john-dowd-x02633",
+   "new_slug": "john-dowd"
   },
   {
    "person_id": "X02634",
@@ -8435,7 +8738,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "esther-munger-coe-x02634"
+   "old_slug": "esther-munger-coe-x02634",
+   "new_slug": "esther-munger"
   },
   {
    "person_id": "X02635",
@@ -8457,7 +8761,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elliot-b-field-x02635"
+   "old_slug": "elliot-b-field-x02635",
+   "new_slug": "elliot-field"
   },
   {
    "person_id": "X02636",
@@ -8479,7 +8784,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "jane-m-blatchley-norton-x02636"
+   "old_slug": "jane-m-blatchley-norton-x02636",
+   "new_slug": "jane-blatchley"
   },
   {
    "person_id": "X02637",
@@ -8501,7 +8807,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "wellington-b-munger-x02637"
+   "old_slug": "wellington-b-munger-x02637",
+   "new_slug": "wellington-munger"
   },
   {
    "person_id": "X02638",
@@ -8523,7 +8830,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "maria-c-chalker-norton-x02638"
+   "old_slug": "maria-c-chalker-norton-x02638",
+   "new_slug": "maria-chalker"
   },
   {
    "person_id": "X02639",
@@ -8545,7 +8853,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "george-w-hill-x02639"
+   "old_slug": "george-w-hill-x02639",
+   "new_slug": "george-hill"
   },
   {
    "person_id": "X02640",
@@ -8567,7 +8876,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "adelaide-kimberly-norton-x02640"
+   "old_slug": "adelaide-kimberly-norton-x02640",
+   "new_slug": "adelaide-kimberly"
   },
   {
    "person_id": "X02641",
@@ -8589,7 +8899,8 @@
     "no_narrative",
     "no_career_or_edu"
    ],
-   "old_slug": "elizabeth-r-dudley-norton-x02641"
+   "old_slug": "elizabeth-r-dudley-norton-x02641",
+   "new_slug": "elizabeth-dudley"
   },
   {
    "person_id": "H01031",
@@ -8611,7 +8922,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "susannah-brace-h01031"
+   "old_slug": "susannah-brace-h01031",
+   "new_slug": "susannah-brace-1780"
   },
   {
    "person_id": "H01035",
@@ -8633,7 +8945,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "manoah-brace-h01035"
+   "old_slug": "manoah-brace-h01035",
+   "new_slug": "manoah-brace-1788"
   },
   {
    "person_id": "H01037",
@@ -8655,7 +8968,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "johnson-brace-h01037"
+   "old_slug": "johnson-brace-h01037",
+   "new_slug": "johnson-brace-1793"
   },
   {
    "person_id": "HD6639",
@@ -8677,7 +8991,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "daphne-hooker-hd6639"
+   "old_slug": "daphne-hooker-hd6639",
+   "new_slug": "daphne-hooker-1971"
   },
   {
    "person_id": "HD6640",
@@ -8699,7 +9014,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "jennie-hooker-hd6640"
+   "old_slug": "jennie-hooker-hd6640",
+   "new_slug": "jennie-hooker-1974"
   },
   {
    "person_id": "HD6641",
@@ -8721,7 +9037,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "robert-gay-hooker-iii-hd6641"
+   "old_slug": "robert-gay-hooker-iii-hd6641",
+   "new_slug": "robert-hooker-iii-1927"
   },
   {
    "person_id": "HD6642",
@@ -8743,7 +9060,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "katharine-elizabeth-hooker-hd6642"
+   "old_slug": "katharine-elizabeth-hooker-hd6642",
+   "new_slug": "katharine-hooker-1929"
   },
   {
    "person_id": "HD6643",
@@ -8765,7 +9083,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "sally-hill-hooker-hd6643"
+   "old_slug": "sally-hill-hooker-hd6643",
+   "new_slug": "sally-hooker-1944"
   },
   {
    "person_id": "I00248",
@@ -8788,7 +9107,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "ruth-keeney-howard-i00248"
+   "old_slug": "ruth-keeney-howard-i00248",
+   "new_slug": "ruth-keeney"
   },
   {
    "person_id": "I00249",
@@ -8810,7 +9130,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "jerusha-olmstead-talcott-i00249"
+   "old_slug": "jerusha-olmstead-talcott-i00249",
+   "new_slug": "jerusha-olmstead-1749"
   },
   {
    "person_id": "I00250",
@@ -8832,7 +9153,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "hannah-percival-talcott-i00250"
+   "old_slug": "hannah-percival-talcott-i00250",
+   "new_slug": "hannah-percival-1761"
   },
   {
    "person_id": "I00251",
@@ -8854,7 +9176,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "betsey-field-baker-talcott-i00251"
+   "old_slug": "betsey-field-baker-talcott-i00251",
+   "new_slug": "betsey-field-1771"
   },
   {
    "person_id": "I00252",
@@ -8877,7 +9200,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "catharine-gillet-griswold-i00252"
+   "old_slug": "catharine-gillet-griswold-i00252",
+   "new_slug": "catharine-gillet"
   },
   {
    "person_id": "I00253",
@@ -8899,7 +9223,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "george-griswold-i00253"
+   "old_slug": "george-griswold-i00253",
+   "new_slug": "george-griswold-1800"
   },
   {
    "person_id": "I00254",
@@ -8921,7 +9246,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "eber-cotter-i00254"
+   "old_slug": "eber-cotter-i00254",
+   "new_slug": "eber-cotter-1800"
   },
   {
    "person_id": "I00255",
@@ -8943,7 +9269,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "cordelia-a-welles-howard-i00255"
+   "old_slug": "cordelia-a-welles-howard-i00255",
+   "new_slug": "cordelia-welles-1850"
   },
   {
    "person_id": "I00256",
@@ -8966,7 +9293,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "rhoda-wells-keeney-i00256"
+   "old_slug": "rhoda-wells-keeney-i00256",
+   "new_slug": "rhoda-wells"
   },
   {
    "person_id": "I00257",
@@ -8989,7 +9317,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "sarah-cravath-keeney-i00257"
+   "old_slug": "sarah-cravath-keeney-i00257",
+   "new_slug": "sarah-cravath"
   },
   {
    "person_id": "I00258",
@@ -9012,7 +9341,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "sarah-reddish-keeney-i00258"
+   "old_slug": "sarah-reddish-keeney-i00258",
+   "new_slug": "sarah-reddish"
   },
   {
    "person_id": "T01095",
@@ -9034,7 +9364,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "walter-howard-t01095"
+   "old_slug": "walter-howard-t01095",
+   "new_slug": "walter-howard-1802"
   },
   {
    "person_id": "X03414",
@@ -9057,7 +9388,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "robert-j-dunham-jr-x03414"
+   "old_slug": "robert-j-dunham-jr-x03414",
+   "new_slug": "robert-dunham"
   },
   {
    "person_id": "X03415",
@@ -9080,7 +9412,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "edith-dunham-throckmorton-x03415"
+   "old_slug": "edith-dunham-throckmorton-x03415",
+   "new_slug": "edith-dunham"
   },
   {
    "person_id": "X03419",
@@ -9102,7 +9435,8 @@
     "no_career_or_edu",
     "no_research_notes"
    ],
-   "old_slug": "robert-turnbull-brown-x03419"
+   "old_slug": "robert-turnbull-brown-x03419",
+   "new_slug": "robert-brown-1842"
   }
  ]
 }

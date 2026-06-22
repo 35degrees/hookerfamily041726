@@ -100,8 +100,18 @@ function firstName(p) {
 	return b.first_name || (b.display_name || '').split(/\s+/)[0] || '';
 }
 
-// Surname chosen by descent, not gender (bloodline women carry married name).
-function surname(p) {
+// Cleaned display_name tokens (qualifiers like "(...)" / "[...]" stripped). Shared by the
+// surname + generationalSuffix display-name fallbacks below.
+function displayTokens(p) {
+	return (bioOf(p).display_name || '')
+		.split(/[([]/)[0]
+		.trim()
+		.split(/\s+/)
+		.filter(Boolean);
+}
+
+// Structured surname by descent, not gender (bloodline women carry married name). No fallback.
+function structuredSurname(p) {
 	const b = bioOf(p);
 	const married = (b.married_names && b.married_names[b.married_names.length - 1]) || null;
 	if (MARRIED_IN.has(prefixOf(p.id))) {
@@ -110,10 +120,34 @@ function surname(p) {
 	return b.last_name || married || b.maiden_name || null;
 }
 
-// Only return a suffix when it is a genuine generational marker.
+// Surname for slugging. Falls back to display_name (mirrors firstName's fallback) when the
+// structured fields are all empty — common for display-name-only / imported / reclassified
+// entries that were otherwise mis-flagged as placeholders and slugged by ID. Drops trailing
+// generational suffixes so "Jonathan Trumbull Jr." → "Trumbull", then takes the last token.
+function surname(p) {
+	const structured = structuredSurname(p);
+	if (structured) return structured;
+	const toks = displayTokens(p);
+	while (
+		toks.length > 1 &&
+		GENERATIONAL.has(toks[toks.length - 1].replace(/[^a-z]/gi, '').toLowerCase())
+	) {
+		toks.pop();
+	}
+	return toks.length >= 2 ? toks[toks.length - 1] : null;
+}
+
+// Only return a suffix when it is a genuine generational marker. Prefer structured bio.suffix;
+// for display-name-only entries (no structured surname) fall back to a trailing generational
+// token in display_name so "Jonathan Trumbull Jr." keeps the Jr. instead of dropping it. The
+// fallback is gated on a missing structured surname so it never alters fully-structured slugs.
 function generationalSuffix(p) {
 	const raw = (bioOf(p).suffix || '').trim();
-	return GENERATIONAL.has(raw.toLowerCase()) ? raw : null;
+	if (GENERATIONAL.has(raw.toLowerCase())) return raw;
+	if (structuredSurname(p)) return null;
+	const toks = displayTokens(p);
+	const last = toks.length > 1 ? toks[toks.length - 1].replace(/[^a-z]/gi, '') : '';
+	return GENERATIONAL.has(last.toLowerCase()) ? last : null;
 }
 
 function isPlaceholder(p) {
