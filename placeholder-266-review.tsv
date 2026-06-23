@@ -1,0 +1,267 @@
+person_id	display_name	first_name	last_name	birth_year	death_year	narrative_blocks_count	has_career_or_education
+H01022	Thomas Brace	Thomas	Brace	1764	1796	0	no
+H01023	Henry Brace IV	Henry	Brace	1766	1841	0	no
+H01024	Edmund Brace	Edmund	Brace	1768	1768	1	no
+H01026	Abigail Elizabeth Brace	Abigail Elizabeth	Brace	1772	1772	1	no
+H01030	Betsey Brace	Betsey	Brace	1778		0	no
+H01031	Susannah Brace	Susannah	Brace	1780		0	no
+H01032	Edmond Hooker Brace	Edmond Hooker	Brace	1782	1840	0	no
+H01033	Jonathan Brace	Jonathan	Brace	1784	1784	1	no
+H01034	Orin Brace	Orin	Brace	1786	1804	0	no
+H01035	Manoah Brace	Manoah	Brace	1788		0	no
+H01036	Vina Brace	Vina	Brace	1791	1791	1	no
+H01037	Johnson Brace	Johnson	Brace	1793		0	no
+H01413	Charles Hooker	Charles	Hooker	1797	1833	0	no
+H02751	Ann Thompson Hooker	Ann	Hooker	1813	1878	0	no
+H02752	Almira Hooker	Almira	Hooker	1819	1850	0	no
+H02757	Worthington Hooker	Worthington	Hooker	1823	1843	0	no
+H02758	Sarah Judd Hooker	Sarah	Hooker	1825	1848	0	no
+H02761	Charles Thompson Hooker	Charles	Hooker	1834	1872	0	no
+H03341	Edmund Lloyd Vail	Edmund	Vail	1858		0	no
+H03345	Walter Scott Vail	Walter	Vail	1867		0	no
+H03351	Henry Ensign Olcott	Henry	Olcott	1871		0	no
+H04343	Charles Hooker Kingsley	Charles	Kingsley	1832	1848	0	no
+H04346	Allen Thompson Hooker	Allen	Hooker	1834	1854	0	no
+H04347	Henry Chester Hooker	Henry	Hooker	1835	1865	0	no
+H04350	Worthington Hooker	Worthington	Hooker	1846	1846	0	no
+H04353	Junia Maria Chapman	Junia	Chapman	1828	1892	0	no
+H04355	Anson Hooker Chapman	Anson	Chapman	1838	1838	0	no
+H04369	Edward Hooker Smith	Edward	Smith	1866		0	no
+H05237	Louisa Bridgeman	Louisa	Bridgeman	1848	1848	0	no
+H05238	Louisa Bridgeman	Louisa	Bridgeman	1851	1852	0	no
+H05239	Charles Kingsley Drury	Charles	Drury	1850	1851	0	no
+H05240	Mary Hooker Drury	Mary	Drury	1857	1876	0	no
+H05245	Charles Hooker Kingsley	Charles	Kingsley	1864	1865	0	no
+H05247	Ellen Munson Kingsley	Ellen	Kingsley	1868		0	no
+H05249	Lucy Maria Bradley	Lucy	Bradley	1880	1910	0	no
+H05251	Anna Worthington Hooker	Anna	Hooker	1870	1873	1	no
+H05252	Edward Festus Hooker	Edward	Hooker	1876	1907	0	no
+H05253	Charles Strong Hooker	Charles	Hooker	1878	1878	1	no
+H05254	Cornelia Almira Hooker	Cornelia	Hooker	1879		0	no
+H05256	George Hooker Knight	George	Knight	1876		0	no
+H05258	Albert Jewett Hooker	Albert	Hooker	1890		0	no
+H05259	Earl Drury Hooker	Earl	Hooker	1892		0	no
+H05260	Bessie May Hooker	Bessie	Hooker	1873		0	no
+H05262	Charles Worcester Hooker	Charles	Hooker	1883		0	no
+H05264	William Brian Hooker	William	Hooker	1880		0	no
+H05265	Joan Culbertson Hooker	Joan	Hooker	1884		0	no
+H05266	Duncan Collins Hooker	Duncan	Hooker	1885		0	no
+HD3398	Mary Hooker	Mary	Hooker	2014		0	no
+HD3399	Teri Hooker	Teri	Hooker	2016		0	no
+HD3788	Harriet Cowles Waller	Harriet	Cowles	1912		0	no
+HD3789	Dwight Whittlesey Cowles	Dwight	Cowles	1874	1930	0	no
+HD3997	Mary Mansfield	Mary	Mansfield	1813		0	no
+HD6639	Daphne Hooker	Daphne	Hooker	1971		0	no
+HD6640	Jennie Hooker	Jennie	Hooker	1974		0	no
+HD6641	Robert Gay Hooker III	Robert	Hooker	1927		0	no
+HD6642	Katharine Elizabeth Hooker	Katharine	Hooker	1929		0	no
+HD6643	Sally Hill Hooker	Sally	Hooker	1944		0	no
+I00246	Harry Page Guyton	Harry	Guyton	1855		0	no
+I00249	Jerusha Olmstead Talcott	Jerusha	Talcott	1749	1800	0	no
+I00250	Hannah Percival Talcott	Hannah	Talcott	1761	1820	0	no
+I00251	Betsey Field Baker Talcott	Betsey	Talcott	1771	1854	0	no
+I00253	George Griswold	George	Griswold	1800	1857	0	no
+I00254	Eber Cotter	Eber	Cotter	1800		0	no
+I00255	Cordelia A. Welles Howard	Cordelia	Howard	1850	1935	0	no
+I00343	Harold Emmett Booth	Harold	Booth	1909	1954	0	no
+T01020	Samuel Wright	Samuel	Wright	1737		0	no
+T01021	Josiah Wright	Josiah	Wright	1738		0	no
+T01022	Abigail Wright	Abigail	Wright	1740		0	no
+T01023	Mehitabel Wright	Mehitabel	Wright	1742		0	no
+T01024	Hezekiah Wright	Hezekiah	Wright	1744		0	no
+T01025	David Wright	David	Wright	1745		0	no
+T01026	Sarah Wright	Sarah	Wright	1748		0	no
+T01027	Isaac Wright	Isaac	Wright	1753		0	no
+T01039	Jerusha Talcott	Jerusha	Talcott	1783		0	no
+T01040	Benjamin Talcott	Benjamin	Talcott	1789		0	no
+T01041	Hannah Talcott	Hannah	Talcott	1804		0	no
+T01042	Elijah Talcott	Elijah	Talcott	1784	1857	0	no
+T01043	Deacon Flavel Talcott	Flavel	Talcott	1786	1844	1	no
+T01044	Rev. Hart Talcott	Hart	Talcott	1787	1836	1	no
+T01045	Rebecca Talcott Stone	Rebecca	Stone	1789	1841	0	no
+T01046	Asa Talcott	Asa	Talcott	1793	1793	0	no
+T01047	Dr. William Olmstead Talcott	William	Talcott	1794	1831	1	no
+T01048	Julius Talcott	Julius	Talcott	1796	1854	1	no
+T01049	Wealthy Talcott	Wealthy	Talcott	1806		0	no
+T01050	Luna Talcott	Luna	Talcott	1808		0	no
+T01051	Lura Talcott	Lura	Talcott	1808		0	no
+T01061	Hannah Talcott	Hannah	Talcott	1791	1866	0	no
+T01064	Joel Talcott	Joel	Talcott	1797	1871	0	no
+T01065	Allyn Talcott	Allyn	Talcott	1800	1863	0	no
+T01066	Clement Talcott	Clement	Talcott	1802	1802	0	no
+T01067	Belinda Talcott	Belinda	Talcott	1804	1846	0	no
+T01068	Eunice Talcott	Eunice	Talcott	1807	1895	0	no
+T01089	Samuel Howard	Samuel	Howard	1790	1861	0	no
+T01090	Ulysses Howard	Ulysses	Howard	1791	1794	0	no
+T01091	Rachel Bingham	Rachel	Bingham	1794	1872	0	no
+T01092	Talcott Howard	Talcott	Howard	1796		0	no
+T01093	Emily Veazey	Emily	Veazey	1798	1871	0	no
+T01095	Walter Howard	Walter	Howard	1802	1867	0	no
+T01174	Nathaniel Hubbard Talcott	Nathaniel Hubbard	Talcott	1816	1895	0	no
+T01175	James Morris Talcott	James Morris	Talcott	1817	1904	1	no
+T01176	William Flavel Talcott	William Flavel	Talcott	1819	1873	0	no
+T01177	Samuel Olmsted Talcott	Samuel Olmsted	Talcott	1821	1825	0	no
+T01178	Philander Parmele Talcott	Philander Parmele	Talcott	1823	1862	0	no
+T01179	Elizabeth Ann Perrin	Elizabeth Ann	Perrin	1825	1889	0	no
+T01180	Royal Talcott	Royal	Talcott	1828	1833	0	no
+T01181	William Hart Talcott	William Hart	Talcott	1822	1866	0	no
+T01182	Susan Maria Talcott	Susan Maria	Talcott	1823	1845	0	no
+T01183	Henry Warner Talcott	Henry Warner	Talcott	1827	1846	0	no
+T01184	Elizabeth Parthenia Talcott	Elizabeth Parthenia	Talcott	1829	1850	0	no
+T01185	Clarina Rebecca Talcott	Clarina Rebecca	Talcott	1833	1870	0	no
+T01186	Edward Olmstead Talcott	Edward Olmstead	Talcott	1835	1840	0	no
+T01187	Sarah W Talcott	Sarah	Talcott	1830	1830	0	no
+T01189	Edward Charles Talcott	Edward Charles	Talcott	1824	1900	0	no
+T01190	Parthenia Maria Talcott	Parthenia Maria	Talcott	1826	1854	0	no
+T01191	Elijah Julius Talcott	Elijah Julius	Talcott	1828	1858	0	no
+T01192	Eliza Jane Talcott	Eliza Jane	Talcott	1830	1865	0	no
+T01193	Harriet Talcott	Harriet	Talcott	1819	1824	0	no
+T01194	Caroline Talcott	Caroline	Talcott	1823	1900	0	no
+T01195	Samuel Tudor Talcott	Samuel Tudor	Talcott	1825	1827	0	no
+T01196	Samuel Tudor Talcott	Samuel Tudor	Talcott	1829	1908	0	no
+T01197	Harriette Talcott	Harriette	Talcott	1830		0	no
+T01198	Henriette Talcott	Henriette	Talcott	1830	1831	0	no
+T01211	Edward Talcott	Edward	Talcott	1831	1831	0	no
+T01212	Susan Bull Talcott	Susan	Talcott	1833	1917	0	no
+T01214	Lora Elizabeth Talcott	Lora	Talcott	1838	1924	0	no
+T01215	Maria Talcott	Maria	Talcott	1839		0	no
+T01216	Mary Talcott	Mary	Talcott	1846	1856	0	no
+T01376	N. Flavel Talcott	N. Flavel	Talcott	1848	1853	0	no
+T01377	Abbie Ann Talcott	Abbie Ann	Talcott	1853	1854	0	no
+T02182	Joseph Abbott Talcott	Joseph Abbott	Talcott	1815		0	no
+T02183	Anson F Talcott	Anson F	Talcott	1817		1	no
+T02184	Norman W Talcott	Norman W	Talcott	1819		0	no
+T02185	George A Talcott	George A	Talcott	1821	1846	0	no
+T02187	Lucius Talcott	Lucius	Talcott	1826	1864	0	no
+T02188	Charlotte A Talcott	Charlotte A	Talcott	1828		0	no
+T02189	Emily Talcott	Emily	Talcott	1831		0	no
+T02191	Lydia M Talcott	Lydia M	Talcott	1835		0	no
+T02193	Cynthia Talcott	Cynthia	Talcott	1902	1905	0	no
+T02194	Iolanda Talcott	Iolanda	Talcott	1907	1911	0	no
+T02198	Elizabeth Griswold	Elizabeth	Griswold	1784	1802	0	no
+T02199	Aurelia Griswold Parmenter	Aurelia	Parmenter	1789	1817	0	no
+T02200	Talcott Griswold	Talcott	Griswold	1791	1796	1	no
+T02203	Charlotte Griswold Sawyer	Charlotte	Sawyer	1797	1857	0	no
+T02204	Emily Griswold Richards	Emily	Richards	1800	1884	0	no
+T02205	Adeline Griswold Sawyer	Adeline	Sawyer	1802	1827	0	no
+T02206	Melitta Griswold Munn	Melitta	Munn	1805	1844	0	no
+T02207	Philena Ann Clark Reynolds	Philena Ann	Reynolds	1820	1907	0	no
+T02208	John Wrisley Clark	John Wrisley	Clark	1829	1885	0	no
+T02209	Theophilus Lyman Griswold	Theophilus Lyman	Griswold	1829	1884	0	no
+T02210	Mary Ellen Burrows Griswold	Mary Ellen	Griswold	1835	1924	0	no
+T02211	Bela Talcott	Bela	Talcott	1797	1802	0	no
+T02212	Betsey Talcott Griswold	Betsey	Griswold	1799	1844	0	no
+T02214	Bartsheba Williams Talcott Cotter	Bartsheba Williams	Cotter	1804	1847	0	no
+T02217	Anna Talcott	Anna	Talcott	1799	1817	0	no
+T02218	Twin Son 1 Talcott	Twin Son 1	Talcott	1802	1802	0	no
+T02219	Twin Son 2 Talcott	Twin Son 2	Talcott	1803	1803	0	no
+T02220	Elizabeth Lyman Talcott	Elizabeth Lyman	Talcott	1804	1824	0	no
+T02221	Olive Talcott	Olive	Talcott	1807	1821	0	no
+T02222	Harriet Martha Ann Talcott	Harriet Martha Ann	Talcott	1823	1826	0	no
+T02231	Phebe Ward	Phebe	Ward	1829	1877	0	no
+T02232	John Howard Ward	John Howard	Ward	1833	1871	0	no
+T02233	Catherine Bertha Ward	Catherine Bertha	Ward	1834	1876	0	no
+T02234	Rachel Lorain Ward	Rachel Lorain	Ward	1837	1842	0	no
+T02235	Eliza McPherson Ward	Eliza	Ward	1839	1873	0	no
+T02237	Arthur Ward	Arthur	Ward	1844	1927	0	no
+T02238	Julia Gertrude Ward	Julia Gertrude	Ward	1848	1930	0	no
+T02240	Aurora Smith	Aurora	Smith	1792	1830	0	no
+T02241	Olive Smith	Olive	Smith	1798	1831	0	no
+T02242	Warren Smith	Warren	Smith	1800	1870	0	no
+T02244	Mary Taylor	Mary	Smith	1807	1876	0	no
+T02246	Zolvah Smith	Zolvah	Smith	1813	1897	0	no
+T02251	Helen M Smith Bly	Helen M	Bly	1835	1908	0	no
+T02252	Adelia H Smith Carey	Adelia H	Carey	1840	1917	0	no
+T02253	Alexander Keeney	Alexander	Keeney	1796	1819	0	no
+T02254	Chester Keeney	Chester	Keeney	1797		0	no
+T02255	George Keeney	George	Keeney	1800		0	no
+T02257	Eli Keeney	Eli	Keeney	1804	1832	0	no
+T02259	Benjamin Keeney	Benjamin	Keeney	1810	1811	0	no
+T02260	Amelia Smith	Amelia	Smith	1798	1859	0	no
+T02261	Mary Talcott	Mary	Talcott	1802		0	no
+T02262	Rachel Howard Case	Rachel Howard	Case	1806	1872	1	no
+T02265	Rosanna Miles	Rosanna	Miles	1811	1838	1	no
+T02266	Emeline Tracy	Emeline	Tracy	1815	1867	0	no
+T02270	William Henry Talcott	William Henry	Talcott	1832	1856	1	no
+T02271	Mary Elizabeth Talcott	Mary Elizabeth	Talcott	1836	1837	0	no
+T02272	Sarah Talcott	Sarah	Talcott	1841	1866	0	no
+TD0073	Jeanne Stanley Oakes	Jeanne	Stanley	1913	1942	1	yes
+TD0074	Talcott Stanley	Talcott	Stanley	1918	2008	7	yes
+TD0075	Elizabeth Stanley	Elizabeth	Stanley	1921	1930	1	no
+TD0121	Betsy Hobart	Betsy	Hobart	1805	1843	0	no
+TD0122	James Hobart Jr.	James	Hobart	1807	1897	0	no
+TD0124	Emeline Hobart Evans	Emeline	Evans	1811	1894	3	no
+TD0127	Harriet N. Hobart	Harriet	Hobart	1816	1834	0	no
+TD0130	Hannah Hobart Craven	Hannah	Craven	1824	1908	0	no
+TD0131	Timothy Dwight Hobart	Timothy	Hobart	1826	1853	0	yes
+TD0132	Isaac Watts Hobart	Isaac	Hobart	1829	1850	0	no
+TD0135	Fredrick Able Hobart	Fredrick	Hobart	1898	1972	0	no
+TD0136	Laura Prescott Hobart Fatheree	Laura	Fatheree	1899	1990	0	no
+TD0142	Mary Perrin Dewey	Mary	Dewey	1839	1918	0	no
+TD0143	Frances Isabella Dewey Fifield	Frances	Fifield	1849	1922	0	no
+TD0144	William Tarbox Dewey	William	Dewey	1852	1911	0	no
+TD0145	Jennie Dewey Blackwell	Jennie	Blackwell	1854	1913	0	no
+TD0146	Mary Grace Dewey	Mary	Dewey	1858	1930	0	no
+TD0147	George Perrin Dewey	George	Dewey	1860	1925	0	no
+TD0148	Gertrude Dewey McCuen	Gertrude	McCuen	1862	1947	0	no
+TD0149	Charles Robert Dewey	Charles	Dewey	1867	1909	0	no
+TD0152	Margaret Dewey Howland	Margaret	Howland	1875	1952	0	no
+TD0153	Julius Edward Dewey	Julius	Dewey	1878	1960	0	no
+TD0154	Edward Bradley Dewey	Edward	Dewey	1891	1962	0	no
+TD0155	Theodore MacRae Dewey	Theodore	Dewey	1895	1962	0	no
+TD0158	Mary E. Evans	Mary	Evans	1834	1837	0	no
+TD0159	Ira Evans	Ira	Evans	1836	1838	0	no
+TD0161	J. Annette Evans	J	Evans	1840	1842	0	no
+TD0164	William Dwight Evans	William	Evans	1849	1861	1	no
+TD0168	Roma Evans Ives	Roma	Ives	1900	1988	0	no
+TD0169	H. Leslie Evans	H.	Evans	1903	1991	0	no
+TD0171	Mary Caroline Perrin Pollard	Mary	Pollard	1837	1866	0	no
+TD0173	Amanda L. Perrin	Amanda	Perrin	1839	1912	0	no
+TD0175	William Niven Perrin	William	Perrin	1864	1933	0	no
+TD0177	John Tindall Perrin	John	Perrin	1869	1943	0	no
+TD0178	James Austin Perrin	James	Perrin	1870	1894	0	no
+TD0179	Clara Amanda Alvira Frizzell Thompson	Clara	Thompson	1891	1983	0	no
+TD0180	Francis Niven Frizzell	Francis	Frizzell	1892	1968	0	no
+TD0181	Lillie Irene Frizzell Johnson	Lillie	Johnson	1897	1972	0	no
+TD0182	Garland Frizzell	Garland	Frizzell	1897	1984	0	no
+TD0183	James Austin Frizzell	James	Frizzell	1899	1973	0	no
+TD0261	Mary Elizabeth Huntington	Mary	Huntington	1811		0	no
+TD0267	Emily Ritchey Douthitt	Emily	Douthitt	1834		0	no
+TD0268	Angelina Elizabeth Ritchey Sadler	Angelina	Sadler	1837	1894	0	no
+TD0269	Augustus Ritchey	Augustus	Ritchey	1839	1843	0	no
+TD0270	Mary Louisa Ritchey Hess	Mary	Hess	1842	1922	0	no
+TD0271	James Lawrence Ritchey	James	Ritchey	1844	1844	0	no
+TD0273	Eliza Huntington Snyder	Eliza	Snyder	1853	1939	0	no
+TD0274	Thomas Hendricks Huntington	Thomas	Huntington	1854	1928	0	no
+TD0275	Abbie Huntington Becker	Abbie	Becker	1856	1941	0	no
+TD0276	Maggie Huntington Allen	Maggie	Allen	1859	1920	0	no
+TD0281	Abbie Huntington Taylor	Abbie	Taylor	1888	1933	0	no
+TD0282	Ben Ferris Huntington	Ben	Huntington	1891	1960	0	no
+TD0283	Walter Huntington	Walter	Huntington	1893	1893	0	no
+TD0284	Olive A. Huntington	Olive	Huntington	1893	1900	0	no
+TD0285	Ruth Somers Huntington	Ruth	Huntington	1898	1900	0	no
+TD0286	George Frederick Huntington Sr.	George	Huntington	1902	1965	0	no
+TD0287	Dorothy Louise Huntington Shelden	Dorothy	Shelden	1900	1968	0	no
+TD0288	Dolores Estelle Huntington Nace	Dolores	Nace	1901	1998	0	no
+TD0290	Joseph Henry "Joe" Huntington	Joseph	Huntington	1911	1978	0	no
+TD0291	Ralph Edwards Huntington	Ralph	Huntington	1915	1962	0	no
+TD0292	Jessie R. Coen	Jessie	Coen	1872	1959	0	no
+TD0293	James Thomas Coen	James	Coen	1874	1906	0	no
+TD0294	Ella Rae Coen	Ella	Coen	1876	1949	0	no
+TD0295	Latha Coen	Latha	Coen	1880	1944	0	no
+TD0296	Fannie Coen	Fannie	Coen	1881	1971	0	no
+TD0297	Case Louise Coen Wallace	Case	Wallace	1884	1964	0	no
+TD0298	Septimus Huntington	Septimus	Huntington	1773	1776	0	no
+TD0299	George Washington Huntington	George	Huntington	1776	1777	0	no
+TD0300	Hannah Huntington	Hannah	Huntington	1779	1794	0	no
+TD0301	Henry Huntington	Henry	Huntington	1781	1806	0	no
+TD0303	Mercy Penelope Huntington	Mercy	Huntington	1788	1794	0	no
+TD0304	James Huntington	James	Huntington	1790	1793	0	no
+X02035	Frederick Law Olmsted	Frederick	Olmsted	1822	1903	4	no
+X02134	Hannah Hawkins Buckingham	Hannah	Buckingham	1606	1646	0	no
+X02367	Albert Norris	Albert	Norris	1935		0	no
+X02376	Maria Gillis Bradley Dewey	Maria	Dewey	1866	1924	0	no
+X02378	Murray Montague Tucker	Murray	Tucker	1888	1966	0	no
+X02387	Josephine Willa Taylor Evans	Josephine	Evans	1876	1958	0	no
+X02563	Emily Dickinson	Emily	Dickinson	1830	1886	3	no
+X03419	Robert Turnbull Brown	Robert	Brown	1842	1878	0	no
