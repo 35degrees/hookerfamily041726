@@ -144,6 +144,11 @@ export interface ArtworkRef {
 	blurb?: string | null;
 }
 
+export interface DocumentRef {
+	document_id: string;
+	document_blurb?: string | null;
+}
+
 export interface Person {
 	id: string;
 	slug: string;
@@ -174,7 +179,7 @@ export interface Person {
 	landmarks: LandmarkRef[];
 	statues?: StatueRef[];
 	artworks: ArtworkRef[];
-	documents: string[];
+	documents: DocumentRef[];
 	paths_to_thomas?: Array<{ path_id: number; length: number; chain: string[]; via?: string }>;
 	paths_to_john_talcott?: Array<{ path_id: number; length: number; chain: string[]; via?: string }>;
 	former_ids?: string[];

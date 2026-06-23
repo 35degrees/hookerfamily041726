@@ -248,8 +248,21 @@
 					Documents
 				</div>
 				{#each person.documents as doc, i (i)}
-					<div class="line-clamp-2 text-[13px] leading-snug font-medium text-slate-800" title={doc}>
-						{doc}
+					<div class="space-y-0.5">
+						<div
+							class="line-clamp-2 text-[13px] leading-snug font-medium text-slate-800"
+							title={doc.document_id}
+						>
+							{doc.document_id}
+						</div>
+						{#if doc.document_blurb}
+							<div
+								class="line-clamp-2 text-[11px] leading-snug text-slate-500"
+								title={doc.document_blurb}
+							>
+								{doc.document_blurb}
+							</div>
+						{/if}
 					</div>
 				{/each}
 			</section>
