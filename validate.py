@@ -87,7 +87,7 @@ def sentence_count(body: str) -> int:
     # 'vs'/'v' protect legal-citation periods ("Brom and Bett v. Ashley") — \b ensures the bare
     # 'v' only matches a standalone citation token, never the v inside words like "Nov."
     # 'Col'/'Capt' are standard rank abbreviations (same class as Gen/Gov/Dr) — protect them too.
-    b = re.sub(r'\b([A-Z]\.|Mr|Mrs|Mme|Mlle|Messrs|Dr|St|Ste|Gen|Gov|Col|Capt|Rev|Jr|Sr|Co|Esq|vs|v)\.', r'\1', b)
+    b = re.sub(r'\b([A-Z]|Mr|Mrs|Mme|Mlle|Messrs|Dr|St|Ste|Gen|Gov|Col|Capt|Rev|Jr|Sr|Co|Esq|vs|v)\.', r'\1', b)
     # Count only fragments with real content — a trailing closing quote / stray punctuation after
     # the final period (e.g. a body ending ...backed.') is not a sentence.
     return len([s for s in re.split(r'[.!?]+', b) if re.search(r'[A-Za-z0-9]', s)])
