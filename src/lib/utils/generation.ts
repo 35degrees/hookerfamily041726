@@ -10,6 +10,11 @@ import type { Person } from '$lib/types/person';
  * - Derived labels (spouse, in-law) carry "of [Founder]" for gen 1-3, drop it for gen 4+
  */
 export function computeGenerationLabels(person: Person, byId: Record<string, Person>): string[] {
+	// === Rare one-off override — render verbatim, skip all computation ===
+	if (person.relational_label_override) {
+		return [person.relational_label_override];
+	}
+
 	// === Hardcoded founders ===
 	if (person.id === 'H00001') {
 		return ['Founder of the American Hooker Line'];

@@ -187,6 +187,8 @@ export interface Person {
 	number_of_marriages?: number | null;
 	cross_reference?: string | null;
 	naming_inspiration?: unknown[];
+	/** Rare one-off: when set, computeGenerationLabels renders this verbatim instead of computing. */
+	relational_label_override?: string;
 }
 
 export interface Education {
