@@ -40,7 +40,7 @@ NB_CATEGORY = {
 NOTABLE_CATEGORY = {
     'politics','military','law','religion','education','arts','science','business',
     'exploration','social_reform','charity','literature','poetry','medicine',
-    'author','history','horse_racing',
+    'author','history','horse_racing','journalist','socialite',
 }
 # §B.2 asymmetry remaps (suggested, for the report — NOT auto-applied)
 NB_CATEGORY_REMAP = {
