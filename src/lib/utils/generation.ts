@@ -94,6 +94,15 @@ function buildDescendantLabel(generation: number, gender: string | null, founder
  *   gen 4+: abbreviated, just "Fourth Generation Hooker" (drops "of Thomas Hooker")
  */
 function getDescendantOrdinalShort(person: Person): string | null {
+	// Honor a stored relationship (ancestor/collateral cases like "Sister of Thomas
+	// Hooker") so a spouse derives e.g. "Husband of Sister of Thomas Hooker" the same
+	// way it already derives "Husband of Granddaughter of Thomas Hooker". Only blood
+	// relationships are safe to prefix with "Husband/Wife of" — skip already-derived
+	// overrides (in-law, or spouse-prefixed) to avoid "Husband of Mother-in-law of …".
+	const override = person.relational_label_override;
+	if (override && !/-in-law\b/i.test(override) && !/^(Husband|Wife|Spouse) of /i.test(override)) {
+		return override;
+	}
 	const cls = person.classification;
 	if (cls.is_thomas_descendant && cls.generation_from_thomas != null) {
 		const relation = getRelationWord(cls.generation_from_thomas, person.gender);
