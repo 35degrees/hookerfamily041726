@@ -1,9 +1,17 @@
 # Hooker Family Descendants — Design Decisions
 
-Last updated: April 23, 2026
+Last updated: July 1, 2026 (revision 070126)
 Maintained by: Samuel Talcott Hooker
+Affiliated schema: v22 (`hooker_json_schema_v22.md`)
 
 Running record of architectural and UX decisions made during design sessions. Update as decisions evolve or get more specific.
+
+**Revision 061726 — what changed in this pass:**
+- Schema affiliation updated v11 → v22; working data is ~14,767 people.
+- Documented the per-person payload data-delivery architecture (built June 2026), which replaces the now-removed `neighborhoods/` model.
+- **Reversed the page-transition technology decision: the View Transitions API is RULED OUT; Svelte `crossfade` (`send`/`receive`) is the chosen approach.** Full rationale in the "Page transitions" section under MOTION LANGUAGE.
+- Reconciled two divergent BUILT-vs-PLANNED inventories into one current inventory.
+- Added authoritative Svelte API references (`svelte/transition`, `svelte/motion`).
 
 ---
 
@@ -27,7 +35,19 @@ Running record of architectural and UX decisions made during design sessions. Up
 
 ## DATA ARCHITECTURE
 
-**Canonical source:** The JSON is the single source of truth. Version 11 schema.
+**Canonical source:** The JSON is the single source of truth. **Schema v22** (canonical schema doc: `hooker_json_schema_v22.md`). Working data is ~14,767 people.
+
+**Data delivery — per-person payloads (built June 2026, current architecture):**
+
+The person page does NOT load the full corpus. `regenerate-data.js` reads `canonical.json` and emits:
+- `static/data/person/<slug>.json` — one self-contained payload per person (~17 KB average; Thomas Hooker, the largest, is ~319 KB). Each payload contains the focus record, its bounded family-graph neighborhood (only the ~40–50 relatives the page's enrich/diedYoung/computeGenerationLabels logic actually reads — Thomas Hooker: 47, not 14,767), the resolved burial cemetery, the focus's institutions only, and cross-connection slugs pre-resolved at build time via the build's slugMap.
+- **Entity resolution (standing rule):** person-side entity references are stored as raw-id backlinks (`{cemetery_id}`, `{landmark_id}`, `{artwork_id}`, `{statue_id}`, document ids). They are resolved at BUILD time in `regenerate-data.js` against the top-level registries, and the display-ready fields are embedded into the payload — the component receives display-ready objects, NEVER a raw id. The resolved burial cemetery (above) is the reference implementation. As of July 1 2026, cemetery is resolved; landmark / artwork / statue / document still render raw ids pending this treatment. A component showing a raw `LM106` / `ART113` is the signal that resolution has not been applied.
+- `static/data/{people,search-index,cemeteries,institutions}.json` — bundle files retained for future client-side search etc., but NOT shipped to the person page.
+- `static/data/redirects.json` — old-slug → current-slug map (generated; a 301 handler is NOT yet wired, so stale/yearless slugs currently 404 rather than redirect).
+
+`/person/[slug]/+page.ts` fetches the single per-person payload; enrichment logic (`+page.ts`, `generation.ts`) runs over that tiny context unchanged. No display logic was ported into the build, so there is no drift risk. This replaced an architecture that serialized the entire 22 MB `people.json` into every page's HTML (Thomas Hooker dropped 28 MB → 319 KB). The earlier `static/data/neighborhoods/` directory is REMOVED and superseded by this model.
+
+**Regenerate loop:** drop a corrected `canonical.json` in → `node regenerate-data.js` → refresh localhost. Regenerating touches no git. When committing, commit `canonical.json` together with its regenerated `static/data/` outputs in the same commit, so source and outputs stay self-consistent (re-running the build from the committed source reproduces the committed data).
 
 **ID prefix system:**
 - `H00001-H09999` — Edward Hooker 1909 book entries (number matches EH entry number)
@@ -57,6 +77,11 @@ Running record of architectural and UX decisions made during design sessions. Up
 
 **Committed slug format:** `first-last-birthyear` (e.g., `/person/thomas-hooker-1586`)
 
+- Slug is computed by `regenerate-data.js` from `bio.first_name` + surname (+ optional generational suffix + birth year). Surname follows DESCENT: married-in spouses (I/X/U prefixes) use `maiden_name`; bloodline women slug by married name. People with no birth year get a provisional yearless slug.
+- **`display_name` is NOT used for the slug.** Empty `first_name`/`last_name` fields produce a broken/empty slug even when `display_name` is populated — a recurring defect class to guard against (it has caused 404s that look like deletions but are not).
+- **Placeholder stubs** (unnamed infants written as `[Son]`/`[Daughter]` in `first_name`): the `[` is detected by `isPlaceholder()` and routes the entry to a sticky, ID-anchored slug `unnamed-<id>` (e.g. `unnamed-hd04871`) rather than slugging from the name. Collision-proof by construction — each stub gets its own id — and it also populates `first_name`, so the empty-name defect above does not apply. The bracket is what triggers this; the slug reads `unnamed-<id>`, not `son-…`.
+- Changing a person's birth year or name changes their slug (e.g., adding a birth year turns `/person/melanie-jackson` into `/person/melanie-jackson-1941`). The regenerate step renames the payload cleanly with no duplicate, but any external link to the prior slug 404s until the `redirects.json` 301 handler is wired.
+
 **Routes:**
 - `/` — Landing, defaults to Thomas Hooker featured tree
 - `/person/[slug]` — Individual person featured card + tree (prerendered)
@@ -78,23 +103,52 @@ Running record of architectural and UX decisions made during design sessions. Up
 
 ## FEATURED CARD LAYOUT
 
+**Implemented as of May 2026.** The card has a carved L-shape silhouette with the spouse chips docked into the upper-right notch.
+
 **Card structure (top-to-bottom):**
 
-1. **Header zone** — name, birth/death dates with location, spouse block(s) in top-right corner
+1. **Header zone** — name, generation labels, notable blurb on the LEFT; spouse chips occupy the upper-right notch
 2. **Divider line**
 3. **Content zone** — three columns:
-   - Left: portrait (Puritan stick-figure placeholder when no photo)
-   - Center: narrative blocks with expand/collapse (plus/minus toggles on hooks)
-   - Right: entity list (institutions, statues, burial, art, landmarks, documents) — conditional headers, only rendered if non-empty
-4. **Cross-connections** — always visible, short labels with blue-linked names
-5. **Action zone (bottom-right)** — exploration actions
+   - Left: portrait at top, then Birth/Death blocks side-by-side below (date, location, Map link)
+   - Center: narrative blocks (max 5 displayed, accordion expand/collapse with category labels)
+   - Right: entity list (institutions, education, career, landmarks, artworks, documents) — conditional headers, only rendered if non-empty. **Burial is NOT in this scrolling list** — it is a fixed anchor pinned to the bottom-right corner (absolutely positioned, decoupled from the scroll so nothing above can overlap it; no caret, always open when the cemetery resolves to a name). Right-aligned: a "Burial" eyebrow, the cemetery name, and a single right-flush line `City, ST  MAP` (MAP opens Google Maps in a new tab; destination falls back GPS zoom-17 → address → city/state). Degrades: no resolved name → no anchor (never a raw id); no GPS → address/city fallback; no location → name only.
+4. **Footer zone** — cross-connections (center) + action buttons (right) — NOT YET BUILT
+5. The card has fixed height (650px) and fixed width (w-4xl, ~896px)
 
-**Spouse blocks:**
-- Top-right of header
-- Horizontal alignment
-- Up to 3 visible as equal-width chips (third narrower if needed)
-- 4+ spouses: horizontal fade-scroll with 3 visible at a time
-- Conditional — zero spouses renders nothing
+**Carved card silhouette:**
+
+The card is NOT a simple rectangle. Its outline is an L-shape with a notch carved out of the upper-right corner. The notch dimensions match the spouse chip zone exactly — chips dock flush into the notch with the chip's top-right corner becoming the card's top-right corner.
+
+Implementation: `clip-path: polygon(...)` on the article element. Polygon is computed dynamically based on spouse count:
+- 0 spouses: regular rectangle (no notch)
+- 1-2 spouses: notch ~244-472px wide × 84px tall (normal chip dimensions)
+- 3+ spouses: notch ~496px wide × 75px tall (compact chip dimensions)
+
+Chips are positioned as ABSOLUTE SIBLINGS of the article element (not children), so the article's clip-path doesn't clip them away.
+
+**Border substitute:** The card has no actual CSS border (clip-path can't carry borders). Instead, `filter: drop-shadow(...)` applied to the PARENT WRAPPER (not the clipped element) creates a shape-aware shadow that follows the carved silhouette. Two stacked drop-shadows: one for ambient (4px 12px blur), one for contact (1px 3px blur).
+
+**Header zone constraints:**
+
+- Header uses CSS Grid with `grid-rows-[minmax(90px,auto)_1fr_auto]` — minimum 90px (room for 3 lines) but expands if 4 lines needed
+- 2-3 line headers (most common) fit in the 90px without pushing content down
+- 4-line headers (rare: double descendant + notable) expand slightly, with `tight-stack` class applying -2px margin to child elements to compress
+- Cousin-marriage labels (containing " / ") automatically use smaller font (`text-[11px]`) to fit on one line
+
+**Spouse chips:**
+
+- Top-right notch position, docked flush with card's top + right edges
+- 12-15px gap below chip and 18px gap to the left (inside the notch)
+- Up to 3 visible as equal-width chips
+- 1-2 spouses: 220px wide × ~75px tall (normal)
+- 3+ spouses: 160px wide × ~65px tall (compact mode)
+- 4+ spouses (rare): horizontal fade-scroll planned, not yet built
+- Conditional — zero spouses produces a regular rectangle card with no notch
+- Chips render as `<a>` links to the spouse's page (slug-based URL)
+- Each chip: photo on left (25-30% width), name + dates + "m. YYYY" on right
+- Photo uses `object-cover object-top` for face-focused crop
+- Photos drop the title prefix (Rev., Capt., Dr.); use `first_name + maiden_name` for women, `first_name + last_name` for men
 
 **Sibling button:**
 - External to card, top-right edge
@@ -237,7 +291,7 @@ Running record of architectural and UX decisions made during design sessions. Up
 
 **Relation is relative:** Same person can be "parent" from child's view and "spouse" from spouse's view.
 
-**Click to re-focus:** Click any non-featured box → that person becomes featured → everyone else's role updates → URL changes → view transition animates.
+**Click to re-focus:** Click any non-featured box → that person becomes featured → everyone else's role updates → URL changes (shallow routing) → the box crossfades into the featured slot.
 
 **Outside-the-Hooker-tree indicator:** When user navigates to a non-Hooker person (spouse's non-Hooker parents, etc.), subtle UI indicator shows "Outside the Hooker tree — [Back to last Hooker person]" or equivalent. Provides orientation when users wander into orbit regions.
 
@@ -290,8 +344,8 @@ No hover on finger touch. Solution: click/tap always navigates (no double-tap re
 - Direction based on spatial relationship (descendants = down, ancestors = up, cousins = lateral)
 - Easing: accelerate out, decelerate in
 - Blur/motion during flight — not pixel-accurate intermediate frames
-- Implementation via View Transitions API, not infinite canvas
-- For unrelated navigations: "teleport mode" — quick crossfade scale instead
+- Implementation via Svelte `crossfade` (`send`/`receive`) over featured-person state — NOT the View Transitions API, and not an infinite canvas (see "Page transitions" under MOTION LANGUAGE for the full rationale)
+- For unrelated navigations: "teleport mode" — the crossfade `fallback` (quick fade/scale) instead of a flight
 
 ---
 
@@ -334,7 +388,7 @@ No hover on finger touch. Solution: click/tap always navigates (no double-tap re
 - Click row: expands to mini-card (preview)
 - "Go to person" button in mini-card: navigates to full featured page
 - Multi-path people: path tabs at top, switch between paths with directional swap animation
-- Static portions stay, divergent portions slide in/out (list diffing via View Transitions)
+- Static portions stay, divergent portions slide in/out (list diffing via Svelte `animate:flip`)
 
 **"Connect to anyone" (Hooker descendants only):**
 - Search modal limited to H/HD targets
@@ -449,7 +503,7 @@ No hover on finger touch. Solution: click/tap always navigates (no double-tap re
 - Container queries (primary responsive mechanism) — see dedicated section below
 - CSS Subgrid for sibling alignment
 - Fontsource for typography (fonts TBD)
-- View Transitions API for cross-route animations
+- Svelte `crossfade` (`svelte/transition`) for cross-route flyovers and the chip→card morph (View Transitions API ruled out — see "Page transitions" under MOTION LANGUAGE)
 
 **Every Layout patterns to reference (NOT install):**
 - `Sidebar` for featured + spouse corner arrangement
@@ -615,7 +669,7 @@ Researched options and the reasoning behind the choice:
 
 - **`animate:flip` directive** — Svelte's built-in for animating layout changes when items reorder. Different from AutoAnimate in that it gives per-element control rather than container-wide uniform animation. Important for the dinner-table mutual-shift effect where featured/parents/children should each move with slight variation, not lockstep.
 
-- **Native View Transitions API** (via SvelteKit) — for cross-route flyovers. Not a library; built into browsers. Right tool for "navigate from Samuel to Emma Willard with directional motion blur." Already part of plan.
+- **Svelte `crossfade` (the `send`/`receive` transition pair)** — for cross-route flyovers and the chip→featured-card morph. Animates the LIVE DOM element (so the carved clip-path silhouette and its wrapper drop-shadow travel intact), supports distance-scaled duration and a directional `fallback`. This REPLACES the View Transitions API, which was evaluated and ruled out (see "Page transitions" below). Works identically across every browser the app runs in, including WebKit/iPad.
 
 - **Plain CSS keyframes** — for Paper Mario alive-paper idle animation and brass-plate ambient feel on featured cards. No library needed; pure CSS handles low-amplitude long-duration breathing animations.
 
@@ -660,11 +714,12 @@ This is a future visual-treatment direction. Implementation via CSS only (no lib
 - Real domain (hookerfamily.com probably)
 - www redirects to non-www (solve upfront)
 
-**Build pipeline (eventually automated):**
-- Canonical JSON → slug generation → path computation → neighborhood files → search index
-- Currently: committed outputs for convenience
-- Production: pre-build hook runs pipeline on every deploy
-- Outputs in .gitignore for production
+**Build pipeline (`regenerate-data.js`):**
+- Canonical JSON → slug generation → path computation → **per-person self-contained payloads** + search index + bundle files + `redirects.json`
+- The old `static/data/neighborhoods/` model is REMOVED (superseded by per-person payloads — see DATA ARCHITECTURE)
+- Currently: committed outputs, with `canonical.json` committed alongside its generated outputs so each save point is self-consistent
+- Production: pre-build hook runs `regenerate-data.js` on every deploy
+- Outputs may move to .gitignore for production
 
 ---
 
@@ -711,9 +766,9 @@ CSS-only technique for elements that "explode" or unfold as users scroll. Apple'
 - Major figure features with multiple historical artifacts unfolding
 - The double wedding story (Sarah Hooker / Stephen Buckingham + Mary Willet / Thomas Buckingham, August 1703) with the four people elegantly paired as the story unfolds
 
-**View Transitions API enhancements:**
+**View Transitions API — evaluated and RULED OUT (June 17, 2026):**
 
-`view-transition-class` and view-transition-types let you target many DOM nodes with one animation rule and direct "forward/backward" motion programmatically. Worth adopting when we implement flyovers between people pages. Better than custom JS choreography.
+Earlier drafts parked the View Transitions API here as the future technology for cross-route flyovers. As of revision 061726 it is ruled out for this project in favor of Svelte `crossfade`. Reasons, in brief (full rationale in "Page transitions" under MOTION LANGUAGE): patchy cross-document support on WebKit/iPad (a first-class target platform); the snapshot/rasterize morph risks artifacts on the carved `clip-path` card with its wrapper drop-shadow; and it offers far less control over the bespoke distance-scaled, directional, motion-blurred choreography this project's motion language requires. Retained here only as a record of the decision, not as future work.
 
 **CSS shape() and shape-outside:**
 
@@ -724,3 +779,403 @@ Native geometric clipping with responsive units. Could create distinctive visual
 CSS selector scoping that limits styles to a component without naming gymnastics. Could simplify component CSS organization. Low priority — Svelte's scoped styles already provide similar isolation.
 
 These are parked here so they're not lost. None are active work. Each could become relevant when we move past the core tree navigation into content pages, visual polish, and aesthetic refinement.
+
+---
+
+## CARVED CARD GEOMETRY — IMPLEMENTATION REFERENCE
+
+**Status as of May 28, 2026:** Built with straight-line `clip-path: polygon()`. Rounded corners deferred to future session (would require `clip-path: shape()` with curve commands — see codepen example saved in chat history).
+
+**The shape:** An L-shape rectangle with an inset rectangular notch carved out of the upper-right corner. The notch holds the spouse chip(s).
+
+**Element hierarchy (CRITICAL — this structure was discovered through trial and error):**
+
+```svelte
+<div class="featured-card-wrap relative">    <!-- Wrapper holds filter (shadow) -->
+    <article style="clip-path: polygon(...)"> <!-- Carved silhouette -->
+        <!-- Header, content, footer here -->
+    </article>
+    <div class="spouse-chips absolute">       <!-- SIBLING of article -->
+        <!-- Chips render in the notch -->
+    </div>
+</div>
+```
+
+**Why this structure:**
+
+1. **`drop-shadow` on parent, `clip-path` on child:** A `filter: drop-shadow()` on a clipped element is ALSO clipped, so the shadow becomes invisible. Putting the shadow on the parent wrapper lets it follow the child's clipped silhouette correctly. (This is the most-Googled clip-path gotcha.)
+
+2. **Chips as siblings, not children:** If chips were inside the article element, the article's clip-path would clip them away (the notch is "outside" the article's visible region). Making them siblings of the article means they render independently.
+
+**Polygon coordinates (no rounding yet):**
+
+```javascript
+const chipZoneWidth = /* computed from chip count and dimensions */;
+const chipZoneHeight = /* 84 for normal chips, 75 for compact */;
+
+`polygon(
+    0 0,
+    calc(100% - ${chipZoneWidth}px) 0,
+    calc(100% - ${chipZoneWidth}px) ${chipZoneHeight}px,
+    100% ${chipZoneHeight}px,
+    100% 100%,
+    0 100%
+)`
+```
+
+Reading clockwise from top-left:
+1. Top-left corner
+2. Top edge runs right, stops at the chip zone's left edge
+3. Down along the chip zone's left edge to the notch's bottom
+4. Right along the notch's bottom edge to card's right edge
+5. Down the right edge to bottom-right
+6. Left along bottom edge to bottom-left
+
+**Chip zone width calculation:**
+
+```javascript
+chipZoneWidth = chipCount * chipWidth + (chipCount - 1) * CHIP_GAP + CHIP_INSET
+// CHIP_INSET = 18px — creates the small gap on the left of the chips inside the notch
+// chipWidth = 220 for normal, 160 for compact
+// CHIP_GAP = 8px between chips
+```
+
+**Chip zone height by mode:**
+
+- Normal chips (1-2 spouses): 84px notch — chip is ~75px tall, leaves ~9px gap below
+- Compact chips (3+ spouses): 75px notch — chip is ~65px tall, leaves ~10px gap below
+
+These values were tuned to feel balanced. Both give similar visual gap below the chip.
+
+**Future upgrade to curves (not yet done):**
+
+The codepen example uses `clip-path: shape()` syntax (recently stable across browsers per MDN):
+
+```
+shape(
+    from 13.4% 3.1%,
+    line to 82.9% 3.1%,
+    curve to 94.9% 14.5% with 94.9% 3.1%,
+    ...
+)
+```
+
+Each `curve to` has an explicit start point, end point, and control point(s). For our card the corners would need:
+- Outer top-left (small radius)
+- Outer top-right (small radius — but this is INSIDE the notch, where the chip's top-right docks)
+- Inner notch corner (small concave curve — the carve-out scoops outward)
+- Outer bottom-right (small radius)
+- Outer bottom-left (small radius)
+
+This is a future session task. Not blocking anything.
+
+---
+
+## FONTS & TYPOGRAPHY
+
+**Currently in use:**
+
+- **Source Sans Pro** (via `@fontsource/source-sans-pro` weights 300, 400) — body default, applied at `body { font-family: var(--font-source); }`
+- **Lora Variable** (via `@fontsource-variable/lora`) — used selectively for dates, locations, and other "data" content via `font-lora` Tailwind utility
+- **Inter** was tested earlier but Source Sans Pro felt more refined for the genealogy context
+
+**Typography hierarchy:**
+
+- Names (h1): Source Sans Pro, text-2xl, font-medium
+- Generation labels: Source Sans Pro, text-sm, font-medium, text-blue-900 (navy)
+- Notable blurb: Source Sans Pro, text-sm, text-slate-600, opacity-80
+- Dates/locations in vitals: Lora (serif), text-[13px], text-slate-700
+- UI labels (BIRTH, DEATH, MAP): Source Sans Pro, text-[10px] or [9px], uppercase, tracking-wider
+
+**Tailwind 4 setup:** Fonts declared as theme tokens in `layout.css`:
+
+```css
+@theme {
+    --font-source: 'Source Sans Pro', sans-serif;
+    --font-lora: 'Lora Variable', Georgia, serif;
+}
+body {
+    font-family: var(--font-source);
+}
+```
+
+This generates `font-source` and `font-lora` utility classes automatically.
+
+---
+
+## DROP SHADOW SYSTEM
+
+**Card lift shadow** (applied to wrapper, follows clip-path):
+
+```css
+filter:
+    drop-shadow(0 4px 12px rgba(0, 0, 0, 0.10))  /* Ambient depth */
+    drop-shadow(0 1px 3px rgba(0, 0, 0, 0.08));  /* Contact shadow */
+```
+
+Two layered drop-shadows — one for ambient depth (blurred, lifted), one for tight contact shadow (small blur, defines the edge against background).
+
+No CSS border — the drop-shadow alone defines the card's silhouette against the page background. This is the "silver bar" aesthetic Sam specified: cards float and shine, not framed.
+
+**Spouse chip shadow:** Each chip uses `shadow-sm` (Tailwind default) plus `hover:shadow-md` on click-enabled chips. No border.
+
+**Hover behavior on chips:** `transition-shadow hover:shadow-md` — slight shadow grow on hover signals interactivity.
+
+---
+
+## NAVIGATION
+
+**Current state:**
+
+- Every PersonBox (spouse, parent, child, etc.) renders as `<a href="/person/{slug}">` when slug is present
+- Click navigates to that person's featured page
+- No back-button breadcrumb yet — browser back button is the only path back
+
+**Future work:**
+
+- Breadcrumb or "Recent" list of last 5 visited people
+- Forward/back keyboard shortcuts
+- "Home" or "Tree root" button
+
+---
+
+## INVENTORY OF WHAT'S BUILT VS PLANNED (earlier draft — superseded)
+
+This earlier inventory has been removed in revision 061726 because it conflicted with the current status (it listed the cross-connections footer and family connectors as "planned" when they are in fact built). **See the single authoritative inventory at the end of this document, "INVENTORY OF WHAT'S BUILT VS PLANNED (Updated July 1, 2026)."**
+
+---
+
+## SESSION ADDITIONS — May 29, 2026
+
+This session built on the foundation laid earlier and added several significant features. Recorded here for posterity.
+
+### Connectors between FeaturedCard and family rows
+
+**Parents connector:** A short vertical line between the parents row and the FeaturedCard, labeled with the focal person's name in possessive form ("Thomas' parents", "Samuel's parents"). The label uses lowercase possessive rules:
+- Names ending in s/S → just apostrophe ("Thomas'")
+- Other names → apostrophe + s ("Samuel's")
+
+The line shortens by 25% on the segment closer to the FeaturedCard (16px outer / 12px inner). The whole connector renders at 75% opacity to recede visually behind the main content.
+
+When the person has no parents, the connector wrapper still renders (preserves vertical anchoring of the FeaturedCard) but its content is empty — the line + label do not display.
+
+**Children connector:** Same structure but mirrored — inner segment (top) is shorter, outer segment (bottom) is full length. Label uses cardinal-word count: "Eight children (two died young)" or "One child" or "Twelve children". When the count exceeds 12, falls back to digits ("15 children").
+
+**Easter egg variant:** When the focal person has `is_easter_egg: true`, the children connector renders as a SINGLE unified vertical line (no label, no segments) since easter eggs link to only one child by rule. The line is doubled in length (~100px instead of split segments). This visually distinguishes easter-egg connections.
+
+### Died-young children
+
+Children whose age at death is ≤ 12 are pushed to the END of the children list (after alive children in birth order). They render with:
+- Dimmed opacity (`opacity-65`)
+- Inline "(died young)" appended after dates
+- No structural difference otherwise — same chip dimensions, clickable, full information
+
+Detection uses computed age (`death_year - birth_year ≤ 15`) since the `died_young` tag is inconsistently populated in current JSON. A single `diedYoung()` in `buildFeatured.ts` (threshold ≤15, raised from ≤12 tree-wide) feeds all three consumers — child-box dimming, the "(N died young)" connector count, and the roster sort — so they never diverge. Entries with unknown death year stay in birth order.
+
+### Cross-connections footer
+
+**Layout:**
+- Renders as a separate footer region BELOW the 580px main card region
+- Footer extends the card downward proportionally to CC count
+- "CROSS CONNECTIONS" label on the left (140px column, uppercase 10px tracking-wider)
+- CCs in two-column grid on the right (gap-x-6, gap-y-1)
+- Each CC: clickable link_text + space + display_label as predicate
+- Font: 12px, leading-snug
+- Reciprocal pairs — every CC has a matching reverse on the target's page
+
+**Tooltip:** Hovering "CROSS CONNECTIONS" label reveals a dark tooltip above explaining the section. Pure CSS hover via dotted underline cue and absolute-positioned tooltip div.
+
+**Format rule for display_label** (records in JSON_CLEANUP_FINDINGS.md #17):
+- link_text is the implicit subject; display_label is the predicate
+- Starts with a verb ("co-founded...") or "was a..." / "served as..."
+- Max 70 characters to fit single-line in two-column layout (raised from 65, July 1 2026, after confirming the footer renders 70 single-line)
+- Render with space separator, no em-dash
+
+### Rounded corners on carved card
+
+Upgrade from `clip-path: polygon()` (straight edges) to `clip-path: shape()` with `curve to` commands at every corner. Radius 8px to match spouse chip's `rounded-lg`.
+
+**Curved corners (clockwise):**
+1. Top-left outer (convex)
+2. Body's top-right corner where chip docks (convex into notch)
+3. Inner notch corner where body wraps under chip (concave from outside)
+4. Right edge upper corner where notch meets card right side (convex)
+5. Bottom-right outer (convex)
+6. Bottom-left outer (convex)
+7. Top-left close
+
+All corners use the same 8px radius for visual harmony. The chip's own rounded corners visually nest in the body's rounded notch edges — they form a continuous silhouette with consistent rounding.
+
+### Header zone refinements
+
+**Fixed-height header pattern:** Inner grid uses `grid-rows-[minmax(70px,auto)_minmax(0,1fr)]`. The header row's minimum is 70px (room for 2-3 lines comfortably). 4-line headers expand modestly. Content row uses `minmax(0,1fr)` with `overflow-hidden` so NB expansion doesn't grow the card.
+
+**Notable blurb:** Third line below generation labels in the header. Small text, slate-600 with 80% opacity. Conditional — null/missing entries omit the line. Examples: "Founder of Hartford, 1636", "Co-founder of Yale College, 1701".
+
+**Cousin marriage / double descendant compact font:** Generation labels containing " / " auto-render at `text-[11px]` instead of `text-sm`. Detects compound labels generated by the generation.ts util.
+
+### Spouse chips refinements
+
+**Title prefix length gate:** When `${title} ${baseName}`.length ≤ 19, include the title. Otherwise drop it. Examples:
+- "Rev. Thomas Hooker" (18 chars) ✓ shown
+- "Rev. James Pierpont" (19) ✓ shown
+- "Rev. Thomas Buckingham" (22) ✗ dropped → "Thomas Buckingham"
+
+**Title abbreviation map:** Stored in `+page.ts` as `TITLE_ABBREVIATIONS`. Maps full titles to abbreviations during render time: Reverend → Rev., Captain → Capt., Doctor → Dr., etc.
+
+**Fixed chip height with notch height accommodation:** Chips are 75px (normal) or 65px (compact) tall. Notch height in the carved card matches with small bottom-gap: 88px / 75px respectively.
+
+### Country-only location display
+
+Updated `formatLocationShort` to handle the case where location has ONLY a country recorded. England/Scotland/Wales display FULL name when standing alone. When paired with city or state, they abbreviate to "UK".
+
+### CC field shape in JSON
+
+Each `cross_connections[]` entry:
+```json
+{
+    "type": "civic_peer",
+    "related_id": "T00011",
+    "link_text": "John Talcott",
+    "display_label": "co-founded Hartford with Hooker."
+}
+```
+
+Rendered via `+page.ts` resolution that adds the target's slug:
+```typescript
+{
+    type, related_id, link_text, display_label,
+    slug: searchIndex.find(p => p.id === cc.related_id)?.slug ?? null
+}
+```
+
+### Page transitions & the chip→card crossfade — CHOSEN APPROACH (revised June 17, 2026)
+
+**Decision: Svelte's `crossfade` (the `send`/`receive` transition pair from `svelte/transition`), driven by featured-person-as-state with shallow client routing. The View Transitions API is explicitly RULED OUT.**
+
+**History — what was tried and what was rejected:**
+
+1. *SvelteKit `{#key page.url.pathname}` fade (attempted, failed).* Both the old and new pages were briefly in the DOM at once, causing vertical stacking, scrollbar pop-in, and a 10–20px layout jerk as the scrollbar reserved width mid-transition. Rolled back to instant navigation. **Lesson: any approach that holds two full pages in the DOM at once will reproduce this; the fix must avoid the full page swap on the warm path.**
+
+2. *View Transitions API (evaluated, RULED OUT).* Earlier drafts of this document named the View Transitions API as the chosen technology. Revision 061726 reverses that, for four reasons:
+   - **WebKit / iPad reliability.** This project commits to iPad (11" Pro fully supported) and accommodates smaller tablets — all WebKit. Cross-document View Transitions support across Safari/WebKit and Firefox has been uneven and late-arriving. Building the single most important interaction in the project on an API with patchy support on a first-class target platform is an unacceptable risk for a launch-when-ready scholarly exhibit. Svelte `crossfade` is pure transform/opacity animation through Svelte's own transition engine — it runs identically in every browser that runs the app.
+   - **Shape fidelity.** The featured card is not a rectangle: it is a carved `clip-path` silhouette with the drop-shadow on a parent wrapper and (planned) `shape()` rounded corners. The View Transitions API works by rasterizing before/after snapshots and crossfading the images — prone to artifacts on a complex clipped silhouette with a shape-aware shadow. `crossfade` animates the LIVE DOM element, so the real carved card travels intact; the size morph is controlled explicitly.
+   - **Choreographic control.** The MOTION LANGUAGE spec calls for distance-scaled duration (~200ms per generation of separation), direction by relationship (descendants down, ancestors up, cousins lateral), gentle motion blur in flight, and the dinner-table mutual-nudge of surrounding boxes. `crossfade` delivers this directly: its `duration` accepts a function of the travel distance (`duration: d => …`), the `fallback` transition handles directional `fly` for elements with no counterpart, and `css`/`tick` allow per-frame blur. The View Transitions morph is browser-decided and far harder to bend to this bespoke motion language.
+   - **Stack coherence.** `crossfade` is Svelte-native and composes with `animate:flip` (the mutual-shift choreography), with `prefersReducedMotion` from `svelte/motion` (accessibility Tier 1), and with the existing component model. No dependency on a browser API sitting outside the framework.
+
+**The chosen architecture (this section is the authoritative spec — there is no separate blueprint file):**
+
+- **Featured person is STATE, not a route, on the warm in-app path.** Clicking a PersonBox updates the featured-person state in place and uses `pushState` (SvelteKit shallow routing) to change the URL without a full document navigation. Because there is no page unmount/remount, the old `{#key}` both-pages-in-DOM problem cannot arise.
+- **`crossfade` provides a `[send, receive]` pair keyed by person ID.** The clicked PersonBox chip carries `out:send={{ key: id }}`; the FeaturedCard slot carries `in:receive={{ key: id }}`. Svelte computes the geometric transform between the chip's old rect and the card's new rect and flies the real element between them — the literal "chip / baseball-card grows into the featured card" motion. Elements with no counterpart (e.g., a freshly-built children row) use the `fallback` (directional `fly`).
+- **Prerendered `/person/[slug]` routes remain** for SEO, crawlers, deep links, and cold direct hits (preserving the SEO discipline in URL STRUCTURE). The crossfade is the enhancement on the warm path; cold loads render the prerendered page normally and instantly.
+- **Each navigation fetches one small `/data/person/<slug>.json` payload** (see DATA ARCHITECTURE), which is what makes the flight cheap enough to animate — the prior 22 MB corpus-per-page made any smooth transition impossible.
+
+**Reference documentation (authoritative API surface for this work):**
+- `svelte/transition` — `crossfade`, `fly`, `fade`, `scale`, `slide`: https://svelte.dev/docs/svelte/svelte-transition
+- `svelte/motion` — `Tween`, `Spring`, `prefersReducedMotion`: https://svelte.dev/docs/svelte/svelte-motion
+
+**First step (warm-up, low-risk):** a tweened search-result count using `Tween` from `svelte/motion` — a single self-contained component with no dependency on the routing work — to re-establish the edit-watch-refresh loop before the shared-element build.
+
+Until the crossfade ships, navigation is instant. This remains the most jarring gap in the experience, but the correct fix is structural (state + shallow routing + crossfade), not a patch.
+
+### Re-focus choreography — the whole tree rearranges (spec for Step 3)
+
+The crossfade is NOT just the featured card moving. On re-focus, the entire family rearranges around the new subject — every box that exists in both the before-state and the after-state FLIES to its new position; boxes with no counterpart fade/fly in. This is the MOTION LANGUAGE "dinner table" metaphor taken to its full extent: when the subject changes, everyone shifts to their new seat rather than the scene cutting.
+
+**The governing principle: key every box by PERSON ID, not by slot.** Svelte `crossfade`'s `send`/`receive` pair flies an element when the same `key` leaves one position and appears in another. If boxes are keyed by person ID, then "the person who was a child is now featured" is automatically a flight, because it is the same key rendered in two different slots across the transition. This single decision is what makes the choreography fall out almost for free. Keying by slot instead would make nothing fly. **Key by person ID.**
+
+**The four re-focus cases:**
+
+1. **Click a spouse chip** → spouse and featured SWAP. The featured card flies up-right into the spouse-chip notch; the clicked spouse chip flies down-left into the featured slot. A true simultaneous two-way swap. (Hardest case — see build order below.)
+
+2. **Click a child chip** → the child rises to featured. The old featured card descends into a parent slot of the new subject (this is literally correct — the old focus IS the new focus's father or mother). The old parents rise further, up toward grandparent positions (off-screen at zoom 1, visible at zoom 2–3).
+
+3. **Click a parent chip** → the mirror of case 2. The parent rises to featured; the old featured card descends into a child slot (again literally correct — the old focus is the parent's child).
+
+4. **Implied general rule** behind all of the above: every box holds a current role and a next role relative to the incoming subject, and crossfade flies it between those two physical positions. Roles are defined in SINGLE-SUBJECT FOCUS MODEL (Featured / Spouse / Parent / Child / Sibling / Grandparent-grandchild).
+
+**Two-tier behavior — fly vs. fallback:**
+
+- **Boxes present in BOTH states fly** (crossfade `send`/`receive`, keyed by person ID). Example: clicking a child — that child, the old featured person, and the old parents all exist before and after, so all three fly to their new seats.
+- **Boxes new to the after-state use the FALLBACK** (directional `fly`, per MOTION LANGUAGE "new elements emerge via translate-in"). Example: when you focus a child, that child's OWN children and spouse had no position on the previous screen — they have nowhere to fly from, so they translate-in directionally. This is correct two-tier behavior, not a gap to engineer around. Do NOT force-fly a box that has no counterpart.
+
+**Grandparent exit (zoom 1):** when old parents "rise to grandparent position" but grandparents are hidden at the default zoom, they fly UP and OUT of the viewport via the fallback's directional out-transition (preserving the spatial logic — "they went up to where grandparents live") rather than simply fading in place. At zoom 2–3, where grandparents are visible, they fly to the actual grandparent slots.
+
+**Build order (easiest → hardest, each verified in localhost before the next):**
+
+1. **Child-click and parent-click first.** These move boxes into largely empty/adjacent slots (old featured → parent or child slot; clicked box → featured). Cleaner because the destinations aren't simultaneously occupied by something flying the other way.
+2. **Spouse-swap last.** Two boxes trading places at the same instant is the most delicate — both a `send` and a `receive` firing in each direction simultaneously. Build it only after the parent/child cases are solid.
+
+**Why this is safe now (and was not before):** this choreography re-keys boxes WITHIN one persistent layout driven by featured-person state (Steps 1–2). It does NOT swap whole pages, so the old `{#key}` failure (both full pages in the DOM, scrollbar pop-in, layout jerk) cannot recur. The persistent featured-as-state container is the precondition that makes whole-tree rearrangement possible at all.
+
+---
+
+### Re-focus choreography — RESOLVED ARCHITECTURE (June 17, 2026)
+
+The first attempt at this (nesting the spouse chip inside `FeaturedCard` and `{#key}`-replacing the whole card) FAILED: the chip's `out:send` was a child of a subtree being torn down by its parent's transition, so it never paired with the new card's `in:receive` — every element fell back to scale+opacity ("fly in from the back," jitter). The lesson, proven by the photo-grid and two-list crossfade references (`docs/examples/REFERENCE_PhotoGrid_crossfade.svelte`): **`send`/`receive` pair only when both ends share a key AND are reconciled in ONE atomic render pass.** They may live in different lists/components — they must not be in independently-`{#key}`-ed blocks.
+
+**The architecture (approach B — id-keyed role-zones from one focus update):**
+
+- Derive ONE roster from the focus state plus the current zoom: `buildRoster(f, zoom)` → each visible person gets exactly ONE role (role-priority dedupe handles cousin-marriage / double-descent so a person renders once and keys stay collision-free, per the Step-2 keyed-render lesson).
+- Render the roster into role-zones (parent row / featured slot + spouse-chip notch / child row, plus grand-tiers at zoom 2+). **The spouse chips are lifted OUT of `FeaturedCard` up to the page level** so a chip and the featured card are peers — this is the load-bearing change. `FeaturedCard` still carves the notch from `chipCount` but no longer renders the chips.
+- Every box in every zone carries the shared `send`/`receive` pair keyed by person ID, plus `animate:flip` for intra-zone reshuffle.
+- A focus change is the single atomic `featured.set(...)` already in place → all zones recompute in one flush → each role-changer's old-shape element (`send`) pairs with its new-shape element (`receive`) by ID across zones. The cascade falls out automatically.
+
+**Shape AND content morph — why this architecture delivers it for free:** when the old featured person becomes a parent, the outgoing full card (`send`: NBs, RightColumn, CC footer) and the incoming parent box (`receive`: photo/name/dates) are DIFFERENT DOM elements that overlap and cross-dissolve between their rects. That cross-dissolve IS the shape+content transform during flight — exactly what the photo app does (cropped thumbnail ↔ full modal photo). NOTE the honest boundary: this is a cross-dissolve between card-content and box-content, NOT bespoke per-sub-element animation (e.g. NBs individually folding away). Per-element choreography is additive polish on top, not a different architecture. **`animate:flip` is reserved for same-role intra-zone reshuffle only** (children reordering, the dinner-table nudge) — it would NOT morph content (it scales the container and pops the markup), which is why role/shape changes use `send`/`receive`, not flip.
+
+**Zoom levels change the choreography (structural from day one, not retrofitted):**
+- **Zoom 1** (default): full crossfade cascade; grand-tiers omitted from the roster, so old parents rising to grandparent fly UP and OUT via the directional fallback ("they went up to where grandparents live").
+- **Zoom 2**: same cascade, but grand-tiers are IN the roster and rendered (`{#if zoom >= 2}`), so parents fly to actual grandparent slots and grandchildren are visible.
+- **Zoom 3**: near-static traditional grid tree for traditionalists — minimal/no motion; transitions gated off (duration 0 / no `send`/`receive`).
+- `buildRoster` takes `zoom`; zone rendering is `{#if zoom >= 2}`; transition-gating keys off zoom. Zoom 1 ships first; z2/z3 slot into the same seams.
+
+**Directional fallback** (for unpaired enter/exit, keyed off the lost/gained role): ancestor roles fly up, descendant roles down, spouse lateral (per the SPATIAL NAVIGATION flyover spec).
+
+**Build order:** z1-first, structure-only first — `buildRoster` + zone layout + chip-lift + notch docking, NO transitions — so roles/positions and the pixel-accurate notch docking (the highest risk) are verified before any crossfade is wired. Then wire `send`/`receive`. Parent/child cascade before spouse-swap (the simultaneous two-way trade is the most delicate).
+
+**Risk center:** the lifted chips must dock in the carved clip-path notch pixel-accurately (compact mode, inset, gaps) while `FeaturedCard` carves the matching notch from `chipCount`. This page↔card geometry coupling is unavoidable in any approach (the chip must be a peer either way) and is verified BEFORE transitions.
+
+---
+
+## INVENTORY OF WHAT'S BUILT VS PLANNED (Updated July 1, 2026)
+
+### BUILT and Verified Working
+
+- **Per-person payload data architecture** — `regenerate-data.js` emits one self-contained `static/data/person/<slug>.json` per person; person page fetches that single payload (Thomas Hooker 28 MB → 319 KB, avg ~17 KB). Verified end-to-end by regenerating from a fresh canonical and loading pages. `neighborhoods/` model removed.
+- **Self-consistent git save point** — code + regenerated data + source `canonical.json` committed and pushed to the private remote (June 17, 2026).
+- FeaturedCard with carved L-shape silhouette + ROUNDED CORNERS (8px throughout)
+- Drop-shadow on wrapper (follows clipped silhouette)
+- Spouse chips docked in carved notch with proper docking gaps
+- Generation labels v2 (relational words, founder equal billing, cousin/double-descendant compact)
+- Photo rendering from Cloudinary
+- Birth/Death side-by-side blocks with Map links (GPS zoom 17)
+- Notable blurb in header
+- Title prefix length-gated with abbreviations
+- Fixed-height header zone (90px minmax) prevents bulldozing
+- 580px card-top region with overflow-hidden for stable NB expand/collapse
+- CC footer with two-column layout, reciprocal links, hover-tooltip section label
+- Clickable chips throughout (PersonBox as <a>)
+- Parents/children connectors with labeled segments
+- Died-young children with reordering and dimmed visual
+- Easter-egg children connector variant (unified line, no label)
+- Country-only location display (England/Scotland/Wales preserved alone)
+- Source Sans Pro + Lora fonts
+- NB component with state reset on navigation
+- NB +/- alignment fix
+- **Right column entity stack** — built (Institutions, Education, Career, Landmarks, Artworks, Documents); conditional headers, only rendered if non-empty. Burial rendered as a fixed bottom-right pinned anchor, not part of the scroll (see FEATURED CARD LAYOUT). Landmarks / Artworks / Documents still render raw ids pending the entity-resolution standing rule (see DATA delivery).
+
+### NOT YET BUILT (next session priorities)
+
+- **Gold outline for Hooker descendants** (drop-shadow tint variant)
+- **Page transitions via Svelte `crossfade`** (send/receive, featured-person-as-state + shallow routing) — View Transitions API ruled out; see "Page transitions" under MOTION LANGUAGE. Warm-up: tweened search-result count via `Tween`.
+- **Action buttons in footer** (Siblings (N) expand, Line to Thomas modal)
+- **4+ spouse horizontal scroll** (rare case, defer until data has real examples)
+- **Landing page**
+- **~100 hand-drawn placeholder figures** for entries without photos
+- **`border-shape` migration** (waits for browser support ~2027)
+
+### KNOWN ISSUES (low-priority)
+
+- Cross-connection render gap (Thomas Hooker showed 2 of 6 CCs not rendering — suspected missing slugs for William Pantry X00090, Samuel Talcott T00036). The per-person payload now pre-resolves CC slugs at build time, and FeaturedCard guards missing `display_label` (no more literal "— undefined"). **Re-verify on the current build** to confirm the gap is closed; if a CC still doesn't render, check that the target has populated `first_name`/`last_name` (empty name fields break the slug — see URL STRUCTURE).
+- The 580px height + 70px header anchor work well together but neither is "responsive" — needs container queries for mobile/tablet. This also matters for the crossfade: the chip→card size morph must handle the fixed card dimensions deliberately.
+
