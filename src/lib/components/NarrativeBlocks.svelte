@@ -69,7 +69,7 @@
 							class="flex h-6 w-6 shrink-0 items-center justify-center text-lg text-slate-500"
 							aria-hidden="true"
 						>
-							{openKey === key ? '' : '+'}
+							{openKey === key ? '−' : '+'}
 						</span>
 					</div>
 				</button>

@@ -333,9 +333,207 @@ function contextIds(p, byId) {
 	return ids;
 }
 
+// ---------------------------------------------------------------------------
+// Registry resolution (Build 1). Attach display-ready arrays so the component
+// NEVER sees a raw id. Uniform row: { name, typeLabel, blurb, url, thumbUrl,
+// alt, tooltip } (null when absent). Every resolver is null-guarded — a missing
+// registry entry drops that row; a malformed field yields null; a thrown map
+// yields [] (build never crashes on a bad registry entry).
+// ---------------------------------------------------------------------------
+
+// x_y -> "X y"; null / "None" / empty -> null.
+function titleCaseType(t) {
+	if (!t || String(t).toLowerCase() === 'none') return null;
+	const s = String(t).replace(/_/g, ' ').trim();
+	return s ? s.charAt(0).toUpperCase() + s.slice(1) : null;
+}
+function landmarkTypeLabel(t) {
+	if (!t || String(t).toLowerCase() === 'none') return null;
+	const s = String(t).toLowerCase();
+	if (s.includes('museum')) return 'Museum'; // before house (house_museum)
+	if (/house|residence|homestead|mansion|dwelling/.test(s)) return 'Residence';
+	if (s.includes('estate')) return 'Estate';
+	if (s.includes('park')) return 'Park';
+	if (/church|meetinghouse|meeting house/.test(s)) return 'Church';
+	if (/monument|memorial/.test(s)) return 'Monument';
+	return titleCaseType(t);
+}
+function artTypeLabel(t) {
+	if (!t || String(t).toLowerCase() === 'none') return null;
+	const s = String(t).toLowerCase();
+	if (s.includes('portrait')) return 'Portrait'; // before painting (portrait_painting)
+	if (s.includes('painting')) return 'Painting';
+	if (s.includes('photograph')) return 'Photograph';
+	if (s.includes('sculpture')) return 'Sculpture';
+	return titleCaseType(t);
+}
+function statueTypeLabel(t) {
+	const s = (t || '').toLowerCase();
+	if (s === 'bust' || s === 'marble_bust') return 'Bust';
+	if (s.includes('relief')) return 'Relief';
+	return null; // statue (and anything else) -> null
+}
+function youtubeThumb(url) {
+	if (!url || typeof url !== 'string') return null;
+	const m = url.match(/(?:[?&]v=|youtu\.be\/|\/embed\/)([A-Za-z0-9_-]{11})/);
+	return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+}
+// Mirrors src/lib/utils/dates.ts formatLocationShort (city/state branch only) so a landmark's
+// registry location can be rendered "City, ST" at build time. Kept in sync manually — this is the
+// static US state table; drift here only affects the landmark subtitle, never core location render.
+const STATE_ABBREV = {
+	Alabama: 'AL', Alaska: 'AK', Arizona: 'AZ', Arkansas: 'AR', California: 'CA', Colorado: 'CO',
+	Connecticut: 'CT', Delaware: 'DE', Florida: 'FL', Georgia: 'GA', Hawaii: 'HI', Idaho: 'ID',
+	Illinois: 'IL', Indiana: 'IN', Iowa: 'IA', Kansas: 'KS', Kentucky: 'KY', Louisiana: 'LA',
+	Maine: 'ME', Maryland: 'MD', Massachusetts: 'MA', Michigan: 'MI', Minnesota: 'MN',
+	Mississippi: 'MS', Missouri: 'MO', Montana: 'MT', Nebraska: 'NE', Nevada: 'NV',
+	'New Hampshire': 'NH', 'New Jersey': 'NJ', 'New Mexico': 'NM', 'New York': 'NY',
+	'North Carolina': 'NC', 'North Dakota': 'ND', Ohio: 'OH', Oklahoma: 'OK', Oregon: 'OR',
+	Pennsylvania: 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC', 'South Dakota': 'SD',
+	Tennessee: 'TN', Texas: 'TX', Utah: 'UT', Vermont: 'VT', Virginia: 'VA', Washington: 'WA',
+	'West Virginia': 'WV', Wisconsin: 'WI', Wyoming: 'WY', 'District of Columbia': 'DC'
+};
+const COUNTRY_ABBREV = {
+	England: 'UK', 'United Kingdom': 'UK', Scotland: 'UK', Wales: 'UK', 'Northern Ireland': 'UK',
+	Britain: 'UK', 'Great Britain': 'UK'
+};
+function formatCityState(city, state, country) {
+	const isUS = !country || country === 'United States' || country === 'USA';
+	const st = state ? STATE_ABBREV[state] ?? state : null;
+	const ct = country ? COUNTRY_ABBREV[country] ?? country : null;
+	if (city && state && isUS) return `${city}, ${st}`;
+	if (city && state && !isUS) return `${city}, ${state}, ${ct}`;
+	if (city && country && !isUS) return `${city}, ${ct}`;
+	if (city) return city;
+	if (state && isUS) return st;
+	if (state && !isUS) return `${state}, ${ct}`;
+	if (country && !isUS) return country;
+	return null;
+}
+const mediaRow = (o) => ({
+	name: o.name ?? null,
+	typeLabel: o.typeLabel ?? null,
+	blurb: o.blurb ?? null,
+	// Single secondary line the card renders. Set per section (landmark → "City, ST"; art →
+	// blurb ?? typeLabel; document → blurb; statue → typeLabel; video → null) so the component
+	// stays dumb — it renders `subtitle` verbatim and never decides the fallback chain.
+	subtitle: o.subtitle ?? null,
+	url: o.url ?? null,
+	thumbUrl: o.thumbUrl ?? null,
+	alt: o.alt ?? null,
+	tooltip: o.tooltip ?? null
+});
+function safeResolve(arr, fn) {
+	try {
+		return (arr || [])
+			.map((x) => {
+				try {
+					return fn(x);
+				} catch {
+					return null;
+				}
+			})
+			.filter(Boolean);
+	} catch {
+		return [];
+	}
+}
+function resolveLandmarks(p, byId) {
+	return safeResolve(p.landmarks, (bl) => {
+		const r = byId[bl && bl.landmark_id];
+		if (!r) return null;
+		// Landmark subtitle = the landmark's own registry location ("City, ST"), NOT the
+		// person-side description. The full notes stay in canonical; they're just off the card.
+		// Location is nested under r.location (schema drift: tolerate a flat entry too).
+		const lc = r.location || r;
+		const loc = formatCityState(lc.city, lc.state, lc.country);
+		return mediaRow({
+			name: r.primary_name,
+			typeLabel: landmarkTypeLabel(r.type),
+			blurb: null,
+			subtitle: loc,
+			url: r.primary_url ?? r.url ?? null,
+			thumbUrl: r.photo_url ?? r.image_url ?? null,
+			alt: r.photo_notes ?? r.image_caption ?? r.primary_name ?? null,
+			tooltip: loc ? `${r.primary_name} — ${loc}` : r.primary_name ?? null
+		});
+	});
+}
+function resolveArtworks(p, byId) {
+	return safeResolve(p.artworks, (bl) => {
+		const r = byId[bl && bl.artwork_id];
+		if (!r) return null;
+		const blurb = bl.artwork_blurb ?? bl.blurb ?? null;
+		return mediaRow({
+			name: r.title,
+			typeLabel: artTypeLabel(r.type),
+			blurb,
+			subtitle: blurb ?? artTypeLabel(r.type),
+			url: r.primary_url ?? r.url ?? null,
+			thumbUrl: r.photo_url ?? r.image_url ?? null,
+			alt: r.title ?? null,
+			tooltip: r.title ?? null
+		});
+	});
+}
+function resolveDocuments(p, byId) {
+	return safeResolve(p.documents, (bl) => {
+		const id = typeof bl === 'string' ? bl : bl && bl.document_id;
+		const r = byId[id];
+		if (!r) return null;
+		const blurb = bl && typeof bl === 'object' ? bl.document_blurb ?? null : null;
+		return mediaRow({
+			name: r.title,
+			typeLabel: null,
+			blurb,
+			subtitle: blurb,
+			url: r.url ?? null,
+			thumbUrl: null,
+			alt: null,
+			tooltip: r.title ?? null
+		});
+	});
+}
+function resolveStatues(p, bySubject) {
+	return safeResolve(bySubject[p.id], (r) => {
+		const nm = r.name ?? r.description ?? 'Statue';
+		return mediaRow({
+			name: nm,
+			typeLabel: statueTypeLabel(r.type),
+			blurb: null,
+			subtitle: statueTypeLabel(r.type),
+			url: r.url ?? null,
+			thumbUrl: r.photo_url ?? null,
+			alt: nm,
+			tooltip: nm
+		});
+	});
+}
+function resolveVideos(p, byId) {
+	return safeResolve(p.videos, (bl) => {
+		const r = byId[bl && bl.video_id];
+		if (!r) return null;
+		// Video renders as a TEXT row (no thumbnail — the 34px YouTube thumb is illegible), so no
+		// thumbUrl is derived. subtitle stays null: a clean spot for duration once it's captured
+		// into canonical (needs the YouTube Data API, not in the URL — flagged for the data chat).
+		return mediaRow({
+			name: r.summary ?? null,
+			typeLabel: null,
+			blurb: null,
+			subtitle: null,
+			url: r.url ?? null,
+			thumbUrl: null,
+			alt: r.summary ?? r.title ?? null,
+			tooltip: r.title ?? null
+		});
+	});
+}
+
 // Builds the self-contained payload that /person/[slug] fetches.
 // `clientById` are the stripped client records (research_notes etc. removed).
-function personPayload(p, byId, clientById, slugMap, cemById, instById) {
+// `reg` bundles the registry lookups: { landmarkById, artworkById, documentById,
+// videoById, statuesBySubject }.
+function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 	const context = {};
 	for (const id of contextIds(p, byId)) context[id] = clientById[id];
 
@@ -354,8 +552,18 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById) {
 		slug: slugMap.get(cc.related_id) ?? null
 	}));
 
+	// Resolved media arrays live ON the focus person record (person.landmarksResolved,
+	// etc.) so the component reads them through its existing `person` prop. Spread a
+	// fresh object (don't mutate the shared clientById — context entries stay lean).
 	return {
-		person: clientById[p.id],
+		person: {
+			...clientById[p.id],
+			landmarksResolved: resolveLandmarks(p, reg.landmarkById),
+			artworksResolved: resolveArtworks(p, reg.artworkById),
+			documentsResolved: resolveDocuments(p, reg.documentById),
+			statuesResolved: resolveStatues(p, reg.statuesBySubject),
+			videosResolved: resolveVideos(p, reg.videoById)
+		},
 		neighborhood: neighborhood(p, byId, slugMap),
 		context,
 		burialCemetery,
@@ -457,6 +665,20 @@ function main() {
 	const cemById = Object.fromEntries((data.cemeteries || []).map((c) => [c.id, c]));
 	const instById = Object.fromEntries((data.institutions || []).map((i) => [i.id, i]));
 
+	// Registry lookups for Build-1 resolution. Landmarks/artworks/documents/videos
+	// are forward id->obj maps (person carries {..._id} backlinks); statues invert —
+	// they carry subject_id, so build a reverse index subject_id -> [statue,...].
+	const landmarkById = Object.fromEntries((data.landmarks || []).map((x) => [x.id, x]));
+	const artworkById = Object.fromEntries((data.artworks || []).map((x) => [x.id, x]));
+	const documentById = Object.fromEntries((data.documents || []).map((x) => [x.id, x]));
+	const videoById = Object.fromEntries((data.videos || []).map((x) => [x.id, x]));
+	const statuesBySubject = {};
+	for (const s of data.statues || []) {
+		if (!s || !s.subject_id) continue;
+		(statuesBySubject[s.subject_id] ||= []).push(s);
+	}
+	const reg = { landmarkById, artworkById, documentById, videoById, statuesBySubject };
+
 	const only = process.env.ONLY_IDS ? new Set(process.env.ONLY_IDS.split(',')) : null;
 	const personDir = join(CONFIG.repoRoot, CONFIG.personDir);
 	if (!only && existsSync(personDir)) rmSync(personDir, { recursive: true, force: true });
@@ -465,7 +687,7 @@ function main() {
 	for (const p of people) {
 		if (only && !only.has(p.id)) continue;
 		const slug = slugMap.get(p.id);
-		const payload = personPayload(p, byId, clientById, slugMap, cemById, instById);
+		const payload = personPayload(p, byId, clientById, slugMap, cemById, instById, reg);
 		writeFileSync(join(personDir, `${slug}.json`), JSON.stringify(payload));
 		pgCount++;
 	}

@@ -149,6 +149,24 @@ export interface DocumentRef {
 	document_blurb?: string | null;
 }
 
+/**
+ * Uniform, display-ready row emitted by regenerate-data.js for each media backlink
+ * (landmark / artwork / document / statue / video). The component NEVER sees a raw id —
+ * every field is already resolved against the top-level registries. Any field may be
+ * null (missing/malformed source); a whole entry is dropped rather than emitted broken.
+ */
+export interface MediaRow {
+	name: string | null;
+	typeLabel: string | null;
+	blurb: string | null;
+	/** The single secondary line the card renders — set per section by the resolver. */
+	subtitle: string | null;
+	url: string | null;
+	thumbUrl: string | null;
+	alt: string | null;
+	tooltip: string | null;
+}
+
 export interface Person {
 	id: string;
 	slug: string;
@@ -189,10 +207,21 @@ export interface Person {
 	naming_inspiration?: unknown[];
 	/** Rare one-off: when set, computeGenerationLabels renders this verbatim instead of computing. */
 	relational_label_override?: string;
+	/**
+	 * Display-ready media rows, resolved at build time by regenerate-data.js against the
+	 * top-level registries (landmarks/artworks/documents/statues/videos). Present only on
+	 * the FOCUS person of a payload — context/relative records don't carry them.
+	 */
+	landmarksResolved?: MediaRow[];
+	artworksResolved?: MediaRow[];
+	documentsResolved?: MediaRow[];
+	statuesResolved?: MediaRow[];
+	videosResolved?: MediaRow[];
 }
 
 export interface Education {
 	institution_id: string | null;
+	institution_name?: string | null; // drift: some rows carry a spelled-out name, no INST id
 	school_name: string | null;
 	dates: string | null;
 	type: string | null;

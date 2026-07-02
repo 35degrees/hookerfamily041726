@@ -180,7 +180,7 @@
 
 			<!-- Content row: minmax(0, 1fr) + overflow-hidden allows NB body expansion
 			     without growing the row. Any overflow is clipped, keeping card height stable. -->
-			<div class="content grid grid-cols-[23%_55%_22%] gap-4 overflow-hidden p-6">
+			<div class="content grid grid-cols-[23%_54.5%_22.5%] gap-1.5 overflow-hidden p-6">
 				<div class="portrait-column space-y-4">
 					{#if photoUrl}
 						<img
@@ -248,7 +248,12 @@
 					<NarrativeBlocks blocks={person.narrative_blocks ?? []} />
 				</div>
 
-				<div class="-ml-1">
+				<!-- h-full + min-h-0: bound this grid cell to the (definite) .content row height so
+				     RightColumn's own h-full resolves to a fixed height and its scroll-group actually
+				     scrolls. Without min-h-0 the cell's default min-height:auto grows to the full stack
+				     height, un-scrolling the column and pushing the burial pin below the fold. No
+				     overflow-hidden here — it would clip the pin's intentional bottom-[-12px] overhang. -->
+				<div class="h-full min-h-0">
 					<RightColumn {person} {institutionsById} {burialCemetery} />
 				</div>
 			</div>

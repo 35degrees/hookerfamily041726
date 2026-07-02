@@ -45,9 +45,16 @@ blurb_worklist.tsv
 nb_worklist.tsv
 gender_worklist.tsv
 
+# --- python bytecode (process_tasks.py / validate.py compile cache) ---
+__pycache__/
+*.pyc
+
 # --- editor / OS ---
 .DS_Store
 .vscode/
 *.log
 .env
 .env.*
+
+# entity image-gap worklist (regenerable side-output, not source)
+static/data/image-gaps.tsv
