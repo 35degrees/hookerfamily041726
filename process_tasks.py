@@ -16,8 +16,12 @@ ARCHITECTURE (decided 2026-06):
 TWO PASSES (per WORKFLOW.md sec 2-3):
   * PASS 1 (mechanical): photo_url, dates, blurbs, tags, marriage, parents, cc,
     education, career, searchable, notable. Deterministic, APPEND/SET-only, auto-applied.
-  * PASS 2 (judgment): nb_angle / nb_full. NOT auto-written. Drafted text lands in the
-    sheet's `proposed` column for Sam's approval. NB prose stays behind human eyes.
+  * PASS 2 (judgment): NB prose stays behind human eyes.
+      - nb_angle: legacy flow -- Code drafts from the angle; staged to `proposed` for approval.
+      - nb_full: Fable's FINISHED NB. Staged to `proposed` for Sam. On APPROVE, re-file the
+        row's field as `nb_approved` (same value) and re-run -> placed VERBATIM (Code does
+        NOT redraft). nb_replace / blurb_replace likewise place Fable's approved prose verbatim;
+        Code is the PLACER, not the writer. Every insert is Fable's words, Sam-approved.
 
 THE NO-DELETE LAW (the whole point):
   Nothing is ever deleted without an EXPLICIT, NAMED destroy row (nb_remove,
@@ -62,7 +66,7 @@ RECOGNIZED_FIELDS = {
     'blurb_remove',     # explicit null of a blurb. value = field=bio_blurb|notable_blurb
     'career_set',       # value = index=N role="..." org="..."  (replace one career row in place)
     'education_set',    # value = index=N ...kv...                (replace one education row in place)
-    'nb_replace',       # value = old="<exact header>" new="<corrected angle/header|body>"
+    'nb_replace',       # value = old="<exact header>" header="..." body="..." category=<enum> (placed VERBATIM)
     'new_person',       # CREATE a new entry. value = name="..." gender=... [searchable=false notable=false ...]
     'cemetery',         # create-or-link a CEM + wire burial. value = name="..." city="..." state="..." lat=.. lng=.. [cem_id=CEM### to link existing]
     'video',            # create-or-link a VID + backlink. value = title="..." url=... platform=youtube summary="3-4 word chip" [notes="..."] [vid_id=VID### to link]
@@ -245,6 +249,20 @@ def apply_mechanical(field, val, p, tp):
         else:
             p.setdefault('notable', {})['notable_blurb'] = text
         return f"OK {which} replaced -> {text!r}", True
+    if field == 'nb_approved':
+        # Fable's FINISHED, Sam-approved NB. Place it VERBATIM — Code does NOT redraft.
+        # Append-only (never overwrites), so it's One-Law-safe and never trips the diff-guard.
+        # Value shape mirrors nb_full: header="..." | body="..." | category=<enum>.
+        kv = parse_kv(val)
+        header, body, category = kv.get('header'), kv.get('body'), kv.get('category')
+        if not header or not body:
+            return 'FLAG nb_approved needs header="..." and body="..."', False
+        if category not in NB_CATEGORY:
+            return f"FLAG nb_approved category '{category}' not in enum", False
+        nbs = p.setdefault('narrative_blocks', [])
+        nbs.append({'number': len(nbs) + 1, 'category': category, 'header': header, 'body': body})
+        warn = '' if len(header.split()) <= 8 else f' (WARN header {len(header.split())} words > 8)'
+        return f"OK nb_approved appended verbatim: '{header}'{warn}", True
     if field == 'field_set':
         # generic any-field setter: value = "path=VALUE" with dotted/bracket path.
         # e.g. classification.generation_from_thomas=11 , gender=female ,
@@ -323,19 +341,24 @@ def apply_destroy(field, val, p, allowed_removals):
             if p.get('notable'): p['notable']['notable_blurb'] = None
             return (f"OK notable_blurb cleared (was: {had!r})" if had else ". notable_blurb already empty"), True
     if field == 'nb_replace':
-        kv = parse_kv(val); old = kv.get('old'); new = kv.get('new')
+        # Sam-approved replacement of one NB. `old` names the exact existing header (this is what
+        # authorizes the destroy under the One Law). header/body/category carry Fable's finished
+        # replacement, placed VERBATIM in the SAME position — Code does NOT draft the new prose.
+        kv = parse_kv(val); old = kv.get('old')
+        header, body, category = kv.get('header'), kv.get('body'), kv.get('category')
         nbs = p.get('narrative_blocks') or []
         match = [nb for nb in nbs if nb.get('header') == old]
         if not match:
             return f"FLAG nb_replace target not found: '{old}'", False
-        # Authorize the old header's disappearance; leave a DRAFT for the new prose
-        # (NB prose stays draft-for-approval per the two-pass rule).
-        allowed_removals.add((p['id'], 'nb', old))
-        # Keep the block in place but blank-flag it for Code to rewrite from `new`.
-        # We do NOT auto-write prose here; mark it so the human/Code finalizes.
+        if not header or not body or category not in NB_CATEGORY:
+            return ('FLAG nb_replace needs the full verbatim replacement alongside old="...": '
+                    'header="..." body="..." category=<enum>. Code drafts nothing.'), False
+        allowed_removals.add((p['id'], 'nb', old))   # authorize the old header's disappearance
         for nb in match:
-            nb['_replace_with'] = new   # transient marker Code resolves into header+body+category
-        return f"PAUSE nb_replace staged for '{old}' -> Code drafts '{new}' (approve before commit)", True
+            nb['category'], nb['header'], nb['body'] = category, header, body
+        for i, nb in enumerate(nbs, 1): nb['number'] = i
+        warn = '' if len(header.split()) <= 8 else f' (WARN header {len(header.split())} words > 8)'
+        return f"OK nb_replace: '{old}' -> '{header}' placed verbatim in place{warn}", True
     if field in ('career_set', 'education_set'):
         arr_key = 'career' if field == 'career_set' else 'education'
         kv = parse_kv(val)
@@ -630,7 +653,13 @@ def main():
             continue
         if field in DESTROY_FIELDS:
             r['status'], _ = apply_destroy(field, val, p, allowed_removals)
-        elif field in ('nb_angle', 'nb_full'):
+        elif field == 'nb_full':
+            # Fable's FINISHED NB. Not auto-written: stage for Sam's eyes. On APPROVE, re-file this
+            # row's field as `nb_approved` (same value) and re-run — it is then placed VERBATIM.
+            r['proposed'] = ("PROPOSED (Fable's finished NB -- placed VERBATIM on approve): " + val[:80])
+            r['status'] = "PAUSE FABLE NB -- APPROVE, then re-file field as `nb_approved` to place it"
+        elif field == 'nb_angle':
+            # Legacy angle flow: Code drafts prose from the angle, appends only on approve.
             r['proposed'] = ("PROPOSED -- Code drafts from this angle per WORKFLOW sec3 and "
                              "APPENDS only on your APPROVE: " + val[:80])
             r['status'] = "PAUSE DRAFTED -- awaiting your APPROVE in `decision` col"
