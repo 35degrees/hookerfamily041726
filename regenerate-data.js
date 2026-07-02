@@ -43,7 +43,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // CONFIG
 // ---------------------------------------------------------------------------
 const CONFIG = {
-	input: process.argv[2] || resolve(__dirname, 'canonical.json'),
+	input:
+		process.argv[2] && !process.argv[2].startsWith('--')
+			? process.argv[2]
+			: resolve(__dirname, 'canonical.json'),
 	repoRoot: resolve(__dirname),
 	dataDir: 'static/data',
 	personDir: 'static/data/person', // one self-contained page payload per slug
@@ -582,6 +585,29 @@ function main() {
 	const byId = Object.fromEntries(people.map((p) => [p.id, p]));
 	log(`  ${people.length} people`);
 
+	// --only ID1,ID2  (or ONLY_IDS env): incremental REVIEW rebuild. Regenerate ONLY these
+	// people's page payloads and SKIP every aggregate file (people.json / search-index / stats /
+	// redirects / cemeteries / institutions) and the dir wipe. A card fetches only its own
+	// /person/<slug>.json, so that's all a per-batch review needs — turns a 16k-file rebuild into
+	// a handful of writes. Run a FULL rebuild (no --only) before commit/deploy to refresh the
+	// aggregates and any OTHER card that embeds a changed person (relatives, CC partners).
+	const onlyArg = (() => {
+		const i = process.argv.indexOf('--only');
+		if (i !== -1 && process.argv[i + 1]) return process.argv[i + 1];
+		const eq = process.argv.find((a) => a.startsWith('--only='));
+		if (eq) return eq.slice('--only='.length);
+		return process.env.ONLY_IDS || null;
+	})();
+	const only = onlyArg
+		? new Set(
+				onlyArg
+					.split(',')
+					.map((s) => s.trim())
+					.filter(Boolean)
+			)
+		: null;
+	if (only) log(`  --only: ${only.size} people (aggregates + dir wipe skipped)`);
+
 	// 1) compute base slugs, then resolve collisions deterministically by ID
 	const groups = new Map(); // base -> [ids]
 	const stickyOf = new Map();
@@ -612,47 +638,53 @@ function main() {
 		return out;
 	});
 
-	// 3) search-index.json
-	const searchIndex = people.map((p) => searchRow(p, slugMap));
-
-	// 4) redirects: every former/merged id (and its old slug if derivable) -> current slug
-	const redirects = {};
-	for (const p of people) {
-		const current = slugMap.get(p.id);
-		const olds = [
-			...(p.former_ids || []),
-			...(p.former_id ? [p.former_id] : []),
-			...(p.merged_ids || [])
-		];
-		for (const old of olds) {
-			redirects[old] = current; // old ID -> current slug
-		}
-	}
-
-	// 5) write the bundle
-	const W = (rel, obj) => {
-		const full = join(CONFIG.repoRoot, rel);
-		mkdirSync(dirname(full), { recursive: true });
-		writeFileSync(full, JSON.stringify(obj)); // minified
-		return full;
-	};
-	W(join(CONFIG.dataDir, 'people.json'), clientPeople);
-	W(join(CONFIG.dataDir, 'search-index.json'), searchIndex);
-	if (data.cemeteries) W(join(CONFIG.dataDir, 'cemeteries.json'), data.cemeteries);
-	if (data.institutions) W(join(CONFIG.dataDir, 'institutions.json'), data.institutions);
-	W(CONFIG.redirectsFile, redirects);
-
-	// 5b) stats.json — corpus tallies computed at build time so the client ships
-	// the number, never counts. Strict === true so null/undefined never count.
+	// 3-5) aggregate bundle files. SKIPPED entirely in --only mode (a card fetches only its own
+	// per-person payload). Declared out here so the closing summary can log them either way.
+	let searchIndex = [];
+	let redirects = {};
 	let thomasDescendants = 0;
 	let talcottDescendants = 0;
-	for (const p of people) {
-		const c = p.classification || {};
-		if (c.is_thomas_descendant === true) thomasDescendants++;
-		if (c.is_talcott_descendant === true) talcottDescendants++;
+	if (!only) {
+		// 3) search-index.json
+		searchIndex = people.map((p) => searchRow(p, slugMap));
+
+		// 4) redirects: every former/merged id -> current slug
+		for (const p of people) {
+			const current = slugMap.get(p.id);
+			const olds = [
+				...(p.former_ids || []),
+				...(p.former_id ? [p.former_id] : []),
+				...(p.merged_ids || [])
+			];
+			for (const old of olds) redirects[old] = current;
+		}
+
+		// 5) write the bundle
+		const W = (rel, obj) => {
+			const full = join(CONFIG.repoRoot, rel);
+			mkdirSync(dirname(full), { recursive: true });
+			writeFileSync(full, JSON.stringify(obj)); // minified
+			return full;
+		};
+		W(join(CONFIG.dataDir, 'people.json'), clientPeople);
+		W(join(CONFIG.dataDir, 'search-index.json'), searchIndex);
+		if (data.cemeteries) W(join(CONFIG.dataDir, 'cemeteries.json'), data.cemeteries);
+		if (data.institutions) W(join(CONFIG.dataDir, 'institutions.json'), data.institutions);
+		W(CONFIG.redirectsFile, redirects);
+
+		// 5b) stats.json — corpus tallies computed at build time so the client ships
+		// the number, never counts. Strict === true so null/undefined never count.
+		for (const p of people) {
+			const c = p.classification || {};
+			if (c.is_thomas_descendant === true) thomasDescendants++;
+			if (c.is_talcott_descendant === true) talcottDescendants++;
+		}
+		W(join(CONFIG.dataDir, 'stats.json'), {
+			total: people.length,
+			thomasDescendants,
+			talcottDescendants
+		});
 	}
-	const stats = { total: people.length, thomasDescendants, talcottDescendants };
-	W(join(CONFIG.dataDir, 'stats.json'), stats);
 
 	// 6) per-person page payloads — one self-contained file per slug.
 	// Each bakes everything /person/[slug] needs (focus record, family graph, a
@@ -679,7 +711,6 @@ function main() {
 	}
 	const reg = { landmarkById, artworkById, documentById, videoById, statuesBySubject };
 
-	const only = process.env.ONLY_IDS ? new Set(process.env.ONLY_IDS.split(',')) : null;
 	const personDir = join(CONFIG.repoRoot, CONFIG.personDir);
 	if (!only && existsSync(personDir)) rmSync(personDir, { recursive: true, force: true });
 	mkdirSync(personDir, { recursive: true });
@@ -693,11 +724,15 @@ function main() {
 	}
 
 	log('Done.');
-	log(`  people.json            ${clientPeople.length} records (research_notes stripped)`);
-	log(`  search-index.json      ${searchIndex.length} rows`);
-	log(`  person/                ${pgCount} page payloads`);
-	log(`  redirects.json         ${Object.keys(redirects).length} entries`);
-	log(`  stats.json             thomas ${thomasDescendants} / talcott ${talcottDescendants}`);
+	if (only) {
+		log(`  --only: ${pgCount} page payload(s) rebuilt; aggregates untouched`);
+	} else {
+		log(`  people.json            ${clientPeople.length} records (research_notes stripped)`);
+		log(`  search-index.json      ${searchIndex.length} rows`);
+		log(`  person/                ${pgCount} page payloads`);
+		log(`  redirects.json         ${Object.keys(redirects).length} entries`);
+		log(`  stats.json             thomas ${thomasDescendants} / talcott ${talcottDescendants}`);
+	}
 }
 
 main();
