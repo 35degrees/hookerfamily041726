@@ -220,9 +220,11 @@ def apply_mechanical(field, val, p, tp):
     if field == 'notable':
         kv = parse_kv(val); no = p.setdefault('notable', {})
         no['is_notable'] = (kv.get('on', 'true').lower() in ('true','1','yes'))
-        if 'url' in kv: no['primary_url'] = kv['url']
+        if 'url' in kv:
+            no['primary_url'] = kv['url']
+            no['notable_url'] = kv['url']   # the field the card reads; keep both in sync
         if 'cat' in kv: no['notable_category'] = kv['cat'].split(',')
-        if no['is_notable'] and not no.get('primary_url'):
+        if no['is_notable'] and not (no.get('notable_url') or no.get('primary_url')):
             return "FLAG notable=true but no url given", False
         return "OK notable set", True
 
