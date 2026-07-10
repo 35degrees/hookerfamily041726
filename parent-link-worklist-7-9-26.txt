@@ -1,0 +1,67 @@
+PARENT-CHILD RECIPROCITY WORKLIST  —  generated 7/9/26 (2026-07-09)
+Cases where a parent lists a child in children_ids, but the child does NOT list that parent (father_id/mother_id).
+For each: decide  [remove-claim] (children_ids is wrong)  OR  [fix-parents] (the child's parents dict is wrong).
+Columns: CLAIMER(id|name) | CHILD(id|name) | CHILD.father | CHILD.mother | NOTE | DECISION
+====================================================================================================
+H00020|Sarah Wilson Torrey  ||  X00072|Micajah Torrey  ||  father=X00068|Captain William Torrey  mother=X00069|Elizabeth Frye Torrey  ||  unclear  ||  ____
+H00045|Sarah Newton Ingersoll  ||  X00542|Aaron Ingersoll  ||  father=I00077|Jonathan Ingersoll  mother=None|-  ||  step? (claimer married to child's parent)  ||  ____
+H00633|Susannah Langdon  ||  H00534|Urania Hooker Hart  ||  father=H00266|Ashbel Hooker  mother=I00044|Susannah Langdon Dickinson  ||  step? (claimer married to child's parent)  ||  ____
+H02380|Wesley Hooker  ||  H03798|Lovice Hooker H02380  ||  father=I00887|Chary Ann Hooker  mother=None|-  ||  step? (claimer married to child's parent)  ||  ____
+HD2477|John Porter  ||  HD2455|David Keyes Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+HD2477|John Porter  ||  HD2456|Susanna Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+HD2477|John Porter  ||  HD2457|Sarah Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+HD2477|John Porter  ||  HD2458|Henry Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+HD2477|John Porter  ||  HD2459|Sidney Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+HD2477|John Porter  ||  HD2460|Eleazer Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+HD2477|John Porter  ||  HD2461|Horace Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+HD2479|Samuel Bayard Woodward  ||  HD2515|Alice Taylor Beardsley  ||  father=HD2440|William Porter Beardsley  mother=X00820|Margaret Perley  ||  step? (claimer married to child's parent)  ||  ____
+HD2479|Samuel Bayard Woodward  ||  HD2516|Glover Beardsley  ||  father=HD2440|William Porter Beardsley  mother=X00820|Margaret Perley  ||  step? (claimer married to child's parent)  ||  ____
+I00013|Susannah Bryan Newton  ||  HD0003|Mary Newton  ||  father=H00012|Roger Newton Jr.  mother=None|-  ||  unclear  ||  ____
+I00059|Rev. Capt. Josiah Torrey  ||  X00072|Micajah Torrey  ||  father=X00068|Captain William Torrey  mother=X00069|Elizabeth Frye Torrey  ||  unclear  ||  ____
+I00244|Alexander Keeney  ||  T02260|Amelia Smith  ||  father=T01038|Alvan Talcott  mother=I00245|Philomela Root Talcott  ||  unclear  ||  ____
+I00244|Alexander Keeney  ||  T02261|Mary Talcott  ||  father=T01038|Alvan Talcott  mother=I00245|Philomela Root Talcott  ||  unclear  ||  ____
+I00370|Sherman Prindle Woodward  ||  HD1181|Minerva Pierrepont Woodward Judd  ||  father=X00366|Sherman Prindle Woodward  mother=HD1179|Minerva Pierpont Woodward  ||  step? (claimer married to child's parent)  ||  ____
+I01043|Louisa Vanzant Hooker  ||  H03858|Frank Ripley Hooker  ||  father=H02417|John "Jack" Hooker  mother=I01035|Louisa Hooker  ||  step? (claimer married to child's parent)  ||  ____
+I01043|Louisa Vanzant Hooker  ||  H03859|John Sims Hooker  ||  father=H02417|John "Jack" Hooker  mother=I01035|Louisa Hooker  ||  step? (claimer married to child's parent)  ||  ____
+I01043|Louisa Vanzant Hooker  ||  H03860|Anna C. Hooker  ||  father=H02417|John "Jack" Hooker  mother=I01035|Louisa Hooker  ||  step? (claimer married to child's parent)  ||  ____
+I01043|Louisa Vanzant Hooker  ||  H03861|George Vanzant Hooker  ||  father=H02417|John "Jack" Hooker  mother=I01035|Louisa Hooker  ||  step? (claimer married to child's parent)  ||  ____
+I01043|Louisa Vanzant Hooker  ||  H03862|Edna Grace Hooker  ||  father=H02417|John "Jack" Hooker  mother=I01035|Louisa Hooker  ||  step? (claimer married to child's parent)  ||  ____
+I01043|Louisa Vanzant Hooker  ||  H03863|Helen Clementine "Nellie" Hooker Farmer  ||  father=H02417|John "Jack" Hooker  mother=I01035|Louisa Hooker  ||  step? (claimer married to child's parent)  ||  ____
+I01043|Louisa Vanzant Hooker  ||  H03864|Jessie Pearl Hooker Thompson  ||  father=H02417|John "Jack" Hooker  mother=I01035|Louisa Hooker  ||  step? (claimer married to child's parent)  ||  ____
+T01037|Esther Talcott Keeney  ||  T02260|Amelia Smith  ||  father=T01038|Alvan Talcott  mother=I00245|Philomela Root Talcott  ||  unclear  ||  ____
+T01037|Esther Talcott Keeney  ||  T02261|Mary Talcott  ||  father=T01038|Alvan Talcott  mother=I00245|Philomela Root Talcott  ||  unclear  ||  ____
+U00049|Ruth Wright  ||  T01042|Elijah Talcott  ||  father=T01029|Deacon Elijah Talcott  mother=I00208|Rebecca Olmstead Talcott  ||  step? (claimer married to child's parent)  ||  ____
+U00049|Ruth Wright  ||  T01043|Deacon Flavel Talcott  ||  father=T01029|Deacon Elijah Talcott  mother=I00208|Rebecca Olmstead Talcott  ||  step? (claimer married to child's parent)  ||  ____
+U00049|Ruth Wright  ||  T01044|Rev. Hart Talcott  ||  father=T01029|Deacon Elijah Talcott  mother=I00208|Rebecca Olmstead Talcott  ||  step? (claimer married to child's parent)  ||  ____
+U00049|Ruth Wright  ||  T01045|Rebecca Talcott Stone  ||  father=T01029|Deacon Elijah Talcott  mother=I00208|Rebecca Olmstead Talcott  ||  step? (claimer married to child's parent)  ||  ____
+U00049|Ruth Wright  ||  T01046|Asa Talcott  ||  father=T01029|Deacon Elijah Talcott  mother=I00208|Rebecca Olmstead Talcott  ||  step? (claimer married to child's parent)  ||  ____
+U00049|Ruth Wright  ||  T01047|Dr. William Olmstead Talcott  ||  father=T01029|Deacon Elijah Talcott  mother=I00208|Rebecca Olmstead Talcott  ||  step? (claimer married to child's parent)  ||  ____
+U00049|Ruth Wright  ||  T01048|Julius Talcott  ||  father=T01029|Deacon Elijah Talcott  mother=I00208|Rebecca Olmstead Talcott  ||  step? (claimer married to child's parent)  ||  ____
+X00044|Mary Thompson Hart  ||  I00041|Mercy Hart Hooker  ||  father=X00119|Dea. Ebenezer Hart  mother=X00043|Deacon Thomas Hart  ||  step? (claimer married to child's parent)  ||  ____
+X00799|Eleazer Porter  ||  X00660|Jonathan Edwards Porter  ||  father=None|-  mother=H00382|Susannah Edwards  ||  step? (claimer married to child's parent)  ||  ____
+X00803|Sarah Keyes  ||  HD2455|David Keyes Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+X00803|Sarah Keyes  ||  HD2456|Susanna Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+X00803|Sarah Keyes  ||  HD2457|Sarah Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+X00803|Sarah Keyes  ||  HD2458|Henry Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+X00803|Sarah Keyes  ||  HD2459|Sidney Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+X00803|Sarah Keyes  ||  HD2460|Eleazer Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+X00803|Sarah Keyes  ||  HD2461|Horace Porter  ||  father=HD2432|Eleazer Williams Porter  mother=X00801|Abigail Martha Phillips  ||  step? (claimer married to child's parent)  ||  ____
+X00819|Joan Rita Coleman  ||  HD2472|Samuel Woodward  ||  father=HD2447|George Hartley Woodward  mother=X00815|Joan Rita Coleman  ||  step? (claimer married to child's parent)  ||  ____
+X00825|Mary Weld Porter  ||  HD2515|Alice Taylor Beardsley  ||  father=HD2440|William Porter Beardsley  mother=X00820|Margaret Perley  ||  step? (claimer married to child's parent)  ||  ____
+X00825|Mary Weld Porter  ||  HD2516|Glover Beardsley  ||  father=HD2440|William Porter Beardsley  mother=X00820|Margaret Perley  ||  step? (claimer married to child's parent)  ||  ____
+X00905|Ellen Almira Low  ||  HD1629|Anne Low Pierrepont Luquer  ||  father=HD1537|Henry Evelyn Pierrepont II  mother=X00517|Ellen Almira Low  ||  step? (claimer married to child's parent)  ||  ____
+X00905|Ellen Almira Low  ||  HD1630|Ellen Low Pierrepont  ||  father=HD1537|Henry Evelyn Pierrepont II  mother=X00517|Ellen Almira Low  ||  step? (claimer married to child's parent)  ||  ____
+X00905|Ellen Almira Low  ||  HD1631|Henry Evelyn Pierrepont III  ||  father=HD1537|Henry Evelyn Pierrepont II  mother=X00517|Ellen Almira Low  ||  step? (claimer married to child's parent)  ||  ____
+X00905|Ellen Almira Low  ||  HD1632|Robert Low Pierrepont  ||  father=HD1537|Henry Evelyn Pierrepont II  mother=X00517|Ellen Almira Low  ||  step? (claimer married to child's parent)  ||  ____
+X00905|Ellen Almira Low  ||  HD1633|Rutherfurd Stuyvesant Pierrepont  ||  father=HD1537|Henry Evelyn Pierrepont II  mother=X00517|Ellen Almira Low  ||  step? (claimer married to child's parent)  ||  ____
+X00905|Ellen Almira Low  ||  HD1634|Seth Low Pierrepont  ||  father=HD1537|Henry Evelyn Pierrepont II  mother=X00517|Ellen Almira Low  ||  step? (claimer married to child's parent)  ||  ____
+X01559|Confederate chaplain Dr  ||  HD2451|Mehetable Hughes Porter  ||  father=HD2450|Edwin Porter  mother=X00810|Mary Wyllis  ||  step? (claimer married to child's parent)  ||  ____
+X01688|Hugh Torbert Brooks  ||  HD2232|George Sprague Brooks  ||  father=X00703|Benedict Brooks  mother=HD2197|Mary Wilmerding Dwight  ||  step? (claimer married to child's parent)  ||  ____
+X01729|Captain Thomas Stoughton  ||  T00064|Mary Stoughton Allyn  ||  father=U00021|Captain Thomas Stoughton  mother=T00044|Dorothy Talcott  ||  step? (claimer married to child's parent)  ||  ____
+X01845|Mary Pantry  ||  X03370|Samuel Bryan  ||  father=X00088|Richard Bryan  mother=None|-  ||  step? (claimer married to child's parent)  ||  ____
+X01900|Rev. Samuel Whittlesey  ||  I00020|Rev. Samuel Whittlesey  ||  father=X03182|Rev. Samuel Whittelsey  mother=X03183|Sarah Chauncy Whittelsey  ||  unclear  ||  ____
+X01900|Rev. Samuel Whittlesey  ||  I00074|Chauncey Whittlesey  ||  father=X03182|Rev. Samuel Whittelsey  mother=X03183|Sarah Chauncy Whittelsey  ||  unclear  ||  ____
+X01901|Sarah Chauncey Whittlesey  ||  I00020|Rev. Samuel Whittlesey  ||  father=X03182|Rev. Samuel Whittelsey  mother=X03183|Sarah Chauncy Whittelsey  ||  unclear  ||  ____
+X01901|Sarah Chauncey Whittlesey  ||  I00074|Chauncey Whittlesey  ||  father=X03182|Rev. Samuel Whittelsey  mother=X03183|Sarah Chauncy Whittelsey  ||  unclear  ||  ____
+X01926|Paul Brandon Barringer Jr.  ||  HD2758|Paul Brandon Barringer III  ||  father=X00991|Paul Brandon Barringer Jr.  mother=HD2757|Lucy Landon Minor  ||  step? (claimer married to child's parent)  ||  ____
+X01926|Paul Brandon Barringer Jr.  ||  HD2759|Rufus Barringer  ||  father=X00991|Paul Brandon Barringer Jr.  mother=HD2757|Lucy Landon Minor  ||  step? (claimer married to child's parent)  ||  ____
