@@ -330,6 +330,10 @@
 		padding-bottom: 80px;
 		padding-left: 32px;
 		padding-right: 32px;
+		/* The (later) spouse-carousel overhang + carets sit past the card's right edge; at narrow
+		   viewports they'd extend the document and raise a horizontal scrollbar. Clip horizontally
+		   at the stage so they never can (vertical scroll is unaffected by overflow-x). */
+		overflow-x: clip;
 	}
 
 	/* The slot is exactly the card's bounding box (so the absolutely-positioned

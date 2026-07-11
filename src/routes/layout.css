@@ -5,6 +5,11 @@
 	--font-lora: 'Lora Variable', Georgia, serif;
 	--font-source: 'Source Sans Pro', sans-serif;
 }
+/* Reserve the vertical scrollbar's gutter always, so pages that grow past one viewport (or do
+   so mid-flight) don't shift the centered card sideways — the "arc-wobble" on child-click. */
+html {
+	scrollbar-gutter: stable;
+}
 body {
 	font-family: var(--font-inter);
 }
