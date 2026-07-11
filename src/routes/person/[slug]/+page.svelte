@@ -159,6 +159,66 @@
 	// card still carves the notch from the same spouse count, so geometry matches.
 	const useCompact = $derived(roster.spouses.length >= 3);
 
+	// ── Spouse carousel (STRIP model, existence-gated) ────────────────────────────────────
+	// ONLY built when spouseCount > 3; ≤3-spouse cards render the untouched baseline flex notch.
+	// ALL chips live in one row-strip inside a clip-path mask; paging is a single PURE-PITCH
+	// transform on the strip (chips hold their docked rects at every offset). L3: no pivot-aware
+	// offset (reset to 0), no landed-gated caret mount — those are L4/L5.
+	const CHIP_W = 160; // must match FeaturedCard CHIP_W_COMPACT
+	const CHIP_GAP = 8; // must match FeaturedCard CHIP_GAP
+	const WINDOW = 3;
+	const STRIP_STEP = CHIP_W + CHIP_GAP; // 168px per page
+	const NOTCH_W = WINDOW * CHIP_W + (WINDOW - 1) * CHIP_GAP; // 496px visible window
+	const CARET_W = 22;
+	const SHADOW_PAD = 6; // mask top/bottom overshoot so chip drop shadows render
+
+	let spouseOffset = $state(0);
+	const spouseCount = $derived(roster.spouses.length);
+	const hasCarousel = $derived(spouseCount > WINDOW);
+	const canPageRight = $derived(spouseOffset + WINDOW < spouseCount);
+	const canPageLeft = $derived(spouseOffset > 0);
+	let pagingLock = $state(false); // inert through the strip transition (no skip-ahead)
+
+	const stripX = $derived(-(spouseOffset * STRIP_STEP)); // pure pitch — chips snap to the grid
+	// Static mask: left clips chips sliding under the header; right hides the next chip (nothing
+	// protrudes past the trailing docked chip — the right caret is the sole "more" cue).
+	const maskClip = `inset(-${SHADOW_PAD}px -${SHADOW_PAD}px -${SHADOW_PAD}px 0px)`;
+	// Carets ride the card edge at the notch seam, EQUIDISTANT from the chips they flank.
+	const rightCaretRight = -(CHIP_GAP + CARET_W); // inner edge CHIP_GAP past the trailing chip
+	const leftCaretRight = NOTCH_W + CHIP_GAP; // inner edge CHIP_GAP before the first chip
+
+	// Initial offset on every new focus. PIVOT-AWARE (L5): if the person we're leaving (the pivot)
+	// becomes a spouse of the incoming focus at strip index i ≥ WINDOW, open the window whose TRAILING
+	// chip is that pivot (offset = i - (WINDOW-1)), so the demotion morph lands on a VISIBLE docked rect
+	// instead of flying to an off-mask position (the ghost). This runs SYNCHRONOUSLY on the focus change
+	// (before the flight's shrinkTo re-reads rects), and because pagingLock is cleared here the strip's
+	// transition (.paging-gated) is OFF — it SNAPS to the offset, never animating chip rects mid-flight.
+	$effect(() => {
+		f.person.id; // dependency
+		untrack(() => {
+			const pivot = getPivotId();
+			const spouses = roster.spouses;
+			const maxOffset = Math.max(0, spouses.length - WINDOW);
+			let init = 0;
+			if (pivot) {
+				const i = spouses.findIndex((s) => s.spouse.id === pivot);
+				if (i >= WINDOW) init = Math.min(i - (WINDOW - 1), maxOffset);
+			}
+			spouseOffset = init;
+			pagingLock = false;
+		});
+	});
+
+	function pageStep(dir: 1 | -1) {
+		if (pagingLock || !featuredLanded) return;
+		if (dir === 1 ? !canPageRight : !canPageLeft) return;
+		pagingLock = true; // .paging → the strip transition applies for THIS user page only
+		spouseOffset += dir; // step ONE
+		setTimeout(() => (pagingLock = false), 440); // ~= the 420ms strip transition
+	}
+	const pageAdvance = () => pageStep(1);
+	const pageBack = () => pageStep(-1);
+
 	const hasParents = $derived(roster.parents.length > 0);
 	const childrenTotal = $derived(roster.children.length);
 	const childrenDiedYoung = $derived(roster.children.filter((c) => c.dy_young).length);
@@ -232,35 +292,70 @@
 
 		     Kept always mounted (no {#if}) so a chip's LOCAL outro still fires when the
 		     set empties to zero — matching the parents/children slots. -->
-		<div class="spouse-notch flex gap-2">
-			{#each roster.spouses as chip (chip.spouse.id)}
-				<!-- data-flight-id lets a shrinking card land on this chip; spouses fly LATERAL.
-				     The .flight box stays UNTRANSFORMED so shrinkTo can read its true rect. The
-				     ENTRANCE gates on the card LANDING (in:markPending → revealed by the
-				     featuredLanded effect), same as parent/child boxes — otherwise the new chip
-				     flashes in early, gets covered by the rising card, and blinks back. (The
-				     up-and-left slide-in is deferred tuning; for now it reveals with the gentle
-				     landing fade.) animate:flip glides surviving chips; out:flyOut pins a LEAVING
-				     chip position:fixed at its click-captured rect (overriding flip's fix()), so it
-				     can't be flung from the notch. -->
+		<!-- data-flight-id lets a shrinking card land on a chip; spouses fly LATERAL. The .flight box
+		     stays UNTRANSFORMED so shrinkTo reads its true rect. Entrance gates on the card LANDING
+		     (in:markPending → revealed by the featuredLanded effect); animate:flip glides survivors;
+		     out:flyOut pins a LEAVING chip at its click-captured rect. These are the NAVIGATION
+		     transitions; carousel paging is a pure CSS transform on .spouse-strip and fires none of
+		     them (the keyed each doesn't change on a page). The .flight (with animate:flip) must be
+		     the DIRECT child of the keyed each, so it's inlined per branch. -->
+		<!-- The mask + strip + each are ALWAYS mounted (never behind an {#if}) so a chip's in:markPending
+		     / out:flyOut / animate:flip fire as ADDED/REMOVED items on navigation — the frozen
+		     landing-gate. Carousel geometry (fixed mask width + clip-path + strip transform) is applied
+		     by CONDITIONAL STYLE only when spouseCount > 3; at ≤3 the mask/strip collapse to a plain
+		     right-anchored flex row (the untouched baseline layout). Only the carets are gated. -->
+		<div class="spouse-notch" data-spouse-offset={hasCarousel ? spouseOffset : 0}>
+			<div
+				class="spouse-mask"
+				class:carousel={hasCarousel}
+				style={hasCarousel ? `width: ${NOTCH_W}px; clip-path: ${maskClip};` : ''}
+			>
 				<div
-					class="flight"
-					data-flight-dir="lateral"
-					data-flight-id={chip.spouse.id}
-					in:markPending
-					out:flyOut={{ key: chip.spouse.id }}
-					animate:flip={{ duration: flipMs }}
+					class="spouse-strip"
+					class:paging={pagingLock}
+					style:transform={hasCarousel ? `translateX(${stripX}px)` : 'none'}
 				>
-					<div class="chip-slide">
-						<PersonBox
-							person={chip.spouse}
-							relation="spouse"
-							marriageYear={chip.year}
-							compact={useCompact}
-						/>
-					</div>
+					{#each roster.spouses as chip (chip.spouse.id)}
+						<div
+							class="flight"
+							data-flight-dir="lateral"
+							data-flight-id={chip.spouse.id}
+							in:markPending
+							out:flyOut={{ key: chip.spouse.id }}
+							animate:flip={{ duration: flipMs }}
+						>
+							<div class="chip-slide">
+								<PersonBox person={chip.spouse} relation="spouse" marriageYear={chip.year} compact={useCompact} />
+							</div>
+						</div>
+					{/each}
 				</div>
-			{/each}
+			</div>
+			<!-- Bookend carets — ALWAYS mounted (same DOM node, never remounted → no flicker AND no
+			     fresh-mount opacity flash: base opacity 0, .visible only ADDS 1 via a transition, so the
+			     stale featuredLanded frame at flight start can never paint them at 1). Visibility is a
+			     pure READ of hasCarousel + featuredLanded + canPage: they fade in with the chips on
+			     landing, fade out on offset changes (last-window right caret fades out and stays out).
+			     pointer-events:none while invisible; the paging lockout is enforced by pageStep's guard,
+			     NOT by CSS, so the cursor stays pointer throughout the 420ms. -->
+			<button
+				type="button"
+				class="caret caret-left"
+				class:visible={hasCarousel && featuredLanded && canPageLeft}
+				style="right: {leftCaretRight}px"
+				aria-label="Previous spouses"
+				aria-disabled={pagingLock || !(hasCarousel && featuredLanded && canPageLeft)}
+				onclick={pageBack}>‹</button
+			>
+			<button
+				type="button"
+				class="caret caret-right"
+				class:visible={hasCarousel && featuredLanded && canPageRight}
+				style="right: {rightCaretRight}px"
+				aria-label="More spouses"
+				aria-disabled={pagingLock || !(hasCarousel && featuredLanded && canPageRight)}
+				onclick={pageAdvance}>›</button
+			>
 		</div>
 		{#each [f] as cur (cur.person.id)}
 			<div
@@ -376,6 +471,101 @@
 		top: 0;
 		right: 0;
 		z-index: 1;
+	}
+
+	/* Mask + strip are ALWAYS present (keeps the each persistent → landing-gate intact). At ≤3 both
+	   collapse to content width → a plain right-anchored flex row = the untouched baseline layout.
+	   The .carousel state (inline: fixed 496px width + clip-path) turns it into the sliding window;
+	   clip-path (not overflow:hidden) lets drop shadows escape top/bottom while the left edge clips
+	   chips sliding under the header. */
+	.spouse-mask {
+		width: max-content;
+	}
+	/* The strip holds ALL chips in one row and slides as ONE object; paging = a single transform.
+	   Transition applies ONLY while .paging (a user page) — never on the navigation-time offset
+	   reset, so the strip SNAPS on navigation and its chip rects never move under the demotion morph.
+	   ~420ms easeOutBack (~5px overshoot-settle) so a page reads as travel-and-stop. */
+	.spouse-strip {
+		display: flex;
+		gap: 8px; /* = CHIP_GAP */
+		width: max-content;
+		will-change: transform;
+	}
+	.spouse-strip.paging {
+		transition: transform 420ms cubic-bezier(0.34, 1.3, 0.64, 1);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.spouse-strip.paging {
+			transition: none;
+		}
+	}
+
+	/* Carousel carets — siblings of the mask, absolutely positioned by inline `right`; never clipped.
+	   Default is HIDDEN (opacity 0, non-interactive); .visible fades them in. cursor stays pointer in
+	   every state — the paging lockout nullifies the click via pageStep's guard, never via cursor. */
+	.caret {
+		position: absolute;
+		top: 50%;
+		z-index: 3;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 22px;
+		height: 22px;
+		padding-bottom: 2px; /* optically center the chevron */
+		border-radius: 9999px;
+		border: 1px solid rgb(214, 211, 209); /* stone-300 */
+		background: rgba(255, 255, 255, 0.94);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+		color: rgb(87, 83, 78); /* stone-600 */
+		font-size: 15px;
+		line-height: 1;
+		cursor: pointer;
+		opacity: 0;
+		pointer-events: none; /* faded carets can't be clicked */
+		transform: translateY(-50%);
+		transition:
+			opacity 180ms ease,
+			transform 120ms ease,
+			box-shadow 120ms ease,
+			background 120ms ease,
+			color 120ms ease;
+	}
+	/* Fades in with the chips on landing; fades out on offset change (last-window right caret stays out). */
+	.caret.visible {
+		opacity: 1;
+		pointer-events: auto;
+	}
+	/* 22px visual, ~32px hit area (the pseudo-element is part of the clickable region). */
+	.caret::before {
+		content: '';
+		position: absolute;
+		inset: -5px;
+	}
+	/* Hover LIFT — a whisper of a rise + slightly softer shadow. */
+	.caret:hover {
+		transform: translateY(calc(-50% - 1px));
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+		background: #fff;
+		color: rgb(28, 25, 23); /* stone-900 */
+	}
+	/* Press DIP — settles toward the surface, springs back to the hover lift on release. */
+	.caret:active {
+		transform: translateY(calc(-50% - 0.5px));
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.caret {
+			transition:
+				opacity 180ms ease,
+				box-shadow 120ms ease,
+				background 120ms ease,
+				color 120ms ease;
+		}
+		.caret:hover,
+		.caret:active {
+			transform: translateY(-50%); /* no lift/dip; shadow/color still change */
+		}
 	}
 
 	/* Flight wrappers are the keyed-each children that carry animate:flip (survivors glide) and

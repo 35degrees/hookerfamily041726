@@ -80,6 +80,67 @@ for (let i = 0; i < 18; i++) {
 }
 ok(worst.over <= 2, `spouse-swap: a VISIBLE element (${worst.what}) flew ${Math.round(worst.over)}px past the card's right edge (≤ 2)`);
 
+// ── C. the Morgan wife-#4/#5 round-trip (the scenario that caught the ghost) ───────────────
+// Morgan → page so a DEEP wife (index ≥ 3) is the trailing chip → click her → click Morgan on her
+// card. The pivot-aware offset must land Morgan's window with that wife a VISIBLE docked chip, and
+// nothing may fly off-card during the demotion. Runs for wife #4 (offset 1) and wife #5 (offset 2).
+const trailingChipInfo = () =>
+	page.evaluate(() => {
+		const slot = document.querySelector('.featured-slot').getBoundingClientRect();
+		const mL = document.querySelector('.spouse-mask')?.getBoundingClientRect().left ?? 0;
+		const vis = [...document.querySelectorAll('.spouse-strip .flight')]
+			.filter((e) => { const r = e.getBoundingClientRect(); return r.right > mL + 1 && r.left < slot.right + 6; })
+			.sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
+		const a = vis[vis.length - 1]?.querySelector('a');
+		const r = a?.getBoundingClientRect();
+		return a ? { href: a.getAttribute('href'), x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
+	});
+for (const pages of [1, 2]) {
+	await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(500);
+	for (let i = 0; i < pages; i++) { await page.click('.caret-right'); await page.waitForTimeout(460); }
+	const wife = await trailingChipInfo();
+	await page.mouse.click(wife.x, wife.y);
+	await page.waitForURL(`**${wife.href}`, { timeout: 4000 }).catch(() => {});
+	await page.waitForTimeout(700);
+	const morgan = await page.evaluate(() => {
+		const a = document.querySelector('.spouse-notch a[href$="john-morgan-1930"]');
+		const r = a?.getBoundingClientRect();
+		return a ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
+	});
+	if (!morgan) { fails.push(`round-trip(${pages}): Morgan chip not found on wife card`); continue; }
+	await page.mouse.move(5, 5);
+	await page.mouse.click(morgan.x, morgan.y); // fly back INTO Morgan, pivot = the deep wife
+	let over = -1e9;
+	for (let i = 0; i < 18; i++) {
+		const o = await page.evaluate(() => {
+			const slot = document.querySelector('.featured-slot')?.getBoundingClientRect();
+			if (!slot) return -1e9;
+			let m = -1e9;
+			for (const e of document.querySelectorAll('.spouse-notch .flight, .featured-flight')) {
+				const cs = getComputedStyle(e);
+				if (parseFloat(cs.opacity) <= 0.5) continue;
+				if ((cs.zIndex === 'auto' ? 0 : Number(cs.zIndex)) < 1) continue;
+				m = Math.max(m, e.getBoundingClientRect().right - slot.right);
+			}
+			return m;
+		});
+		if (o > over) over = o;
+		await page.waitForTimeout(35);
+	}
+	ok(over <= 2, `round-trip(${pages}): a visible element flew ${Math.round(over)}px off-card during the demotion`);
+	const res = await page.evaluate((href) => {
+		const off = Number(document.querySelector('.spouse-notch')?.getAttribute('data-spouse-offset') ?? 0);
+		const slot = document.querySelector('.featured-slot').getBoundingClientRect();
+		const mL = document.querySelector('.spouse-mask')?.getBoundingClientRect().left ?? 0;
+		const pivot = [...document.querySelectorAll('.spouse-strip .flight')].find((e) => e.querySelector(`a[href$="${href.split('/').pop()}"]`));
+		const r = pivot?.getBoundingClientRect();
+		return { off, pivotVisible: r ? r.right > mL + 1 && r.right <= slot.right + 1 : false };
+	}, wife.href);
+	ok(res.off > 0, `round-trip(${pages}): pivot-aware offset not applied (offset ${res.off})`);
+	ok(res.pivotVisible, `round-trip(${pages}): the wife we left is not a visible docked chip on Morgan`);
+}
+
 await ctx.close();
 await browser.close();
 
