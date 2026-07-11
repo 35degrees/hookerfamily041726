@@ -489,7 +489,10 @@
 		display: flex;
 		gap: 8px; /* = CHIP_GAP */
 		width: max-content;
-		will-change: transform;
+		/* NO will-change/transform-creating property here: it would establish a containing block for
+		   the position:fixed flyOut chips, so their viewport-coord pins would resolve relative to the
+		   strip and fling them to the viewport edge mid-crossfade (Artifact B). The paging transform is
+		   cheap enough without the GPU hint. */
 	}
 	.spouse-strip.paging {
 		transition: transform 420ms cubic-bezier(0.34, 1.3, 0.64, 1);
