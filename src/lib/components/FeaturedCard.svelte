@@ -75,13 +75,18 @@
 	});
 
 	let chipCount = $derived(spouseChips.length);
-	let useCompact = $derived(chipCount >= 3);
+	// The carved notch shows at most 3 chips — the Task 2 carousel windows the rest — so
+	// cap ALL notch geometry (width, height, clip-path, header padding) at 3. Without this
+	// a 4+-spouse card (Michael HD3384) runs the notch, hence the whole card-top, off its
+	// 925px frame. This is the geometry invariant the carousel build sits on top of.
+	let notchChipCount = $derived(Math.min(chipCount, 3));
+	let useCompact = $derived(notchChipCount >= 3);
 	let chipWidth = $derived(useCompact ? CHIP_W_COMPACT : CHIP_W_NORMAL);
 	let chipZoneHeight = $derived(useCompact ? CHIP_ZONE_HEIGHT_COMPACT : CHIP_ZONE_HEIGHT_NORMAL);
 
 	let chipZoneWidth = $derived.by(() => {
-		if (chipCount === 0) return 0;
-		return chipCount * chipWidth + (chipCount - 1) * CHIP_GAP + CHIP_INSET;
+		if (notchChipCount === 0) return 0;
+		return notchChipCount * chipWidth + (notchChipCount - 1) * CHIP_GAP + CHIP_INSET;
 	});
 
 	// Corner radius for the rounded card silhouette.
@@ -109,7 +114,7 @@
 	let clipPath = $derived.by(() => {
 		const r = CORNER_R;
 		// No chips → the flat silhouette IS the resting shape (also reused while flying).
-		if (chipCount === 0) return flatShape;
+		if (notchChipCount === 0) return flatShape;
 		const cw = chipZoneWidth;
 		const ch = chipZoneHeight;
 		return `shape(
@@ -159,7 +164,7 @@
 		<div class="card-top grid h-[580px] grid-rows-[96px_minmax(0,1fr)]">
 			<div
 				class="header min-w-0 px-6 py-4"
-				style="padding-right: {chipCount > 0 ? chipZoneWidth + 16 : 24}px;"
+				style="padding-right: {notchChipCount > 0 ? chipZoneWidth + 16 : 24}px;"
 			>
 				<div class="name-block min-w-0" class:tight-stack={headerIsCrowded}>
 					<!-- min-w-0 + [data-fit] inline span: shrinkToFit measures the wrapper's real
