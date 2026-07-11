@@ -317,3 +317,18 @@ export function flyOut(_node: Element, params: { key: string }) {
 			`${pin}opacity: ${t}; transform: translate(${u * dx}px, ${u * dy}px) scale(${0.96 + 0.04 * t});`
 	};
 }
+
+/**
+ * `out:chipExit` — leave transition for a SPOUSE CAROUSEL chip. A chip that was OFF the visible
+ * window at click time (mask-clipped, invisible at rest) must also leave invisibly: on the crossfade
+ * the mask adopts the incoming card's clip state, which no longer clips this departing chip, so a
+ * normal flyOut would paint it at its true off-card rect (Artifact B-residual). The render marks such
+ * chips `data-offwindow="true"`; here they exit at duration 0 / opacity 0 — never painted. In-window
+ * chips (and every ≤3-card chip, which is never off-window) fall through to the normal flyOut.
+ */
+export function chipExit(node: Element, params: { key: string }) {
+	if ((node as HTMLElement).dataset.offwindow === 'true') {
+		return { duration: 0, css: () => 'opacity: 0;' };
+	}
+	return flyOut(node, params);
+}

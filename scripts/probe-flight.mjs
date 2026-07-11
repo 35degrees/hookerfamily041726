@@ -53,10 +53,12 @@ ok(frames[frames.length - 1].vis === 4, `child-click: incoming spouse chips neve
 // KNOWN, TOLERATED BASELINE BEHAVIOR — "Artifact A" (documented, NOT asserted): on a LEADING/middle
 // spouse-chip click the growing hero flies from a left-position rect, so its right edge lands left of
 // the demoting card and the demoting card's right edge is briefly EXPOSED (~228px on a 2-spouse card).
-// A TRAILING click covers it fully (0px). Pre-existing flight-system behavior, newly noticed; Sam can
-// live with it. Candidate fix (own micro-phase, needs approval): clip the morph layer to the
-// featured-slot bounds — both morph endpoints live in-slot, so clipping loses nothing. Check B below
-// deliberately filters to z-index ≥ 1 so it does NOT flag this covered-under-hero case.
+// A TRAILING click covers it fully (0px). Same family: aaron-burr-1808 (3 spouses) shows a leading-
+// click flicker — a visible-chip exit exposed by the hero's coverage geometry, NO carousel involvement.
+// Pre-existing flight-system behavior, newly noticed; Sam can live with it. Candidate fix (own micro-
+// phase, needs approval): clip the morph layer to the featured-slot bounds — both morph endpoints live
+// in-slot, so clipping loses nothing. Check B below deliberately filters to z-index ≥ 1 so it does NOT
+// flag this covered-under-hero case.
 
 // ── B. spouse-swap demotion: nothing VISIBLE flies off the card's right edge ────────────────
 // Reference is the STABLE .featured-slot (the card's bounding box — it never transforms; the cards

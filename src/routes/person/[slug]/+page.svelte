@@ -10,7 +10,15 @@
 	import { featured } from '$lib/state/featured.svelte';
 	import { loadFeatured, warmPersonLinks } from '$lib/state/navigate';
 	import { buildRoster } from '$lib/data/roster';
-	import { flyOut, growFrom, shrinkTo, markPending, morphIn, getPivotId } from '$lib/transitions/flight';
+	import {
+		flyOut,
+		chipExit,
+		growFrom,
+		shrinkTo,
+		markPending,
+		morphIn,
+		getPivotId
+	} from '$lib/transitions/flight';
 
 	let { data }: { data: PageData } = $props();
 
@@ -315,13 +323,18 @@
 					class:paging={pagingLock}
 					style:transform={hasCarousel ? `translateX(${stripX}px)` : 'none'}
 				>
-					{#each roster.spouses as chip (chip.spouse.id)}
+					{#each roster.spouses as chip, i (chip.spouse.id)}
+						<!-- data-offwindow: this chip is OUTSIDE the visible 3-window (mask-clipped, invisible
+						     at rest). out:chipExit reads it so an off-window leaver exits at opacity 0 / no
+						     travel instead of painting off-card once the mask adopts the incoming card's clip
+						     state (Artifact B-residual). Frozen at the click-time offset when the chip leaves. -->
 						<div
 							class="flight"
 							data-flight-dir="lateral"
 							data-flight-id={chip.spouse.id}
+							data-offwindow={hasCarousel && (i < spouseOffset || i >= spouseOffset + WINDOW)}
 							in:markPending
-							out:flyOut={{ key: chip.spouse.id }}
+							out:chipExit={{ key: chip.spouse.id }}
 							animate:flip={{ duration: flipMs }}
 						>
 							<div class="chip-slide">
