@@ -58,3 +58,8 @@ __pycache__/
 
 # entity image-gap worklist (regenerable side-output, not source)
 static/data/image-gaps.tsv
+# Playwright
+test-results
+
+# card-probe harness screenshots (regenerable)
+scripts/probe-out/
