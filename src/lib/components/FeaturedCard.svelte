@@ -153,17 +153,17 @@
 		style="clip-path: {clipPath}; --flat-shape: {flatShape};"
 	>
 		<!-- Fixed-height TOP region: header + content area, always exactly 580px tall.
-		     This is the "main card" that stays consistent regardless of NB expansion. -->
-		<!-- Header row is a FIXED height (Task 3): the common case (name + 1 label + blurb = 3 lines)
-		     sits comfortably in it, and the rare dual-descent card (name + 2 labels + blurb = 4 lines)
-		     compresses into the SAME height via .tight-stack (headerIsCrowded) so the content
-		     columns below never shift. The name is now single-line (shrinkToFit), so wrapping no
-		     longer inflates this; 96px accounts for the restored 14px/13px label sizes (up from the
-		     interim 12px). Still a CSS-derived estimate — TUNE on real cards: if a common
-		     single-descent card's content grid shifts, match this to its natural on-screen height. -->
-		<div class="card-top grid h-[580px] grid-rows-[96px_minmax(0,1fr)]">
+		     The COMMON header auto-sizes (minmax floor + auto), giving every card the SAME ~12px
+		     breathing gap under its last text line regardless of line count — a single fixed height
+		     can't (a no-blurb 2-line card and a blurb 3-line card differ by a whole line). The rare
+		     dual-descent 4-line card keeps the FIXED 96px + .tight-stack (headerIsCrowded) so its
+		     spacing is unchanged. The gap is the header's pb (12px); pt stays 16px. -->
+		<div
+			class="card-top grid h-[580px]"
+			style="grid-template-rows: {headerIsCrowded ? '96px' : 'minmax(72px, auto)'} minmax(0, 1fr);"
+		>
 			<div
-				class="header min-w-0 px-6 py-4"
+				class="header min-w-0 px-6 pt-4 pb-3"
 				style="padding-right: {notchChipCount > 0 ? chipZoneWidth + 16 : 24}px;"
 			>
 				<div class="name-block min-w-0" class:tight-stack={headerIsCrowded}>
@@ -202,7 +202,12 @@
 						{/each}
 					{/if}
 					{#if blurb}
-						<div class="mt-0.5 -mb-2 font-source text-sm leading-tight text-slate-600 opacity-80">
+						<!-- -mb-2 only in the crowded fixed-height variant (earns back a couple px for the
+						     4th line); on auto-height common cards it would just eat the breathing gap. -->
+						<div
+							class="mt-0.5 font-source text-sm leading-tight text-slate-600 opacity-80"
+							class:-mb-2={headerIsCrowded}
+						>
 							{blurb}
 						</div>
 					{/if}
