@@ -20,6 +20,12 @@ const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 const page = await ctx.newPage();
 
+// ORPHAN DETECTOR: the dev janitor warns when it removes a stranded position:fixed flight element
+// (an interrupted-outro orphan). Capturing that warning converts "the stuck chip" into an assertable
+// invariant — zero janitor warnings across the whole run.
+const janitorWarns = [];
+page.on('console', (m) => { if (m.text().includes('[flight janitor]')) janitorWarns.push(m.text()); });
+
 // clickable center of the first matching element (bypasses clipped-node interception)
 const centerOf = (sel) =>
 	page.evaluate((s) => {
@@ -150,6 +156,13 @@ for (const pages of [1, 2]) {
 	ok(res.off > 0, `round-trip(${pages}): pivot-aware offset not applied (offset ${res.off})`);
 	ok(res.pivotVisible, `round-trip(${pages}): the wife we left is not a visible docked chip on Morgan`);
 }
+
+// ── D. orphan invariant: after everything settles, no stranded position:fixed flight element, and
+// the dev janitor never had to fire (either would mean an interrupted-outro orphan reached the DOM).
+await page.waitForTimeout(900);
+const pinned = await page.evaluate(() => [...document.querySelectorAll('.flight')].filter((e) => getComputedStyle(e).position === 'fixed').map((e) => e.dataset.flightId));
+ok(pinned.length === 0, `orphaned pinned flight element(s) still in DOM: ${JSON.stringify(pinned)}`);
+ok(janitorWarns.length === 0, `dev janitor fired (orphan reached the DOM): ${janitorWarns.join(' ; ')}`);
 
 await ctx.close();
 await browser.close();

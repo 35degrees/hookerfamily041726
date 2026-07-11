@@ -99,8 +99,13 @@
 		}
 	}
 
+	// Monotonic navigation counter — the janitor (onIncomingLand) uses it to tell "no newer nav
+	// started" so its post-settle sweep never removes a legitimately in-flight pin.
+	let navSeq = 0;
+
 	function onIncomingStart(node: HTMLElement) {
 		if (prefersReducedMotion.current) return;
+		navSeq++;
 		node.classList.add('flat'); // suppress notch → solid rectangle for the flight
 		featuredLanded = false; // hold the PIVOT + spouse chips hidden until we land (see reveal below)
 		// Close the bare-screen gap: reveal the incoming PARENT and CHILD boxes NOW — as the outgoing
@@ -129,6 +134,22 @@
 		// appear sooner. Still strictly gated on landing → CHIPS-SOON stays green.
 		revealPending((el) => el.dataset.flightDir === 'lateral', CHIP_REVEAL_MS);
 		featuredLanded = true; // → reveals the pivot box + any remaining pending boxes (safety-net effect)
+
+		// DEV JANITOR (belt, NOT the root-cause fix): an interrupted outro can strand a flyOut-pinned
+		// position:fixed chip in the DOM until the next navigation (Sam hit this once). Well after this
+		// landing has settled — and only if no NEWER navigation started — sweep for any position:fixed
+		// flight element left over and remove it, warning with its identity so we learn the frequency.
+		if (import.meta.env.DEV) {
+			const seq = navSeq;
+			setTimeout(() => {
+				if (seq !== navSeq) return; // a newer nav is in flight; its pins are legitimate
+				for (const el of document.querySelectorAll<HTMLElement>('.flight')) {
+					if (getComputedStyle(el).position !== 'fixed') continue;
+					console.warn('[flight janitor] removed orphaned pinned chip:', el.dataset.flightId);
+					el.remove();
+				}
+			}, 700);
+		}
 	}
 	function onOutgoingStart(node: HTMLElement) {
 		if (prefersReducedMotion.current) return;
