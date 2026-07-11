@@ -246,7 +246,7 @@
 	     the ONLY scrolling region. Its padding-bottom is reserved to the measured burial-block
 	     height (+ gap) so nothing here can ever scroll beneath the pinned corner. -->
 	<div
-		class="scroll-group flex-1 space-y-2.5 overflow-y-auto pr-2"
+		class="scroll-group flex-1 space-y-2.5 overflow-y-auto pr-1"
 		style="min-height: 0; padding-bottom: {burialCemetery?.name ? burialHeight + 12 : 0}px"
 	>
 		<!-- 1. EDUCATION (education[], capped at EDU_LIMIT) -->

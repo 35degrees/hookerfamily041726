@@ -6,6 +6,7 @@
 	import RightColumn from './RightColumn.svelte';
 	import NarrativeBlocks from './NarrativeBlocks.svelte';
 	import { formatDate, formatLocationShort, buildMapUrl } from '$lib/utils/dates';
+	import { shrinkToFit } from '$lib/actions/shrinkToFit';
 
 	type Props = {
 		person: Person;
@@ -32,6 +33,7 @@
 	}: Props = $props();
 
 	let photoUrl = $derived(person.bio?.photo_url ?? person.name?.photo_url ?? null);
+	let displayName = $derived(person.bio?.display_name ?? person.name?.display_name ?? '');
 
 	let birthDate = $derived(formatDate(person.birth));
 	let birthLocation = $derived(formatLocationShort(person.birth));
@@ -147,27 +149,51 @@
 	>
 		<!-- Fixed-height TOP region: header + content area, always exactly 580px tall.
 		     This is the "main card" that stays consistent regardless of NB expansion. -->
-		<div class="card-top grid h-[580px] grid-rows-[minmax(70px,auto)_minmax(0,1fr)]">
+		<!-- Header row is a FIXED height (Task 3): the common case (name + 1 label + blurb = 3 lines)
+		     sits comfortably in it, and the rare dual-descent card (name + 2 labels + blurb = 4 lines)
+		     compresses into the SAME height via .tight-stack (headerIsCrowded) so the content
+		     columns below never shift. The name is now single-line (shrinkToFit), so wrapping no
+		     longer inflates this; 96px accounts for the restored 14px/13px label sizes (up from the
+		     interim 12px). Still a CSS-derived estimate — TUNE on real cards: if a common
+		     single-descent card's content grid shifts, match this to its natural on-screen height. -->
+		<div class="card-top grid h-[580px] grid-rows-[96px_minmax(0,1fr)]">
 			<div
-				class="header px-6 py-4"
+				class="header min-w-0 px-6 py-4"
 				style="padding-right: {chipCount > 0 ? chipZoneWidth + 16 : 24}px;"
 			>
-				<div class="name-block" class:tight-stack={headerIsCrowded}>
-					<h1 class="text-2xl leading-tight font-medium text-stone-900">
-						{person.bio?.display_name ?? person.name?.display_name}
-						<span class="ml-2 align-middle font-mono text-sm font-normal text-stone-400"
-							>{person.id}</span
+				<div class="name-block min-w-0" class:tight-stack={headerIsCrowded}>
+					<!-- min-w-0 + [data-fit] inline span: shrinkToFit measures the wrapper's real
+					     available width against the span's natural text width. Without min-w-0 up the
+					     chain the wrapper grows to the text and nothing ever shrinks (the HD3384 blowup). -->
+					<h1
+						class="w-full min-w-0 text-2xl leading-tight font-medium text-stone-900"
+						use:shrinkToFit={{ max: 24, min: 17, key: displayName }}
+					>
+						<span data-fit class="inline-block whitespace-nowrap"
+							>{displayName}<span class="ml-2 align-middle font-mono text-sm font-normal text-stone-400"
+								>{person.id}</span
+							></span
 						>
 					</h1>
 					{#if generationLabels.length > 0}
 						{#each generationLabels as label, i (i)}
-							<div
-								class="leading-tight font-medium text-blue-900"
-								class:text-sm={!label.includes(' / ')}
-								class:text-[11px]={label.includes(' / ')}
-							>
-								{label}
-							</div>
+							{#if label.includes(' & ')}
+								<!-- Merged cousin-marriage line: full-size, shrink-to-fit so a long
+								     "…Hooker Descendant & Wife of Hooker Descendant" stays one line. -->
+								<div
+									class="min-w-0 text-sm leading-tight font-medium text-blue-900"
+									use:shrinkToFit={{ max: 14, min: 10, key: label }}
+								>
+									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
+								</div>
+							{:else if generationLabels.length >= 2}
+								<!-- Dual-descent (Hooker + Talcott) line: ~5% smaller, STATIC.
+								     Rare; this guards the 4-line header height. -->
+								<div class="text-[13px] leading-tight font-medium text-blue-900">{label}</div>
+							{:else}
+								<!-- Ordinary single descent / spouse-only / in-law line: default size. -->
+								<div class="text-sm leading-tight font-medium text-blue-900">{label}</div>
+							{/if}
 						{/each}
 					{/if}
 					{#if blurb}
@@ -180,7 +206,7 @@
 
 			<!-- Content row: minmax(0, 1fr) + overflow-hidden allows NB body expansion
 			     without growing the row. Any overflow is clipped, keeping card height stable. -->
-			<div class="content grid grid-cols-[23%_54.5%_22.5%] gap-1.5 overflow-hidden p-6">
+			<div class="content grid grid-cols-[23%_1fr_21%] overflow-hidden py-6 pr-3 pl-6">
 				<div class="portrait-column space-y-4">
 					{#if photoUrl}
 						<img
@@ -191,61 +217,40 @@
 					{:else}
 						<div class="aspect-[3/4] w-full rounded-sm bg-stone-100"></div>
 					{/if}
-					<div class="vitals flex gap-6 pl-1">
-						{#if birthDate || birthLocation}
-							<div class="vital-block">
+					<div class="vitals space-y-2.5 pl-1">
+						{#snippet vital(
+							label: string,
+							date: string,
+							loc: string | null,
+							mapUrl: string | null
+						)}
+							<div>
 								<div class="text-[10px] font-semibold tracking-wider text-stone-500 uppercase">
-									Birth
+									{label}
 								</div>
-								{#if birthDate}
-									<div class="font-lora text-[13px] leading-tight text-slate-700">{birthDate}</div>
-								{/if}
-								{#if birthLocation}
-									<div class="font-lora text-xs leading-tight text-slate-600">{birthLocation}</div>
-								{/if}
-								{#if birthMapUrl}
-									<div class="-mt-1.5">
-										<a
-											href={birthMapUrl}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="inline-block text-[9px] tracking-wider text-blue-700 uppercase hover:text-blue-900 hover:underline"
-											>Map</a
-										>
+								<div class="font-lora text-[13px] leading-snug text-slate-800">{date}</div>
+								{#if loc || mapUrl}
+									<div class="font-lora text-[12.5px] leading-snug text-slate-600">
+										{loc ?? ''}{#if mapUrl}<a
+												href={mapUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="ml-1.5 align-middle text-[9px] tracking-wider text-blue-700 uppercase hover:underline"
+												>Map</a
+											>{/if}
 									</div>
 								{/if}
 							</div>
-						{/if}
-
-						{#if deathDate || deathLocation}
-							<div class="vital-block">
-								<div class="text-[10px] font-semibold tracking-wider text-stone-500 uppercase">
-									Death
-								</div>
-								{#if deathDate}
-									<div class="font-lora text-[13px] leading-tight text-slate-700">{deathDate}</div>
-								{/if}
-								{#if deathLocation}
-									<div class="font-lora text-xs leading-tight text-slate-600">{deathLocation}</div>
-								{/if}
-								{#if deathMapUrl}
-									<div class="-mt-1.5">
-										<a
-											href={deathMapUrl}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="inline-block text-[9px] tracking-wider text-blue-700 uppercase hover:text-blue-900 hover:underline"
-											>Map</a
-										>
-									</div>
-								{/if}
-							</div>
-						{/if}
+						{/snippet}
+						{#if birthDate}{@render vital('Birth', birthDate, birthLocation, birthMapUrl)}{/if}
+						{#if deathDate}{@render vital('Death', deathDate, deathLocation, deathMapUrl)}{/if}
 					</div>
 				</div>
 
-				<div class="narrative min-h-0 overflow-hidden">
-					<NarrativeBlocks blocks={person.narrative_blocks ?? []} />
+				<div class="narrative min-w-0 min-h-0 overflow-hidden pr-4 pl-4">
+					<div class="max-w-[60ch]">
+						<NarrativeBlocks blocks={person.narrative_blocks ?? []} />
+					</div>
 				</div>
 
 				<!-- h-full + min-h-0: bound this grid cell to the (definite) .content row height so

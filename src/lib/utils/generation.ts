@@ -28,50 +28,96 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 
 	const cls = person.classification;
 
-	// === Direct descendant cases ===
-	const descendantLabels: string[] = [];
+	// === Split direct descent into its two independent lineages ===
+	// Each lineage is its OWN output line — no ' / ' joining.
+	let hookerLine: string | null = null;
+	let talcottLine: string | null = null;
 
 	if (cls.is_thomas_descendant && cls.generation_from_thomas != null) {
-		const label = buildDescendantLabel(cls.generation_from_thomas, person.gender, 'Thomas Hooker');
-		descendantLabels.push(label);
+		hookerLine = buildDescendantLabel(cls.generation_from_thomas, person.gender, 'Thomas Hooker');
 	}
-
 	if (cls.is_talcott_descendant && cls.generation_from_john_talcott != null) {
-		const label = buildDescendantLabel(
+		talcottLine = buildDescendantLabel(
 			cls.generation_from_john_talcott,
 			person.gender,
 			'John Talcott'
 		);
-		descendantLabels.push(label);
-	}
-
-	// Combine descendant lines (double descendant case)
-	let descendantLine: string | null = null;
-	if (descendantLabels.length === 2) {
-		descendantLine = descendantLabels.join(' / ');
-	} else if (descendantLabels.length === 1) {
-		descendantLine = descendantLabels[0];
 	}
 
 	// === Spouse-of-descendant check ===
 	const spouseLabel = computeSpouseLabel(person, byId);
 
-	const labels: string[] = [];
-	if (descendantLine) labels.push(descendantLine);
-	if (spouseLabel) labels.push(spouseLabel);
+	// Build an ARRAY OF LINES — one line per lineage. The FeaturedCard renders one div each.
+	const lines: string[] = [];
 
-	// === Easter egg ===
-	if (labels.length === 0 && cls.is_easter_egg) {
+	// 1. HOOKER line. Cousin marriage (person is a Hooker descendant AND married to a
+	//    descendant) merges the spouse onto THIS line with '&', both sides compact:
+	//      • descent: gen 4+ → "Eleventh Generation Hooker Descendant"; gen 1-3 keep the
+	//        relational wording ("Granddaughter of Thomas Hooker").
+	//      • spouse: "Husband/Wife of Hooker Descendant" — marriage ordinal AND the spouse's
+	//        generation are dropped in this merged form only.
+	if (hookerLine) {
+		if (spouseLabel && cls.generation_from_thomas != null) {
+			const compactDescent = compactHookerDescent(cls.generation_from_thomas, person.gender);
+			const compactSpouse = computeSpouseCompact(person, byId) ?? spouseLabel;
+			lines.push(`${compactDescent} & ${compactSpouse}`);
+		} else {
+			lines.push(hookerLine);
+		}
+	}
+
+	// 2. TALCOTT line — ALWAYS its own line, long form. Never merged, never ' / '-joined.
+	if (talcottLine) lines.push(talcottLine);
+
+	// 3 & 4. Spouse label as its OWN line when there is no Hooker line to merge onto:
+	//   - SPOUSE-ONLY (no descent — the common I-entry): unchanged, keeps the marriage ordinal.
+	//   - EDGE: Talcott descent + spouse-of-Hooker but NO Hooker descent → Talcott line (above)
+	//     then the unchanged spouse line here. The '&' merge fires ONLY onto a Hooker line.
+	//     (Flagged — Sam may prefer merging onto the Talcott line instead.)
+	if (!hookerLine && spouseLabel) lines.push(spouseLabel);
+
+	// === Easter egg in-law fallback (no descent and no spouse label) ===
+	if (lines.length === 0 && cls.is_easter_egg) {
 		const inLawLabel = computeInLawLabel(person, byId);
-		if (inLawLabel) labels.push(inLawLabel);
+		if (inLawLabel) lines.push(inLawLabel);
 	}
 
-	// Combine descendant + spouse on one line (cousin marriage)
-	if (labels.length === 2 && descendantLine && spouseLabel) {
-		return [`${descendantLine} / ${spouseLabel}`];
-	}
+	return lines;
+}
 
-	return labels;
+/**
+ * Compact Hooker-descent phrase for the merged cousin-marriage line.
+ *   gen 1-3 → relational wording, unchanged ("Granddaughter of Thomas Hooker")
+ *   gen 4+  → reordered compact ("Eleventh Generation Hooker Descendant")
+ */
+function compactHookerDescent(generation: number, gender: string | null): string {
+	const relation = getRelationWord(generation, gender);
+	if (relation) return `${relation} of Thomas Hooker`;
+	return `${ordinalWord(generation)} Generation Hooker Descendant`;
+}
+
+/**
+ * Compact spouse phrase for the merged cousin-marriage line: "Husband/Wife of Hooker
+ * Descendant". Marriage ordinal and the spouse's generation are dropped; the founder is
+ * taken from the spouse's own descent (Hooker vs Talcott). Falls back to the spouse's
+ * descendant-short for pure relational-override spouses.
+ */
+function computeSpouseCompact(person: Person, byId: Record<string, Person>): string | null {
+	for (const marriage of person.marriages || []) {
+		if (!marriage.spouse_id) continue;
+		const spouse = byId[marriage.spouse_id];
+		if (!spouse) continue;
+		const descendantShort = getDescendantOrdinalShort(spouse);
+		if (!descendantShort) continue;
+		const word = getRelationshipWord(person.gender);
+		const founder = spouse.classification.is_thomas_descendant
+			? 'Hooker Descendant'
+			: spouse.classification.is_talcott_descendant
+				? 'Talcott Descendant'
+				: descendantShort;
+		return `${word} of ${founder}`;
+	}
+	return null;
 }
 
 /**

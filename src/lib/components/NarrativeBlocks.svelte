@@ -61,17 +61,12 @@
 							{block.category}
 						</div>
 					{/if}
-					<div class="flex items-center gap-2">
-						<h3 class="text-base font-semibold text-blue-900 transition-colors select-none">
-							{block.header}
-						</h3>
-						<span
-							class="flex h-6 w-6 shrink-0 items-center justify-center text-lg text-slate-500"
-							aria-hidden="true"
+					<h3 class="text-[15px] font-semibold text-blue-900 transition-colors select-none">
+						{block.header}<span
+							class="ml-2 inline-flex align-baseline text-lg leading-none text-slate-500"
+							aria-hidden="true">{openKey === key ? '−' : '+'}</span
 						>
-							{openKey === key ? '−' : '+'}
-						</span>
-					</div>
+					</h3>
 				</button>
 				{#if openKey === key}
 					<div class="pt-1 pr-8 pb-1.5" transition:slide={{ duration: 220, axis: 'y' }}>
