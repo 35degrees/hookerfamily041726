@@ -146,11 +146,11 @@ export function relativeGrowMs(distance: number): number {
 }
 // SPOUSE promotion duration — now the SAME velocity family as the parent/child regime (V-ceiling 1.6),
 // just a higher floor (SPOUSE_FLOOR_MS) so the in-corner swaps carry human weight instead of snapping.
-// The floor covers every swap up to ~784px (SPOUSE_FLOOR_MS·V_CEIL), so the whole common spouse range
+// The floor covers every swap up to ~744px (SPOUSE_FLOOR_MS·V_CEIL), so the whole common spouse range
 // lands in ONE tight duration band (flattened — a short top-center swap and a full-width swap feel the
 // same speed); only true cross-screen swaps scale up at the shared 1.6 px/ms ceiling. This is the FLOOR
 // for the hero; spouseHeroDurationMs below may EXTEND it so the demote can travel at honest velocity.
-const SPOUSE_FLOOR_MS = 490;
+const SPOUSE_FLOOR_MS = 465;
 export function spouseGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(SPOUSE_FLOOR_MS, distance / RELATIVE_V_CEIL));
 }
