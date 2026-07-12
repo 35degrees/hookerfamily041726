@@ -13,6 +13,10 @@
 
 	let displayName = $derived(person.sn ?? person.n);
 	let href = $derived(person.slug ? `/person/${person.slug}` : null);
+	// §16 chip-date degrade: when BOTH lifespan ends are unknown, suppress the dates line entirely — no
+	// "?–?" anywhere, at any scale (this box, the featured card, and the demote chip-face all read it).
+	// One end known ("1850–?" / "?–1900") still shows.
+	let hasDates = $derived(person.by != null || person.dy != null);
 </script>
 
 {#if href}
@@ -46,10 +50,12 @@
 			>
 				{displayName}
 			</div>
-			<div class="text-stone-500" class:text-xs={!compact} class:text-[10px]={compact}>
-				{person.by ?? '?'}–{person.dy ?? '?'}{#if relation === 'child' && dimmed}
-					{' '}(died young){/if}
-			</div>
+			{#if hasDates}
+				<div class="text-stone-500" class:text-xs={!compact} class:text-[10px]={compact}>
+					{person.by ?? '?'}–{person.dy ?? '?'}{#if relation === 'child' && dimmed}
+						{' '}(died young){/if}
+				</div>
+			{/if}
 			{#if relation === 'spouse' && marriageYear}
 				<div class="text-stone-500" class:text-xs={!compact} class:text-[10px]={compact}>
 					m. {marriageYear}
@@ -87,10 +93,12 @@
 			>
 				{displayName}
 			</div>
-			<div class="text-stone-500" class:text-xs={!compact} class:text-[10px]={compact}>
-				{person.by ?? '?'}–{person.dy ?? '?'}{#if relation === 'child' && dimmed}
-					{' '}(died young){/if}
-			</div>
+			{#if hasDates}
+				<div class="text-stone-500" class:text-xs={!compact} class:text-[10px]={compact}>
+					{person.by ?? '?'}–{person.dy ?? '?'}{#if relation === 'child' && dimmed}
+						{' '}(died young){/if}
+				</div>
+			{/if}
 			{#if relation === 'spouse' && marriageYear}
 				<div class="text-stone-500" class:text-xs={!compact} class:text-[10px]={compact}>
 					m. {marriageYear}
