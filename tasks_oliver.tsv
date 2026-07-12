@@ -1,0 +1,8 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD6644	field_set	classification.is_thomas_descendant=true	OK set classification.is_thomas_descendant = True	/person/frances-stuart-1910		
+HD6646	field_set	classification.is_thomas_descendant=true	OK set classification.is_thomas_descendant = True	/person/florence-livingood-1937		
+HD6647	field_set	classification.is_thomas_descendant=true	OK set classification.is_thomas_descendant = True	/person/sally-stuart-1940		
+HD6648	field_set	classification.is_thomas_descendant=true	OK set classification.is_thomas_descendant = True	/person/elizabeth-north-1944		
+X03455	field_set	classification.is_spouse_of_thomas_descendant=true	OK set classification.is_spouse_of_thomas_descendant = True	/person/james-stuart-1898		
+X03458	field_set	classification.is_spouse_of_thomas_descendant=true	OK set classification.is_spouse_of_thomas_descendant = True	/person/oliver-north-1943		
+X03459	field_set	classification.is_spouse_of_thomas_descendant=true	OK set classification.is_spouse_of_thomas_descendant = True	/person/john-livingood-1928		
