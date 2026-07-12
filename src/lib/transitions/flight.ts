@@ -150,7 +150,7 @@ export function relativeGrowMs(distance: number): number {
 // lands in ONE tight duration band (flattened — a short top-center swap and a full-width swap feel the
 // same speed); only true cross-screen swaps scale up at the shared 1.6 px/ms ceiling. This is the FLOOR
 // for the hero; spouseHeroDurationMs below may EXTEND it so the demote can travel at honest velocity.
-const SPOUSE_FLOOR_MS = 465;
+const SPOUSE_FLOOR_MS = 385;
 export function spouseGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(SPOUSE_FLOOR_MS, distance / RELATIVE_V_CEIL));
 }
@@ -171,20 +171,9 @@ function maxCornerTravel(a: PinRect, b: PinRect): number {
 		}
 	return m;
 }
-// The spouse hero's promotion duration, EXTENDED when the demote's honest-velocity clock needs it so the
-// two share ONE clock and the demote can finish first WITHOUT cramming: max(the promotion curve, the
-// demote's own honest duration + the finish lead). Both growFrom (returns this) and shrinkTo (returns this
-// − the lead) call it with the same (heroDist, demote max-corner travel), so demote lands exactly the lead
-// ahead of the hero and no point on EITHER card ever exceeds the ceiling.
-const SPOUSE_FINISH_LEAD_MS = 60;
-function spouseHeroDurationMs(heroDist: number, demoteMaxCorner: number): number {
-	const ownDuration = demoteMaxCorner / RELATIVE_V_CEIL; // honest: fastest corner obeys the ceiling
-	return Math.max(spouseGrowMs(heroDist), ownDuration + SPOUSE_FINISH_LEAD_MS);
-}
 // The RELATIVE demotion runs shorter than its matching promotion (×this lead) so it always FINISHES first
 // — the leaving card releases attention to the hero and never competes with the hero's landing. (The
-// SPOUSE demote gets its finish-first from spouseHeroDurationMs / SPOUSE_FINISH_LEAD_MS above, at honest
-// velocity — see shrinkTo.)
+// SPOUSE demote is DECOUPLED — honest own-clock, may land a beat after the fast hero; see shrinkTo.)
 const DEMOTE_LEAD = 0.85;
 
 /**
@@ -207,17 +196,12 @@ export function growFrom(node: Element) {
 
 	// Distance-scaled; the floor/slope depend on the flight kind (spouse = brisk in-corner morph,
 	// parent/child = velocity-capped travel).
-	let duration: number;
-	if (flightKind === 'spouse') {
-		// Extend the hero to honor the demote's honest-velocity clock (below), so the two share one clock
-		// and neither the growing hero nor the shrinking demote ever exceeds the ceiling. The demote starts
-		// at THIS slot (dest) and shrinks into the pivot's notch seat; its max-corner travel sets the floor.
-		const seat = pivotId ? document.querySelector(`[data-flight-id="${pivotId}"]`)?.getBoundingClientRect() : null;
-		const demoteMax = seat && seat.width ? maxCornerTravel(dest, seat) : distance;
-		duration = spouseHeroDurationMs(distance, demoteMax);
-	} else {
-		duration = relativeGrowMs(distance);
-	}
+	// The hero runs its OWN tempo curve, DECOUPLED from the demote: the promotion is what earns the settle
+	// snap, so it stays brisk (spouseGrowMs floor) even when the demote's honest-velocity clock is longer.
+	// The demote is no longer crammed to finish 60ms first (that would strobe the photo); on a far swap it
+	// simply lands a beat AFTER the hero — unobtrusive, since the scale-gate keeps its face invisible (a
+	// shrinking shell) until it nears its own seat. See shrinkTo.
+	const duration = flightKind === 'spouse' ? spouseGrowMs(distance) : relativeGrowMs(distance);
 	// SETTLE (Block 3) — SPOUSE promotions only for now, and only on a warm click (the camera store
 	// published a spouse move; cold loads don't and shouldn't settle). The overshoot direction is the
 	// flight's own (dx,dy) axis — identical to the camera screenVector (validated by probe-camera).
@@ -281,6 +265,11 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// (never the hollow 1.5× state); once the shrinking shell's natural scale drops below the cap the face
 	// fills it 100% and rides it down to the box. Uniform (aspect preserved), centered. BOTH regimes.
 	const FACE_SCALE_MAX = 2.3; // tune by feel 2.2–2.4
+	// SCALE-GATED REVEAL: the chip-face's opacity keys to SHELL WIDTH (geometry), not elapsed time — it is
+	// not painted above REVEAL_ABOVE× natural chip scale and is fully opaque by REVEAL_FULL×. So a NAME can
+	// never render billboard: by the time it's legible the face is already near chip scale. Both regimes.
+	const REVEAL_ABOVE = 2.0; // ×natural: face invisible above this shell scale
+	const REVEAL_FULL = 1.6; // ×natural: face fully opaque at/below this
 	// Demotion duration: derived from the HERO's flight — the SAME distance-scaled curve the promotion
 	// uses for this kind, then ×DEMOTE_LEAD so the demote finishes ~15% sooner and clears the stage
 	// before the hero lands. Distance = the clicked box (hero origin, snapshotted at click) → the featured
@@ -298,8 +287,10 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		// cramming multiplier. (Same seat + same slot rect as growFrom, so both compute the same clock.)
 		const seat = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
 		const demoteMax = seat && seat.width ? maxCornerTravel(card, seat) : heroDist;
-		const heroDuration = heroOrigin ? spouseHeroDurationMs(heroDist, demoteMax) : SPOUSE_EXIT_MS;
-		demoteDuration = heroDuration - SPOUSE_FINISH_LEAD_MS;
+		// HONEST VELOCITY, DECOUPLED from the hero: time off the max-corner travel so the photo never
+		// strobes, and NEVER cram it to beat the (now faster) hero — a far-swap demote lands a beat after
+		// the hero, hidden by the scale-gate until it nears its seat. Floor keeps a very short swap graceful.
+		demoteDuration = Math.max(SPOUSE_EXIT_MS * 0.6, demoteMax / RELATIVE_V_CEIL);
 	}
 	return {
 		duration: demoteDuration,
@@ -345,10 +336,18 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// shell (the whitespace above/below in the tall early shell is honest, not a taffy chip). U =
 			// shellWidth/FACE_W; at landing Sx=box.w/card.w so U→1 and the face lands at natural box size.
 			if (face) {
+				const uNat = (Sx * card.width) / FACE_W; // the face's natural (uncapped) shell-spanning scale
+				// SCALE-GATED REVEAL (kills the billboard name at the root): opacity keyed to shell width, not
+				// a clock — invisible above REVEAL_ABOVE×, fully opaque by REVEAL_FULL×. transition:none so it
+				// tracks the geometry exactly (no 110ms CSS lag). Overrides the .demoting opacity:1 rule.
+				face.style.transition = 'none';
+				face.style.opacity = String(
+					Math.max(0, Math.min(1, (REVEAL_ABOVE - uNat) / (REVEAL_ABOVE - REVEAL_FULL)))
+				);
 				// Uniform on-screen scale U, capped at FACE_SCALE_MAX (see above). afx=U/Sx, afy=U/Sy give
 				// Sx·afx=Sy·afy=U (uniform → aspect preserved at every frame); the face is centered in the
 				// shell. Below the cap the face spans the shell (tx≈0); above it, it holds cap-size, centered.
-				const U = Math.min(FACE_SCALE_MAX, (Sx * card.width) / FACE_W);
+				const U = Math.min(FACE_SCALE_MAX, uNat);
 				const afx = U / Sx;
 				const afy = U / Sy;
 				const tx = card.width / 2 - (U * FACE_W) / (2 * Sx); // center horizontally in the shell

@@ -320,7 +320,7 @@ if (backToMorgan) {
 //   G1 UP  — click a CHILD → old focus demotes UP into a PARENT box (paints UNDER the card).
 //   G2 DOWN — click a PARENT → old focus demotes DOWN into a CHILD box (paints OVER the card) — the
 //             double-prone case: an early reveal would show the box stacked on the docked card.
-async function atomicSwap(label, startSlug, targetSel) {
+async function atomicSwap(label, startSlug, targetSel, demoteFinishesFirst = true) {
 	await page.goto(`${BASE}/person/${startSlug}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	const pivotId = await page.evaluate(() => document.querySelector('.featured-card h1 .font-mono')?.textContent?.trim() ?? null);
@@ -383,9 +383,9 @@ async function atomicSwap(label, startSlug, targetSel) {
 	// (7) FLIP EARLY: the chip-face is shown (>0.9) for the final 60%+ of the card's presence — the
 	// face flips to chip-layout up front and stays a chip the rest of the way in.
 	const presentFrames = swap.filter((s) => s.cardPresent);
-	const tail = presentFrames.slice(Math.floor(presentFrames.length * 0.4)); // final 60%, past the flip-in
+	const tail = presentFrames.slice(Math.floor(presentFrames.length * 0.8)); // final 20%, past the scale-gate reveal
 	const tailShown = tail.filter((s) => s.faceOp > 0.9).length;
-	ok(tail.length > 0 && tailShown >= tail.length - 1, `${label}: chip-face not held through the final 60% of travel (${tailShown}/${tail.length} shown)`);
+	ok(tail.length > 0 && tailShown >= tail.length - 1, `${label}: chip-face not held through the final 20% of travel (${tailShown}/${tail.length} shown)`);
 	// (8) LANDS AS THE BOX: the chip-face converges onto the destination box's rect, so the swap is
 	// between two coincident chips (visual similarity, not just presence).
 	const deltas = swap.filter((s) => s.cardPresent && s.rectDelta >= 0).map((s) => s.rectDelta);
@@ -396,28 +396,35 @@ async function atomicSwap(label, startSlug, targetSel) {
 	const TRUE_ASPECT = 220 / 75;
 	const warped = swap.filter((s) => s.cardPresent && s.faceOp > 0.9 && s.faceAspect > 0 && Math.abs(s.faceAspect / TRUE_ASPECT - 1) > 0.02);
 	ok(warped.length === 0, `${label}: chip-face aspect distorted on ${warped.length} frame(s) (e.g. ${warped[0] ? warped[0].faceAspect.toFixed(2) : ''} vs true ${TRUE_ASPECT.toFixed(2)})`);
-	// (9a) SCALE CAP: the chip-face never exceeds FACE_SCALE_MAX× its natural chip width — no billboard
-	// text at a full-size shell. Uncapped it spans the shell (up to ~925px); capped it holds ≤ 2.3×220.
-	// The freeze that stops demotion-look drift forever, both regimes. (RED on the uncapped build.)
-	const CAP_PX = 2.3 * 220;
-	const faceWmax = Math.max(0, ...swap.filter((s) => s.cardPresent && s.faceW > 0).map((s) => s.faceW));
-	ok(faceWmax <= CAP_PX * 1.06, `${label}: chip-face width ${Math.round(faceWmax)}px exceeds the cap ${Math.round(CAP_PX)}px (×1.06 tol) — billboard text / cap not applied`);
+	// (9a) SCALE-GATED REVEAL: the chip-face is only VISIBLE near chip scale — its LEGIBLE width (where
+	// opacity > 0.5) never exceeds ~REVEAL_FULL(1.6)× natural, so a NAME is never painted billboard. This
+	// freezes the demotion look, both regimes: RED on any build without the gate (face visible from a
+	// full-size shell → ~925px legible). The geometric face may briefly be larger while INVISIBLE (gated).
+	const GATE_PX = 1.6 * 220;
+	const legibleWmax = Math.max(0, ...swap.filter((s) => s.cardPresent && s.faceOp > 0.5 && s.faceW > 0).map((s) => s.faceW));
+	ok(legibleWmax <= GATE_PX * 1.15, `${label}: legible chip-face width ${Math.round(legibleWmax)}px exceeds the reveal gate ${Math.round(GATE_PX)}px (×1.15) — name too large / gate not applied`);
 	// (9b) NO DOUBLE NAME: a true crossfade of faces — the card's own face and the chip-face never both
 	// exceed ~0.5 opacity at the same frame (that would be two names visible at once).
 	const doubled = swap.filter((s) => s.cardPresent && s.cardFaceOp > 0.55 && s.faceOp > 0.55);
 	ok(doubled.length === 0, `${label}: double name — card face (${doubled[0] ? doubled[0].cardFaceOp.toFixed(2) : ''}) + chip-face (${doubled[0] ? doubled[0].faceOp.toFixed(2) : ''}) both visible on ${doubled.length} frame(s)`);
-	// (10) FINISH ORDER: the demotion's atomic swap (card gone) precedes the hero's landing (its .flat
-	// drops) — the leaving card clears the stage before the hero arrives, never competing with it.
+	// (10) FINISH ORDER: for the RELATIVE demote the atomic swap (card gone) precedes the hero's landing
+	// (its .flat drops) — it clears the stage before the hero arrives. The SPOUSE demote is DECOUPLED
+	// (honest own-clock, fast hero) and may land a beat AFTER the hero; there we only require both to
+	// complete — the atomic swap itself is guarded by tests 1-6 (pivot held, STEP reveal, no double/bare).
 	const demoteGone = swap.findIndex((s, i) => i > 0 && !s.cardPresent && swap[i - 1].cardPresent);
 	const heroLand = swap.findIndex((s, i) => i > 0 && !s.heroFlat && swap[i - 1].heroFlat);
-	ok(demoteGone >= 0 && heroLand >= 0 && demoteGone <= heroLand, `${label}: demotion did not finish before the hero landed (demote-gone frame ${demoteGone}, hero-land frame ${heroLand})`);
+	if (demoteFinishesFirst) {
+		ok(demoteGone >= 0 && heroLand >= 0 && demoteGone <= heroLand, `${label}: demotion did not finish before the hero landed (demote-gone frame ${demoteGone}, hero-land frame ${heroLand})`);
+	} else {
+		ok(demoteGone >= 0 && heroLand >= 0, `${label}: demote or hero never completed (demote-gone ${demoteGone}, hero-land ${heroLand})`);
+	}
 }
 await atomicSwap('relative-demote UP (parent box)', 'nancy-morse-1915', '.children-slot a, [class*="children"] a');
 await atomicSwap('relative-demote DOWN (child box)', 'michael-hooker-1935', '.parents-slot a');
 // Layer 2: the SPOUSE demote now runs the SAME atomic-swap machinery — flip-early chip-face, held-hidden
 // notch seat, STEP reveal at landing, solid opaque card, no double-name, finish-before-hero. Morgan's
 // leading spouse (the maximal carousel case); the demote lands in its notch seat on the wife's card.
-await atomicSwap('spouse-demote (notch seat)', 'john-morgan-1930', '.spouse-notch .flight a');
+await atomicSwap('spouse-demote (notch seat)', 'john-morgan-1930', '.spouse-notch .flight a', false);
 
 // ── G-Z. Z-ORDER: a relative demote is a visible solid object — it must ride ABOVE resting relative
 // boxes as it flies over a row (z:1), below the hero. michael → parent Rodman: michael's card demotes

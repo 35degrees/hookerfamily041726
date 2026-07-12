@@ -203,7 +203,11 @@
 		// the still-flying card. Doing it here (with the quicker CHIP_REVEAL_MS fade) instead of waiting
 		// for the featuredLanded $effect to schedule + run shaves the post-landing lag, so the chips
 		// appear sooner. Still strictly gated on landing → CHIPS-SOON stays green.
-		revealPending((el) => el.dataset.flightDir === 'lateral', CHIP_REVEAL_MS);
+		// EXCLUDE the demote's pivot SEAT: it is owned by the demote's own landing (the onOutgoingEnd
+		// atomic swap), which — now that the spouse demote is DECOUPLED and may finish a beat AFTER the hero
+		// — can come after this. Revealing it here would fade it in (not a step) and double it against the
+		// still-shrinking card. The other lateral chips reveal promptly as before.
+		revealPending((el) => el.dataset.flightDir === 'lateral' && el.dataset.flightId !== demotingPivotId, CHIP_REVEAL_MS);
 		featuredLanded = true; // → reveals the pivot box + any remaining pending boxes (safety-net effect)
 
 		// JANITOR (PROD belt for the finished-animation teardown residue the sweep can't safely touch):
