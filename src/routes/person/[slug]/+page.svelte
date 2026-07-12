@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import PersonBox from '$lib/components/PersonBox.svelte';
 	import FeaturedCard from '$lib/components/FeaturedCard.svelte';
-	import { untrack } from 'svelte';
+	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { cardinalWord, cardinalWordLower, possessive } from '$lib/utils/dates';
@@ -62,6 +62,55 @@
 	// positions. Its fix() mis-pins LEAVERS (measured post-insertion), but flyOut's WAAPI
 	// position:fixed pin overrides that, so leavers still land at their true click-captured rect.
 	const flipMs = $derived(prefersReducedMotion.current ? 0 : 420);
+
+	// ── Stranded-transition sweep (Layer 1 — the orphan root fix) ──────────────────────────
+	// A relative box (parent/child/spouse) carries animate:flip (fix() → inline position:absolute)
+	// and out:flyOut (position:fixed via a compiled animation). Under rapid navigation an outro/flip
+	// can be interrupted so Svelte never strips its inline positioning, stranding the element pinned
+	// until the next nav (BOTH re-adopted and roster-absent cases occur → sweep ALL resident boxes).
+	//
+	// Reset the inline positioning of any .flight with NO live animation (getAnimations().length === 0
+	// — the ground truth) AND a non-static computed position (the residue). The getAnimations() gate is
+	// load-bearing AND makes the sweep SAFE TO RUN ANY TIME: a live flip/flyOut is always skipped, so it
+	// can never pop a legitimate in-flight element (flip's pin is inline, not animation-driven — that's
+	// exactly what would pop). An orphan manifests only AFTER its interrupted animation ends (~360ms),
+	// which is past a single tick — so on each roster change we sweep across the whole settle window.
+	function sweepStranded() {
+		if (typeof document === 'undefined') return;
+		for (const el of document.querySelectorAll<HTMLElement>('.flight')) {
+			if (el.getAnimations().length > 0) continue; // legitimately mid-transition — never touch
+			const pos = getComputedStyle(el).position;
+			if (pos !== 'fixed' && pos !== 'absolute') continue; // no stranded positioning residue
+			for (const prop of ['position', 'left', 'top', 'width', 'height', 'transform', 'margin']) {
+				el.style.removeProperty(prop);
+			}
+			if (import.meta.env.DEV) console.warn('[flight sweep] reset stranded flight element:', el.dataset.flightId);
+		}
+	}
+	// An orphan can manifest on ANY frame its interrupted animation happens to end, so a few fixed
+	// timeouts miss the tail. Instead sweep EVERY frame across a settle window (~50 frames ≈ 800ms,
+	// past the 420ms flip / 360ms flyOut), re-armed by each navigation. The getAnimations() gate makes
+	// per-frame sweeping harmless (live elements always skipped). A single shared rAF loop, frame-
+	// counted (no wall-clock), so rapid navs just extend the window rather than stacking loops.
+	let sweepUntilFrame = 0;
+	let sweepFrame = 0;
+	let sweeping = false;
+	function armSweep() {
+		sweepUntilFrame = sweepFrame + 50;
+		if (sweeping || typeof requestAnimationFrame === 'undefined') return;
+		sweeping = true;
+		const loop = () => {
+			sweepFrame++;
+			sweepStranded();
+			if (sweepFrame < sweepUntilFrame) requestAnimationFrame(loop);
+			else sweeping = false;
+		};
+		requestAnimationFrame(loop);
+	}
+	$effect(() => {
+		f.person.id; // hazard event: the roster changed
+		untrack(armSweep);
+	});
 
 	// The card morphs via transform (no layout effect), so without this the children
 	// row's Y would snap/jerk to the new card's height. Bind the current card's
@@ -135,21 +184,21 @@
 		revealPending((el) => el.dataset.flightDir === 'lateral', CHIP_REVEAL_MS);
 		featuredLanded = true; // → reveals the pivot box + any remaining pending boxes (safety-net effect)
 
-		// DEV JANITOR (belt, NOT the root-cause fix): an interrupted outro can strand a flyOut-pinned
-		// position:fixed chip in the DOM until the next navigation (Sam hit this once). Well after this
-		// landing has settled — and only if no NEWER navigation started — sweep for any position:fixed
-		// flight element left over and remove it, warning with its identity so we learn the frequency.
-		if (import.meta.env.DEV) {
-			const seq = navSeq;
-			setTimeout(() => {
-				if (seq !== navSeq) return; // a newer nav is in flight; its pins are legitimate
-				for (const el of document.querySelectorAll<HTMLElement>('.flight')) {
-					if (getComputedStyle(el).position !== 'fixed') continue;
-					console.warn('[flight janitor] removed orphaned pinned chip:', el.dataset.flightId);
-					el.remove();
-				}
-			}, 700);
-		}
+		// JANITOR (PROD belt for the finished-animation teardown residue the sweep can't safely touch):
+		// a small class of orphans keeps a getAnimations() entry stuck in playState 'finished', so the
+		// sweep's gate shields them; this removes them outright. Runs in PROD (700ms worst-case transient
+		// — the class occurs only under rapid clicking, zero at normal speed), guarded so a newer nav's
+		// legitimate pins are never touched. The warn is dev-only (a tripwire; any firing at normal use
+		// is a regression alarm) so prod consoles stay quiet.
+		const seq = navSeq;
+		setTimeout(() => {
+			if (seq !== navSeq) return; // a newer nav is in flight; its pins are legitimate
+			for (const el of document.querySelectorAll<HTMLElement>('.flight')) {
+				if (getComputedStyle(el).position !== 'fixed') continue;
+				if (import.meta.env.DEV) console.warn('[flight janitor] removed orphaned pinned chip:', el.dataset.flightId);
+				el.remove();
+			}
+		}, 700);
 	}
 	function onOutgoingStart(node: HTMLElement) {
 		if (prefersReducedMotion.current) return;
