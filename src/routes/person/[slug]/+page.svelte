@@ -17,8 +17,7 @@
 		shrinkTo,
 		markPending,
 		morphIn,
-		getPivotId,
-		getFlightKind
+		getPivotId
 	} from '$lib/transitions/flight';
 
 	let { data }: { data: PageData } = $props();
@@ -209,18 +208,13 @@
 		if (prefersReducedMotion.current) return;
 		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
 		demotingPivotId = id; // this card IS the pivot (getPivotId is already cleared by introend)
-		if (getFlightKind() === 'spouse') {
-			// SPOUSE demotion is now HIDDEN (opacity 0 in shrinkTo — "covered by emptiness", retiring
-			// Artifact A). So there is no fade to watch and no cross-dissolve to run: the demote's
-			// destination chip is a lateral notch chip and reveals on the incoming card's LANDING
-			// (onIncomingLand's lateral reveal / the featuredLanded safety-net), like every other new
-			// chip. Nothing to do here for the spouse kind.
-			return;
-		}
-		// RELATIVE demotion (L3a) — "flip early, land as a chip". The .demoting class cross-fades the
-		// chip-face in over the first ~110ms (front-loaded, motion-masked, one flip); shrinkTo's tick
-		// then counter-scales the face every frame so it renders undistorted and lands at natural box
-		// size. Skip the flip if the destination box isn't mounted (the card just shrinks plainly).
+		// "Flip early, land as a chip" — Layer 2 UNIFIES this across both kinds. The .demoting class
+		// cross-fades the chip-face in over the first ~110ms (front-loaded, motion-masked, one flip) while
+		// the card's own face fades out; shrinkTo's tick then counter-scales the face every frame so it
+		// renders undistorted and lands at natural box size. RELATIVE lands on a parent/child box; SPOUSE
+		// lands on its lateral notch seat (pivot-aware offset guarantees that seat is in the visible
+		// window). Either seat is revealed at the demote's landing by the onOutgoingEnd atomic swap. Skip
+		// the flip only if the destination seat isn't mounted (then the card just shrinks plainly).
 		if (!document.querySelector(`[data-flight-id="${id}"]`)) return;
 		node.classList.add('demoting');
 	}
@@ -245,8 +239,9 @@
 		const landed = featuredLanded;
 		untrack(() => {
 			if (landed && !prevLanded) {
-				const excludePivot =
-					getFlightKind() === 'relative' && !prefersReducedMotion.current && demotingPivotId != null;
+				// BOTH kinds now own their pivot via the onOutgoingEnd atomic swap (fires first, DEMOTE_LEAD);
+				// exclude it so this net can't fade-reveal it and double the seat against the shrinking card.
+				const excludePivot = !prefersReducedMotion.current && demotingPivotId != null;
 				revealPending((el) => !(excludePivot && el.dataset.flightId === demotingPivotId));
 			}
 			prevLanded = landed;

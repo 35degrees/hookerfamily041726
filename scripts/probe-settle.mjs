@@ -69,10 +69,10 @@ async function settleFor(idx, label) {
 	// transform-origin top-left: the LEFT edge carries via the translate, the BOTTOM edge via the scale
 	// growth (the right edge nets ~0 — leftward carry cancels the scale on that side). Both must carry
 	// TOGETHER (whole-path, one curve) — a fixed edge would mean translate/scale desynced.
-	ok(overshoot > 1, `${label}: left carry ${overshoot.toFixed(1)}px too small`);
-	ok(overshoot < 6, `${label}: left carry ${overshoot.toFixed(1)}px too large`);
-	ok(bottomExcursion > 0.8, `${label}: bottom edge did not carry past (${bottomExcursion.toFixed(1)}px) — scale channel not overshooting (desync)`);
-	ok(scaleOvershootPct > 0.05 && scaleOvershootPct < 1.2, `${label}: scale overshoot ${scaleOvershootPct.toFixed(2)}% out of the safe (no-shimmer) band`);
+	ok(overshoot > 2, `${label}: left carry ${overshoot.toFixed(1)}px too small`);
+	ok(overshoot < 11, `${label}: left carry ${overshoot.toFixed(1)}px too large`);
+	ok(bottomExcursion > 1.5, `${label}: bottom edge did not carry past (${bottomExcursion.toFixed(1)}px) — scale channel not overshooting (desync)`);
+	ok(scaleOvershootPct > 0.1 && scaleOvershootPct < 2.0, `${label}: scale overshoot ${scaleOvershootPct.toFixed(2)}% out of the safe (no-shimmer) band (4–8px dial, 1.5% ≈ 0.36px on a 24px glyph)`);
 	void rightExcursion;
 	ok(endResidual < 1.2 && endWidthResidual < 1.5, `${label}: endpoint not frozen (pos ${endResidual.toFixed(2)}px / width ${endWidthResidual.toFixed(2)}px)`);
 	// VELOCITY CONTINUITY: on the APPROACH to the overshoot peak the speed must decelerate MONOTONICALLY
@@ -106,4 +106,4 @@ if (s1 && s3) {
 await ctx.close();
 await browser.close();
 if (fails.length) { console.log('SETTLE PROBE: RED\n- ' + fails.join('\n- ')); process.exit(1); }
-console.log('SETTLE PROBE: GREEN — spouse promotions carry a ~2–3px nudge along the travel axis, settle to the exact rect, angles differ.');
+console.log('SETTLE PROBE: GREEN — spouse promotions carry a ~6–8px settle along the travel axis, settle to the exact rect, angles differ.');

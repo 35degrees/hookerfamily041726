@@ -114,38 +114,60 @@ for (let i = 0; i < 18; i++) {
 }
 ok(worst.over <= 2, `spouse-swap: a VISIBLE element (${worst.what}) flew ${Math.round(worst.over)}px past the card's right edge (≤ 2)`);
 
-// ── A2. NOTCH-HIDE: spouse promotion exposes NOTHING beneath/behind the hero (Artifact A retired).
-// LEADING click (leftmost visible chip) at every carousel offset; once the hero has grown to cover, no
-// element (demote or leaving chip, z<2, opacity>0.15) may stick past ANY hero edge.
+// ── A2. ONLY-THE-TWO-MOVERS (Layer 2): a spouse promotion now puts TWO visible baseball cards on stage
+// — the growing hero (z2) and its DEMOTE (the old featured card, .demoting, z1, solid, flying up-right
+// into its notch seat). EVERY OTHER notch chip stays hidden (notch-hide kept). LEADING click at each
+// carousel offset; assert across the flight: (a) the demote IS a visible SOLID object (shell opacity 1)
+// for a real span, and (b) no OTHER notch chip is visible mid-flight — the sole exception is the pivot
+// SEAT (data-flight-id = the departing person), which legitimately reveals at the demote's landing swap.
 for (const offset of [0, 1, 2]) {
 	await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	for (let k = 0; k < offset; k++) { await page.click('.caret-right'); await page.waitForTimeout(460); }
-	const lead = await centerOf('.spouse-notch .flight a');
+	const fromId = await page.evaluate(() => document.querySelector('.featured-card h1 .font-mono')?.textContent?.trim() ?? null);
+	// the leading VISIBLE chip (inside the mask window) — NOT the first DOM chip, which at a paged offset
+	// is scrolled off-window (clipped) and would not navigate on click.
+	const lead = await page.evaluate(() => {
+		const slot = document.querySelector('.featured-slot').getBoundingClientRect();
+		const mL = document.querySelector('.spouse-mask')?.getBoundingClientRect().left ?? 0;
+		const vis = [...document.querySelectorAll('.spouse-strip .flight')]
+			.filter((e) => { const r = e.getBoundingClientRect(); return r.right > mL + 1 && r.left < slot.right + 6; })
+			.sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
+		const a = vis[0]?.querySelector('a'); const r = a?.getBoundingClientRect();
+		return a ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
+	});
+	if (!lead) { fails.push(`two-movers(offset ${offset}): no visible leading chip to click`); continue; }
 	await page.mouse.move(5, 5);
 	await page.mouse.click(lead.x, lead.y);
-	let exposed = { over: 0, who: '' };
+	let demoteSolidFrames = 0, stray = { op: 0, who: '' };
 	for (let i = 0; i < 45; i++) {
-		const r = await page.evaluate(() => {
+		const r = await page.evaluate((fid) => {
 			const hero = [...document.querySelectorAll('.featured-flight')].find((x) => getComputedStyle(x).zIndex === '2');
 			if (!hero) return null;
-			const hr = hero.getBoundingClientRect();
-			if (hr.width < 450) return null; // only judge once the hero covers
-			let over = 0, who = '';
-			for (const e of document.querySelectorAll('.featured-flight, .spouse-notch .flight')) {
-				const cs = getComputedStyle(e);
-				if ((cs.zIndex === 'auto' ? 0 : Number(cs.zIndex)) >= 2 || parseFloat(cs.opacity) < 0.15) continue;
-				const er = e.getBoundingClientRect();
-				if (er.width < 5) continue;
-				const o = Math.max(er.right - hr.right, hr.left - er.left, er.bottom - hr.bottom, hr.top - er.top);
-				if (o > over) { over = o; who = (e.querySelector('a,h1')?.textContent || e.className).toString().trim().slice(0, 14); }
+			const demote = document.querySelector('.featured-flight.demoting');
+			// judge stray chips only ONCE the demote exists (mid-flight, on the NEW page) — before that we
+			// are still pre-nav on the old page, where the just-clicked chip is legitimately still visible.
+			if (!demote) return { demotePresent: false, demoteOp: -1, worst: { op: 0, who: '' } };
+			const demoteOp = parseFloat(getComputedStyle(demote).opacity);
+			// the visible mover that is NEITHER the hero NOR the demote NOR the pivot seat = a leaked chip.
+			let worst = { op: 0, who: '' };
+			for (const e of document.querySelectorAll('.spouse-notch .flight')) {
+				if (e.dataset.flightId === fid) continue; // the pivot seat — its reveal at the swap is legitimate
+				const op = parseFloat(getComputedStyle(e).opacity);
+				if (op > 0.15 && e.getBoundingClientRect().width > 5 && op > worst.op) {
+					worst = { op, who: (e.querySelector('a')?.textContent || '').trim().slice(0, 14) };
+				}
 			}
-			return { over, who };
-		});
-		if (r && r.over > exposed.over) exposed = r;
+			return { demotePresent: !!demote, demoteOp, worst };
+		}, fromId);
+		if (r) {
+			if (r.demotePresent && r.demoteOp > 0.9) demoteSolidFrames++;
+			if (r.worst.op > stray.op) stray = r.worst;
+		}
 		await page.waitForTimeout(6);
 	}
-	ok(exposed.over < 4, `notch-hide(offset ${offset}): '${exposed.who}' exposed ${Math.round(exposed.over)}px beyond the hero (spouse-regime exposure must be zero)`);
+	ok(demoteSolidFrames >= 4, `two-movers(offset ${offset}): the demote was not a visible SOLID second card (${demoteSolidFrames} frames at shell-opacity>0.9)`);
+	ok(stray.op < 0.15, `two-movers(offset ${offset}): a THIRD element ('${stray.who}', opacity ${stray.op.toFixed(2)}) was visible mid-flight — notch-hide must keep every non-pivot chip hidden`);
 }
 
 // ── C. the Morgan wife-#4/#5 round-trip (the scenario that caught the ghost) ───────────────
@@ -348,9 +370,10 @@ async function atomicSwap(label, startSlug, targetSel) {
 	ok(swap[swap.length - 1].boxOp > 0.9, `${label}: pivot box not fully visible at rest (${swap[swap.length - 1].boxOp})`);
 	// (7) FLIP EARLY: the chip-face is shown (>0.9) for the final 60%+ of the card's presence — the
 	// face flips to chip-layout up front and stays a chip the rest of the way in.
-	const present = swap.filter((s) => s.cardPresent).length;
-	const faceShown = swap.filter((s) => s.cardPresent && s.faceOp > 0.9).length;
-	ok(present > 0 && faceShown >= present * 0.6, `${label}: chip-face not shown for the final 60%+ of travel (${faceShown}/${present})`);
+	const presentFrames = swap.filter((s) => s.cardPresent);
+	const tail = presentFrames.slice(Math.floor(presentFrames.length * 0.4)); // final 60%, past the flip-in
+	const tailShown = tail.filter((s) => s.faceOp > 0.9).length;
+	ok(tail.length > 0 && tailShown >= tail.length - 1, `${label}: chip-face not held through the final 60% of travel (${tailShown}/${tail.length} shown)`);
 	// (8) LANDS AS THE BOX: the chip-face converges onto the destination box's rect, so the swap is
 	// between two coincident chips (visual similarity, not just presence).
 	const deltas = swap.filter((s) => s.cardPresent && s.rectDelta >= 0).map((s) => s.rectDelta);
@@ -373,6 +396,10 @@ async function atomicSwap(label, startSlug, targetSel) {
 }
 await atomicSwap('relative-demote UP (parent box)', 'nancy-morse-1915', '.children-slot a, [class*="children"] a');
 await atomicSwap('relative-demote DOWN (child box)', 'michael-hooker-1935', '.parents-slot a');
+// Layer 2: the SPOUSE demote now runs the SAME atomic-swap machinery — flip-early chip-face, held-hidden
+// notch seat, STEP reveal at landing, solid opaque card, no double-name, finish-before-hero. Morgan's
+// leading spouse (the maximal carousel case); the demote lands in its notch seat on the wife's card.
+await atomicSwap('spouse-demote (notch seat)', 'john-morgan-1930', '.spouse-notch .flight a');
 
 // ── G-Z. Z-ORDER: a relative demote is a visible solid object — it must ride ABOVE resting relative
 // boxes as it flies over a row (z:1), below the hero. michael → parent Rodman: michael's card demotes

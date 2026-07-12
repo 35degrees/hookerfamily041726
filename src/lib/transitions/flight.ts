@@ -30,7 +30,7 @@ function easeOutBack(u: number, s: number): number {
 // solve s per-flight to hit it — a short swap carries less, a far one is capped, never a 40px lunge.
 function settleBackFor(distance: number): number {
 	if (distance < 1) return 0;
-	const targetPx = Math.min(4, Math.max(2, distance * 0.01)); // whole-path edge excursion, capped 2–4px
+	const targetPx = Math.min(8, Math.max(4, distance * 0.02)); // whole-path edge excursion, capped 4–8px
 	const targetG = Math.min(0.09, targetPx / distance); // overshoot as a fraction of the translate
 	let s = 0.8;
 	for (let i = 0; i < 8; i++) {
@@ -144,6 +144,12 @@ const RELATIVE_V_CEIL = 1.6; // avg px/ms — tune by feel
 function relativeGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(410, distance / RELATIVE_V_CEIL));
 }
+// SPOUSE promotion duration — a brisk in-corner morph (floor 360ms, gentle slope, capped 617ms). Shared
+// by growFrom (the hero) and, ×DEMOTE_LEAD, shrinkTo (the spouse demote) so the two stay in lockstep and
+// the demote always finishes first — the same lockstep relativeGrowMs gives the parent/child regime.
+function spouseGrowMs(distance: number): number {
+	return Math.min(617, Math.max(360, 225 + distance * 0.342));
+}
 // The demotion runs ~15% shorter than the matching promotion so it always FINISHES first — the
 // leaving card releases attention to the hero and never competes with the hero's landing.
 const DEMOTE_LEAD = 0.85;
@@ -168,10 +174,7 @@ export function growFrom(node: Element) {
 
 	// Distance-scaled; the floor/slope depend on the flight kind (spouse = brisk in-corner morph,
 	// parent/child = velocity-capped travel).
-	const duration =
-		flightKind === 'spouse'
-			? Math.min(617, Math.max(360, 225 + distance * 0.342))
-			: relativeGrowMs(distance);
+	const duration = flightKind === 'spouse' ? spouseGrowMs(distance) : relativeGrowMs(distance);
 	// SETTLE (Block 3) — SPOUSE promotions only for now, and only on a warm click (the camera store
 	// published a spouse move; cold loads don't and shouldn't settle). The overshoot direction is the
 	// flight's own (dx,dy) axis — identical to the camera screenVector (validated by probe-camera).
@@ -223,22 +226,25 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	if (!card.width || !card.height) return { duration: 0 };
 	const relative = flightKind === 'relative';
 	// The demoting card's chip-face (a PersonBox, natural 220×75) — counter-scaled per frame below so
-	// it renders undistorted inside the shell's non-uniform morph. Cached once.
-	const face = relative ? (el.querySelector('.demote-chipface') as HTMLElement | null) : null;
+	// it renders undistorted inside the shell's non-uniform morph. Cached once. BOTH kinds now use it:
+	// the spouse demote is a visible solid object too (Layer 2 — unified with the L3a relative machinery),
+	// flying up-right into its notch seat and atomic-swapping into the real chip at landing.
+	const face = el.querySelector('.demote-chipface') as HTMLElement | null;
 	const FACE_W = 220;
 	const FACE_H = 75;
-	// Demotion duration: derived from the HERO's flight — the same distance-scaled curve the promotion
-	// uses, then ×DEMOTE_LEAD so the demote finishes ~15% sooner and clears the stage before the hero
-	// lands. Distance = the clicked box (hero origin, snapshotted at click) → the featured slot (which
-	// the demote starts from and the hero lands on: card ≈ hero dest). Using the CLICKED rect, not the
-	// destination box, sidesteps mount-order (a child box may not be mounted yet at outro init).
-	let relDuration = RELATIVE_EXIT_MS;
-	if (relative) {
-		const heroOrigin = clickedId ? rectSnapshot.get(clickedId) : undefined;
-		if (heroOrigin) relDuration = relativeGrowMs(Math.hypot(heroOrigin.left - card.left, heroOrigin.top - card.top)) * DEMOTE_LEAD;
+	// Demotion duration: derived from the HERO's flight — the SAME distance-scaled curve the promotion
+	// uses for this kind, then ×DEMOTE_LEAD so the demote finishes ~15% sooner and clears the stage
+	// before the hero lands. Distance = the clicked box (hero origin, snapshotted at click) → the featured
+	// slot (which the demote starts from and the hero lands on: card ≈ hero dest). Using the CLICKED rect,
+	// not the destination box, sidesteps mount-order (a child box may not be mounted yet at outro init).
+	let demoteDuration = relative ? RELATIVE_EXIT_MS : SPOUSE_EXIT_MS;
+	const heroOrigin = clickedId ? rectSnapshot.get(clickedId) : undefined;
+	if (heroOrigin) {
+		const heroDist = Math.hypot(heroOrigin.left - card.left, heroOrigin.top - card.top);
+		demoteDuration = (relative ? relativeGrowMs(heroDist) : spouseGrowMs(heroDist)) * DEMOTE_LEAD;
 	}
 	return {
-		duration: relative ? relDuration : SPOUSE_EXIT_MS,
+		duration: demoteDuration,
 		easing: cubicOut,
 		// TICK, not css: the destination box can MOVE during the flight. When the new hero's card is a
 		// different height, the featured-slot height glide shifts the children/parent rows — e.g. on
@@ -247,19 +253,18 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		// stale spot, ending ~116px BELOW the settled box (the overshoot). Re-querying the box EVERY
 		// frame makes the card track it to its FINAL position — it nestles in from above, never below.
 		// (Re-querying also keeps the Phase-1 mount-order fix: a not-yet-mounted child box just yields
-		// no transform that frame.) z-index — a RELATIVE demote is a visible-by-design solid object that
-		// flies OVER resting relative rows en route to its box, so it rides at z 1 (above resting
-		// boxes/rows, below the growing hero at z 2). A SPOUSE demote stays z 0 (covered under the hero
-		// and the z-1 notch — untouched pending the spouse prototypes).
+		// no transform that frame.) z-index — BOTH kinds are now visible-by-design solid objects that
+		// fly OVER resting content en route to their seat, so the demote rides at z 1 (above resting
+		// boxes/rows/notch, below the growing hero at z 2). The notch-hide (chipExit hides every OTHER
+		// spouse chip) keeps exactly two movers on stage: this demote and the hero.
 		tick: (t: number, u: number) => {
-			el.style.zIndex = relative ? '1' : '0';
-			// RELATIVE (parent/child) demotion is a SOLID object: opacity 1 the whole way to its box, no
-			// terminal fade. SPOUSE demotion is now HIDDEN (opacity 0) for its whole flight — "covered by
-			// emptiness": the spouse regime is covered-under-hero by design, but a leading-chip click let
-			// the demoting card's right edge peek past the smaller hero (Artifact A). Hiding it retires
-			// that exposure; the morph geometry is unchanged, only invisible, and the demote's destination
-			// chip reveals on the incoming card's LANDING like every other new chip (see onOutgoingStart).
-			el.style.opacity = relative ? '1' : '0';
+			el.style.zIndex = '1';
+			// SOLID object: opacity 1 the whole way to its seat, no terminal fade — the user tracks one
+			// continuous card shrinking into its chip. (Spouse was formerly hidden ["covered by emptiness"]
+			// to retire Artifact A's edge-peek; Layer 2 makes it a visible second baseball card instead, so
+			// you can follow the card→chip AND the chip→card as discrete objects trading places. The seat
+			// chip reveals on the demote's LANDING via the onOutgoingEnd atomic swap, like the relative box.)
+			el.style.opacity = '1';
 			const box = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
 			if (!box || !box.width) return;
 			const dx = box.left - card.left;
