@@ -341,10 +341,12 @@ async function atomicSwap(label, startSlug, targetSel) {
 			const faceOp = face ? parseFloat(getComputedStyle(face).opacity) : -1;
 			let rectDelta = -1;
 			let faceAspect = -1;
+			let faceW = -1;
 			if (face) {
 				const pb = face.querySelector('.person-box') || face;
 				const fr = pb.getBoundingClientRect();
 				if (fr.height > 0) faceAspect = fr.width / fr.height;
+				faceW = fr.width;
 				if (box) {
 					const a = cen(fr);
 					const b = cen(box.getBoundingClientRect());
@@ -357,7 +359,7 @@ async function atomicSwap(label, startSlug, targetSel) {
 			// fades IN, so the two names never coexist.
 			const cardTop = demote?.querySelector('.card-top');
 			const cardFaceOp = cardTop ? parseFloat(getComputedStyle(cardTop).opacity) : -1;
-			out.push({ n, boxOp, cardPresent: !!demote, cardOp: demote ? parseFloat(getComputedStyle(demote).opacity) : -1, faceOp, cardFaceOp, rectDelta, faceAspect, heroFlat });
+			out.push({ n, boxOp, cardPresent: !!demote, cardOp: demote ? parseFloat(getComputedStyle(demote).opacity) : -1, faceOp, cardFaceOp, rectDelta, faceAspect, faceW, heroFlat });
 			if (++n < 48) requestAnimationFrame(tick);
 			else resolve(out);
 		};
@@ -394,6 +396,12 @@ async function atomicSwap(label, startSlug, targetSel) {
 	const TRUE_ASPECT = 220 / 75;
 	const warped = swap.filter((s) => s.cardPresent && s.faceOp > 0.9 && s.faceAspect > 0 && Math.abs(s.faceAspect / TRUE_ASPECT - 1) > 0.02);
 	ok(warped.length === 0, `${label}: chip-face aspect distorted on ${warped.length} frame(s) (e.g. ${warped[0] ? warped[0].faceAspect.toFixed(2) : ''} vs true ${TRUE_ASPECT.toFixed(2)})`);
+	// (9a) SCALE CAP: the chip-face never exceeds FACE_SCALE_MAX× its natural chip width — no billboard
+	// text at a full-size shell. Uncapped it spans the shell (up to ~925px); capped it holds ≤ 2.3×220.
+	// The freeze that stops demotion-look drift forever, both regimes. (RED on the uncapped build.)
+	const CAP_PX = 2.3 * 220;
+	const faceWmax = Math.max(0, ...swap.filter((s) => s.cardPresent && s.faceW > 0).map((s) => s.faceW));
+	ok(faceWmax <= CAP_PX * 1.06, `${label}: chip-face width ${Math.round(faceWmax)}px exceeds the cap ${Math.round(CAP_PX)}px (×1.06 tol) — billboard text / cap not applied`);
 	// (9b) NO DOUBLE NAME: a true crossfade of faces — the card's own face and the chip-face never both
 	// exceed ~0.5 opacity at the same frame (that would be two names visible at once).
 	const doubled = swap.filter((s) => s.cardPresent && s.cardFaceOp > 0.55 && s.faceOp > 0.55);

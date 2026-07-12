@@ -275,6 +275,12 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	const face = el.querySelector('.demote-chipface') as HTMLElement | null;
 	const FACE_W = 220;
 	const FACE_H = 75;
+	// The chip-face's on-screen scale is capped at FACE_SCALE_MAX× its natural chip size. Uncapped it
+	// spans the shell (~3-4× at a full-size shell = billboard text — legible-but-giant, exposed longer at
+	// the slower spouse tempo). Capped HIGH (2.3×), early frames read as a ~80%-fill chip with thin margins
+	// (never the hollow 1.5× state); once the shrinking shell's natural scale drops below the cap the face
+	// fills it 100% and rides it down to the box. Uniform (aspect preserved), centered. BOTH regimes.
+	const FACE_SCALE_MAX = 2.3; // tune by feel 2.2–2.4
 	// Demotion duration: derived from the HERO's flight — the SAME distance-scaled curve the promotion
 	// uses for this kind, then ×DEMOTE_LEAD so the demote finishes ~15% sooner and clears the stage
 	// before the hero lands. Distance = the clicked box (hero origin, snapshotted at click) → the featured
@@ -339,11 +345,16 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// shell (the whitespace above/below in the tall early shell is honest, not a taffy chip). U =
 			// shellWidth/FACE_W; at landing Sx=box.w/card.w so U→1 and the face lands at natural box size.
 			if (face) {
-				const afx = card.width / FACE_W; // → afx·Sx = U (spans the shell's width)
-				const afy = (card.width * Sx) / (FACE_W * Sy); // → afy·Sy = U (same uniform scale)
-				const tfy = card.height / 2 - (FACE_H * card.width * Sx) / (2 * FACE_W * Sy); // vertical center
+				// Uniform on-screen scale U, capped at FACE_SCALE_MAX (see above). afx=U/Sx, afy=U/Sy give
+				// Sx·afx=Sy·afy=U (uniform → aspect preserved at every frame); the face is centered in the
+				// shell. Below the cap the face spans the shell (tx≈0); above it, it holds cap-size, centered.
+				const U = Math.min(FACE_SCALE_MAX, (Sx * card.width) / FACE_W);
+				const afx = U / Sx;
+				const afy = U / Sy;
+				const tx = card.width / 2 - (U * FACE_W) / (2 * Sx); // center horizontally in the shell
+				const tfy = card.height / 2 - (U * FACE_H) / (2 * Sy); // center vertically in the shell
 				face.style.transformOrigin = 'top left';
-				face.style.transform = `translate(0px, ${tfy}px) scale(${afx}, ${afy})`;
+				face.style.transform = `translate(${tx}px, ${tfy}px) scale(${afx}, ${afy})`;
 			}
 			// The pivot box is revealed by the outro-END callback (onOutgoingEnd) — the atomic swap fires
 			// the frame the card leaves. The card's outer shell/opacity here are unchanged.
