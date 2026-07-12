@@ -103,12 +103,14 @@ export function clearFlightCaptures(): void {
 // VELOCITY-CEILING duration for a RELATIVE (parent/child) flight — shared by the PROMOTION (growFrom)
 // and, ×DEMOTE_LEAD, the DEMOTION (shrinkTo), so both inherit the same physics. NOT a global slowdown:
 // near flights keep the ~410ms floor (unchanged feel); FAR flights EXTEND so the card's average
-// on-screen speed never exceeds RELATIVE_V_CEIL — a distant relative travels like a thing with weight,
-// not a missile. The old upper duration clamp (604) is what forced far flights to high px/ms; it's
-// raised to a generous safety cap so distance and duration stay proportional past the crossover
-// (~525px). Ceiling ≈ 1.2× the measured near-parent-click baseline (~1.07 px/ms avg); peak scales
-// with the average for the fixed cubicOut easing.
-const RELATIVE_V_CEIL = 1.28; // avg px/ms
+// on-screen speed never exceeds RELATIVE_V_CEIL — a distant relative travels with weight, not a missile.
+//
+// THE TUNING KNOB: RELATIVE_V_CEIL is the single constant to adjust by feel. At 1.6 a typical flight is
+// back to its pre-ceiling speed (738px ≈ 461ms vs the old 466ms; 600px ≈ 410ms) while the true 1000px+
+// missiles Sam flagged are still capped (1000px 625ms, 1300px 813ms — vs uncapped 554/604). The crossover
+// (where the cap starts extending duration past the 410ms floor) is ~656px. Raise it → faster/lighter;
+// lower it → slower/heavier. (Was 1.28, which overcorrected — it slowed typical flights too.)
+const RELATIVE_V_CEIL = 1.6; // avg px/ms — tune by feel
 function relativeGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(410, distance / RELATIVE_V_CEIL));
 }

@@ -609,6 +609,18 @@
 	.featured-flight:global(.demoting) .demote-chipface {
 		opacity: 1;
 	}
+	/* TRUE CROSSFADE OF FACES: as the chip-face fades IN, the card's OWN face (card-top content + footer)
+	   fades OUT over the same 110ms — so the demoting card's header name and the chip-face name never
+	   coexist at full opacity (the double name). The article's white bg stays opaque throughout, so the
+	   object never goes transparent; only the FACE dissolves. Same :global reach as .flat. */
+	.featured-flight:global(.demoting) :global(.card-top),
+	.featured-flight:global(.demoting) :global(.footer) {
+		opacity: 0;
+		/* FRONT-LOADED (70ms vs the chip-face's 110ms in): the card's own header clears BEFORE the chip
+		   name becomes legible, so the two — which sit at different positions (header top-left vs chip
+		   centered) — are never both readable at once, not merely never both >0.5. */
+		transition: opacity 70ms ease-out;
+	}
 	/* the wrap's drop-shadow is the object's shadow throughout; drop the chip-face's own shadow so a
 	   scaled-up shadow-sm doesn't double it mid-flight. */
 	.demote-chipface :global(.person-box) {

@@ -70,6 +70,18 @@ ok(frames[frames.length - 1].vis === 4, `child-click: incoming spouse chips neve
 // phase, needs approval): clip the morph layer to the featured-slot bounds — both morph endpoints live
 // in-slot, so clipping loses nothing. Check B below deliberately filters to z-index ≥ 1 so it does NOT
 // flag this covered-under-hero case.
+//
+// KNOWN, ACCEPTED BEHAVIOR — "Artifact B / cover-and-re-emerge" (documented, NOT asserted; Sam's call):
+// onIncomingStart reveals every incoming relative box at full opacity immediately (to close the bare-
+// screen gap) EXCEPT the pivot and lateral chips. So a sibling of the pivot in the same row (e.g. Rodman
+// Hooker when demoting Nancy Morse up into michael-hooker-1935's parents row) is up at opacity 1 while
+// the demoting card is still crossing its region: its name shows, the solid demoting card (z:1, rides
+// ABOVE the rows by design) passes over and covers it, then it re-emerges. This is HONEST occlusion —
+// a solid object passing a stationary one, consistent with the table world model — NOT a z-seam (the
+// z-order is correct; the pivot itself is correctly held at opacity 0, so it never doubles). Accepted.
+// Surgical option if ever revisited: a corridor-hold — hold ONLY the incoming boxes that fall in the
+// demote's flight path until it passes (keeps the bare-screen gap closed everywhere else). Best bundled
+// with Phase 3a's flyover-corridor work, which makes the travel vector a first-class captured value.
 
 // ── B. spouse-swap demotion: nothing VISIBLE flies off the card's right edge ────────────────
 // Reference is the STABLE .featured-slot (the card's bounding box — it never transforms; the cards
@@ -274,7 +286,11 @@ async function atomicSwap(label, startSlug, targetSel) {
 			}
 			// hero = the OTHER flying featured card (the incoming one still `.flat`, not `.demoting`).
 			const heroFlat = [...document.querySelectorAll('.featured-flight.flat')].some((c) => !c.classList.contains('demoting'));
-			out.push({ n, boxOp, cardPresent: !!demote, cardOp: demote ? parseFloat(getComputedStyle(demote).opacity) : -1, faceOp, rectDelta, faceAspect, heroFlat });
+			// the card's OWN face (card-top → holds the header/name); it must crossfade OUT as the chip
+			// fades IN, so the two names never coexist.
+			const cardTop = demote?.querySelector('.card-top');
+			const cardFaceOp = cardTop ? parseFloat(getComputedStyle(cardTop).opacity) : -1;
+			out.push({ n, boxOp, cardPresent: !!demote, cardOp: demote ? parseFloat(getComputedStyle(demote).opacity) : -1, faceOp, cardFaceOp, rectDelta, faceAspect, heroFlat });
 			if (++n < 48) requestAnimationFrame(tick);
 			else resolve(out);
 		};
@@ -310,6 +326,10 @@ async function atomicSwap(label, startSlug, targetSel) {
 	const TRUE_ASPECT = 220 / 75;
 	const warped = swap.filter((s) => s.cardPresent && s.faceOp > 0.9 && s.faceAspect > 0 && Math.abs(s.faceAspect / TRUE_ASPECT - 1) > 0.02);
 	ok(warped.length === 0, `${label}: chip-face aspect distorted on ${warped.length} frame(s) (e.g. ${warped[0] ? warped[0].faceAspect.toFixed(2) : ''} vs true ${TRUE_ASPECT.toFixed(2)})`);
+	// (9b) NO DOUBLE NAME: a true crossfade of faces — the card's own face and the chip-face never both
+	// exceed ~0.5 opacity at the same frame (that would be two names visible at once).
+	const doubled = swap.filter((s) => s.cardPresent && s.cardFaceOp > 0.55 && s.faceOp > 0.55);
+	ok(doubled.length === 0, `${label}: double name — card face (${doubled[0] ? doubled[0].cardFaceOp.toFixed(2) : ''}) + chip-face (${doubled[0] ? doubled[0].faceOp.toFixed(2) : ''}) both visible on ${doubled.length} frame(s)`);
 	// (10) FINISH ORDER: the demotion's atomic swap (card gone) precedes the hero's landing (its .flat
 	// drops) — the leaving card clears the stage before the hero arrives, never competing with it.
 	const demoteGone = swap.findIndex((s, i) => i > 0 && !s.cardPresent && swap[i - 1].cardPresent);
