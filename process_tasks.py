@@ -273,6 +273,12 @@ def apply_mechanical(field, val, p, tp):
         if not m:
             return "FLAG field_set needs path=value", False
         path, raw = m.group(1), m.group(2).strip().strip('"')
+        # EMIT-TIME-ONLY BOUNDARY: `t` (table coordinates) and `hidden_by_default` (CC visibility)
+        # are DERIVED by regenerate-data.js at build time and never stored in canonical. A task row
+        # must never write them — that would fabricate a coordinate the pipeline is supposed to own.
+        root = re.split(r'[.\[]', path, 1)[0]
+        if root == 't' or 'hidden_by_default' in path:
+            return f"FLAG BLOCKED: '{path}' is emit-time only (table coords / CC annotation), never stored in canonical", False
         # coerce simple literals
         if raw.lower() in ('true', 'false'):
             coerced = (raw.lower() == 'true')
