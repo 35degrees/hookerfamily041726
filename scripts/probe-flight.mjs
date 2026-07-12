@@ -78,6 +78,16 @@ ok(frames[frames.length - 1].vis === 4, `child-click: incoming spouse chips neve
 // Surgical option if ever revisited: a corridor-hold — hold ONLY the incoming boxes that fall in the
 // demote's flight path until it passes (keeps the bare-screen gap closed everywhere else). Best bundled
 // with Phase 3a's flyover-corridor work, which makes the travel vector a first-class captured value.
+//
+// KNOWN, ACCEPTED-AND-PARKED — "compact-seat sliver" (Sam deprioritized; documented, NOT asserted):
+// on a click landing in a COMPACT notch seat (a ≥3-spouse card's carousel chip, 160×65, aspect 2.46),
+// the demote's chip-face is a NON-compact PersonBox (220×75, aspect 2.93) counter-scaled to span the
+// seat's WIDTH — so it lands ~54px tall in the 65px shell, leaving a ~5px empty-white shell edge above/
+// below that briefly slides in with the demote. It never warps (the face holds its true aspect). The
+// only clean fix is a COMPACT chip-face variant chosen at demote time from the seat's measured aspect
+// (non-trivial: the leaving card's chip-face is rendered from the OLD page and can't reactively know the
+// destination's compactness) — parked until it's worth that surface. Non-compact seats (≤3-spouse cards)
+// land exactly and show no sliver.
 
 // ── B. spouse-swap demotion: nothing VISIBLE flies off the card's right edge ────────────────
 // Reference is the STABLE .featured-slot (the card's bounding box — it never transforms; the cards
