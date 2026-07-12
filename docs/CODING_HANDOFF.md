@@ -1,9 +1,9 @@
 # CODING_HANDOFF — frontend (Stream B) itinerary & session record
 
-The card-transition maintenance phase is **CLOSED** (this session). What follows is
-the standing model, the lessons, the ghost taxonomy, and the probe gate. Next up is
-**Phase 3a — the camera / flyover-corridor work**, which makes the *travel vector* a
-first-class captured value; several deferred items bundle with it (see end).
+The card-transition phase is **CLOSED**; Phase 3a (camera store / travel vector) and the
+spouse-regime unification shipped (see **Session record** below for the doctrines). What
+follows is the standing model, the lessons, the ghost taxonomy, and the probe gate. Next
+up is **Phase 3b — the field** (midnight ground + parallax mote layers on the camera store).
 
 ---
 
@@ -121,3 +121,71 @@ Run all three after every change to the flight system; dev server up on `:5173`.
 - **Corridor-hold** for Artifact C — hold only the incoming boxes in the demote's
   flight path — bundles with 3a's flyover-corridor work.
 - **Artifact A** clip-to-slot-bounds — a separate micro-phase if ever wanted.
+
+---
+
+## Session record — spouse-regime unification + geometry-crossfade demotion
+
+The demotion model above is now **unified across both regimes** (spouse + relative are
+one visible-solid-object system, one velocity family) and hardened by several doctrines
+earned this session. Phase 3a (camera store / travel vector) shipped; the settle was
+built on it. Next is **Phase 3b — the field** (parallax world).
+
+**Doctrines (the load-bearing lessons):**
+- **Exposure-time, not code.** A "regression" that appears when motion slows is usually
+  *exposure* — slower motion reveals what speed concealed (a giant chip-face was always
+  there; the slower spouse tempo made it visible). Diagnose before reverting; the regime
+  guards held every time. **Rule: a change spec'd for one regime must be regime-guarded
+  in shared code** (`flightKind`/`relative` branches, or a kind-specific constant).
+- **Face visibility keys to GEOMETRY, never clocks.** The card's own face and the
+  chip-face crossfade on **shell width**, not elapsed time — outgoing fades 2.4×→2.0×
+  natural chip scale, chip-face fades in 2.1×→1.7×, OVERLAPPING (no blink; the white card
+  body is always up). This kills the billboard name at the root (max legible ~388px): by
+  the time a name is legible the face is near chip scale. Band constants tunable (drop the
+  whole band 0.2 if a name still reads big). Replaced all time-based face CSS.
+- **Honest velocity = MAX-corner travel.** With transform-origin top-left, a card
+  shrinking into its top-right notch seat moves its **bottom-left corner (the photo)** ~2×
+  its top-left corner — timing off the corner let the photo run 2× the ceiling and STROBE
+  (browsers don't motion-blur). Time the demote off `maxCornerTravel` / ceiling, and use
+  **LINEAR** easing on the spouse demote (cubicOut's fast start peaks ~3× average — a
+  peak-to-average problem no duration fixes). Guarded by **`probe-demote-velocity.mjs`**
+  (smoothed per-frame photo-corner velocity ≤ strobe-regime limit).
+- **Coupled finish-first — do NOT decouple.** `hero = max(spouseGrowMs, demote+60)`; the
+  demote lands 60ms before the hero, so the pivot seat reveals **under cover** (the atomic
+  swap owns it). Decoupling (demote lands after) breaks the atomic swap — the hero's
+  landing reveals the seat early (fade + double). Speed the promotion by raising the
+  **spouse demote's own velocity ceiling** (`SPOUSE_DEMOTE_V_CEIL` = 1.85; relative stays
+  1.6) — the demote honestly travels faster, so the coupled hero speeds up without cram.
+- **First-frame flash fix.** Svelte applies a css-transition's keyframes one frame LATE,
+  so the incoming hero paints at its DESTINATION for frame 0 before jumping to the origin
+  (visible with a photo). `growFrom` sets the t=0 (origin) transform **inline** so frame 0
+  is at the chip; `onIncomingLand` clears it so the landed card rests at identity.
+- **Settle = whole-path growth-overshoot**, spouse promotions only, on a warm camera move:
+  one easeOutBack value drives translate AND scale (no fixed-edge lope), clamped to a
+  ~5–6px edge excursion, endpoints frozen. `probe-settle.mjs` guards it.
+
+**The pinned demotion look** (freezes it against drift, both regimes): `probe-flight.mjs`
+Check G adds **9a** (legible chip-face width, opacity>0.5, ≤ ~2.1×220 — RED without the
+crossfade) and reframes **7** to *lands-as-a-chip* (face reaches full opacity + is shown
+at the last frame, seat-size-agnostic).
+
+**Also this session:** children-row entrance now **mirrors** the parents' fade-and-rise
+(measured 150px, 300ms, cubicOut — children settle DOWN from above via `revealPending`);
+§16 chip dates degrade (both-ends-unknown suppressed; single-unknown drops the `?` →
+"1977–"), scoped to `PersonBox` (featured vitals untouched).
+
+**Parked (known-accepted, not asserted):** the **compact-seat sliver** — on a ≥3-spouse
+card the seat is a compact chip (aspect 2.46) but the non-compact chip-face (2.93) lands
+~54px in the 65px shell → ~5px white edges. No small non-distorting fix (only a compact
+chip-face variant, which the leaving card can't reactively select). Annotated in
+`probe-flight.mjs` beside Artifact C.
+
+---
+
+## Phase 3b — the field (NEXT)
+
+Midnight-blue page ground behind the stage; 2–3 world-seeded mote layers ("fairy lights")
+subscribing to the camera store and counter-drifting by depth on **the same clock as the
+flight** (the §17 one-clock doctrine — desync is THE failure mode). Cards/chips at depth 0
+(never parallax). First world movement: click a child chip, the field drifts up past the
+cards.
