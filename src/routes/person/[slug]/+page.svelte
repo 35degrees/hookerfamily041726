@@ -354,6 +354,8 @@
 				class="flight"
 				data-flight-dir="up"
 				data-flight-id={parent.id}
+				data-tx={parent.t?.x}
+				data-ty={parent.t?.y}
 				in:morphIn={{ id: parent.id }}
 				out:flyOut={{ key: parent.id }}
 				animate:flip={{ duration: flipMs }}
@@ -428,6 +430,8 @@
 							class="flight"
 							data-flight-dir="lateral"
 							data-flight-id={chip.spouse.id}
+							data-tx={chip.spouse.t?.x}
+							data-ty={chip.spouse.t?.y}
 							data-offwindow={hasCarousel && (i < spouseOffset || i >= spouseOffset + WINDOW)}
 							in:markPending
 							out:chipExit={{ key: chip.spouse.id }}
@@ -522,6 +526,8 @@
 				class="flight"
 				data-flight-dir="down"
 				data-flight-id={child.id}
+				data-tx={child.t?.x}
+				data-ty={child.t?.y}
 				in:markPending
 				out:flyOut={{ key: child.id }}
 				animate:flip={{ duration: flipMs }}

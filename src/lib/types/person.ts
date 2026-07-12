@@ -170,6 +170,7 @@ export interface MediaRow {
 export interface Person {
 	id: string;
 	slug: string;
+	t?: import('./neighborhood').TableCoord; // Phase 3a: table seat {x, y, e?} (emit-time derived)
 	is_placeholder: boolean;
 	bio?: Name;
 	name?: Name;

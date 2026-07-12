@@ -13,6 +13,7 @@
  */
 import { pushState } from '$app/navigation';
 import { featured } from './featured.svelte';
+import { publishCameraMove } from './camera';
 import { fetchFeatured } from '$lib/data/buildFeatured';
 import {
 	captureFlightOrigin,
@@ -87,6 +88,37 @@ export function warmPersonLinks(node: HTMLElement) {
 		// BUG 3: snapshot every relative box's rect NOW — before focusPerson changes state and the
 		// rows reflow — so each leaver can pin itself out of flow at its true pre-reflow position.
 		captureRects(node.querySelectorAll('[data-flight-id]'));
+
+		// CAMERA STORE (Phase 3a Block 2): publish the move HERE — synchronous with the captures above,
+		// before focusPerson mutates state. from = the departing featured's table coords; to = the
+		// clicked box's (surfaced as data-tx/data-ty from its compact); screenVector = clicked box →
+		// featured slot displacement (the direction the hero travels). No subscribers yet.
+		const box = anchor.closest('[data-flight-id]') as HTMLElement | null;
+		const slot = document.querySelector('.featured-slot');
+		const oc = anchor.getBoundingClientRect();
+		const dr = slot?.getBoundingClientRect();
+		const kind = relation === 'spouse' ? 'spouse' : 'relative';
+		const screenVector = dr
+			? {
+					dx: dr.left + dr.width / 2 - (oc.left + oc.width / 2),
+					dy: dr.top + dr.height / 2 - (oc.top + oc.height / 2)
+				}
+			: { dx: 0, dy: 0 };
+		const distance = Math.hypot(screenVector.dx, screenVector.dy);
+		const numOr = (v: string | undefined) => (v != null && v !== '' && v !== 'null' ? Number(v) : null);
+		const to =
+			box && numOr(box.dataset.tx) != null
+				? { x: Number(box.dataset.tx), y: numOr(box.dataset.ty) }
+				: null;
+		const ft = featured.current?.person?.t;
+		const from = ft ? { x: ft.x, y: ft.y } : null;
+		// duration mirrors flight.ts's per-kind curve (informational until Block 3 reads the real clock)
+		const duration =
+			kind === 'spouse'
+				? Math.min(617, Math.max(360, 225 + distance * 0.342))
+				: Math.min(1000, Math.max(410, distance / 1.6));
+		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind });
+
 		void focusPerson(decodeURIComponent(match[1]));
 	}
 	node.addEventListener('click', onClick);

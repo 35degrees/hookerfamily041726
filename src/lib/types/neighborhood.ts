@@ -12,6 +12,14 @@ export interface PersonCompact {
 	p?: string | null;
 	sn?: string | null;
 	dy_young?: boolean;
+	t?: TableCoord; // Phase 3a: table seat {x, y, e?} (emit-time derived; y may be null)
+}
+
+/** Table coordinate (Phase 3a Block 1). y is null only for the logged no-basis set — consumers SKIP. */
+export interface TableCoord {
+	x: number;
+	y: number | null;
+	e?: boolean; // estimated (or unknown) time
 }
 
 export interface SpouseEntry {
