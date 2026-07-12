@@ -233,6 +233,91 @@ if (backToMorgan) {
 	ok(ret.visibleCount === 3, `return-trip: Morgan's window shows ${ret.visibleCount} visible chips, not 3 (offset ${ret.offset})`);
 }
 
+// ── G. RELATIVE demotion atomic swap (L3a): the demoting parent/child card is a SOLID object
+// (opacity 1, no terminal fade) and its pivot box is revealed as a STEP exactly the frame the card
+// leaves — never a cross-dissolve, never a visible double (box on top of the still-docked card),
+// never a bare frame. Frame-sample the pivot box (data-flight-id = old focus id) and the demoting
+// card (the .featured-flight riding at z-index 0; the incoming hero is z-index 2). Two regimes:
+//   G1 UP  — click a CHILD → old focus demotes UP into a PARENT box (paints UNDER the card).
+//   G2 DOWN — click a PARENT → old focus demotes DOWN into a CHILD box (paints OVER the card) — the
+//             double-prone case: an early reveal would show the box stacked on the docked card.
+async function atomicSwap(label, startSlug, targetSel) {
+	await page.goto(`${BASE}/person/${startSlug}`, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(500);
+	const pivotId = await page.evaluate(() => document.querySelector('.featured-card h1 .font-mono')?.textContent?.trim() ?? null);
+	const target = await centerOf(targetSel);
+	if (!pivotId || !target) { fails.push(`${label}: setup failed (pivotId ${pivotId}, target ${!!target})`); return; }
+	await page.mouse.move(5, 5);
+	await page.mouse.click(target.x, target.y);
+	const swap = await page.evaluate((pid) => new Promise((resolve) => {
+		const out = [];
+		let n = 0;
+		const cen = (r) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+		const tick = () => {
+			const box = document.querySelector(`[data-flight-id="${pid}"]`);
+			const boxOp = box ? parseFloat(getComputedStyle(box).opacity) : -1;
+			const demote = [...document.querySelectorAll('.featured-flight')].find((c) => getComputedStyle(c).zIndex === '0');
+			const face = demote?.querySelector('.demote-chipface');
+			const faceOp = face ? parseFloat(getComputedStyle(face).opacity) : -1;
+			let rectDelta = -1;
+			let faceAspect = -1;
+			if (face) {
+				const pb = face.querySelector('.person-box') || face;
+				const fr = pb.getBoundingClientRect();
+				if (fr.height > 0) faceAspect = fr.width / fr.height;
+				if (box) {
+					const a = cen(fr);
+					const b = cen(box.getBoundingClientRect());
+					rectDelta = Math.hypot(a.x - b.x, a.y - b.y);
+				}
+			}
+			// hero = the OTHER flying featured card (the incoming one still `.flat`, z-index ≠ 0).
+			const heroFlat = [...document.querySelectorAll('.featured-flight.flat')].some((c) => getComputedStyle(c).zIndex !== '0');
+			out.push({ n, boxOp, cardPresent: !!demote, cardOp: demote ? parseFloat(getComputedStyle(demote).opacity) : -1, faceOp, rectDelta, faceAspect, heroFlat });
+			if (++n < 48) requestAnimationFrame(tick);
+			else resolve(out);
+		};
+		requestAnimationFrame(tick);
+	}), pivotId);
+	// (1) STEP not fade — few frames at intermediate box opacity (the old 170ms cross-dissolve ≈ 10).
+	ok(swap.filter((s) => s.boxOp > 0.1 && s.boxOp < 0.9).length <= 3, `${label}: pivot box faded in (expected an atomic STEP ≤ 3 intermediate frames)`);
+	// (2) HELD hidden through the flight (proves it isn't revealed early by the incoming landing).
+	ok(swap.filter((s) => s.cardPresent && s.boxOp < 0.1).length >= 3, `${label}: pivot box was not held hidden during the flight`);
+	// (3) NO BARE FRAME at the swap: the frame after the demoting card is last present, the box is up.
+	const lastCard = swap.reduce((acc, s, i) => (s.cardPresent ? i : acc), -1);
+	const after = lastCard >= 0 && lastCard + 1 < swap.length ? swap[lastCard + 1] : null;
+	ok(after !== null, `${label}: never observed the demoting card leaving (sampler window too short?)`);
+	ok(!after || after.boxOp > 0.5, `${label}: BARE FRAME — pivot box not visible the frame after the card left (boxOp ${after?.boxOp})`);
+	// (4) SOLID object: the demoting card never faded while present (opacity 1 the whole flight).
+	ok(swap.filter((s) => s.cardPresent && s.cardOp >= 0 && s.cardOp < 0.9).length === 0, `${label}: demoting card faded — must stay a solid opaque object`);
+	// (5) NO VISIBLE DOUBLE: ≤ ~one frame with BOTH card and pivot box fully visible at once.
+	ok(swap.filter((s) => s.cardPresent && s.cardOp > 0.9 && s.boxOp > 0.9).length <= 2, `${label}: card + pivot box both fully visible for >2 frames (visible double)`);
+	// (6) ended fully visible.
+	ok(swap[swap.length - 1].boxOp > 0.9, `${label}: pivot box not fully visible at rest (${swap[swap.length - 1].boxOp})`);
+	// (7) FLIP EARLY: the chip-face is shown (>0.9) for the final 60%+ of the card's presence — the
+	// face flips to chip-layout up front and stays a chip the rest of the way in.
+	const present = swap.filter((s) => s.cardPresent).length;
+	const faceShown = swap.filter((s) => s.cardPresent && s.faceOp > 0.9).length;
+	ok(present > 0 && faceShown >= present * 0.6, `${label}: chip-face not shown for the final 60%+ of travel (${faceShown}/${present})`);
+	// (8) LANDS AS THE BOX: the chip-face converges onto the destination box's rect, so the swap is
+	// between two coincident chips (visual similarity, not just presence).
+	const deltas = swap.filter((s) => s.cardPresent && s.rectDelta >= 0).map((s) => s.rectDelta);
+	const minDelta = deltas.length ? Math.min(...deltas) : Infinity;
+	ok(minDelta < 40, `${label}: chip-face never converged onto the box (min center delta ${Math.round(minDelta)}px)`);
+	// (9) NO WARP: whenever the chip-face is shown it renders at the true PersonBox aspect (~2.93) —
+	// counter-scaled against the shell's non-uniform morph, never stretched. THE warp guard.
+	const TRUE_ASPECT = 220 / 75;
+	const warped = swap.filter((s) => s.cardPresent && s.faceOp > 0.9 && s.faceAspect > 0 && Math.abs(s.faceAspect / TRUE_ASPECT - 1) > 0.02);
+	ok(warped.length === 0, `${label}: chip-face aspect distorted on ${warped.length} frame(s) (e.g. ${warped[0] ? warped[0].faceAspect.toFixed(2) : ''} vs true ${TRUE_ASPECT.toFixed(2)})`);
+	// (10) FINISH ORDER: the demotion's atomic swap (card gone) precedes the hero's landing (its .flat
+	// drops) — the leaving card clears the stage before the hero arrives, never competing with it.
+	const demoteGone = swap.findIndex((s, i) => i > 0 && !s.cardPresent && swap[i - 1].cardPresent);
+	const heroLand = swap.findIndex((s, i) => i > 0 && !s.heroFlat && swap[i - 1].heroFlat);
+	ok(demoteGone >= 0 && heroLand >= 0 && demoteGone <= heroLand, `${label}: demotion did not finish before the hero landed (demote-gone frame ${demoteGone}, hero-land frame ${heroLand})`);
+}
+await atomicSwap('relative-demote UP (parent box)', 'nancy-morse-1915', '.children-slot a, [class*="children"] a');
+await atomicSwap('relative-demote DOWN (child box)', 'michael-hooker-1935', '.parents-slot a');
+
 await ctx.close();
 await browser.close();
 
@@ -240,4 +325,4 @@ if (fails.length) {
 	console.log('FLIGHT CHECK: RED\n- ' + fails.join('\n- '));
 	process.exit(1);
 }
-console.log('FLIGHT CHECK: GREEN — incoming notch gated on landing; no off-card demotion.');
+console.log('FLIGHT CHECK: GREEN — incoming notch gated on landing; no off-card demotion; relative demote = atomic swap.');

@@ -36,6 +36,12 @@ let flightKind: 'spouse' | 'relative' = 'relative';
 export function captureFlightKind(kind: 'spouse' | 'relative'): void {
 	flightKind = kind;
 }
+// Read the current nav's kind. Stable through the whole flight — clearFlightCaptures (1 rAF after
+// nav) does NOT reset flightKind, so late lifecycle handlers (introend) can still branch on it.
+export function getFlightKind(): 'spouse' | 'relative' {
+	return flightKind;
+}
+
 
 // ── Path A captures (parent/child/spouse rows no longer use animate:flip — we pin leavers
 // ourselves, at the TRUE click-time positions, so Svelte's fix() can't mis-pin them) ──
@@ -94,6 +100,16 @@ export function clearFlightCaptures(): void {
 	rectSnapshot = new Map();
 }
 
+// Distance-scaled duration for a RELATIVE (parent/child) PROMOTION. Shared so the DEMOTION can
+// derive its own from the same curve (see DEMOTE_LEAD / shrinkTo) instead of a constant that drifts
+// out of proportion as the promotion tuning changes.
+function relativeGrowMs(distance: number): number {
+	return Math.min(604, Math.max(410, 218 + distance * 0.336));
+}
+// The demotion runs ~15% shorter than the matching promotion so it always FINISHES first — the
+// leaving card releases attention to the hero and never competes with the hero's landing.
+const DEMOTE_LEAD = 0.85;
+
 /**
  * `in:growFrom` — fly the featured card from the click-captured box rect to its
  * own layout position (canonical FLIP, top-left origin). Consumes the captured
@@ -120,7 +136,7 @@ export function growFrom(node: Element) {
 		duration:
 			flightKind === 'spouse'
 				? Math.min(617, Math.max(360, 225 + distance * 0.342))
-				: Math.min(604, Math.max(410, 218 + distance * 0.336)), // parent→hero floor 352→410
+				: relativeGrowMs(distance), // parent→hero, distance-scaled (floor 410)
 		easing: cubicOut,
 		// u = 1 - t: at the start the card exactly overlays the clicked box; settles to identity.
 		// z-index 2 + explicit opacity 1: the clicked subject is the HERO — it rides ON TOP
@@ -151,8 +167,24 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	const el = node as HTMLElement;
 	const card = node.getBoundingClientRect(); // the card's START rect (center) — stable through the flight
 	if (!card.width || !card.height) return { duration: 0 };
+	const relative = flightKind === 'relative';
+	// The demoting card's chip-face (a PersonBox, natural 220×75) — counter-scaled per frame below so
+	// it renders undistorted inside the shell's non-uniform morph. Cached once.
+	const face = relative ? (el.querySelector('.demote-chipface') as HTMLElement | null) : null;
+	const FACE_W = 220;
+	const FACE_H = 75;
+	// Demotion duration: derived from the HERO's flight — the same distance-scaled curve the promotion
+	// uses, then ×DEMOTE_LEAD so the demote finishes ~15% sooner and clears the stage before the hero
+	// lands. Distance = the clicked box (hero origin, snapshotted at click) → the featured slot (which
+	// the demote starts from and the hero lands on: card ≈ hero dest). Using the CLICKED rect, not the
+	// destination box, sidesteps mount-order (a child box may not be mounted yet at outro init).
+	let relDuration = RELATIVE_EXIT_MS;
+	if (relative) {
+		const heroOrigin = clickedId ? rectSnapshot.get(clickedId) : undefined;
+		if (heroOrigin) relDuration = relativeGrowMs(Math.hypot(heroOrigin.left - card.left, heroOrigin.top - card.top)) * DEMOTE_LEAD;
+	}
 	return {
-		duration: flightKind === 'spouse' ? SPOUSE_EXIT_MS : RELATIVE_EXIT_MS,
+		duration: relative ? relDuration : SPOUSE_EXIT_MS,
 		easing: cubicOut,
 		// TICK, not css: the destination box can MOVE during the flight. When the new hero's card is a
 		// different height, the featured-slot height glide shifts the children/parent rows — e.g. on
@@ -165,15 +197,36 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		// cross-fades over the last fifth as the destination box reveals (see onOutgoingStart watch).
 		tick: (t: number, u: number) => {
 			el.style.zIndex = '0';
-			el.style.opacity = String(Math.min(1, t / 0.2));
+			// L3a — RELATIVE (parent/child) demotion is a SOLID object: opacity 1 the whole way to its
+			// box, no terminal fade (Sam's "suction" was the fade collapsing under scale, not the curve).
+			// SPOUSE demotion (covered under the hero) keeps its last-fifth cross-fade untouched.
+			el.style.opacity = relative ? '1' : String(Math.min(1, t / 0.2));
 			const box = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
 			if (!box || !box.width) return;
 			const dx = box.left - card.left;
 			const dy = box.top - card.top;
 			const sx = box.width / card.width;
 			const sy = box.height / card.height;
+			const Sx = 1 - u * (1 - sx);
+			const Sy = 1 - u * (1 - sy);
 			el.style.transformOrigin = 'top left';
-			el.style.transform = `translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)})`;
+			el.style.transform = `translate(${u * dx}px, ${u * dy}px) scale(${Sx}, ${Sy})`;
+			// "flip early, land as a chip": the chip-face is a real PersonBox (identical to the box it
+			// becomes). The shell's morph is NON-uniform (Sx ≠ Sy), which would stretch the face; so
+			// counter-scale it every frame — scale(afx, afy) with afx·Sx = afy·Sy = U — so the composite
+			// (shell × face) is a UNIFORM scale U. The face therefore renders at its true 220:75 aspect at
+			// every frame (never stretched), spans the shell's width, and stays vertically centered in the
+			// shell (the whitespace above/below in the tall early shell is honest, not a taffy chip). U =
+			// shellWidth/FACE_W; at landing Sx=box.w/card.w so U→1 and the face lands at natural box size.
+			if (face) {
+				const afx = card.width / FACE_W; // → afx·Sx = U (spans the shell's width)
+				const afy = (card.width * Sx) / (FACE_W * Sy); // → afy·Sy = U (same uniform scale)
+				const tfy = card.height / 2 - (FACE_H * card.width * Sx) / (2 * FACE_W * Sy); // vertical center
+				face.style.transformOrigin = 'top left';
+				face.style.transform = `translate(0px, ${tfy}px) scale(${afx}, ${afy})`;
+			}
+			// The pivot box is revealed by the outro-END callback (onOutgoingEnd) — the atomic swap fires
+			// the frame the card leaves. The card's outer shell/opacity here are unchanged.
 		}
 	};
 }

@@ -17,7 +17,8 @@
 		shrinkTo,
 		markPending,
 		morphIn,
-		getPivotId
+		getPivotId,
+		getFlightKind
 	} from '$lib/transitions/flight';
 
 	let { data }: { data: PageData } = $props();
@@ -148,6 +149,10 @@
 		}
 	}
 
+	// The pivot the current demotion owns — set at outrostart, consumed at outroend. The introend
+	// safety-net excludes it for relative+motion so it can't pre-empt the atomic swap with a fade.
+	let demotingPivotId: string | null = null;
+
 	// Monotonic navigation counter — the janitor (onIncomingLand) uses it to tell "no newer nav
 	// started" so its post-settle sweep never removes a legitimately in-flight pin.
 	let navSeq = 0;
@@ -200,35 +205,56 @@
 			}
 		}, 700);
 	}
-	function onOutgoingStart(node: HTMLElement) {
+	function onOutgoingStart(node: HTMLElement, id: string) {
 		if (prefersReducedMotion.current) return;
 		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
-		// Hand off to the pivot box AS this demoted card fades into its slot — a cross-dissolve, not
-		// a seam. Rather than guess a timer, WATCH the card's own opacity: the instant it begins
-		// fading (it has reached and is docking into its slot), fade the pivot box in to take its
-		// place. Tying the reveal to the card's fade (not the incoming card's separate landing clock)
-		// keeps the destination continuously covered — no bare frame at either end of the morph.
-		const pivot = getPivotId();
-		const watch = () => {
-			// Start the box's fade-in the instant the card begins fading (op dips below ~1), and run
-			// it over a window close to the card's own fade so the two cross-dissolve evenly — the
-			// composite at the destination stays high the whole hand-off.
-			if (!node.isConnected || +getComputedStyle(node).opacity < 0.99) {
-				revealPending((el) => el.dataset.flightId === pivot, 170);
-				return;
-			}
+		demotingPivotId = id; // this card IS the pivot (getPivotId is already cleared by introend)
+		if (getFlightKind() === 'spouse') {
+			// SPOUSE demotion (covered under the hero) keeps its cross-dissolve: WATCH the card's own
+			// opacity and, the instant it begins fading into its notch chip, fade the pivot chip in to
+			// take its place — no seam. Untouched by L3a.
+			const watch = () => {
+				if (!node.isConnected || +getComputedStyle(node).opacity < 0.99) {
+					revealPending((el) => el.dataset.flightId === id, 170);
+					return;
+				}
+				requestAnimationFrame(watch);
+			};
 			requestAnimationFrame(watch);
-		};
-		requestAnimationFrame(watch);
+			return;
+		}
+		// RELATIVE demotion (L3a) — "flip early, land as a chip". The .demoting class cross-fades the
+		// chip-face in over the first ~110ms (front-loaded, motion-masked, one flip); shrinkTo's tick
+		// then counter-scales the face every frame so it renders undistorted and lands at natural box
+		// size. Skip the flip if the destination box isn't mounted (the card just shrinks plainly).
+		if (!document.querySelector(`[data-flight-id="${id}"]`)) return;
+		node.classList.add('demoting');
+	}
+
+	// ATOMIC SWAP: the demoting card has just been removed by Svelte (outro end). Reveal its pivot box
+	// THIS frame, instantly (fade 0) — so the box appears exactly as the card leaves: never on top of
+	// the still-docked card (a visible double, for a child pivot whose box paints above the demote),
+	// never a frame after it's gone (a bare destination). This is the explicit landing signal that
+	// replaced the deleted opacity fade-watch; it also nets the degraded case (duration 0 / box
+	// unmounted), where it simply reveals immediately.
+	function onOutgoingEnd(_node: HTMLElement, id: string) {
+		revealPending((el) => el.dataset.flightId === id, 0);
+		if (demotingPivotId === id) demotingPivotId = null;
 	}
 
 	// Safety net: if anything is still pending when the incoming card lands (e.g. the demoted card's
-	// fade-watch never fired), reveal it. Normally the pivot is already revealed by onOutgoingStart.
+	// landing signal never fired), reveal it. For a RELATIVE demotion under motion the pivot is owned
+	// by the demote's own landing (the atomic swap) — exclude it here so this net can't pre-empt it
+	// with a fade. Spouse (cross-dissolve owns it) and reduced-motion (no demote tick) reveal all.
 	let prevLanded = true;
 	$effect(() => {
 		const landed = featuredLanded;
 		untrack(() => {
-			if (landed && !prevLanded) revealPending(() => true);
+			if (landed && !prevLanded) {
+				const excludePivot =
+					getFlightKind() === 'relative' && !prefersReducedMotion.current && demotingPivotId != null;
+				revealPending((el) => !(excludePivot && el.dataset.flightId === demotingPivotId));
+			}
 			prevLanded = landed;
 		});
 	});
@@ -449,7 +475,8 @@
 				out:shrinkTo={{ id: cur.person.id }}
 				onintrostart={(e) => onIncomingStart(e.currentTarget)}
 				onintroend={(e) => onIncomingLand(e.currentTarget)}
-				onoutrostart={(e) => onOutgoingStart(e.currentTarget)}
+				onoutrostart={(e) => onOutgoingStart(e.currentTarget, cur.person.id)}
+				onoutroend={(e) => onOutgoingEnd(e.currentTarget, cur.person.id)}
 			>
 				<FeaturedCard
 					person={cur.person}
@@ -459,6 +486,13 @@
 					crossConnections={cur.crossConnections}
 					institutionsById={cur.institutionsById}
 				/>
+				<!-- Chip-face for the "flip early, land as a chip" relative demotion: a real PersonBox of
+				     THIS person (identical to the parent/child box it becomes), pre-scaled to fill the card
+				     and cross-faded in at the start of a demote, then shrunk with the card to land exactly
+				     on the box. Inert (opacity 0) on resting/incoming/spouse cards. -->
+				<div class="demote-chipface" inert>
+					<PersonBox person={cur.neighborhood.focus} relation="parent" />
+				</div>
 			</div>
 		{/each}
 	</div>
@@ -530,6 +564,7 @@
 	}
 	.featured-slot > .featured-flight {
 		grid-area: 1 / 1;
+		position: relative; /* positioning context for the absolutely-placed .demote-chipface overlay */
 	}
 
 	/* While a card flies (.flat added by transition lifecycle events) it renders as a
@@ -542,6 +577,40 @@
 	   silently strips it. `.featured-flight` stays scoped, keeping the rule bound to this page. */
 	.featured-flight:global(.flat) :global(.featured-card) {
 		clip-path: var(--flat-shape) !important;
+	}
+
+	/* L3a "flip early, land as a chip": the demote's CHIP-FACE. A real PersonBox of the demoting
+	   person (identical to the box it becomes). shrinkTo's tick counter-scales it every frame against
+	   the shell's non-uniform morph so it renders at its true 220:75 aspect throughout (never
+	   stretched), spans the shell's width, stays vertically centered, and lands at natural box size —
+	   so the atomic swap is between two identical boxes. Cross-faded in over the first ~110ms of a
+	   relative demotion (motion-masked, front-loaded) via the runtime .demoting class; inert +
+	   opacity 0 on resting/incoming/spouse cards. Only the FACE flips — the shell is untouched. */
+	.demote-chipface {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 220px; /* natural non-compact PersonBox (parent/child box) size */
+		height: 75px;
+		transform-origin: top left;
+		/* transform is set per-frame by shrinkTo's tick (counter-scaled to render undistorted); at rest
+		   the face is opacity 0 so its untransformed box is never seen. */
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 110ms ease-out;
+	}
+	.featured-flight:global(.demoting) .demote-chipface {
+		opacity: 1;
+	}
+	/* the wrap's drop-shadow is the object's shadow throughout; drop the chip-face's own shadow so a
+	   scaled-up shadow-sm doesn't double it mid-flight. */
+	.demote-chipface :global(.person-box) {
+		box-shadow: none;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.demote-chipface {
+			transition: none;
+		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
