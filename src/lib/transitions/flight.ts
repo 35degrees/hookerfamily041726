@@ -141,6 +141,10 @@ export function clearFlightCaptures(): void {
 // (where the cap starts extending duration past the 410ms floor) is ~656px. Raise it → faster/lighter;
 // lower it → slower/heavier. (Was 1.28, which overcorrected — it slowed typical flights too.)
 const RELATIVE_V_CEIL = 1.6; // avg px/ms — tune by feel
+// The SPOUSE demote travels a touch faster than the relative family (its own honest ceiling), which — via
+// the coupled clock (hero = max(curve, demote+60)) — speeds up the spouse PROMOTION too, without cramming
+// (the demote genuinely covers its path faster). Guarded by probe-demote-velocity staying well green.
+const SPOUSE_DEMOTE_V_CEIL = 1.85;
 export function relativeGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(410, distance / RELATIVE_V_CEIL));
 }
@@ -178,7 +182,7 @@ function maxCornerTravel(a: PinRect, b: PinRect): number {
 // ahead of the hero and no point on EITHER card ever exceeds the ceiling.
 const SPOUSE_FINISH_LEAD_MS = 60;
 function spouseHeroDurationMs(heroDist: number, demoteMaxCorner: number): number {
-	const ownDuration = demoteMaxCorner / RELATIVE_V_CEIL; // honest: fastest corner obeys the ceiling
+	const ownDuration = demoteMaxCorner / SPOUSE_DEMOTE_V_CEIL; // honest: fastest corner obeys the SPOUSE ceiling
 	return Math.max(spouseGrowMs(heroDist), ownDuration + SPOUSE_FINISH_LEAD_MS);
 }
 // The RELATIVE demotion runs shorter than its matching promotion (×this lead) so it always FINISHES first
