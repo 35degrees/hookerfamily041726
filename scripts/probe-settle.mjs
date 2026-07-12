@@ -50,17 +50,39 @@ async function settleFor(idx, label) {
 	});
 	const s = data.samples;
 	if (s.length < 8 || !data.sv || !rest) { fails.push(`${label}: too few samples / no camera vector / no rest`); return null; }
-	const svLen = Math.hypot(data.sv.dx, data.sv.dy);
-	const ux = data.sv.dx / svLen, uy = data.sv.dy / svLen;
-	// project each sample PAST the true (post-settle) rest onto the vector unit
-	const proj = (p) => (p.left - rest.left) * ux + (p.top - rest.top) * uy;
+	// Measure the overshoot along the card's OWN travel axis (origin corner → rest), not the center-
+	// based camera screenVector — for a small chip → big card those directions diverge, and the settle
+	// carries along the card's translate. Origin = the sampled frame farthest from rest.
+	let originS = s[0], maxD = 0;
+	for (const p of s) { const d = Math.hypot(p.left - rest.left, p.top - rest.top); if (d > maxD) { maxD = d; originS = p; } }
+	const tux = (rest.left - originS.left) / maxD, tuy = (rest.top - originS.top) / maxD;
+	const proj = (p) => (p.left - rest.left) * tux + (p.top - rest.top) * tuy;
 	const overshoot = Math.max(...s.map(proj));
 	const endResidual = Math.abs(proj(s[s.length - 1]));
-	const dirDeg = (Math.atan2(uy, ux) * 180) / Math.PI;
+	// direction reported is the camera screenVector's (the consumer axis) — spouse-1 vs spouse-3 differ
+	const dirDeg = (Math.atan2(data.sv.dy, data.sv.dx) * 180) / Math.PI;
 	console.log(`  ${label}: vector=(${data.sv.dx.toFixed(0)},${data.sv.dy.toFixed(0)}) dir=${dirDeg.toFixed(0)}° overshoot=${overshoot.toFixed(1)}px endpoint-residual=${endResidual.toFixed(2)}px`);
 	ok(overshoot > 2.5, `${label}: overshoot ${overshoot.toFixed(1)}px too small (expected ~5)`);
 	ok(overshoot < 9, `${label}: overshoot ${overshoot.toFixed(1)}px too large`);
 	ok(endResidual < 1.2, `${label}: endpoint not frozen (residual ${endResidual.toFixed(2)}px)`);
+	// VELOCITY CONTINUITY: on the APPROACH to the overshoot peak the speed must decelerate MONOTONICALLY
+	// into the turnaround (one unbroken motion — easeOutBack). The two-phase signature is the opposite:
+	// the main easing decelerates to near-rest AT the destination, then the pulse RE-ACCELERATES the
+	// card out — a speed dip-then-rise before the overshoot peak.
+	const projs = s.map(proj);
+	const peakPos = Math.max(...projs);
+	const peakIdx = projs.indexOf(peakPos); // the overshoot turnaround frame
+	const speeds = [];
+	for (let i = 1; i <= peakIdx; i++) speeds.push(Math.abs(projs[i] - projs[i - 1]));
+	const sMax = Math.max(...speeds, 0.001);
+	const sMaxIdx = speeds.indexOf(sMax);
+	let dipped = false;
+	let jerk = false;
+	for (let i = sMaxIdx + 1; i < speeds.length; i++) {
+		if (!dipped && speeds[i] < 0.15 * sMax) dipped = true; // decelerated to near-rest
+		else if (dipped && speeds[i] > 0.28 * sMax) { jerk = true; break; } // then re-accelerated (the jerk)
+	}
+	ok(!jerk, `${label}: velocity JERK — decelerated to near-rest then re-accelerated before the overshoot (two-phase)`);
 	return { dirDeg, overshoot };
 }
 

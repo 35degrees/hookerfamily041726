@@ -14,18 +14,33 @@ import { cubicOut } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
 import { getCameraMove } from '../state/camera';
 
-// L3b SETTLE (Block 3) — the promotion carries a few px PAST its final rect ALONG the travel vector
-// (the camera store's screenVector), springing back over the last ~SETTLE_MS. Translate-only (the
-// scale lands at 1.0 and stays — no origin-anchored puff, the lesson of the reverted settle). The
-// pulse is 0 at both ends, so both endpoints (origin, dest) are frozen exact.
-const SETTLE_MS = 90;
-const SETTLE_PX = 5; // overshoot distance past the destination, along the vector's unit direction
-// One-humped pulse over the last `frac` of progress p: 0 → 1 → 0, slightly front-loaded (x**0.85) so
-// the overshoot snaps in and eases out — the back-out dialect the carousel settle uses.
-function settleBump(p: number, frac: number): number {
-	if (frac <= 0 || p <= 1 - frac) return 0;
-	const x = (p - (1 - frac)) / frac;
-	return Math.sin(Math.PI * Math.pow(x, 0.85));
+// SETTLE (Block 3) — the promotion carries a few px PAST its final rect along the travel vector, then
+// decelerates back. Done as ONE C1-continuous easeOutBack curve on the TRANSLATE (not a two-phase
+// main-easing-plus-pulse, which decelerates to rest AT the destination then restarts motion — a jerk).
+// The card arrives WITH residual velocity, crosses the destination once, overshoots, and returns in a
+// single unbroken motion. Translate-only (scale stays cubicOut, lands at 1.0 — no puff). The overshoot
+// is a fixed FRACTION of the curve, so its px scale with flight distance (short swap = smaller carry).
+// easeOutBack: f(u) = 1 + (1+s)(u−1)³ + s(u−1)²  — overshoots past 1 (the destination) then settles.
+function easeOutBack(u: number, s: number): number {
+	const p = u - 1;
+	return 1 + (1 + s) * p * p * p + s * p * p;
+}
+// easeOutBack's inherent overshoot is g(s)·distance, g(s) = 4s³ / (27(1+s)²). A fixed s therefore
+// flings far swaps (corner-to-corner spouse distances span ~8×). So CLAMP the carry to a few px and
+// solve s per-flight to hit it — a short swap carries less, a far one is capped, never a 40px lunge.
+function settleBackFor(distance: number): number {
+	if (distance < 1) return 0;
+	const targetPx = Math.min(6, Math.max(2.5, distance * 0.02)); // ~4–5px typical, clamped both ends
+	const targetG = Math.min(0.09, targetPx / distance); // overshoot as a fraction of the translate
+	let s = 0.8;
+	for (let i = 0; i < 8; i++) {
+		const o = 1 + s;
+		const g = (4 * s * s * s) / (27 * o * o);
+		const dg = (4 * s * s * (3 + s)) / (27 * o * o * o); // dg/ds
+		if (dg === 0) break;
+		s = Math.max(0.05, s - (g - targetG) / dg);
+	}
+	return s;
 }
 
 // ── Click-time origin capture for the card's "grow from the clicked box" flight ──
@@ -157,29 +172,25 @@ export function growFrom(node: Element) {
 		flightKind === 'spouse'
 			? Math.min(617, Math.max(360, 225 + distance * 0.342))
 			: relativeGrowMs(distance);
-	// SETTLE (Block 3) — SPOUSE promotions only for now. Overshoot along the camera store's
-	// screenVector unit (the true travel direction, published at capture), translate-only. Inactive on
-	// cold loads (no camera move) and for relative kind until the second commit.
-	const cam = getCameraMove();
-	const sv = cam?.screenVector;
-	const svLen = sv ? Math.hypot(sv.dx, sv.dy) : 0;
-	const settleActive = flightKind === 'spouse' && svLen > 1;
-	const ux = settleActive ? sv!.dx / svLen : 0;
-	const uy = settleActive ? sv!.dy / svLen : 0;
-	const settleFrac = Math.min(0.4, SETTLE_MS / duration);
+	// SETTLE (Block 3) — SPOUSE promotions only for now, and only on a warm click (the camera store
+	// published a spouse move; cold loads don't and shouldn't settle). The overshoot direction is the
+	// flight's own (dx,dy) axis — identical to the camera screenVector (validated by probe-camera).
+	const settleActive = flightKind === 'spouse' && getCameraMove()?.kind === 'spouse';
+	const settleS = settleActive ? settleBackFor(distance) : 0;
 	return {
 		duration,
-		easing: cubicOut,
-		// u = 1 - t: at the start the card exactly overlays the clicked box; settles to identity.
-		// z-index 2 + explicit opacity 1: the clicked subject is the HERO — it rides ON TOP
-		// (above the outgoing card AND the z-index:1 spouse notch) and NEVER fades, so the
-		// user tracks one solid object continuously from chip to featured. Svelte strips the
-		// animation styles on completion, so z-index reverts to auto and chips re-dock on top.
-		css: (t: number, u: number) => {
-			// SETTLE bump added to TRANSLATE only, along the vector unit, peaking in the last ~SETTLE_MS
-			// (real-time progress recovered from the cubicOut-eased keyframe position) and 0 at both ends.
-			const bump = settleActive ? SETTLE_PX * settleBump(1 - Math.cbrt(1 - t), settleFrac) : 0;
-			return `z-index: 2; opacity: 1; transform-origin: top left; transform: translate(${u * dx + bump * ux}px, ${u * dy + bump * uy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`;
+		// LINEAR clock: t = real-time progress. Scale and translate carry their OWN curves in css so the
+		// spouse translate can be one C1-continuous easeOutBack (no two-phase decelerate-then-restart).
+		easing: (x: number) => x,
+		// z-index 2 + explicit opacity 1: the clicked subject is the HERO — it rides ON TOP (above the
+		// outgoing card AND the z-index:1 spouse notch) and NEVER fades, so the user tracks one solid
+		// object continuously from chip to featured. Svelte strips the animation styles on completion.
+		css: (t: number) => {
+			const sc = cubicOut(t); // SCALE: cubicOut, lands at 1.0, never overshoots (no puff)
+			const tr = settleActive ? easeOutBack(t, settleS) : cubicOut(t); // TRANSLATE: one curve
+			const us = 1 - sc; // u = 1 − eased, per axis
+			const ut = 1 - tr; // <0 during the overshoot → translate carries PAST dest along (dx,dy)
+			return `z-index: 2; opacity: 1; transform-origin: top left; transform: translate(${ut * dx}px, ${ut * dy}px) scale(${1 - us * (1 - sx)}, ${1 - us * (1 - sy)});`;
 		}
 	};
 }
