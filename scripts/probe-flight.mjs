@@ -97,6 +97,11 @@ for (let i = 0; i < 18; i++) {
 		for (const e of document.querySelectorAll('.spouse-notch .flight, .featured-flight')) {
 			const cs = getComputedStyle(e);
 			if (parseFloat(cs.opacity) <= 0.5) continue; // hidden / fading-out
+				// the INCOMING hero (promoted card, z:2, not .demoting) is SUPPOSED to fill the slot, and its
+				// whole-path settle deliberately overshoots the right/bottom edges ~3px before landing back
+				// exactly — a separate, endpoint-frozen invariant guarded by probe-settle. The ghost this
+				// check hunts is a DEMOTE / off-window chip peeking, never the hero itself.
+				if (e.classList.contains('featured-flight') && !e.classList.contains('demoting')) continue;
 			const z = cs.zIndex === 'auto' ? 0 : Number(cs.zIndex);
 			if (z < 1) continue; // under the incoming hero — covered
 			const over = e.getBoundingClientRect().right - slot.right;

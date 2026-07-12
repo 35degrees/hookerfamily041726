@@ -30,7 +30,7 @@ function easeOutBack(u: number, s: number): number {
 // solve s per-flight to hit it — a short swap carries less, a far one is capped, never a 40px lunge.
 function settleBackFor(distance: number): number {
 	if (distance < 1) return 0;
-	const targetPx = Math.min(3, Math.max(1.5, distance * 0.008)); // a NUDGE: hard-capped 1.5–3px
+	const targetPx = Math.min(4, Math.max(2, distance * 0.01)); // whole-path edge excursion, capped 2–4px
 	const targetG = Math.min(0.09, targetPx / distance); // overshoot as a fraction of the translate
 	let s = 0.8;
 	for (let i = 0; i < 8; i++) {
@@ -190,11 +190,14 @@ export function growFrom(node: Element) {
 		// outgoing card AND the z-index:1 spouse notch) and NEVER fades, so the user tracks one solid
 		// object continuously from chip to featured. Svelte strips the animation styles on completion.
 		css: (t: number) => {
-			const sc = cubicOut(t); // SCALE: cubicOut, lands at 1.0, never overshoots (no puff)
-			const tr = settleActive ? easeOutBack(t, settleS) : cubicOut(t); // TRANSLATE: one curve
-			const us = 1 - sc; // u = 1 − eased, per axis
-			const ut = 1 - tr; // <0 during the overshoot → translate carries PAST dest along (dx,dy)
-			return `z-index: 2; opacity: 1; transform-origin: top left; transform: translate(${ut * dx}px, ${ut * dy}px) scale(${1 - us * (1 - sx)}, ${1 - us * (1 - sy)});`;
+			// WHOLE-PATH overshoot: ONE eased value drives BOTH translate AND scale, so the card's
+			// expansion ITSELF carries past the final rect (left edge past via translate, right/bottom via
+			// scale) and retracts both together — desync is impossible, killing the fixed-top-edge lope.
+			// Spouse promotion overshoots (easeOutBack, e>1 → u<0 → scale>1 & translate past dest); every
+			// other promotion is plain cubicOut. Endpoints frozen: e(0)=0, e(1)=1.
+			const e = settleActive ? easeOutBack(t, settleS) : cubicOut(t);
+			const u = 1 - e;
+			return `z-index: 2; opacity: 1; transform-origin: top left; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`;
 		}
 	};
 }

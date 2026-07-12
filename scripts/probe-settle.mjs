@@ -35,7 +35,7 @@ async function settleFor(idx, label) {
 		let n = 0;
 		const tick = () => {
 			const hero = [...document.querySelectorAll('.featured-flight')].find((c) => !c.classList.contains('demoting'));
-			if (hero) { const r = hero.getBoundingClientRect(); samples.push({ left: r.left, top: r.top }); }
+			if (hero) { const r = hero.getBoundingClientRect(); samples.push({ left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width }); }
 			if (++n < 52) requestAnimationFrame(tick);
 			else res({ samples, sv: globalThis.__cameraMove?.screenVector ?? null });
 		};
@@ -46,7 +46,7 @@ async function settleFor(idx, label) {
 		const h = document.querySelector('.featured-flight');
 		if (!h) return null;
 		const r = h.getBoundingClientRect();
-		return { left: r.left, top: r.top };
+		return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width };
 	});
 	const s = data.samples;
 	if (s.length < 8 || !data.sv || !rest) { fails.push(`${label}: too few samples / no camera vector / no rest`); return null; }
@@ -57,14 +57,24 @@ async function settleFor(idx, label) {
 	for (const p of s) { const d = Math.hypot(p.left - rest.left, p.top - rest.top); if (d > maxD) { maxD = d; originS = p; } }
 	const tux = (rest.left - originS.left) / maxD, tuy = (rest.top - originS.top) / maxD;
 	const proj = (p) => (p.left - rest.left) * tux + (p.top - rest.top) * tuy;
-	const overshoot = Math.max(...s.map(proj));
+	const overshoot = Math.max(...s.map(proj)); // top-left carry (translate)
 	const endResidual = Math.abs(proj(s[s.length - 1]));
-	// direction reported is the camera screenVector's (the consumer axis) — spouse-1 vs spouse-3 differ
+	// WHOLE-PATH: scale also overshoots → right/bottom edges push past final, width past rest width.
+	const scaleOvershootPct = (Math.max(...s.map((p) => p.width)) / rest.width - 1) * 100;
+	const rightExcursion = Math.max(...s.map((p) => p.right - rest.right));
+	const bottomExcursion = Math.max(...s.map((p) => p.bottom - rest.bottom));
+	const endWidthResidual = Math.abs(s[s.length - 1].width - rest.width);
 	const dirDeg = (Math.atan2(data.sv.dy, data.sv.dx) * 180) / Math.PI;
-	console.log(`  ${label}: vector=(${data.sv.dx.toFixed(0)},${data.sv.dy.toFixed(0)}) dir=${dirDeg.toFixed(0)}° overshoot=${overshoot.toFixed(1)}px endpoint-residual=${endResidual.toFixed(2)}px`);
-	ok(overshoot > 1, `${label}: overshoot ${overshoot.toFixed(1)}px too small (expected a 1.5–3px nudge)`);
-	ok(overshoot < 4.5, `${label}: overshoot ${overshoot.toFixed(1)}px too large (hard cap ~3px + measurement slack)`);
-	ok(endResidual < 1.2, `${label}: endpoint not frozen (residual ${endResidual.toFixed(2)}px)`);
+	console.log(`  ${label}: dir=${dirDeg.toFixed(0)}° left-carry=${overshoot.toFixed(1)}px right=${rightExcursion.toFixed(1)}px bottom=${bottomExcursion.toFixed(1)}px scale=+${scaleOvershootPct.toFixed(2)}% endpoint(px/w)=${endResidual.toFixed(2)}/${endWidthResidual.toFixed(2)}`);
+	// transform-origin top-left: the LEFT edge carries via the translate, the BOTTOM edge via the scale
+	// growth (the right edge nets ~0 — leftward carry cancels the scale on that side). Both must carry
+	// TOGETHER (whole-path, one curve) — a fixed edge would mean translate/scale desynced.
+	ok(overshoot > 1, `${label}: left carry ${overshoot.toFixed(1)}px too small`);
+	ok(overshoot < 6, `${label}: left carry ${overshoot.toFixed(1)}px too large`);
+	ok(bottomExcursion > 0.8, `${label}: bottom edge did not carry past (${bottomExcursion.toFixed(1)}px) — scale channel not overshooting (desync)`);
+	ok(scaleOvershootPct > 0.05 && scaleOvershootPct < 1.2, `${label}: scale overshoot ${scaleOvershootPct.toFixed(2)}% out of the safe (no-shimmer) band`);
+	void rightExcursion;
+	ok(endResidual < 1.2 && endWidthResidual < 1.5, `${label}: endpoint not frozen (pos ${endResidual.toFixed(2)}px / width ${endWidthResidual.toFixed(2)}px)`);
 	// VELOCITY CONTINUITY: on the APPROACH to the overshoot peak the speed must decelerate MONOTONICALLY
 	// into the turnaround (one unbroken motion — easeOutBack). The two-phase signature is the opposite:
 	// the main easing decelerates to near-rest AT the destination, then the pulse RE-ACCELERATES the
