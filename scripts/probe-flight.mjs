@@ -71,7 +71,7 @@ ok(frames[frames.length - 1].vis === 4, `child-click: incoming spouse chips neve
 // in-slot, so clipping loses nothing. Check B below deliberately filters to z-index ≥ 1 so it does NOT
 // flag this covered-under-hero case.
 //
-// KNOWN, ACCEPTED BEHAVIOR — "Artifact B / cover-and-re-emerge" (documented, NOT asserted; Sam's call):
+// KNOWN, ACCEPTED BEHAVIOR — "Artifact C / cover-and-re-emerge" (documented, NOT asserted; Sam's call):
 // onIncomingStart reveals every incoming relative box at full opacity immediately (to close the bare-
 // screen gap) EXCEPT the pivot and lateral chips. So a sibling of the pivot in the same row (e.g. Rodman
 // Hooker when demoting Nancy Morse up into michael-hooker-1935's parents row) is up at opacity 1 while
