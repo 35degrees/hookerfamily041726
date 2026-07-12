@@ -256,7 +256,8 @@ async function atomicSwap(label, startSlug, targetSel) {
 		const tick = () => {
 			const box = document.querySelector(`[data-flight-id="${pid}"]`);
 			const boxOp = box ? parseFloat(getComputedStyle(box).opacity) : -1;
-			const demote = [...document.querySelectorAll('.featured-flight')].find((c) => getComputedStyle(c).zIndex === '0');
+			// the demoting card carries .demoting (relative demote rides at z:1 now, so don't key on z:0)
+			const demote = [...document.querySelectorAll('.featured-flight')].find((c) => c.classList.contains('demoting'));
 			const face = demote?.querySelector('.demote-chipface');
 			const faceOp = face ? parseFloat(getComputedStyle(face).opacity) : -1;
 			let rectDelta = -1;
@@ -271,8 +272,8 @@ async function atomicSwap(label, startSlug, targetSel) {
 					rectDelta = Math.hypot(a.x - b.x, a.y - b.y);
 				}
 			}
-			// hero = the OTHER flying featured card (the incoming one still `.flat`, z-index ≠ 0).
-			const heroFlat = [...document.querySelectorAll('.featured-flight.flat')].some((c) => getComputedStyle(c).zIndex !== '0');
+			// hero = the OTHER flying featured card (the incoming one still `.flat`, not `.demoting`).
+			const heroFlat = [...document.querySelectorAll('.featured-flight.flat')].some((c) => !c.classList.contains('demoting'));
 			out.push({ n, boxOp, cardPresent: !!demote, cardOp: demote ? parseFloat(getComputedStyle(demote).opacity) : -1, faceOp, rectDelta, faceAspect, heroFlat });
 			if (++n < 48) requestAnimationFrame(tick);
 			else resolve(out);
@@ -317,6 +318,68 @@ async function atomicSwap(label, startSlug, targetSel) {
 }
 await atomicSwap('relative-demote UP (parent box)', 'nancy-morse-1915', '.children-slot a, [class*="children"] a');
 await atomicSwap('relative-demote DOWN (child box)', 'michael-hooker-1935', '.parents-slot a');
+
+// ── G-Z. Z-ORDER: a relative demote is a visible solid object — it must ride ABOVE resting relative
+// boxes as it flies over a row (z:1), below the hero. michael → parent Rodman: michael's card demotes
+// DOWN, flying over Rodman's children row. Sample mid-flight: where the demoting card overlaps a
+// VISIBLE resting box, the topmost element at that overlap must belong to the demote, never the box.
+await page.goto(`${BASE}/person/michael-hooker-1935`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+const zParent = await centerOf('.parents-slot a');
+await page.mouse.move(5, 5);
+await page.mouse.click(zParent.x, zParent.y);
+let zTested = false;
+let zOccluded = false;
+for (let i = 0; i < 44; i++) {
+	const s = await page.evaluate(() => {
+		const d = [...document.querySelectorAll('.featured-flight')].find((c) => c.classList.contains('demoting'));
+		if (!d) return null;
+		// Measure the OPAQUE white card (.featured-card-wrap), not the .featured-flight bounding rect —
+		// the counter-scaled chip-face inflates that rect with transparent whitespace below the card, and
+		// sampling there hits the background, not the card (a false occlusion).
+		const wrap = d.querySelector('.featured-card-wrap');
+		if (!wrap) return { tested: false };
+		const dr = wrap.getBoundingClientRect();
+		// RESTING relative-ROW boxes only: in-flow (position static — exclude leaving spouse chips that
+		// flyOut pins position:fixed at the old notch) and dir up/down (parent/child rows, not lateral).
+		const box = [...document.querySelectorAll('.flight[data-flight-id]')].find((b) => {
+			if (d.contains(b)) return false;
+			const cs = getComputedStyle(b);
+			if (cs.position !== 'static' || (b.dataset.flightDir !== 'up' && b.dataset.flightDir !== 'down')) return false;
+			const r = b.getBoundingClientRect();
+			if (parseFloat(cs.opacity) <= 0.5 || r.width < 5) return false;
+			return !(r.right < dr.left || r.left > dr.right || r.bottom < dr.top || r.top > dr.bottom);
+		});
+		if (!box) return { tested: false };
+		// Sample a GRID of points across the wrap∩box overlap; an occlusion counts only where the demote
+		// card genuinely PAINTS (is in the stack) AND the box paints ABOVE it. Bounding-rect overlap with
+		// no demote pixel (the card's painted area ends above the row) is NOT occlusion.
+		const b = box.getBoundingClientRect();
+		const ox0 = Math.max(dr.left, b.left), ox1 = Math.min(dr.right, b.right);
+		const oy0 = Math.max(dr.top, b.top), oy1 = Math.min(dr.bottom, b.bottom);
+		let genuine = false, occluded = false;
+		for (let gx = 1; gx <= 5; gx++) {
+			for (let gy = 1; gy <= 3; gy++) {
+				const px = ox0 + ((ox1 - ox0) * gx) / 6, py = oy0 + ((oy1 - oy0) * gy) / 4;
+				const stack = document.elementsFromPoint(px, py);
+				const di = stack.findIndex((e) => e.closest('.featured-flight') === d);
+				const bi = stack.findIndex((e) => e.closest('.flight[data-flight-id]') === box);
+				if (di >= 0 && bi >= 0) { genuine = true; if (bi < di) occluded = true; } // box painted above the card
+			}
+		}
+		return { tested: genuine, occluded };
+	});
+	if (s && s.tested) {
+		zTested = true;
+		if (s.occluded) zOccluded = true;
+	}
+	await page.waitForTimeout(11);
+}
+// zTested is a NOTE, not a gate: in a single-row children nav the demote lands in its own column and
+// genuinely never pixel-overlaps a sibling, so "not exercised" is expected here (a 2+-row case would
+// exercise it). The invariant that must hold whenever it IS exercised: the card rides above the row.
+if (!zTested) console.log('  (z-order: single-row nav — demote never pixel-overlapped a resting box; occlusion path not exercised)');
+ok(!zOccluded, 'z-order: demoting card was OCCLUDED by a resting relative box mid-flight (must ride above the row)');
 
 await ctx.close();
 await browser.close();

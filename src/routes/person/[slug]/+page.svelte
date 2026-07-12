@@ -561,6 +561,13 @@
 		/* Glide the slot height between focuses so the children row moves in lockstep
 		   with the card morph instead of snapping. cubic-bezier ≈ cubicOut. */
 		transition: height 540ms cubic-bezier(0.33, 1, 0.68, 1);
+		/* Lift the ENTIRE slot (hero + demote + notch) above the resting parent/child rows so a
+		   visible-by-design relative demote flies OVER those rows en route to its box. z-index on the
+		   flying card alone can't do it — the slot forms a stacking context that would otherwise confine
+		   the card's z below the later-in-DOM (and incoming-fading = opacity stacking-context) row boxes.
+		   Inert at rest (card and rows never overlap). The demote still rides UNDER the hero via its own
+		   z:1 < hero z:2 WITHIN this slot's context. */
+		z-index: 1;
 	}
 	.featured-slot > .featured-flight {
 		grid-area: 1 / 1;
@@ -744,6 +751,11 @@
 		justify-content: center;
 		gap: 16px;
 		margin-bottom: 0;
+		/* Confine the row to its own z:0 stacking context so it sits UNDER the lifted featured-slot
+		   (z:1) — a relative demote flies OVER the row. Needed because an incoming box mid-fade is an
+		   opacity stacking context that otherwise resolves against the slot by DOM order, not z. */
+		position: relative;
+		z-index: 0;
 	}
 
 	.connector {
@@ -794,6 +806,9 @@
 		gap: 12px;
 		max-width: 72rem;
 		margin-top: 0;
+		/* Same as .parents-slot: confine to a z:0 context so the row sits under the lifted slot (z:1). */
+		position: relative;
+		z-index: 0;
 	}
 
 	.connector-children .connector-line.connector-line-full {

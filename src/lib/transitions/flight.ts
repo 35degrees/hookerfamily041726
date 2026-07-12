@@ -100,11 +100,17 @@ export function clearFlightCaptures(): void {
 	rectSnapshot = new Map();
 }
 
-// Distance-scaled duration for a RELATIVE (parent/child) PROMOTION. Shared so the DEMOTION can
-// derive its own from the same curve (see DEMOTE_LEAD / shrinkTo) instead of a constant that drifts
-// out of proportion as the promotion tuning changes.
+// VELOCITY-CEILING duration for a RELATIVE (parent/child) flight — shared by the PROMOTION (growFrom)
+// and, ×DEMOTE_LEAD, the DEMOTION (shrinkTo), so both inherit the same physics. NOT a global slowdown:
+// near flights keep the ~410ms floor (unchanged feel); FAR flights EXTEND so the card's average
+// on-screen speed never exceeds RELATIVE_V_CEIL — a distant relative travels like a thing with weight,
+// not a missile. The old upper duration clamp (604) is what forced far flights to high px/ms; it's
+// raised to a generous safety cap so distance and duration stay proportional past the crossover
+// (~525px). Ceiling ≈ 1.2× the measured near-parent-click baseline (~1.07 px/ms avg); peak scales
+// with the average for the fixed cubicOut easing.
+const RELATIVE_V_CEIL = 1.28; // avg px/ms
 function relativeGrowMs(distance: number): number {
-	return Math.min(604, Math.max(410, 218 + distance * 0.336));
+	return Math.min(1000, Math.max(410, distance / RELATIVE_V_CEIL));
 }
 // The demotion runs ~15% shorter than the matching promotion so it always FINISHES first — the
 // leaving card releases attention to the hero and never competes with the hero's landing.
@@ -193,10 +199,12 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		// stale spot, ending ~116px BELOW the settled box (the overshoot). Re-querying the box EVERY
 		// frame makes the card track it to its FINAL position — it nestles in from above, never below.
 		// (Re-querying also keeps the Phase-1 mount-order fix: a not-yet-mounted child box just yields
-		// no transform that frame.) z-index 0: passes under the hero (z 2) and notch (z 1). Opacity
-		// cross-fades over the last fifth as the destination box reveals (see onOutgoingStart watch).
+		// no transform that frame.) z-index — a RELATIVE demote is a visible-by-design solid object that
+		// flies OVER resting relative rows en route to its box, so it rides at z 1 (above resting
+		// boxes/rows, below the growing hero at z 2). A SPOUSE demote stays z 0 (covered under the hero
+		// and the z-1 notch — untouched pending the spouse prototypes).
 		tick: (t: number, u: number) => {
-			el.style.zIndex = '0';
+			el.style.zIndex = relative ? '1' : '0';
 			// L3a — RELATIVE (parent/child) demotion is a SOLID object: opacity 1 the whole way to its
 			// box, no terminal fade (Sam's "suction" was the fade collapsing under scale, not the curve).
 			// SPOUSE demotion (covered under the hero) keeps its last-fifth cross-fade untouched.
