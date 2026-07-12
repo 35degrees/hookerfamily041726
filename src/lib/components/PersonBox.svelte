@@ -52,7 +52,7 @@
 			</div>
 			{#if hasDates}
 				<div class="text-stone-500" class:text-xs={!compact} class:text-[10px]={compact}>
-					{person.by ?? '?'}–{person.dy ?? '?'}{#if relation === 'child' && dimmed}
+					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && dimmed}
 						{' '}(died young){/if}
 				</div>
 			{/if}
@@ -95,7 +95,7 @@
 			</div>
 			{#if hasDates}
 				<div class="text-stone-500" class:text-xs={!compact} class:text-[10px]={compact}>
-					{person.by ?? '?'}–{person.dy ?? '?'}{#if relation === 'child' && dimmed}
+					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && dimmed}
 						{' '}(died young){/if}
 				</div>
 			{/if}
