@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import PersonBox from '$lib/components/PersonBox.svelte';
 	import FeaturedCard from '$lib/components/FeaturedCard.svelte';
+	import Field from '$lib/components/Field.svelte';
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { prefersReducedMotion } from 'svelte/motion';
@@ -356,6 +357,8 @@
 	});
 </script>
 
+<!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
+<Field />
 <div class="page-container" use:warmPersonLinks>
 	<div class="parents-slot">
 		{#each roster.parents as parent (parent.id)}
@@ -556,6 +559,9 @@
 		flex-direction: column;
 		align-items: center;
 		min-height: 100vh;
+		/* Above the fixed midnight Field (z:0) so the cards float on the night, never behind the motes. */
+		position: relative;
+		z-index: 1;
 		padding-top: 80px;
 		padding-bottom: 80px;
 		padding-left: 32px;

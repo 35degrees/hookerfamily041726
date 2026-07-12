@@ -10,6 +10,12 @@
 html {
 	scrollbar-gutter: stable;
 }
+:root {
+	/* Phase 3b — the midnight ground behind the stage (tunable token). Cards/chips/timeline surfaces
+	   stay light and float on the night. Applied on the Field (person-page stage only), NOT on body —
+	   other routes (home) keep the light ground until Phase 2's full palette pass. */
+	--ground: #0f1626;
+}
 body {
 	font-family: var(--font-inter);
 }

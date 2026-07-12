@@ -32,15 +32,25 @@ export type CameraMove = {
 let current: CameraMove | null = null;
 let seq = 0;
 
+// Subscribers (Phase 3b: the field's mote layers) called synchronously on each publish. A plain
+// listener set — the store is a module singleton, not a Svelte store, and the flight already reads it
+// by poll (getCameraMove); the parallax needs the push instead, so it drifts ON the move, one clock.
+type Listener = (m: CameraMove) => void;
+const listeners = new Set<Listener>();
+export function subscribeCameraMove(cb: Listener): () => void {
+	listeners.add(cb);
+	return () => listeners.delete(cb);
+}
+
 /** Publish the move for the click just captured. Overwrites the previous (single latest move). */
 export function publishCameraMove(m: Omit<CameraMove, 'seq'>): void {
 	current = { ...m, seq: ++seq };
-	// Dev tripwire so the probe can read publishes off the console (no subscribers yet). Kept out of
-	// prod. Also mirrored onto window in dev for direct assertion.
+	// Dev tripwire so the probe can read publishes off the console. Also mirrored onto window in dev.
 	if (import.meta.env.DEV) {
 		console.log('[camera]', JSON.stringify(current));
 		(globalThis as { __cameraMove?: CameraMove }).__cameraMove = current;
 	}
+	for (const l of listeners) l(current);
 }
 
 /** The latest published move (Block 3+ reads this). Null before any warm nav. */
