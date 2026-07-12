@@ -106,4 +106,4 @@ if (s1 && s3) {
 await ctx.close();
 await browser.close();
 if (fails.length) { console.log('SETTLE PROBE: RED\n- ' + fails.join('\n- ')); process.exit(1); }
-console.log('SETTLE PROBE: GREEN — spouse promotions carry a ~4–5px settle along the travel axis, settle to the exact rect, angles differ.');
+console.log('SETTLE PROBE: GREEN — spouse promotions carry a ~5–6px settle along the travel axis, settle to the exact rect, angles differ.');

@@ -30,7 +30,7 @@ function easeOutBack(u: number, s: number): number {
 // solve s per-flight to hit it — a short swap carries less, a far one is capped, never a 40px lunge.
 function settleBackFor(distance: number): number {
 	if (distance < 1) return 0;
-	const targetPx = Math.min(5, Math.max(4, distance * 0.01)); // whole-path edge excursion, capped 4–5px
+	const targetPx = Math.min(6, Math.max(5, distance * 0.012)); // whole-path edge excursion, capped 5–6px
 	const targetG = Math.min(0.09, targetPx / distance); // overshoot as a fraction of the translate
 	let s = 0.8;
 	for (let i = 0; i < 8; i++) {
@@ -150,7 +150,7 @@ export function relativeGrowMs(distance: number): number {
 // lands in ONE tight duration band (flattened — a short top-center swap and a full-width swap feel the
 // same speed); only true cross-screen swaps scale up at the shared 1.6 px/ms ceiling. This is the FLOOR
 // for the hero; spouseHeroDurationMs below may EXTEND it so the demote can travel at honest velocity.
-const SPOUSE_FLOOR_MS = 465;
+const SPOUSE_FLOOR_MS = 420;
 export function spouseGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(SPOUSE_FLOOR_MS, distance / RELATIVE_V_CEIL));
 }
@@ -227,6 +227,15 @@ export function growFrom(node: Element) {
 		const g = (4 * settleS ** 3) / (27 * (1 + settleS) ** 2);
 		console.log('[settle]', JSON.stringify({ dist: Math.round(distance), s: +settleS.toFixed(2), carryPx: +(g * distance).toFixed(1) }));
 	}
+	// FIRST-FRAME FLASH FIX: Svelte applies a css-transition's keyframes one frame LATE, so frame 0 paints
+	// the card at its DESTINATION (natural layout) before the animation jumps it to the origin — a visible
+	// flash with a photo. Set the t=0 (origin) transform INLINE now, so frame 0 is already at the clicked
+	// chip; the keyframe animation (whose 0% is the same origin) then takes over seamlessly. Cleared at
+	// introend (onIncomingLand) so the landed card rests at identity — else it would snap back to origin.
+	const hero = node as HTMLElement;
+	hero.style.transformOrigin = 'top left';
+	hero.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+	hero.style.zIndex = '2';
 	return {
 		duration,
 		// LINEAR clock: t = real-time progress. Scale and translate carry their OWN curves in css so the
@@ -273,14 +282,25 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// the spouse demote is a visible solid object too (Layer 2 — unified with the L3a relative machinery),
 	// flying up-right into its notch seat and atomic-swapping into the real chip at landing.
 	const face = el.querySelector('.demote-chipface') as HTMLElement | null;
+	// The card's OWN face (header/name = .card-top, plus .footer) — cached so the GEOMETRY-KEYED CROSSFADE
+	// (below) can fade them out keyed to shell width, overlapping the chip-face fade-in. Replaces the old
+	// time-based CSS crossfade entirely (no clock-based face logic remains).
+	const cardTop = el.querySelector('.card-top') as HTMLElement | null;
+	const footer = el.querySelector('.footer') as HTMLElement | null;
 	const FACE_W = 220;
 	const FACE_H = 75;
-	// The chip-face's on-screen scale is capped at FACE_SCALE_MAX× its natural chip size. Uncapped it
-	// spans the shell (~3-4× at a full-size shell = billboard text — legible-but-giant, exposed longer at
-	// the slower spouse tempo). Capped HIGH (2.3×), early frames read as a ~80%-fill chip with thin margins
-	// (never the hollow 1.5× state); once the shrinking shell's natural scale drops below the cap the face
-	// fills it 100% and rides it down to the box. Uniform (aspect preserved), centered. BOTH regimes.
-	const FACE_SCALE_MAX = 2.3; // tune by feel 2.2–2.4
+	// The chip-face's on-screen scale is capped at FACE_SCALE_MAX× its natural chip size — a ceiling on the
+	// geometry; the CROSSFADE below is what keeps the NAME from ever reading billboard (invisible above
+	// REVEAL_HI×). Uniform (aspect preserved), centered. BOTH regimes.
+	const FACE_SCALE_MAX = 2.3;
+	// GEOMETRY-KEYED CROSSFADE bands (×natural chip scale = shellWidth/FACE_W). The card's own face fades
+	// OUT over [OUT_LO, OUT_HI] and the chip-face fades IN over [REVEAL_LO, REVEAL_HI], OVERLAPPING so at
+	// every shell size something is visible (no blink) and the chip-face never paints above REVEAL_HI (no
+	// billboard name). If a name still reads large, drop the whole band by 0.2 (one edit, keeps the overlap).
+	const OUT_LO = 2.0;
+	const OUT_HI = 2.4; // outgoing face: opaque ≥2.4×, gone ≤2.0×
+	const REVEAL_LO = 1.7;
+	const REVEAL_HI = 2.1; // chip-face: invisible ≥2.1×, opaque ≤1.7×
 	// Demotion duration: derived from the HERO's flight — the SAME distance-scaled curve the promotion
 	// uses for this kind, then ×DEMOTE_LEAD so the demote finishes ~15% sooner and clears the stage
 	// before the hero lands. Distance = the clicked box (hero origin, snapshotted at click) → the featured
@@ -337,6 +357,14 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			const Sy = 1 - u * (1 - sy);
 			el.style.transformOrigin = 'top left';
 			el.style.transform = `translate(${u * dx}px, ${u * dy}px) scale(${Sx}, ${Sy})`;
+			// GEOMETRY-KEYED CROSSFADE (replaces the time-based CSS fades AND any gated reveal): both the
+			// card's own face and the chip-face key their opacity to the shell's natural scale uNat, in
+			// OVERLAPPING bands — so something is always visible (no empty-shell blink) and the chip-face is
+			// never painted above REVEAL_HI× (no billboard name). transition:none so they track geometry exactly.
+			const uNat = (Sx * card.width) / FACE_W;
+			const outOp = Math.max(0, Math.min(1, (uNat - OUT_LO) / (OUT_HI - OUT_LO)));
+			if (cardTop) { cardTop.style.transition = 'none'; cardTop.style.opacity = String(outOp); }
+			if (footer) { footer.style.transition = 'none'; footer.style.opacity = String(outOp); }
 			// "flip early, land as a chip": the chip-face is a real PersonBox (identical to the box it
 			// becomes). The shell's morph is NON-uniform (Sx ≠ Sy), which would stretch the face; so
 			// counter-scale it every frame — scale(afx, afy) with afx·Sx = afy·Sy = U — so the composite
@@ -345,10 +373,14 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// shell (the whitespace above/below in the tall early shell is honest, not a taffy chip). U =
 			// shellWidth/FACE_W; at landing Sx=box.w/card.w so U→1 and the face lands at natural box size.
 			if (face) {
+				// Chip-face fades IN over [REVEAL_LO, REVEAL_HI]× — the other half of the geometry crossfade,
+				// overlapping the outgoing fade so there's no gap and no billboard (invisible above REVEAL_HI).
+				face.style.transition = 'none';
+				face.style.opacity = String(Math.max(0, Math.min(1, (REVEAL_HI - uNat) / (REVEAL_HI - REVEAL_LO))));
 				// Uniform on-screen scale U, capped at FACE_SCALE_MAX (see above). afx=U/Sx, afy=U/Sy give
 				// Sx·afx=Sy·afy=U (uniform → aspect preserved at every frame); the face is centered in the
 				// shell. Below the cap the face spans the shell (tx≈0); above it, it holds cap-size, centered.
-				const U = Math.min(FACE_SCALE_MAX, (Sx * card.width) / FACE_W);
+				const U = Math.min(FACE_SCALE_MAX, uNat);
 				const afx = U / Sx;
 				const afy = U / Sy;
 				const tx = card.width / 2 - (U * FACE_W) / (2 * Sx); // center horizontally in the shell

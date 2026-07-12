@@ -380,12 +380,13 @@ async function atomicSwap(label, startSlug, targetSel) {
 	ok(swap.filter((s) => s.cardPresent && s.cardOp > 0.9 && s.boxOp > 0.9).length <= 2, `${label}: card + pivot box both fully visible for >2 frames (visible double)`);
 	// (6) ended fully visible.
 	ok(swap[swap.length - 1].boxOp > 0.9, `${label}: pivot box not fully visible at rest (${swap[swap.length - 1].boxOp})`);
-	// (7) FLIP EARLY: the chip-face is shown (>0.9) for the final 60%+ of the card's presence — the
-	// face flips to chip-layout up front and stays a chip the rest of the way in.
+	// (7) LANDS AS A CHIP: the geometry crossfade brings the chip-face to full opacity near chip scale, so
+	// it IS the object at landing. Assert the intent directly — the face reaches full opacity AND is shown
+	// at the LAST frame (the landing) — not a stopwatch window (the reveal point varies with seat size).
 	const presentFrames = swap.filter((s) => s.cardPresent);
-	const tail = presentFrames.slice(Math.floor(presentFrames.length * 0.4)); // final 60%, past the flip-in
-	const tailShown = tail.filter((s) => s.faceOp > 0.9).length;
-	ok(tail.length > 0 && tailShown >= tail.length - 1, `${label}: chip-face not held through the final 60% of travel (${tailShown}/${tail.length} shown)`);
+	const maxFaceOp = Math.max(0, ...presentFrames.map((s) => s.faceOp));
+	const lastFaceOp = presentFrames.length ? presentFrames[presentFrames.length - 1].faceOp : -1;
+	ok(maxFaceOp > 0.9 && lastFaceOp > 0.85, `${label}: chip-face not fully shown at landing (max ${maxFaceOp.toFixed(2)}, last ${lastFaceOp.toFixed(2)})`);
 	// (8) LANDS AS THE BOX: the chip-face converges onto the destination box's rect, so the swap is
 	// between two coincident chips (visual similarity, not just presence).
 	const deltas = swap.filter((s) => s.cardPresent && s.rectDelta >= 0).map((s) => s.rectDelta);
@@ -399,9 +400,12 @@ async function atomicSwap(label, startSlug, targetSel) {
 	// (9a) SCALE CAP: the chip-face never exceeds FACE_SCALE_MAX× its natural chip width — no billboard
 	// text at a full-size shell. Uncapped it spans the shell (up to ~925px); capped it holds ≤ 2.3×220.
 	// The freeze that stops demotion-look drift forever, both regimes. (RED on the uncapped build.)
-	const CAP_PX = 2.3 * 220;
-	const faceWmax = Math.max(0, ...swap.filter((s) => s.cardPresent && s.faceW > 0).map((s) => s.faceW));
-	ok(faceWmax <= CAP_PX * 1.06, `${label}: chip-face width ${Math.round(faceWmax)}px exceeds the cap ${Math.round(CAP_PX)}px (×1.06 tol) — billboard text / cap not applied`);
+	// The GEOMETRY CROSSFADE keeps the chip-face INVISIBLE above ~REVEAL_HI(2.1)× natural, so the LEGIBLE
+	// name (opacity > 0.5) never reads billboard. Guard the visible width, not the geometric one (the face
+	// may be briefly wider while invisible). RED without the crossfade (face opaque from a full-size shell).
+	const GATE_PX = 2.1 * 220;
+	const legibleWmax = Math.max(0, ...swap.filter((s) => s.cardPresent && s.faceOp > 0.5 && s.faceW > 0).map((s) => s.faceW));
+	ok(legibleWmax <= GATE_PX * 1.02, `${label}: legible chip-face width ${Math.round(legibleWmax)}px exceeds the crossfade ceiling ${Math.round(GATE_PX)}px — name too large / crossfade not applied`);
 	// (9b) NO DOUBLE NAME: a true crossfade of faces — the card's own face and the chip-face never both
 	// exceed ~0.5 opacity at the same frame (that would be two names visible at once).
 	const doubled = swap.filter((s) => s.cardPresent && s.cardFaceOp > 0.55 && s.faceOp > 0.55);

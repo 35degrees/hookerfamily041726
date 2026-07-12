@@ -198,6 +198,11 @@
 	const CHIP_REVEAL_MS = 120;
 	function onIncomingLand(node: HTMLElement) {
 		node.classList.remove('flat'); // re-form the notch ON the real landing (no timer)
+		// Clear the inline origin transform growFrom set for the first-frame-flash fix — the animation is
+		// done, so the landed card must rest at identity (its natural layout position), not snap to origin.
+		node.style.transform = '';
+		node.style.transformOrigin = '';
+		node.style.zIndex = '';
 		// Reveal the spouse chips PROMPTLY here, in the introend handler itself — the hero's transform
 		// has just hit identity, so the notch is in its final spot and a chip can never be caught under
 		// the still-flying card. Doing it here (with the quicker CHIP_REVEAL_MS fade) instead of waiting
@@ -615,25 +620,13 @@
 		transform-origin: top left;
 		/* transform is set per-frame by shrinkTo's tick (counter-scaled to render undistorted); at rest
 		   the face is opacity 0 so its untransformed box is never seen. */
-		opacity: 0;
+		opacity: 0; /* at rest; the chip-face opacity is driven per-frame by shrinkTo's tick (geometry crossfade) */
 		pointer-events: none;
-		transition: opacity 110ms ease-out;
 	}
-	.featured-flight:global(.demoting) .demote-chipface {
-		opacity: 1;
-	}
-	/* TRUE CROSSFADE OF FACES: as the chip-face fades IN, the card's OWN face (card-top content + footer)
-	   fades OUT over the same 110ms — so the demoting card's header name and the chip-face name never
-	   coexist at full opacity (the double name). The article's white bg stays opaque throughout, so the
-	   object never goes transparent; only the FACE dissolves. Same :global reach as .flat. */
-	.featured-flight:global(.demoting) :global(.card-top),
-	.featured-flight:global(.demoting) :global(.footer) {
-		opacity: 0;
-		/* FRONT-LOADED (70ms vs the chip-face's 110ms in): the card's own header clears BEFORE the chip
-		   name becomes legible, so the two — which sit at different positions (header top-left vs chip
-		   centered) — are never both readable at once, not merely never both >0.5. */
-		transition: opacity 70ms ease-out;
-	}
+	/* GEOMETRY-KEYED CROSSFADE: the card's own face (.card-top + .footer) fade OUT and the .demote-chipface
+	   fades IN entirely from shrinkTo's tick, keyed to SHELL WIDTH (overlapping bands) — no time-based CSS
+	   opacity here anymore, so the two never blink and the chip name never paints billboard. The tick sets
+	   inline opacity + transition:none on all three, so no CSS rule is needed (and none may conflict). */
 	/* the wrap's drop-shadow is the object's shadow throughout; drop the chip-face's own shadow so a
 	   scaled-up shadow-sm doesn't double it mid-flight. */
 	.demote-chipface :global(.person-box) {
