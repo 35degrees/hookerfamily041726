@@ -10,7 +10,7 @@
  * Click-time captures (origin rect, flight kind, clicked id, pan direction, rect snapshot) live at
  * the top of this file and are read by the transitions during the flush, then cleared one frame on.
  */
-import { cubicOut } from 'svelte/easing';
+import { cubicOut, linear } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
 import { getCameraMove } from '../state/camera';
 
@@ -148,16 +148,43 @@ export function relativeGrowMs(distance: number): number {
 // just a higher floor (SPOUSE_FLOOR_MS) so the in-corner swaps carry human weight instead of snapping.
 // The floor covers every swap up to ~784px (SPOUSE_FLOOR_MS·V_CEIL), so the whole common spouse range
 // lands in ONE tight duration band (flattened — a short top-center swap and a full-width swap feel the
-// same speed); only true cross-screen swaps scale up at the shared 1.6 px/ms ceiling.
-// Shared by growFrom (the hero) and, ×SPOUSE_DEMOTE_LEAD, shrinkTo (the demote), kept in lockstep.
+// same speed); only true cross-screen swaps scale up at the shared 1.6 px/ms ceiling. This is the FLOOR
+// for the hero; spouseHeroDurationMs below may EXTEND it so the demote can travel at honest velocity.
 const SPOUSE_FLOOR_MS = 490;
 export function spouseGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(SPOUSE_FLOOR_MS, distance / RELATIVE_V_CEIL));
 }
-// The demotion runs shorter than the matching promotion so it always FINISHES first — the leaving card
-// releases attention to the hero and never competes with the hero's landing. The relative demote scales
-// its own travel by this lead; the spouse demote (shrinkTo) uses the same 0.85 on its OWN distance then
-// clamps to finish ≥40ms before the hero (see below) — grace at the demotion speed Sam approved.
+
+// HONEST VELOCITY (the photo-whiplash fix). With transform-origin top-left, a card shrinking into its
+// top-right notch seat moves its LEFT / BOTTOM-LEFT corner — where the PHOTO lives — FAR more than its
+// top-left corner (for slot→notch the top-right corner barely moves, the bottom-left moves most). Timing
+// the demote off top-left/corner travel let the photo run ~2× the velocity ceiling and STROBE (browsers
+// don't motion-blur). So measure the MAX displacement over all four corners — the fastest point, the
+// photo's path — and time off THAT, so no corner exceeds the ceiling.
+function maxCornerTravel(a: PinRect, b: PinRect): number {
+	let m = 0;
+	for (const cx of [0, 1])
+		for (const cy of [0, 1]) {
+			const dx = b.left + cx * b.width - (a.left + cx * a.width);
+			const dy = b.top + cy * b.height - (a.top + cy * a.height);
+			m = Math.max(m, Math.hypot(dx, dy));
+		}
+	return m;
+}
+// The spouse hero's promotion duration, EXTENDED when the demote's honest-velocity clock needs it so the
+// two share ONE clock and the demote can finish first WITHOUT cramming: max(the promotion curve, the
+// demote's own honest duration + the finish lead). Both growFrom (returns this) and shrinkTo (returns this
+// − the lead) call it with the same (heroDist, demote max-corner travel), so demote lands exactly the lead
+// ahead of the hero and no point on EITHER card ever exceeds the ceiling.
+const SPOUSE_FINISH_LEAD_MS = 60;
+function spouseHeroDurationMs(heroDist: number, demoteMaxCorner: number): number {
+	const ownDuration = demoteMaxCorner / RELATIVE_V_CEIL; // honest: fastest corner obeys the ceiling
+	return Math.max(spouseGrowMs(heroDist), ownDuration + SPOUSE_FINISH_LEAD_MS);
+}
+// The RELATIVE demotion runs shorter than its matching promotion (×this lead) so it always FINISHES first
+// — the leaving card releases attention to the hero and never competes with the hero's landing. (The
+// SPOUSE demote gets its finish-first from spouseHeroDurationMs / SPOUSE_FINISH_LEAD_MS above, at honest
+// velocity — see shrinkTo.)
 const DEMOTE_LEAD = 0.85;
 
 /**
@@ -180,7 +207,17 @@ export function growFrom(node: Element) {
 
 	// Distance-scaled; the floor/slope depend on the flight kind (spouse = brisk in-corner morph,
 	// parent/child = velocity-capped travel).
-	const duration = flightKind === 'spouse' ? spouseGrowMs(distance) : relativeGrowMs(distance);
+	let duration: number;
+	if (flightKind === 'spouse') {
+		// Extend the hero to honor the demote's honest-velocity clock (below), so the two share one clock
+		// and neither the growing hero nor the shrinking demote ever exceeds the ceiling. The demote starts
+		// at THIS slot (dest) and shrinks into the pivot's notch seat; its max-corner travel sets the floor.
+		const seat = pivotId ? document.querySelector(`[data-flight-id="${pivotId}"]`)?.getBoundingClientRect() : null;
+		const demoteMax = seat && seat.width ? maxCornerTravel(dest, seat) : distance;
+		duration = spouseHeroDurationMs(distance, demoteMax);
+	} else {
+		duration = relativeGrowMs(distance);
+	}
 	// SETTLE (Block 3) — SPOUSE promotions only for now, and only on a warm click (the camera store
 	// published a spouse move; cold loads don't and shouldn't settle). The overshoot direction is the
 	// flight's own (dx,dy) axis — identical to the camera screenVector (validated by probe-camera).
@@ -249,20 +286,22 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	if (relative) {
 		if (heroOrigin) demoteDuration = relativeGrowMs(heroDist) * DEMOTE_LEAD;
 	} else {
-		// SPOUSE demote runs on ITS OWN travel clock in the parent/child velocity family (relativeGrowMs of
-		// the slot→seat distance × the standard 0.85) — the graceful demotion speed Sam already approved —
-		// NOT the hero's duration × a punishing 0.75 that crammed a long diagonal swap into ~330ms (the "car
-		// crash"). Finish-first is then guaranteed EXPLICITLY by comparison: land at least 40ms before the
-		// hero, whatever the two distances are — the lead is enforced, not baked into a harsh multiplier.
+		// SPOUSE demote at HONEST VELOCITY: time off the MAX-corner travel (the photo's fast bottom-left
+		// path), not the top-left corner — so the photo never strobes. It shares the hero's extended clock
+		// (spouseHeroDurationMs) and lands exactly SPOUSE_FINISH_LEAD_MS ahead — finish-first without any
+		// cramming multiplier. (Same seat + same slot rect as growFrom, so both compute the same clock.)
 		const seat = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
-		const ownDist = seat && seat.width ? Math.hypot(seat.left - card.left, seat.top - card.top) : heroDist;
-		const ownDuration = relativeGrowMs(ownDist) * DEMOTE_LEAD;
-		const heroDuration = heroOrigin ? spouseGrowMs(heroDist) : SPOUSE_EXIT_MS;
-		demoteDuration = Math.min(ownDuration, heroDuration - 40);
+		const demoteMax = seat && seat.width ? maxCornerTravel(card, seat) : heroDist;
+		const heroDuration = heroOrigin ? spouseHeroDurationMs(heroDist, demoteMax) : SPOUSE_EXIT_MS;
+		demoteDuration = heroDuration - SPOUSE_FINISH_LEAD_MS;
 	}
 	return {
 		duration: demoteDuration,
-		easing: cubicOut,
+		// SPOUSE demote uses LINEAR (constant velocity) so the fast-moving photo corner never exceeds the
+		// ceiling — cubicOut's fast start peaks at ~3-4× the average and strobes the photo, which no
+		// duration can fix (it's a peak-to-average problem, not a distance one). The demote is a supporting
+		// glide to its seat, so constant velocity reads clean. RELATIVE demote keeps cubicOut (approved).
+		easing: relative ? cubicOut : linear,
 		// TICK, not css: the destination box can MOVE during the flight. When the new hero's card is a
 		// different height, the featured-slot height glide shifts the children/parent rows — e.g. on
 		// X00126 (9 children) → father X03175 (1 child) the destination's bottom rises ~118px mid-
