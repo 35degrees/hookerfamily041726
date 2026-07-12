@@ -145,21 +145,20 @@ export function relativeGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(410, distance / RELATIVE_V_CEIL));
 }
 // SPOUSE promotion duration — now the SAME velocity family as the parent/child regime (V-ceiling 1.6),
-// just a slightly higher floor (SPOUSE_FLOOR_MS) so the in-corner swaps carry human weight instead of
-// snapping. The floor covers every swap up to ~712px (SPOUSE_FLOOR_MS·V_CEIL), so the whole common
-// spouse range lands in ONE tight duration band (flattened — a short top-center swap and a full-width
-// swap feel the same speed); only true cross-screen swaps scale up at the shared 1.6 px/ms ceiling.
+// just a higher floor (SPOUSE_FLOOR_MS) so the in-corner swaps carry human weight instead of snapping.
+// The floor covers every swap up to ~784px (SPOUSE_FLOOR_MS·V_CEIL), so the whole common spouse range
+// lands in ONE tight duration band (flattened — a short top-center swap and a full-width swap feel the
+// same speed); only true cross-screen swaps scale up at the shared 1.6 px/ms ceiling.
 // Shared by growFrom (the hero) and, ×SPOUSE_DEMOTE_LEAD, shrinkTo (the demote), kept in lockstep.
-const SPOUSE_FLOOR_MS = 445;
+const SPOUSE_FLOOR_MS = 490;
 export function spouseGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(SPOUSE_FLOOR_MS, distance / RELATIVE_V_CEIL));
 }
 // The demotion runs shorter than the matching promotion so it always FINISHES first — the leaving card
-// releases attention to the hero and never competes with the hero's landing. Spouse leads MORE (0.75 vs
-// 0.85): the old card clears the center a beat earlier, which also de-overlaps the two photos at the
-// crossing (the photo-mash fix) — a timing move, the solid-object doctrine holds (never an opacity dodge).
+// releases attention to the hero and never competes with the hero's landing. The relative demote scales
+// its own travel by this lead; the spouse demote (shrinkTo) uses the same 0.85 on its OWN distance then
+// clamps to finish ≥40ms before the hero (see below) — grace at the demotion speed Sam approved.
 const DEMOTE_LEAD = 0.85;
-const SPOUSE_DEMOTE_LEAD = 0.75;
 
 /**
  * `in:growFrom` — fly the featured card from the click-captured box rect to its
@@ -246,11 +245,20 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// not the destination box, sidesteps mount-order (a child box may not be mounted yet at outro init).
 	let demoteDuration = relative ? RELATIVE_EXIT_MS : SPOUSE_EXIT_MS;
 	const heroOrigin = clickedId ? rectSnapshot.get(clickedId) : undefined;
-	if (heroOrigin) {
-		const heroDist = Math.hypot(heroOrigin.left - card.left, heroOrigin.top - card.top);
-		demoteDuration = relative
-			? relativeGrowMs(heroDist) * DEMOTE_LEAD
-			: spouseGrowMs(heroDist) * SPOUSE_DEMOTE_LEAD;
+	const heroDist = heroOrigin ? Math.hypot(heroOrigin.left - card.left, heroOrigin.top - card.top) : 0;
+	if (relative) {
+		if (heroOrigin) demoteDuration = relativeGrowMs(heroDist) * DEMOTE_LEAD;
+	} else {
+		// SPOUSE demote runs on ITS OWN travel clock in the parent/child velocity family (relativeGrowMs of
+		// the slot→seat distance × the standard 0.85) — the graceful demotion speed Sam already approved —
+		// NOT the hero's duration × a punishing 0.75 that crammed a long diagonal swap into ~330ms (the "car
+		// crash"). Finish-first is then guaranteed EXPLICITLY by comparison: land at least 40ms before the
+		// hero, whatever the two distances are — the lead is enforced, not baked into a harsh multiplier.
+		const seat = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
+		const ownDist = seat && seat.width ? Math.hypot(seat.left - card.left, seat.top - card.top) : heroDist;
+		const ownDuration = relativeGrowMs(ownDist) * DEMOTE_LEAD;
+		const heroDuration = heroOrigin ? spouseGrowMs(heroDist) : SPOUSE_EXIT_MS;
+		demoteDuration = Math.min(ownDuration, heroDuration - 40);
 	}
 	return {
 		duration: demoteDuration,
