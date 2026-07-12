@@ -149,12 +149,16 @@
 			// their slot (morphIn); children settle DOWN from above into theirs. Only on a real reveal
 			// (fadeMs > 0) — the atomic-swap pivot reveal (fadeMs 0) must stay an instant STEP, never a slide.
 			if (el.dataset.flightDir === 'down' && fadeMs > 0) {
+				// MIRROR the parents' no-origin entrance EXACTLY: measured 150px travel, 300ms, easeOutCubic
+				// (= Svelte cubicOut, the same curve morphIn uses) — same magnitude AND the same gradual
+				// deceleration tail, so children settle DOWN from above just as parents rise UP from below.
+				// The old 28px / hard-out ease covered ~1/3 the distance and "hit a wall".
 				el.animate(
 					[
-						{ opacity: 0, transform: 'translateY(-28px)' },
+						{ opacity: 0, transform: 'translateY(-150px)' },
 						{ opacity: 1, transform: 'translateY(0)' }
 					],
-					{ duration: Math.max(fadeMs, 300), easing: 'cubic-bezier(0.22,1,0.36,1)' }
+					{ duration: 300, easing: 'cubic-bezier(0.33, 1, 0.68, 1)' }
 				);
 			} else {
 				el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: fadeMs, easing: 'ease-out' });
