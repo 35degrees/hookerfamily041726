@@ -62,8 +62,8 @@ async function settleFor(idx, label) {
 	// direction reported is the camera screenVector's (the consumer axis) — spouse-1 vs spouse-3 differ
 	const dirDeg = (Math.atan2(data.sv.dy, data.sv.dx) * 180) / Math.PI;
 	console.log(`  ${label}: vector=(${data.sv.dx.toFixed(0)},${data.sv.dy.toFixed(0)}) dir=${dirDeg.toFixed(0)}° overshoot=${overshoot.toFixed(1)}px endpoint-residual=${endResidual.toFixed(2)}px`);
-	ok(overshoot > 2.5, `${label}: overshoot ${overshoot.toFixed(1)}px too small (expected ~5)`);
-	ok(overshoot < 9, `${label}: overshoot ${overshoot.toFixed(1)}px too large`);
+	ok(overshoot > 1, `${label}: overshoot ${overshoot.toFixed(1)}px too small (expected a 1.5–3px nudge)`);
+	ok(overshoot < 4.5, `${label}: overshoot ${overshoot.toFixed(1)}px too large (hard cap ~3px + measurement slack)`);
 	ok(endResidual < 1.2, `${label}: endpoint not frozen (residual ${endResidual.toFixed(2)}px)`);
 	// VELOCITY CONTINUITY: on the APPROACH to the overshoot peak the speed must decelerate MONOTONICALLY
 	// into the turnaround (one unbroken motion — easeOutBack). The two-phase signature is the opposite:
@@ -96,4 +96,4 @@ if (s1 && s3) {
 await ctx.close();
 await browser.close();
 if (fails.length) { console.log('SETTLE PROBE: RED\n- ' + fails.join('\n- ')); process.exit(1); }
-console.log('SETTLE PROBE: GREEN — spouse promotions overshoot ~5px along the vector, settle to the exact rect, angles differ.');
+console.log('SETTLE PROBE: GREEN — spouse promotions carry a ~2–3px nudge along the travel axis, settle to the exact rect, angles differ.');

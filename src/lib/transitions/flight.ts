@@ -30,7 +30,7 @@ function easeOutBack(u: number, s: number): number {
 // solve s per-flight to hit it — a short swap carries less, a far one is capped, never a 40px lunge.
 function settleBackFor(distance: number): number {
 	if (distance < 1) return 0;
-	const targetPx = Math.min(6, Math.max(2.5, distance * 0.02)); // ~4–5px typical, clamped both ends
+	const targetPx = Math.min(3, Math.max(1.5, distance * 0.008)); // a NUDGE: hard-capped 1.5–3px
 	const targetG = Math.min(0.09, targetPx / distance); // overshoot as a fraction of the translate
 	let s = 0.8;
 	for (let i = 0; i < 8; i++) {
@@ -177,6 +177,10 @@ export function growFrom(node: Element) {
 	// flight's own (dx,dy) axis — identical to the camera screenVector (validated by probe-camera).
 	const settleActive = flightKind === 'spouse' && getCameraMove()?.kind === 'spouse';
 	const settleS = settleActive ? settleBackFor(distance) : 0;
+	if (import.meta.env.DEV && settleActive) {
+		const g = (4 * settleS ** 3) / (27 * (1 + settleS) ** 2);
+		console.log('[settle]', JSON.stringify({ dist: Math.round(distance), s: +settleS.toFixed(2), carryPx: +(g * distance).toFixed(1) }));
+	}
 	return {
 		duration,
 		// LINEAR clock: t = real-time progress. Scale and translate carry their OWN curves in css so the
