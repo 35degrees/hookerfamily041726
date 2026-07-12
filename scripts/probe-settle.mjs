@@ -1,0 +1,77 @@
+/**
+ * probe-settle.mjs — Block 3 settle (spouse promotions). Frame-samples the growing hero's top-left
+ * corner (transform-origin top-left → rect.left/top track the translate directly) for a spouse-1 and
+ * a spouse-3 promotion, and asserts:
+ *   - the hero overshoots ~SETTLE_PX px PAST its final rect ALONG the camera screenVector,
+ *   - both settle back to the exact final rect (endpoint frozen, ~0 residual),
+ *   - spouse-1 and spouse-3 overshoot along DIFFERENT vector directions (for free, from the vector).
+ * Logs the vector + overshoot px + direction for each. Dev server up on :5173.
+ */
+import { chromium } from '@playwright/test';
+
+const BASE = 'http://localhost:5173';
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+const page = await ctx.newPage();
+const fails = [];
+const ok = (c, m) => { if (!c) fails.push(m); };
+
+async function settleFor(idx, label) {
+	await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(500);
+	const chip = await page.evaluate((i) => {
+		const chips = [...document.querySelectorAll('.spouse-notch .flight a')];
+		const a = chips[i];
+		if (!a) return null;
+		const r = a.getBoundingClientRect();
+		return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+	}, idx);
+	if (!chip) { fails.push(`${label}: spouse chip ${idx} not found`); return null; }
+	await page.mouse.click(chip.x, chip.y);
+	// hero = the incoming featured card (NOT .demoting) — persists through Svelte's style-strip at
+	// landing, so its rect keeps reading (unlike a z-index probe which vanishes at strip).
+	const data = await page.evaluate(() => new Promise((res) => {
+		const samples = [];
+		let n = 0;
+		const tick = () => {
+			const hero = [...document.querySelectorAll('.featured-flight')].find((c) => !c.classList.contains('demoting'));
+			if (hero) { const r = hero.getBoundingClientRect(); samples.push({ left: r.left, top: r.top }); }
+			if (++n < 52) requestAnimationFrame(tick);
+			else res({ samples, sv: globalThis.__cameraMove?.screenVector ?? null });
+		};
+		requestAnimationFrame(tick);
+	}));
+	await page.waitForTimeout(700); // fully settle
+	const rest = await page.evaluate(() => {
+		const h = document.querySelector('.featured-flight');
+		if (!h) return null;
+		const r = h.getBoundingClientRect();
+		return { left: r.left, top: r.top };
+	});
+	const s = data.samples;
+	if (s.length < 8 || !data.sv || !rest) { fails.push(`${label}: too few samples / no camera vector / no rest`); return null; }
+	const svLen = Math.hypot(data.sv.dx, data.sv.dy);
+	const ux = data.sv.dx / svLen, uy = data.sv.dy / svLen;
+	// project each sample PAST the true (post-settle) rest onto the vector unit
+	const proj = (p) => (p.left - rest.left) * ux + (p.top - rest.top) * uy;
+	const overshoot = Math.max(...s.map(proj));
+	const endResidual = Math.abs(proj(s[s.length - 1]));
+	const dirDeg = (Math.atan2(uy, ux) * 180) / Math.PI;
+	console.log(`  ${label}: vector=(${data.sv.dx.toFixed(0)},${data.sv.dy.toFixed(0)}) dir=${dirDeg.toFixed(0)}° overshoot=${overshoot.toFixed(1)}px endpoint-residual=${endResidual.toFixed(2)}px`);
+	ok(overshoot > 2.5, `${label}: overshoot ${overshoot.toFixed(1)}px too small (expected ~5)`);
+	ok(overshoot < 9, `${label}: overshoot ${overshoot.toFixed(1)}px too large`);
+	ok(endResidual < 1.2, `${label}: endpoint not frozen (residual ${endResidual.toFixed(2)}px)`);
+	return { dirDeg, overshoot };
+}
+
+const s1 = await settleFor(0, 'spouse-1');
+const s3 = await settleFor(2, 'spouse-3');
+if (s1 && s3) {
+	ok(Math.abs(s1.dirDeg - s3.dirDeg) > 2, `spouse-1 and spouse-3 overshoot along the SAME angle (${s1.dirDeg.toFixed(0)}° vs ${s3.dirDeg.toFixed(0)}°) — vector not driving direction`);
+	console.log(`  angle difference: ${Math.abs(s1.dirDeg - s3.dirDeg).toFixed(0)}° (naturally different, from the vector)`);
+}
+
+await ctx.close();
+await browser.close();
+if (fails.length) { console.log('SETTLE PROBE: RED\n- ' + fails.join('\n- ')); process.exit(1); }
+console.log('SETTLE PROBE: GREEN — spouse promotions overshoot ~5px along the vector, settle to the exact rect, angles differ.');

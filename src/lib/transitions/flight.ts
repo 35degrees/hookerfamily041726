@@ -12,6 +12,21 @@
  */
 import { cubicOut } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
+import { getCameraMove } from '../state/camera';
+
+// L3b SETTLE (Block 3) — the promotion carries a few px PAST its final rect ALONG the travel vector
+// (the camera store's screenVector), springing back over the last ~SETTLE_MS. Translate-only (the
+// scale lands at 1.0 and stays — no origin-anchored puff, the lesson of the reverted settle). The
+// pulse is 0 at both ends, so both endpoints (origin, dest) are frozen exact.
+const SETTLE_MS = 90;
+const SETTLE_PX = 5; // overshoot distance past the destination, along the vector's unit direction
+// One-humped pulse over the last `frac` of progress p: 0 → 1 → 0, slightly front-loaded (x**0.85) so
+// the overshoot snaps in and eases out — the back-out dialect the carousel settle uses.
+function settleBump(p: number, frac: number): number {
+	if (frac <= 0 || p <= 1 - frac) return 0;
+	const x = (p - (1 - frac)) / frac;
+	return Math.sin(Math.PI * Math.pow(x, 0.85));
+}
 
 // ── Click-time origin capture for the card's "grow from the clicked box" flight ──
 // crossfade self-measures rects DURING the DOM update, which is corrupted when the
@@ -136,23 +151,36 @@ export function growFrom(node: Element) {
 	const sy = origin.height / dest.height;
 	const distance = Math.hypot(dx, dy);
 
+	// Distance-scaled; the floor/slope depend on the flight kind (spouse = brisk in-corner morph,
+	// parent/child = velocity-capped travel).
+	const duration =
+		flightKind === 'spouse'
+			? Math.min(617, Math.max(360, 225 + distance * 0.342))
+			: relativeGrowMs(distance);
+	// SETTLE (Block 3) — SPOUSE promotions only for now. Overshoot along the camera store's
+	// screenVector unit (the true travel direction, published at capture), translate-only. Inactive on
+	// cold loads (no camera move) and for relative kind until the second commit.
+	const cam = getCameraMove();
+	const sv = cam?.screenVector;
+	const svLen = sv ? Math.hypot(sv.dx, sv.dy) : 0;
+	const settleActive = flightKind === 'spouse' && svLen > 1;
+	const ux = settleActive ? sv!.dx / svLen : 0;
+	const uy = settleActive ? sv!.dy / svLen : 0;
+	const settleFrac = Math.min(0.4, SETTLE_MS / duration);
 	return {
-		// Distance-scaled, but the FLOOR/SLOPE depend on the flight kind (see flightKind):
-		//   spouse swap  → 10% quicker than the prior tuning (brisk in-corner morph)
-		//   parent/child → 20% quicker (they read as too slow at the prior tuning)
-		// Every coefficient below is the prior value × (spouse 0.9 / relative 0.8).
-		duration:
-			flightKind === 'spouse'
-				? Math.min(617, Math.max(360, 225 + distance * 0.342))
-				: relativeGrowMs(distance), // parent→hero, distance-scaled (floor 410)
+		duration,
 		easing: cubicOut,
 		// u = 1 - t: at the start the card exactly overlays the clicked box; settles to identity.
 		// z-index 2 + explicit opacity 1: the clicked subject is the HERO — it rides ON TOP
 		// (above the outgoing card AND the z-index:1 spouse notch) and NEVER fades, so the
 		// user tracks one solid object continuously from chip to featured. Svelte strips the
 		// animation styles on completion, so z-index reverts to auto and chips re-dock on top.
-		css: (_t: number, u: number) =>
-			`z-index: 2; opacity: 1; transform-origin: top left; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`
+		css: (t: number, u: number) => {
+			// SETTLE bump added to TRANSLATE only, along the vector unit, peaking in the last ~SETTLE_MS
+			// (real-time progress recovered from the cubicOut-eased keyframe position) and 0 at both ends.
+			const bump = settleActive ? SETTLE_PX * settleBump(1 - Math.cbrt(1 - t), settleFrac) : 0;
+			return `z-index: 2; opacity: 1; transform-origin: top left; transform: translate(${u * dx + bump * ux}px, ${u * dy + bump * uy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`;
+		}
 	};
 }
 
