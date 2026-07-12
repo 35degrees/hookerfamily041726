@@ -30,7 +30,7 @@ function easeOutBack(u: number, s: number): number {
 // solve s per-flight to hit it — a short swap carries less, a far one is capped, never a 40px lunge.
 function settleBackFor(distance: number): number {
 	if (distance < 1) return 0;
-	const targetPx = Math.min(8, Math.max(4, distance * 0.02)); // whole-path edge excursion, capped 4–8px
+	const targetPx = Math.min(5, Math.max(4, distance * 0.01)); // whole-path edge excursion, capped 4–5px
 	const targetG = Math.min(0.09, targetPx / distance); // overshoot as a fraction of the translate
 	let s = 0.8;
 	for (let i = 0; i < 8; i++) {
@@ -141,18 +141,25 @@ export function clearFlightCaptures(): void {
 // (where the cap starts extending duration past the 410ms floor) is ~656px. Raise it → faster/lighter;
 // lower it → slower/heavier. (Was 1.28, which overcorrected — it slowed typical flights too.)
 const RELATIVE_V_CEIL = 1.6; // avg px/ms — tune by feel
-function relativeGrowMs(distance: number): number {
+export function relativeGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(410, distance / RELATIVE_V_CEIL));
 }
-// SPOUSE promotion duration — a brisk in-corner morph (floor 360ms, gentle slope, capped 617ms). Shared
-// by growFrom (the hero) and, ×DEMOTE_LEAD, shrinkTo (the spouse demote) so the two stay in lockstep and
-// the demote always finishes first — the same lockstep relativeGrowMs gives the parent/child regime.
-function spouseGrowMs(distance: number): number {
-	return Math.min(617, Math.max(360, 225 + distance * 0.342));
+// SPOUSE promotion duration — now the SAME velocity family as the parent/child regime (V-ceiling 1.6),
+// just a slightly higher floor (SPOUSE_FLOOR_MS) so the in-corner swaps carry human weight instead of
+// snapping. The floor covers every swap up to ~712px (SPOUSE_FLOOR_MS·V_CEIL), so the whole common
+// spouse range lands in ONE tight duration band (flattened — a short top-center swap and a full-width
+// swap feel the same speed); only true cross-screen swaps scale up at the shared 1.6 px/ms ceiling.
+// Shared by growFrom (the hero) and, ×SPOUSE_DEMOTE_LEAD, shrinkTo (the demote), kept in lockstep.
+const SPOUSE_FLOOR_MS = 445;
+export function spouseGrowMs(distance: number): number {
+	return Math.min(1000, Math.max(SPOUSE_FLOOR_MS, distance / RELATIVE_V_CEIL));
 }
-// The demotion runs ~15% shorter than the matching promotion so it always FINISHES first — the
-// leaving card releases attention to the hero and never competes with the hero's landing.
+// The demotion runs shorter than the matching promotion so it always FINISHES first — the leaving card
+// releases attention to the hero and never competes with the hero's landing. Spouse leads MORE (0.75 vs
+// 0.85): the old card clears the center a beat earlier, which also de-overlaps the two photos at the
+// crossing (the photo-mash fix) — a timing move, the solid-object doctrine holds (never an opacity dodge).
 const DEMOTE_LEAD = 0.85;
+const SPOUSE_DEMOTE_LEAD = 0.75;
 
 /**
  * `in:growFrom` — fly the featured card from the click-captured box rect to its
@@ -232,6 +239,7 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	const face = el.querySelector('.demote-chipface') as HTMLElement | null;
 	const FACE_W = 220;
 	const FACE_H = 75;
+	const FACE_SCALE_MAX = 1.5; // the face never renders bigger than 1.5× its natural chip size (legible)
 	// Demotion duration: derived from the HERO's flight — the SAME distance-scaled curve the promotion
 	// uses for this kind, then ×DEMOTE_LEAD so the demote finishes ~15% sooner and clears the stage
 	// before the hero lands. Distance = the clicked box (hero origin, snapshotted at click) → the featured
@@ -241,7 +249,9 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	const heroOrigin = clickedId ? rectSnapshot.get(clickedId) : undefined;
 	if (heroOrigin) {
 		const heroDist = Math.hypot(heroOrigin.left - card.left, heroOrigin.top - card.top);
-		demoteDuration = (relative ? relativeGrowMs(heroDist) : spouseGrowMs(heroDist)) * DEMOTE_LEAD;
+		demoteDuration = relative
+			? relativeGrowMs(heroDist) * DEMOTE_LEAD
+			: spouseGrowMs(heroDist) * SPOUSE_DEMOTE_LEAD;
 	}
 	return {
 		duration: demoteDuration,
@@ -283,11 +293,19 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// shell (the whitespace above/below in the tall early shell is honest, not a taffy chip). U =
 			// shellWidth/FACE_W; at landing Sx=box.w/card.w so U→1 and the face lands at natural box size.
 			if (face) {
-				const afx = card.width / FACE_W; // → afx·Sx = U (spans the shell's width)
-				const afy = (card.width * Sx) / (FACE_W * Sy); // → afy·Sy = U (same uniform scale)
-				const tfy = card.height / 2 - (FACE_H * card.width * Sx) / (2 * FACE_W * Sy); // vertical center
+				// The face's uniform on-screen scale U (so it renders undistorted at 220:75). Left free, U
+				// spans the shell (Sx·card.width/FACE_W), which EARLY in the flight is ~4× — gigantic text.
+				// CAP it at FACE_SCALE_MAX so the SHELL carries the size story while the face stays a legible
+				// chip, and CENTER the capped face in the shell. afx=U/Sx, afy=U/Sy give Sx·afx=Sy·afy=U
+				// (uniform, so aspect is preserved at every frame). Once the shrinking shell brings the natural
+				// U below the cap (near landing) the face tracks it down and lands exactly at box size.
+				const U = Math.min(FACE_SCALE_MAX, (Sx * card.width) / FACE_W);
+				const afx = U / Sx;
+				const afy = U / Sy;
+				const tx = card.width / 2 - (U * FACE_W) / (2 * Sx); // center horizontally in the shell
+				const tfy = card.height / 2 - (U * FACE_H) / (2 * Sy); // center vertically in the shell
 				face.style.transformOrigin = 'top left';
-				face.style.transform = `translate(0px, ${tfy}px) scale(${afx}, ${afy})`;
+				face.style.transform = `translate(${tx}px, ${tfy}px) scale(${afx}, ${afy})`;
 			}
 			// The pivot box is revealed by the outro-END callback (onOutgoingEnd) — the atomic swap fires
 			// the frame the card leaves. The card's outer shell/opacity here are unchanged.

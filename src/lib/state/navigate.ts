@@ -22,7 +22,9 @@ import {
 	capturePanDir,
 	capturePivot,
 	captureRects,
-	clearFlightCaptures
+	clearFlightCaptures,
+	spouseGrowMs,
+	relativeGrowMs
 } from '$lib/transitions/flight';
 
 /** Fetch a person and set them as featured. No history change. False if not found. */
@@ -112,11 +114,9 @@ export function warmPersonLinks(node: HTMLElement) {
 				: null;
 		const ft = featured.current?.person?.t;
 		const from = ft ? { x: ft.x, y: ft.y } : null;
-		// duration mirrors flight.ts's per-kind curve (informational until Block 3 reads the real clock)
-		const duration =
-			kind === 'spouse'
-				? Math.min(617, Math.max(360, 225 + distance * 0.342))
-				: Math.min(1000, Math.max(410, distance / 1.6));
+		// duration reuses flight.ts's per-kind curve directly (single source of truth — no drift; the
+		// published value is informational metadata, the real flight clock lives in growFrom).
+		const duration = kind === 'spouse' ? spouseGrowMs(distance) : relativeGrowMs(distance);
 		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind });
 
 		void focusPerson(decodeURIComponent(match[1]));
