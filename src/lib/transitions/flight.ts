@@ -250,10 +250,13 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		// and the z-1 notch — untouched pending the spouse prototypes).
 		tick: (t: number, u: number) => {
 			el.style.zIndex = relative ? '1' : '0';
-			// L3a — RELATIVE (parent/child) demotion is a SOLID object: opacity 1 the whole way to its
-			// box, no terminal fade (Sam's "suction" was the fade collapsing under scale, not the curve).
-			// SPOUSE demotion (covered under the hero) keeps its last-fifth cross-fade untouched.
-			el.style.opacity = relative ? '1' : String(Math.min(1, t / 0.2));
+			// RELATIVE (parent/child) demotion is a SOLID object: opacity 1 the whole way to its box, no
+			// terminal fade. SPOUSE demotion is now HIDDEN (opacity 0) for its whole flight — "covered by
+			// emptiness": the spouse regime is covered-under-hero by design, but a leading-chip click let
+			// the demoting card's right edge peek past the smaller hero (Artifact A). Hiding it retires
+			// that exposure; the morph geometry is unchanged, only invisible, and the demote's destination
+			// chip reveals on the incoming card's LANDING like every other new chip (see onOutgoingStart).
+			el.style.opacity = relative ? '1' : '0';
 			const box = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
 			if (!box || !box.width) return;
 			const dx = box.left - card.left;
@@ -433,11 +436,11 @@ export function flyOut(_node: Element, params: { key: string }) {
  * chips (and every ≤3-card chip, which is never off-window) fall through to the normal flyOut.
  */
 export function chipExit(node: Element, params: { key: string }) {
-	if ((node as HTMLElement).dataset.offwindow === 'true') {
-		// Hidden EVERY frame (visibility:hidden + opacity 0 → zero off-card paint, the B-residual
-		// guarantee) but with a small NON-ZERO duration: a duration:0 outro gives Svelte no frame to
-		// apply/clean it, so the element strands with animate:flip's fix() position:absolute and
-		// re-appears visible on a ≤3-spouse destination that has no mask to clip it (the floater bug).
+	// SPOUSE PROMOTION notch-hide: on a spouse-chip click, ALL other notch chips hide immediately
+	// (opacity 0) so the promoted chip (→ hero) is the only notch element visible during the flight —
+	// nothing beneath/behind the hero, retiring Artifact A for the spouse regime. Non-degenerate
+	// duration so Svelte cleans the outro (the floater lesson). Off-window chips hide the same way.
+	if (flightKind === 'spouse' || (node as HTMLElement).dataset.offwindow === 'true') {
 		return { duration: 60, css: () => 'opacity: 0; visibility: hidden;' };
 	}
 	return flyOut(node, params);

@@ -61,15 +61,11 @@ const early = frames.slice(0, Math.max(0, lastFlat));
 ok(!early.some((f) => f.vis >= 4), `child-click: incoming spouse chips appeared BEFORE landing (frames ${frames.map((f) => `${f.flat ? 'F' : '.'}${f.vis}`).join(' ')})`);
 ok(frames[frames.length - 1].vis === 4, `child-click: incoming spouse chips never resolved after landing (got ${frames[frames.length - 1].vis})`);
 
-// KNOWN, TOLERATED BASELINE BEHAVIOR — "Artifact A" (documented, NOT asserted): on a LEADING/middle
-// spouse-chip click the growing hero flies from a left-position rect, so its right edge lands left of
-// the demoting card and the demoting card's right edge is briefly EXPOSED (~228px on a 2-spouse card).
-// A TRAILING click covers it fully (0px). Same family: aaron-burr-1808 (3 spouses) shows a leading-
-// click flicker — a visible-chip exit exposed by the hero's coverage geometry, NO carousel involvement.
-// Pre-existing flight-system behavior, newly noticed; Sam can live with it. Candidate fix (own micro-
-// phase, needs approval): clip the morph layer to the featured-slot bounds — both morph endpoints live
-// in-slot, so clipping loses nothing. Check B below deliberately filters to z-index ≥ 1 so it does NOT
-// flag this covered-under-hero case.
+// "Artifact A" — RETIRED for the spouse regime, now ASSERTED ZERO (Check A2 below). It was: on a
+// LEADING/middle spouse-chip click the growing hero flew from a left-position rect, so its right edge
+// landed left of the demoting card and the demoting card's right edge peeked. Fixed by the notch-hide:
+// the spouse demote is opacity 0 for its whole flight ("covered by emptiness") and all leaving notch
+// chips exit at opacity 0, so nothing is visible beneath/behind the hero at any frame, any offset.
 //
 // KNOWN, ACCEPTED BEHAVIOR — "Artifact C / cover-and-re-emerge" (documented, NOT asserted; Sam's call):
 // onIncomingStart reveals every incoming relative box at full opacity immediately (to close the bare-
@@ -112,6 +108,40 @@ for (let i = 0; i < 18; i++) {
 	await page.waitForTimeout(35);
 }
 ok(worst.over <= 2, `spouse-swap: a VISIBLE element (${worst.what}) flew ${Math.round(worst.over)}px past the card's right edge (≤ 2)`);
+
+// ── A2. NOTCH-HIDE: spouse promotion exposes NOTHING beneath/behind the hero (Artifact A retired).
+// LEADING click (leftmost visible chip) at every carousel offset; once the hero has grown to cover, no
+// element (demote or leaving chip, z<2, opacity>0.15) may stick past ANY hero edge.
+for (const offset of [0, 1, 2]) {
+	await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(500);
+	for (let k = 0; k < offset; k++) { await page.click('.caret-right'); await page.waitForTimeout(460); }
+	const lead = await centerOf('.spouse-notch .flight a');
+	await page.mouse.move(5, 5);
+	await page.mouse.click(lead.x, lead.y);
+	let exposed = { over: 0, who: '' };
+	for (let i = 0; i < 45; i++) {
+		const r = await page.evaluate(() => {
+			const hero = [...document.querySelectorAll('.featured-flight')].find((x) => getComputedStyle(x).zIndex === '2');
+			if (!hero) return null;
+			const hr = hero.getBoundingClientRect();
+			if (hr.width < 450) return null; // only judge once the hero covers
+			let over = 0, who = '';
+			for (const e of document.querySelectorAll('.featured-flight, .spouse-notch .flight')) {
+				const cs = getComputedStyle(e);
+				if ((cs.zIndex === 'auto' ? 0 : Number(cs.zIndex)) >= 2 || parseFloat(cs.opacity) < 0.15) continue;
+				const er = e.getBoundingClientRect();
+				if (er.width < 5) continue;
+				const o = Math.max(er.right - hr.right, hr.left - er.left, er.bottom - hr.bottom, hr.top - er.top);
+				if (o > over) { over = o; who = (e.querySelector('a,h1')?.textContent || e.className).toString().trim().slice(0, 14); }
+			}
+			return { over, who };
+		});
+		if (r && r.over > exposed.over) exposed = r;
+		await page.waitForTimeout(6);
+	}
+	ok(exposed.over < 4, `notch-hide(offset ${offset}): '${exposed.who}' exposed ${Math.round(exposed.over)}px beyond the hero (spouse-regime exposure must be zero)`);
+}
 
 // ── C. the Morgan wife-#4/#5 round-trip (the scenario that caught the ghost) ───────────────
 // Morgan → page so a DEEP wife (index ≥ 3) is the trailing chip → click her → click Morgan on her

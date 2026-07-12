@@ -210,17 +210,11 @@
 		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
 		demotingPivotId = id; // this card IS the pivot (getPivotId is already cleared by introend)
 		if (getFlightKind() === 'spouse') {
-			// SPOUSE demotion (covered under the hero) keeps its cross-dissolve: WATCH the card's own
-			// opacity and, the instant it begins fading into its notch chip, fade the pivot chip in to
-			// take its place — no seam. Untouched by L3a.
-			const watch = () => {
-				if (!node.isConnected || +getComputedStyle(node).opacity < 0.99) {
-					revealPending((el) => el.dataset.flightId === id, 170);
-					return;
-				}
-				requestAnimationFrame(watch);
-			};
-			requestAnimationFrame(watch);
+			// SPOUSE demotion is now HIDDEN (opacity 0 in shrinkTo — "covered by emptiness", retiring
+			// Artifact A). So there is no fade to watch and no cross-dissolve to run: the demote's
+			// destination chip is a lateral notch chip and reveals on the incoming card's LANDING
+			// (onIncomingLand's lateral reveal / the featuredLanded safety-net), like every other new
+			// chip. Nothing to do here for the spouse kind.
 			return;
 		}
 		// RELATIVE demotion (L3a) — "flip early, land as a chip". The .demoting class cross-fades the
