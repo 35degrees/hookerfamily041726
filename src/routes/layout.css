@@ -11,9 +11,11 @@ html {
 	scrollbar-gutter: stable;
 }
 :root {
-	/* Phase 3b — the midnight ground behind the stage (tunable token). Cards/chips/timeline surfaces
-	   stay light and float on the night. Applied on the Field (person-page stage only), NOT on body —
-	   other routes (home) keep the light ground until Phase 2's full palette pass. */
+	/* Phase 3b — the ground behind the stage (Field, person-page only; NOT on body, so other routes keep
+	   their light ground until Phase 2's palette pass). GROUND A/B — flip this one line on localhost:
+	     --ground: #0f1626;   MIDNIGHT (deep blue-black)
+	     --ground: #10241b;   DEEP PINE (forest-nymph)  — gold motes still pop; a future Talcott GREEN
+	                          role-glow may vanish on pine (flag for Phase 2, Sam's eye decides). */
 	--ground: #0f1626;
 }
 body {

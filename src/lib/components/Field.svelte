@@ -1,27 +1,40 @@
 <script lang="ts">
-	// Phase 3b Block 1 — THE FIELD. A midnight world behind the stage: 2–3 layers of luminous motes
-	// ("fairy lights") that COUNTER-DRIFT on every camera move (parallax by depth), on the SAME clock as
-	// the flight (§17 one-clock doctrine). Cards/chips live above this at depth 0 and never parallax.
+	// Phase 3b Block 1 — THE FIELD. A midnight world behind the stage: depth-differentiated luminous
+	// motes ("fairy lights") that COUNTER-DRIFT on every camera move (parallax by depth), on the SAME
+	// clock as the flight (§17 one-clock doctrine). Cards/chips live above at depth 0 and never parallax.
 	import { onMount } from 'svelte';
 	import { subscribeCameraMove, type CameraMove } from '$lib/state/camera';
 	import { prefersReducedMotion } from 'svelte/motion';
 
-	type Layer = { depth: number; count: number; sizeMin: number; sizeMax: number; seed: number };
-	// far → near: deeper layers hold MORE, smaller, dimmer motes and drift LESS (lower depth factor).
+	// ─────────────────────────────────────────────────────────────────────────────────────────────
+	//  TASTE TOKENS — dial these live (all one-line edits). The ground token lives in layout.css :root.
+	//  DEPTH MUST READ AT A GLANCE: near = big/bright/haloed, far = small/dim — two obviously different
+	//  populations, so the differential drift reads as parallax, not noise.
+	// ─────────────────────────────────────────────────────────────────────────────────────────────
+	type Layer = {
+		depth: number; // parallax factor (× screenVector)
+		count: number; // motes in this layer
+		sizeMin: number;
+		sizeMax: number; // px
+		op: number; // base brightness (opacity)
+		glowMul: number; // halo px = size × glowMul
+		twMin: number;
+		twMax: number; // twinkle period (s)
+		twLo: number; // twinkle dips to op × twLo (deeper on near)
+		seed: number;
+	};
 	const LAYERS: Layer[] = [
-		{ depth: 0.2, count: 60, sizeMin: 1, sizeMax: 2, seed: 0x9e37 }, // far
-		{ depth: 0.35, count: 40, sizeMin: 1.5, sizeMax: 3, seed: 0x85eb }, // mid
-		{ depth: 0.5, count: 20, sizeMin: 2, sizeMax: 4, seed: 0xc2b2 } // near
+		{ depth: 0.2, count: 45, sizeMin: 2, sizeMax: 3, op: 0.35, glowMul: 1.3, twMin: 6, twMax: 11, twLo: 0.75, seed: 0x9e37 }, // far: small, dim
+		{ depth: 0.35, count: 40, sizeMin: 4, sizeMax: 6, op: 0.6, glowMul: 1.7, twMin: 7, twMax: 13, twLo: 0.62, seed: 0x85eb }, // mid
+		{ depth: 0.5, count: 20, sizeMin: 6, sizeMax: 10, op: 0.9, glowMul: 2.1, twMin: 9, twMax: 16, twLo: 0.5, seed: 0xc2b2 } // near: big, bright, haloed
 	];
-
-	// The world drifts OPPOSITE the camera pan. The hero's screenVector points chip→slot, i.e. OPPOSITE
-	// the focus shift (a child sits below → hero travels UP), so the world moves WITH the screenVector:
-	// click a child (sv up) → world drifts up. One flag — flip to -1 if the feel reads inverted.
+	// The world drifts WITH the hero's screenVector (which points opposite the focus shift): a child sits
+	// below → hero travels up → world drifts up. One flag — flip to -1 if the feel reads inverted.
 	const PARALLAX_SIGN = 1;
+	// ─────────────────────────────────────────────────────────────────────────────────────────────
 
-	// Deterministic PRNG (mulberry32) so the field is STABLE — same motes every render, no Math.random
-	// flicker on hydrate. (World-space seeding on table coords — stable per region — is Block 2; this
-	// Block-1 field is a fixed deterministic pattern that parallaxes.)
+	// Deterministic PRNG (mulberry32) — stable pattern, no Math.random hydrate flicker. (World-space
+	// seeding on table coords — stable per region + culling — is Block 2.)
 	function mulberry32(a: number) {
 		return () => {
 			a |= 0;
@@ -31,30 +44,35 @@
 			return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 		};
 	}
-	type Mote = { x: number; y: number; size: number; op: number; twDelay: number; twDur: number; gold: number };
+	type Mote = { x: number; y: number; size: number; op: number; glow: number; twLo: number; twDur: number; twDelay: number; edge: number };
 	function makeMotes(l: Layer): Mote[] {
 		const r = mulberry32(l.seed);
-		return Array.from({ length: l.count }, () => ({
-			x: r() * 100, // % across the oversized (300%) layer
-			y: r() * 100,
-			size: l.sizeMin + r() * (l.sizeMax - l.sizeMin),
-			op: 0.35 + r() * 0.5,
-			twDelay: r() * 8, // s — randomized phase so twinkles never pulse in unison
-			twDur: 5 + r() * 8, // s
-			gold: r() // 0 warm-white → 1 pale-gold
-		}));
+		return Array.from({ length: l.count }, () => {
+			const size = l.sizeMin + r() * (l.sizeMax - l.sizeMin);
+			const op = Math.min(1, l.op * (0.85 + r() * 0.3));
+			return {
+				x: r() * 100, // % across the oversized (300%) layer
+				y: r() * 100,
+				size,
+				op,
+				glow: size * l.glowMul, // halo px
+				twLo: op * l.twLo, // twinkle low point
+				twDur: l.twMin + r() * (l.twMax - l.twMin),
+				twDelay: r() * 8, // randomized phase — never a unison pulse
+				edge: 215 - r() * 55 // warm-white → pale-gold (blue channel of the halo edge)
+			};
+		});
 	}
 	const motes = LAYERS.map(makeMotes);
 
 	// Accumulated per-layer offset (px). Each camera move adds PARALLAX_SIGN·screenVector·depth.
 	let offsets = $state(LAYERS.map(() => ({ x: 0, y: 0 })));
 	let move = $state<CameraMove | null>(null); // latest move — drives the transition duration/easing
-
 	const easeCss = (name?: string) => (name === 'linear' ? 'linear' : 'cubic-bezier(0.33, 1, 0.68, 1)');
 
 	onMount(() => {
-		// Subscribe so the field drifts ON the published move (same clock as the flight). Reduced motion:
-		// no drift at all — the field stays static (twinkle is also killed by the media query below).
+		// Drift ON the published move (same clock as the flight). Reduced motion: no drift (twinkle is
+		// also killed by the media query below) — the field stays static.
 		const unsub = subscribeCameraMove((m) => {
 			if (prefersReducedMotion.current) return;
 			move = m;
@@ -82,9 +100,11 @@
 					style:width={`${m.size}px`}
 					style:height={`${m.size}px`}
 					style:--op={m.op}
-					style:--tw-delay={`${m.twDelay}s`}
+					style:--glow={`${m.glow}px`}
+					style:--tw-lo={m.twLo}
 					style:--tw-dur={`${m.twDur}s`}
-					style:--edge={`${215 - m.gold * 55}`}
+					style:--tw-delay={`${m.twDelay}s`}
+					style:--edge={m.edge}
 				></span>
 			{/each}
 		</div>
@@ -92,20 +112,18 @@
 </div>
 
 <style>
-	/* z-index 0 fixed; the stage (.page-container) sits at z-index 1 above it. Behind that, the body's
-	   midnight ground. pointer-events none — the field is scenery, never interactive. */
+	/* z:0 fixed; the stage (.page-container) sits at z:1 above it. The field IS the midnight ground the
+	   motes glow on and the cards float above. pointer-events none — scenery, never interactive. */
 	.field {
 		position: fixed;
 		inset: 0;
 		overflow: hidden;
 		pointer-events: none;
 		z-index: 0;
-		/* the midnight ground itself — the field IS the night the motes glow on and the cards float above
-		   (scoped here, so it covers the viewport only where the stage renders it, not app-wide). */
 		background: var(--ground, #0f1626);
 	}
-	/* 300% of the viewport (100% margin each side) so a few navigations of parallax drift don't reveal an
-	   edge. (Sustained navigation needs world-space culling — Block 2.) transform-only, GPU-hinted. */
+	/* 300% of the viewport (100% margin each side) so a few navigations of parallax don't reveal an edge.
+	   (Sustained navigation needs world-space culling — Block 2.) transform-only, GPU-hinted. */
 	.layer {
 		position: absolute;
 		inset: -100%;
@@ -114,22 +132,22 @@
 	.mote {
 		position: absolute;
 		border-radius: 50%;
-		/* warm-white core → pale-gold edge (edge channel varied per mote via --edge), soft glow. */
+		/* warm-white core → pale-gold edge (edge channel per mote), plus a size-scaled soft halo. */
 		background: radial-gradient(
 			circle,
-			rgba(255, 252, 244, 0.95),
-			rgba(255, 244, var(--edge), 0.55) 55%,
-			transparent 70%
+			rgba(255, 253, 247, 0.98),
+			rgba(255, 246, var(--edge), 0.7) 55%,
+			transparent 72%
 		);
+		box-shadow: 0 0 var(--glow) calc(var(--glow) / 3) rgba(255, 246, 220, 0.4);
 		opacity: var(--op);
-		box-shadow: 0 0 4px 1px rgba(255, 246, 224, 0.45);
+		/* LIFE AT REST — slow breathing glow, randomized phase; deeper/slower on the big near motes. */
 		animation: twinkle var(--tw-dur) ease-in-out var(--tw-delay) infinite;
 	}
-	/* LIFE AT REST — a slow opacity micro-drift, randomized phase per mote (never a unison pulse). */
 	@keyframes twinkle {
 		0%,
 		100% {
-			opacity: calc(var(--op) * 0.55);
+			opacity: var(--tw-lo);
 		}
 		50% {
 			opacity: var(--op);
