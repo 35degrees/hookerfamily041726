@@ -24,7 +24,12 @@ const page = await ctx.newPage();
 // (an interrupted-outro orphan). Capturing that warning converts "the stuck chip" into an assertable
 // invariant — zero janitor warnings across the whole run.
 const janitorWarns = [];
-page.on('console', (m) => { if (m.text().includes('[flight janitor]')) janitorWarns.push(m.text()); });
+const sweepWarns = [];
+page.on('console', (m) => {
+	const t = m.text();
+	if (t.includes('[flight janitor]')) janitorWarns.push(t);
+	if (t.includes('[flight sweep]')) sweepWarns.push(t);
+});
 
 // clickable center of the first matching element (bypasses clipped-node interception)
 const centerOf = (sel) =>
@@ -163,6 +168,70 @@ await page.waitForTimeout(900);
 const pinned = await page.evaluate(() => [...document.querySelectorAll('.flight')].filter((e) => getComputedStyle(e).position === 'fixed').map((e) => e.dataset.flightId));
 ok(pinned.length === 0, `orphaned pinned flight element(s) still in DOM: ${JSON.stringify(pinned)}`);
 ok(janitorWarns.length === 0, `dev janitor fired (orphan reached the DOM): ${janitorWarns.join(' ; ')}`);
+
+// ── E. FALSE-POSITIVE GUARD: the sweep must NEVER target a LIVE in-flight element. Mid-flight, every
+// positioned (fixed/absolute) flight box must be ANIMATING — so the sweep's gate (getAnimations()===0)
+// classifies ZERO of them as strandable. If the discrimination were position-only (break the gate),
+// `sweepEligible` would be > 0 and this fails — proving the gate is load-bearing.
+await page.goto(`${BASE}/person/nancy-morse-1915`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+const sweepBefore = sweepWarns.length;
+const chip2 = await centerOf('.spouse-notch .flight a');
+await page.mouse.click(chip2.x, chip2.y); // spouse swap → chips flyOut (fixed) + relatives flip (absolute)
+await page.waitForTimeout(130); // mid-flight
+const guard = await page.evaluate(() => {
+	const positioned = [...document.querySelectorAll('.flight')].filter((e) => ['fixed', 'absolute'].includes(getComputedStyle(e).position));
+	const live = positioned.filter((e) => e.getAnimations().length > 0);
+	const sweepEligible = positioned.filter((e) => e.getAnimations().length === 0);
+	return { positioned: positioned.length, live: live.length, sweepEligible: sweepEligible.length };
+});
+ok(guard.sweepEligible === 0, `false-positive: sweep would classify ${guard.sweepEligible} LIVE mid-flight element(s) as strandable`);
+ok(guard.live > 0, `guard not exercising the gate (no live positioned element mid-flight: ${JSON.stringify(guard)})`);
+// and the sweep, running across this CLEAN flight's settle window, must reset NOTHING (no orphans here;
+// a live element it wrongly stripped would log + pop). Break the getAnimations() gate → this goes red.
+await page.waitForTimeout(700);
+ok(sweepWarns.length === sweepBefore, `false-positive: sweep reset a live element during a clean flight: ${sweepWarns.slice(sweepBefore).join(' ; ')}`);
+
+// ── F. paged-nav floater guard: leaving a PAGED carousel window must not strand off-window chips
+// visible on the destination card, and the RETURN trip must render the correct window. (Off-window
+// chips exit at duration:0 → they can strand visible on a ≤3-spouse destination that has no mask.)
+await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+await page.click('.caret-right'); // → offset 1, window shows spouses 2-4 (Elizabeth[1] & Connie[5] off-window)
+await page.waitForTimeout(500);
+const lead = await page.evaluate(() => {
+	const slot = document.querySelector('.featured-slot').getBoundingClientRect();
+	const mL = document.querySelector('.spouse-mask').getBoundingClientRect().left;
+	const vis = [...document.querySelectorAll('.spouse-strip .flight')].filter((e) => { const r = e.getBoundingClientRect(); return r.right > mL + 1 && r.left < slot.right + 6; }).sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
+	const a = vis[0].querySelector('a'); const r = a.getBoundingClientRect();
+	return { href: a.getAttribute('href'), x: r.left + r.width / 2, y: r.top + r.height / 2 };
+});
+await page.mouse.move(5, 5);
+await page.mouse.click(lead.x, lead.y); // navigate into the leading wife (a ≤3-spouse card, no mask)
+await page.waitForURL(`**${lead.href}`, { timeout: 4000 }).catch(() => {});
+await page.waitForTimeout(1200);
+const floaters = await page.evaluate(() => [...document.querySelectorAll('.spouse-notch .flight')]
+	.filter((e) => { const cs = getComputedStyle(e); const r = e.getBoundingClientRect(); return parseFloat(cs.opacity) > 0.1 && r.width > 5 && e.dataset.offwindow === 'true'; })
+	.map((e) => e.querySelector('a')?.textContent?.trim().split('\n')[0]?.slice(0, 16)));
+ok(floaters.length === 0, `paged-nav: off-window chip(s) stranded visible on the destination: ${JSON.stringify(floaters)}`);
+// (b) return trip: click Morgan back → his window must render (3 visible chips, pivot-aware offset)
+const backToMorgan = await page.evaluate(() => {
+	const a = document.querySelector('.spouse-notch a[href$="john-morgan-1930"]');
+	const r = a?.getBoundingClientRect();
+	return a ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
+});
+if (backToMorgan) {
+	await page.mouse.click(backToMorgan.x, backToMorgan.y);
+	await page.waitForURL('**/john-morgan-1930', { timeout: 4000 }).catch(() => {});
+	await page.waitForTimeout(1200);
+	const ret = await page.evaluate(() => {
+		const slot = document.querySelector('.featured-slot').getBoundingClientRect();
+		const mL = document.querySelector('.spouse-mask')?.getBoundingClientRect().left ?? 0;
+		const vis = [...document.querySelectorAll('.spouse-strip .flight')].filter((e) => { const r = e.getBoundingClientRect(); const cs = getComputedStyle(e); return parseFloat(cs.opacity) > 0.1 && r.right > mL + 1 && r.left < slot.right + 6; });
+		return { visibleCount: vis.length, offset: document.querySelector('.spouse-notch')?.getAttribute('data-spouse-offset') };
+	});
+	ok(ret.visibleCount === 3, `return-trip: Morgan's window shows ${ret.visibleCount} visible chips, not 3 (offset ${ret.offset})`);
+}
 
 await ctx.close();
 await browser.close();

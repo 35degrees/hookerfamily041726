@@ -328,7 +328,11 @@ export function flyOut(_node: Element, params: { key: string }) {
  */
 export function chipExit(node: Element, params: { key: string }) {
 	if ((node as HTMLElement).dataset.offwindow === 'true') {
-		return { duration: 0, css: () => 'opacity: 0;' };
+		// Hidden EVERY frame (visibility:hidden + opacity 0 → zero off-card paint, the B-residual
+		// guarantee) but with a small NON-ZERO duration: a duration:0 outro gives Svelte no frame to
+		// apply/clean it, so the element strands with animate:flip's fix() position:absolute and
+		// re-appears visible on a ≤3-spouse destination that has no mask to clip it (the floater bug).
+		return { duration: 60, css: () => 'opacity: 0; visibility: hidden;' };
 	}
 	return flyOut(node, params);
 }
