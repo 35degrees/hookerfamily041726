@@ -34,8 +34,14 @@
  */
 
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { computeTableCoords } from './table-coords.mjs';
+
+// Phase 3a Block 1: table coordinates, computed at emit time only (never at runtime, never stored in
+// canonical). Set once in main(), read by compact() so `t:{x,y,e?}` rides on every payload.
+let tableCoords = new Map();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -197,7 +203,8 @@ function compact(p, slugMap) {
 		hd: Boolean(c.is_thomas_descendant),
 		td: Boolean(c.is_talcott_descendant),
 		ee: Boolean(c.is_easter_egg),
-		g: c.generation_from_thomas ?? null
+		g: c.generation_from_thomas ?? null,
+		t: tableCoords.get(p.id) ?? null // {x, y, e?} — table seat (y may be null: consumers SKIP, never throw)
 	};
 }
 
@@ -547,13 +554,23 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 	const cemeteryId = p.burial && p.burial.cemetery_id;
 	const burialCemetery = (cemeteryId && cemById[cemeteryId]) || null;
 
-	const crossConnections = (p.cross_connections || []).map((cc) => ({
-		type: cc.type,
-		related_id: cc.related_id,
-		link_text: cc.link_text,
-		display_label: cc.display_label ?? '',
-		slug: slugMap.get(cc.related_id) ?? null
-	}));
+	const crossConnections = (p.cross_connections || []).map((cc) => {
+		// hidden_by_default: the CC target is Talcott-only (grove) — the Talcott toggle (a later block)
+		// suppresses these on Hooker cards. Render annotation only; the data is untouched. Baked at
+		// build time so the cold path works before table-index loads.
+		const tgt = byId[cc.related_id];
+		const tc = tgt && tgt.classification;
+		const talcottOnly = Boolean(tc && tc.is_talcott_descendant === true && tc.is_thomas_descendant !== true);
+		const out = {
+			type: cc.type,
+			related_id: cc.related_id,
+			link_text: cc.link_text,
+			display_label: cc.display_label ?? '',
+			slug: slugMap.get(cc.related_id) ?? null
+		};
+		if (talcottOnly) out.hidden_by_default = true;
+		return out;
+	});
 
 	// Resolved media arrays live ON the focus person record (person.landmarksResolved,
 	// etc.) so the component reads them through its existing `person` prop. Spread a
@@ -584,6 +601,17 @@ function main() {
 	const people = data.people || [];
 	const byId = Object.fromEntries(people.map((p) => [p.id, p]));
 	log(`  ${people.length} people`);
+
+	// Table coordinates (Phase 3a Block 1) — derived at emit time, one seat per person. Set the
+	// module-level map so compact() emits `t` on every payload; the aggregates (table-index +
+	// anomaly worklist) are written below in the !only block.
+	const coordResult = computeTableCoords(people);
+	tableCoords = coordResult.coords;
+	log(
+		`  table coords: ${coordResult.stats.yDated} dated / ${coordResult.stats.yEstimated} estimated / ${coordResult.stats.yNull} null-y | ` +
+			`Hooker seats 0..${coordResult.stats.hookerSeats} · grove ${coordResult.stats.groveStart}..${coordResult.stats.groveEnd} · ` +
+			`archipelago ${coordResult.stats.archipelago} · gutter ${coordResult.stats.gutterOrphans} · detached-td ${coordResult.stats.detachedTd}`
+	);
 
 	// --only ID1,ID2  (or ONLY_IDS env): incremental REVIEW rebuild. Regenerate ONLY these
 	// people's page payloads and SKIP every aggregate file (people.json / search-index / stats /
@@ -633,7 +661,7 @@ function main() {
 
 	// 2) people.json — full records, slug written, research_notes (etc.) stripped
 	const clientPeople = people.map((p) => {
-		const out = { ...p, slug: slugMap.get(p.id) };
+		const out = { ...p, slug: slugMap.get(p.id), t: tableCoords.get(p.id) ?? null };
 		for (const f of CONFIG.stripFromClient) delete out[f];
 		return out;
 	});
@@ -684,6 +712,47 @@ function main() {
 			thomasDescendants,
 			talcottDescendants
 		});
+
+		// 5c) table-index.json — one lean row per person for the map/timeline/camera consumers, so
+		// they never load the 22 MB people.json to place a seat. Carries the three blood/egg flags +
+		// the spouse-of flags (visibility filter, no second source) + parent pointers + x/y/e.
+		// CONSUMER CONTRACT: y may be null (no time basis, never fabricated) — SKIP null-y people,
+		// degrade, never throw (the NaN doctrine's null-shaped sibling).
+		const tableIndex = people.map((p) => {
+			const c = p.classification || {};
+			const par = p.parents || {};
+			const t = tableCoords.get(p.id) || { x: null, y: null };
+			const row = {
+				id: p.id,
+				slug: slugMap.get(p.id) ?? null,
+				n: bioOf(p).display_name || p.id,
+				by: birthYear(p),
+				dy: deathYear(p),
+				hd: Boolean(c.is_thomas_descendant), // Hooker (Thomas) descendant
+				td: Boolean(c.is_talcott_descendant), // Talcott descendant
+				ee: Boolean(c.is_easter_egg),
+				sd: Boolean(c.is_spouse_of_thomas_descendant),
+				sg: Boolean(c.is_spouse_of_talcott_descendant),
+				x: t.x,
+				y: t.y,
+				father_id: par.father_id ?? null,
+				mother_id: par.mother_id ?? null
+			};
+			if (t.e) row.e = true;
+			return row;
+		});
+		const tiFull = W(join(CONFIG.dataDir, 'table-index.json'), tableIndex);
+		const tiGz = gzipSync(readFileSync(tiFull)).length;
+		log(`  table-index.json: ${tableIndex.length} rows, ${(tiGz / 1024).toFixed(0)} KB gzipped`);
+
+		// 5d) seating-anomalies.tsv — the worklist Sam routes to the DATA stream. Detached-td linkage
+		// gaps, orbit archipelago, true orphans, and no-y-basis people, so they never evaporate and the
+		// list shrinks as enrichment touches them. Written at the repo root (not shipped to the client).
+		const anomHeader = 'id\tname\treason\tdetail';
+		const anomRows = coordResult.anomalies.map((r) => r.join('\t'));
+		writeFileSync(join(CONFIG.repoRoot, 'seating-anomalies.tsv'), [anomHeader, ...anomRows].join('\n') + '\n');
+		const anomBy = coordResult.anomalies.reduce((a, r) => ((a[r[2]] = (a[r[2]] || 0) + 1), a), {});
+		log(`  seating-anomalies.tsv: ${anomRows.length} rows (${JSON.stringify(anomBy)})`);
 	}
 
 	// 6) per-person page payloads — one self-contained file per slug.
