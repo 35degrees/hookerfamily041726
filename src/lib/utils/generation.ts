@@ -22,8 +22,15 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 	if (person.id === 'I00001') {
 		return ['Founder of the American Hooker Line'];
 	}
-	if (person.id === 'T00010') {
+	if (person.id === 'T00011') {
+		// The Talcott progenitor (gen 0). Was hardcoded as T00010, which no longer exists (merged
+		// away); T00011 is is_talcott_descendant:false, so without this it would get no label at all.
 		return ['Founder of the American Talcott Line'];
+	}
+	if (person.id === 'X01725') {
+		// Anne Skinner — T00011's mother. is_talcott_descendant:false + no generation, so the gen≤0
+		// rule below can't reach her; label her directly as the founder's mother.
+		return ['Mother of the Talcott Founder'];
 	}
 
 	const cls = person.classification;
@@ -127,6 +134,15 @@ function computeSpouseCompact(person: Person, byId: Record<string, Person>): str
  *   gen 4+ → "Fourth Generation Descendant of Thomas Hooker"
  */
 function buildDescendantLabel(generation: number, gender: string | null, founder: string): string {
+	// Ancestors of a line founder sit at generation ≤ 0 (e.g. the Talcott founder's father at −1).
+	// Key on the negative generation, line-agnostic, so ordinal math never emits "−1th Generation".
+	if (generation <= 0) {
+		const line = founder.split(' ').pop() || founder; // "John Talcott" → "Talcott"
+		if (generation === 0) return `Founder of the American ${line} Line`;
+		if (generation === -1) return `${gender === 'female' ? 'Mother' : 'Father'} of the ${line} Founder`;
+		const greats = 'Great-'.repeat(-generation - 2);
+		return `${greats}Grand${gender === 'female' ? 'mother' : 'father'} of the ${line} Founder`;
+	}
 	const relation = getRelationWord(generation, gender);
 	if (relation) {
 		return `${relation} of ${founder}`;

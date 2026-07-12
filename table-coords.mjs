@@ -33,6 +33,10 @@ export function computeTableCoords(people) {
 	const C = (p) => p.classification || {};
 	const isTd = (p) => C(p).is_thomas_descendant === true;
 	const isGrove = (p) => C(p).is_talcott_descendant === true && !isTd(p);
+	// The Talcott PROGENITOR T00011 (gen 0) isn't flagged is_talcott_descendant, but he heads the
+	// grove — include him as a BRIDGE member so the tidy-tree connects his father T00002 (gen -1,
+	// is_talcott_descendant) down through him to the descendants, instead of fragmenting into a forest.
+	const isGroveMember = (p) => isGrove(p) || p.id === TALCOTT_ROOT;
 	const isEgg = (p) => C(p).is_easter_egg === true;
 	const nameOf = (p) => (p.bio || p.name || {}).display_name || p.id;
 	const anomalies = []; // [id, name, reason, detail] worklist rows
@@ -190,7 +194,7 @@ export function computeTableCoords(people) {
 	// The Talcott progenitors (T00001/T00011) aren't flagged is_talcott_descendant, so the natural
 	// roots are their descendant lines (John Talcott T00002's line + T00011's children); seat them
 	// birth-year-ordered. (TALCOTT_FOUNDER_Y stays the y-estimate anchor for grove people with no date.)
-	const gv = buildTree(isGrove);
+	const gv = buildTree(isGroveMember);
 	const groveStart = hookerEnd + REGION_GUTTER;
 	seat = layoutTree(gv.kids, byRootOrder(gv.roots), groveStart);
 	const groveEnd = seat;
@@ -233,10 +237,17 @@ export function computeTableCoords(people) {
 	const hasCC = (p) => (p.cross_connections || []).length > 0;
 	const archi = unseated.filter(hasCC).sort((a, b) => (a.id < b.id ? -1 : 1));
 	const orphans = unseated.filter((p) => !hasCC(p)).sort((a, b) => (a.id < b.id ? -1 : 1));
+	// Sam-confirmed orbit islanders — genuine orbit figures with no blood/marriage anchor; NOT flag
+	// bugs, no further linkage chase. (Contrast: Oliver North X03458 IS a flag bug — his wife's branch
+	// is mis-flagged is_thomas_descendant:false; tracked separately for the data stream.)
+	const SAM_CONFIRMED_ORBIT = new Set(['X01977', 'X01979', 'X03441', 'X03442', 'Y00001']);
 	let s = groveEnd + BAND_GUTTER;
 	for (const p of archi) {
 		xById.set(p.id, s++);
-		anomalies.push([p.id, nameOf(p), 'archipelago', 'orbit figure: documented CCs but no blood/marriage anchor']);
+		const detail = SAM_CONFIRMED_ORBIT.has(p.id)
+			? 'orbit figure — Sam-confirmed islander (no linkage chase)'
+			: 'orbit figure: documented CCs but no blood/marriage anchor';
+		anomalies.push([p.id, nameOf(p), 'archipelago', detail]);
 	}
 	s += BAND_GUTTER;
 	for (const p of orphans) {

@@ -8,7 +8,6 @@ HD1418	Mary Rawson	detached-td-root	is_thomas_descendant but no in-tree parent; 
 HD1419	Edward Wilson Rawson	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD1420	Thomas Hooker Rawson	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 H03798	Lovice Hooker H02380	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
-T00011	John Talcott	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X00019	Sgt. Zachariah Baldwin	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X00039	Captain John Hinsdale	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X00094	Miles Merwin	archipelago	orbit figure: documented CCs but no blood/marriage anchor
@@ -19,8 +18,8 @@ X00478	Joel Blakeslee	archipelago	orbit figure: documented CCs but no blood/marr
 X00745	George Richards Minot	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X01932	Elihu Burritt	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X01938	Edwin Percival	archipelago	orbit figure: documented CCs but no blood/marriage anchor
-X01977	Rev. Noah Porter Jr.	archipelago	orbit figure: documented CCs but no blood/marriage anchor
-X01979	Rev. Noah Porter III	archipelago	orbit figure: documented CCs but no blood/marriage anchor
+X01977	Rev. Noah Porter Jr.	archipelago	orbit figure — Sam-confirmed islander (no linkage chase)
+X01979	Rev. Noah Porter III	archipelago	orbit figure — Sam-confirmed islander (no linkage chase)
 X02143	Noah Webster	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X02151	Rev. James W.C. Pennington	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X02788	Hon. Frederick Whittlesey	archipelago	orbit figure: documented CCs but no blood/marriage anchor
@@ -31,11 +30,11 @@ X03226	Rev. Thomas Ruggles Pynchon	archipelago	orbit figure: documented CCs but 
 X03411	William Vaughan Shaw	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X03413	Mary Lithgow “Polly” Osborne	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X03432	Morton William Easton	archipelago	orbit figure: documented CCs but no blood/marriage anchor
-X03441	William Dwight Whitney	archipelago	orbit figure: documented CCs but no blood/marriage anchor
-X03442	Elizabeth Wooster Baldwin Whitney	archipelago	orbit figure: documented CCs but no blood/marriage anchor
+X03441	William Dwight Whitney	archipelago	orbit figure — Sam-confirmed islander (no linkage chase)
+X03442	Elizabeth Wooster Baldwin Whitney	archipelago	orbit figure — Sam-confirmed islander (no linkage chase)
 X03457	Maj. William Swan "Bill" Formwalt	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X03458	Oliver North	archipelago	orbit figure: documented CCs but no blood/marriage anchor
-Y00001	William Wadsworth	archipelago	orbit figure: documented CCs but no blood/marriage anchor
+Y00001	William Wadsworth	archipelago	orbit figure — Sam-confirmed islander (no linkage chase)
 Y00004	Hon. William Pynchon	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 H01707	James Chauncey Hooker	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 H03156	Mary Hooker Fox	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -65,8 +64,6 @@ I01606	Dorothy Howe Bass Spencer	true-orphan	no blood/egg flag, no marriage anch
 I01608	Mabel Williams Spencer	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I01914	Hannah Pope Putnam	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I01915	Deborah Lothrop Putnam	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-T00001	John Talcott	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-U00011	Dorothy Mott Talcott	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00001	Thomas Hooker I	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00002	Susannah Hooker	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00003	Richard Garbrand	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -167,8 +164,6 @@ X01715	(unknown spouse)	true-orphan	no blood/egg flag, no marriage anchor, no CC
 X01716	Sarah (unknown)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01720	Elizabeth Hart	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01722	(unknown spouse)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01723	Wells unknown)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01724	Marie Pullen	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01736	Elizabeth Stone	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01762	Mary Russell Talcott	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01778	Stebbins	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
