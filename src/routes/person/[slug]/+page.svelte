@@ -142,7 +142,21 @@
 			if (!accept(el)) continue;
 			delete el.dataset.pending;
 			el.style.opacity = '';
-			if (!prefersReducedMotion.current) {
+			if (prefersReducedMotion.current) continue;
+			// CHILDREN (data-flight-dir="down") get the MIRROR of the parents' fade-and-rise: they arrive
+			// from the CARD's side — the card sits directly above the children row — fading in while
+			// settling DOWN into place, instead of a flat opacity pop. Parents rise UP from below into
+			// their slot (morphIn); children settle DOWN from above into theirs. Only on a real reveal
+			// (fadeMs > 0) — the atomic-swap pivot reveal (fadeMs 0) must stay an instant STEP, never a slide.
+			if (el.dataset.flightDir === 'down' && fadeMs > 0) {
+				el.animate(
+					[
+						{ opacity: 0, transform: 'translateY(-28px)' },
+						{ opacity: 1, transform: 'translateY(0)' }
+					],
+					{ duration: Math.max(fadeMs, 300), easing: 'cubic-bezier(0.22,1,0.36,1)' }
+				);
+			} else {
 				el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: fadeMs, easing: 'ease-out' });
 			}
 		}
