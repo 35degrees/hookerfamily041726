@@ -31,6 +31,11 @@
 	// The world drifts WITH the hero's screenVector (which points opposite the focus shift): a child sits
 	// below → hero travels up → world drifts up. One flag — flip to -1 if the feel reads inverted.
 	const PARALLAX_SIGN = 1;
+	// Live ground A/B — the toggle pill cycles these (Sam picks by eye on localhost). Add more if wanted.
+	const GROUNDS = [
+		{ name: 'Midnight', value: '#0f1626', swatch: '#1a2740' },
+		{ name: 'Pine', value: '#10241b', swatch: '#1c3a2b' }
+	];
 	// ─────────────────────────────────────────────────────────────────────────────────────────────
 
 	// Deterministic PRNG (mulberry32) — stable pattern, no Math.random hydrate flicker. (World-space
@@ -69,6 +74,32 @@
 	let offsets = $state(LAYERS.map(() => ({ x: 0, y: 0 })));
 	let move = $state<CameraMove | null>(null); // latest move — drives the transition duration/easing
 	const easeCss = (name?: string) => (name === 'linear' ? 'linear' : 'cubic-bezier(0.33, 1, 0.68, 1)');
+
+	// Ground toggle: cycle GROUNDS and write --ground on :root, remembered in localStorage.
+	let groundIdx = $state(0);
+	function applyGround(i: number) {
+		if (typeof document === 'undefined') return;
+		document.documentElement.style.setProperty('--ground', GROUNDS[i].value);
+		try {
+			localStorage.setItem('field-ground', String(i));
+		} catch {
+			/* ignore */
+		}
+	}
+	function cycleGround() {
+		groundIdx = (groundIdx + 1) % GROUNDS.length;
+		applyGround(groundIdx);
+	}
+
+	onMount(() => {
+		try {
+			const saved = Number(localStorage.getItem('field-ground'));
+			if (Number.isInteger(saved) && saved >= 0 && saved < GROUNDS.length) groundIdx = saved;
+		} catch {
+			/* ignore */
+		}
+		applyGround(groundIdx);
+	});
 
 	onMount(() => {
 		// Drift ON the published move (same clock as the flight). Reduced motion: no drift (twinkle is
@@ -110,6 +141,18 @@
 		</div>
 	{/each}
 </div>
+
+<!-- Live ground toggle (dialing aid): cycles midnight ↔ pine on click, remembered per browser. -->
+<button
+	class="ground-toggle"
+	type="button"
+	title="Toggle field ground"
+	aria-label={`Field ground: ${GROUNDS[groundIdx].name} — click to change`}
+	onclick={cycleGround}
+>
+	<span class="swatch" style:background={GROUNDS[groundIdx].swatch}></span>
+	{GROUNDS[groundIdx].name}
+</button>
 
 <style>
 	/* z:0 fixed; the stage (.page-container) sits at z:1 above it. The field IS the midnight ground the
@@ -157,6 +200,44 @@
 		.mote {
 			animation: none;
 			opacity: var(--op);
+		}
+	}
+
+	/* the ground toggle — small, low-key, bottom-right, above the stage. Not part of the scenery, so it
+	   sits outside .field (which is pointer-events:none) and takes pointer events itself. */
+	.ground-toggle {
+		position: fixed;
+		right: 16px;
+		bottom: 16px;
+		z-index: 10;
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		padding: 6px 11px 6px 8px;
+		font: 500 12px/1 var(--font-inter, sans-serif);
+		color: rgba(255, 250, 240, 0.85);
+		background: rgba(20, 28, 46, 0.55);
+		border: 1px solid rgba(255, 250, 240, 0.18);
+		border-radius: 999px;
+		cursor: pointer;
+		backdrop-filter: blur(6px);
+		transition:
+			background 150ms ease,
+			border-color 150ms ease;
+	}
+	.ground-toggle:hover {
+		background: rgba(30, 40, 62, 0.72);
+		border-color: rgba(255, 250, 240, 0.32);
+	}
+	.ground-toggle .swatch {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		border: 1px solid rgba(255, 250, 240, 0.35);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.ground-toggle {
+			transition: none;
 		}
 	}
 </style>
