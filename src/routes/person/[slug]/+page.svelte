@@ -3,6 +3,7 @@
 	import PersonBox from '$lib/components/PersonBox.svelte';
 	import FeaturedCard from '$lib/components/FeaturedCard.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import Passage from '$lib/components/Passage.svelte';
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { prefersReducedMotion } from 'svelte/motion';
@@ -359,6 +360,8 @@
 
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
 <Field />
+<!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
+<Passage />
 <div class="page-container" use:warmPersonLinks>
 	<div class="parents-slot">
 		{#each roster.parents as parent (parent.id)}

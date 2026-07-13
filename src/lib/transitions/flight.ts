@@ -12,7 +12,7 @@
  */
 import { cubicOut, linear } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
-import { getCameraMove } from '../state/camera';
+import { getCameraMove, type CameraMove } from '../state/camera';
 
 // SETTLE (Block 3) — the promotion carries a few px PAST its final rect along the travel vector, then
 // decelerates back. Done as ONE C1-continuous easeOutBack curve on the TRANSLATE (not a two-phase
@@ -87,7 +87,9 @@ const CC_COMPRESS_L = 300; // log-compression scale for collateral Δx (near-ide
 //   collateral → tilt = atan2(log-compressed Δx, Δyears), capped at COLLATERAL_CAP_DEG (uncle preserved).
 // Falls back to the raw screenVector when the target has no time basis (y null).
 function ccScreenDir(): { x: number; y: number } {
-	const m = getCameraMove();
+	return ccScreenDirFor(getCameraMove());
+}
+export function ccScreenDirFor(m: CameraMove | null): { x: number; y: number } {
 	if (m?.from && m?.to && m.to.y != null && m.from.y != null) {
 		const vx = m.to.x - m.from.x;
 		const vy = m.to.y - m.from.y; // years: >0 later (below), <0 earlier (above)
@@ -117,6 +119,23 @@ function ccDurationMs(): number {
 	const m = getCameraMove();
 	const wy = m?.to?.y != null && m?.from?.y != null ? Math.abs(m.to.y - m.from.y) : 0; // years apart
 	return Math.min(950, Math.max(500, 500 + wy * 1.6));
+}
+
+// ── THE PASSAGE BEAT (distance made felt) ────────────────────────────────────────────────────────
+// Between the old card leaving and the new card entering, a scalable mid-beat scaled to the TRUE year-
+// span: a near CC (< PASSAGE_MIN_SPAN) gets none (the current conveyor feel); a far dive earns up to
+// PASSAGE_MAX_MS of stillness while decade markers rush past (Passage.svelte reads the same numbers).
+// The new card's growFrom delays by this, raising the extreme-dive total to ~1300ms — a long journey
+// reads long. Transient, flight-only: nothing lingers at rest.
+const PASSAGE_MIN_SPAN = 60; // years — below this (uncle-class same-era CCs) there is no passage
+const PASSAGE_MAX_MS = 450;
+export function ccYearSpan(m: CameraMove | null): number {
+	return m?.to?.y != null && m?.from?.y != null ? Math.abs(m.to.y - m.from.y) : 0;
+}
+export function passageMsFor(m: CameraMove | null): number {
+	const span = ccYearSpan(m);
+	if (span < PASSAGE_MIN_SPAN) return 0;
+	return Math.min(PASSAGE_MAX_MS, (span - PASSAGE_MIN_SPAN) * 2.0);
 }
 
 
@@ -263,6 +282,9 @@ export function growFrom(node: Element) {
 	// Distance-scaled; the floor/slope depend on the flight kind (spouse = brisk in-corner morph,
 	// parent/child = velocity-capped travel, cc = a long directional journey from offscreen).
 	let duration: number;
+	// The passage beat: for a far dive the hero WAITS offscreen while the decades rush (Passage.svelte),
+	// then flies in. Near CCs delay 0 (unchanged conveyor). It's the entry that's held, not the travel.
+	const ccDelay = cc ? passageMsFor(getCameraMove()) : 0;
 	if (cc) {
 		duration = ccDurationMs();
 	} else if (flightKind === 'spouse') {
@@ -297,6 +319,7 @@ export function growFrom(node: Element) {
 	hero.style.zIndex = '2';
 	return {
 		duration,
+		delay: ccDelay, // the passage beat (0 for chip navs and near CCs)
 		// LINEAR clock: t = real-time progress. Scale and translate carry their OWN curves in css so the
 		// spouse translate can be one C1-continuous easeOutBack (no two-phase decelerate-then-restart).
 		easing: (x: number) => x,
