@@ -14,8 +14,10 @@
 import { pushState } from '$app/navigation';
 import { prefersReducedMotion } from 'svelte/motion';
 import { featured } from './featured.svelte';
-import { publishCameraMove } from './camera';
+import { publishCameraMove, type CameraMove } from './camera';
 import { hideCcRoster, showCcRoster } from './ccRoster.svelte';
+import { startArc } from './arc.svelte';
+import { isArcMove, arcScaleMinFor, arcDurationMsFor } from '$lib/transitions/arc-math';
 import { fetchFeatured } from '$lib/data/buildFeatured';
 import {
 	captureFlightOrigin,
@@ -126,7 +128,18 @@ export function warmPersonLinks(node: HTMLElement) {
 		// duration reuses flight.ts's per-kind curve directly (single source of truth — no drift; the
 		// published value is informational metadata, the real flight clock lives in growFrom).
 		const duration = kind === 'spouse' ? spouseGrowMs(distance) : relativeGrowMs(distance);
-		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass });
+		// ALTITUDE ARC: a FAR COLLATERAL CC pulls the camera back (scaleMin) to reveal the real table, then
+		// descends. Publish scaleMin so the card + substrate read it; start the shared arc clock. Direct dives
+		// and short collateral hops stay flat (scaleMin null). Reduced motion never arcs.
+		const provisional = { from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, seq: 0 } as CameraMove;
+		const arc = !prefersReducedMotion.current && isArcMove(provisional);
+		const scaleMin = arc ? arcScaleMinFor(provisional) : null;
+		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, scaleMin });
+		// The arc clock is started at the STATE SWAP (below), not here — so it shares its time origin with the
+		// card + substrate transitions that mount then, guaranteeing one clock (no fetch-time offset).
+		const arcFrom = from && to ? { x: from.x, y: from.y ?? to.y ?? 0 } : null;
+		const arcTo = from && to ? { x: to.x, y: to.y ?? from.y ?? 0 } : null;
+		const arcDuration = arcDurationMsFor(provisional);
 
 		const slug = decodeURIComponent(match[1]);
 		// HARD CUT → FLY (item A): a CC arrival removes the roster THIS frame — the same frame the flight
@@ -135,7 +148,10 @@ export function warmPersonLinks(node: HTMLElement) {
 		// has taken over (one frame after the state swap) so the NEW roster is display-able but still pending.
 		if (isCC && !prefersReducedMotion.current) {
 			hideCcRoster();
-			void focusPerson(slug).then(() => requestAnimationFrame(() => showCcRoster()));
+			void focusPerson(slug).then(() => {
+				if (arc && arcFrom && arcTo) startArc({ from: arcFrom, to: arcTo, scaleMin: scaleMin as number, duration: arcDuration });
+				requestAnimationFrame(() => showCcRoster());
+			});
 			return;
 		}
 		void focusPerson(slug);

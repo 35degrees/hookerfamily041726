@@ -13,6 +13,8 @@
 import { cubicOut, linear } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
 import { getCameraMove, type CameraMove } from '../state/camera';
+import { isArcMove, arcDurationMsFor, ARC_DESC, ARC_RISE } from './arc-math';
+import { arcClock } from '../state/arc.svelte';
 
 // SETTLE (Block 3) — the promotion carries a few px PAST its final rect along the travel vector, then
 // decelerates back. Done as ONE C1-continuous easeOutBack curve on the TRANSLATE (not a two-phase
@@ -138,6 +140,9 @@ export function passageMsFor(m: CameraMove | null): number {
 	if (span < PASSAGE_MIN_SPAN) return 0;
 	return Math.min(PASSAGE_MAX_MS, (span - PASSAGE_MIN_SPAN) * 2.0);
 }
+
+// The altitude arc's math + trigger live in arc-math.ts (shared with the arc clock + substrate); the arc
+// clock itself (the single rAF the card + substrate both read) lives in arc.svelte.ts.
 
 
 // ── Path A captures (parent/child/spouse rows no longer use animate:flip — we pin leavers
@@ -272,8 +277,13 @@ export function growFrom(node: Element) {
 
 	// CC (directional arrival): IGNORE the click origin (a text-link rect) — the card enters WHOLE from
 	// offscreen along the world vector, full size (no scale morph), and settles into the slot.
+	// CC ARC (far collateral): the camera scale carries the motion instead — the card DESCENDS onto the seat
+	// (no offscreen slide: dx=dy=0), entering only for the descent phase while the arc clock scales it up.
 	const cc = flightKind === 'cc';
-	const ccDir = cc ? ccScreenDir() : { x: 0, y: 0 };
+	const arcM = cc ? getCameraMove() : null;
+	const arc = cc && isArcMove(arcM);
+	const arcDur = arc ? arcDurationMsFor(arcM) : 0;
+	const ccDir = cc && !arc ? ccScreenDir() : { x: 0, y: 0 };
 	const dx = cc ? ccDir.x * CC_ENTRY_DIST : origin.left - dest.left;
 	const dy = cc ? ccDir.y * CC_ENTRY_DIST : origin.top - dest.top;
 	const sx = cc ? 1 : origin.width / dest.width;
@@ -283,10 +293,13 @@ export function growFrom(node: Element) {
 	// Distance-scaled; the floor/slope depend on the flight kind (spouse = brisk in-corner morph,
 	// parent/child = velocity-capped travel, cc = a long directional journey from offscreen).
 	let duration: number;
-	// The passage beat: for a far dive the hero WAITS offscreen while the decades rush (Passage.svelte),
-	// then flies in. Near CCs delay 0 (unchanged conveyor). It's the entry that's held, not the travel.
-	const ccDelay = cc ? passageMsFor(getCameraMove()) : 0;
-	if (cc) {
+	// The beat before the hero enters: a far dive WAITS while the decades rush (passage). An ARC instead
+	// runs its transition for the WHOLE arc and takes BOTH its scale AND its reveal timing from the shared
+	// arc clock (not its own t) — so it can never drift from the substrate. Near CCs delay 0 (conveyor).
+	const ccDelay = arc ? 0 : cc ? passageMsFor(getCameraMove()) : 0;
+	if (arc) {
+		duration = arcDur; // run the whole arc; opacity/scale are driven by the arc clock inside css
+	} else if (cc) {
 		duration = ccDurationMs();
 	} else if (flightKind === 'spouse') {
 		// Extend the hero to honor the demote's honest-velocity clock (below), so the two share one clock
@@ -315,6 +328,28 @@ export function growFrom(node: Element) {
 	// chip; the keyframe animation (whose 0% is the same origin) then takes over seamlessly. Cleared at
 	// introend (onIncomingLand) so the landed card rests at identity — else it would snap back to origin.
 	const hero = node as HTMLElement;
+	if (arc) {
+		// ARC: the card DESCENDS onto the seat — no slide, no chip-morph. BOTH its scale AND its fade-in are
+		// read from the shared arc clock (never its own transition t), so it stays locked to the substrate:
+		// invisible through the rise+traverse, fading in as the descent begins, at the clock's own scale.
+		hero.style.transformOrigin = 'center center';
+		hero.style.opacity = '0';
+		hero.style.transform = `scale(${arcClock.scale})`;
+		hero.style.zIndex = '2';
+		return {
+			duration,
+			delay: ccDelay,
+			easing: (x: number) => x,
+			// tick (NOT css): css transitions are keyframe-sampled ONCE at setup, which would freeze the live
+			// arc clock. tick runs every frame, so the card reads the shared clock's scale + reveal in real time.
+			tick: () => {
+				const s = arcClock.active ? arcClock.scale : 1;
+				const op = arcClock.active ? Math.max(0, Math.min(1, (arcClock.t - ARC_DESC) / 0.12)) : 1;
+				hero.style.transform = `scale(${s})`;
+				hero.style.opacity = `${op}`;
+			}
+		};
+	}
 	hero.style.transformOrigin = 'top left';
 	hero.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
 	hero.style.zIndex = '2';
@@ -363,6 +398,23 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// (no chip-face, no destination box), sliding OFFSCREEN the OPPOSITE way the new card enters, shrinking
 	// modestly, finish-first (heroDur − 60ms). Non-degenerate exit so Svelte cleans it.
 	if (flightKind === 'cc') {
+		const arcM = getCameraMove();
+		if (isArcMove(arcM)) {
+			// ARC: the old card RECEDES on the shared arc clock (scale 1 → scaleMin over the rise), fading out
+			// before the traverse — no opposite slide. Same clock the incoming card + substrate read.
+			const rise = Math.max(200, ARC_RISE * arcDurationMsFor(arcM));
+			el.style.zIndex = '1';
+			el.style.transformOrigin = 'center center';
+			return {
+				duration: rise,
+				easing: (x: number) => x,
+				// tick so the recede reads the LIVE arc clock (scale 1 → scaleMin), not a frozen setup sample.
+				tick: (t: number) => {
+					el.style.transform = `scale(${arcClock.active ? arcClock.scale : 1})`;
+					el.style.opacity = `${Math.min(1, t * 2.2)}`;
+				}
+			};
+		}
 		const dir = ccScreenDir();
 		const ex = -dir.x * CC_ENTRY_DIST, ey = -dir.y * CC_ENTRY_DIST; // opposite the hero's entry
 		return {

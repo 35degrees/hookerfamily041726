@@ -29,6 +29,9 @@ export type CameraMove = {
 	// CC laterality (graph-derived at build time; see regenerate relationClass). 'direct' → the arrival
 	// flies in vertically (Δx ignored); 'collateral' → it tilts by compressed Δx. Absent for chip navs.
 	relationClass?: 'direct' | 'collateral' | null;
+	// ALTITUDE ARC (far collateral CCs): the camera pulls back to this scale, traverses, descends. The
+	// subject card and the tile substrate both read it. Absent/null → a flat flight (no pull-back).
+	scaleMin?: number | null;
 	seq: number;
 };
 
