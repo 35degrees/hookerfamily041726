@@ -61,6 +61,16 @@ async function arrival(src, target, label, wantClass, [tLo, tHi]) {
 	const start = heroFrames.reduce((a, f) => (Math.hypot(f.dx, f.dy) > Math.hypot(a.dx, a.dy) ? f : a), heroFrames[0]);
 	const tilt = start ? (Math.atan2(Math.abs(start.dx), Math.abs(start.dy)) * 180) / Math.PI : null;
 	ok(tilt != null && tilt >= tLo && tilt <= tHi, `${label}: tilt ${tilt?.toFixed(1)}° outside [${tLo},${tHi}]`);
+
+	// SETTLE DIRECTION — the arrival must overshoot ALONG the travel direction (carry PAST the slot, then
+	// spring back), never backwards toward the entry point. Project every hero offset onto the entry unit
+	// vector (dir points at the offscreen start; +ENTRY_DIST → 0 at the slot → NEGATIVE = past the slot).
+	if (start) {
+		const mag = Math.hypot(start.dx, start.dy);
+		const ux = start.dx / mag, uy = start.dy / mag;
+		const minProj = Math.min(...heroFrames.map((f) => f.dx * ux + f.dy * uy));
+		ok(minProj < -0.5, `${label}: settle did NOT overshoot past the slot (min projection ${minProj.toFixed(1)}px — backwards or absent)`);
+	}
 	// (b) vertical entry side matches Δyears
 	if (worldVy != null && start) ok(Math.sign(start.dy) === Math.sign(worldVy), `${label}: entered wrong vertical side (dy ${start.dy.toFixed(0)}, Δyears ${worldVy})`);
 
