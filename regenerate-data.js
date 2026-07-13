@@ -196,7 +196,9 @@ function compact(p, slugMap) {
 	return {
 		id: p.id,
 		slug: slugMap.get(p.id) ?? null,
-		n: bioOf(p).display_name || p.id,
+		// Relationship CHIPS use chip_name when set (a shorter form, e.g. "Lent Hooker"); the FEATURED
+		// card renders the full bio.display_name from the person payload, so the two can differ by design.
+		n: bioOf(p).chip_name || bioOf(p).display_name || p.id,
 		by: birthYear(p),
 		dy: deathYear(p),
 		sx: sex(p),
