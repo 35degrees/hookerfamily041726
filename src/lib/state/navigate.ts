@@ -99,7 +99,10 @@ export function warmPersonLinks(node: HTMLElement) {
 		const slot = document.querySelector('.featured-slot');
 		const oc = anchor.getBoundingClientRect();
 		const dr = slot?.getBoundingClientRect();
-		const kind = relation === 'spouse' ? 'spouse' : 'relative';
+		// A CC link (data-cc) is a NON-CHIP navigation → the directional arrival class (kind 'cc'). Its
+		// `to` comes from the anchor's own data-tx/ty (baked from the CC target's seat), not a flight box.
+		const isCC = (anchor as HTMLElement).dataset.cc === 'true';
+		const kind = isCC ? 'cc' : relation === 'spouse' ? 'spouse' : 'relative';
 		const screenVector = dr
 			? {
 					dx: dr.left + dr.width / 2 - (oc.left + oc.width / 2),
@@ -108,9 +111,10 @@ export function warmPersonLinks(node: HTMLElement) {
 			: { dx: 0, dy: 0 };
 		const distance = Math.hypot(screenVector.dx, screenVector.dy);
 		const numOr = (v: string | undefined) => (v != null && v !== '' && v !== 'null' ? Number(v) : null);
+		const src = isCC ? (anchor as HTMLElement) : box;
 		const to =
-			box && numOr(box.dataset.tx) != null
-				? { x: Number(box.dataset.tx), y: numOr(box.dataset.ty) }
+			src && numOr(src.dataset.tx) != null
+				? { x: Number(src.dataset.tx), y: numOr(src.dataset.ty) }
 				: null;
 		const ft = featured.current?.person?.t;
 		const from = ft ? { x: ft.x, y: ft.y } : null;

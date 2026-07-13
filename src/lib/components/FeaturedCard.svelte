@@ -19,6 +19,7 @@
 			link_text: string;
 			display_label: string;
 			slug: string | null;
+			t?: { x: number; y: number | null; e?: boolean } | null;
 		}>;
 		institutionsById?: Record<string, Institution>;
 	};
@@ -299,8 +300,13 @@
 						{#each crossConnections as cc, i (i)}
 							<div class="cc-row text-[12px] leading-snug">
 								{#if cc.slug}
+									<!-- data-cc marks a NON-CHIP navigation (the directional arrival class); data-tx/ty
+									     carry the target's table seat so the camera store gets a real `to`. -->
 									<a
 										href="/person/{cc.slug}"
+										data-cc="true"
+										data-tx={cc.t?.x ?? undefined}
+										data-ty={cc.t?.y ?? undefined}
 										class="font-medium text-blue-700 hover:text-blue-900 hover:underline"
 										>{cc.link_text}</a
 									>

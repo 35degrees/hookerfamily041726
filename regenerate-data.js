@@ -566,7 +566,11 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 			related_id: cc.related_id,
 			link_text: cc.link_text,
 			display_label: cc.display_label ?? '',
-			slug: slugMap.get(cc.related_id) ?? null
+			slug: slugMap.get(cc.related_id) ?? null,
+			// Phase 3b: the CC target's table seat, baked at build time — a CC link is NOT a chip (no
+			// data-flight-id box), so this is how the camera store gets a real `to` for the directional
+			// arrival. y may be null (no time basis: the consumer degrades to a screen-vector-only move).
+			t: tableCoords.get(cc.related_id) ?? null
 		};
 		if (talcottOnly) out.hidden_by_default = true;
 		return out;

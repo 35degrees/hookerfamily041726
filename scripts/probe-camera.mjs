@@ -92,10 +92,37 @@ await page.waitForTimeout(500);
 await step('parent', '.parents-slot a', 'relative', +1); // parent above → hero travels DOWN
 await step('child', '.children-slot a', 'relative', -1); // child below → hero travels UP
 await step('spouse', '.spouse-notch .flight a', 'spouse', 0); // lateral swap
-// CC on a fresh card known to have a footer cross-connection (michael → Rev. Bunker Gay)
-await page.goto(`${BASE}/person/michael-hooker-1935`, { waitUntil: 'networkidle' });
-await page.waitForTimeout(500);
-await step('cc', '.footer a[href^="/person/"]', 'relative', 0); // to is null (CC target isn't a card box)
+// CC — a NON-CHIP navigation: publishes kind 'cc' with a REAL `to` (the target's seat, baked onto the
+// anchor as data-tx/ty in regenerate), matching table-index. Three known pairs.
+const CC_PAIRS = [
+	['michael-hooker-1935', 'Bunker'],
+	['michael-hooker-1935', 'Bunker'], // (michael has one CC; repeat is a stability run)
+	['nancy-morse-1915', null]
+];
+for (const [slug, needle] of CC_PAIRS) {
+	await page.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(400);
+	const cc = await page.evaluate((nd) => {
+		const links = [...document.querySelectorAll('a[data-cc]')];
+		const a = nd ? links.find((x) => x.textContent.includes(nd)) : links[0];
+		if (!a || a.dataset.tx == null) return null;
+		const r = a.getBoundingClientRect();
+		return { x: r.left + r.width / 2, y: r.top + r.height / 2, tx: Number(a.dataset.tx), ty: a.dataset.ty === 'null' || a.dataset.ty == null ? null : Number(a.dataset.ty) };
+	}, needle);
+	if (!cc) { console.log(`  cc(${slug}): no CC with coords — skipped`); continue; }
+	const n0 = moves.length;
+	await page.mouse.click(cc.x, cc.y);
+	await page.waitForTimeout(350);
+	ok(moves.length > n0, `cc(${slug}): no [camera] publish`);
+	const mv = moves[moves.length - 1];
+	if (!mv) continue;
+	ok(mv.kind === 'cc', `cc(${slug}): kind ${mv.kind} != cc`);
+	ok(mv.to != null, `cc(${slug}): to is null — the CC seat did not reach the camera store`);
+	ok(mv.to && near(mv.to.x, cc.tx, 0.01), `cc(${slug}): to.x ${mv.to?.x} != anchor/table-index ${cc.tx}`);
+	ok(mv.to && (cc.ty == null ? mv.to.y == null : near(mv.to.y, cc.ty, 0.01)), `cc(${slug}): to.y ${mv.to?.y} != anchor ${cc.ty}`);
+	console.log(`  cc(${slug}): kind=cc to=${JSON.stringify(mv.to)} from=${JSON.stringify(mv.from)}`);
+	await page.waitForTimeout(600);
+}
 
 await ctx.close();
 await browser.close();

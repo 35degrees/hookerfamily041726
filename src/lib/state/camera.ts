@@ -25,7 +25,7 @@ export type CameraMove = {
 	distance: number;
 	duration: number;
 	easing: string;
-	kind: 'spouse' | 'relative';
+	kind: 'spouse' | 'relative' | 'cc'; // 'cc' = a non-chip navigation (the directional arrival class)
 	seq: number;
 };
 
