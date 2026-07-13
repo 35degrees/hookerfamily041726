@@ -30,7 +30,7 @@ dates, bio blurbs, tags, cross-connections, institutions, landmarks, the schema,
 `tasks.tsv`, the section-C debt drawdown, "add this person," "enrich X."
 
 **Read before acting:** `docs/WORKFLOW.md` (editorial contract) and
-`docs/hooker_json_schema_v22.md` (structural law). The Woodward entry (X00804) is
+`docs/hooker_json_schema_v23.md` (structural law). The Woodward entry (X00804) is
 the NB quality bar.
 
 **The data loop -- you (Code) run every step; Sam types no git or shell commands:**
@@ -126,11 +126,11 @@ CLAUDE.md                     <- this file (auto-read every session)
 canonical.json                <- the genealogy DB (the SOURCE; edited directly, git-protected)
 tasks.tsv                     <- the data task sheet
 process_tasks.py              <- two-pass, append-only task processor
-validate.py                   <- schema v22 gate + git-HEAD silent-loss diff
+validate.py                   <- schema v23 gate + git-HEAD silent-loss diff
 regenerate-data.js            <- builds static/data/ from canonical.json (takes a filename arg)
 docs/
   WORKFLOW.md                 <- data editorial contract
-  hooker_json_schema_v22.md   <- structural law
+  hooker_json_schema_v23.md   <- structural law
   DESIGN_061726.md            <- frontend form/model map
   CODING_HANDOFF.md           <- frontend itinerary (what's next)
   examples/                   <- frontend pattern references
