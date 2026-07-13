@@ -160,9 +160,12 @@ built on it. Next is **Phase 3b — the field** (parallax world).
   so the incoming hero paints at its DESTINATION for frame 0 before jumping to the origin
   (visible with a photo). `growFrom` sets the t=0 (origin) transform **inline** so frame 0
   is at the chip; `onIncomingLand` clears it so the landed card rests at identity.
-- **Settle = whole-path growth-overshoot**, spouse promotions only, on a warm camera move:
-  one easeOutBack value drives translate AND scale (no fixed-edge lope), clamped to a
-  ~5–6px edge excursion, endpoints frozen. `probe-settle.mjs` guards it.
+- **Settle = whole-path growth-overshoot** on the PROMOTION, BOTH regimes (Layer 3 extended it from
+  spouse to relative parent/child): one easeOutBack value drives translate AND scale (no fixed-edge
+  lope) along each flight's own vector, clamped to a ~5–6px along-axis carry, endpoints frozen. Active
+  only on a warm click whose camera-move kind matches the flight (`getCameraMove()?.kind === flightKind`).
+  `probe-settle.mjs` guards spouse + relative. The DEMOTION micro-settle was deliberately SKIPPED — a
+  demote overshoot risks the atomic-swap frame; not worth it. **The motion layer is CLOSED here.**
 
 **The pinned demotion look** (freezes it against drift, both regimes): `probe-flight.mjs`
 Check G adds **9a** (legible chip-face width, opacity>0.5, ≤ ~2.1×220 — RED without the

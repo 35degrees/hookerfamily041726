@@ -16,17 +16,32 @@ const page = await ctx.newPage();
 const fails = [];
 const ok = (c, m) => { if (!c) fails.push(m); };
 
-async function settleFor(idx, label) {
+// getClick: async () => {x,y} — navigates and returns the click point (a spouse chip or a relative link).
+// The settle now applies to BOTH promotion regimes (Layer 3), so the measurement is regime-agnostic.
+const spouseClick = (idx) => async () => {
 	await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
-	const chip = await page.evaluate((i) => {
-		const chips = [...document.querySelectorAll('.spouse-notch .flight a')];
-		const a = chips[i];
+	return page.evaluate((i) => {
+		const a = [...document.querySelectorAll('.spouse-notch .flight a')][i];
 		if (!a) return null;
 		const r = a.getBoundingClientRect();
 		return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 	}, idx);
-	if (!chip) { fails.push(`${label}: spouse chip ${idx} not found`); return null; }
+};
+const relativeClick = (slug, sel) => async () => {
+	await page.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+	await page.waitForTimeout(500);
+	return page.evaluate((s) => {
+		const a = document.querySelector(s);
+		if (!a) return null;
+		const r = a.getBoundingClientRect();
+		return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+	}, sel);
+};
+
+async function settleFor(getClick, label) {
+	const chip = await getClick();
+	if (!chip) { fails.push(`${label}: click target not found`); return null; }
 	await page.mouse.click(chip.x, chip.y);
 	// hero = the incoming featured card (NOT .demoting) — persists through Svelte's style-strip at
 	// landing, so its rect keeps reading (unlike a z-index probe which vanishes at strip).
@@ -96,14 +111,20 @@ async function settleFor(idx, label) {
 	return { dirDeg, overshoot };
 }
 
-const s1 = await settleFor(0, 'spouse-1');
-const s3 = await settleFor(2, 'spouse-3');
+const s1 = await settleFor(spouseClick(0), 'spouse-1');
+const s3 = await settleFor(spouseClick(2), 'spouse-3');
 if (s1 && s3) {
 	ok(Math.abs(s1.dirDeg - s3.dirDeg) > 2, `spouse-1 and spouse-3 overshoot along the SAME angle (${s1.dirDeg.toFixed(0)}° vs ${s3.dirDeg.toFixed(0)}°) — vector not driving direction`);
 	console.log(`  angle difference: ${Math.abs(s1.dirDeg - s3.dirDeg).toFixed(0)}° (naturally different, from the vector)`);
+}
+// Layer 3: the RELATIVE promotion (parent click) now settles too — same ~5–6px overshoot along ITS OWN
+// (vertical-ish) vector, endpoints frozen. A different direction from the spouse (lateral) swaps.
+const rel = await settleFor(relativeClick('michael-hooker-1935', '.parents-slot a'), 'relative-parent');
+if (rel && s1) {
+	ok(Math.abs(rel.dirDeg - s1.dirDeg) > 2, `relative and spouse settle along the SAME angle (${rel.dirDeg.toFixed(0)}° vs ${s1.dirDeg.toFixed(0)}°) — vector not driving direction`);
 }
 
 await ctx.close();
 await browser.close();
 if (fails.length) { console.log('SETTLE PROBE: RED\n- ' + fails.join('\n- ')); process.exit(1); }
-console.log('SETTLE PROBE: GREEN — spouse promotions carry a ~5–6px settle along the travel axis, settle to the exact rect, angles differ.');
+console.log('SETTLE PROBE: GREEN — spouse AND relative promotions carry a ~5–6px settle along each flight vector, settle to the exact rect, angles differ.');

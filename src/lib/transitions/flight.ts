@@ -222,10 +222,12 @@ export function growFrom(node: Element) {
 	} else {
 		duration = relativeGrowMs(distance);
 	}
-	// SETTLE (Block 3) — SPOUSE promotions only for now, and only on a warm click (the camera store
-	// published a spouse move; cold loads don't and shouldn't settle). The overshoot direction is the
-	// flight's own (dx,dy) axis — identical to the camera screenVector (validated by probe-camera).
-	const settleActive = flightKind === 'spouse' && getCameraMove()?.kind === 'spouse';
+	// SETTLE — the whole-path easeOutBack overshoot on the PROMOTION, now on BOTH regimes (Layer 3:
+	// extended from spouse to relative parent/child promotions). Active only on a WARM click whose camera
+	// move kind matches this flight's kind (cold loads / back-forward publish no matching move → plain
+	// cubicOut, no settle). The overshoot direction is the flight's own (dx,dy) axis — identical to the
+	// camera screenVector (validated by probe-camera). Same ~5–6px excursion for both.
+	const settleActive = getCameraMove()?.kind === flightKind;
 	const settleS = settleActive ? settleBackFor(distance) : 0;
 	if (import.meta.env.DEV && settleActive) {
 		const g = (4 * settleS ** 3) / (27 * (1 + settleS) ** 2);
