@@ -15,7 +15,7 @@ const ACCEL_RATIO = 3; // spike threshold vs local ±5 median |accel|
 const ACCEL_FLOOR = 0.08; // px/ms² — accels below this are smooth-motion noise (the flight body runs
 // ~0.005–0.03); ratios are only judged above it, so tiny near-zero accels can't inflate a false spike.
 const VEL_NOISE = 0.03; // px/ms — below this is "at rest / turnaround", trimmed from the flight window
-const DWELL_MAX = 3; // a smooth turnaround dwells ≤2 frames near zero; a two-phase jerk sits far longer
+const DWELL_MAX = 4; // a smooth turnaround dwells ≤2 frames near zero; a two-phase jerk sits far longer (5+) — 4 gives one frame of rAF-variance headroom without masking a real dwell
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 const page = await ctx.newPage();
