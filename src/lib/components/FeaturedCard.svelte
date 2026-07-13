@@ -20,6 +20,7 @@
 			display_label: string;
 			slug: string | null;
 			t?: { x: number; y: number | null; e?: boolean } | null;
+			relation_class?: 'direct' | 'collateral' | null;
 		}>;
 		institutionsById?: Record<string, Institution>;
 	};
@@ -307,6 +308,7 @@
 										data-cc="true"
 										data-tx={cc.t?.x ?? undefined}
 										data-ty={cc.t?.y ?? undefined}
+										data-relation-class={cc.relation_class ?? undefined}
 										class="font-medium text-blue-700 hover:text-blue-900 hover:underline"
 										>{cc.link_text}</a
 									>

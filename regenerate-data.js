@@ -543,6 +543,35 @@ function resolveVideos(p, byId) {
 // `clientById` are the stripped client records (research_notes etc. removed).
 // `reg` bundles the registry lookups: { landmarkById, artworkById, documentById,
 // videoById, statuesBySubject }.
+// Is `ancId` a direct-line ancestor of `descId`? Walk the descendant's parent chains (father_id /
+// mother_id) upward, cycle-guarded and bounded. Build-time only.
+function isAncestorOf(ancId, descId, byId) {
+	if (!ancId || !descId) return false;
+	const seen = new Set();
+	const stack = [descId];
+	while (stack.length) {
+		const cur = stack.pop();
+		if (!cur || seen.has(cur)) continue;
+		seen.add(cur);
+		if (seen.size > 8000) break; // runaway guard
+		const par = (byId[cur] && byId[cur].parents) || {};
+		if (par.father_id === ancId || par.mother_id === ancId) return true;
+		if (par.father_id) stack.push(par.father_id);
+		if (par.mother_id) stack.push(par.mother_id);
+	}
+	return false;
+}
+// A CC's genealogical laterality, derived from the graph (NEVER from label text). 'direct' = one of
+// the pair is in the other's ancestor chain (parent/grandparent line OR child/grandchild line) — the
+// flight arrives vertically. 'collateral' = uncle/cousin/in-law/orbit — the flight tilts by Δx. This
+// is the honest laterality signal the tidy-tree x-delta can't give (a granddaughter can sit 800 seats
+// from her grandmother's centroid yet is genealogically straight-down).
+function relationClass(sourceId, targetId, byId) {
+	if (!sourceId || !targetId || sourceId === targetId) return 'collateral';
+	if (isAncestorOf(targetId, sourceId, byId) || isAncestorOf(sourceId, targetId, byId)) return 'direct';
+	return 'collateral';
+}
+
 function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 	const context = {};
 	for (const id of contextIds(p, byId)) context[id] = clientById[id];
@@ -570,7 +599,10 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 			// Phase 3b: the CC target's table seat, baked at build time — a CC link is NOT a chip (no
 			// data-flight-id box), so this is how the camera store gets a real `to` for the directional
 			// arrival. y may be null (no time basis: the consumer degrades to a screen-vector-only move).
-			t: tableCoords.get(cc.related_id) ?? null
+			t: tableCoords.get(cc.related_id) ?? null,
+			// direct-vs-collateral, walked from the parent graph (see relationClass). The CC flight reads
+			// this: 'direct' arrives vertical (ignore Δx); 'collateral' tilts by compressed Δx, capped ~45°.
+			relation_class: relationClass(p.id, cc.related_id, byId)
 		};
 		if (talcottOnly) out.hidden_by_default = true;
 		return out;

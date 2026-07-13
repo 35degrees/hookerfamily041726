@@ -78,14 +78,31 @@ export function getFlightKind(): 'spouse' | 'relative' | 'cc' {
 // as below, higher seats as right — the true angle, never quantized) and the old card SLIDES OUT WHOLE
 // the opposite way. The link is a trigger, not an origin.
 const CC_ENTRY_DIST = 1150; // px the card travels from offscreen into the slot (dialable — full vs ~60% vp)
-// screen direction of the world vector; falls back to the screenVector when the target has no time basis.
+const DIRECT_WHISPER_DEG = 6; // a direct-line arrival is ~vertical; a faint Δx-sign lean, never more than this
+const COLLATERAL_CAP_DEG = 45; // the uncle diagonal is the maximum lateral tilt — collateral is capped here
+const CC_COMPRESS_L = 300; // log-compression scale for collateral Δx (near-identity at the uncle's ~50 seats)
+// Screen direction of the CC arrival. Laterality is GRAPH-derived (relationClass), NOT the raw tidy-tree
+// Δx — a direct descendant can sit 800 seats sideways yet is genealogically straight-down:
+//   direct     → near-vertical (±DIRECT_WHISPER_DEG, a whisper of the Δx sign), generations dominate.
+//   collateral → tilt = atan2(log-compressed Δx, Δyears), capped at COLLATERAL_CAP_DEG (uncle preserved).
+// Falls back to the raw screenVector when the target has no time basis (y null).
 function ccScreenDir(): { x: number; y: number } {
 	const m = getCameraMove();
 	if (m?.from && m?.to && m.to.y != null && m.from.y != null) {
-		const vx = m.to.x - m.from.x,
-			vy = m.to.y - m.from.y;
-		const mag = Math.hypot(vx, vy);
-		if (mag > 0.001) return { x: vx / mag, y: vy / mag };
+		const vx = m.to.x - m.from.x;
+		const vy = m.to.y - m.from.y; // years: >0 later (below), <0 earlier (above)
+		const vSign = vy >= 0 ? 1 : -1; // vertical entry side
+		const xSign = vx >= 0 ? 1 : vx < 0 ? -1 : 0;
+		let tiltRad: number;
+		if (m.relationClass === 'direct' || vx === 0) {
+			tiltRad = (xSign * DIRECT_WHISPER_DEG * Math.PI) / 180;
+		} else {
+			const cx = CC_COMPRESS_L * Math.log1p(Math.abs(vx) / CC_COMPRESS_L); // compressed lateral
+			const raw = Math.atan2(cx, Math.max(1, Math.abs(vy)));
+			tiltRad = xSign * Math.min(raw, (COLLATERAL_CAP_DEG * Math.PI) / 180);
+		}
+		// unit vector: lateral = sin(tilt) with Δx's sign; vertical = cos(tilt) with the entry side's sign.
+		return { x: Math.sin(tiltRad), y: vSign * Math.cos(Math.abs(tiltRad)) };
 	}
 	const sv = m?.screenVector;
 	if (sv) {

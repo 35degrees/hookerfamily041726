@@ -26,6 +26,9 @@ export type CameraMove = {
 	duration: number;
 	easing: string;
 	kind: 'spouse' | 'relative' | 'cc'; // 'cc' = a non-chip navigation (the directional arrival class)
+	// CC laterality (graph-derived at build time; see regenerate relationClass). 'direct' → the arrival
+	// flies in vertically (Δx ignored); 'collateral' → it tilts by compressed Δx. Absent for chip navs.
+	relationClass?: 'direct' | 'collateral' | null;
 	seq: number;
 };
 

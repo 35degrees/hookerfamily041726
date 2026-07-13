@@ -104,6 +104,8 @@ export function warmPersonLinks(node: HTMLElement) {
 		// `to` comes from the anchor's own data-tx/ty (baked from the CC target's seat), not a flight box.
 		const isCC = (anchor as HTMLElement).dataset.cc === 'true';
 		const kind = isCC ? 'cc' : relation === 'spouse' ? 'spouse' : 'relative';
+		const rcAttr = (anchor as HTMLElement).dataset.relationClass;
+		const relationClass = isCC ? (rcAttr === 'direct' ? 'direct' : 'collateral') : null;
 		const screenVector = dr
 			? {
 					dx: dr.left + dr.width / 2 - (oc.left + oc.width / 2),
@@ -122,7 +124,7 @@ export function warmPersonLinks(node: HTMLElement) {
 		// duration reuses flight.ts's per-kind curve directly (single source of truth — no drift; the
 		// published value is informational metadata, the real flight clock lives in growFrom).
 		const duration = kind === 'spouse' ? spouseGrowMs(distance) : relativeGrowMs(distance);
-		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind });
+		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass });
 
 		void focusPerson(decodeURIComponent(match[1]));
 	}

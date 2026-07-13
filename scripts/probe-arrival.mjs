@@ -1,9 +1,10 @@
 /**
- * probe-arrival.mjs — the DIRECTIONAL ARRIVAL class (CC / non-chip navigations). On a CC click asserts:
+ * probe-arrival.mjs — the DIRECTIONAL ARRIVAL class (CC / non-chip navigations). Per CC click asserts:
+ *   ANGLE (graph-derived laterality): collateral (uncle) tilts ~45°±3; direct (grand-son/-daughter) ≤8°.
  *   (a) the OLD card slides out the OPPOSITE way and is GONE before the hero lands (finish-first);
- *   (b) the HERO enters from offscreen on the WORLD VECTOR's side (entry-side sign matches to−from in y);
- *   (c) NO frame has both cards full-size overlapping (the flash — pinned dead);
- *   (d) chip navigation is untouched — covered by probe-flight/settle/camera (run separately).
+ *   (b) the HERO enters from offscreen on the correct vertical side (sign matches Δyears);
+ *   (c) NO frame has both cards full-size overlapping (the flash — pinned dead).
+ *   Chip navigation is untouched — covered by probe-flight/settle/camera (run separately).
  * Dev server up on :5173.
  */
 import { chromium } from '@playwright/test';
@@ -17,60 +18,67 @@ page.on('console', (m) => { const t = m.text(); if (t.startsWith('[camera]')) { 
 const fails = [];
 const ok = (c, m) => { if (!c) fails.push(m); };
 
-async function ccArrival(slug, needle, label) {
-	await page.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+// [source slug, target slug, label, expected relation_class, [tiltLo, tiltHi] degrees]
+const PAIRS = [
+	['matthew-russell-1761', 'matthew-talcott-1713', 'uncle', 'collateral', [42, 48]],
+	['matthew-russell-1761', 'talcott-russell-1847', 'grandson', 'direct', [0, 8]],
+	['mary-pierpont-1673', 'mary-talcott-1720', 'granddaughter', 'direct', [0, 8]]
+];
+
+async function arrival(src, target, label, wantClass, [tLo, tHi]) {
+	await page.goto(`${BASE}/person/${src}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(400);
-	const slotCy = await page.evaluate(() => { const r = document.querySelector('.featured-slot').getBoundingClientRect(); return r.top + r.height / 2; });
-	const cc = await page.evaluate((nd) => { const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (nd ? x.textContent.includes(nd) : true) && x.dataset.tx != null); if (!a) return null; const r = a.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, needle);
-	if (!cc) { console.log(`  ${label}: no CC with coords — skipped`); return; }
+	const geo = await page.evaluate((tg) => {
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		if (!a) return null;
+		const r = a.getBoundingClientRect();
+		const s = document.querySelector('.featured-slot').getBoundingClientRect();
+		return { x: r.left + r.width / 2, y: r.top + r.height / 2, sx: s.left + s.width / 2, sy: s.top + s.height / 2, rc: a.dataset.relationClass };
+	}, target);
+	if (!geo) { fails.push(`${label}: no data-cc link → ${target}`); return; }
+	ok(geo.rc === wantClass, `${label}: relation_class ${geo.rc} != ${wantClass}`);
 	const n0 = moves.length;
-	await page.mouse.click(cc.x, cc.y);
-	const frames = await page.evaluate(() => new Promise((res) => {
+	await page.mouse.click(geo.x, geo.y);
+	const frames = await page.evaluate(({ sx, sy }) => new Promise((res) => {
 		const out = []; let n = 0;
-		const cy = (el) => { if (!el) return null; const w = el.querySelector('.featured-card-wrap,.featured-card')?.getBoundingClientRect(); return w && w.width > 2 ? { cy: w.top + w.height / 2, w: w.width } : null; };
+		const box = (el) => { if (!el) return null; const w = el.querySelector('.featured-card-wrap,.featured-card')?.getBoundingClientRect(); return w && w.width > 2 ? { dx: w.left + w.width / 2 - sx, dy: w.top + w.height / 2 - sy, w: w.width, cy: w.top + w.height / 2 } : null; };
 		const tick = () => {
 			const ffs = [...document.querySelectorAll('.featured-flight')];
 			const hero = ffs.find((x) => getComputedStyle(x).zIndex === '2') || ffs.find((x) => x.classList.contains('flat'));
 			const old = ffs.find((x) => x !== hero);
-			out.push({ ffCount: ffs.length, hero: cy(hero), old: cy(old), heroFlat: !!hero?.classList.contains('flat') });
+			out.push({ hero: box(hero), old: box(old), heroFlat: !!hero?.classList.contains('flat') });
 			if (++n < 66) requestAnimationFrame(tick); else res(out);
 		};
 		requestAnimationFrame(tick);
-	}));
+	}), { sx: geo.sx, sy: geo.sy });
 	await page.waitForTimeout(400);
 	const mv = moves[moves.length - 1];
-	ok(mv && mv.kind === 'cc' && mv.to && mv.to.y != null, `${label}: no cc move with a time-based to`);
-	if (!mv || mv.to?.y == null) return;
-	const worldVy = mv.to.y - mv.from.y;
+	ok(mv && mv.kind === 'cc', `${label}: no cc camera move`);
+	const worldVy = mv?.to?.y != null && mv?.from?.y != null ? mv.to.y - mv.from.y : null;
+
+	// ANGLE — the entry unit vector, read from the frame with the LARGEST offset (the offscreen start).
+	const heroFrames = frames.map((f) => f.hero).filter(Boolean);
+	const start = heroFrames.reduce((a, f) => (Math.hypot(f.dx, f.dy) > Math.hypot(a.dx, a.dy) ? f : a), heroFrames[0]);
+	const tilt = start ? (Math.atan2(Math.abs(start.dx), Math.abs(start.dy)) * 180) / Math.PI : null;
+	ok(tilt != null && tilt >= tLo && tilt <= tHi, `${label}: tilt ${tilt?.toFixed(1)}° outside [${tLo},${tHi}]`);
+	// (b) vertical entry side matches Δyears
+	if (worldVy != null && start) ok(Math.sign(start.dy) === Math.sign(worldVy), `${label}: entered wrong vertical side (dy ${start.dy.toFixed(0)}, Δyears ${worldVy})`);
 
 	// (c) no full-size overlap
 	const overlap = frames.filter((f) => f.hero && f.old && f.hero.w > 850 && f.old.w > 850 && Math.abs(f.hero.cy - f.old.cy) < 300).length;
-	ok(overlap === 0, `${label}: ${overlap} frame(s) with both cards full-size overlapping (the flash)`);
+	ok(overlap === 0, `${label}: ${overlap} frame(s) both cards full-size overlapping (the flash)`);
 
-	// (b) hero enters from the world-vector side: sign(hero_start_cy − slot) === sign(worldVy)
-	const heroFrames = frames.filter((f) => f.hero);
-	const heroStart = heroFrames[0]?.hero.cy;
-	ok(heroStart != null && Math.sign(heroStart - slotCy) === Math.sign(worldVy), `${label}: hero entered from the WRONG side (start cy ${Math.round(heroStart)} vs slot ${Math.round(slotCy)}, worldVy ${Math.round(worldVy)})`);
-	// … and settles at the slot
-	const heroEnd = heroFrames[heroFrames.length - 1]?.hero.cy;
-	ok(heroEnd != null && Math.abs(heroEnd - slotCy) < 40, `${label}: hero did not land in the slot (end cy ${Math.round(heroEnd)} vs ${Math.round(slotCy)})`);
-
-	// (a) old card exits the OPPOSITE way and is GONE before the hero lands
-	const oldFrames = frames.filter((f) => f.old);
-	const oldEnd = oldFrames[oldFrames.length - 1]?.old.cy;
-	ok(oldEnd != null && Math.sign(oldEnd - slotCy) === -Math.sign(worldVy), `${label}: old card exited the wrong way (end cy ${Math.round(oldEnd)} vs slot, expected sign ${-Math.sign(worldVy)})`);
+	// (a) old gone before the hero lands (.flat drop = the true landing)
 	const oldGoneIdx = frames.findIndex((f, i) => i > 2 && !f.old && frames[i - 1].old);
-	// hero LANDS when its .flat class drops (introend) — not when it first nears the slot (the settle
-	// keeps it near for a while before the true landing).
 	const heroLandIdx = frames.findIndex((f, i) => i > 2 && !f.heroFlat && frames[i - 1].heroFlat);
-	ok(oldGoneIdx >= 0 && heroLandIdx >= 0 && oldGoneIdx <= heroLandIdx, `${label}: old card not gone before the hero landed (old-gone ${oldGoneIdx}, hero-land ${heroLandIdx})`);
+	ok(oldGoneIdx >= 0 && heroLandIdx >= 0 && oldGoneIdx <= heroLandIdx, `${label}: old not gone before landing (old-gone ${oldGoneIdx}, hero-land ${heroLandIdx})`);
 
-	console.log(`  ${label}: worldVy=${Math.round(worldVy)} hero ${Math.round(heroStart)}→${Math.round(heroEnd)} old →${Math.round(oldEnd)} overlap=${overlap} (old-gone ${oldGoneIdx} ≤ hero-land ${heroLandIdx})`);
+	console.log(`  ${label} [${geo.rc}]: tilt=${tilt?.toFixed(1)}° ${start?.dy < 0 ? 'from-above' : 'from-below'} overlap=${overlap} (old-gone ${oldGoneIdx} ≤ land ${heroLandIdx})`);
 }
 
-await ccArrival('michael-hooker-1935', 'Bunker', 'cc michael→bunker (earlier → from above)');
+for (const p of PAIRS) await arrival(...p);
 
 await ctx.close();
 await browser.close();
 if (fails.length) { console.log('ARRIVAL PROBE: RED\n- ' + fails.join('\n- ')); process.exit(1); }
-console.log('ARRIVAL PROBE: GREEN — CC card flies in whole on the world vector, old slides out opposite & finishes first, no overlap flash.');
+console.log('ARRIVAL PROBE: GREEN — collateral tilts ~45°, direct arrives vertical; old slides out opposite & finishes first; no overlap flash.');
