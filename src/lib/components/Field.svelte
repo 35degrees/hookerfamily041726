@@ -14,7 +14,8 @@
 
 	const active = $derived(GROUNDS[groundState.idx]);
 	const showField = $derived(active.kind !== 'light');
-	const isLedger = $derived(active.kind === 'ledger');
+	const isLedger = $derived(active.kind === 'ledger'); // rules only on the ledger
+	const isPaper = $derived(active.kind === 'paper'); // aged paper: sepia + rich foxing, no rules
 	function cycleGround() {
 		groundState.idx = (groundState.idx + 1) % GROUNDS.length;
 	}
@@ -88,6 +89,13 @@
 		{ count: 30, sizeMin: 3, sizeMax: 5, op: 0.14, glowMul: 0, twMin: 0, twMax: 0, twLo: 1 },
 		{ count: 16, sizeMin: 4, sizeMax: 6, op: 0.18, glowMul: 0, twMin: 0, twMax: 0, twLo: 1 }
 	];
+	// AGED PAPER foxing — richer & more authentic: dense fine specks + a scatter of larger soft diffuse
+	// blotches, warm rust, varied alpha. Real foxing clusters and varies in size/intensity.
+	const FOXING_PAPER = [
+		{ count: 70, sizeMin: 1.5, sizeMax: 4, op: 0.12, glowMul: 0, twMin: 0, twMax: 0, twLo: 1 }, // fine specks
+		{ count: 44, sizeMin: 4, sizeMax: 9, op: 0.16, glowMul: 0, twMin: 0, twMax: 0, twLo: 1 }, // medium spots
+		{ count: 20, sizeMin: 9, sizeMax: 20, op: 0.13, glowMul: 0, twMin: 0, twMax: 0, twLo: 1 } // large soft blotches
+	];
 	function makeMotes(seed: number, l: (typeof DARK_SKIN)[number]): Mote[] {
 		const r = mulberry32(seed);
 		return Array.from({ length: l.count }, () => {
@@ -97,7 +105,7 @@
 			return { x: r() * 100, y: r() * 100, size, op, glow: size * l.glowMul, twLo: op * l.twLo, twDur: l.twMin + r() * (l.twMax - l.twMin), twDelay: r() * 8, edge: 215 - r() * 55, radius: shape < 0.34 ? '50%' : shape < 0.67 ? '46% 54% 52% 48%' : '54% 46% 48% 52%' };
 		});
 	}
-	const skinLayers = $derived(isLedger ? FOXING_SKIN : DARK_SKIN);
+	const skinLayers = $derived(isPaper ? FOXING_PAPER : isLedger ? FOXING_SKIN : DARK_SKIN);
 	const motes = $derived(MOTE_LAYERS.map((m, i) => makeMotes(m.seed, skinLayers[i])));
 
 	// ── the FLIP: on an anchor change, jump each layer to the OLD person's mapping then animate to 0 on
@@ -145,7 +153,7 @@
 </script>
 
 {#if showField}
-	<div class="field" class:dark={active.kind === 'dark'} class:ledger={isLedger} aria-hidden="true">
+	<div class="field" class:dark={active.kind === 'dark'} class:ledger={isLedger} class:paper={isPaper} aria-hidden="true">
 		{#each MOTE_LAYERS as _meta, i (i)}
 			<div class="layer" style:transform={`translate3d(${flip[i].x}px, ${flip[i].y}px, 0)`} style:transition={`transform ${dur}ms ${easeCss()}`}>
 				{#each motes[i] as m, j (j)}
@@ -203,6 +211,17 @@
 			radial-gradient(70% 52% at 46% 94%, rgba(170, 150, 112, 0.15), transparent 72%),
 			var(--ground, #ece3d2);
 	}
+	/* AGED PAPER — warmer/more-worn sepia: stronger uneven mottle (aging stains) + a deeper corner
+	   vignette (browned edges), so it reads as a genuinely old sheet. The foxing does the rest. */
+	.field.paper {
+		background:
+			radial-gradient(130% 130% at 50% 40%, transparent 46%, rgba(74, 50, 20, 0.14) 100%),
+			radial-gradient(50% 48% at 18% 22%, rgba(150, 118, 72, 0.22), transparent 68%),
+			radial-gradient(46% 54% at 84% 30%, rgba(138, 106, 60, 0.18), transparent 70%),
+			radial-gradient(58% 50% at 72% 82%, rgba(160, 128, 80, 0.2), transparent 70%),
+			radial-gradient(52% 46% at 30% 88%, rgba(146, 112, 66, 0.19), transparent 72%),
+			var(--ground, #e0cfa9);
+	}
 	.layer {
 		position: absolute;
 		inset: -100%;
@@ -230,9 +249,15 @@
 			opacity: var(--op);
 		}
 	}
-	.field.ledger .mote {
-		background: radial-gradient(circle, rgba(150, 92, 58, 0.9), rgba(126, 78, 48, 0.55) 55%, transparent 74%);
+	.field.ledger .mote,
+	.field.paper .mote {
+		/* rust foxing — warm reddish-brown, soft-edged; the larger paper blotches read as diffuse stains. */
+		background: radial-gradient(circle, rgba(150, 92, 58, 0.9), rgba(126, 78, 48, 0.5) 52%, transparent 76%);
 		opacity: var(--op);
+	}
+	/* the aged-paper large blotches are extra-diffuse (foxing bleeds into the fibre) */
+	.field.paper .mote {
+		background: radial-gradient(circle, rgba(146, 88, 54, 0.82), rgba(120, 74, 46, 0.42) 48%, transparent 78%);
 	}
 	/* PRESENCE + INK: decade rules thicker/warmer; a subtle dashed break on ~1-in-4 (ink gap). */
 	.rule-h {

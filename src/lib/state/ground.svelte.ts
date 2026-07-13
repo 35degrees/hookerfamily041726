@@ -6,7 +6,7 @@
 // rules + red verticals + rust foxing. The toggle cycles Light → Midnight → Pine → Ledger.
 export type Skin = {
 	name: string;
-	kind: 'light' | 'dark' | 'ledger';
+	kind: 'light' | 'dark' | 'ledger' | 'paper';
 	ground: string | null; // base --ground colour (null = light, no field)
 	swatch: string; // the toggle-pill dot
 };
@@ -15,7 +15,8 @@ export const GROUNDS: Skin[] = [
 	{ name: 'Light', kind: 'light', ground: null, swatch: '#e7e5e4' }, // no field — original render
 	{ name: 'Midnight', kind: 'dark', ground: '#0f1626', swatch: '#1a2740' },
 	{ name: 'Pine', kind: 'dark', ground: '#10241b', swatch: '#1c3a2b' },
-	{ name: 'Ledger', kind: 'ledger', ground: '#ece3d2', swatch: '#d8c9a8' } // aged paper
+	{ name: 'Ledger', kind: 'ledger', ground: '#ece3d2', swatch: '#d8c9a8' }, // paper + decade rules
+	{ name: 'Aged Paper', kind: 'paper', ground: '#e0cfa9', swatch: '#c6ac78' } // sepia + foxing, no rules
 ];
 
 export const groundState = $state({ idx: 0 }); // default = Light
