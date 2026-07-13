@@ -73,7 +73,8 @@ export function warmPersonLinks(node: HTMLElement) {
 		// brisk in-corner swap; everything else (parent/child boxes, cross-links) travels at
 		// the near-original parent/child speed.
 		const relation = anchor.getAttribute('data-relation');
-		captureFlightKind(relation === 'spouse' ? 'spouse' : 'relative');
+		const ccNav = (anchor as HTMLElement).dataset.cc === 'true';
+		captureFlightKind(ccNav ? 'cc' : relation === 'spouse' ? 'spouse' : 'relative');
 		// BUG 1: remember which box was clicked so flyOut keeps it invisible — it's becoming the
 		// featured card via the morph, and a second visible copy is the ghost. (No imperative hide
 		// here: the clicked chip stays VISIBLE through the fetch, then the growFrom card — which

@@ -61,15 +61,45 @@ export function captureFlightOrigin(rect: DOMRect | null): void {
 // morph; a parent/child click is a real-distance travel that was never meant to be slowed), and
 // distance can't tell them apart (a docked chip is ~as far from the card's top-left as a child
 // box). So the click handler tags the flight; growFrom + shrinkTo pick their durations from it.
-let flightKind: 'spouse' | 'relative' = 'relative';
+let flightKind: 'spouse' | 'relative' | 'cc' = 'relative';
 
-export function captureFlightKind(kind: 'spouse' | 'relative'): void {
+export function captureFlightKind(kind: 'spouse' | 'relative' | 'cc'): void {
 	flightKind = kind;
 }
 // Read the current nav's kind. Stable through the whole flight — clearFlightCaptures (1 rAF after
 // nav) does NOT reset flightKind, so late lifecycle handlers (introend) can still branch on it.
-export function getFlightKind(): 'spouse' | 'relative' {
+export function getFlightKind(): 'spouse' | 'relative' | 'cc' {
 	return flightKind;
+}
+
+// ── DIRECTIONAL ARRIVAL (the 'cc' class — a NON-CHIP navigation) ────────────────────────────────
+// A CC target isn't a chip: no origin box to grow from, no destination box to shrink into. So the new
+// card FLIES IN WHOLE from offscreen along the WORLD vector (to − from in table space; later years read
+// as below, higher seats as right — the true angle, never quantized) and the old card SLIDES OUT WHOLE
+// the opposite way. The link is a trigger, not an origin.
+const CC_ENTRY_DIST = 1150; // px the card travels from offscreen into the slot (dialable — full vs ~60% vp)
+// screen direction of the world vector; falls back to the screenVector when the target has no time basis.
+function ccScreenDir(): { x: number; y: number } {
+	const m = getCameraMove();
+	if (m?.from && m?.to && m.to.y != null && m.from.y != null) {
+		const vx = m.to.x - m.from.x,
+			vy = m.to.y - m.from.y;
+		const mag = Math.hypot(vx, vy);
+		if (mag > 0.001) return { x: vx / mag, y: vy / mag };
+	}
+	const sv = m?.screenVector;
+	if (sv) {
+		const mag = Math.hypot(sv.dx, sv.dy);
+		if (mag > 0.001) return { x: sv.dx / mag, y: sv.dy / mag };
+	}
+	return { x: 0, y: 1 }; // default: arrive from below
+}
+// CC duration: distance-scaled through the velocity family, floored so a same-era jump still reads as a
+// real flight and capped so a gen-1→gen-12 dive reads LONG (a long journey), never a strobe.
+function ccDurationMs(): number {
+	const m = getCameraMove();
+	const wy = m?.to?.y != null && m?.from?.y != null ? Math.abs(m.to.y - m.from.y) : 0; // years apart
+	return Math.min(950, Math.max(500, 500 + wy * 1.6));
 }
 
 
@@ -203,16 +233,22 @@ export function growFrom(node: Element) {
 	const dest = node.getBoundingClientRect();
 	if (!dest.width || !dest.height) return { duration: 0 };
 
-	const dx = origin.left - dest.left;
-	const dy = origin.top - dest.top;
-	const sx = origin.width / dest.width;
-	const sy = origin.height / dest.height;
+	// CC (directional arrival): IGNORE the click origin (a text-link rect) — the card enters WHOLE from
+	// offscreen along the world vector, full size (no scale morph), and settles into the slot.
+	const cc = flightKind === 'cc';
+	const ccDir = cc ? ccScreenDir() : { x: 0, y: 0 };
+	const dx = cc ? ccDir.x * CC_ENTRY_DIST : origin.left - dest.left;
+	const dy = cc ? ccDir.y * CC_ENTRY_DIST : origin.top - dest.top;
+	const sx = cc ? 1 : origin.width / dest.width;
+	const sy = cc ? 1 : origin.height / dest.height;
 	const distance = Math.hypot(dx, dy);
 
 	// Distance-scaled; the floor/slope depend on the flight kind (spouse = brisk in-corner morph,
-	// parent/child = velocity-capped travel).
+	// parent/child = velocity-capped travel, cc = a long directional journey from offscreen).
 	let duration: number;
-	if (flightKind === 'spouse') {
+	if (cc) {
+		duration = ccDurationMs();
+	} else if (flightKind === 'spouse') {
 		// Extend the hero to honor the demote's honest-velocity clock (below), so the two share one clock
 		// and neither the growing hero nor the shrinking demote ever exceeds the ceiling. The demote starts
 		// at THIS slot (dest) and shrinks into the pivot's notch seat; its max-corner travel sets the floor.
@@ -282,6 +318,21 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	const el = node as HTMLElement;
 	const card = node.getBoundingClientRect(); // the card's START rect (center) — stable through the flight
 	if (!card.width || !card.height) return { duration: 0 };
+	// CC (directional arrival): the old card leaves the NEIGHBOURHOOD, not landing in it — depart WHOLE
+	// (no chip-face, no destination box), sliding OFFSCREEN the OPPOSITE way the new card enters, shrinking
+	// modestly, finish-first (heroDur − 60ms). Non-degenerate exit so Svelte cleans it.
+	if (flightKind === 'cc') {
+		const dir = ccScreenDir();
+		const ex = -dir.x * CC_ENTRY_DIST, ey = -dir.y * CC_ENTRY_DIST; // opposite the hero's entry
+		return {
+			duration: Math.max(300, ccDurationMs() - 60),
+			easing: cubicOut,
+			// u = 1 − t (out): 0 at rest → 1 gone. Rides z:1 UNDER the incoming hero; slides out + shrinks to
+			// ~0.9; opacity holds then fades over the last third (it is offscreen by then anyway).
+			css: (t: number, u: number) =>
+				`z-index: 1; opacity: ${Math.min(1, t * 3)}; transform-origin: center; transform: translate(${u * ex}px, ${u * ey}px) scale(${1 - u * 0.1});`
+		};
+	}
 	const relative = flightKind === 'relative';
 	// The demoting card's chip-face (a PersonBox, natural 220×75) — counter-scaled per frame below so
 	// it renders undistorted inside the shell's non-uniform morph. Cached once. BOTH kinds now use it:
