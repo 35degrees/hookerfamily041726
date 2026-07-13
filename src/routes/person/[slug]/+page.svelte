@@ -152,14 +152,16 @@
 			// settling DOWN into place, instead of a flat opacity pop. Parents rise UP from below into
 			// their slot (morphIn); children settle DOWN from above into theirs. Only on a real reveal
 			// (fadeMs > 0) — the atomic-swap pivot reveal (fadeMs 0) must stay an instant STEP, never a slide.
-			if (el.dataset.flightDir === 'down' && fadeMs > 0) {
-				// MIRROR the parents' no-origin entrance EXACTLY: measured 150px travel, 300ms, easeOutCubic
-				// (= Svelte cubicOut, the same curve morphIn uses) — same magnitude AND the same gradual
-				// deceleration tail, so children settle DOWN from above just as parents rise UP from below.
-				// The old 28px / hard-out ease covered ~1/3 the distance and "hit a wall".
+			if ((el.dataset.flightDir === 'down' || el.dataset.flightDir === 'up') && fadeMs > 0) {
+				// DIRECTIONAL entrance, both rows now symmetric: children (dir "down") settle DOWN from above
+				// (−150), parents (dir "up") rise UP from below (+150) — same 150px / 300ms / cubicOut curve
+				// morphIn uses. When a held parent reveals HERE (CC arrival), it emanates from the landed card
+				// exactly as the children do, instead of the flat opacity fade it used to get. 150px travel,
+				// gradual deceleration tail (the old 28px / hard-out covered ~1/3 the distance, "hit a wall").
+				const fromY = el.dataset.flightDir === 'down' ? -150 : 150;
 				el.animate(
 					[
-						{ opacity: 0, transform: 'translateY(-150px)' },
+						{ opacity: 0, transform: `translateY(${fromY}px)` },
 						{ opacity: 1, transform: 'translateY(0)' }
 					],
 					{ duration: 300, easing: 'cubic-bezier(0.33, 1, 0.68, 1)' }

@@ -531,6 +531,14 @@ export function morphIn(node: Element, params: { id: string }) {
 		el.dataset.pending = '';
 		return { duration: 0 };
 	}
+	// CC ARRIVAL (unfurl symmetry): a parent must NOT fade in mid-flight. Hold it hidden (pending) exactly
+	// like a child, so it rises out of the LANDED card at the reveal — parents and children emanate together
+	// on the introend/final-position signal, never at flight-start. Chip navs keep their mid-flight morph.
+	if (getFlightKind() === 'cc') {
+		el.style.opacity = '0';
+		el.dataset.pending = '';
+		return { duration: 0 };
+	}
 	const dest = node.getBoundingClientRect();
 	const old = rectSnapshot.get(params.id);
 	if (old && dest.width && dest.height) {

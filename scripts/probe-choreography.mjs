@@ -24,12 +24,11 @@ async function sampleFlight(clickTarget, byHref) {
 	await page.mouse.click(t.x, t.y);
 	const frames = await page.evaluate(() => new Promise((res) => {
 		const out = []; let n = 0;
+		const vc = (sel) => { let v = 0; for (const c of document.querySelectorAll(sel)) { const r = c.getBoundingClientRect(); const op = parseFloat(getComputedStyle(c).opacity); if (r.width > 2 && op > 0.05 && r.bottom > 0 && r.top < 1000) v++; } return v; };
 		const tick = () => {
-			const chips = [...document.querySelectorAll('.parents-slot .flight, .children-slot .flight')];
-			let vis = 0;
-			for (const c of chips) { const r = c.getBoundingClientRect(); const op = parseFloat(getComputedStyle(c).opacity); if (r.width > 2 && op > 0.05 && r.bottom > 0 && r.top < 1000) vis++; }
+			const p = vc('.parents-slot .flight'), c = vc('.children-slot .flight');
 			const flying = !![...document.querySelectorAll('.featured-flight')].find((x) => x.classList.contains('flat'));
-			out.push({ vis, flying });
+			out.push({ p, c, vis: p + c, flying });
 			if (++n < 100) requestAnimationFrame(tick); else res(out);
 		};
 		requestAnimationFrame(tick);
@@ -38,19 +37,22 @@ async function sampleFlight(clickTarget, byHref) {
 	return frames;
 }
 
-// CC nav — michael → Rev. Bunker Gay (far, both cards have rosters)
-await page.goto(`${BASE}/person/michael-hooker-1935`, { waitUntil: 'networkidle' });
+// CC nav — mary-pierpont → mary-talcott (the destination has parents, so the parent-row unfurl is tested)
+await page.goto(`${BASE}/person/mary-pierpont-1673`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
-const cc = await sampleFlight('/person/bunker-gay-1735', true);
-ok(cc, 'CC: bunker link not found');
+const cc = await sampleFlight('/person/mary-talcott-1720', true);
+ok(cc, 'CC: mary-talcott link not found');
 if (cc) {
 	const flightIdx = cc.map((f, i) => ({ f, i })).filter((x) => x.f.flying).map((x) => x.i);
-	const start = flightIdx[0], end = flightIdx[flightIdx.length - 1];
-	const maxDuring = Math.max(...cc.slice(start, end + 1).map((f) => f.vis), 0);
-	ok(maxDuring === 0, `CC: ${maxDuring} chip(s) visible during the flight window (want 0 — gather/unfurl)`);
-	const afterLanding = Math.max(...cc.slice(end + 1).map((f) => f.vis), 0);
+	const start = flightIdx[0], landing = flightIdx[flightIdx.length - 1] + 1; // introend / final-position signal
+	// PARENTS and CHILDREN are BOTH gated on the landing signal — zero pixels before it (unfurl symmetry).
+	const pBefore = Math.max(...cc.slice(0, landing).map((f) => f.p), 0);
+	const cBefore = Math.max(...cc.slice(0, landing).map((f) => f.c), 0);
+	ok(pBefore === 0, `CC: ${pBefore} PARENT chip(s) visible before the landing signal (want 0 — unfurl symmetry)`);
+	ok(cBefore === 0, `CC: ${cBefore} CHILD chip(s) visible before the landing signal (want 0)`);
+	const afterLanding = Math.max(...cc.slice(landing).map((f) => f.vis), 0);
 	ok(afterLanding > 0, `CC: roster did not unfurl after landing (${afterLanding} chips — deleted, not unfurled?)`);
-	console.log(`  CC (michael→bunker): flight frames ${start}-${end}, max chips DURING=${maxDuring}, after-landing=${afterLanding}`);
+	console.log(`  CC (mary-pierpont→mary-talcott): landing @${landing}, parents-before=${pBefore}, children-before=${cBefore}, after-landing=${afterLanding}`);
 }
 
 // CHIP nav — a parent/child click must STILL reveal its roster during the flight (bare-screen gap closed)
