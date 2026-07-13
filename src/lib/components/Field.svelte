@@ -4,6 +4,7 @@
 	// clock as the flight (§17 one-clock doctrine). Cards/chips live above at depth 0 and never parallax.
 	import { onMount } from 'svelte';
 	import { subscribeCameraMove, type CameraMove } from '$lib/state/camera';
+	import { GROUNDS, groundState } from '$lib/state/ground.svelte';
 	import { prefersReducedMotion } from 'svelte/motion';
 
 	// ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -31,11 +32,6 @@
 	// The world drifts WITH the hero's screenVector (which points opposite the focus shift): a child sits
 	// below → hero travels up → world drifts up. One flag — flip to -1 if the feel reads inverted.
 	const PARALLAX_SIGN = 1;
-	// Live ground A/B — the toggle pill cycles these (Sam picks by eye on localhost). Add more if wanted.
-	const GROUNDS = [
-		{ name: 'Midnight', value: '#0f1626', swatch: '#1a2740' },
-		{ name: 'Pine', value: '#10241b', swatch: '#1c3a2b' }
-	];
 	// ─────────────────────────────────────────────────────────────────────────────────────────────
 
 	// Deterministic PRNG (mulberry32) — stable pattern, no Math.random hydrate flicker. (World-space
@@ -75,30 +71,18 @@
 	let move = $state<CameraMove | null>(null); // latest move — drives the transition duration/easing
 	const easeCss = (name?: string) => (name === 'linear' ? 'linear' : 'cubic-bezier(0.33, 1, 0.68, 1)');
 
-	// Ground toggle: cycle GROUNDS and write --ground on :root, remembered in localStorage.
-	let groundIdx = $state(0);
-	function applyGround(i: number) {
-		if (typeof document === 'undefined') return;
-		document.documentElement.style.setProperty('--ground', GROUNDS[i].value);
-		try {
-			localStorage.setItem('field-ground', String(i));
-		} catch {
-			/* ignore */
-		}
-	}
+	// Ground choice lives in module state (persists across navigations, resets on reload). LIGHT (idx 0,
+	// value null) means NO field mounts — the pre-field approved render. isDark gates the whole field.
+	const active = $derived(GROUNDS[groundState.idx]);
+	const isDark = $derived(active.value !== null);
 	function cycleGround() {
-		groundIdx = (groundIdx + 1) % GROUNDS.length;
-		applyGround(groundIdx);
+		groundState.idx = (groundState.idx + 1) % GROUNDS.length;
 	}
-
-	onMount(() => {
-		try {
-			const saved = Number(localStorage.getItem('field-ground'));
-			if (Number.isInteger(saved) && saved >= 0 && saved < GROUNDS.length) groundIdx = saved;
-		} catch {
-			/* ignore */
-		}
-		applyGround(groundIdx);
+	// Write / clear the --ground token on :root reactively as the choice changes.
+	$effect(() => {
+		if (typeof document === 'undefined') return;
+		if (active.value) document.documentElement.style.setProperty('--ground', active.value);
+		else document.documentElement.style.removeProperty('--ground');
 	});
 
 	onMount(() => {
@@ -116,8 +100,9 @@
 	});
 </script>
 
-<div class="field" aria-hidden="true">
-	{#each LAYERS as _layer, i (i)}
+{#if isDark}
+	<div class="field" aria-hidden="true">
+		{#each LAYERS as _layer, i (i)}
 		<div
 			class="layer"
 			style:transform={`translate3d(${offsets[i].x}px, ${offsets[i].y}px, 0)`}
@@ -138,20 +123,21 @@
 					style:--edge={m.edge}
 				></span>
 			{/each}
-		</div>
-	{/each}
-</div>
+			</div>
+		{/each}
+	</div>
+{/if}
 
-<!-- Live ground toggle (dialing aid): cycles midnight ↔ pine on click, remembered per browser. -->
+<!-- Ground toggle (Sam's workbench control): cycles Light → Midnight → Pine. Light = no field. -->
 <button
 	class="ground-toggle"
 	type="button"
 	title="Toggle field ground"
-	aria-label={`Field ground: ${GROUNDS[groundIdx].name} — click to change`}
+	aria-label={`Field ground: ${active.name} — click to change`}
 	onclick={cycleGround}
 >
-	<span class="swatch" style:background={GROUNDS[groundIdx].swatch}></span>
-	{GROUNDS[groundIdx].name}
+	<span class="swatch" style:background={active.swatch}></span>
+	{active.name}
 </button>
 
 <style>

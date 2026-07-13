@@ -72,9 +72,16 @@ async function step(label, sel, expectDySign) {
 
 await page.goto(`${BASE}/person/michael-hooker-1935`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
+// LIGHT is the default (no field) — toggle once (Light → Midnight) so the field mounts. The choice is
+// module state, so it persists across the john-morgan nav below.
+await page.click('.ground-toggle');
+await page.waitForTimeout(200);
+ok(await page.evaluate(() => !!document.querySelector('.field')), 'field did not mount after toggling to a dark ground');
 await step('child (world drifts UP)', '.children-slot a', -1); // hero up → world up
 await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
+await page.click('.ground-toggle'); // goto is a full reload → module state reset to Light; re-arm dark
+await page.waitForTimeout(200);
 await step('spouse (lateral)', '.spouse-notch .flight a', 0);
 
 await ctx.close();
