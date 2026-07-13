@@ -30,7 +30,7 @@ function easeOutBack(u: number, s: number): number {
 // solve s per-flight to hit it — a short swap carries less, a far one is capped, never a 40px lunge.
 function settleBackFor(distance: number): number {
 	if (distance < 1) return 0;
-	const targetPx = Math.min(6, Math.max(5, distance * 0.012)); // whole-path edge excursion, capped 5–6px
+	const targetPx = Math.min(5.4, Math.max(4.5, distance * 0.011)); // whole-path along-axis carry, ~10% softer (4.5–5.4px)
 	const targetG = Math.min(0.09, targetPx / distance); // overshoot as a fraction of the translate
 	let s = 0.8;
 	for (let i = 0; i < 8; i++) {
