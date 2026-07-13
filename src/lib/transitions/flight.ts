@@ -603,6 +603,14 @@ export function slideChip(_node: Element) {
  */
 export function flyOut(_node: Element, params: { key: string }) {
 	if (prefersReducedMotion.current) return { duration: 0 };
+	// CC ARRIVAL (item 4): the roster already GATHERED into the card (faded to nothing) in the pre-flight
+	// beat. These leavers must NOT re-animate from opacity 1 (that re-showed them mid-flight — the bug);
+	// hold them INVISIBLE, pinned out of flow, while Svelte removes them. No chip pixels during the flight.
+	if (getFlightKind() === 'cc') {
+		const s = rectSnapshot.get(params.key);
+		const p = s ? `position: fixed; left: ${s.left}px; top: ${s.top}px; width: ${s.width}px; height: ${s.height}px; margin: 0; ` : '';
+		return { duration: 200, easing: cubicOut, css: () => `${p}opacity: 0;` };
+	}
 	// BUG 3: pin at the pre-reflow viewport rect so the box leaves layout flow at the right spot
 	// (incoming boxes settle without being shoved). Replaces flip's fix(), which mis-pinned.
 	const snap = rectSnapshot.get(params.key);

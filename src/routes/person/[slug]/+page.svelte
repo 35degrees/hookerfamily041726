@@ -19,8 +19,10 @@
 		shrinkTo,
 		markPending,
 		morphIn,
-		getPivotId
+		getPivotId,
+		getFlightKind
 	} from '$lib/transitions/flight';
+	import { gatherState } from '$lib/state/gather.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -191,6 +193,10 @@
 		//     card's OWN top-right corner, directly under the card's flight path. Revealed early they
 		//     flash in, get covered by the rising card, then re-emerge — the exact bug this gate
 		//     prevents. They wait for the card to land (the featuredLanded effect reveals them).
+		// CC ARRIVAL (item 4, gather → fly → UNFURL): hold the ENTIRE roster until landing — no early
+		// reveal. The card flies alone through the passage (a beat of stillness is desirable), then the
+		// roster unfurls out of the new card at landing (the safety-net reveal, its inverse gesture).
+		if (getFlightKind() === 'cc') return;
 		const pivot = getPivotId();
 		revealPending((el) => el.dataset.flightId !== pivot && el.dataset.flightDir !== 'lateral');
 	}
@@ -363,7 +369,7 @@
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <Passage />
 <div class="page-container" use:warmPersonLinks>
-	<div class="parents-slot">
+	<div class="parents-slot" class:gathering={gatherState.active}>
 		{#each roster.parents as parent (parent.id)}
 			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors;
 			     on leave, out:flyOut pins this box position:fixed at its click-captured rect, which
@@ -535,7 +541,7 @@
 		</div>
 	{/if}
 
-	<div class="children-slot">
+	<div class="children-slot" class:gathering={gatherState.active}>
 		{#each roster.children as child (child.id)}
 			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors
 			     (children shared across a spouse swap); out:flyOut pins a LEAVER position:fixed at
@@ -769,6 +775,24 @@
 	   this element is transformed during the slide, keeping the .flight box's rect true. */
 	.chip-slide {
 		display: flex;
+	}
+
+	/* GATHER (item 4, CC arrivals only): before the lone card flies, the roster collapses INTO it —
+	   parents sink DOWN toward the card, children rise UP toward it, both fading. .gathering is set only
+	   on a CC nav (navigate.ts → gatherState); chip navs never see it, so their reveals are untouched. */
+	.parents-slot.gathering .flight {
+		transform: translateY(58px);
+		opacity: 0;
+		transition:
+			transform 140ms cubic-bezier(0.4, 0, 1, 1),
+			opacity 130ms ease-in;
+	}
+	.children-slot.gathering .flight {
+		transform: translateY(-58px);
+		opacity: 0;
+		transition:
+			transform 140ms cubic-bezier(0.4, 0, 1, 1),
+			opacity 130ms ease-in;
 	}
 
 	.parents-slot {

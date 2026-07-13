@@ -12,8 +12,10 @@
  * popstate (back/forward) is reconciled in +page.svelte by watching the URL.
  */
 import { pushState } from '$app/navigation';
+import { prefersReducedMotion } from 'svelte/motion';
 import { featured } from './featured.svelte';
 import { publishCameraMove } from './camera';
+import { beginGather, endGather, GATHER_MS } from './gather.svelte';
 import { fetchFeatured } from '$lib/data/buildFeatured';
 import {
 	captureFlightOrigin,
@@ -126,7 +128,21 @@ export function warmPersonLinks(node: HTMLElement) {
 		const duration = kind === 'spouse' ? spouseGrowMs(distance) : relativeGrowMs(distance);
 		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass });
 
-		void focusPerson(decodeURIComponent(match[1]));
+		const slug = decodeURIComponent(match[1]);
+		// GATHER → FLY (item 4): a CC arrival plays a pre-flight beat — the current roster slides into the
+		// card and fades — THEN the lone card departs. focusPerson is held GATHER_MS so the beat shows; the
+		// incoming roster is held pending and unfurls at landing. Chip navs (and reduced motion) fly at once.
+		if (isCC && !prefersReducedMotion.current) {
+			beginGather();
+			setTimeout(() => {
+				void focusPerson(slug);
+				// End the gather once the flight has taken over — one frame after the state swap, alongside the
+				// capture clear — so the NEW roster (held pending) isn't born in the gathered pose.
+				requestAnimationFrame(() => endGather());
+			}, GATHER_MS);
+			return;
+		}
+		void focusPerson(slug);
 	}
 	node.addEventListener('click', onClick);
 	return { destroy: () => node.removeEventListener('click', onClick) };
