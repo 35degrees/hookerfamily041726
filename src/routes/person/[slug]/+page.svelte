@@ -22,7 +22,7 @@
 		getPivotId,
 		getFlightKind
 	} from '$lib/transitions/flight';
-	import { gatherState } from '$lib/state/gather.svelte';
+	import { ccRoster } from '$lib/state/ccRoster.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -369,7 +369,7 @@
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <Passage />
 <div class="page-container" use:warmPersonLinks>
-	<div class="parents-slot" class:gathering={gatherState.active}>
+	<div class="parents-slot" class:cc-hidden={ccRoster.hidden}>
 		{#each roster.parents as parent (parent.id)}
 			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors;
 			     on leave, out:flyOut pins this box position:fixed at its click-captured rect, which
@@ -541,7 +541,7 @@
 		</div>
 	{/if}
 
-	<div class="children-slot" class:gathering={gatherState.active}>
+	<div class="children-slot" class:cc-hidden={ccRoster.hidden}>
 		{#each roster.children as child (child.id)}
 			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors
 			     (children shared across a spouse swap); out:flyOut pins a LEAVER position:fixed at
@@ -777,22 +777,14 @@
 		display: flex;
 	}
 
-	/* GATHER (item 4, CC arrivals only): before the lone card flies, the roster collapses INTO it —
-	   parents sink DOWN toward the card, children rise UP toward it, both fading. .gathering is set only
-	   on a CC nav (navigate.ts → gatherState); chip navs never see it, so their reveals are untouched. */
-	.parents-slot.gathering .flight {
-		transform: translateY(58px);
-		opacity: 0;
-		transition:
-			transform 140ms cubic-bezier(0.4, 0, 1, 1),
-			opacity 130ms ease-in;
-	}
-	.children-slot.gathering .flight {
-		transform: translateY(-58px);
-		opacity: 0;
-		transition:
-			transform 140ms cubic-bezier(0.4, 0, 1, 1),
-			opacity 130ms ease-in;
+	/* HARD CUT (item A, CC arrivals only): the roster is removed the SAME frame the flight origin is
+	   captured — instant opacity 0, NO transition (no fade, no beat). Layout is preserved (the slot keeps
+	   its reserved height, so the card never jumps). .cc-hidden is set only on a CC nav (navigate.ts →
+	   ccRoster); chip navs never see it, so their reveals are untouched. */
+	.parents-slot.cc-hidden .flight,
+	.children-slot.cc-hidden .flight {
+		opacity: 0 !important;
+		transition: none !important;
 	}
 
 	.parents-slot {

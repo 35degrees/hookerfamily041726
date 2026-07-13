@@ -15,7 +15,7 @@ import { pushState } from '$app/navigation';
 import { prefersReducedMotion } from 'svelte/motion';
 import { featured } from './featured.svelte';
 import { publishCameraMove } from './camera';
-import { beginGather, endGather, GATHER_MS } from './gather.svelte';
+import { hideCcRoster, showCcRoster } from './ccRoster.svelte';
 import { fetchFeatured } from '$lib/data/buildFeatured';
 import {
 	captureFlightOrigin,
@@ -129,17 +129,13 @@ export function warmPersonLinks(node: HTMLElement) {
 		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass });
 
 		const slug = decodeURIComponent(match[1]);
-		// GATHER → FLY (item 4): a CC arrival plays a pre-flight beat — the current roster slides into the
-		// card and fades — THEN the lone card departs. focusPerson is held GATHER_MS so the beat shows; the
-		// incoming roster is held pending and unfurls at landing. Chip navs (and reduced motion) fly at once.
+		// HARD CUT → FLY (item A): a CC arrival removes the roster THIS frame — the same frame the flight
+		// origin was captured above — no beat, no fade. The lone card launches; the incoming roster is held
+		// pending and unfurls at landing. Chip navs (and reduced motion) never cut. Restored once the flight
+		// has taken over (one frame after the state swap) so the NEW roster is display-able but still pending.
 		if (isCC && !prefersReducedMotion.current) {
-			beginGather();
-			setTimeout(() => {
-				void focusPerson(slug);
-				// End the gather once the flight has taken over — one frame after the state swap, alongside the
-				// capture clear — so the NEW roster (held pending) isn't born in the gathered pose.
-				requestAnimationFrame(() => endGather());
-			}, GATHER_MS);
+			hideCcRoster();
+			void focusPerson(slug).then(() => requestAnimationFrame(() => showCcRoster()));
 			return;
 		}
 		void focusPerson(slug);

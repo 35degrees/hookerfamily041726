@@ -1,7 +1,7 @@
 /**
- * probe-choreography.mjs — GATHER → FLY → UNFURL (item 4, CC arrivals only). Asserts:
+ * probe-choreography.mjs — HARD CUT → FLY → UNFURL (CC arrivals only). Asserts:
  *   - on a CC nav, ZERO parent/child chip pixels are visible from flight-start (.flat card) to landing
- *     (the roster gathered into the card BEFORE the flight, and unfurls AFTER — never flashing mid-flight);
+ *     (the roster is hard-cut at frame 0, and unfurls AFTER — never flashing mid-flight);
  *   - the roster DOES return after landing (unfurl happened — not simply deleted);
  *   - a CHIP nav is untouched: its incoming roster reveals DURING the flight (the bare-screen gap stays
  *     closed for parent/child navigation).
@@ -68,4 +68,4 @@ if (chip) {
 await ctx.close();
 await browser.close();
 if (fails.length) { console.log('CHOREOGRAPHY PROBE: RED\n- ' + fails.join('\n- ')); process.exit(1); }
-console.log('CHOREOGRAPHY PROBE: GREEN — CC gathers→flies→unfurls (no chips mid-flight); chip nav reveal untouched.');
+console.log('CHOREOGRAPHY PROBE: GREEN — CC hard-cut→flies→unfurls (no chips mid-flight); chip nav reveal untouched.');
