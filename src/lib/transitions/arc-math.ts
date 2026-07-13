@@ -18,11 +18,18 @@ const ARC_MIN_YEARS = 120;
 const ARC_SCALE_MIN = 0.5; // altitude — how far the camera pulls back (dial)
 const ARC_MAX_MS = 2000; // far arcs earn more time than the flat-flight cap (dial)
 
+// PARKED (Sam, superseded): Zoom 2 ships as a standalone hand-panned view FIRST; the up-over-down arc
+// re-attaches later as a camera path over the real table, unchanged. While false, isArcMove always
+// returns false → every CC flies the flat directional arrival, and none of the arc machinery runs. The
+// scale channel (arc.svelte + the flight arc branches) stays intact for the manual Card↔Table transition.
+export const ARC_ENABLED = false;
+
 const cubicOutE = (p: number) => 1 - Math.pow(1 - p, 3);
 const cubicInE = (p: number) => p * p * p;
 
-/** Does this CC earn an arc? Collateral only, and far enough in seats OR years. */
+/** Does this CC earn an arc? Collateral only, and far enough in seats OR years. (Parked: see ARC_ENABLED.) */
 export function isArcMove(m: CameraMove | null): boolean {
+	if (!ARC_ENABLED) return false;
 	if (!m || m.kind !== 'cc' || m.relationClass !== 'collateral') return false;
 	if (m.from?.x == null || m.to?.x == null) return false;
 	const dx = Math.abs(m.to.x - m.from.x);

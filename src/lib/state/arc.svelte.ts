@@ -11,7 +11,9 @@
  */
 import { arcScaleAt, arcProgress } from '$lib/transitions/arc-math';
 
-export const arcClock = $state({ active: false, t: 0, scale: 1, cx: 0, cy: 0 });
+// cx/cy = camera centre this frame (pans from → to); fx/fy → tx/ty = the traverse corridor endpoints in
+// table coords (fixed for the arc), so the substrate can pick its tiles once and only re-transform them.
+export const arcClock = $state({ active: false, t: 0, scale: 1, cx: 0, cy: 0, fx: 0, fy: 0, tx: 0, ty: 0, seq: 0 });
 
 let raf = 0;
 let startT = 0;
@@ -41,6 +43,11 @@ export function startArc(o: {
 	arcClock.scale = 1;
 	arcClock.cx = fromX;
 	arcClock.cy = fromY;
+	arcClock.fx = fromX;
+	arcClock.fy = fromY;
+	arcClock.tx = toX;
+	arcClock.ty = toY;
+	arcClock.seq++;
 	const loop = (now: number) => {
 		const t = Math.min(1, (now - startT) / dur);
 		arcClock.t = t;

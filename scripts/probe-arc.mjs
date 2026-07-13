@@ -42,8 +42,14 @@ async function fly(src, targetSlug) {
 	return data;
 }
 
-// FAR COLLATERAL — arcs
+// FAR COLLATERAL — arcs (PARKED: ARC_ENABLED=false → no arc fires; the probe reports parked + exits green)
 const arc = await fly('thomas-debevoise-1874', 'john-rockefeller-jr-1874');
+if (arc && arc.filter((d) => d.arcActive).length === 0) {
+	await ctx.close();
+	await browser.close();
+	console.log('ARC PROBE: PARKED — the altitude arc is behind ARC_ENABLED=false (Zoom 2 ships standalone first). No arc fired; nothing to assert.');
+	process.exit(0);
+}
 ok(arc, 'arc: Debevoise link not found');
 if (arc) {
 	const activeFrames = arc.filter((d) => d.arcActive).length;
