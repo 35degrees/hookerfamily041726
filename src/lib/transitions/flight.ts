@@ -79,39 +79,40 @@ export function getFlightKind(): 'spouse' | 'relative' | 'cc' {
 // the opposite way. The link is a trigger, not an origin.
 const CC_ENTRY_DIST = 1150; // px the card travels from offscreen into the slot (dialable — full vs ~60% vp)
 const DIRECT_WHISPER_DEG = 6; // a direct-line arrival is ~vertical; a faint Δx-sign lean, never more than this
-const COLLATERAL_CAP_DEG = 45; // the uncle diagonal is the maximum lateral tilt — collateral is capped here
 const CC_COMPRESS_L = 300; // log-compression scale for collateral Δx (near-identity at the uncle's ~50 seats)
-// Screen direction of the CC arrival. Laterality is GRAPH-derived (relationClass), NOT the raw tidy-tree
-// Δx — a direct descendant can sit 800 seats sideways yet is genealogically straight-down:
-//   direct     → near-vertical (±DIRECT_WHISPER_DEG, a whisper of the Δx sign), generations dominate.
-//   collateral → tilt = atan2(log-compressed Δx, Δyears), capped at COLLATERAL_CAP_DEG (uncle preserved).
-// Falls back to the raw screenVector when the target has no time basis (y null).
+// Screen direction of the CC arrival, built from the TRUE vector so it is exactly RECIPROCAL — A→B is the
+// reverse of B→A — and never injects a fake vertical. Vertical sign + magnitude come from real Δy, always.
+//   direct     → near-vertical (±DIRECT_WHISPER_DEG whisper of the Δx sign; the 800-seat tidy-tree spread
+//                a direct descendant can carry is suppressed to the whisper — generations dominate).
+//   collateral → normalize(sign·log-compressed Δx, true Δy). No cap: a same-era CC (Δy=0) pans HORIZONTAL
+//                (vertical component 0, not a capped 45° descent); the uncle keeps his ~45° from his real
+//                generation gap; both invert exactly on the reverse trip.
+// Falls back to the raw screenVector only when the target has no time basis (y null).
 function ccScreenDir(): { x: number; y: number } {
 	return ccScreenDirFor(getCameraMove());
 }
 export function ccScreenDirFor(m: CameraMove | null): { x: number; y: number } {
 	if (m?.from && m?.to && m.to.y != null && m.from.y != null) {
 		const vx = m.to.x - m.from.x;
-		const vy = m.to.y - m.from.y; // years: >0 later (below), <0 earlier (above)
-		const vSign = vy >= 0 ? 1 : -1; // vertical entry side
-		const xSign = vx >= 0 ? 1 : vx < 0 ? -1 : 0;
-		let tiltRad: number;
-		if (m.relationClass === 'direct' || vx === 0) {
-			tiltRad = (xSign * DIRECT_WHISPER_DEG * Math.PI) / 180;
-		} else {
-			const cx = CC_COMPRESS_L * Math.log1p(Math.abs(vx) / CC_COMPRESS_L); // compressed lateral
-			const raw = Math.atan2(cx, Math.max(1, Math.abs(vy)));
-			tiltRad = xSign * Math.min(raw, (COLLATERAL_CAP_DEG * Math.PI) / 180);
+		const vy = m.to.y - m.from.y; // TRUE Δy (years): >0 later (below), <0 earlier (above) — the SOLE
+		// source of vertical sign + magnitude. Never a constant, never a default-down.
+		if (m.relationClass === 'direct') {
+			const w = (DIRECT_WHISPER_DEG * Math.PI) / 180;
+			return { x: Math.sign(vx) * Math.sin(w), y: (vy >= 0 ? 1 : -1) * Math.cos(w) };
 		}
-		// unit vector: lateral = sin(tilt) with Δx's sign; vertical = cos(tilt) with the entry side's sign.
-		return { x: Math.sin(tiltRad), y: vSign * Math.cos(Math.abs(tiltRad)) };
+		// collateral: the vector itself (compressed laterally), normalized. Odd in (vx,vy) → reciprocal;
+		// |vertical| = 0 when Δy = 0.
+		const cx = Math.sign(vx) * CC_COMPRESS_L * Math.log1p(Math.abs(vx) / CC_COMPRESS_L);
+		const mag = Math.hypot(cx, vy);
+		if (mag > 0.001) return { x: cx / mag, y: vy / mag };
+		return { x: 0, y: 1 };
 	}
 	const sv = m?.screenVector;
 	if (sv) {
 		const mag = Math.hypot(sv.dx, sv.dy);
 		if (mag > 0.001) return { x: sv.dx / mag, y: sv.dy / mag };
 	}
-	return { x: 0, y: 1 }; // default: arrive from below
+	return { x: 0, y: 1 }; // no time basis: degrade to the screen vector's own direction
 }
 // CC duration: distance-scaled through the velocity family, floored so a same-era jump still reads as a
 // real flight and capped so a gen-1→gen-12 dive reads LONG (a long journey), never a strobe.
