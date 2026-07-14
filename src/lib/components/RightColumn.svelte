@@ -77,8 +77,12 @@
 	// this $derived (which would tear down the whole FeaturedCard render).
 	function normalizeGps(gps: unknown): { latitude: number; longitude: number } | null {
 		if (gps && typeof gps === 'object' && !Array.isArray(gps)) {
-			const lat = Number((gps as Record<string, unknown>).latitude);
-			const lng = Number((gps as Record<string, unknown>).longitude);
+			// Accept both the canonical {latitude, longitude} and the short {lat, lng} form —
+			// cemetery coords live under either key across the collection, and passing the whole
+			// cemetery record here (see call site) lets a top-level lat/lng reach the map too.
+			const o = gps as Record<string, unknown>;
+			const lat = Number(o.latitude ?? o.lat);
+			const lng = Number(o.longitude ?? o.lng);
 			return Number.isFinite(lat) && Number.isFinite(lng) ? { latitude: lat, longitude: lng } : null;
 		}
 		if (typeof gps === 'string') {
@@ -97,7 +101,9 @@
 	// built here in the same Google Maps search pattern. Defensive throughout — never throws.
 	let burialMapUrl = $derived.by(() => {
 		if (!burialCemetery) return null;
-		const coords = normalizeGps(burialCemetery.gps);
+		// GPS first from the .gps field, then from any top-level lat/lng on the cemetery record —
+		// so coords stored either way still produce a zoom-17 pin instead of falling to address search.
+		const coords = normalizeGps(burialCemetery.gps) ?? normalizeGps(burialCemetery);
 		if (coords) return buildMapUrl(coords);
 		if (burialCemetery.address) {
 			return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(burialCemetery.address)}`;
