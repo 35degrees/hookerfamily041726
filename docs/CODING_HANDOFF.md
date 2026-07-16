@@ -164,8 +164,9 @@ built on it. Next is **Phase 3b — the field** (parallax world).
   spouse to relative parent/child): one easeOutBack value drives translate AND scale (no fixed-edge
   lope) along each flight's own vector, clamped to a ~5–6px along-axis carry, endpoints frozen. Active
   only on a warm click whose camera-move kind matches the flight (`getCameraMove()?.kind === flightKind`).
-  `probe-settle.mjs` guards spouse + relative. The DEMOTION micro-settle was deliberately SKIPPED — a
-  demote overshoot risks the atomic-swap frame; not worth it. **The motion layer is CLOSED here.**
+  `probe-settle.mjs` guards spouse + relative. The DEMOTION micro-settle was deliberately SKIPPED at the
+  time — a demote overshoot risks the atomic-swap frame. **(Superseded: it was later BUILT, per-seat, on
+  frozen endpoints — the atomic-swap risk did not materialize. See the "demotion settle" session record below.)**
 
 **The pinned demotion look** (freezes it against drift, both regimes): `probe-flight.mjs`
 Check G adds **9a** (legible chip-face width, opacity>0.5, ≤ ~2.1×220 — RED without the
@@ -182,6 +183,78 @@ card the seat is a compact chip (aspect 2.46) but the non-compact chip-face (2.9
 ~54px in the 65px shell → ~5px white edges. No small non-distorting fix (only a compact
 chip-face variant, which the leaving card can't reactively select). Annotated in
 `probe-flight.mjs` beside Artifact C.
+
+---
+
+## Session record — the demotion settle (per-seat), the glide fix, the child-row de-jello
+
+The **demotion micro-settle** — logged above as deliberately SKIPPED — was built this
+session, on the true travel vector, per-seat; plus the root-cause fix for a pre-existing
+child-row wobble. The atomic-swap risk that justified skipping did **not** materialize:
+the settle's endpoints are frozen (departure + arrival byte-identical), so the swap frame
+is untouched. All in `src/lib/transitions/flight.ts` + one CSS line in `+page.svelte`.
+
+**What shipped:**
+- **Demotion settle, reciprocal of the promotion.** The demote overshoots a few px PAST
+  its seat and returns — the same `easeOutBack` machinery as `growFrom`, aimed inward. On
+  `shrinkTo` (the card) and `morphIn` (the spouse), each on its OWN captured `{from,to}`
+  vector. Endpoints frozen → duration + unfurl schedule byte-identical (only the middle
+  gains the tail). Gate: `demoteSettleActive = relative && getCameraMove()?.kind === flightKind`
+  (warm chip-nav only; cold / back-forward → no-settle, bit-identical to pre-settle).
+- **PER-SEAT DIALS — independent, now doctrine.** Parent-seat, child-seat, and spouse
+  demotions are different situations (travel, scale delta, landing context, glide vs no-
+  glide) and MUST NOT share a dial, clock, or amplitude. In `flight.ts`:
+  - `DEMOTE_SETTLE_PARENT_FACTOR = 0.6` — card→PARENT seat (dir `up`). Lands exactly on
+    `DEMOTE_SETTLE_FLOOR_PX` (2.2 targetPx → ~1.84px measured); the floor dominates so the
+    factor is **INERT** (further reduction needs lowering the floor). **FROZEN — reads right.**
+  - `DEMOTE_SETTLE_CHILD_FACTOR = 1.6` — card→CHILD seat (dir `down`). Ratio-driven
+    (targetPx 3.66 at factor 1, above the floor — a real dial). **Under evaluation** — Sam
+    bracketing 1.2 / 1.6 / 2.2 = ~3.3 / 5.0 / 7.4px measured; build sits at +60%.
+  - Spouse (`morphIn` → parent slot) ~3.6px. **FROZEN — reads right.**
+  - `DEMOTE_SETTLE_CAP_PX` raised 6.5→9 for child-bracket headroom (parent 2.2 + spouse
+    3.66 sit far below → unaffected).
+- **The easing-flip audit (bit-identical non-settle, by construction).** To layer
+  `easeOutBack`, `shrinkTo`'s `easing` flipped to identity so `t` arrives RAW; the base
+  curve is reconstructed INSIDE the tick (relative → `cubicOut(t)`, spouse → linear) so
+  every non-settle path is **bit-identical** — verified empirically (under identity `u ==`
+  raw progress; `cubicOut(u)` reproduces the pre-flip curve). The tick's whole geometry AND
+  its geometry-keyed opacity crossfade key off a single `u`, so ONE substitution covers
+  every consumer — no property left on raw `t` (probe asserts opacity lies on its width
+  contract, teeth-proven by injecting a raw-`t` leak → RED).
+- **THE CHILD-ROW WOBBLE WAS THE GLIDE, NOT THE CHILDREN.** Pre-existing (present on
+  pristine): the `.featured-slot` height glide ran **540ms** while the children directional
+  entrance ran **300ms**. `rect.top = layout(t) + transform(t)` — the entrance finished
+  while the row was still sliding underneath, so the sum overshot ~23px (the whole children
+  row dipped). **Fix: match the glide to the children's 300ms clock** (same easing) →
+  `rect.top` collapses to a single monotone curve → no wobble, children UNTOUCHED. **Two
+  rejected detours, both of which deformed the innocent children:** (A) gating the children
+  reveal until the glide settled (+216ms lag — slow reveal); (B) stretching the children
+  entrance to 540ms (slow crawl). **Doctrine: fix the guilty layout animation, never deform
+  its victims.** (Option (b) — sizing the slot at flight-start with no transition — was
+  rejected: `cardHeight` updates reactively, so no transition = a 1-frame snap, the exact
+  thing the glide exists to prevent.)
+- **No settle on the CHILD chip decision — reversed on a contaminated verdict.** The
+  child down-case first read as "swooping" at 5.01px — but that was measured under the
+  540ms glide, i.e. the seat was still sliding ~240ms after the card docked; the measurement
+  absorbed the seat's motion. On the fixed 300ms glide the true settle is far subtler. Lesson:
+  never judge (or tune) a landing while its landing surface is still moving.
+- **Measurement lesson.** On a long-travel demote (851px child) the card is removed at
+  outro-end, sometimes mid-settle — so measuring overshoot against the card's OWN last frame
+  UNDER-measures. Use the **resting-seat** rect as the arrival reference (reliable, and
+  consistent with the parent's measured/targetPx ratio ~0.8).
+
+**New probes (add to the standing gate):**
+- **`scripts/probe-neighbor-stability.mjs`** — the doctrine guard: a chip that did NOT fly
+  must not overshoot ("jello screen"). Drives the Burr repro (`aaron-burr-jr-1756` → father
+  Burr Sr; H00912 the stationary sibling, H00913 the flying seat, excluded), gates on
+  VISIBILITY, asserts the neighbor settles with 0px overshoot. RED (23px) on the wobble,
+  GREEN after the glide fix.
+- **`scripts/probe-demote-settle.mjs`** — the per-element settle: card + spouse each
+  overshoot their own captured vector and return; departure/arrival rects byte-stable;
+  unfurl unchanged (relative-to-card timing, jitter-immune); CC departure byte-identical
+  (whole-card, no settle — the July-12 flash guard); reduced-motion zero-settle; opacity on
+  its width contract. Pair with **`scripts/probe-demote-baseline.mjs`** (records the
+  pre-settle reference into `scripts/probe-out/demote-baseline.json`).
 
 ---
 

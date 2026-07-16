@@ -10,7 +10,7 @@
  * Click-time captures (origin rect, flight kind, clicked id, pan direction, rect snapshot) live at
  * the top of this file and are read by the transitions during the flush, then cleared one frame on.
  */
-import { cubicOut, linear } from 'svelte/easing';
+import { cubicOut } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
 import { getCameraMove, type CameraMove } from '../state/camera';
 import { isArcMove, arcDurationMsFor, ARC_DESC, ARC_RISE } from './arc-math';
@@ -263,6 +263,44 @@ function spouseHeroDurationMs(heroDist: number, demoteMaxCorner: number): number
 // velocity — see shrinkTo.)
 const DEMOTE_LEAD = 0.85;
 
+// DEMOTE SETTLE — the reciprocal of the promotion settle, on the DEMOTING elements (the leaving featured
+// card via shrinkTo, and its spouse via morphIn). Same easeOutBack machinery, aimed INWARD: the element
+// crosses its seat, overshoots a few px PAST it, and returns — one unbroken curve, endpoints frozen (so
+// departure + arrival + duration + the unfurl schedule are untouched; only the middle gains the tail).
+// Amplitude is proportional to the DESTINATION FOOTPRINT (a small chip seat carries less than a big parent
+// box) with a perception FLOOR so it never vanishes at chip scale, dialled by DEMOTE_SETTLE_RATIO.
+const DEMOTE_SETTLE_RATIO = 0.45; // amplitude dial — tune by feel on the rendered cards
+const DEMOTE_SETTLE_FLOOR_PX = 2.2; // perception floor — below this the settle reads as nothing at chip scale
+const DEMOTE_SETTLE_CAP_PX = 9; // ceiling — a demote overshoot larger than this is a lunge (raised from 6.5 to
+// give the child dial headroom; parent 2.2 and spouse 3.66 sit far below it, so they're unaffected).
+// PER-SEAT amplitude dials — INDEPENDENT (per-seat doctrine). Parent and child seats face different travel,
+// scale delta, and landing context, so they never share a number.
+// PARENT: Sam's verdict — too strong, take it to the FLOOR. At 0.6 the parent targetPx (0.45·232·0.035·0.6 =
+// 2.2) lands exactly on DEMOTE_SETTLE_FLOOR_PX, so the floor dominates and this factor is INERT (further
+// reduction needs lowering the floor). Applies ONLY to the card demoting UP into a parent seat. FROZEN.
+const DEMOTE_SETTLE_PARENT_FACTOR = 0.6;
+// CHILD: applies ONLY to the card demoting DOWN into a child seat. Ratio-driven (targetPx 3.66 at factor 1,
+// well above the floor — a real dial, not floor-clamped). At 1.57px the child read too imperceptible (Sam);
+// its ~3× travel + dramatic shrink want MORE overshoot than the parent to read equally. Being bracketed.
+const DEMOTE_SETTLE_CHILD_FACTOR = 1.6;
+// Solve easeOutBack's overshoot parameter s so the carry hits targetPx (footprint-scaled), same Newton
+// solve as settleBackFor. distance = the element's own travel; footprint = the destination box's diagonal;
+// factor trims the amplitude per-direction (1 = full; parent-seat landings pass DEMOTE_SETTLE_PARENT_FACTOR).
+function demoteSettleBackFor(distance: number, footprint: number, factor = 1): number {
+	if (distance < 1) return 0;
+	const targetPx = Math.min(DEMOTE_SETTLE_CAP_PX, Math.max(DEMOTE_SETTLE_FLOOR_PX, DEMOTE_SETTLE_RATIO * footprint * 0.035 * factor));
+	const targetG = Math.min(0.14, targetPx / distance); // overshoot as a fraction of the translate
+	let s = 0.8;
+	for (let i = 0; i < 8; i++) {
+		const o = 1 + s;
+		const g = (4 * s * s * s) / (27 * o * o);
+		const dg = (4 * s * s * (3 + s)) / (27 * o * o * o); // dg/ds
+		if (dg === 0) break;
+		s = Math.max(0.05, s - (g - targetG) / dg);
+	}
+	return s;
+}
+
 /**
  * `in:growFrom` — fly the featured card from the click-captured box rect to its
  * own layout position (canonical FLIP, top-left origin). Consumes the captured
@@ -471,13 +509,22 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		const heroDuration = heroOrigin ? spouseHeroDurationMs(heroDist, demoteMax) : SPOUSE_EXIT_MS;
 		demoteDuration = heroDuration - SPOUSE_FINISH_LEAD_MS;
 	}
+	// DEMOTE SETTLE gate: active only on a warm RELATIVE demote whose camera move matches (a couple demoting
+	// into the parent row). Cold / back-forward publish no matching move → inactive → the tick reproduces the
+	// pre-settle motion BIT-IDENTICALLY. The SPOUSE-swap demote (relative=false; honest-velocity LINEAR, kept
+	// so the photo never strobes) is deliberately NOT settled — its base curve is preserved untouched.
+	const demoteSettleActive = relative && getCameraMove()?.kind === flightKind;
+	let demoteSettleS: number | null = null; // solved lazily on the first frame the seat is known (mount-order safe)
 	return {
 		duration: demoteDuration,
-		// SPOUSE demote uses LINEAR (constant velocity) so the fast-moving photo corner never exceeds the
-		// ceiling — cubicOut's fast start peaks at ~3-4× the average and strobes the photo, which no
-		// duration can fix (it's a peak-to-average problem, not a distance one). The demote is a supporting
-		// glide to its seat, so constant velocity reads clean. RELATIVE demote keeps cubicOut (approved).
-		easing: relative ? cubicOut : linear,
+		// EASING IS IDENTITY so `t` arrives RAW: the base curve AND the settle are applied INSIDE the tick (a
+		// css-transition can't overshoot past the moving seat this tick re-queries). The base is reproduced
+		// exactly — RELATIVE keeps cubicOut (approved), SPOUSE keeps LINEAR (constant velocity so the fast
+		// photo corner never strobes — cubicOut's fast start peaks ~3-4× the average). Non-settle is therefore
+		// BIT-IDENTICAL to the pre-flip build (relative→cubicOut(p), spouse→p); settle replaces the base with
+		// easeOutBack. Verified empirically: under identity, u == raw linear progress p, and cubicOut(p) equals
+		// what easing:cubicOut used to pass.
+		easing: (x: number) => x,
 		// TICK, not css: the destination box can MOVE during the flight. When the new hero's card is a
 		// different height, the featured-slot height glide shifts the children/parent rows — e.g. on
 		// X00126 (9 children) → father X03175 (1 child) the destination's bottom rises ~118px mid-
@@ -503,10 +550,27 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			const dy = box.top - card.top;
 			const sx = box.width / card.width;
 			const sy = box.height / card.height;
-			const Sx = 1 - u * (1 - sx);
-			const Sy = 1 - u * (1 - sy);
+			// PROGRESS RECONSTRUCTION — easing is identity, so `u` here is the RAW linear progress p ∈ [0,1].
+			// Re-apply the base curve (bit-identical to the pre-flip build) and layer the settle by REPLACING it
+			// with easeOutBack, which carries the whole path (translate + scale, one curve) PAST the seat and
+			// back. Everything below keys off `uu` (incl. the geometry-keyed opacity crossfade via Sx), so the
+			// single substitution covers every consumer coherently — no property is left on raw t.
+			if (demoteSettleS === null) {
+				// PER-SEAT amplitude — parent and child seats never share a dial (different travel, scale, and
+				// landing context). Parent-seat lands at the FLOOR (DEMOTE_SETTLE_PARENT_FACTOR). Child-seat runs
+				// at ORIGINAL FULL amplitude (factor 1 → ~5px): the earlier "swooping" verdict was formed under
+				// the 540ms glide, when the child seat docked onto a row that kept sliding ~240ms after; now the
+				// glide is 300ms and rect.top is monotone, so the child settle is being measured fair for the
+				// first time. Left unchanged — a measurement pass, not a tuning pass.
+				const parentSeat = document.querySelector(`[data-flight-id="${params.id}"]`)?.getAttribute('data-flight-dir') === 'up';
+				const factor = parentSeat ? DEMOTE_SETTLE_PARENT_FACTOR : DEMOTE_SETTLE_CHILD_FACTOR;
+				demoteSettleS = demoteSettleActive ? demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(box.width, box.height), factor) : 0;
+			}
+			const uu = demoteSettleS ? easeOutBack(u, demoteSettleS) : relative ? cubicOut(u) : u;
+			const Sx = 1 - uu * (1 - sx);
+			const Sy = 1 - uu * (1 - sy);
 			el.style.transformOrigin = 'top left';
-			el.style.transform = `translate(${u * dx}px, ${u * dy}px) scale(${Sx}, ${Sy})`;
+			el.style.transform = `translate(${uu * dx}px, ${uu * dy}px) scale(${Sx}, ${Sy})`;
 			// GEOMETRY-KEYED CROSSFADE (replaces the time-based CSS fades AND any gated reveal): both the
 			// card's own face and the chip-face key their opacity to the shell's natural scale uNat, in
 			// OVERLAPPING bands — so something is always visible (no empty-shell blink) and the chip-face is
@@ -599,13 +663,25 @@ export function morphIn(node: Element, params: { id: string }) {
 		const dy = old.top - dest.top;
 		const sx = old.width / dest.width;
 		const sy = old.height / dest.height;
+		// DEMOTE SETTLE (the demoted spouse): the reciprocal-of-promotion overshoot on its OWN captured vector
+		// (old → dest), mirroring growFrom exactly — this is an `in`, so easeOutBack on the raw t makes u dip
+		// below 0, carrying the morph a few px PAST the slot and back. Amplitude scales to the destination
+		// footprint (its own, distinct from the card's — different seats, different angles fall out of the two
+		// rects). Active on a warm chip-nav whose camera move matches; else cubicOut, bit-identical to before.
+		const settleActive = getCameraMove()?.kind === getFlightKind();
+		const settleS = settleActive ? demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(dest.width, dest.height)) : 0;
 		return {
 			duration: 360,
-			easing: cubicOut,
+			// identity easing → t is RAW; the base cubicOut and the settle are applied inside (see growFrom).
+			// Non-settle reproduces the pre-flip cubicOut morph bit-identically; settle replaces it with easeOutBack.
+			easing: (x: number) => x,
 			// z-index 1: above the leaving chips, below the hero card (z-index 2). Solid (opacity 1)
 			// so the user tracks one object lifting out of its chip and into the slot.
-			css: (_t: number, u: number) =>
-				`z-index: 1; opacity: 1; transform-origin: top left; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`
+			css: (t: number) => {
+				const e = settleS ? easeOutBack(t, settleS) : cubicOut(t);
+				const u = 1 - e;
+				return `z-index: 1; opacity: 1; transform-origin: top left; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`;
+			}
 		};
 	}
 	// No on-screen origin → slide UP from below into the slot, fading in. 150px so the rise reads.

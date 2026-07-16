@@ -594,8 +594,11 @@
 		align-items: start; /* don't stretch cards to the explicit (gliding) slot height */
 		overflow: visible; /* a taller leaving card overflows invisibly while it flies away */
 		/* Glide the slot height between focuses so the children row moves in lockstep
-		   with the card morph instead of snapping. cubic-bezier ≈ cubicOut. */
-		transition: height 540ms cubic-bezier(0.33, 1, 0.68, 1);
+		   with the card morph instead of snapping. cubic-bezier ≈ cubicOut. Duration MATCHES the
+		   children directional entrance (revealPending, 300ms, same easing) so the row's layout glide
+		   and the children's transform land TOGETHER — rect.top = layout(t)+transform(t) stays monotone,
+		   no dip/jello. (Was 540ms, which outran the 300ms entrance and manufactured the child-row wobble.) */
+		transition: height 300ms cubic-bezier(0.33, 1, 0.68, 1);
 		/* Lift the ENTIRE slot (hero + demote + notch) above the resting parent/child rows so a
 		   visible-by-design relative demote flies OVER those rows en route to its box. z-index on the
 		   flying card alone can't do it — the slot forms a stacking context that would otherwise confine
