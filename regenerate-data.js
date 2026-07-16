@@ -280,12 +280,47 @@ function neighborhood(p, byId, slugMap) {
 		}
 	}
 
-	// siblings_count: union of both parents' children, minus focus
+	// siblings_count: union of both parents' children, minus focus [UNCHANGED — full+half, NOT step]
 	const sibs = new Set();
 	for (const pid of [par.father_id, par.mother_id]) {
 		if (pid && byId[pid]) for (const cid of childrenOf(byId[pid])) sibs.add(cid);
 	}
 	sibs.delete(p.id);
+
+	// siblings[] — TIERED, natural order (children_ids order; the UI applies the same died-young sort it
+	// applies to children[] — the generator does NOT sort). Pure set math on the two parents' child lists:
+	//   full = father's children ∩ mother's children       (share BOTH recorded parents)
+	//   half = symmetric difference, minus focus            (share exactly ONE recorded parent)
+	//   step = children of a parent's OTHER spouse (a step-parent) via that spouse's other marriages, minus
+	//          any child of the focus's own parents (full/half already cover those). Expected EMPTY in the
+	//          overwhelming majority (step-siblings carry no Hooker blood, so rarely built out) — emit the
+	//          possibly-empty array anyway; the UI gates the tier on non-empty.
+	const fatherKids = par.father_id && byId[par.father_id] ? childrenOf(byId[par.father_id]) : [];
+	const motherKids = par.mother_id && byId[par.mother_id] ? childrenOf(byId[par.mother_id]) : [];
+	const fSet = new Set(fatherKids), mSet = new Set(motherKids);
+	const full = [], half = [], seen = new Set();
+	for (const cid of [...fatherKids, ...motherKids]) {
+		if (cid === p.id || seen.has(cid)) continue;
+		seen.add(cid);
+		(fSet.has(cid) && mSet.has(cid) ? full : half).push(cid);
+	}
+	const ownKids = new Set([...fatherKids, ...motherKids]);
+	const stepSpouses = new Set();
+	const spousesOf = (pid, other) =>
+		(pid && byId[pid] ? byId[pid].marriages || [] : [])
+			.map((m) => m.spouse_id)
+			.filter((sid) => sid && sid !== other && byId[sid]);
+	for (const sid of spousesOf(par.father_id, par.mother_id)) stepSpouses.add(sid);
+	for (const sid of spousesOf(par.mother_id, par.father_id)) stepSpouses.add(sid);
+	const step = [];
+	for (const sid of stepSpouses) {
+		for (const cid of childrenOf(byId[sid])) {
+			if (cid === p.id || ownKids.has(cid) || seen.has(cid)) continue;
+			seen.add(cid);
+			step.push(cid);
+		}
+	}
+	const toCompact = (ids) => ids.map(cm).filter(Boolean);
 
 	return {
 		focus: compact(p, slugMap),
@@ -293,6 +328,7 @@ function neighborhood(p, byId, slugMap) {
 		parents,
 		grandparents,
 		grandchildren,
+		siblings: { full: toCompact(full), half: toCompact(half), step: toCompact(step) },
 		siblings_count: sibs.size
 	};
 }
@@ -341,6 +377,12 @@ function contextIds(p, byId) {
 		const gpar = pid && byId[pid] ? byId[pid].parents || {} : {};
 		add(gpar.father_id);
 		add(gpar.mother_id);
+	}
+	// SIBLINGS (full + half): both parents' other children. Their FULL records must ship so the page's
+	// enrich / diedYoung / computeGenerationLabels can read them — else the sibling chips ship but the UI
+	// has no record to compute died-young from and the feature half-works. (Same union as siblings_count.)
+	for (const pid of [par.father_id, par.mother_id]) {
+		if (pid && byId[pid]) for (const cid of childrenOf(byId[pid])) add(cid);
 	}
 	return ids;
 }
