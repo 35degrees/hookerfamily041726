@@ -191,6 +191,32 @@ function sex(p) {
 	return 'u';
 }
 
+// SHORT NAME (`sn`) — ported VERBATIM from computeShortName/abbreviateTitle in src/lib/data/buildFeatured.ts
+// so the value the generator bakes into the compact is byte-identical to what enrich() would have computed
+// from the full record. enrich reads `compact.sn ?? computeShortName(full)`, so a matching compact.sn makes
+// enrich a no-op and lets the chip render its short name WITHOUT the full record in context. KEEP IN SYNC.
+const TITLE_ABBREVIATIONS = {
+	Reverend: 'Rev.', Captain: 'Capt.', Doctor: 'Dr.', Colonel: 'Col.', General: 'Gen.', Lieutenant: 'Lt.',
+	Major: 'Maj.', Governor: 'Gov.', Deacon: 'Dea.', Elder: 'Eld.', Honorable: 'Hon.',
+	'Lieutenant Colonel': 'Lt. Col.', 'Lt.-Col.': 'Lt. Col.', 'Lieut.-Col.': 'Lt. Col.', 'Rev. Capt.': 'Rev. Capt.'
+};
+const abbreviateTitle = (title) => (!title ? null : TITLE_ABBREVIATIONS[title] ?? title);
+function computeShortName(p) {
+	const bio = bioOf(p);
+	const first = bio.first_name;
+	if (!first) return null;
+	let surname;
+	if (p.gender === 'female' || bio.maiden_name) surname = bio.maiden_name ?? bio.last_name;
+	else surname = bio.last_name;
+	const baseName = surname ? `${first} ${surname}` : first;
+	const title = abbreviateTitle(bio.title);
+	if (title) {
+		const fullName = `${title} ${baseName}`;
+		if (fullName.length <= 19) return fullName;
+	}
+	return baseName;
+}
+
 function compact(p, slugMap) {
 	const c = p.classification || {};
 	return {
@@ -206,6 +232,11 @@ function compact(p, slugMap) {
 		td: Boolean(c.is_talcott_descendant),
 		ee: Boolean(c.is_easter_egg),
 		g: c.generation_from_thomas ?? null,
+		// p (photo) + sn (short name) baked in so a chip renders WITHOUT its full record in context — enrich()
+		// prefers these (`compact.p ?? …`, `compact.sn ?? …`), so it no-ops when they're present. This is what
+		// lets siblings drop out of contextIds (they were shipping ~2.9KB full records to surface ~100 bytes).
+		p: p.bio?.photo_url ?? p.name?.photo_url ?? null,
+		sn: computeShortName(p),
 		t: tableCoords.get(p.id) ?? null // {x, y, e?} — table seat (y may be null: consumers SKIP, never throw)
 	};
 }
@@ -320,7 +351,18 @@ function neighborhood(p, byId, slugMap) {
 			step.push(cid);
 		}
 	}
-	const toCompact = (ids) => ids.map(cm).filter(Boolean);
+	// Sibling compacts carry dy_young baked in (computed from by/dy — MUST match diedYoung() in
+	// buildFeatured.ts, age-at-death ≤ 15). Siblings ship NO full record in context, so the UI can't call
+	// diedYoung(byId[id]) for them (it would return false → no dimming); reading this precomputed flag is the
+	// safe path. Parents/children still compute dy_young at render off their in-context full records.
+	const toCompact = (ids) =>
+		ids
+			.map((id) => {
+				const c = cm(id);
+				if (!c) return null;
+				return { ...c, dy_young: !!c.by && !!c.dy && c.dy - c.by <= 15 };
+			})
+			.filter(Boolean);
 
 	return {
 		focus: compact(p, slugMap),
@@ -378,12 +420,11 @@ function contextIds(p, byId) {
 		add(gpar.father_id);
 		add(gpar.mother_id);
 	}
-	// SIBLINGS (full + half): both parents' other children. Their FULL records must ship so the page's
-	// enrich / diedYoung / computeGenerationLabels can read them — else the sibling chips ship but the UI
-	// has no record to compute died-young from and the feature half-works. (Same union as siblings_count.)
-	for (const pid of [par.father_id, par.mother_id]) {
-		if (pid && byId[pid]) for (const cid of childrenOf(byId[pid])) add(cid);
-	}
+	// NB: SIBLINGS are deliberately NOT in context. Everything a sibling CHIP needs is baked into its compact
+	// (n/sn, p, by/dy, dy_young — see neighborhood()), so enrich() no-ops and died-young reads the flag. This
+	// reclaims the ~2.9KB full record per sibling (contextIds was the only reason they shipped). diedYoung /
+	// computeGenerationLabels don't need them: died-young is by/dy (in the compact); generation labels are
+	// focus-only. (Parents/children still ship full records — they carry richer render needs.)
 	return ids;
 }
 
