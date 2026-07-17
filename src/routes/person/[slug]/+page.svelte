@@ -23,6 +23,8 @@
 		getFlightKind
 	} from '$lib/transitions/flight';
 	import { ccRoster } from '$lib/state/ccRoster.svelte';
+	import SiblingPanel from '$lib/components/SiblingPanel.svelte';
+	import Caret from '$lib/components/Caret.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -127,12 +129,41 @@
 		mounted = true;
 	});
 
+	// ── Sibling panel (Phase 7 Slice 1) ──────────────────────────────────────────────────────────────
+	// Gate: a blood sibling exists AND the focus is on the Hooker/Talcott lines and NOT an easter egg — so no
+	// button for in-laws (I-prefix), orbit figures, or line-external people. siblings_count is the blood-only
+	// (full+half) field and is the correct > 0 gate; the button LABEL counts the rendered tiers (SiblingPanel).
+	const focusC = $derived(f.neighborhood.focus);
+	const showSiblings = $derived(
+		f.neighborhood.siblings_count > 0 && (focusC.hd || focusC.td) && !focusC.ee
+	);
+	let siblingsOpen = $state(false);
+	// The panel closes on navigation (§20.5: the nudge was removed — Sam's call; not worth the fallout, and it
+	// leaves one fewer clock in the Slice-3 flight path). No transform anywhere now.
+	$effect(() => {
+		f.person.id; // nav hazard: on any focus change, close the panel
+		untrack(() => {
+			siblingsOpen = false;
+		});
+	});
+
 	// ── Flight landing: the single source of truth for "the featured card has arrived" ──
 	// `featuredLanded` is driven by the featured card's REAL transition lifecycle events, not a
 	// timer: false the instant a card starts flying in, true at `introend` (growFrom actually
 	// finished). Everything that should wait for the card to land keys off this — killing the
 	// intermittent flicker the old fixed clocks caused (they guessed the distance-scaled landing).
 	let featuredLanded = $state(true); // true at rest / cold load (intros don't replay on hydrate)
+
+	// `landedPersonId` — the id of the person whose card has actually LANDED and is being shown. Set at
+	// introend alongside featuredLanded=true. Its job is to close the one-frame stale-data window that
+	// featuredLanded alone can't: on nav, `f` (and everything derived from it — the sibling count, the
+	// trigger text) switches to the incoming person in the SAME reactive flush, but featuredLanded doesn't
+	// flip false until introSTART fires a frame later. Any affordance gated on featuredLanded alone paints
+	// the incoming person's data on the OUTGOING card for that frame (the sibling-trigger regression).
+	// A gate of `featuredLanded && f.person.id === landedPersonId` instead goes false the instant f changes
+	// (landedPersonId still holds the old id) — atomically with the new text, so nothing stale is ever
+	// painted. The spouse CHIPS don't need this: markPending holds each new chip at opacity 0 on mount.
+	let landedPersonId = $state(untrack(() => f.person.id)); // initial-capture is intended (cold-load person)
 
 	// Notch suppression: a carved notch makes the growing/shrinking cards animate around a corner
 	// cutout — a blur, not a discrete object. So while a card flies we flatten it to a COMPLETE
@@ -220,6 +251,7 @@
 		// appear sooner. Still strictly gated on landing → CHIPS-SOON stays green.
 		revealPending((el) => el.dataset.flightDir === 'lateral', CHIP_REVEAL_MS);
 		featuredLanded = true; // → reveals the pivot box + any remaining pending boxes (safety-net effect)
+		landedPersonId = f.person.id; // the shown person has now landed → ungate its trigger (see above)
 
 		// JANITOR (PROD belt for the finished-animation teardown residue the sweep can't safely touch):
 		// a small class of orphans keeps a getAnimations() entry stuck in playState 'finished', so the
@@ -477,25 +509,38 @@
 			     landing, fade out on offset changes (last-window right caret fades out and stays out).
 			     pointer-events:none while invisible; the paging lockout is enforced by pageStep's guard,
 			     NOT by CSS, so the cursor stays pointer throughout the 420ms. -->
-			<button
-				type="button"
-				class="caret caret-left"
-				class:visible={hasCarousel && featuredLanded && canPageLeft}
-				style="right: {leftCaretRight}px"
-				aria-label="Previous spouses"
-				aria-disabled={pagingLock || !(hasCarousel && featuredLanded && canPageLeft)}
-				onclick={pageBack}>‹</button
-			>
-			<button
-				type="button"
-				class="caret caret-right"
-				class:visible={hasCarousel && featuredLanded && canPageRight}
-				style="right: {rightCaretRight}px"
-				aria-label="More spouses"
-				aria-disabled={pagingLock || !(hasCarousel && featuredLanded && canPageRight)}
-				onclick={pageAdvance}>›</button
-			>
+			<span class="caret-slot" style="right: {leftCaretRight}px">
+				<Caret
+					char="‹"
+					class="caret-left"
+					visible={hasCarousel && featuredLanded && canPageLeft}
+					disabled={pagingLock || !(hasCarousel && featuredLanded && canPageLeft)}
+					onclick={pageBack}
+					ariaLabel="Previous spouses"
+				/>
+			</span>
+			<span class="caret-slot" style="right: {rightCaretRight}px">
+				<Caret
+					char="›"
+					class="caret-right"
+					visible={hasCarousel && featuredLanded && canPageRight}
+					disabled={pagingLock || !(hasCarousel && featuredLanded && canPageRight)}
+					onclick={pageAdvance}
+					ariaLabel="More spouses"
+				/>
+			</span>
 		</div>
+		{#if showSiblings}
+			<!-- Slice 1: trigger + panel + nudge. Inside featured-slot so it travels with the card GROUP on the
+			     nudge. Flow-placed right of the last spouse affordance (caret-aware). No carousel/flight yet. -->
+			<SiblingPanel
+				siblings={f.neighborhood.siblings}
+				{cardHeight}
+				anchorOffset={useCompact ? 78 : 90}
+				landed={featuredLanded && f.person.id === landedPersonId}
+				bind:open={siblingsOpen}
+			/>
+		{/if}
 		{#each [f] as cur (cur.person.id)}
 			<div
 				class="featured-flight"
@@ -700,72 +745,15 @@
 		}
 	}
 
-	/* Carousel carets — siblings of the mask, absolutely positioned by inline `right`; never clipped.
-	   Default is HIDDEN (opacity 0, non-interactive); .visible fades them in. cursor stays pointer in
-	   every state — the paging lockout nullifies the click via pageStep's guard, never via cursor. */
-	.caret {
+	/* Carousel caret SLOT — positions the shared <Caret> at the notch seam by inline `right`, vertically
+	   centred on the chip row. The caret's own hover LIFT lives on the inner button, so it composes with this
+	   centring transform (different elements). The caret visual/behaviour lives in Caret.svelte (shared with
+	   the sibling panel — one component, not a lookalike). */
+	.caret-slot {
 		position: absolute;
 		top: 50%;
 		z-index: 3;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 22px;
-		height: 22px;
-		padding-bottom: 2px; /* optically center the chevron */
-		border-radius: 9999px;
-		border: 1px solid rgb(214, 211, 209); /* stone-300 */
-		background: rgba(255, 255, 255, 0.94);
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-		color: rgb(87, 83, 78); /* stone-600 */
-		font-size: 15px;
-		line-height: 1;
-		cursor: pointer;
-		opacity: 0;
-		pointer-events: none; /* faded carets can't be clicked */
 		transform: translateY(-50%);
-		transition:
-			opacity 180ms ease,
-			transform 120ms ease,
-			box-shadow 120ms ease,
-			background 120ms ease,
-			color 120ms ease;
-	}
-	/* Fades in with the chips on landing; fades out on offset change (last-window right caret stays out). */
-	.caret.visible {
-		opacity: 1;
-		pointer-events: auto;
-	}
-	/* 22px visual, ~32px hit area (the pseudo-element is part of the clickable region). */
-	.caret::before {
-		content: '';
-		position: absolute;
-		inset: -5px;
-	}
-	/* Hover LIFT — a whisper of a rise + slightly softer shadow. */
-	.caret:hover {
-		transform: translateY(calc(-50% - 1px));
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-		background: #fff;
-		color: rgb(28, 25, 23); /* stone-900 */
-	}
-	/* Press DIP — settles toward the surface, springs back to the hover lift on release. */
-	.caret:active {
-		transform: translateY(calc(-50% - 0.5px));
-		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.caret {
-			transition:
-				opacity 180ms ease,
-				box-shadow 120ms ease,
-				background 120ms ease,
-				color 120ms ease;
-		}
-		.caret:hover,
-		.caret:active {
-			transform: translateY(-50%); /* no lift/dip; shadow/color still change */
-		}
 	}
 
 	/* Flight wrappers are the keyed-each children that carry animate:flip (survivors glide) and

@@ -237,6 +237,10 @@ function compact(p, slugMap) {
 		// lets siblings drop out of contextIds (they were shipping ~2.9KB full records to surface ~100 bytes).
 		p: p.bio?.photo_url ?? p.name?.photo_url ?? null,
 		sn: computeShortName(p),
+		// fn (first name) — sibling chips render just the first name ("from the POV of the card, he knows them
+		// as Abigail"). A DATA field, not a UI split of sn/n (which breaks on titles/maiden names/suffixes).
+		// On ALL compacts (~10 bytes); only sibling chips read it, everyone else keeps sn.
+		fn: bioOf(p).first_name ?? null,
 		t: tableCoords.get(p.id) ?? null // {x, y, e?} — table seat (y may be null: consumers SKIP, never throw)
 	};
 }

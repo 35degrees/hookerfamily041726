@@ -69,6 +69,11 @@ export function warmPersonLinks(node: HTMLElement) {
 		const href = anchor.getAttribute('href');
 		const match = href?.match(/^\/person\/([^/?#]+)$/);
 		if (!match) return; // not an internal person link — leave it to the browser
+		// SLICE 1 (Phase 7): a sibling chip is a PLAIN navigation — do NOT capture the warm flight. The old
+		// featured card has no destination box on the sibling's page, so a warm demote would ghost (the
+		// July-12 flash condition). The chip carries data-sveltekit-reload → a full reload, no flight. Slice 3
+		// replaces this with the CC-path lateral flight (whole card, opposite vector, no chip-face, no settle).
+		if (anchor.getAttribute('data-relation') === 'sibling') return;
 		event.preventDefault();
 		// Capture the clicked box's rect at CLICK time (outside any reactive effect) so the
 		// card flies from its true on-screen position before any state change or reflow.

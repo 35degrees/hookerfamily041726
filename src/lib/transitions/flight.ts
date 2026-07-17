@@ -23,17 +23,14 @@ import { arcClock } from '../state/arc.svelte';
 // single unbroken motion. Translate-only (scale stays cubicOut, lands at 1.0 — no puff). The overshoot
 // is a fixed FRACTION of the curve, so its px scale with flight distance (short swap = smaller carry).
 // easeOutBack: f(u) = 1 + (1+s)(u−1)³ + s(u−1)²  — overshoots past 1 (the destination) then settles.
-function easeOutBack(u: number, s: number): number {
+export function easeOutBack(u: number, s: number): number {
 	const p = u - 1;
 	return 1 + (1 + s) * p * p * p + s * p * p;
 }
-// easeOutBack's inherent overshoot is g(s)·distance, g(s) = 4s³ / (27(1+s)²). A fixed s therefore
-// flings far swaps (corner-to-corner spouse distances span ~8×). So CLAMP the carry to a few px and
-// solve s per-flight to hit it — a short swap carries less, a far one is capped, never a 40px lunge.
-function settleBackFor(distance: number): number {
-	if (distance < 1) return 0;
-	const targetPx = Math.min(5.4, Math.max(4.5, distance * 0.011)); // whole-path along-axis carry, ~10% softer (4.5–5.4px)
-	const targetG = Math.min(0.09, targetPx / distance); // overshoot as a fraction of the translate
+// Newton solve for the s that makes easeOutBack overshoot by a target FRACTION of the travel:
+// g(s) = 4s³ / (27(1+s)²) = targetG. Shared by every settle (promotion, demote, and the sibling cascade)
+// so there is ONE curve, one solver — never a second hand-rolled overshoot.
+export function solveBackS(targetG: number): number {
 	let s = 0.8;
 	for (let i = 0; i < 8; i++) {
 		const o = 1 + s;
@@ -43,6 +40,13 @@ function settleBackFor(distance: number): number {
 		s = Math.max(0.05, s - (g - targetG) / dg);
 	}
 	return s;
+}
+// easeOutBack's inherent overshoot is g(s)·distance. A fixed s flings far swaps (corner-to-corner spouse
+// distances span ~8×). So CLAMP the carry to a few px and solve s per-flight to hit it.
+function settleBackFor(distance: number): number {
+	if (distance < 1) return 0;
+	const targetPx = Math.min(5.4, Math.max(4.5, distance * 0.011)); // whole-path along-axis carry, ~10% softer (4.5–5.4px)
+	return solveBackS(Math.min(0.09, targetPx / distance));
 }
 
 // ── Click-time origin capture for the card's "grow from the clicked box" flight ──
@@ -289,16 +293,7 @@ const DEMOTE_SETTLE_CHILD_FACTOR = 1.6;
 function demoteSettleBackFor(distance: number, footprint: number, factor = 1): number {
 	if (distance < 1) return 0;
 	const targetPx = Math.min(DEMOTE_SETTLE_CAP_PX, Math.max(DEMOTE_SETTLE_FLOOR_PX, DEMOTE_SETTLE_RATIO * footprint * 0.035 * factor));
-	const targetG = Math.min(0.14, targetPx / distance); // overshoot as a fraction of the translate
-	let s = 0.8;
-	for (let i = 0; i < 8; i++) {
-		const o = 1 + s;
-		const g = (4 * s * s * s) / (27 * o * o);
-		const dg = (4 * s * s * (3 + s)) / (27 * o * o * o); // dg/ds
-		if (dg === 0) break;
-		s = Math.max(0.05, s - (g - targetG) / dg);
-	}
-	return s;
+	return solveBackS(Math.min(0.14, targetPx / distance));
 }
 
 /**
