@@ -499,8 +499,17 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	const sibling = flightKind === 'sibling';
 	const SIB_SEAT_W = 160; // compact spouse-chip size = the notch seat the retraction sizes down to
 	const SIB_SEAT_H = 65;
+	// The endpoint sits at the CARD-EDGE RESUME (just below the notch cutout), not the top-right corner. The
+	// retraction rides at z:-1, so the incoming card occludes it wherever that card is OPAQUE — but the card
+	// is CLIPPED at its notch cutout (top-right), and while flying it's .flat (solid) so it covers the corner,
+	// yet the instant the cutout reforms at landing the corner is exposed and the retraction's endpoint showed
+	// through it (the tic). Dropping the endpoint below the notch line (~chip-zone height) lands it in the
+	// OPAQUE body, which occludes it at every phase — flat AND resting-with-cutout. This is the same anchor
+	// line the sibling column + caret align to, so it reads as consistent, not a concession. (A notch is why
+	// "behind the card" is not a reliable hiding place — see the ghost taxonomy.)
+	const SIB_SEAT_TOP_INSET = 100; // > max chip-zone height (90) so the endpoint clears the cutout in every regime
 	const siblingSeat = sibling
-		? { left: card.left + card.width - SIB_SEAT_W, top: card.top, width: SIB_SEAT_W, height: SIB_SEAT_H }
+		? { left: card.left + card.width - SIB_SEAT_W, top: card.top + SIB_SEAT_TOP_INSET, width: SIB_SEAT_W, height: SIB_SEAT_H }
 		: null;
 	// The demoting card's chip-face (a PersonBox, natural 220×75) — counter-scaled per frame below so
 	// it renders undistorted inside the shell's non-uniform morph. Cached once. BOTH kinds now use it:
