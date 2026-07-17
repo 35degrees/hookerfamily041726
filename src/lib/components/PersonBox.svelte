@@ -28,9 +28,9 @@
 	// Sibling chips show the FIRST NAME only (fn); everyone else keeps the short name (sn). Null beats weak —
 	// fall back to sn then n if fn is absent.
 	let displayName = $derived(isSibling ? (person.fn ?? person.sn ?? person.n) : (person.sn ?? person.n));
-	// Slice 1: a sibling nav is a PLAIN full reload (no flight/ghost — the old card has no destination box on
-	// the sibling's page; that CC-path flight is Slice 3). data-sveltekit-reload opts out of client routing,
-	// and warmPersonLinks skips data-relation="sibling" so it can't preventDefault into the warm flight.
+	// Slice 3: a sibling nav is now a WARM flight (kind 'sibling'). warmPersonLinks captures the chip rect
+	// and reads the sibling's seat t off data-tx/data-ty (below) to compute the collateral LATERAL departure
+	// vector. No data-sveltekit-reload — the click is preventDefault-ed into the warm path.
 	let href = $derived(person.slug ? `/person/${person.slug}` : null);
 	// §16 chip-date degrade: when BOTH lifespan ends are unknown, suppress the dates line entirely — no
 	// "?–?" anywhere, at any scale (this box, the featured card, and the demote chip-face all read it).
@@ -57,7 +57,8 @@
 {#if href}
 	<a
 		{href}
-		data-sveltekit-reload={isSibling ? '' : undefined}
+		data-tx={isSibling ? person.t?.x : undefined}
+		data-ty={isSibling ? person.t?.y : undefined}
 		class="person-box flex overflow-hidden rounded-lg bg-white shadow-sm transition-shadow hover:shadow-md {boxSize} {dimmed
 			? 'opacity-65'
 			: ''}"

@@ -67,14 +67,18 @@ export function captureFlightOrigin(rect: DOMRect | null): void {
 // morph; a parent/child click is a real-distance travel that was never meant to be slowed), and
 // distance can't tell them apart (a docked chip is ~as far from the card's top-left as a child
 // box). So the click handler tags the flight; growFrom + shrinkTo pick their durations from it.
-let flightKind: 'spouse' | 'relative' | 'cc' = 'relative';
+// 'sibling' (Phase 7 Slice 3): a HYBRID — growFrom treats it like 'relative' (grow from the clicked chip
+// rect, with settle), but shrinkTo + chipExit route it through the CC path (whole card departs on the
+// opposite LATERAL vector, no chip-face, no settle) because the old focus has no destination box on the
+// sibling's page. A demote-into-box would have nowhere to land — the July-12 ghost condition.
+let flightKind: 'spouse' | 'relative' | 'cc' | 'sibling' = 'relative';
 
-export function captureFlightKind(kind: 'spouse' | 'relative' | 'cc'): void {
+export function captureFlightKind(kind: 'spouse' | 'relative' | 'cc' | 'sibling'): void {
 	flightKind = kind;
 }
 // Read the current nav's kind. Stable through the whole flight — clearFlightCaptures (1 rAF after
 // nav) does NOT reset flightKind, so late lifecycle handlers (introend) can still branch on it.
-export function getFlightKind(): 'spouse' | 'relative' | 'cc' {
+export function getFlightKind(): 'spouse' | 'relative' | 'cc' | 'sibling' {
 	return flightKind;
 }
 
@@ -221,8 +225,17 @@ const RELATIVE_V_CEIL = 1.6; // avg px/ms — tune by feel
 // the coupled clock (hero = max(curve, demote+60)) — speeds up the spouse PROMOTION too, without cramming
 // (the demote genuinely covers its path faster). Guarded by probe-demote-velocity staying well green.
 const SPOUSE_DEMOTE_V_CEIL = 1.85;
+// SIBLING arrival velocity — its OWN dial, deliberately gentler than the 1.6 relative ceiling. Clocked off
+// CENTER travel (the honest translation; corner travel of a 119×54 chip over-inflates), the 1.6 ceiling
+// floored the arrival to ~410ms (≈1.42 px/ms — Sam: too fast) while the untuned 582ms floated (≈1.01). This
+// is the midpoint: ~1.2 px/ms ≈ 490ms over the ~588px sibling center travel. TUNE BY FEEL. The 1.6 relative
+// ceiling (parent/child) is untouched.
+const SIBLING_V_CEIL = 1.2; // px/ms — sibling arrival dial
 export function relativeGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(410, distance / RELATIVE_V_CEIL));
+}
+export function siblingGrowMs(centerDist: number): number {
+	return Math.min(1000, Math.max(410, centerDist / SIBLING_V_CEIL));
 }
 // SPOUSE promotion duration — now the SAME velocity family as the parent/child regime (V-ceiling 1.6),
 // just a higher floor (SPOUSE_FLOOR_MS) so the in-corner swaps carry human weight instead of snapping.
@@ -322,6 +335,19 @@ export function growFrom(node: Element) {
 	const sx = cc ? 1 : origin.width / dest.width;
 	const sy = cc ? 1 : origin.height / dest.height;
 	const distance = Math.hypot(dx, dy);
+	// SIBLING velocity match: the card grows from a tiny 119×54 chip, so its TOP-LEFT-corner travel
+	// (`distance`) is inflated by the scale-up — clocking the flight off it makes the CENTER translate ~30%
+	// slower than a parent/child promotion (which grow from larger, nearer boxes), so the sibling "floats".
+	// Clock the sibling DURATION off the CENTER travel instead — the honest translation the eye tracks — so
+	// its px/ms matches parent/child at the SAME 1.6 ceiling (no ceiling change). The transform (dx,dy) and
+	// the settle amplitude (settleBackFor(distance)) are UNCHANGED — still the real chip→slot corner path.
+	const durDistance =
+		flightKind === 'sibling'
+			? Math.hypot(
+					origin.left + origin.width / 2 - (dest.left + dest.width / 2),
+					origin.top + origin.height / 2 - (dest.top + dest.height / 2)
+				)
+			: distance;
 
 	// Distance-scaled; the floor/slope depend on the flight kind (spouse = brisk in-corner morph,
 	// parent/child = velocity-capped travel, cc = a long directional journey from offscreen).
@@ -341,8 +367,10 @@ export function growFrom(node: Element) {
 		const seat = pivotId ? document.querySelector(`[data-flight-id="${pivotId}"]`)?.getBoundingClientRect() : null;
 		const demoteMax = seat && seat.width ? maxCornerTravel(dest, seat) : distance;
 		duration = spouseHeroDurationMs(distance, demoteMax);
+	} else if (flightKind === 'sibling') {
+		duration = siblingGrowMs(durDistance); // center travel at the gentler sibling dial (~1.2 px/ms)
 	} else {
-		duration = relativeGrowMs(distance);
+		duration = relativeGrowMs(durDistance); // parent/child → corner distance (unchanged)
 	}
 	// SETTLE — the whole-path easeOutBack overshoot on the PROMOTION, now on BOTH regimes (Layer 3:
 	// extended from spouse to relative parent/child promotions). Active only on a WARM click whose camera
@@ -429,7 +457,8 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	if (!card.width || !card.height) return { duration: 0 };
 	// CC (directional arrival): the old card leaves the NEIGHBOURHOOD, not landing in it — depart WHOLE
 	// (no chip-face, no destination box), sliding OFFSCREEN the OPPOSITE way the new card enters, shrinking
-	// modestly, finish-first (heroDur − 60ms). Non-degenerate exit so Svelte cleans it.
+	// modestly, finish-first (heroDur − 60ms). Non-degenerate exit so Svelte cleans it. (SIBLING departures
+	// do NOT use this branch — see the spouse-retraction reuse below.)
 	if (flightKind === 'cc') {
 		const arcM = getCameraMove();
 		if (isArcMove(arcM)) {
@@ -460,6 +489,19 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		};
 	}
 	const relative = flightKind === 'relative';
+	// SIBLING RETRACTION (Slice 3): the old focus exits EXACTLY like a promoted-spouse demote — it retracts
+	// into the top-right notch corner, sizing down, linear velocity (the anti-strobe curve), chip-face
+	// crossfade. It reuses this whole spouse branch verbatim; the ONLY substitution is the destination. A
+	// spouse demote docks into a real seat box ([data-flight-id]); a sibling has no such box (it lands in the
+	// closed panel, not a roster seat), and Sam wants a FIXED destination with no per-pair variance. So the
+	// seat is a fixed top-right corner rect derived from the card's own geometry — same for every sibling
+	// pair (no vector, no capture). The card shrinks into the corner and is removed (no persistent chip).
+	const sibling = flightKind === 'sibling';
+	const SIB_SEAT_W = 160; // compact spouse-chip size = the notch seat the retraction sizes down to
+	const SIB_SEAT_H = 65;
+	const siblingSeat = sibling
+		? { left: card.left + card.width - SIB_SEAT_W, top: card.top, width: SIB_SEAT_W, height: SIB_SEAT_H }
+		: null;
 	// The demoting card's chip-face (a PersonBox, natural 220×75) — counter-scaled per frame below so
 	// it renders undistorted inside the shell's non-uniform morph. Cached once. BOTH kinds now use it:
 	// the spouse demote is a visible solid object too (Layer 2 — unified with the L3a relative machinery),
@@ -499,7 +541,7 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		// path), not the top-left corner — so the photo never strobes. It shares the hero's extended clock
 		// (spouseHeroDurationMs) and lands exactly SPOUSE_FINISH_LEAD_MS ahead — finish-first without any
 		// cramming multiplier. (Same seat + same slot rect as growFrom, so both compute the same clock.)
-		const seat = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
+		const seat = siblingSeat ?? document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
 		const demoteMax = seat && seat.width ? maxCornerTravel(card, seat) : heroDist;
 		const heroDuration = heroOrigin ? spouseHeroDurationMs(heroDist, demoteMax) : SPOUSE_EXIT_MS;
 		demoteDuration = heroDuration - SPOUSE_FINISH_LEAD_MS;
@@ -532,14 +574,25 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		// boxes/rows/notch, below the growing hero at z 2). The notch-hide (chipExit hides every OTHER
 		// spouse chip) keeps exactly two movers on stage: this demote and the hero.
 		tick: (t: number, u: number) => {
-			el.style.zIndex = '1';
+			// z-index: a spouse/relative demote rides at z 1 (above resting boxes/rows/notch, below the hero
+			// z 2) because it flies OVER resting content to its seat. A SIBLING retraction is different: the
+			// hero clears its z 2 at introend (~one flight sooner than the retraction ends, since the hero was
+			// sped up), leaving the retraction at z 1 ABOVE the just-landed card — it painted over the new card
+			// (the confirmed bug). The retraction only ever travels over the CARD region (never the neighbour
+			// rows), so parking it BELOW the incoming card's resting level (z −1, under the isolated slot's
+			// content) keeps it behind the hero at EVERY phase — during the flight (hero z 2) AND after landing
+			// (hero z 0). It stays visible wherever the growing hero hasn't yet covered it; once covered, it is
+			// correctly hidden behind. z-order is now timing-independent — no re-mask.
+			el.style.zIndex = sibling ? '-1' : '1';
 			// SOLID object: opacity 1 the whole way to its seat, no terminal fade — the user tracks one
 			// continuous card shrinking into its chip. (Spouse was formerly hidden ["covered by emptiness"]
 			// to retire Artifact A's edge-peek; Layer 2 makes it a visible second baseball card instead, so
 			// you can follow the card→chip AND the chip→card as discrete objects trading places. The seat
 			// chip reveals on the demote's LANDING via the onOutgoingEnd atomic swap, like the relative box.)
 			el.style.opacity = '1';
-			const box = document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
+			// Sibling → the fixed corner rect (no data-flight-id box exists); spouse/relative → the live seat,
+			// re-queried each frame (the moving-destination fix). Sibling's rect is constant, so it just holds.
+			const box = siblingSeat ?? document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
 			if (!box || !box.width) return;
 			const dx = box.left - card.left;
 			const dy = box.top - card.top;
@@ -796,6 +849,7 @@ export function chipExit(node: Element, params: { key: string }) {
 	if (
 		flightKind === 'spouse' ||
 		flightKind === 'relative' ||
+		flightKind === 'sibling' ||
 		(node as HTMLElement).dataset.offwindow === 'true'
 	) {
 		return { duration: 60, css: () => 'opacity: 0; visibility: hidden;' };

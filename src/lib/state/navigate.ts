@@ -69,12 +69,13 @@ export function warmPersonLinks(node: HTMLElement) {
 		const href = anchor.getAttribute('href');
 		const match = href?.match(/^\/person\/([^/?#]+)$/);
 		if (!match) return; // not an internal person link — leave it to the browser
-		// SLICE 1 (Phase 7): a sibling chip is a PLAIN navigation — do NOT capture the warm flight. The old
-		// featured card has no destination box on the sibling's page, so a warm demote would ghost (the
-		// July-12 flash condition). The chip carries data-sveltekit-reload → a full reload, no flight. Slice 3
-		// replaces this with the CC-path lateral flight (whole card, opposite vector, no chip-face, no settle).
-		if (anchor.getAttribute('data-relation') === 'sibling') return;
+		// SLICE 3 (Phase 7): a sibling chip is now a WARM flight — kind 'sibling'. The hero grows from the
+		// chip rect (with settle, like a relative promotion); the old card DEPARTS via the CC path (whole
+		// card, opposite lateral vector, no chip-face, no settle) because the old focus has no destination
+		// box on the sibling's page (a demote-into-box would ghost — the July-12 flash condition). The
+		// laterality is graph-true: kind 'sibling' + relationClass 'collateral' + the sibling's captured t.
 		event.preventDefault();
+		const isSibling = anchor.getAttribute('data-relation') === 'sibling';
 		// Capture the clicked box's rect at CLICK time (outside any reactive effect) so the
 		// card flies from its true on-screen position before any state change or reflow.
 		captureFlightOrigin(anchor.getBoundingClientRect());
@@ -83,7 +84,9 @@ export function warmPersonLinks(node: HTMLElement) {
 		// the near-original parent/child speed.
 		const relation = anchor.getAttribute('data-relation');
 		const ccNav = (anchor as HTMLElement).dataset.cc === 'true';
-		captureFlightKind(ccNav ? 'cc' : relation === 'spouse' ? 'spouse' : 'relative');
+		captureFlightKind(
+			ccNav ? 'cc' : isSibling ? 'sibling' : relation === 'spouse' ? 'spouse' : 'relative'
+		);
 		// BUG 1: remember which box was clicked so flyOut keeps it invisible — it's becoming the
 		// featured card via the morph, and a second visible copy is the ghost. (No imperative hide
 		// here: the clicked chip stays VISIBLE through the fetch, then the growFrom card — which
@@ -112,9 +115,11 @@ export function warmPersonLinks(node: HTMLElement) {
 		// A CC link (data-cc) is a NON-CHIP navigation → the directional arrival class (kind 'cc'). Its
 		// `to` comes from the anchor's own data-tx/ty (baked from the CC target's seat), not a flight box.
 		const isCC = (anchor as HTMLElement).dataset.cc === 'true';
-		const kind = isCC ? 'cc' : relation === 'spouse' ? 'spouse' : 'relative';
+		const kind = isCC ? 'cc' : isSibling ? 'sibling' : relation === 'spouse' ? 'spouse' : 'relative';
 		const rcAttr = (anchor as HTMLElement).dataset.relationClass;
-		const relationClass = isCC ? (rcAttr === 'direct' ? 'direct' : 'collateral') : null;
+		// Siblings are collateral (adjacent seats, same generation) → the CC departure reads the lateral
+		// vector from t (Δy≈0). Chip navs (spouse/parent/child) keep relationClass null.
+		const relationClass = isCC ? (rcAttr === 'direct' ? 'direct' : 'collateral') : isSibling ? 'collateral' : null;
 		const screenVector = dr
 			? {
 					dx: dr.left + dr.width / 2 - (oc.left + oc.width / 2),
@@ -123,7 +128,8 @@ export function warmPersonLinks(node: HTMLElement) {
 			: { dx: 0, dy: 0 };
 		const distance = Math.hypot(screenVector.dx, screenVector.dy);
 		const numOr = (v: string | undefined) => (v != null && v !== '' && v !== 'null' ? Number(v) : null);
-		const src = isCC ? (anchor as HTMLElement) : box;
+		// A sibling chip has no flight-id box, so its seat t is on the anchor itself (like a CC link).
+		const src = isCC || isSibling ? (anchor as HTMLElement) : box;
 		const to =
 			src && numOr(src.dataset.tx) != null
 				? { x: Number(src.dataset.tx), y: numOr(src.dataset.ty) }

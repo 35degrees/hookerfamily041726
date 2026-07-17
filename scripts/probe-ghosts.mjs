@@ -17,7 +17,11 @@ const OLD_SPOUSE_IDS = ['X00361', 'X00360'];
 const OLD_SIBLING_SLUGS = ['sarah-morgan-1839', 'junius-morgan-jr-1846', 'juliet-morgan-1847', 'mary-burns-1844'];
 const CASES = [
 	{ name: 'UP → parent chip', link: 'a[data-relation="parent"][href="/person/junius-morgan-1813"]' },
-	{ name: 'DOWN → child chip', link: 'a[data-relation="child"][href="/person/louisa-satterlee-1866"]' }
+	{ name: 'DOWN → child chip', link: 'a[data-relation="child"][href="/person/louisa-satterlee-1866"]' },
+	// Slice 3: LATERAL sibling flight — the old card departs via the CC path (whole slide, no destination
+	// box). Sam's worst case: the panel is OPEN and the click lands ON a chip inside it. The old card, its
+	// spouse chips, and the old panel must all leave; nothing accumulates.
+	{ name: 'LATERAL → sibling chip', link: '.sibling-strip a[data-relation="sibling"][href="/person/sarah-morgan-1839"]' }
 ];
 
 const b = await chromium.launch();

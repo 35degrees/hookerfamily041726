@@ -25,7 +25,11 @@ export type CameraMove = {
 	distance: number;
 	duration: number;
 	easing: string;
-	kind: 'spouse' | 'relative' | 'cc'; // 'cc' = a non-chip navigation (the directional arrival class)
+	// 'cc' = a non-chip navigation (the directional arrival class). 'sibling' = a chip nav that GROWS from
+	// the clicked sibling chip (like 'relative') but whose old card DEPARTS via the CC path (whole card,
+	// opposite lateral vector, no chip-face, no settle) — the old focus has no destination box on the
+	// sibling's page, so it can't demote into one.
+	kind: 'spouse' | 'relative' | 'cc' | 'sibling';
 	// CC laterality (graph-derived at build time; see regenerate relationClass). 'direct' → the arrival
 	// flies in vertically (Δx ignored); 'collateral' → it tilts by compressed Δx. Absent for chip navs.
 	relationClass?: 'direct' | 'collateral' | null;

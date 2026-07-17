@@ -41,9 +41,12 @@
 	const GAP = 16;
 	const PITCH = CHIP_H + GAP; // 70 — the mount-cascade drop distance (layout below is cumulative, not pitch)
 	const HEADER_H = 28; // FIXED header height (the CSS matches) so the cumulative height model is exact
-	const WINDOW = 7; // Sam: 7 CHIPS visible; headers among them ADD height — a chip is never sliced
+	// Sam (final model): the window is a FIXED HEIGHT — 6 chips' worth — that NEVER changes. Headers CONSUME
+	// SLOTS: no headers → 6 chips; one header → fewer; two → fewer still. "6" is a consequence of the height,
+	// not a law. Derived, not hardcoded.
+	const WINDOW_CHIPS = 6;
+	const WINDOW_H = WINDOW_CHIPS * CHIP_H + (WINDOW_CHIPS - 1) * GAP; // 404px
 	const SHADOW_PAD = 6; // clip overshoot so no chip's drop shadow is cut
-	let maskClip = $derived(`inset(-4px -${SHADOW_PAD}px -${SHADOW_PAD}px -${SHADOW_PAD}px)`);
 
 	// ── Cumulative layout (the CUT-CHIP fix) ───────────────────────────────────────────────────────────
 	// The old window was a fixed 474px = 7·54 + 6·16, budgeted for CHIPS ONLY. A header is a list item that
@@ -53,12 +56,22 @@
 	function itemH(it: Item): number {
 		return it.kind === 'header' ? HEADER_H : CHIP_H;
 	}
+	// Asymmetric header gaps (Sam): a header sits CLOSER to the chips it labels than to the content above —
+	// proximity grouping. Gap ABOVE a header −40%; gap BELOW −80%. Intentional asymmetry, do not "correct".
+	// (These match the negative margins on .sib-item.is-header in the CSS — keep the two in sync.)
+	const HEADER_GAP_ABOVE = GAP * 0.6; // 9.6px
+	const HEADER_GAP_BELOW = GAP * 0.2; // 3.2px
+	function gapAfter(i: number): number {
+		if (items[i + 1]?.kind === 'header') return HEADER_GAP_ABOVE; // this item → the header below it
+		if (items[i]?.kind === 'header') return HEADER_GAP_BELOW; // a header → the chip below it
+		return GAP;
+	}
 	let cumTop = $derived.by(() => {
 		const tops: number[] = [];
 		let y = 0;
-		for (const it of items) {
+		for (let i = 0; i < items.length; i++) {
 			tops.push(y);
-			y += itemH(it) + GAP; // flex column, GAP between every item
+			y += itemH(items[i]!) + gapAfter(i);
 		}
 		return tops;
 	});
@@ -69,7 +82,34 @@
 		});
 		return idx;
 	});
-	let maxOffset = $derived(Math.max(0, count - WINDOW));
+	// The window's first item for a given chip-offset: the chip at `o`, extended UP to include its tier
+	// header when one sits directly above (so a tier label shows atop its first visible chip).
+	function startItemFor(o: number): number {
+		let s = chipItemIndices[o] ?? 0;
+		if (s > 0 && items[s - 1]?.kind === 'header') s -= 1;
+		return s;
+	}
+	// The LAST item that fits COMPLETELY within the fixed WINDOW_H starting at item `s`. Never a partial:
+	// an item is included only if its whole box (bottom edge) lands within the window; the straddler and
+	// everything below are excluded, and the leftover space at the bottom stays empty.
+	function endItemFor(s: number): number {
+		const startTop = cumTop[s] ?? 0;
+		let last = s;
+		for (let i = s; i < items.length; i++) {
+			if ((cumTop[i] ?? 0) + itemH(items[i]!) - startTop <= WINDOW_H + 0.5) last = i;
+			else break;
+		}
+		return last;
+	}
+	// maxOffset — the smallest chip-offset from which the LAST item already fits in the window; paging past
+	// it reveals nothing, so it's the clamp for the accumulating target. (Counts are small — ≤~21 — so the
+	// linear scan is cheap.)
+	let maxOffset = $derived.by(() => {
+		for (let o = 0; o <= Math.max(0, count - 1); o++) {
+			if (endItemFor(startItemFor(o)) >= items.length - 1) return o;
+		}
+		return Math.max(0, count - 1);
+	});
 
 	// ── Paging — ACCUMULATING TARGET, no lock (2d) ──────────────────────────────────────────────────────
 	// The SPOUSE carousel keeps its pagingLock (a different problem: 3–5 chips). Siblings can be 15+, so a
@@ -81,20 +121,18 @@
 	let paging = $state(false); // strip transition ON while paging; OFF on reset so close/nav SNAP
 	let canPageDown = $derived(offset < maxOffset);
 	let canPageUp = $derived(offset > 0);
-	// Window's first item = the first visible chip, extended UP to include its tier header when one sits
-	// directly above — so a tier label shows atop its first visible chip instead of clipping just off-screen.
-	let winStartItem = $derived.by(() => {
-		let s = chipItemIndices[offset] ?? 0;
-		if (s > 0 && items[s - 1]?.kind === 'header') s -= 1;
-		return s;
-	});
-	let winEndItem = $derived(chipItemIndices[Math.min(offset + WINDOW - 1, count - 1)] ?? items.length - 1);
+	let winStartItem = $derived(startItemFor(offset));
+	let winEndItem = $derived(endItemFor(winStartItem));
 	let stripY = $derived(-(cumTop[winStartItem] ?? 0));
-	// Window height = exact pixel span of the visible items (chips + headers among them). Grows when a header
-	// is in view so the 7th chip — shadow included — is never cut.
+	// The MASK clips at the last COMPLETE item (≤ WINDOW_H) → never a partial chip. It rides at the top of the
+	// fixed WINDOW_H zone; any leftover space (when headers shrink the item count) sits below it, empty, and
+	// the caret is anchored to the zone's fixed bottom (below), so it never bobs.
 	let maskH = $derived(
 		items.length ? (cumTop[winEndItem] ?? 0) + itemH(items[winEndItem]!) - (cumTop[winStartItem] ?? 0) : 0
 	);
+	// Bottom clip trims the mask exactly at the last complete item + its shadow, hiding the straddler that
+	// starts a full GAP below; sides/top keep the shadow pad. maskH ≤ WINDOW_H, so this inset is ≥ −SHADOW_PAD.
+	let maskClip = $derived(`inset(-4px -${SHADOW_PAD}px -${SHADOW_PAD}px -${SHADOW_PAD}px)`);
 	function pageStep(dir: 1 | -1) {
 		if (!landed) return; // GONDOLA GUARD stays: inert during a card flight
 		const next = Math.min(maxOffset, Math.max(0, offset + dir));
@@ -186,7 +224,7 @@
 
 	// The arrows fade IN only after the cascade has fully landed — derived from the real cascade end
 	// (STAGGER × visible + duration), not hardcoded. Fade OUT / reset when the panel closes.
-	let visibleCount = $derived(Math.min(count, WINDOW));
+	let visibleCount = $derived(Math.min(count, WINDOW_CHIPS));
 	let cascadeEnd = $derived((visibleCount - 1) * STAGGER_IN + DUR_IN);
 	let arrowsShown = $state(false);
 	$effect(() => {
@@ -240,24 +278,36 @@
 		     component nav-reset to instant. The OPEN cascade is unchanged: the chips' in:fly|global still fire
 		     as this body mounts. -->
 		<div class="sibling-body" out:collapse>
-			<!-- The MASK windows 7 chips; the STRIP holds all of them and translates by pure pitch on a page
-			     (transition only while .paging). clip-path (not overflow) so drop shadows escape the sides/bottom. -->
-			<div class="sibling-mask" class:paging style="height: {maskH}px; clip-path: {maskClip}">
-				<div class="sibling-strip" class:paging style:transform="translateY({stripY}px)">
-					{#each items as item, i (item.kind === 'chip' ? item.chip.id : item.label)}
-						<!-- in: only, |global for the ancestor-mount reveal. NO per-chip out: — the container
-						     collapse (above) handles close; a |global outro is what stranded the old card as a ghost. -->
-						<div class="sib-item" in:fly|global={flyIn(i)} animate:flip={{ duration: flipMs }}>
-							{#if item.kind === 'header'}
-								<div class="sibling-header">{item.label}</div>
-							{:else}
-								<PersonBox person={item.chip} relation="sibling" dimmed={!!item.chip.dy_young} />
-							{/if}
-						</div>
-					{/each}
+			<!-- FIXED-height window zone (WINDOW_H, never changes) so the caret below it never bobs. The MASK
+			     rides at its top and clips at the last COMPLETE item (maskH ≤ WINDOW_H) — never a partial chip;
+			     leftover space (headers shrink the item count) stays empty below the mask, inside this zone. -->
+			<div class="sibling-window" style="height: {WINDOW_H}px">
+				<!-- The STRIP holds all items and translates by the cumulative offset on a page (transition only
+				     while .paging). clip-path (not overflow) so drop shadows escape the sides. -->
+				<div class="sibling-mask" class:paging style="height: {maskH}px; clip-path: {maskClip}">
+					<div class="sibling-strip" class:paging style:transform="translateY({stripY}px)">
+						{#each items as item, i (item.kind === 'chip' ? item.chip.id : item.label)}
+							<!-- in: only, |global for the ancestor-mount reveal. NO per-chip out: — the container
+							     collapse (above) handles close; a |global outro is what stranded the old card as a ghost. -->
+							<div
+								class="sib-item"
+								class:is-header={item.kind === 'header'}
+								in:fly|global={flyIn(i)}
+								animate:flip={{ duration: flipMs }}
+							>
+								{#if item.kind === 'header'}
+									<div class="sibling-header">{item.label}</div>
+								{:else}
+									<PersonBox person={item.chip} relation="sibling" dimmed={!!item.chip.dy_young} />
+								{/if}
+							</div>
+						{/each}
+					</div>
 				</div>
 			</div>
 			{#if canPageDown}
+				<!-- FIXED position: the caret sits below the fixed WINDOW_H zone, so it never moves as the item
+				     count changes (Sam: a moving target sabotages the acceleration → fat-fingered chips). -->
 				<div class="down-caret">
 					<Caret
 						char="⌄"
@@ -292,6 +342,15 @@
 		flex-direction: column;
 		align-items: center;
 		transform-origin: top center;
+	}
+
+	/* FIXED-height window zone (WINDOW_H inline). The mask rides at its top; leftover space (headers shrink
+	   the item count) stays empty below, keeping the caret — which sits below this zone — at a fixed y. */
+	.sibling-window {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-start;
 	}
 
 	/* The word/up-arrow slot: bottom-aligned so the word's underline sits at the spouse chip's bottom edge
@@ -336,9 +395,10 @@
 		color: rgb(68, 64, 60); /* stone-700 */
 	}
 
-	/* .sibling-mask: height + clip-path set inline; clip-path (not overflow) lets chip shadows render past
-	   the edges. Its HEIGHT glides in lockstep with the strip while paging (a header entering/leaving the
-	   window changes maskH — without the transition the mask would snap taller/shorter mid-glide). */
+	/* .sibling-mask: height (≤ WINDOW_H, clips at the last complete item) + clip-path set inline; clip-path
+	   (not overflow) lets chip shadows render past the edges. Its height glides in lockstep with the strip
+	   while paging (a header entering/leaving the visible set changes how many items fit → maskH shifts;
+	   without the transition the clip boundary would snap mid-glide). */
 	.sibling-mask.paging {
 		transition: height 420ms cubic-bezier(0.34, 1.3, 0.64, 1);
 	}
@@ -361,6 +421,13 @@
 	}
 	.sib-item {
 		flex: 0 0 auto;
+	}
+	/* Asymmetric header gaps via negative margins that trim the 16px flex gap (matches gapAfter() in the
+	   script — keep in sync). Above a header: 16 − 6.4 = 9.6px (−40%). Below: 16 − 12.8 = 3.2px (−80%). The
+	   header sits nearer the chips it labels than the content above it (proximity grouping). */
+	.sib-item.is-header {
+		margin-top: -6.4px;
+		margin-bottom: -12.8px;
 	}
 	/* FIXED height (= HEADER_H) so the cumulative window math is exact. Centred, roomier than before. */
 	.sibling-header {
