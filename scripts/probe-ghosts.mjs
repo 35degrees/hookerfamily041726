@@ -39,7 +39,10 @@ for (const c of CASES) {
 	if ((await p.locator(c.link).count()) === 0) { console.log(`  SKIP ${c.name}: link not found`); continue; }
 	pageErrors = [];
 
-	// Per-frame from the click: count OUTGOING artifacts by identity.
+	// Per-frame from the click: count OUTGOING artifacts by identity. Track (id + data-relation), NOT id
+	// alone — a spouse who becomes a parent/child LEGITIMATELY persists in the destination role, so an
+	// identity-only count goes green while a stale SPOUSE-role render flickers alongside the correct demote.
+	// The real invariant: no single outgoing person may render in TWO roles (opacity > 0.05) at once.
 	await p.evaluate(({ ids, oldSibSel }) => {
 		window.__gh = [];
 		const t0 = performance.now();
@@ -49,7 +52,18 @@ for (const c of CASES) {
 			const flying = cards.some((el) => el.classList.contains('flat') || getComputedStyle(el).transform !== 'none');
 			const oldSpouse = ids.filter((id) => document.querySelector(`.spouse-strip .flight[data-flight-id="${id}"]`)).length;
 			const oldSib = document.querySelectorAll(oldSibSel).length;
-			window.__gh.push({ t: Math.round(t), flying, oldSpouse, oldSib, cards: cards.length });
+			// For each outgoing spouse id, count DISTINCT visible roles it renders in this frame.
+			const roleDouble = ids.map((id) => {
+				const els = [...document.querySelectorAll(`[data-flight-id="${id}"]`)];
+				const roles = new Set();
+				for (const el of els) {
+					if (parseFloat(getComputedStyle(el).opacity) <= 0.05) continue;
+					const rel = el.getAttribute('data-relation') || el.querySelector('[data-relation]')?.getAttribute('data-relation');
+					if (rel) roles.add(rel);
+				}
+				return { id, roles: [...roles] };
+			}).filter((r) => r.roles.length > 1);
+			window.__gh.push({ t: Math.round(t), flying, oldSpouse, oldSib, cards: cards.length, roleDouble });
 			if (t < 1800) requestAnimationFrame(frame);
 			else window.__ghDone = true;
 		})();
@@ -63,6 +77,9 @@ for (const c of CASES) {
 	const LINGER = flyEnd + 500;
 	const lastOldSib = Math.max(-1, ...s.filter((x) => x.oldSib > 0).map((x) => x.t));
 	const lastOldSpouse = Math.max(-1, ...s.filter((x) => x.oldSpouse > 0).map((x) => x.t));
+	// Doubled-role render: the pre-existing spouse-demote ghost — one person shown as spouse AND parent/child.
+	const doubleFrames = s.filter((x) => x.roleDouble && x.roleDouble.length > 0);
+	const doubleEg = doubleFrames[0]?.roleDouble?.[0];
 
 	const endH1 = (await p.locator('.featured-flight h1').first().textContent().catch(() => '')) || '';
 	const endCards = await p.locator('.featured-flight').count();
@@ -75,9 +92,10 @@ for (const c of CASES) {
 	if (endOldSib > 0) fails.push(`${endOldSib} of the outgoing person's sibling chips still mounted at rest`);
 	if (lastOldSib > LINGER) fails.push(`outgoing sibling chips linger to t=${lastOldSib} (past landing+500=${LINGER}) — ghost cascade / frozen panel`);
 	if (lastOldSpouse > LINGER) fails.push(`outgoing spouse chips linger to t=${lastOldSpouse} (past landing+500=${LINGER})`);
+	if (doubleFrames.length) fails.push(`doubled-role render: person ${doubleEg.id} shown as [${doubleEg.roles.join(' + ')}] simultaneously for ${doubleFrames.length} frames — the spouse chip re-animates from opacity 1 while the same person morphs into a parent/child slot (flicker ghost)`);
 
 	if (fails.length) { failures++; console.log(`  RED  ${c.name}`); for (const f of fails) console.log(`         - ${f}`); }
-	else console.log(`  GREEN ${c.name} — old card/spouse/sibling all gone by landing (sib last t=${lastOldSib}, spouse last t=${lastOldSpouse}); no error`);
+	else console.log(`  GREEN ${c.name} — old card/spouse/sibling all gone by landing (sib last t=${lastOldSib}, spouse last t=${lastOldSpouse}); no doubled-role render; no error`);
 }
 
 // Accumulation guard: repeated round-trips must not leak resident flight/chip nodes.

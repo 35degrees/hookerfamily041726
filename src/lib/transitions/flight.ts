@@ -780,12 +780,25 @@ export function flyOut(_node: Element, params: { key: string }) {
  * chips (and every ≤3-card chip, which is never off-window) fall through to the normal flyOut.
  */
 export function chipExit(node: Element, params: { key: string }) {
-	// SPOUSE PROMOTION notch-hide: on a spouse-chip click, ALL other notch chips hide immediately
-	// (opacity 0) so the promoted chip (→ hero) is the only notch element visible during the flight —
-	// nothing beneath/behind the hero, retiring Artifact A for the spouse regime. Non-degenerate
-	// duration so Svelte cleans the outro (the floater lesson). Off-window chips hide the same way.
-	if (flightKind === 'spouse' || (node as HTMLElement).dataset.offwindow === 'true') {
+	// A notch spouse chip belongs to the FEATURED CARD's own top-right corner — it must never independently
+	// re-animate from opacity 1 on the card's teardown. There is no card-level flight where a notch chip
+	// should visibly fly on its own:
+	//   • SPOUSE swap — the promoted chip flies to hero; ALL other notch chips hide (retiring Artifact A).
+	//   • RELATIVE promotion — the whole card (with its notch) demotes to a parent/child chip; the card's
+	//     own shrink + chip-face carries the motion, so the notch chips hide. If a departing spouse ALSO
+	//     morphs into the destination as a parent/child (e.g. the featured person's wife is the clicked
+	//     child's mother), the fall-through flyOut re-animated that chip from opacity 1 → a SECOND, spouse-
+	//     role render flickering alongside the correct parent morphIn (the doubled-render ghost, pre-existing
+	//     and caught by probe-ghosts). Hiding here kills it: the person's motion is owned by their morphIn.
+	//   • CC — the roster already gathered into the card pre-flight (flyOut's own cc branch holds invisible).
+	// So on EVERY card-level flight, a notch chip leaves invisibly. Non-degenerate duration so Svelte cleans
+	// the outro (the floater lesson). Off-window chips (mask-clipped) leave the same way.
+	if (
+		flightKind === 'spouse' ||
+		flightKind === 'relative' ||
+		(node as HTMLElement).dataset.offwindow === 'true'
+	) {
 		return { duration: 60, css: () => 'opacity: 0; visibility: hidden;' };
 	}
-	return flyOut(node, params);
+	return flyOut(node, params); // cc only — flyOut short-circuits it to invisible internally
 }
