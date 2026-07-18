@@ -259,6 +259,9 @@ function compact(p, slugMap) {
 		// bio.display_name from the full record, so it's UNAFFECTED.
 		nk: (() => {
 			const b = bioOf(p);
+			// bio.chip_name is a VERBATIM override — the exact chip label, used when the auto-surname is wrong
+			// (e.g. a married noblewoman known by her married name: "Countess Szapary", not maiden "Széchenyi").
+			if (b.chip_name) return b.chip_name;
 			if (!b.chip_first_name) return null;
 			const surname = chipSurname(p);
 			return surname ? `${b.chip_first_name} ${surname}` : b.chip_first_name;
