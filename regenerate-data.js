@@ -266,6 +266,21 @@ function compact(p, slugMap) {
 			const surname = chipSurname(p);
 			return surname ? `${b.chip_first_name} ${surname}` : b.chip_first_name;
 		})(),
+		// cm (child married name) — CHILD chips ONLY, WOMEN ONLY: show the MARRIED surname (last of
+		// married_names) instead of the maiden/last_name a normal chip uses — "Alice Vanderbilt", not
+		// "Alice Gwynne". Surname falls back to last_name when there is no married name (unmarried daughters
+		// stay unchanged). Verbatim bio.chip_name still wins (a curated label like "Countess Szapary" is
+		// never overwritten). null on men / when no first name → child chip falls through to nk/sn/n (current
+		// behavior). Only PersonBox's child branch reads it; every other chip type is UNAFFECTED.
+		cm: (() => {
+			if (p.gender !== 'female') return null;
+			const b = bioOf(p);
+			if (b.chip_name) return b.chip_name;
+			const surname = (b.married_names && b.married_names[b.married_names.length - 1]) || b.last_name || null;
+			const first = b.chip_first_name ?? b.first_name;
+			if (!surname || !first) return null;
+			return `${first} ${surname}`;
+		})(),
 		t: tableCoords.get(p.id) ?? null // {x, y, e?} — table seat (y may be null: consumers SKIP, never throw)
 	};
 }

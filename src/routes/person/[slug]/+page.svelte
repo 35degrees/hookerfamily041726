@@ -280,8 +280,18 @@
 		// lands on its lateral notch seat (pivot-aware offset guarantees that seat is in the visible
 		// window). Either seat is revealed at the demote's landing by the onOutgoingEnd atomic swap. Skip
 		// the flip only if the destination seat isn't mounted (then the card just shrinks plainly).
-		if (!document.querySelector(`[data-flight-id="${id}"]`)) return;
+		const seat = document.querySelector(`[data-flight-id="${id}"]`);
+		if (!seat) return;
 		node.classList.add('demoting');
+		// The chip-face is a resting PersonBox rendered relation="parent", so its name is the parent/short
+		// form ("Alice Gwynne"). When this demote lands in a CHILD seat, the real chip shows the married-
+		// surname form ("Alice Vanderbilt", from compact.cm) — so the flying face would read the maiden name
+		// and SNAP to the married one at the atomic swap. Mirror the destination chip's name onto the chip-
+		// face now so the two are identical for the whole flight. Purely the name text — geometry, crossfade,
+		// and the atomic swap are untouched; correct for every seat/name kind (parent sn, child cm, verbatim).
+		const seatName = seat.querySelector('[data-chip-name]')?.textContent;
+		const faceName = node.querySelector('.demote-chipface [data-chip-name]');
+		if (seatName && faceName && faceName.textContent !== seatName) faceName.textContent = seatName;
 	}
 
 	// ATOMIC SWAP: the demoting card has just been removed by Svelte (outro end). Reveal its pivot box

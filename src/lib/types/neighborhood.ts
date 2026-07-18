@@ -14,6 +14,7 @@ export interface PersonCompact {
 	fn?: string | null; // first name — sibling chips render this (falls back to sn); other chips use sn
 	cf?: string | null; // chip_first_name alone ("Lent") — SIBLING chips show just this (first-name-only)
 	nk?: string | null; // opt-in chip name from bio.chip_first_name ("Cettie Mathews"); non-sibling chips prefer it; null → sn
+	cm?: string | null; // child-chip married surname, WOMEN only ("Alice Vanderbilt"); CHILD chips prefer it; null → nk/sn
 	dy_young?: boolean;
 	t?: TableCoord; // Phase 3a: table seat {x, y, e?} (emit-time derived; y may be null)
 }

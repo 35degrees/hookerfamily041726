@@ -30,10 +30,15 @@
 	// short chip name — the curated "chip_first_name + surname" (nk, "Cettie Mathews") when set, else the
 	// computed short name (sn). Null beats weak — fall back through sn then n. (FeaturedCard is unaffected —
 	// it renders the full bio.display_name, not this compact.)
+	// CHILD chips for WOMEN prefer the MARRIED surname (cm, "Alice Vanderbilt") over the maiden/short name;
+	// cm is null for men / unavailable, so they keep the normal nk→sn→n fallback. Verbatim chip_name still
+	// wins (it's baked into cm for women). Sibling chips are first-name-only; everyone else uses nk→sn→n.
 	let displayName = $derived(
 		isSibling
 			? (person.cf ?? person.fn ?? person.sn ?? person.n)
-			: (person.nk ?? person.sn ?? person.n)
+			: relation === 'child'
+				? (person.cm ?? person.nk ?? person.sn ?? person.n)
+				: (person.nk ?? person.sn ?? person.n)
 	);
 	// Slice 3: a sibling nav is now a WARM flight (kind 'sibling'). warmPersonLinks captures the chip rect
 	// and reads the sibling's seat t off data-tx/data-ty (below) to compute the collateral LATERAL departure
@@ -48,16 +53,20 @@
 <!-- Sibling chips clamp the first name with shrinkToFit — the SAME machinery as the FeaturedCard's main
      name (min-w-0 wrapper + [data-fit] inline span), so a long first name shrinks 11px→8px instead of
      clipping. Other chips render the name plain (unchanged). -->
+<!-- data-chip-name is a stable hook the demote flight reads: it mirrors the destination chip's name onto
+     the flying chip-face at demote start, so a child-seat landing (where a woman's married-surname `cm`
+     differs from the parent/short `sn`) never flashes the maiden name before the atomic swap. -->
 {#snippet nameEl()}
 	{#if isSibling}
 		<div
 			class="min-w-0 font-medium text-stone-900 {nameText}"
+			data-chip-name
 			use:shrinkToFit={{ max: 11, min: 8, key: displayName }}
 		>
 			<span data-fit class="inline-block whitespace-nowrap">{displayName}</span>
 		</div>
 	{:else}
-		<div class="font-medium text-stone-900 {nameText}">{displayName}</div>
+		<div class="font-medium text-stone-900 {nameText}" data-chip-name>{displayName}</div>
 	{/if}
 {/snippet}
 
