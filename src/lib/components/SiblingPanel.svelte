@@ -18,8 +18,15 @@
 	let { siblings, cardHeight, anchorOffset, landed = true, open = $bindable(false) }: Props = $props();
 
 	let count = $derived(siblings.full.length + siblings.half.length + siblings.step.length);
+	// Sort each tier by BIRTH YEAR (the parents' children_ids aren't reliably birth-ordered), then keep the
+	// died-young chips grouped at the bottom (dimmed, by design) — birth-sorted within each group. Unknown
+	// birth years sort last but hold their relative order (stable sort).
 	function tier(list: PersonCompact[]): PersonCompact[] {
-		return [...list.filter((s) => !s.dy_young), ...list.filter((s) => s.dy_young)];
+		const byBirth = (a: PersonCompact, b: PersonCompact) => (a.by ?? Infinity) - (b.by ?? Infinity);
+		return [
+			...list.filter((s) => !s.dy_young).sort(byBirth),
+			...list.filter((s) => s.dy_young).sort(byBirth)
+		];
 	}
 	type Item = { kind: 'header'; label: string } | { kind: 'chip'; chip: PersonCompact };
 	let items = $derived.by<Item[]>(() => {

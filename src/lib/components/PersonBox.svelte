@@ -25,9 +25,16 @@
 	let textAreaPad = $derived(isSibling ? 'min-w-0 gap-0 px-2.5 py-1' : 'gap-0.5 px-2.5 py-2');
 	let diedYoungText = 'text-[9px]';
 
-	// Sibling chips show the FIRST NAME only (fn); everyone else keeps the short name (sn). Null beats weak —
-	// fall back to sn then n if fn is absent.
-	let displayName = $derived(isSibling ? (person.fn ?? person.sn ?? person.n) : (person.sn ?? person.n));
+	// SIBLING chips are first-name-only ("from the POV of the card, he knows them as Lent"): use the curated
+	// chip first name (cf, e.g. "Lent") when set, else the real first name (fn). EVERYONE ELSE gets the full
+	// short chip name — the curated "chip_first_name + surname" (nk, "Cettie Mathews") when set, else the
+	// computed short name (sn). Null beats weak — fall back through sn then n. (FeaturedCard is unaffected —
+	// it renders the full bio.display_name, not this compact.)
+	let displayName = $derived(
+		isSibling
+			? (person.cf ?? person.fn ?? person.sn ?? person.n)
+			: (person.nk ?? person.sn ?? person.n)
+	);
 	// Slice 3: a sibling nav is now a WARM flight (kind 'sibling'). warmPersonLinks captures the chip rect
 	// and reads the sibling's seat t off data-tx/data-ty (below) to compute the collateral LATERAL departure
 	// vector. No data-sveltekit-reload — the click is preventDefault-ed into the warm path.

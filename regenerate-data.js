@@ -201,13 +201,20 @@ const TITLE_ABBREVIATIONS = {
 	'Lieutenant Colonel': 'Lt. Col.', 'Lt.-Col.': 'Lt. Col.', 'Lieut.-Col.': 'Lt. Col.', 'Rev. Capt.': 'Rev. Capt.'
 };
 const abbreviateTitle = (title) => (!title ? null : TITLE_ABBREVIATIONS[title] ?? title);
+// Chip surname — the last name a chip displays: the MAIDEN (birth) name for a woman / anyone who has
+// one, else last_name. Shared by computeShortName (sn) and the chip_first_name override (nk) so a
+// curated chip keeps the SAME last name it would otherwise show — chip_first_name swaps ONLY the first
+// name (e.g. Juliet Burkett Hooker → "Julie Burkett", never "Julie Hooker").
+function chipSurname(p) {
+	const bio = bioOf(p);
+	if (p.gender === 'female' || bio.maiden_name) return bio.maiden_name ?? bio.last_name ?? null;
+	return bio.last_name ?? null;
+}
 function computeShortName(p) {
 	const bio = bioOf(p);
 	const first = bio.first_name;
 	if (!first) return null;
-	let surname;
-	if (p.gender === 'female' || bio.maiden_name) surname = bio.maiden_name ?? bio.last_name;
-	else surname = bio.last_name;
+	const surname = chipSurname(p);
 	const baseName = surname ? `${first} ${surname}` : first;
 	const title = abbreviateTitle(bio.title);
 	if (title) {
@@ -241,6 +248,21 @@ function compact(p, slugMap) {
 		// as Abigail"). A DATA field, not a UI split of sn/n (which breaks on titles/maiden names/suffixes).
 		// On ALL compacts (~10 bytes); only sibling chips read it, everyone else keeps sn.
 		fn: bioOf(p).first_name ?? null,
+		// cf (chip first name) — bio.chip_first_name alone, no surname. SIBLING chips show just this ("Lent"),
+		// the same way they show fn for everyone else (sibling = first-name-only). Other chip types use nk.
+		cf: bioOf(p).chip_first_name ?? null,
+		// nk (chip name) — OPT-IN. Only when bio.chip_first_name is set do chips read "chip_first_name +
+		// chipSurname" — the SAME last name the chip shows otherwise (maiden → else last_name), so only the
+		// first name is swapped ("Julie Burkett", not "Julie Hooker"). Applies to EVERY chip type
+		// (spouse/parent/child/sibling). Deliberately NOT driven by bio.nickname (the tree has ~400
+		// nicknames, many bad chip reads). null → chips fall back to sn/fn. FeaturedCard renders
+		// bio.display_name from the full record, so it's UNAFFECTED.
+		nk: (() => {
+			const b = bioOf(p);
+			if (!b.chip_first_name) return null;
+			const surname = chipSurname(p);
+			return surname ? `${b.chip_first_name} ${surname}` : b.chip_first_name;
+		})(),
 		t: tableCoords.get(p.id) ?? null // {x, y, e?} — table seat (y may be null: consumers SKIP, never throw)
 	};
 }
