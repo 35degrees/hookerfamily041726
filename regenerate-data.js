@@ -636,11 +636,14 @@ function resolveDocuments(p, byId) {
 function resolveStatues(p, bySubject) {
 	return safeResolve(bySubject[p.id], (r) => {
 		const nm = r.name ?? r.description ?? 'Statue';
+		// Second line = the statue's place, like a landmark (its own `location` label, else "City, ST").
+		// Falls back to the type label (Bust/Relief) when no place is recorded.
+		const loc = r.location ?? formatCityState(r.city, r.state, r.country) ?? statueTypeLabel(r.type);
 		return mediaRow({
 			name: nm,
 			typeLabel: statueTypeLabel(r.type),
 			blurb: null,
-			subtitle: statueTypeLabel(r.type),
+			subtitle: loc,
 			url: r.url ?? null,
 			thumbUrl: r.photo_url ?? null,
 			alt: nm,
