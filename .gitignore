@@ -33,6 +33,9 @@ dist/
 # --- working / scratch (data batches) ---
 # only if you ever use a preview draft; not the source
 canonical_draft.json
+# minified/pruned export of canonical.json — a read-only standalone copy for
+# uploads/sharing, never re-imported into the pipeline. NEVER commit it.
+canonical.min.json
 *.bak
 *_backup.json
 # validate.py's git-HEAD baseline scratch file
