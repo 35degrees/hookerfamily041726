@@ -221,9 +221,12 @@ export function buildMapUrl(
 		return null;
 	}
 
-	// Text-based: use search (zoom controlled by Google based on query specificity)
+	// Text-based: use search (zoom controlled by Google based on query specificity).
+	// Require something more specific than a bare country: a lone "United States" query just
+	// opens a full-country map, so country-only (no city AND no state) reads as no usable
+	// location — return null so the card shows the place text without a pointless "Map" link.
+	if (!input.city && !input.state) return null;
 	const parts = [input.city, input.state, input.country].filter(Boolean);
-	if (parts.length === 0) return null;
 	const query = encodeURIComponent(parts.join(', '));
 	return `https://www.google.com/maps/search/?api=1&query=${query}`;
 }

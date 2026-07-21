@@ -620,13 +620,17 @@ function resolveDocuments(p, byId) {
 		const id = typeof bl === 'string' ? bl : bl && bl.document_id;
 		const r = byId[id];
 		if (!r) return null;
-		const blurb = bl && typeof bl === 'object' ? bl.document_blurb ?? null : null;
+		// person-side ref carries the per-person note under `blurb` (older rows used `document_blurb`)
+		const blurb =
+			bl && typeof bl === 'object' ? (bl.blurb ?? bl.document_blurb ?? null) : null;
 		return mediaRow({
 			name: r.title,
 			typeLabel: null,
 			blurb,
 			subtitle: blurb,
-			url: r.url ?? null,
+			// document registry stores its link as `source_url` (videos/landmarks use `url`); accept
+			// either so the row becomes a whole-row link to the external archive.
+			url: r.source_url ?? r.url ?? null,
 			thumbUrl: null,
 			alt: null,
 			tooltip: r.title ?? null
