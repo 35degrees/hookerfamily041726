@@ -37,6 +37,58 @@
 	let photoUrl = $derived(person.bio?.photo_url ?? person.name?.photo_url ?? null);
 	let displayName = $derived(person.bio?.display_name ?? person.name?.display_name ?? '');
 
+	// ── Main-portrait hover-zoom ──────────────────────────────────────────────
+	// Same mechanism as RightColumn's thumbnail popout (mouse-anchored, portaled to <body> so it escapes
+	// the card clip / overflow, pointer-events-none so the card stays interactive). Anchored ABOVE the
+	// cursor with a smart flip below when near the top edge, and clamped horizontally to the viewport.
+	// Hidden the instant the pointer leaves the photo.
+	let zoom = $state<{ src: string; alt: string; w: number; h: number; ax: number; y: number } | null>(
+		null
+	);
+
+	// Instant + lightweight: reuse the ALREADY-LOADED portrait src (no new network request → the
+	// enlargement appears the moment you hover, no first-hover lag). Sized to 200% of the displayed
+	// WIDTH at the image's NATURAL aspect, so the WHOLE photo shows — tall portraits aren't cropped to
+	// the midriff the way the object-cover card thumbnail is. Capped to the viewport, and never
+	// narrower than the on-card photo.
+	const ZOFFSET = 58; // fixed horizontal nudge right of the photo's edge, toward page centre (~3.5rem)
+	function trackZoom(e: MouseEvent) {
+		if (!photoUrl) return;
+		const img = e.currentTarget as HTMLImageElement;
+		const r = img.getBoundingClientRect();
+		const ar = img.naturalWidth ? img.naturalHeight / img.naturalWidth : r.height / r.width;
+		let w = r.width * 2; // 200% of the displayed width
+		let h = w * ar; // full-height at the image's own aspect → nothing cropped
+		const s = Math.min(1, (window.innerWidth * 0.6) / w, (window.innerHeight * 0.9) / h);
+		w *= s;
+		h *= s;
+		if (w < r.width) {
+			w = r.width; // never narrower than what's already shown on the card
+			h = w * ar;
+		}
+		// Horizontal is pinned to the photo's right edge (constant as the mouse moves), not the cursor.
+		zoom = { src: photoUrl, alt: displayName || 'Portrait', w, h, ax: r.right, y: e.clientY };
+	}
+	function closeZoom() {
+		zoom = null;
+	}
+	// FIXED horizontal position (photo's right edge + ~5rem toward centre) — moving the mouse only
+	// slides it up and down; it never drifts left/right. Vertically centered on the cursor, top clamped
+	// so the box stays fully on screen; the left is clamped only as a narrow-viewport safety.
+	function zoomStyle(z: { w: number; h: number; ax: number; y: number }): string {
+		const vw = typeof window !== 'undefined' ? window.innerWidth : 1280;
+		const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
+		const left = Math.max(8, Math.min(z.ax + ZOFFSET, vw - z.w - 8));
+		const top = Math.max(8, Math.min(z.y - z.h / 2, vh - z.h - 8));
+		return `left:${left}px; top:${top}px; width:${z.w}px; height:${z.h}px;`;
+	}
+	// Portal to <body> so no card ancestor (clip-path / overflow) can clip the float. Client-only: the
+	// {#if zoom} is false during SSR and actions never run on the server.
+	function portalZoom(node: HTMLElement) {
+		document.body.appendChild(node);
+		return { destroy: () => node.remove() };
+	}
+
 	let birthDate = $derived(formatDate(person.birth));
 	let birthLocation = $derived(formatLocationShort(person.birth));
 	let birthMapUrl = $derived(buildMapUrl(person.birth));
@@ -225,6 +277,9 @@
 							src={photoUrl}
 							alt={person.bio?.display_name ?? person.name?.display_name ?? 'Portrait'}
 							class="aspect-[3/4] w-full rounded-sm bg-stone-100 object-cover object-top"
+							onmouseenter={trackZoom}
+							onmousemove={trackZoom}
+							onmouseleave={closeZoom}
 						/>
 					{:else}
 						<div class="aspect-[3/4] w-full rounded-sm bg-stone-100"></div>
@@ -330,6 +385,22 @@
 	     peers for the crossfade — see DESIGN "Re-focus choreography"). This card
 	     still CARVES the notch from chipCount; the page docks the chips into it. -->
 </div>
+
+<!-- Main-portrait hover-zoom float — portaled to <body>, anchored above the cursor, pointer-events-none. -->
+{#if zoom}
+	<div
+		use:portalZoom
+		class="pointer-events-none fixed z-[9999]"
+		style={zoomStyle(zoom)}
+		aria-hidden="true"
+	>
+		<img
+			src={zoom.src}
+			alt={zoom.alt}
+			class="block h-full w-full rounded-md object-cover shadow-2xl ring-1 ring-black/10"
+		/>
+	</div>
+{/if}
 
 <style>
 	.tight-stack > * {
