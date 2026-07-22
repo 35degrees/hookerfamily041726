@@ -141,14 +141,36 @@
 			: thumbUrl;
 	}
 
-	// Warm the browser cache: preload the high-res popout images whenever the media rows change (i.e. on
-	// each person navigation), so the FIRST hover shows the enlargement instantly instead of waiting on a
-	// fresh network fetch. Client-only — Image is undefined during SSR.
+	// Warm the browser cache for the high-res hover popouts — but ONLY when the browser is idle and at
+	// LOW fetch priority, so these speculative loads NEVER compete with the foundational card, chip, and
+	// portrait photos for connections. (An eager, normal-priority preload here starved the visible
+	// images and made them load slowly — regression noticed 2026-07. Foundational photos always win.)
+	// Client-only — Image is undefined during SSR.
 	$effect(() => {
 		if (typeof Image === 'undefined') return;
-		for (const row of [...landmarks, ...artworks, ...statues]) {
-			if (row.thumbUrl) new Image().src = popoutSrc(row.thumbUrl);
-		}
+		const urls = [...landmarks, ...artworks, ...statues]
+			.filter((r) => r.thumbUrl)
+			.map((r) => popoutSrc(r.thumbUrl as string));
+		if (!urls.length) return;
+		const warm = () => {
+			for (const u of urls) {
+				const img = new Image();
+				try {
+					(img as unknown as { fetchPriority: string }).fetchPriority = 'low';
+				} catch {
+					/* older browsers: no fetchPriority — idle scheduling still keeps it out of the way */
+				}
+				img.src = u;
+			}
+		};
+		const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: object) => number })
+			.requestIdleCallback;
+		const cic = (window as unknown as { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
+		const id = ric ? ric(warm, { timeout: 3000 }) : (setTimeout(warm, 1200) as unknown as number);
+		return () => {
+			if (ric && cic) cic(id);
+			else clearTimeout(id);
+		};
 	});
 
 	function trackPopout(e: MouseEvent, row: MediaRow) {
