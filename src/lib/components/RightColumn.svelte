@@ -131,17 +131,38 @@
 	// opens inward over the narrative and never sits under the click → the row-link still fires.
 	// State is set only in event handlers (never a $effect) → no $effect.pre read/write hazard.
 	let popout = $state<{ src: string; alt: string; x: number; y: number } | null>(null);
+	let colRoot: HTMLElement | undefined; // the right-column root (fills card height → its centre ≈ card centre)
 
-	// Cloudinary-hosted thumbs (landmarks etc.) request a crisper ~2× fit crop; other hosts as-is.
+	// Cloudinary-hosted thumbs (landmarks etc.) request a crisper fit crop sized for the larger popout;
+	// other hosts as-is. These thumbnails are tiny, so the enlargement scales UP to person-photo size.
 	function popoutSrc(thumbUrl: string): string {
 		return thumbUrl.includes('res.cloudinary.com') && thumbUrl.includes('/upload/')
-			? thumbUrl.replace('/upload/', '/upload/w_520,c_fit,q_auto/')
+			? thumbUrl.replace('/upload/', '/upload/w_800,c_fit,q_auto/')
 			: thumbUrl;
 	}
 
+	// Warm the browser cache: preload the high-res popout images whenever the media rows change (i.e. on
+	// each person navigation), so the FIRST hover shows the enlargement instantly instead of waiting on a
+	// fresh network fetch. Client-only — Image is undefined during SSR.
+	$effect(() => {
+		if (typeof Image === 'undefined') return;
+		for (const row of [...landmarks, ...artworks, ...statues]) {
+			if (row.thumbUrl) new Image().src = popoutSrc(row.thumbUrl);
+		}
+	});
+
 	function trackPopout(e: MouseEvent, row: MediaRow) {
 		if (!row.thumbUrl) return;
-		popout = { src: popoutSrc(row.thumbUrl), alt: row.alt ?? '', x: e.clientX, y: e.clientY };
+		// Horizontal is FIXED (anchored just left of the column, opening inward) so it never drifts side to
+		// side; vertical FOLLOWS the cursor and is amplified 1.5× around the card centre, so small cursor
+		// moves give more vertical travel. Clamped so the tall box stays on screen.
+		const rect = colRoot?.getBoundingClientRect();
+		const anchorX = rect ? rect.left - 53 : e.clientX - 71;
+		const pivot = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+		const HALF = 288; // half of max-h (576) — keeps the tall box fully on screen
+		const amplified = pivot + (e.clientY - pivot) * 1.5;
+		const y = Math.max(HALF + 8, Math.min(amplified, window.innerHeight - HALF - 8));
+		popout = { src: popoutSrc(row.thumbUrl), alt: row.alt ?? '', x: anchorX, y };
 	}
 	function closePopout() {
 		popout = null;
@@ -247,7 +268,10 @@
 
 <!-- Root fills the content-zone height (h-full) and is the positioning context (relative) for the
      burial pin. It does NOT scroll itself — the variable stack below does. -->
-<div class="right-column relative flex h-full min-h-0 w-full flex-col pt-[6px] break-words">
+<div
+	bind:this={colRoot}
+	class="right-column relative flex h-full min-h-0 w-full flex-col pt-[6px] break-words"
+>
 	<!-- Variable entity stack (Education → Career → Landmarks → Art → Documents → Statues → Video):
 	     the ONLY scrolling region. Its padding-bottom is reserved to the measured burial-block
 	     height (+ gap) so nothing here can ever scroll beneath the pinned corner. -->
@@ -437,13 +461,13 @@
 	<div
 		use:portal
 		class="pointer-events-none fixed z-[9999]"
-		style="left: {popout.x - 18}px; top: {popout.y}px; transform: translate(-100%, -50%);"
+		style="left: {popout.x}px; top: {popout.y}px; transform: translate(-100%, -50%);"
 		aria-hidden="true"
 	>
 		<img
 			src={popout.src}
 			alt={popout.alt}
-			class="block max-h-[300px] max-w-[260px] rounded-md shadow-2xl ring-1 ring-black/10"
+			class="block max-h-[576px] max-w-[456px] rounded-md shadow-[18px_22px_48px_-12px_rgba(0,0,0,0.55)] ring-1 ring-black/10"
 		/>
 	</div>
 {/if}

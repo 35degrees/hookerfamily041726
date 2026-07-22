@@ -51,7 +51,7 @@
 	// WIDTH at the image's NATURAL aspect, so the WHOLE photo shows — tall portraits aren't cropped to
 	// the midriff the way the object-cover card thumbnail is. Capped to the viewport, and never
 	// narrower than the on-card photo.
-	const ZOFFSET = 58; // fixed horizontal nudge right of the photo's edge, toward page centre (~3.5rem)
+	const ZOFFSET = 33; // fixed horizontal nudge right of the photo's edge, toward page centre (~2rem)
 	function trackZoom(e: MouseEvent) {
 		if (!photoUrl) return;
 		const img = e.currentTarget as HTMLImageElement;
@@ -397,7 +397,7 @@
 		<img
 			src={zoom.src}
 			alt={zoom.alt}
-			class="block h-full w-full rounded-md object-cover shadow-2xl ring-1 ring-black/10"
+			class="block h-full w-full rounded-md object-cover shadow-[-18px_22px_48px_-12px_rgba(0,0,0,0.55)] ring-1 ring-black/10"
 		/>
 	</div>
 {/if}
