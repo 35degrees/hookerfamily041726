@@ -23,6 +23,10 @@
 			relation_class?: 'direct' | 'collateral' | null;
 		}>;
 		institutionsById?: Record<string, Institution>;
+		// False while this card is flying/settling into FeaturedCard space (promotion morph).
+		// Gates the hover-zoom so a cursor already over the incoming photo can't trigger the
+		// enlarge mid-flight (it flashed in then popped as the card grew). True at rest / introend.
+		settled?: boolean;
 	};
 
 	let {
@@ -31,7 +35,8 @@
 		generationLabels = [],
 		burialCemetery = null,
 		crossConnections = [],
-		institutionsById = {}
+		institutionsById = {},
+		settled = true
 	}: Props = $props();
 
 	let photoUrl = $derived(person.bio?.photo_url ?? person.name?.photo_url ?? null);
@@ -53,7 +58,10 @@
 	// narrower than the on-card photo.
 	const ZOFFSET = 33; // fixed horizontal nudge right of the photo's edge, toward page centre (~2rem)
 	function trackZoom(e: MouseEvent) {
-		if (!photoUrl) return;
+		// Don't enlarge until the card has finished flying into FeaturedCard space. During the
+		// promotion morph the img is transform-scaled (getBoundingClientRect would be wrong anyway),
+		// and a stationary cursor over the landing spot would otherwise flash the zoom in and out.
+		if (!photoUrl || !settled) return;
 		const img = e.currentTarget as HTMLImageElement;
 		const r = img.getBoundingClientRect();
 		const ar = img.naturalWidth ? img.naturalHeight / img.naturalWidth : r.height / r.width;
@@ -72,6 +80,11 @@
 	function closeZoom() {
 		zoom = null;
 	}
+	// If a zoom is open when a promotion morph begins (settled → false), drop it immediately so it
+	// doesn't ride the shrinking/growing card. It resumes on the next mousemove once settled again.
+	$effect(() => {
+		if (!settled) closeZoom();
+	});
 	// FIXED horizontal position (photo's right edge + ~5rem toward centre) — moving the mouse only
 	// slides it up and down; it never drifts left/right. Vertically centered on the cursor, top clamped
 	// so the box stays fully on screen; the left is clamped only as a narrow-viewport safety.

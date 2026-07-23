@@ -166,10 +166,30 @@
 		const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: object) => number })
 			.requestIdleCallback;
 		const cic = (window as unknown as { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
-		const id = ric ? ric(warm, { timeout: 3000 }) : (setTimeout(warm, 1200) as unknown as number);
+		// Two-stage deferral, tuned toward foundational-photos-first (Sam, 2026-07). The promoting
+		// FeaturedCard portrait + the spouse/parent/child chip photos must claim the connection pool
+		// UNCONTESTED first. (1) HOLD OFF past the nav — longer than the promotion morph (~460–625ms)
+		// — so those foundational images are already in flight before we schedule anything; THEN
+		// (2) warm only when the browser is genuinely idle, with a long deadline: we'd rather warm
+		// late (or let the popout load on demand, which measures lag-free) than steal a byte early.
+		// Was a bare idle({ timeout: 3000 }) with no hold-off, which could fire into a mid-load idle
+		// gap and briefly starve the visible photos.
+		// HOLD-OFF is generous on purpose: a user can't hover a popout until they've SEEN the content,
+		// which takes well over a second — so warming this late costs nothing (the popout still measures
+		// lag-free on demand) while giving every foundational photo, parent/child/spouse chips included,
+		// an uncontested head start. Raise further if chips still load late; lower only if a fast
+		// hover ever feels laggy.
+		const HOLDOFF_MS = 2000;
+		let ricId: number | undefined;
+		const holdId = setTimeout(() => {
+			ricId = ric ? ric(warm, { timeout: 8000 }) : (setTimeout(warm, 600) as unknown as number);
+		}, HOLDOFF_MS) as unknown as number;
 		return () => {
-			if (ric && cic) cic(id);
-			else clearTimeout(id);
+			clearTimeout(holdId);
+			if (ricId !== undefined) {
+				if (ric && cic) cic(ricId);
+				else clearTimeout(ricId);
+			}
 		};
 	});
 
