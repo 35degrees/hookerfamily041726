@@ -33,6 +33,10 @@ export type CameraMove = {
 	// CC laterality (graph-derived at build time; see regenerate relationClass). 'direct' → the arrival
 	// flies in vertically (Δx ignored); 'collateral' → it tilts by compressed Δx. Absent for chip navs.
 	relationClass?: 'direct' | 'collateral' | null;
+	// KINSHIP generation gap (graph-derived at build time; see regenerate genDelta). The DECK direction
+	// keys off THIS, not birth-years: null/0 → lateral (orbit/unrelated/same-gen cousin), <0 → target is an
+	// ancestor tier (enters from top), >0 → a descendant tier (from bottom). Absent for chip navs.
+	genDelta?: number | null;
 	// ALTITUDE ARC (far collateral CCs): the camera pulls back to this scale, traverses, descends. The
 	// subject card and the tile substrate both read it. Absent/null → a flat flight (no pull-back).
 	scaleMin?: number | null;

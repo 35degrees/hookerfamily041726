@@ -21,6 +21,7 @@
 			slug: string | null;
 			t?: { x: number; y: number | null; e?: boolean } | null;
 			relation_class?: 'direct' | 'collateral' | null;
+			gen_delta?: number | null;
 		}>;
 		institutionsById?: Record<string, Institution>;
 		// False while this card is flying/settling into FeaturedCard space (promotion morph).
@@ -377,6 +378,7 @@
 										data-tx={cc.t?.x ?? undefined}
 										data-ty={cc.t?.y ?? undefined}
 										data-relation-class={cc.relation_class ?? undefined}
+										data-gen-delta={cc.gen_delta ?? undefined}
 										class="font-medium text-blue-700 hover:text-blue-900 hover:underline"
 										>{cc.link_text}</a
 									>

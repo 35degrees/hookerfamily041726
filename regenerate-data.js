@@ -708,6 +708,32 @@ function relationClass(sourceId, targetId, byId) {
 	return 'collateral';
 }
 
+// Effective generation for the DECK direction: a person's own generation_from_thomas, else a married
+// partner's (a spouse of a grandparent is grandparent-tier — they ride the line via marriage), else null
+// (orbit / unrelated / no descent — by construction these have no generation on the tree).
+function effectiveGen(id, byId) {
+	const p = id && byId[id];
+	if (!p) return null;
+	const gen = (q) => q && q.classification && q.classification.generation_from_thomas;
+	if (gen(p) != null) return gen(p);
+	for (const m of p.marriages || []) {
+		const sp = m.spouse_id && byId[m.spouse_id];
+		if (gen(sp) != null) return gen(sp);
+	}
+	return null;
+}
+
+// gen_delta = effGen(target) − effGen(source): the KINSHIP generation gap the deck uses for direction.
+// NULL when either side has no effective generation (orbit/unrelated → the riffle rides LATERAL, never
+// vertical — vertical is reserved for climbing/descending the family line). deckDirFor: null/0 → lateral,
+// < 0 → target is an ancestor tier (from TOP), > 0 → a descendant tier (from BOTTOM). NOT a birth-year gap.
+function genDelta(sourceId, targetId, byId) {
+	const s = effectiveGen(sourceId, byId);
+	const t = effectiveGen(targetId, byId);
+	if (s == null || t == null) return null;
+	return t - s;
+}
+
 function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 	const context = {};
 	for (const id of contextIds(p, byId)) context[id] = clientById[id];
@@ -736,9 +762,13 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 			// data-flight-id box), so this is how the camera store gets a real `to` for the directional
 			// arrival. y may be null (no time basis: the consumer degrades to a screen-vector-only move).
 			t: tableCoords.get(cc.related_id) ?? null,
-			// direct-vs-collateral, walked from the parent graph (see relationClass). The CC flight reads
-			// this: 'direct' arrives vertical (ignore Δx); 'collateral' tilts by compressed Δx, capped ~45°.
-			relation_class: relationClass(p.id, cc.related_id, byId)
+			// direct-vs-collateral, walked from the parent graph (see relationClass). Still baked for other
+			// consumers, but the DECK direction now keys off gen_delta below, not this.
+			relation_class: relationClass(p.id, cc.related_id, byId),
+			// KINSHIP generation gap (see genDelta) — the deck's direction signal. null → lateral (orbit,
+			// unrelated, OR a same-generation cousin: kin, but not up/down the line); < 0 → target is an
+			// ancestor tier (rides in from TOP); > 0 → a descendant tier (from BOTTOM). Never a birth-year gap.
+			gen_delta: genDelta(p.id, cc.related_id, byId)
 		};
 		if (talcottOnly) out.hidden_by_default = true;
 		return out;

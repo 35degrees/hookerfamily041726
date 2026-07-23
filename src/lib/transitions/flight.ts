@@ -42,11 +42,12 @@ export function solveBackS(targetG: number): number {
 	return s;
 }
 // easeOutBack's inherent overshoot is g(s)·distance. A fixed s flings far swaps (corner-to-corner spouse
-// distances span ~8×). So CLAMP the carry to a few px and solve s per-flight to hit it.
-function settleBackFor(distance: number): number {
+// distances span ~8×). So CLAMP the carry to a few px and solve s per-flight to hit it. `boost` scales the
+// target carry: the DECK arrival passes 1.1 (v4.2.1 — a heavier card needs more to settle); everyone else 1.
+function settleBackFor(distance: number, boost = 1): number {
 	if (distance < 1) return 0;
-	const targetPx = Math.min(5.4, Math.max(4.5, distance * 0.011)); // whole-path along-axis carry, ~10% softer (4.5–5.4px)
-	return solveBackS(Math.min(0.09, targetPx / distance));
+	const targetPx = boost * Math.min(5.4, Math.max(4.5, distance * 0.011)); // whole-path along-axis carry (4.5–5.4px × boost)
+	return solveBackS(Math.min(0.1, targetPx / distance));
 }
 
 // ── Click-time origin capture for the card's "grow from the clicked box" flight ──
@@ -75,6 +76,7 @@ let flightKind: 'spouse' | 'relative' | 'cc' | 'sibling' = 'relative';
 
 export function captureFlightKind(kind: 'spouse' | 'relative' | 'cc' | 'sibling'): void {
 	flightKind = kind;
+	if (kind !== 'cc') clearLateralMemory(); // a chip/sibling/relative nav ends the lateral back-and-forth
 }
 // Read the current nav's kind. Stable through the whole flight — clearFlightCaptures (1 rAF after
 // nav) does NOT reset flightKind, so late lifecycle handlers (introend) can still branch on it.
@@ -87,7 +89,7 @@ export function getFlightKind(): 'spouse' | 'relative' | 'cc' | 'sibling' {
 // card FLIES IN WHOLE from offscreen along the WORLD vector (to − from in table space; later years read
 // as below, higher seats as right — the true angle, never quantized) and the old card SLIDES OUT WHOLE
 // the opposite way. The link is a trigger, not an origin.
-const CC_ENTRY_DIST = 1150; // px the card travels from offscreen into the slot (dialable — full vs ~60% vp)
+// (the deck hero's entry offset is DECK_HERO_ENTRY, defined with the other DECK constants below)
 const DIRECT_WHISPER_DEG = 6; // a direct-line arrival is ~vertical; a faint Δx-sign lean, never more than this
 const CC_COMPRESS_L = 300; // log-compression scale for collateral Δx (near-identity at the uncle's ~50 seats)
 // Screen direction of the CC arrival, built from the TRUE vector so it is exactly RECIPROCAL — A→B is the
@@ -98,9 +100,8 @@ const CC_COMPRESS_L = 300; // log-compression scale for collateral Δx (near-ide
 //                (vertical component 0, not a capped 45° descent); the uncle keeps his ~45° from his real
 //                generation gap; both invert exactly on the reverse trip.
 // Falls back to the raw screenVector only when the target has no time basis (y null).
-function ccScreenDir(): { x: number; y: number } {
-	return ccScreenDirFor(getCameraMove());
-}
+// ccScreenDirFor stays (the DECK forks it only at the 'cc' call sites — deckDirFor; sibling departures
+// still own this directional vector). The private ccScreenDir() wrapper was removed with the old cc slide.
 export function ccScreenDirFor(m: CameraMove | null): { x: number; y: number } {
 	if (m?.from && m?.to && m.to.y != null && m.from.y != null) {
 		const vx = m.to.x - m.from.x;
@@ -148,6 +149,219 @@ export function passageMsFor(m: CameraMove | null): number {
 	if (span < PASSAGE_MIN_SPAN) return 0;
 	return Math.min(PASSAGE_MAX_MS, (span - PASSAGE_MIN_SPAN) * 2.0);
 }
+
+// ══════════════════════════════════════════════════════════════════════════════════════════════
+// THE DECK SHUFFLE — the archival riffle (design §22). A CC arrival becomes a stack of pages
+// riffled past: N faint ghost cards stream edge-to-edge across the viewport, heavily overlapped,
+// and the destination card is the LAST vehicle in the convoy — entering at ghost tempo, braking
+// into the slot. These functions are built ALONGSIDE the directional-slide ones above: deckDirFor
+// forks ccScreenDirFor for the 'cc' CALL SITES only; ccScreenDirFor itself stays (sibling
+// departures still own it). Call sites are swapped separately (step 3); nothing here is wired yet.
+// ══════════════════════════════════════════════════════════════════════════════════════════════
+
+// Seeded PRNG (mulberry32): each flight's riffle is deterministic — seed = the camera seq — so the
+// jitter (stagger/rotation/scatter) is reproducible and probe-able. Same nav → same fan, every time.
+function mulberry32(seed: number): () => number {
+	let a = seed >>> 0;
+	return () => {
+		a = (a + 0x6d2b79f5) | 0;
+		let t = Math.imul(a ^ (a >>> 15), 1 | a);
+		t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+		return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+	};
+}
+
+// DECK v4 — THE PHANTOM TRAIN. Default is TWO real cards, no visible convoy, but the DISTANCE of the
+// riffle is restored as an empty BEAT between them: EXIT → BEAT → ENTRY. Car 1 leaves FULLY, the stage is
+// empty for the length of the (invisible) train — 16–20 shuffled cards' worth of time — then the hero
+// arrives. The emptiness IS the distance; it is what fixes "why is this card right next door". Tilt +
+// blur removed/restored per Sam's v4 spec (blur = the tuning-fork shimmer; tilt = the life push stripped).
+//
+// GHOST A/B (the visible convoy is banked, not deleted):
+//   OFF (default) = THE PHANTOM TRAIN — hero + car 1 only, sharp (no blur), seeded tilt, separated by the beat.
+//   ON  = the dialed v3 convoy (N cards, opaque + blurred ghosts, seeded procedural photos).
+export const DECK_GHOSTS = false; // default OFF — flip true for the visible convoy
+export const DECK_GHOST_V = 1.65; // px/ms — house tempo / the EXIT velocity (car 1's heft — Sam: keep)
+const DECK_HERO_V_MULT = 1.1; // v4.2.1: the ENTERING card is 10% quicker than the exit (still decelerating into the brake)
+// GLOBAL TEMPO (v4.2.3): a uniform time-scale on EVERY deck duration + the beat — the whole operation plays
+// this much faster end-to-end. It does NOT touch any easing curve, the heft, the angles, or the overshoot
+// distance (those are shape/space, not tempo) — it just compresses the timeline. 0.9 = 10% quicker overall.
+const DECK_TEMPO = 0.9;
+export const DECK_TRAVEL = 1300; // px — FALLBACK offscreen reach only (live coords are viewport-derived; see deckExit)
+const DECK_EDGE_MARGIN = 80; // px past the window edge every offscreen coord clears — no car/hero peeks at any window size
+const DECK_STAGGER_BASE = 120; // ms between cars — breathes wider now the count is smaller (dial 110–130)
+const DECK_LANE_FAN = 70; // ±px PERPENDICULAR scatter — the spread-deck fan (dial 40–100; ghost density lives here)
+const SEAT_NEAR = 180; // |Δseats| ≤ this + a generation gap = SAME LINE (uncle/niece) → vertical; farther = cross-branch → lateral
+// The TWO real cards (push) get a seeded but FLOORED draw — angle + lane always present (never flat-axial),
+// yet no two flights identical (protected variation). v4.1: tilt is per-axis — a VERTICAL fall reads with a
+// real lean (2.5–4°), a LATERAL slide only banks slightly (1.5–2°, more = speedboat). Ghosts keep the fan.
+const DECK_ROT_VERT_MIN = 2.5; // ±deg floor of a vertical card's lean (the falling-at-an-angle Sam praised)
+const DECK_ROT_VERT_MAX = 4.0;
+const DECK_ROT_LAT_MIN = 1.5; // ±deg floor of a lateral card's bank (subtle — banking, not a speedboat)
+const DECK_ROT_LAT_MAX = 2.0;
+const DECK_PUSH_LANE_MIN = 18; // ±px floor of the real-card perpendicular draw (~20–30)
+const DECK_PUSH_LANE_MAX = 30; // ±px ceiling
+const DECK_ROT_JITTER = 3.5; // ±deg seeded tilt per GHOST (convoy fan)
+const DECK_DT_JITTER = 15; // ±ms stagger jitter (a thumb's riffle is never even)
+const DECK_N_CAP = 6; // collateral ceiling (dial up to 8, NEVER above)
+// THE EMPTY-STAGE BEAT — v4.2.2 (Sam: the convoy/overlap RUINED the large-tree illusion; the exiting and
+// entering cards must NEVER be on screen together). The hero waits for car 1 to FULLY exit, then this beat
+// of empty stage, THEN it enters. The gap sells the distance across the tree. Scaled by relation (a same-
+// line hop is a shorter reach than a cross-tree/orbit one). +10% wider than v4.1 (Sam), dial UP for more.
+const DECK_BEAT_DIRECT = 87; // ms base for direct (uncle/grandparent/niece) — v4.2.5: another −5% gap (total shortens with it; speed unchanged)
+const DECK_BEAT_COLL = 170; // ms base for collateral/orbit — v4.2.5: another −5% gap
+export const DECK_GHOST_OPACITY = 1.0; // OPAQUE ghost cards (convoy only). Blurry ≠ translucent (Sam)
+export const DECK_GHOST_BLUR = 5.5; // ghost blur (convoy only); the two real cards carry NO blur at any frame
+const DECK_BRAKE_MS = 180; // the hero's deceleration tail past its cruise transit
+const DECK_SETTLE_BOOST = 1.1; // v4.2.1: +10% arrival overshoot — a heavier card needs more to settle into the slot
+
+// ── Viewport-relative offscreen coords ──────────────────────────────────────────────────────────
+// A FIXED entry distance (the dead CC_ENTRY_DIST=1150, DECK_HERO_ENTRY=950) sits INSIDE real browser
+// windows: the delayed hero mounted pre-positioned, VISIBLE, and held frozen until its schedule slot —
+// the July-12 first-frame class, viewport edition. Every offscreen coordinate now derives from the LIVE
+// viewport at flight time. deckExit returns the translate that carries a box whose current top-left is
+// (left,top), size (w,h), FULLY past the window edge along +dir (axis-aligned unit vector), + margin.
+// Map a flight's seeded jitter (rotDeg ±DECK_ROT_JITTER, lanePx ±DECK_LANE_FAN) to a FLOORED signed draw
+// for a real push card: the sign + relative magnitude are kept (so no two flights are identical), but the
+// magnitude is remapped into [MIN, MAX] so a card is NEVER flat-axial (an unfloored seed can land near 0).
+// v4.1: the TILT range is per-axis — a lateral slide only banks (1.5–2°); a vertical fall leans (2.5–4°).
+function pushDraw(seededRot: number, seededLane: number, lateral: boolean): { rot: number; lane: number } {
+	const sr = seededRot / DECK_ROT_JITTER; // ∈ [-1,1]
+	const sl = seededLane / DECK_LANE_FAN; // ∈ [-1,1]
+	const rMin = lateral ? DECK_ROT_LAT_MIN : DECK_ROT_VERT_MIN;
+	const rMax = lateral ? DECK_ROT_LAT_MAX : DECK_ROT_VERT_MAX;
+	const rot = (sr >= 0 ? 1 : -1) * (rMin + Math.abs(sr) * (rMax - rMin));
+	const lane = (sl >= 0 ? 1 : -1) * (DECK_PUSH_LANE_MIN + Math.abs(sl) * (DECK_PUSH_LANE_MAX - DECK_PUSH_LANE_MIN));
+	return { rot, lane };
+}
+
+export function deckExit(
+	dir: { x: number; y: number },
+	left: number,
+	top: number,
+	w: number,
+	h: number
+): { x: number; y: number } {
+	const vw = window.innerWidth;
+	const vh = window.innerHeight;
+	let x = 0;
+	let y = 0;
+	if (dir.x > 0) x = vw - left + DECK_EDGE_MARGIN; // off the RIGHT: left edge past vw
+	else if (dir.x < 0) x = -(left + w + DECK_EDGE_MARGIN); // off the LEFT: right edge past 0
+	if (dir.y > 0) y = vh - top + DECK_EDGE_MARGIN; // off the BOTTOM: top edge past vh
+	else if (dir.y < 0) y = -(top + h + DECK_EDGE_MARGIN); // off the TOP: bottom edge past 0
+	return { x, y };
+}
+
+// ── Lateral CC direction: the ping-pong memory ─────────────────────────────────────────────────
+// A FRESH lateral CC always exits the old card LEFT (hero enters from the RIGHT) — a fixed, predictable
+// default, NOT tied to where the target sits in the tree (Sam: direction is history, not seat position).
+// If the VERY NEXT lateral CC reverses the exact edge just traversed — you clicked the reciprocal link
+// straight back — the direction FLIPS, so toggling A↔B ping-pongs (left, right, left, right…). ANYTHING
+// else — a fresh lateral CC to a new card, a vertical/family CC, or a chip nav — is not that reversal, so
+// it resets to the fresh default and the back-and-forth ends. One-deep, edge-exact.
+//
+// Resolved ONCE per nav in resolveLateralDir (deckDirFor is a pure READ — it runs several times per flight
+// for the hero, car 1, and ghosts, so it must never mutate the memory or the ping-pong would double-flip).
+type LateralEdge = { source: string; target: string; dir: { x: number; y: number } };
+let lastLateral: LateralEdge | null = null;
+let currentLateralDir: { x: number; y: number } = { x: 1, y: 0 };
+export function resolveLateralDir(m: CameraMove | null, source: string, target: string): void {
+	const gd = m?.genDelta ?? null;
+	const dxSeat = m?.to && m?.from ? m.to.x - m.from.x : 0;
+	const sameLine = m?.relationClass === 'direct' || Math.abs(dxSeat) <= SEAT_NEAR;
+	if (gd != null && gd !== 0 && sameLine) {
+		lastLateral = null; // a VERTICAL CC ends the lateral back-and-forth
+		return;
+	}
+	const prev = lastLateral;
+	const reciprocal = prev !== null && prev.target === source && prev.source === target;
+	if (reciprocal && prev) currentLateralDir = { x: -prev.dir.x, y: 0 };
+	else currentLateralDir = { x: 1, y: 0 }; // fresh → exit LEFT
+	lastLateral = { source, target, dir: currentLateralDir };
+}
+export function clearLateralMemory(): void {
+	lastLateral = null; // any non-CC nav (chip/sibling/relative) ends the back-and-forth
+}
+
+// ── deckDirFor — the entry direction of the riffle. Unit vector pointing at the OFFSCREEN START
+// (same convention as ccScreenDirFor: the card/ghosts translate −dir into the slot). ─────────────
+// DIRECTION = SAME-LINE test, never a birth-year gap. VERTICAL is reserved for climbing/descending the
+// OWN family line: gen_delta < 0 → an ANCESTOR tier (uncle, grandparent) → enters from the TOP; > 0 → a
+// DESCENDANT tier (niece) → from the BOTTOM. But a generation gap alone is NOT enough — two people on
+// DIFFERENT branches can differ in generation yet not be up/down each other's line (the Pennoyer→Strong
+// bug). So vertical requires gen_delta ≠ 0 AND same-line: relationClass 'direct' (one is literally the
+// other's ancestor/descendant) OR seat-near (|Δseats| ≤ SEAT_NEAR — an uncle/niece sits close in the
+// tidy tree). A cross-branch peer (gen ≠ 0, collateral, seat-far) rides LATERAL. gen_delta null (orbit)
+// or 0 (same-gen cousin) is lateral too. (SEAT_NEAR is the interim proxy for the §19.4 LCA/kin-distance
+// bake — replace it when that ships.) BOTH axes now follow GEOGRAPHY, never navigation history: vertical by
+// the gen_delta SIGN (older→top / younger→bottom), lateral by the SEAT SIGN (target seated right→enters from
+// the right / left→from the left). A directed edge and its reverse are exact opposites, so toggling A↔B
+// ping-pongs (each hop swings the convoy the other way) and repeating A→B is always identical — no memory,
+// no "return" special case that got stuck armed while ping-ponging.
+export function deckDirFor(m: CameraMove | null): { x: number; y: number } {
+	const gd = m?.genDelta ?? null;
+	const dxSeat = m?.to && m?.from ? m.to.x - m.from.x : 0; // signed: target seat − source seat
+	const sameLine = m?.relationClass === 'direct' || Math.abs(dxSeat) <= SEAT_NEAR;
+	if (gd != null && gd !== 0 && sameLine) {
+		return { x: 0, y: gd < 0 ? -1 : 1 }; // VERTICAL: ancestor tier → from TOP; descendant tier → from BOTTOM
+	}
+	return currentLateralDir; // LATERAL: resolved once per nav (resolveLateralDir) — fresh=left, reciprocal flips
+}
+
+// ── deckScheduleFor — the convoy's shape + timing. Ghost count scales with the flight's magnitude;
+// the hero is the LAST vehicle (heroDelayMs = its stagger slot). All jitter is seeded, so the exact
+// riffle is deterministic per nav. (Magnitude is the interim seats/years metric until the LCA bake.)
+export type DeckSchedule = {
+	N: number;
+	staggerBaseMs: number;
+	jitter: {
+		dtMs: number;
+		rotDeg: number;
+		lanePx: number; // PERPENDICULAR fan offset
+		photo: { hue: number; offX: number; offY: number } | null; // seeded procedural portrait, or plain grey slot
+	}[];
+	convoyHeroDelayMs: number; // GHOSTS on → hero launches INSIDE the last stagger slot ((N−1)·base − a hair)
+	phantomBeatMs: number; // GHOSTS off → the empty-stage beat AFTER car 1 fully exits, before the hero arrives
+	// (per-car transit durations + the push heroDelay = car1ExitMs + phantomBeatMs are computed at the flight
+	//  sites, from the LIVE slot→window-edge distance)
+};
+export function deckScheduleFor(m: CameraMove | null): DeckSchedule {
+	const dSeats = m?.to && m?.from ? Math.abs(m.to.x - m.from.x) : 0;
+	const dYears = ccYearSpan(m); // |Δyears|, 0 when no time basis
+	const norm = Math.max(Math.min(dSeats / 800, 1), Math.min(dYears / 120, 1));
+	// COUNT BY RELATION (Sam's strongest note): a same-line hop (direct — uncle/grandparent/niece class) is a
+	// SHORT riffle, 2–3 hard, never a cross-tree dive. Collateral scales with the metric to the cap.
+	const direct = m?.relationClass === 'direct';
+	const N = direct ? Math.round(2 + norm) : Math.min(DECK_N_CAP, Math.round(2 + norm * 5));
+	const rng = mulberry32((m?.seq ?? 1) >>> 0);
+	// PHOTO SLOTS: 1–2 seeded ghosts carry a PROCEDURAL blurred portrait (never real data — §22.4); the rest
+	// keep the plain grey slot, because the corpus is mostly photoless and the riffle tells the truth.
+	const photoWanted = Math.min(N, rng() < 0.5 ? 1 : 2);
+	const photoIdx = new Set<number>();
+	let guard = 0;
+	while (photoIdx.size < photoWanted && guard++ < 40) photoIdx.add(Math.floor(rng() * N));
+	const jitter = Array.from({ length: N }, (_v, i) => ({
+		dtMs: (rng() * 2 - 1) * DECK_DT_JITTER,
+		rotDeg: (rng() * 2 - 1) * DECK_ROT_JITTER,
+		lanePx: (rng() * 2 - 1) * DECK_LANE_FAN, // the spread-deck fan across parallel tracks
+		photo: photoIdx.has(i)
+			? { hue: 20 + rng() * 45, offX: (rng() * 2 - 1) * 22, offY: (rng() * 2 - 1) * 14 }
+			: null
+	}));
+	// CONVOY (ghosts on): the hero rides the pack's TAIL — inside the last stagger slot ((N−1)·base − a hair)
+	// so it overlaps the final ghosts as they exit while it brakes. (× DECK_TEMPO like everything else.)
+	const convoyHeroDelayMs = Math.max(0, (N - 1) * DECK_STAGGER_BASE - 15) * DECK_TEMPO;
+	// PHANTOM BEAT (ghosts off): the empty stage between car 1's full exit and the hero's arrival — the length
+	// of the invisible train, scaled by relation. Direct = a short train; collateral/orbit = a long one.
+	const phantomBeatMs = (direct ? DECK_BEAT_DIRECT + norm * 30 : DECK_BEAT_COLL + norm * 87) * DECK_TEMPO;
+	return { N, staggerBaseMs: DECK_STAGGER_BASE, jitter, convoyHeroDelayMs, phantomBeatMs };
+}
+
+// DECK v4 — NO BLUR on the two real cards. The per-tick SVG feGaussianBlur ramp that used to sharpen the
+// hero/car-1 as they moved was the tuning-fork shimmer (an animated filter forces a full re-raster every
+// frame). Removed entirely: the real cards are always sharp. The visible ghosts (convoy mode) keep their
+// STATIC filter in DeckRiffle — a fixed filter is cheap; only the animated ramp shimmered.
 
 // The altitude arc's math + trigger live in arc-math.ts (shared with the arc clock + substrate); the arc
 // clock itself (the single rAF the card + substrate both read) lives in arc.svelte.ts.
@@ -329,9 +543,18 @@ export function growFrom(node: Element) {
 	const arcM = cc ? getCameraMove() : null;
 	const arc = cc && isArcMove(arcM);
 	const arcDur = arc ? arcDurationMsFor(arcM) : 0;
-	const ccDir = cc && !arc ? ccScreenDir() : { x: 0, y: 0 };
-	const dx = cc ? ccDir.x * CC_ENTRY_DIST : origin.left - dest.left;
-	const dy = cc ? ccDir.y * CC_ENTRY_DIST : origin.top - dest.top;
+	const ccDir = cc && !arc ? deckDirFor(getCameraMove()) : { x: 0, y: 0 }; // DECK: riffle entry direction
+	const sched = cc && !arc ? deckScheduleFor(getCameraMove()) : null; // DECK: convoy shape (hero = last car)
+	// DECK hero entry = the LIVE slot→window-edge distance along ccDir (+ margin), not a fixed constant that
+	// sat inside real windows and left the delayed hero peeking (the frozen jut). Arc: ccDir=0 → dx=dy=0.
+	const ccEntry = cc && !arc ? deckExit(ccDir, dest.left, dest.top, dest.width, dest.height) : { x: 0, y: 0 };
+	const dx = cc ? ccEntry.x : origin.left - dest.left;
+	const dy = cc ? ccEntry.y : origin.top - dest.top;
+	// PHANTOM BEAT (push): the hero waits until car 1 is FULLY offscreen, then the empty-stage beat. Car 1
+	// exits along −ccDir from THIS same slot rect (it was the outgoing featured card here), so its exit time
+	// is computable right here without cross-talk. Strict EXIT → BEAT → ENTRY; no co-occupancy, ever.
+	const car1Exit = cc && !arc ? deckExit({ x: -ccDir.x, y: -ccDir.y }, dest.left, dest.top, dest.width, dest.height) : { x: 0, y: 0 };
+	const car1ExitMs = (Math.hypot(car1Exit.x, car1Exit.y) / DECK_GHOST_V) * DECK_TEMPO;
 	const sx = cc ? 1 : origin.width / dest.width;
 	const sy = cc ? 1 : origin.height / dest.height;
 	const distance = Math.hypot(dx, dy);
@@ -355,11 +578,24 @@ export function growFrom(node: Element) {
 	// The beat before the hero enters: a far dive WAITS while the decades rush (passage). An ARC instead
 	// runs its transition for the WHOLE arc and takes BOTH its scale AND its reveal timing from the shared
 	// arc clock (not its own t) — so it can never drift from the substrate. Near CCs delay 0 (conveyor).
-	const ccDelay = arc ? 0 : cc ? passageMsFor(getCameraMove()) : 0;
+	// CONVOY (ghosts): hero launches inside the last stagger slot. PUSH (v4.2.2): NO OVERLAP — the hero waits
+	// for car 1 to FULLY exit, THEN the empty-stage beat, THEN it enters. The exiting and entering cards are
+	// never on screen together; the empty gap between them IS the large-tree distance (Sam). heroDelay =
+	// car1ExitMs + beat.
+	const ccDelay = arc
+		? 0
+		: sched
+			? DECK_GHOSTS
+				? sched.convoyHeroDelayMs
+				: car1ExitMs + sched.phantomBeatMs
+			: 0;
 	if (arc) {
 		duration = arcDur; // run the whole arc; opacity/scale are driven by the arc clock inside css
 	} else if (cc) {
-		duration = ccDurationMs();
+		// DECK v4.2.1: the ENTERING card runs 10% quicker than the exit (DECK_HERO_V_MULT) but still decelerates
+		// through the brake tail into the slot — quick in, slowing to land. Viewport-honest (distance off the
+		// live slot→edge). × DECK_TEMPO for the global 10% speed-up (curve/heft/overshoot all unchanged).
+		duration = sched ? (distance / (DECK_GHOST_V * DECK_HERO_V_MULT) + DECK_BRAKE_MS) * DECK_TEMPO : ccDurationMs();
 	} else if (flightKind === 'spouse') {
 		// Extend the hero to honor the demote's honest-velocity clock (below), so the two share one clock
 		// and neither the growing hero nor the shrinking demote ever exceeds the ceiling. The demote starts
@@ -378,7 +614,8 @@ export function growFrom(node: Element) {
 	// cubicOut, no settle). The overshoot direction is the flight's own (dx,dy) axis — identical to the
 	// camera screenVector (validated by probe-camera). Same ~5–6px excursion for both.
 	const settleActive = getCameraMove()?.kind === flightKind;
-	const settleS = settleActive ? settleBackFor(distance) : 0;
+	// The DECK arrival (cc) overshoots 10% harder than chip/spouse promotions — a heavier card settling.
+	const settleS = settleActive ? settleBackFor(distance, cc ? DECK_SETTLE_BOOST : 1) : 0;
 	if (import.meta.env.DEV && settleActive) {
 		const g = (4 * settleS ** 3) / (27 * (1 + settleS) ** 2);
 		console.log('[settle]', JSON.stringify({ dist: Math.round(distance), s: +settleS.toFixed(2), carryPx: +(g * distance).toFixed(1) }));
@@ -408,6 +645,39 @@ export function growFrom(node: Element) {
 				const op = arcClock.active ? Math.max(0, Math.min(1, (arcClock.t - ARC_DESC) / 0.12)) : 1;
 				hero.style.transform = `scale(${s})`;
 				hero.style.opacity = `${op}`;
+			}
+		};
+	}
+	// DECK v4 hero: the arriving card enters at convoy tempo along deckDir and BRAKES through the house
+	// curve + settle into the slot. NO BLUR (sharp at every frame — the animated filter was the shimmer).
+	// A seeded TILT + small lane draw IRON to 0 as it settles: it arrives angled, straightening as it lands.
+	// cc has no scale morph (sx=sy=1), so transform is translate + rotate only.
+	if (cc) {
+		const horiz = Math.abs(ccDir.x) >= Math.abs(ccDir.y); // lateral entry → banks only; vertical → leans
+		const perp = { x: -ccDir.y, y: ccDir.x }; // perpendicular to travel → the draw axis
+		const jH = sched?.jitter[sched.N - 1] ?? { lanePx: 0, rotDeg: 0, dtMs: 0 }; // seeded per flight (protected variation)
+		// Push → a FLOORED seeded draw (never flat), per-axis tilt; convoy → the full un-floored fan character.
+		const draw = DECK_GHOSTS ? { rot: jH.rotDeg, lane: jH.lanePx } : pushDraw(jH.rotDeg, jH.lanePx, horiz);
+		const lx = draw.lane * perp.x;
+		const ly = draw.lane * perp.y;
+		const rot = draw.rot; // seeded ±2.5–4° draw, ironing to 0 as it settles
+		hero.style.transformOrigin = 'center'; // cc is translate-only (no scale) → rotate about centre
+		hero.style.transform = `translate(${dx + lx}px, ${dy + ly}px) rotate(${rot}deg)`;
+		// BELT vs the frozen jut (fix 1b) AND the phantom beat: INVISIBLE from mount until its first MOTION
+		// frame. Through the whole heroDelay (car 1's exit + the empty beat) it sits offscreen at opacity 0 —
+		// a stationary hero never paints, so car 1 and the hero can never co-occupy the stage. The first tick
+		// (motion begins, car 1 long gone) reveals it, already offscreen and moving.
+		hero.style.opacity = '0';
+		hero.style.zIndex = '3'; // ABOVE car 1 (z 2) — belt for any cancellation edge case where they overlap
+		return {
+			duration,
+			delay: ccDelay,
+			easing: (x: number) => x,
+			tick: (t: number) => {
+				hero.style.opacity = '1'; // first motion frame → reveal (was 0 through the delay + beat)
+				const e = settleActive ? easeOutBack(t, settleS) : cubicOut(t);
+				const u = 1 - e; // 1 at entry → 0 (past 0 briefly on the settle overshoot) at rest
+				hero.style.transform = `translate(${u * (dx + lx)}px, ${u * (dy + ly)}px) rotate(${(u * rot).toFixed(2)}deg)`;
 			}
 		};
 	}
@@ -477,15 +747,40 @@ export function shrinkTo(node: Element, params: { id: string }) {
 				}
 			};
 		}
-		const dir = ccScreenDir();
-		const ex = -dir.x * CC_ENTRY_DIST, ey = -dir.y * CC_ENTRY_DIST; // opposite the hero's entry
+		// DECK v4 — CAR 1: the departing card leaves FIRST and FULLY, ACCELERATING from rest to convoy speed
+		// along −deckDir, exiting the far edge at full opacity — a real card leaving, never dimmed in place.
+		// NO BLUR (sharp at every frame). A seeded tilt is DRAWN in as it goes (the exit's own angle); it stays
+		// on top of nothing here — with the phantom beat, the hero doesn't paint until car 1 is long gone.
+		const dir = deckDirFor(arcM); // offscreen START; the card travels −dir
+		// Exit terminus = the LIVE distance from car 1's rest rect to just past the FAR window edge (−dir),
+		// not a fixed DECK_TRAVEL that a wide window would leave a sliver of. Duration off that honest distance.
+		const exit = deckExit({ x: -dir.x, y: -dir.y }, card.left, card.top, card.width, card.height);
+		const ex = exit.x,
+			ey = exit.y;
+		const car1Ms = (Math.hypot(ex, ey) / DECK_GHOST_V) * DECK_TEMPO; // rest → fully offscreen (× tempo)
+		const sched = deckScheduleFor(arcM);
+		const j0 = sched.jitter[0]; // seeded per flight (protected variation)
+		const horiz = Math.abs(dir.x) >= Math.abs(dir.y); // lateral exit → banks; vertical → leans
+		const perp = { x: -dir.y, y: dir.x };
+		// Push → a FLOORED seeded draw (never flat), per-axis tilt; convoy → the full un-floored fan character.
+		const draw = DECK_GHOSTS ? { rot: j0.rotDeg, lane: j0.lanePx } : pushDraw(j0.rotDeg, j0.lanePx, horiz);
+		const lx = draw.lane * perp.x,
+			ly = draw.lane * perp.y;
+		const rot = draw.rot;
+		// WEIGHT PHYSICS (v4.2): the card is HEAVY leaving its slot. It doesn't dart off at a uniform clip — it
+		// starts slow, reluctant, and ACCELERATES away (easeIn, every axis now, not just the downward fall Sam
+		// loved). Cards have weight, not engines: they lean into the exit and build speed, never launch flat-out.
+		el.style.zIndex = '2'; // below the incoming hero (z 3); above the ghost layer (z 1) in convoy mode
+		el.style.transformOrigin = 'center';
 		return {
-			duration: Math.max(300, ccDurationMs() - 60),
-			easing: cubicOut,
-			// u = 1 − t (out): 0 at rest → 1 gone. Rides z:1 UNDER the incoming hero; slides out + shrinks to
-			// ~0.9; opacity holds then fades over the last third (it is offscreen by then anyway).
-			css: (t: number, u: number) =>
-				`z-index: 1; opacity: ${Math.min(1, t * 3)}; transform-origin: center; transform: translate(${u * ex}px, ${u * ey}px) scale(${1 - u * 0.1});`
+			duration: car1Ms,
+			easing: (x: number) => x,
+			// u = 1 − t (out): 0 at rest → 1 gone. easeIn (u²) — slow, weighty start; accelerating exit. The tilt
+			// DRAWS IN with it: 0° at rest → full ±draw as it leaves, so the angle is a transition, never a snap.
+			tick: (_t: number, u: number) => {
+				const e = u * u;
+				el.style.transform = `translate(${e * (ex + lx)}px, ${e * (ey + ly)}px) rotate(${(u * rot).toFixed(2)}deg)`;
+			}
 		};
 	}
 	const relative = flightKind === 'relative';
@@ -582,7 +877,7 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		// fly OVER resting content en route to their seat, so the demote rides at z 1 (above resting
 		// boxes/rows/notch, below the growing hero at z 2). The notch-hide (chipExit hides every OTHER
 		// spouse chip) keeps exactly two movers on stage: this demote and the hero.
-		tick: (t: number, u: number) => {
+		tick: (_t: number, u: number) => {
 			// z-index: a spouse/relative demote rides at z 1 (above resting boxes/rows/notch, below the hero
 			// z 2) because it flies OVER resting content to its seat. A SIBLING retraction is different: the
 			// hero clears its z 2 at introend (~one flight sooner than the retraction ends, since the hero was

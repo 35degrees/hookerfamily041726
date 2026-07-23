@@ -3,7 +3,7 @@
 	import PersonBox from '$lib/components/PersonBox.svelte';
 	import FeaturedCard from '$lib/components/FeaturedCard.svelte';
 	import Field from '$lib/components/Field.svelte';
-	import Passage from '$lib/components/Passage.svelte';
+	import DeckRiffle from '$lib/components/DeckRiffle.svelte';
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { prefersReducedMotion } from 'svelte/motion';
@@ -23,6 +23,7 @@
 		getFlightKind
 	} from '$lib/transitions/flight';
 	import { ccRoster } from '$lib/state/ccRoster.svelte';
+	import { unlockFlight } from '$lib/state/flightLock';
 	import SiblingPanel from '$lib/components/SiblingPanel.svelte';
 	import Caret from '$lib/components/Caret.svelte';
 
@@ -252,6 +253,7 @@
 		revealPending((el) => el.dataset.flightDir === 'lateral', CHIP_REVEAL_MS);
 		featuredLanded = true; // → reveals the pivot box + any remaining pending boxes (safety-net effect)
 		landedPersonId = f.person.id; // the shown person has now landed → ungate its trigger (see above)
+		unlockFlight(); // card is in final position, chips extending → nav clicks honored again
 
 		// JANITOR (PROD belt for the finished-animation teardown residue the sweep can't safely touch):
 		// a small class of orphans keeps a getAnimations() entry stuck in playState 'finished', so the
@@ -388,6 +390,10 @@
 	const pageBack = () => pageStep(-1);
 
 	const hasParents = $derived(roster.parents.length > 0);
+	// The connector stems + labels reveal only when the SHOWN person has actually landed — not merely
+	// featuredLanded (true during the stale-frame window at flight start). Without the id match, the old
+	// connector hangs on the empty stage through the phantom beat (v4.1 CC bug). Same guard as the trigger.
+	const familyLanded = $derived(featuredLanded && f.person.id === landedPersonId);
 	const childrenTotal = $derived(roster.children.length);
 	const childrenDiedYoung = $derived(roster.children.filter((c) => c.dy_young).length);
 	const isEasterEgg = $derived(f.person.classification?.is_easter_egg ?? false);
@@ -411,7 +417,7 @@
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
 <Field />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
-<Passage />
+<DeckRiffle />
 <div class="page-container" use:warmPersonLinks>
 	<div class="parents-slot" class:cc-hidden={ccRoster.hidden}>
 		{#each roster.parents as parent (parent.id)}
@@ -433,7 +439,7 @@
 		{/each}
 	</div>
 
-	<div class="connector connector-parents" class:landed={featuredLanded}>
+	<div class="connector connector-parents" class:landed={familyLanded} class:cc-hidden={ccRoster.hidden}>
 		{#if hasParents}
 			<div class="connector-line"></div>
 			<span class="connector-label">{parentsLabel}</span>
@@ -587,7 +593,8 @@
 		<div
 			class="connector connector-children"
 			class:connector-no-label={isEasterEgg}
-			class:landed={featuredLanded}
+			class:landed={familyLanded}
+			class:cc-hidden={ccRoster.hidden}
 		>
 			{#if !isEasterEgg}
 				<div class="connector-line"></div>
@@ -787,6 +794,14 @@
 	   ccRoster); chip navs never see it, so their reveals are untouched. */
 	.parents-slot.cc-hidden .flight,
 	.children-slot.cc-hidden .flight {
+		opacity: 0 !important;
+		transition: none !important;
+	}
+	/* The connector STEMS + LABELS ("George's parents", "Three children") are part of the same family
+	   apparatus — hard-cut them the SAME frame as the chips so NOTHING of the old family reading survives
+	   during the flight (v4.1: they used to hang on the empty stage through the phantom beat). They return
+	   with the landing unfurl, gated by .landed as before. */
+	.connector.cc-hidden {
 		opacity: 0 !important;
 		transition: none !important;
 	}

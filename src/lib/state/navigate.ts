@@ -16,6 +16,7 @@ import { prefersReducedMotion } from 'svelte/motion';
 import { featured } from './featured.svelte';
 import { publishCameraMove, type CameraMove } from './camera';
 import { hideCcRoster, showCcRoster } from './ccRoster.svelte';
+import { isFlightLocked, lockFlight } from './flightLock';
 import { startArc } from './arc.svelte';
 import { isArcMove, arcScaleMinFor, arcDurationMsFor } from '$lib/transitions/arc-math';
 import { fetchFeatured } from '$lib/data/buildFeatured';
@@ -28,7 +29,8 @@ import {
 	captureRects,
 	clearFlightCaptures,
 	spouseGrowMs,
-	relativeGrowMs
+	relativeGrowMs,
+	resolveLateralDir
 } from '$lib/transitions/flight';
 
 /** Fetch a person and set them as featured. No history change. False if not found. */
@@ -69,12 +71,22 @@ export function warmPersonLinks(node: HTMLElement) {
 		const href = anchor.getAttribute('href');
 		const match = href?.match(/^\/person\/([^/?#]+)$/);
 		if (!match) return; // not an internal person link — leave it to the browser
+		// FLIGHT LOCK: a warm nav is in progress (a card is mid-flight, its roster not yet extended). Swallow
+		// this click entirely — no overlapping flight, no nav off a card the user can't yet read. Released when
+		// the incoming card LANDS with its chips out (+page's landing effect → unlockFlight).
+		if (isFlightLocked()) {
+			event.preventDefault();
+			return;
+		}
 		// SLICE 3 (Phase 7): a sibling chip is now a WARM flight — kind 'sibling'. The hero grows from the
 		// chip rect (with settle, like a relative promotion); the old card DEPARTS via the CC path (whole
 		// card, opposite lateral vector, no chip-face, no settle) because the old focus has no destination
 		// box on the sibling's page (a demote-into-box would ghost — the July-12 flash condition). The
 		// laterality is graph-true: kind 'sibling' + relationClass 'collateral' + the sibling's captured t.
 		event.preventDefault();
+		// Lock immediately: this nav starts a flight, and no further nav click is honored until it lands with
+		// its chips extended. Reduced motion has no flight (instant swap) → no lock. Safety-timed regardless.
+		if (!prefersReducedMotion.current) lockFlight();
 		const isSibling = anchor.getAttribute('data-relation') === 'sibling';
 		// Capture the clicked box's rect at CLICK time (outside any reactive effect) so the
 		// card flies from its true on-screen position before any state change or reflow.
@@ -136,16 +148,26 @@ export function warmPersonLinks(node: HTMLElement) {
 				: null;
 		const ft = featured.current?.person?.t;
 		const from = ft ? { x: ft.x, y: ft.y } : null;
+		// DECK direction: the kinship generation gap, baked onto the CC anchor (see regenerate genDelta).
+		// Siblings are same-generation (adjacent seats) → 0 → lateral. Chip navs carry none (not a deck flight).
+		const genDelta = isCC ? numOr((anchor as HTMLElement).dataset.genDelta) : isSibling ? 0 : null;
 		// duration reuses flight.ts's per-kind curve directly (single source of truth — no drift; the
 		// published value is informational metadata, the real flight clock lives in growFrom).
 		const duration = kind === 'spouse' ? spouseGrowMs(distance) : relativeGrowMs(distance);
 		// ALTITUDE ARC: a FAR COLLATERAL CC pulls the camera back (scaleMin) to reveal the real table, then
 		// descends. Publish scaleMin so the card + substrate read it; start the shared arc clock. Direct dives
 		// and short collateral hops stay flat (scaleMin null). Reduced motion never arcs.
-		const provisional = { from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, seq: 0 } as CameraMove;
+		const provisional = { from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, seq: 0 } as CameraMove;
 		const arc = !prefersReducedMotion.current && isArcMove(provisional);
 		const scaleMin = arc ? arcScaleMinFor(provisional) : null;
-		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, scaleMin });
+		// DECK lateral direction: resolve the ping-pong memory ONCE here, before the flight reads deckDirFor.
+		// Fresh lateral CC → exit left; clicking the reciprocal link straight back → flip; anything else resets.
+		// (Vertical CCs self-skip inside — they use the gen sign, not this memory.)
+		if (isCC) {
+			const source = decodeURIComponent(window.location.pathname.replace(/^\/person\//, ''));
+			resolveLateralDir(provisional, source, decodeURIComponent(match[1]));
+		}
+		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, scaleMin });
 		// The arc clock is started at the STATE SWAP (below), not here — so it shares its time origin with the
 		// card + substrate transitions that mount then, guaranteeing one clock (no fetch-time offset).
 		const arcFrom = from && to ? { x: from.x, y: from.y ?? to.y ?? 0 } : null;
