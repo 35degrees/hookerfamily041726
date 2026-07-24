@@ -1,6 +1,8 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: July 23, 2026 — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_072326.md (the what/why for every item below).**
+**Date: July 24, 2026 — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Companion: ENRICHED_DESIGN_FABLE_072426.md (the what/why for every item below).**
+**The 072426 edition (July 24) adds §15 — DECK VERTICAL MISFIRE (uncle/nephew rides horizontal). A confirmed bug surfaced during a content session: John Pierpont H00388 → uncle-guardian James Pierpont II H00116 transitions HORIZONTAL when it should be vertical. Diagnosed: the CC data is correct (`gen_delta = −1`); the flight engine's `sameLine` test proxies "same line" by seat distance (`|Δseats| ≤ 180`), and these genuine uncle/nephew sit far apart, so it falls through to lateral. NOT hacked mid-content-session. The proper fix is the long-planned §19.4 LCA/kin-distance bake (per-CC shared-common-ancestor depth, used instead of seat proximity). Deferred, scoped, and specced below. Design rationale: design doc §22.2b.**
+
 **This 071226 edition records the July 11 session: the (unplanned) CARD-TRANSITION MAINTENANCE PHASE is CLOSED and pushed — spouse carousel, demotion baseball-card model, velocity-ceiling physics, six ghosts dispositioned, Playwright probe arsenal standing. Statuses updated throughout; §7 added (state of play + what Phase 3a inherits). Repo-side session record: docs/CODING_HANDOFF.md.**
 
 **The 071326 edition (July 13) adds §9 — the CC-arrival Zoom-1 corrections that landed (hard-cut gather, true-vector reciprocity), the SEQUENCING PIVOT (build standalone Zoom 2 first; shelve the arc trajectory as a later camera path over it), the KEPT/SHELVED disposition of the in-flight arc work, the standalone Zoom 2 build spec (the thing Code is building NOW and needs specced), the arc-readiness invariants, the tech verdict (no Threlte), and the 60fps culling spike. Design rationale: design doc §19.**
@@ -1207,3 +1209,42 @@ SCRIPT that GETs every person's `w_600` URL once, or (b) Cloudinary EAGER
 TRANSFORMATIONS at upload. Code can write the warm-up script on Sam's word. Also
 logged: migrate the remaining Wikimedia-hosted photos to Cloudinary so they share
 the resize too.
+
+---
+
+## 15. JULY 24 — DECK VERTICAL MISFIRE (deferred; design §22.2b)
+
+**Symptom (Sam, content session):** clicking the CC between John Pierpont H00388
+and his uncle-guardian James Pierpont II H00116 slides HORIZONTAL. Same-line
+uncle/nephew should ride vertical (older tier enters from the TOP) — "we worked
+hard to make CC transitions vertical."
+
+**Diagnosis — the data is right, the direction test is wrong.**
+- The baked CC is correct: `gen_delta = −1` (James one generation up), `relation_
+  class = collateral`. Confirmed in the payload.
+- `deckDirFor` (flight.ts) rides vertical only when `gen_delta ≠ 0` **AND**
+  `sameLine`, where `sameLine = relationClass === 'direct' OR |Δseats| ≤ SEAT_NEAR
+  (180)`.
+- Uncle/nephew is `collateral` (neither is the other's ancestor), and John and
+  James sit >180 seats apart in the tidy tree → `sameLine` is false → it falls
+  through to lateral. The seat proxy is standing in for real kinship and getting
+  it wrong.
+
+**Why not just widen `SEAT_NEAR`:** the seat threshold is the WRONG lever — raising
+it would wrongly verticalize far cross-branch PEERS (the Pennoyer→Strong /
+Jonathan-Edwards case: collateral, gen≠0, but genuinely across branches). Seat
+distance ≠ kin distance.
+
+**Fix (the §19.4 LCA/kin-distance bake, now with a concrete trigger):**
+1. In `regenerate-data.js`, stamp each CC with a `kin_distance` — the depth to the
+   nearest shared ancestor (LCA) walking the parent graph (uncle = 2, first cousin
+   once removed = small, cross-branch peer = large/none). Reuse the existing
+   `isAncestorOf`/parent-walk machinery.
+2. In `deckDirFor`, redefine `sameLine = relationClass === 'direct' OR kin_distance
+   ≤ K` (start K small; tune on localhost). Delete the `SEAT_NEAR` seat proxy.
+3. Verify: John↔James now vertical (from TOP, `gen_delta<0`); Pennoyer→Strong stays
+   lateral; direct-line dives unchanged. Add a probe asserting the John↔James
+   vertical vector, `svelte-check` clean, SSR 200.
+
+**Status:** deferred to a Stream-B session (touches flight.ts + the bake + a probe).
+Not started; no code changed. Pick up on Sam's word.

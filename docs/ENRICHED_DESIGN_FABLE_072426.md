@@ -1,5 +1,5 @@
 # HOOKER FAMILY DESCENDANTS — ENRICHED DESIGN (FABLE PASS)
-**Date: July 23, 2026 — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
+**Date: July 24, 2026 — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
 **Prepared by the architect stream for Samuel Talcott Hooker's review. Nothing here is a decision until Sam says so.**
 **The 070926 edition added §13 (viewport-lock / scrollbar doctrine) and §14 (Zoom 1 card-grid refinements). This 071226 edition adds §17 (motion physics doctrine — learned the hard way in the July 11 card-transition maintenance phase) and threads the one-physics/velocity-ceiling lessons into §3. The card-transition layer is now CLOSED, probe-guarded, and pushed; see docs/CODING_HANDOFF.md in the repo for the session record and ghost taxonomy.**
 
@@ -11,8 +11,10 @@
 **The 072226 edition (July 22) adds §22 — THE DECK SHUFFLE (the Zoom-1-era CC transition: the archival metaphor that withdraws the spatial claim; generation-delta direction; return-memory), and the HOLD register (§23): the Table (Zoom 2), Zoom 3, and the CC altitude arc move to deliberate hold — preserved, not removed.**
 **The 072326 edition (July 23) rewrites §22 AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards trading places with WEIGHT and an EMPTY-STAGE gap (the visible ghost riffle moved behind a default-off toggle, because a visible convoy read as "adjacent" and shrank the tree). It records the gen_delta direction model (effective generation; the easter-egg child-in-law rule), the FIXED lateral ping-pong memory (replacing the July-22 return-memory that armed permanently), the weight-physics doctrine (accelerating exit, decelerating settle + ~6px overshoot, seeded per-axis tilt, global + travel tempo dials), the offscreen-honesty/belt + connector hard-cut + flight-lock, and the seven-probe guard suite. Built, probe-guarded, committed to main (Stream B). It also adds §24 — the PHOTO-LOADING doctrine (the NEIGHBORHOOD is the load unit; a tiered batch preload warms on-screen chips first; ONE shared Cloudinary derivative per person; person photos are foundational, media tertiary) — earned after a hover-preload experiment degraded the foundations and was undone.**
 
+**The 072426 edition (July 24) adds §22.2b — a CONFIRMED DEFECT in the deck's vertical/lateral choice: the `sameLine` seat-distance proxy (`|Δseats| ≤ SEAT_NEAR`) misfires for genuine close kin who happen to sit FAR apart in the tidy tree, so a real up/down-the-line CC rides lateral. First live case: John Pierpont H00388 ↔ his uncle-guardian James Pierpont II H00116 (uncle/nephew, `gen_delta = −1`, correctly baked) renders HORIZONTAL because their seats are >180 apart. The data is right; the direction test is wrong. This is exactly the failure the §19.4 LCA/kin-distance bake exists to fix — logged now with a repro. Deferred (Stream B); tracked in the roadmap (§15).**
+
 This doc follows the house convention: it holds *what and why* (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_072326.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_072426.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
@@ -1917,6 +1919,22 @@ function of where the target happens to sit).
   "Pennoyer→Strong" case — collateral, seat-far, gen≠0 → correctly lateral).
   `SEAT_NEAR` is the interim proxy for the §19.4 LCA/kin-distance bake — replace it
   when that ships.
+
+**22.2b CONFIRMED DEFECT (July 24) — the seat proxy fails close kin who sit far
+apart.** `sameLine` conflates "same genealogical line" with "seated within 180
+seats." A real up/down-the-line pair whose tidy-tree seats are far apart therefore
+falls through to LATERAL even though `gen_delta ≠ 0` is baked correctly. Live repro:
+**John Pierpont H00388 → his uncle-and-guardian James Pierpont II H00116** —
+uncle/nephew, `gen_delta = −1` (James one tier up), `relationClass = collateral`,
+seats >180 apart → renders HORIZONTAL; it should ride vertical (enter from the TOP).
+The DATA is correct; the DIRECTION TEST is the bug. **The fix is the §19.4 bake, not
+a wider `SEAT_NEAR`** (widening the seat threshold would wrongly verticalize far
+cross-branch peers like Pennoyer→Strong). Bake a per-CC shared-common-ancestor
+(LCA) depth / kin-distance in `regenerate-data.js`; in `deckDirFor`, define
+`sameLine` as `relationClass === 'direct' OR kinDistance ≤ K` (small K — uncle,
+grandaunt, first-cousin-once-removed all qualify), never on seat proximity. Then any
+close kin with a generation gap rides vertical regardless of where they sit.
+Deferred to a Stream-B session (touches flight.ts + the bake); roadmap §15.
 
 **22.2a Effective generation — how in-laws get placed.** `gen_delta =
 effGen(target) − effGen(source)`, where effGen is: the person's own
