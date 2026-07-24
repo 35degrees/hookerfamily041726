@@ -67,6 +67,30 @@ flip/send/receive, the children-row glide, scrollbar behavior.
 `docs/examples/` (e.g. `REFERENCE_PhotoGrid_crossfade.svelte` -- take the
 keyed-list + send/receive/flip principle, not the photo-app specifics).
 
+**Architecture first -- map the grain before you cut it (learned the hard way,
+072326 photo-loading):** a symptom lives in a component; the fix almost always
+lives in the UNIT the architecture already works in. Before any non-trivial change:
+- **Read the data model + flow FIRST** -- the relevant `types/`, what
+  `regenerate-data.js` emits, what the page loads, and *where the state comes from
+  and when it's known* -- not just the component showing the symptom. (The miss:
+  I tuned `<img>` knobs for three turns without reading `types/neighborhood.ts` --
+  and the load unit was the NEIGHBORHOOD, a complete set delivered in one payload,
+  the whole time. The right fix was a batch preload of the set, not per-`<img>`
+  attributes.)
+- **Name the natural unit** (the neighborhood, the camera move, the payload, the
+  flight capture) and fix THERE, not in a local knob.
+- **Extend the existing pattern, don't invent a parallel one.** If a
+  store/batch/preload/capture already does this shape of work, use it. (A preload
+  warmer already existed; I should have recognized and repurposed it, not deleted
+  and reinvented.)
+- **Breadth before depth:** for anything spanning >1 component or a subsystem not
+  already mapped, do an Explore/Plan read pass first -- and STATE the model you
+  inferred to Sam before writing code, so a wrong mental model dies in one sentence
+  instead of after three turns of tuning.
+- **Tripwire:** turning the SAME dial a 2nd or 3rd time without solving it = STOP
+  and re-map the architecture. The repetition is the tell that the model is wrong,
+  not the value.
+
 **Rules:**
 - **`canonical.json` is FROZEN / read-only in this stream.** UX work edits
   components, transitions, styles -- never genealogy data.
