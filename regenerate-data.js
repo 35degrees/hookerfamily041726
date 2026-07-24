@@ -709,8 +709,11 @@ function relationClass(sourceId, targetId, byId) {
 }
 
 // Effective generation for the DECK direction: a person's own generation_from_thomas, else a married
-// partner's (a spouse of a grandparent is grandparent-tier — they ride the line via marriage), else null
-// (orbit / unrelated / no descent — by construction these have no generation on the tree).
+// partner's (a spouse of a grandparent is grandparent-tier — they ride the line via marriage), else — for
+// EASTER EGGS only — one generation ABOVE a child-in-law (a famous figure who joins the tree solely through
+// a CHILD's marriage into the line, e.g. William Henry Vanderbilt, whose son married gen-9 Alice → gen 8).
+// Else null (orbit / unrelated / no descent). Scoped to easter eggs (Sam): an easter egg with no such
+// marriage — like Rockefeller — stays ungenerationed, so its CCs to other lines correctly ride lateral.
 function effectiveGen(id, byId) {
 	const p = id && byId[id];
 	if (!p) return null;
@@ -719,6 +722,12 @@ function effectiveGen(id, byId) {
 	for (const m of p.marriages || []) {
 		const sp = m.spouse_id && byId[m.spouse_id];
 		if (gen(sp) != null) return gen(sp);
+	}
+	if (p.classification && p.classification.is_easter_egg) {
+		for (const m of p.marriages || [])
+			for (const cid of m.children_ids || [])
+				for (const cm of (byId[cid] && byId[cid].marriages) || [])
+					if (gen(byId[cm.spouse_id]) != null) return gen(byId[cm.spouse_id]) - 1;
 	}
 	return null;
 }
