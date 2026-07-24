@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PersonCompact } from '$lib/types/neighborhood';
 	import { shrinkToFit } from '$lib/actions/shrinkToFit';
+	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
 
 	type Props = {
 		person: PersonCompact;
@@ -11,6 +12,11 @@
 	};
 
 	let { person, relation, marriageYear = null, compact = false, dimmed = false }: Props = $props();
+
+	// The person's ONE shared photo derivative (same URL the FeaturedCard uses) — loaded EAGER at HIGH
+	// priority so a chip is never seen painting in, and so promoting the chip to featured is a cache hit,
+	// not a second load. The discrete baseball-card read depends on it.
+	const chipSrc = $derived(cldSize(person.p, PHOTO_TRANSFORM));
 
 	// SIBLING chips are their own size tier — ~20% smaller than a normal spouse/child chip (220×75 → 176×60).
 	// Existing relations keep their exact classes (sibling only ADDS a branch), so no spouse/child chip moves.
@@ -83,10 +89,12 @@
 		<div class="photo aspect-square shrink-0 bg-stone-100 {photoW}">
 			{#if person.p}
 				<img
-					src={person.p}
+					src={chipSrc}
 					alt={person.n}
 					class="h-full w-full object-cover object-top"
-					loading="lazy"
+					loading="eager"
+					fetchpriority="high"
+					decoding="async"
 				/>
 			{/if}
 		</div>
@@ -119,10 +127,12 @@
 		<div class="photo h-full shrink-0 bg-stone-100 {photoW}">
 			{#if person.p}
 				<img
-					src={person.p}
+					src={chipSrc}
 					alt={person.n}
 					class="h-full w-full object-cover object-top"
-					loading="lazy"
+					loading="eager"
+					fetchpriority="high"
+					decoding="async"
 				/>
 			{/if}
 		</div>

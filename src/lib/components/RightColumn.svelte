@@ -141,57 +141,12 @@
 			: thumbUrl;
 	}
 
-	// Warm the browser cache for the high-res hover popouts — but ONLY when the browser is idle and at
-	// LOW fetch priority, so these speculative loads NEVER compete with the foundational card, chip, and
-	// portrait photos for connections. (An eager, normal-priority preload here starved the visible
-	// images and made them load slowly — regression noticed 2026-07. Foundational photos always win.)
-	// Client-only — Image is undefined during SSR.
-	$effect(() => {
-		if (typeof Image === 'undefined') return;
-		const urls = [...landmarks, ...artworks, ...statues]
-			.filter((r) => r.thumbUrl)
-			.map((r) => popoutSrc(r.thumbUrl as string));
-		if (!urls.length) return;
-		const warm = () => {
-			for (const u of urls) {
-				const img = new Image();
-				try {
-					(img as unknown as { fetchPriority: string }).fetchPriority = 'low';
-				} catch {
-					/* older browsers: no fetchPriority — idle scheduling still keeps it out of the way */
-				}
-				img.src = u;
-			}
-		};
-		const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: object) => number })
-			.requestIdleCallback;
-		const cic = (window as unknown as { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
-		// Two-stage deferral, tuned toward foundational-photos-first (Sam, 2026-07). The promoting
-		// FeaturedCard portrait + the spouse/parent/child chip photos must claim the connection pool
-		// UNCONTESTED first. (1) HOLD OFF past the nav — longer than the promotion morph (~460–625ms)
-		// — so those foundational images are already in flight before we schedule anything; THEN
-		// (2) warm only when the browser is genuinely idle, with a long deadline: we'd rather warm
-		// late (or let the popout load on demand, which measures lag-free) than steal a byte early.
-		// Was a bare idle({ timeout: 3000 }) with no hold-off, which could fire into a mid-load idle
-		// gap and briefly starve the visible photos.
-		// HOLD-OFF is generous on purpose: a user can't hover a popout until they've SEEN the content,
-		// which takes well over a second — so warming this late costs nothing (the popout still measures
-		// lag-free on demand) while giving every foundational photo, parent/child/spouse chips included,
-		// an uncontested head start. Raise further if chips still load late; lower only if a fast
-		// hover ever feels laggy.
-		const HOLDOFF_MS = 2000;
-		let ricId: number | undefined;
-		const holdId = setTimeout(() => {
-			ricId = ric ? ric(warm, { timeout: 8000 }) : (setTimeout(warm, 600) as unknown as number);
-		}, HOLDOFF_MS) as unknown as number;
-		return () => {
-			clearTimeout(holdId);
-			if (ricId !== undefined) {
-				if (ric && cic) cic(ricId);
-				else clearTimeout(ricId);
-			}
-		};
-	});
+	// NO speculative popout warmer. It was removed 2026-07 (Sam: reset the prerender effect) — even at low
+	// priority behind a hold-off, warming the landmark/art/statue hover popouts contended with the PERSON
+	// photos (chips + featured) for the connection pool and made chips paint in top-to-bottom. Those popouts
+	// now load ON DEMAND (on hover, via popoutSrc); the same photo is small and measures lag-free. Person
+	// photos are a strictly higher load scale — eager + fetchpriority high, chip-sized via Cloudinary — and
+	// own the pool uncontested. See $lib/photo.ts for the person-photo loading doctrine.
 
 	function trackPopout(e: MouseEvent, row: MediaRow) {
 		if (!row.thumbUrl) return;

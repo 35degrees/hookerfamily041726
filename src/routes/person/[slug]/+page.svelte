@@ -24,6 +24,7 @@
 	} from '$lib/transitions/flight';
 	import { ccRoster } from '$lib/state/ccRoster.svelte';
 	import { unlockFlight } from '$lib/state/flightLock';
+	import { preloadNeighborhood } from '$lib/photo';
 	import SiblingPanel from '$lib/components/SiblingPanel.svelte';
 	import Caret from '$lib/components/Caret.svelte';
 
@@ -34,6 +35,15 @@
 	// we fall back to `data`. Client: $effect.pre re-syncs BEFORE the DOM update.
 	$effect.pre(() => featured.set(data));
 	const f = $derived(featured.current ?? data);
+
+	// FOUNDATIONAL PHOTO PRELOAD: the moment a neighborhood is known — on cold-load hydration, and on a warm
+	// nav the instant the incoming payload is set (during the flight, before the chips reveal at landing) —
+	// warm EVERY person photo in it as one high-priority batch. A neighborhood is a complete set, so its chips
+	// load together and are cache hits by the time any of them render (on screen, off screen, in a collapsed
+	// panel, or promoted next nav). Client-only (effects don't run in SSR). See $lib/photo.ts.
+	$effect(() => {
+		preloadNeighborhood(f.neighborhood);
+	});
 
 	// Dev guard: f is one atomic FeaturedData, so neighborhood and person must
 	// describe the same focal id. If this logs, a warm focus left them out of sync.

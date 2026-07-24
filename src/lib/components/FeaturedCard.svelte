@@ -7,6 +7,7 @@
 	import NarrativeBlocks from './NarrativeBlocks.svelte';
 	import { formatDate, formatLocationShort, buildMapUrl } from '$lib/utils/dates';
 	import { shrinkToFit } from '$lib/actions/shrinkToFit';
+	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
 
 	type Props = {
 		person: Person;
@@ -41,6 +42,10 @@
 	}: Props = $props();
 
 	let photoUrl = $derived(person.bio?.photo_url ?? person.name?.photo_url ?? null);
+	// The featured portrait — the SAME shared derivative the chips use (so a chip→featured promotion is a
+	// cache hit, not a reload), covering the ~200px display AND the ~2× hover-zoom in one image. Loaded
+	// eager + high-priority; the zoom reuses it verbatim (same URL → no second fetch).
+	let portraitSrc = $derived(cldSize(photoUrl, PHOTO_TRANSFORM));
 	let displayName = $derived(person.bio?.display_name ?? person.name?.display_name ?? '');
 
 	// ── Main-portrait hover-zoom ──────────────────────────────────────────────
@@ -76,7 +81,7 @@
 			h = w * ar;
 		}
 		// Horizontal is pinned to the photo's right edge (constant as the mouse moves), not the cursor.
-		zoom = { src: photoUrl, alt: displayName || 'Portrait', w, h, ax: r.right, y: e.clientY };
+		zoom = { src: portraitSrc ?? photoUrl, alt: displayName || 'Portrait', w, h, ax: r.right, y: e.clientY };
 	}
 	function closeZoom() {
 		zoom = null;
@@ -288,9 +293,11 @@
 				<div class="portrait-column space-y-4">
 					{#if photoUrl}
 						<img
-							src={photoUrl}
+							src={portraitSrc}
 							alt={person.bio?.display_name ?? person.name?.display_name ?? 'Portrait'}
 							class="aspect-[3/4] w-full rounded-sm bg-stone-100 object-cover object-top"
+							loading="eager"
+							fetchpriority="high"
 							onmouseenter={trackZoom}
 							onmousemove={trackZoom}
 							onmouseleave={closeZoom}
