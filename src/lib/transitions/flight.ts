@@ -187,6 +187,10 @@ const DECK_HERO_V_MULT = 1.1; // v4.2.1: the ENTERING card is 10% quicker than t
 // this much faster end-to-end. It does NOT touch any easing curve, the heft, the angles, or the overshoot
 // distance (those are shape/space, not tempo) — it just compresses the timeline. 0.9 = 10% quicker overall.
 const DECK_TEMPO = 0.9;
+// TRAVEL TEMPO (v4.2.6): shortens the two cards' TRANSIT time only — NOT the beat (spacing held) and NOT the
+// easing shape (velocity curve held): same distances, same curves, same gap, cards just cross a bit faster,
+// so the total drops ~5%. Applied to car 1's exit + the hero's entry, never to the phantom beat.
+const DECK_TRAVEL_TEMPO = 0.94;
 export const DECK_TRAVEL = 1300; // px — FALLBACK offscreen reach only (live coords are viewport-derived; see deckExit)
 const DECK_EDGE_MARGIN = 80; // px past the window edge every offscreen coord clears — no car/hero peeks at any window size
 const DECK_STAGGER_BASE = 120; // ms between cars — breathes wider now the count is smaller (dial 110–130)
@@ -554,7 +558,7 @@ export function growFrom(node: Element) {
 	// exits along −ccDir from THIS same slot rect (it was the outgoing featured card here), so its exit time
 	// is computable right here without cross-talk. Strict EXIT → BEAT → ENTRY; no co-occupancy, ever.
 	const car1Exit = cc && !arc ? deckExit({ x: -ccDir.x, y: -ccDir.y }, dest.left, dest.top, dest.width, dest.height) : { x: 0, y: 0 };
-	const car1ExitMs = (Math.hypot(car1Exit.x, car1Exit.y) / DECK_GHOST_V) * DECK_TEMPO;
+	const car1ExitMs = (Math.hypot(car1Exit.x, car1Exit.y) / DECK_GHOST_V) * DECK_TEMPO * DECK_TRAVEL_TEMPO;
 	const sx = cc ? 1 : origin.width / dest.width;
 	const sy = cc ? 1 : origin.height / dest.height;
 	const distance = Math.hypot(dx, dy);
@@ -595,7 +599,7 @@ export function growFrom(node: Element) {
 		// DECK v4.2.1: the ENTERING card runs 10% quicker than the exit (DECK_HERO_V_MULT) but still decelerates
 		// through the brake tail into the slot — quick in, slowing to land. Viewport-honest (distance off the
 		// live slot→edge). × DECK_TEMPO for the global 10% speed-up (curve/heft/overshoot all unchanged).
-		duration = sched ? (distance / (DECK_GHOST_V * DECK_HERO_V_MULT) + DECK_BRAKE_MS) * DECK_TEMPO : ccDurationMs();
+		duration = sched ? (distance / (DECK_GHOST_V * DECK_HERO_V_MULT) + DECK_BRAKE_MS) * DECK_TEMPO * DECK_TRAVEL_TEMPO : ccDurationMs();
 	} else if (flightKind === 'spouse') {
 		// Extend the hero to honor the demote's honest-velocity clock (below), so the two share one clock
 		// and neither the growing hero nor the shrinking demote ever exceeds the ceiling. The demote starts
@@ -757,7 +761,7 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		const exit = deckExit({ x: -dir.x, y: -dir.y }, card.left, card.top, card.width, card.height);
 		const ex = exit.x,
 			ey = exit.y;
-		const car1Ms = (Math.hypot(ex, ey) / DECK_GHOST_V) * DECK_TEMPO; // rest → fully offscreen (× tempo)
+		const car1Ms = (Math.hypot(ex, ey) / DECK_GHOST_V) * DECK_TEMPO * DECK_TRAVEL_TEMPO; // rest → fully offscreen (× tempo, × travel-tempo)
 		const sched = deckScheduleFor(arcM);
 		const j0 = sched.jitter[0]; // seeded per flight (protected variation)
 		const horiz = Math.abs(dir.x) >= Math.abs(dir.y); // lateral exit → banks; vertical → leans
