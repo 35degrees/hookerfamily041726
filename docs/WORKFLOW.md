@@ -54,13 +54,12 @@ person_id   field   value_or_angle   |   status   slug
 Unrecognized field → `🚩 BLOCKED: unknown field`, never a guess.
 
 ### The processing loop
-1. Sam appends rows to `tasks.tsv` as he researches (fast, one line each).
-2. Claude copies `canonical.json` → `canonical_draft.json` (the real canonical is never edited in place).
-3. Claude processes **every row, in order**, against the draft.
-4. Claude runs `python validate.py canonical_draft.json --baseline canonical.json`.
-5. If validate passes (no new ERRORS): Claude runs `regenerate-data.js` against the draft so Sam can review live cards.
-6. Claude returns `tasks.tsv` with `status` + `slug` filled on every row.
-7. Sam reviews the flagged localhost cards. If good → promote draft to canonical (git commit). If not → re-flag the row; no re-explanation needed.
+1. Sam appends rows to the task sheet as he researches (fast, one line each).
+2. **Before editing, Code commits canonical.json** (`git add -A && git commit -m "pre-batch <desc>"`) — the revert point. **There is no draft file;** `process_tasks.py` edits `canonical.json` in place. git is the safety net.
+3. Code runs `python process_tasks.py tasks.tsv` (`.csv` → comma, else tab; auto-detected). It applies **every row, in order, directly to `canonical.json`**, append/set-only, and writes `status` + `slug` back into the sheet. NB prose (`nb_angle`/`nb_full`) is staged to the sheet's `proposed` column — **not** written to canonical — for Sam's approval (see §3).
+4. Code runs `git show HEAD:canonical.json > /tmp/baseline.json` then `python validate.py canonical.json --baseline /tmp/baseline.json`. New ERRORS or unauthorized loss → **STOP**, report, `git revert`. Do not proceed.
+5. If validate passes: Code runs `node regenerate-data.js canonical.json` **on Sam's command** so he can review the live cards.
+6. Sam reviews the flagged localhost cards (click the `slug` links). Good → keep the commit. Bad → `git revert`; it never happened, no re-explanation needed.
 
 ---
 
@@ -73,7 +72,7 @@ These are deterministic. The script applies them and reports the slug:
 | `photo_url` | set `bio.photo_url`. **Read it back applied, in-field, in the report.** A dropped photo URL must be impossible to hide. |
 | `birth_date` / `death_date` | parse `YYYY-MM-DD` (or partial) into the date object; set `date_precision` accordingly. |
 | `bio_blurb` / `notable_blurb` | set, after checking ≤8 words (reject if over). |
-| `tag_add` / `tag_remove` | add/remove a tag — **only if canonical** (grep schema §6 / §2; if count ≤1 tree-wide, flag don't add). |
+| `tag_add` / `tag_remove` | add/remove a tag — **only if canonical** per `canonical_tags.txt` (the approved vocabulary). `process_tasks.py` flags any `tag_add` outside it; add a line to that file to approve a new tag. |
 | `marriage` | wire `spouse=X year=Y order=N`, **bidirectionally**. |
 | `parents` | set `{father_id, mother_id}` dict, **bidirectionally** (parent's marriage children_ids too). |
 | `education` / `career` | append a structured record from `key=value` pairs. |

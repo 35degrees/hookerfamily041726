@@ -1,0 +1,250 @@
+# canonical_tags.txt -- the approved tag vocabulary (DATA, read by process_tasks.py + validate.py)
+#
+# One tag per line. Blank lines and #-comments ignored. Approve a new tag = add a line
+# (no code edit). process_tasks.py FLAGS (does not silently add) any tag_add outside this
+# set; validate.py WARNS (never errors) on non-canonical tags already in canonical. If this
+# file is empty or deleted the gate is OFF.
+#
+# SOURCE: extracted from schema v23 §6 (the full taxonomy), grouped by its category headers,
+# plus the four §2.1/§2.2 addendum tags not carried in the §6 body. Deprecated
+# `orbit_non_descendant` is intentionally EXCLUDED.
+#
+# STILL RECONCILE AGAINST LIVE: §6 defines the documented set, but your live canonical may
+# carry (a) family-lineage dynasty tags you've added since (each `<surname>_family`), and
+# (b) undocumented drift (photographer, chicago_fire, colorado_migration, yale_professor...).
+# The drift is exactly what the gate now surfaces. To see the gap:
+#
+#   python3 -c "import json,collections; T=json.load(open('canonical.json')); \
+#   c=collections.Counter(t for p in T['people'] for t in (p.get('tags') or [])); \
+#   [print(f'{n:6d}  {t}') for t,n in c.most_common()]"
+#
+# Keep legit survivors (add them under the right section), drop the junk.
+
+# --- death cause ---
+died_in_infancy
+died_in_childhood
+died_young
+died_unmarried
+lost_at_sea
+drowned
+killed_in_action
+killed_in_duel
+died_in_childbirth
+died_as_prisoner_of_war
+unusual_death
+epidemic_death
+pandemic_death
+suicide
+titanic
+empress_of_ireland
+unsolved_crime_victim
+
+# --- military ---
+revolutionary_war
+civil_war
+confederate
+navy
+marine_corps
+wwi
+wwii
+mexican_american_war
+spanish_american_war
+korean_war
+vietnam_war
+war_of_1812
+second_seminole_war
+pequot_war
+king_philips_war
+king_williams_war
+french_indian_war
+medal_of_honor
+silver_star
+flying_cross
+air_medal
+bronze_star
+air_force
+army
+spy
+loyalist
+
+# --- founding / early american ---
+hartford_founder
+farmington_founder
+milford_founder
+massachusetts_bay_founder
+princeton_founder
+town_founder
+great_migration
+seven_pillars
+
+# --- migration ---
+pennsylvania_migration
+massachusetts_migration
+connecticut_migration
+new_hampshire_migration
+missouri_migration
+oklahoma_migration
+v17
+iowa_migration
+v20
+vermont_migration
+ohio_migration
+canada_migration
+nova_scotia_migration
+argentina_migration
+california_migration
+new_york_migration
+illinois_migration
+mississippi_migration
+georgia_migration
+indiana_migration
+florida_migration
+idaho_migration
+michigan_migration
+minnesota_migration
+kansas_migration
+washington_migration
+louisiana_migration
+texas_migration
+oregon_migration
+arkansas_migration
+wisconsin_migration
+montana_migration
+westward_migration
+
+# --- religion / belief ---
+minister
+clergy
+deacon
+missionary
+hawaii_mission_era
+shaker
+episcopal
+freemason
+catholic
+v18
+universalist
+v20
+
+# --- academic / institutional ---
+yale_connection
+yale_graduate
+yale_president
+yale_founder
+yale_trustee
+skull_and_bones
+harvard_graduate
+harvard_founder
+academic
+educator
+librarian
+v21
+
+# --- social / political ---
+governor
+senator
+congressman
+mayor
+v17
+president
+vice_president
+continental_congress
+diplomat
+general
+judge
+justice
+federal_judge
+lawyer
+politician
+abolitionist
+slaveholder
+underground_railroad
+suffragist
+womens_rights
+civil_rights
+pacifist
+temperance
+indigenous_rights
+
+# --- arts / science / professional ---
+author
+journalist
+artist
+painter
+v19
+architect
+musician
+engineer
+inventor
+scientist
+mathematician
+physician
+psychiatrist
+banker
+merchant
+publisher
+v18
+rancher
+v17
+postmaster
+city_planner
+diarist
+letter_writer
+theologian
+railroad
+collegiate_athlete
+pro_athlete
+olympian
+gold_medal
+environmentalist
+nobel_prize
+
+# --- genealogical pattern ---
+named_for_hooker
+replacement_naming
+double_hooker_ancestry
+hooker_talcott_convergence
+cousin_marriage
+extraordinary_longevity
+adopted
+extraordinary_story
+moral_complexity
+
+# --- family lineage (extensible — add surname dynasties) ---
+rockefeller_family
+percy_family
+hooker_family
+talcott_family
+
+# --- research / data quality (internal) ---
+not_yet_fully_entered
+identification_uncertain
+parentage_unverified
+ghost_ancestor
+data_quality_uncertain
+has_discrepancy
+source_conflict_gender
+eh_attribution_error
+duplicate_entry
+needs_research
+dna_confirmed_2018
+unacknowledged_by_burr
+reputed_biological
+
+# --- compiler (personal research) ---
+compiler_ancestor
+compiler_adjacent
+compiler_line_eliminated
+outreach_target
+outreach
+living_contact
+living_possible_contact
+living_or_recent
+
+# --- addendum extras (schema v22 §2.1 / §2.2) ---
+silversmith
+businessman
+durham_newton
+cherokee_mission
+
+# --- add reconciled live tags below (family dynasties, blessed drift) ---

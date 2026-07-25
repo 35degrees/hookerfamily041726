@@ -1,4 +1,5 @@
 # HOOKER FAMILY DESCENDANTS — ENRICHED DESIGN (FABLE PASS)
+
 **Date: July 24, 2026 — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
 **Prepared by the architect stream for Samuel Talcott Hooker's review. Nothing here is a decision until Sam says so.**
 **The 070926 edition added §13 (viewport-lock / scrollbar doctrine) and §14 (Zoom 1 card-grid refinements). This 071226 edition adds §17 (motion physics doctrine — learned the hard way in the July 11 card-transition maintenance phase) and threads the one-physics/velocity-ceiling lessons into §3. The card-transition layer is now CLOSED, probe-guarded, and pushed; see docs/CODING_HANDOFF.md in the repo for the session record and ghost taxonomy.**
@@ -9,11 +10,12 @@
 
 **The 071726 edition (July 17) adds §21 — SIBLING EXPANSION AS BUILT (supersedes §20.2 where they differ), THE NOTCH-CUTOUT DOCTRINE (one unstated fact that caused three separate ghost bugs), the FALSE-GREEN taxonomy (six in one session, all the same shape), and the STAGGER REVERSAL (context-dependent, scoped).**
 **The 072226 edition (July 22) adds §22 — THE DECK SHUFFLE (the Zoom-1-era CC transition: the archival metaphor that withdraws the spatial claim; generation-delta direction; return-memory), and the HOLD register (§23): the Table (Zoom 2), Zoom 3, and the CC altitude arc move to deliberate hold — preserved, not removed.**
-**The 072326 edition (July 23) rewrites §22 AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards trading places with WEIGHT and an EMPTY-STAGE gap (the visible ghost riffle moved behind a default-off toggle, because a visible convoy read as "adjacent" and shrank the tree). It records the gen_delta direction model (effective generation; the easter-egg child-in-law rule), the FIXED lateral ping-pong memory (replacing the July-22 return-memory that armed permanently), the weight-physics doctrine (accelerating exit, decelerating settle + ~6px overshoot, seeded per-axis tilt, global + travel tempo dials), the offscreen-honesty/belt + connector hard-cut + flight-lock, and the seven-probe guard suite. Built, probe-guarded, committed to main (Stream B). It also adds §24 — the PHOTO-LOADING doctrine (the NEIGHBORHOOD is the load unit; a tiered batch preload warms on-screen chips first; ONE shared Cloudinary derivative per person; person photos are foundational, media tertiary) — earned after a hover-preload experiment degraded the foundations and was undone.**
+**The 072326 edition (July 23) rewrites §22
+AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards trading places with WEIGHT and an EMPTY-STAGE gap (the visible ghost riffle moved behind a default-off toggle, because a visible convoy read as "adjacent" and shrank the tree). It records the gen_delta direction model (effective generation; the easter-egg child-in-law rule), the FIXED lateral ping-pong memory (replacing the July-22 return-memory that armed permanently), the weight-physics doctrine (accelerating exit, decelerating settle + ~6px overshoot, seeded per-axis tilt, global + travel tempo dials), the offscreen-honesty/belt + connector hard-cut + flight-lock, and the seven-probe guard suite. Built, probe-guarded, committed to main (Stream B). It also adds §24 — the PHOTO-LOADING doctrine (the NEIGHBORHOOD is the load unit; a tiered batch preload warms on-screen chips first; ONE shared Cloudinary derivative per person; person photos are foundational, media tertiary) — earned after a hover-preload experiment degraded the foundations and was undone.**
 
 **The 072426 edition (July 24) adds §22.2b — a CONFIRMED DEFECT in the deck's vertical/lateral choice: the `sameLine` seat-distance proxy (`|Δseats| ≤ SEAT_NEAR`) misfires for genuine close kin who happen to sit FAR apart in the tidy tree, so a real up/down-the-line CC rides lateral. First live case: John Pierpont H00388 ↔ his uncle-guardian James Pierpont II H00116 (uncle/nephew, `gen_delta = −1`, correctly baked) renders HORIZONTAL because their seats are >180 apart. The data is right; the direction test is wrong. This is exactly the failure the §19.4 LCA/kin-distance bake exists to fix — logged now with a repro. Deferred (Stream B); tracked in the roadmap (§15).**
 
-This doc follows the house convention: it holds *what and why* (durable design).
+This doc follows the house convention: it holds _what and why_ (durable design).
 Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_072426.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
@@ -22,7 +24,7 @@ folded back without conflict.
 
 ## 1. THESIS — the product is connection, not biography
 
-Every genealogy site renders *records*. This project renders *travel*: you stand
+Every genealogy site renders _records_. This project renders _travel_: you stand
 at one person, and every click is a journey to another — down a generation, up a
 branch, or through a cross-connection wormhole to someone a century away. The
 navigation is already instant and infinite; what the next design phase adds is
@@ -31,7 +33,7 @@ history rather than reshuffling on a stage.
 
 Biography still matters more here than in any Ancestry-style tree — the NBs are
 the reason a card is worth arriving at. But the load-bearing insight is that a
-*stub* is still a complete product experience if the connective tissue renders:
+_stub_ is still a complete product experience if the connective tissue renders:
 its position on the table, its lifespan on the timeline, its path to Thomas.
 Biography is the reward; connection is the game.
 
@@ -40,16 +42,17 @@ huge swath of the American experience — Puritan founding, Great Awakening,
 revolution and treason, finance, reform, war. And not only the WASP side of it:
 the Aaron Burr Jr. household line (see §10) carries the story into Black
 abolitionist Philadelphia and the Underground Railroad. A tree that documents
-*that* with the same rigor as the Morgan money is a genuinely different object
+_that_ with the same rigor as the Morgan money is a genuinely different object
 from anything online.
 
 ---
 
 ## 2. THE VIRTUAL TABLE — the coordinate system everything else stands on
-*(extends: SPATIAL NAVIGATION / the substrate insight in UX_ROADMAP §2a)*
+
+_(extends: SPATIAL NAVIGATION / the substrate insight in UX_ROADMAP §2a)_
 
 The single missing structural piece in the current design. Sam's instinct —
-flights should travel *diagonally*, as if the destination sits at a real spot on
+flights should travel _diagonally_, as if the destination sits at a real spot on
 a table — requires that every person have a **fixed table coordinate**, computed
 once, not improvised per flight.
 
@@ -86,13 +89,13 @@ discussion): y is TIME, not generation index.** By generation 8+, generations
 overlap each other's birth-year ranges by decades — clean "generation strata"
 on the table are a fiction. Time is the axis the left timeline, the anchor
 figures (§3.6), and the lifespan highlight all speak, so the table speaks it
-too. Consequences: (a) the earlier notion of labeled *generation* horizon-lines
+too. Consequences: (a) the earlier notion of labeled _generation_ horizon-lines
 is retired in favor of faint decade/era rules (§3.5); (b) generation renders as
 a card-level label and soft contextual band, never a spatial line; (c) a
 same-generation CC to a cousin born 35 years later legitimately pans down as
 well as across — on a time table, they ARE later.
 
-Once the table exists, five features become *renderings of the same data*:
+Once the table exists, five features become _renderings of the same data_:
 the substrate offset, the timeline, flight direction/distance, the shuffle
 flyover, and Zoom 3. That is the deepest version of the "build the linchpin
 once" insight.
@@ -100,7 +103,8 @@ once" insight.
 ---
 
 ## 3. THE CAMERA — one clock, many subscribers
-*(extends: MOTION LANGUAGE)*
+
+_(extends: MOTION LANGUAGE)_
 
 A small module-level store (plain module values, per the motion-loop hazard —
 not `$state` read-and-written in effects). On any navigation, the click handler
@@ -178,8 +182,9 @@ hazard (clicks landing mid-flight capturing garbage rects).
 ---
 
 ## 3.5 THE FIELD — what actually moves (stars, motes, and one semantic layer)
-*(new; answers Sam's starfield idea and "is there a better indicator than
-stars?")*
+
+_(new; answers Sam's starfield idea and "is there a better indicator than
+stars?")_
 
 **Verdict: the mechanic is right; the skin is a taste decision; add one
 semantic garnish.** A sparse multi-depth point field is the correct parallax
@@ -187,6 +192,7 @@ instrument — better than a grid, which reads as graph paper (the Ancestry
 aesthetic this project exists to escape).
 
 **Mechanics (settled regardless of skin):**
+
 - Points live in **world space** — seated at fixed table coordinates,
   generated deterministically (seeded hash) so regions of the table always
   look the same. They translate with the camera at their layer's depth factor
@@ -205,9 +211,10 @@ aesthetic this project exists to escape).
   layer replaces the retired generation horizon-lines (§2 axis decision).
 
 **Skin — decide in the Phase 3b design pass, same code either way:**
-- *Star-cold:* classic points on midnight blue. Proven vocabulary, zero
+
+- _Star-cold:_ classic points on midnight blue. Proven vocabulary, zero
   ambiguity about depth.
-- *Archive-warm:* the same points styled as dust motes in lamplight — warmer
+- _Archive-warm:_ the same points styled as dust motes in lamplight — warmer
   tint, softer edges. Matches the project's semantics (a table in an archive)
   over space semantics.
 - A/B both on localhost in an afternoon; Sam's eye decides.
@@ -221,7 +228,8 @@ texture drift (too subtle to carry motion alone).
 ---
 
 ## 3.6 THE LEFT TIMELINE — scale, lifespan highlight, anchor figures
-*(extends the roadmap's time-slider; new: anchor figures per Sam 0703)*
+
+_(extends the roadmap's time-slider; new: anchor figures per Sam 0703)_
 
 The timeline is the table's y-axis rendered as an instrument: 1586 → today,
 persistent at the left edge in every layout tier (§12 — Sam's explicit
@@ -255,9 +263,10 @@ requirement includes phone).
 ---
 
 ## 4. THE FLYOVER LAYER — real names, fake fidelity, TWO MODES
-*(new; answers "can we actually show real cards below?" — revised 0703 per
+
+_(new; answers "can we actually show real cards below?" — revised 0703 per
 Sam: short flights PRIORITIZE the in-between names; they are comprehension,
-not decoration)*
+not decoration)_
 
 Show **real people at their real table positions, rendered as fakes.** Not
 actual PersonBox components (mounting dozens of interactive components for a
@@ -266,8 +275,9 @@ of a recognizable name streaking past). And the layer behaves differently by
 range, because the in-between people MEAN something different by range:
 
 **Near mode (≈1–3 generations of displacement) — the priority mode.**
-On a short flight the passed-over people are the *explanation of the journey*:
+On a short flight the passed-over people are the _explanation of the journey_:
 the connecting parent is why the destination relates to the origin. So:
+
 - **Selection = the lineage path, not the spatial corridor.** Show the actual
   connecting people in order (the parent chain for ancestor-line flights),
   walked client-side from parent pointers in `table-index.json` (see §2 —
@@ -281,6 +291,7 @@ the connecting parent is why the destination relates to the origin. So:
   happens in the settle, not mid-streak, so nothing slows down.
 
 **Far mode (wormholes, shuffle, timeline jumps).**
+
 - Selection = the swept spatial corridor (rectangle between from and to,
   spatial-bucketed against precomputed coordinates), capped (~40), **biased
   toward notables** — recognizable names streaking past is the payoff.
@@ -301,7 +312,8 @@ a short ride, you're meant to recognize the stops.
 ---
 
 ## 5. ZOOM MODEL
-*(extends: Re-focus choreography / zoom levels)*
+
+_(extends: Re-focus choreography / zoom levels)_
 
 **Zoom 1** — unchanged. The neighborhood stage; per-person payload; the flights.
 
@@ -323,6 +335,7 @@ not: many families put 25+ grandchildren on screen. Proposal:
   asc, died-young last).
 
 **Zoom 3 — the literal table.**
+
 - **Data: the per-person payload pattern does NOT apply here** (direct answer).
   Zoom 3 is corpus-wide by definition; it draws from `table-index.json`,
   lazy-loaded on first invocation and cached for the session. Zoom 1/2 stay on
@@ -339,13 +352,13 @@ not: many families put 25+ grandchildren on screen. Proposal:
   parallax and timeline stay in sync during a drag); no scroll-chaining fights.
 - **Chip click → featured:** capture the chip's on-screen rect (the existing
   `captureFlightOrigin` pattern), set featured, revert to zoom 1; the card
-  grows from the chip exactly as flights do today. Zoom 3 is thus a *view*,
+  grows from the chip exactly as flights do today. Zoom 3 is thus a _view_,
   never a separate app.
 - Same-size chips at zoom 3 (confirmed direction) — role color remains the
   differentiator, which is another reason Phase 2's palette precedes this.
 
 **PINCH — discrete levels with magnetic detents, not continuous zoom.**
-Zoom 1 and 2 are *compositions* (distinct stage layouts), not magnifications
+Zoom 1 and 2 are _compositions_ (distinct stage layouts), not magnifications
 of one image; a free pinch would demand rendering meaningless in-between
 states. The gesture model:
 
@@ -370,8 +383,9 @@ states. The gesture model:
 ---
 
 ## 6. SPOUSE CAROUSEL (4+ spouses)
-*(extends: FEATURED CARD LAYOUT / spouse chips; supersedes "4+ spouse
-horizontal scroll" in the NOT-BUILT list)*
+
+_(extends: FEATURED CARD LAYOUT / spouse chips; supersedes "4+ spouse
+horizontal scroll" in the NOT-BUILT list)_
 
 Confirmed direction from Sam, recorded as spec:
 
@@ -402,7 +416,8 @@ Confirmed direction from Sam, recorded as spec:
 ---
 
 ## 7. SIBLING BUBBLES
-*(extends: Action buttons in footer / siblings; roadmap Phase 7)*
+
+_(extends: Action buttons in footer / siblings; roadmap Phase 7)_
 
 Confirmed direction, recorded as spec, with two implementation insights:
 
@@ -411,7 +426,7 @@ Confirmed direction, recorded as spec, with two implementation insights:
   ~16–24 px left with a soft spring-ish ease (slight overshoot). A layout-level
   shift would reflow the notch, connectors, and rows — the "push" Sam
   explicitly doesn't want. A transform moves the painted card as one object:
-  it *yields*, it doesn't *relocate*. RightColumn and CC footer do not move —
+  it _yields_, it doesn't _relocate_. RightColumn and CC footer do not move —
   only the card breathes left, which is what "feeling their presence" means.
 - **Bubble entrance:** sibling chips in a vertical stack anchored to the group's
   right edge, each entering with scale (from ~0.85) + fade + a tiny y-settle,
@@ -430,14 +445,15 @@ Confirmed direction, recorded as spec, with two implementation insights:
 ---
 
 ## 8. SEO & DISCOVERABILITY — the richness gate
-*(extends: URL STRUCTURE / data delivery; new decisions)*
+
+_(extends: URL STRUCTURE / data delivery; new decisions)_
 
 Sam's call, endorsed and formalized: **only substantive pages are indexable.**
 
 - **Richness gate at build time:** a person is indexable iff `notable` OR
   meets a content threshold (e.g., ≥1 NB, or blurb + photo + resolved dates —
   exact predicate is Sam's to set). Below the gate: `<meta name="robots"
-  content="noindex">`, excluded from sitemap. Pages remain fully navigable.
+content="noindex">`, excluded from sitemap. Pages remain fully navigable.
   Entries graduate into the index automatically as enrichment lands — the
   5–6 month content push continuously widens the indexed surface with zero
   extra process.
@@ -464,7 +480,8 @@ Sam's call, endorsed and formalized: **only substantive pages are indexable.**
 ---
 
 ## 9. THE CREDIBILITY APPARATUS — what the roadmap is missing
-*(answers "anything missing to reach your goals?")*
+
+_(answers "anything missing to reach your goals?")_
 
 For the stated audience — CHS, NEHGS, academic historians — the make-or-break
 feature isn't motion. It's **visible method.** Historians decide in thirty
@@ -505,7 +522,7 @@ to moments that already happen — instead of an act of memory:
    pass — never a separate step Sam must remember. The paste IS the citation
    event.
 2. **A `source_add` row in the tasks grammar** (`source_add url="..."
-   tier=primary note="..."`), so a Sheets research session can carry
+tier=primary note="..."`), so a Sheets research session can carry
    provenance inline on the row where the finding lands.
 3. **A minimum viable citation** — URL + tier + accessed date. Not Chicago
    style. A low bar that gets met beats a high bar that gets skipped; the
@@ -521,8 +538,9 @@ to moments that already happen — instead of an act of memory:
 ---
 
 ## 10. THE BURR–EMMONS LINE — the thesis exemplar
-*(content direction, for the enrichment stream — recorded here because it
-shapes design)*
+
+_(content direction, for the enrichment stream — recorded here because it
+shapes design)_
 
 Aaron Burr Jr.'s second family — his children with Mary Emmons, a servant in
 the Burr household — leads to John Pierre Burr and Louisa Charlotte Burr and
@@ -533,6 +551,7 @@ the strongest possible answer to "isn't this just a WASP tree" — the American
 experience the project claims to capture runs straight through it.
 
 Two notes for the enrichment pass, in the spirit of the project's precision:
+
 - **Historiography care on Mary Emmons herself:** the sourcing commonly
   describes her as a woman of color from Calcutta (accounts vary on her origins
   and name — "Eugénie" appears in some traditions), and much of the record is
@@ -548,7 +567,8 @@ Two notes for the enrichment pass, in the spirit of the project's precision:
 ---
 
 ## 11. STUB DESIGN — degrade beautifully
-*(extends Phase 2 role-color work)*
+
+_(extends Phase 2 role-color work)_
 
 A deliberate stub state, designed in the Phase 2 palette pass: a stub card
 leads with what it HAS — position (generation label, horizon-line context),
@@ -562,7 +582,8 @@ median product experience and deserves one focused design session.
 ---
 
 ## 12. LAYOUT TIERS — desktop, tablet, phone
-*(new per Sam 0703: tablet/mobile is a big part of the project)*
+
+_(new per Sam 0703: tablet/mobile is a big part of the project)_
 
 **The architectural rule that makes this tractable: tiers are layout
 compositions over the SAME state, data, and camera.** One neighborhood payload,
@@ -591,6 +612,7 @@ is identical, just recomposed.
 
 **Tier C — Phone (the essential instrument).** Stripped but genuinely useful,
 per Sam — not a business-card site:
+
 - **Zoom 1 only** at first (a simplified zoom 3 is a candidate later, never a
   launch gate). Vertical stack: compact parent chips → full-width featured
   card (notch simplified to a spouse chip row; carousel still pages) →
@@ -617,7 +639,8 @@ iPad — simulator rendering lies about touch feel.
 ---
 
 ## 13. VIEWPORT-LOCK & SCROLLBAR DOCTRINE
-*(new 070926; answers the scrollbar pop and establishes the "god view" model)*
+
+_(new 070926; answers the scrollbar pop and establishes the "god view" model)_
 
 **The doctrine: this is an exhibit, not a document. The stage owns the whole
 viewport; there are no scrollbars anywhere in zoom 1. Movement is clicking;
@@ -636,12 +659,15 @@ steals its gutter, shifts everything, and vanishes.
 
 ```css
 /* app shell — the stage owns the viewport */
-html, body { height: 100%; }
+html,
+body {
+	height: 100%;
+}
 .app-shell {
-  height: 100dvh;            /* dvh: honest on iPad/mobile URL-bar resize */
-  width: 100%;               /* prefer % / cqi over vw everywhere inside */
-  overflow: clip;            /* NOT hidden — see below */
-  overscroll-behavior: none; /* no iPad rubber-band / pull-to-refresh */
+	height: 100dvh; /* dvh: honest on iPad/mobile URL-bar resize */
+	width: 100%; /* prefer % / cqi over vw everywhere inside */
+	overflow: clip; /* NOT hidden — see below */
+	overscroll-behavior: none; /* no iPad rubber-band / pull-to-refresh */
 }
 ```
 
@@ -658,7 +684,7 @@ html, body { height: 100%; }
   but the discipline stands: **inside the shell, size with `%`, `fr`, or
   container-query units (`cqi`), never `vw/vh`.** If any interim page keeps a
   scrollable document (e.g. a future About page), `html { scrollbar-gutter:
-  stable; }` is the correct reservation there.
+stable; }` is the correct reservation there.
 - **Interim one-liner (ship tomorrow, before the lock):**
   `html { scrollbar-gutter: stable; }` — the scrollbar may still appear, but
   it stops shifting the layout. Removes the jarring effect in one line while
@@ -706,10 +732,11 @@ clipping — §14.5.
 ---
 
 ## 14. ZOOM 1 CARD GRID — REFINEMENTS (with code)
-*(new 070926; from live review of FeaturedCard.svelte + RightColumn.svelte +
+
+_(new 070926; from live review of FeaturedCard.svelte + RightColumn.svelte +
 screenshots of Pierpont Edwards, Thomas Hooker, Anne Hooker, Aaron Burr,
 Florence Talcott Hope. No revamp — the layout is close; these are the last
-six turns of the screwdriver.)*
+six turns of the screwdriver.)_
 
 **14.1 The reading measure is the root of the middle-column complaints.**
 `grid-cols-[23%_54.5%_22.5%]` gives the NB column ~500 px of text at
@@ -720,13 +747,14 @@ gapped from the right column: the text runs too wide and stops nowhere.
 ```svelte
 <!-- FeaturedCard content row: name the seams, bound the measure -->
 <div class="content grid grid-cols-[23%_1fr_22.5%] overflow-hidden p-6">
-  <div class="portrait-column space-y-4 pr-4">…</div>
-  <div class="narrative min-h-0 overflow-hidden pr-6 pl-4">
-    <div class="max-w-[52ch]">   <!-- the measure cap: readability + gutter -->
-      <NarrativeBlocks blocks={person.narrative_blocks ?? []} />
-    </div>
-  </div>
-  <div class="h-full min-h-0"><RightColumn … /></div>
+	<div class="portrait-column space-y-4 pr-4">…</div>
+	<div class="narrative min-h-0 overflow-hidden pr-6 pl-4">
+		<div class="max-w-[52ch]">
+			<!-- the measure cap: readability + gutter -->
+			<NarrativeBlocks blocks={person.narrative_blocks ?? []} />
+		</div>
+	</div>
+	<div class="h-full min-h-0"><RightColumn … /></div>
 </div>
 ```
 
@@ -775,8 +803,7 @@ policy ≠ data policy). CC display order is curation and routes to the data
 stream (worklist: order CCs by wormhole quality per person).
 
 ```svelte
-const CC_DISPLAY_CAP = 6;
-let visibleCCs = $derived(crossConnections.slice(0, CC_DISPLAY_CAP));
+const CC_DISPLAY_CAP = 6; let visibleCCs = $derived(crossConnections.slice(0, CC_DISPLAY_CAP));
 ```
 
 Type: `text-[12px]` → `text-[11.5px]`, `gap-y-1` → `gap-y-0.5`, and
@@ -867,9 +894,10 @@ identity instead of reading as a missing image.
 ---
 
 ## 15. WAYFINDING OFF THE LINE — the easter-egg problem
-*(new 070926, second session; from the William Pantry X00090 review. Answers:
+
+_(new 070926, second session; from the William Pantry X00090 review. Answers:
 "should the Hooker spouse appear beside Mary Pantry, or should a glow point
-off-screen?")*
+off-screen?")_
 
 **The problem:** an X-entry's zoom-1 view can contain zero Hooker-line people
 (Pantry: X-focus, non-line wife, non-line daughter). A user three clicks into
@@ -900,6 +928,7 @@ exhibit that says "there are no edges" cannot then hint around an edge.
    rendering the bridge IS their correct form.
 
 **Data prerequisites (route to the data/pipeline stream):**
+
 - Audit: every easter_egg entry has its automatic `family_orbit` CC to its
   Hooker connector (the doctrine exists; Pantry's footer suggests drift).
 - The door pair needs the bridge couple resolvable in X-entry payloads —
@@ -907,6 +936,7 @@ exhibit that says "there are no edges" cannot then hint around an edge.
   (and which child they attach to) on X-focus payloads.
 
 **Role-color calibration notes (for the Phase 2 pass; Sam decides):**
+
 - The glow cannot read on white — role-glow ships WITH the midnight
   background, not before. Sequencing dependency, now explicit.
 - Surface tints at very low chroma (3–6%); the glow/edge carries the role,
@@ -927,7 +957,8 @@ exhibit that says "there are no edges" cannot then hint around an edge.
 ---
 
 ## 16. PAYLOAD & CONTENT FINDINGS — July 9 audit (Pierpont H00386 live payload)
-*(grounding notes; small items, recorded so they don't evaporate)*
+
+_(grounding notes; small items, recorded so they don't evaporate)_
 
 - **Payload hygiene is already good:** 155 KB with 68 context people;
   `research_*` fields contribute ~220 bytes. The suspected research-notes
@@ -949,14 +980,14 @@ exhibit that says "there are no edges" cannot then hint around an edge.
   (Mary Pantry). Suppress the dates line when both ends are unknown — null
   beats weak applies to chips.
 
-
 ---
 
 ## 17. MOTION PHYSICS DOCTRINE — earned in the card-transition maintenance phase
-*(new 071226; the July 11 session closed the card-transition layer — carousel,
+
+_(new 071226; the July 11 session closed the card-transition layer — carousel,
 demotion model, six ghosts — and produced motion principles that BIND the
 camera/parallax design. Recorded here so Phase 3 inherits them as constraints,
-not suggestions.)*
+not suggestions.)_
 
 **17.1 Perceived weight is velocity, not duration (Sam's "cm/ms" insight).**
 Distance-scaled durations with a duration clamp force far flights to high
@@ -992,6 +1023,7 @@ is logged for 3a's flyover corridor work if it ever bothers Sam's eye).
 
 **17.5 Structural doctrine from the ghost taxonomy (binding on all future
 features):**
+
 - **Existence-gating:** features serving a minority of cards (4+ spouse
   carousel, sibling bubbles, the door pair, connect buttons) must not exist
   in the DOM on cards that don't need them. The median card never pays for
@@ -1011,10 +1043,11 @@ features):**
 ---
 
 ## 18. THE PARALLAX RECIPE — post-mortem of the first field session (July 12, evening) and the composition that will work
-*(added after the live 3b Block 1 attempt. The mechanics shipped and are
+
+_(added after the live 3b Block 1 attempt. The mechanics shipped and are
 probe-verified; the ILLUSION did not read. This section records why, so the
 next session — whoever runs it — builds the composition instead of
-rediscovering the lesson.)*
+rediscovering the lesson.)_
 
 **18.1 What happened.** The field was built correctly: midnight ground,
 three mote layers, camera-store subscription, one-clock drift, dead-zone on
@@ -1029,6 +1062,7 @@ Twenty dots translating for 400ms reads as "dots slid," not "I moved,"
 no matter how correct the math. Parallax is not a feature; it is a
 COMPOSITION of mutually-reinforcing cues, and it only clicks when several
 play at once:
+
 1. **The world-anchored field** (Block 2, deferred): motes seeded on TABLE
    coordinates, not viewport-relative — so regions have stable, faintly
    recognizable star-patterns and the drift is the world scrolling, not a
@@ -1064,6 +1098,7 @@ the dark world in thirty seconds without blocking light-mode progress.
 **18.4 Build order for the session that finishes this** (each step
 verifiable alone; the illusion is expected to click around step 4, not
 step 1):
+
 1. Block 2 seeding — motes on table coords, culled by viewport, stable per
    region. (Prereq: none; the coords exist.)
 2. Decade rules at far depth (same world-space layer family).
@@ -1090,6 +1125,7 @@ watch keeps time.
 **18.6 SUBSTRATE SKINS — the day form and the night form (July 12, late).**
 Sam's grid instinct, examined against tonight's lesson, resolves the
 substrate question:
+
 - **The axis-legibility law:** lines carry only the motion PERPENDICULAR to
   themselves (a horizontal rule sliding vertically = unambiguous travel;
   sliding laterally = invisible). Dots are isotropic but weak in every
@@ -1119,6 +1155,7 @@ substrate question:
 inventory example).** Period account books and registers (1700s–1800s)
 supply the light-mode skin ready-made, and their anatomy maps 1:1 onto the
 substrate skeleton:
+
 - **Faint ink HORIZONTAL rules** = the decade lines (vertical-travel
   carriers), warm brown at low alpha on aged-paper ground.
 - **Sparse RED VERTICAL column rules** = the lateral-axis carriers — the
@@ -1153,6 +1190,7 @@ FIGURE-GROUND composition — luminous cards on a quiet wall — and any
 articulated moving background competes with the figure ("makes something
 beautiful look amateur"). The white/quiet ground is the designed matting,
 not an empty slot. Consequences:
+
 - Zoom 1/2 ground is STATIC. Permitted: subtle static texture (true
   parchment grain — a real texture asset or SVG turbulence; NOT thin CSS
   rule-lines, which read as wireframe errors, and NOT broken-dash "ink
@@ -1177,6 +1215,7 @@ better by the timeline rail (temporal orientation), sibling bubbles
 What it would actually render — cards shrunk halfway — is the
 neither-gallery-nor-map mush the §18.8 figure-ground verdict already
 rejected. The model becomes a NAMED BINARY:
+
 - **THE CARD** (reading view — today's zoom 1, the gallery, untouched);
 - **THE TABLE** (map view — fixed tiles at true t-coords on crafted
   parchment, the §18.8 zoom-3 dream, dock-to-line code as foundation).
@@ -1205,6 +1244,7 @@ never as benevolence toward people who "didn't understand ownership."
 
 **18.11 THE ARRIVAL CLASS + THE PASSAGE LAYER (July 12, final session
 entries — CC navigation solved; the flyover arrives in its legal form).**
+
 - **The arrival class** (built, probe-guarded): all NON-CHIP navigations
   (CC now; search modal, timeline anchors, shuffle later — reuse verbatim)
   use directional arrival, never growFrom-from-a-text-rect. The old card
@@ -1241,19 +1281,20 @@ entries — CC navigation solved; the flyover arrives in its legal form).**
 ---
 
 ## 19. THE CC-FLIGHT RETHINK — SCALE, NOT ANGLE; AND THE ZOOM-2-FIRST PIVOT
-*(July 13, 2026. Supersedes the angle-centric framing of the CC arrival work in
+
+_(July 13, 2026. Supersedes the angle-centric framing of the CC arrival work in
 §18.11 for the FELT-DISTANCE problem specifically. The §18.11 arrival-class
 mechanics — hard-cut departure, directional entry, gather/unfurl — stand; what
 changes is the diagnosis of why short CC flights feel cheap and the architecture
 that fixes it. Recorded after a long working session in the architect stream;
-Code executed the Zoom-1 corrections and began standalone Zoom 2.)*
+Code executed the Zoom-1 corrections and began standalone Zoom 2.)_
 
 ### 19.1 The diagnosis — the "adjacent desktop" problem
 
 Sam's verdict on the CC flights as built: they read like macOS "switch to the
 next desktop" — a constant-altitude pan one viewport over, revealing a cousin
-who is supposedly five generations and a whole branch away sitting *coincidentally
-right there*. It cheapens the project: it exposes the structure in a bad way
+who is supposedly five generations and a whole branch away sitting _coincidentally
+right there_. It cheapens the project: it exposes the structure in a bad way
 ("behind-the-scenes of a show, more amateur than you thought"), and no pan angle
 rescues it. A flat lateral move, an 87° near-vertical, a 45° diagonal — all feel
 like the same parallel-plane slide, because the thing missing is not direction.
@@ -1273,13 +1314,14 @@ meant.
 
 **The missing ingredient is SCALE (altitude), not angle.** A pan at any angle
 moves sideways at constant altitude — the parallel-plane feeling. What reads as
-"flew to a distant part of the tree" is *rising up, seeing the landscape, and
-coming back down somewhere far.* Altitude change is the entire difference between
+"flew to a distant part of the tree" is _rising up, seeing the landscape, and
+coming back down somewhere far._ Altitude change is the entire difference between
 "adjacent desktop" and "crossed the family." Everything prior had been
 rearranging the sideways move.
 
 ### 19.2 The gesture — up → over → down, through the real Zoom 2 table
-*(Sam's formulation, endorsed. This is the durable design for the far CC flight.)*
+
+_(Sam's formulation, endorsed. This is the durable design for the far CC flight.)_
 
 A far CC is a three-phase camera path over ONE shared clock, gondola-locked
 (no clicks / user actions) across ALL THREE phases:
@@ -1340,7 +1382,8 @@ is shared infrastructure, not arc-only scaffolding.
   above a seats/threshold. Re-key onto true LCA depth when baked.
 
 ### 19.5 THE SEQUENCING PIVOT — build Zoom 2 fully first
-*(Sam's call, July 13. This is the load-bearing decision of the session.)*
+
+_(Sam's call, July 13. This is the load-bearing decision of the session.)_
 
 **Build Zoom 2 completely, as its own standalone hand-panned view, BEFORE
 implementing the CC arc. Re-attach the arc as a camera path over the finished
@@ -1398,8 +1441,9 @@ default and the richer, reading-focused view; Zoom 2 is the map.
   Zoom 2, and the arc becomes a thin wrapper on it.
 
 ### 19.7 TECH-STACK VERDICT — plain Svelte + CSS transforms; NO Threlte/3D
-*(July 13. Answers Sam's "is this doable with standard tools, or do I need
-Threlte / a flyover flight-sim library?")*
+
+_(July 13. Answers Sam's "is this doable with standard tools, or do I need
+Threlte / a flyover flight-sim library?")_
 
 **All of Zoom 2 and the arc are doable with the existing stack. Do NOT install
 Threlte, three.js, or any 3D / flight-sim library for this.** It is not settling;
@@ -1418,7 +1462,7 @@ ones it does.
   canvas, for the table; §8/Phase 8 already ruled Threlte out for the card. A
   WebGL tile is a texture in a canvas: it has no rect (breaks the
   `captureFlightOrigin` grow-from-chip machinery every flight uses), no `<a
-  href>` (breaks the SEO phase's cold-path link requirement), no hover, no a11y,
+href>` (breaks the SEO phase's cold-path link requirement), no hover, no a11y,
   no shared styling. You would be inventing a WebGL↔DOM bridge for the
   chip-click-to-featured path — a self-made nightmare — to gain nothing.
 - **The performance recipe (standard, already proven by the card flights):**
@@ -1448,11 +1492,12 @@ logic — plain TypeScript over data 3a already generates.
 ---
 
 ## 20. THE DEMOTE SETTLE + SIBLING EXPANSION
-*(July 16, 2026. §20.1 records doctrine EARNED ON PIXELS during the demote-settle
+
+_(July 16, 2026. §20.1 records doctrine EARNED ON PIXELS during the demote-settle
 build — it generalizes beyond that feature and should be read as standing law.
 §20.2–20.4 supersede parts of §7 (Sibling Bubbles) where they conflict; §7's
 core instincts — the group-transform nudge, chips carrying flight-ids, panel
-reset on nav — all survive and are reaffirmed.)*
+reset on nav — all survive and are reaffirmed.)_
 
 ### 20.1 Settle doctrine — what the pixels taught
 
@@ -1479,8 +1524,8 @@ govern all motion work:
    or any stationary chip. **"Jello screen" — nearby elements wobbling along —
    is the failure state.** Sam's framing, recorded because it is the governing
    philosophy: the child chips are not "pushed" by the Featured Card; they are
-   *independent discrete baseball cards* that slide to their own final positions,
-   not knowing the card is going to overshoot. They position themselves *around*
+   _independent discrete baseball cards_ that slide to their own final positions,
+   not knowing the card is going to overshoot. They position themselves _around_
    a parent; they are not subsets of it. Now machine-guarded by
    `probe-neighbor-stability.mjs`.
 4. **TRANSFORM vs LAYOUT is the whole mechanism** — and it is why (3) is
@@ -1492,8 +1537,8 @@ govern all motion work:
    overshoot, not any element actually springing.
 
 **The diagnostic lesson (process, not pixels).** Twice a "bad-looking motion"
-verdict was contaminated by a bug elsewhere, and twice the instinct to *tune the
-thing that looked wrong* would have been wrong: the child settle read as
+verdict was contaminated by a bug elsewhere, and twice the instinct to _tune the
+thing that looked wrong_ would have been wrong: the child settle read as
 "theatrical swooping" only because it was landing on a row still sliding beneath
 it. **Fix the ground, then re-judge.** A verdict rendered under contaminated
 conditions is not a verdict. Corollary that nearly cost the feature: mitigating a
@@ -1517,7 +1562,8 @@ glide exists to prevent.
 **Reduced motion:** instant dock, no settle, everywhere.
 
 ### 20.2 Sibling expansion — the confirmed UX
-*(Sam's direction, July 16. Extends §7; where they conflict, this governs.)*
+
+_(Sam's direction, July 16. Extends §7; where they conflict, this governs.)_
 
 - **The resting layout is unchanged.** No reserved space, no reflow. A person
   with siblings looks exactly like one without, except for the trigger.
@@ -1528,8 +1574,8 @@ glide exists to prevent.
   size tier.
 - **THE NUDGE LIVES** (§7 reaffirmed, and Sam's framing sharpens it): on open,
   the card GROUP translates left — a **transform, never a layout change**. Sam's
-  words: *"a family thing — like taking a step to the left to let the siblings
-  in… a soap bubble push, occupying and sharing the same space gracefully."* It
+  words: _"a family thing — like taking a step to the left to let the siblings
+  in… a soap bubble push, occupying and sharing the same space gracefully."_ It
   **yields**, it does not **relocate**. RightColumn and the CC footer do not
   move. Per §20.1(4) this is also why the nudge cannot disturb anything —
   transforms don't reflow — and `probe-neighbor-stability` guards it for free.
@@ -1560,10 +1606,11 @@ glide exists to prevent.
   by default).
 
 ### 20.3 The no-reciprocal catch — sibling nav is a HYBRID
-*(Sam's observation, and it has a consequence bigger than it first appears.)*
 
-Sam: *"there's no reciprocal — the Featured Card doesn't need to move into the
-sibling list because the sibling list is not visible by default."* Correct, and
+_(Sam's observation, and it has a consequence bigger than it first appears.)_
+
+Sam: _"there's no reciprocal — the Featured Card doesn't need to move into the
+sibling list because the sibling list is not visible by default."_ Correct, and
 the consequence is: **the departing card has NO DESTINATION BOX on the target
 page.** Navigate Anson → sibling Fred, and Anson is not Fred's parent, child, or
 spouse; he is Fred's sibling, and Fred's sibling panel is closed. Anson has
@@ -1593,8 +1640,8 @@ never found a destination box, so the old card never left). Therefore:
   parent's marriage). The distinction is biological, and both half and step are
   genuine family history worth showing.
 - **Ordering (the two rules NEST, they do not conflict):** **died_young sorts to
-  the END WITHIN EACH TIER.** So: full (by birth) → full died-young → *Half-
-  siblings* header → half (by birth) → half died-young → *Step-siblings* header
+  the END WITHIN EACH TIER.** So: full (by birth) → full died-young → _Half-
+  siblings_ header → half (by birth) → half died-young → _Step-siblings_ header
   (only if non-empty) → step. Headers are list items in the flat sequence, so a
   carousel window slides over them with no special casing.
 - **Half and step tiers render only when non-empty** (null beats weak).
@@ -1604,15 +1651,16 @@ never found a destination box, so the old card never left). Therefore:
   has 12; several have 8). The step tier earns its place.
 
 ### 20.5 THE NUDGE — TABLED (and why)
-*(July 16, later the same day. SUPERSEDES §7's group-transform nudge and
+
+_(July 16, later the same day. SUPERSEDES §7's group-transform nudge and
 §20.2's "THE NUDGE LIVES". Recorded in full because a tabled feature with no
-recorded reasoning gets re-proposed in six months.)*
+recorded reasoning gets re-proposed in six months.)_
 
 **The nudge is deleted.** Not flagged, not parked behind a constant — removed.
 It was built, it worked (15px translate at −20% speed, transform on the card
 group, `probe-neighbor-stability` green), Sam saw it on pixels, and killed it.
 
-**Sam's reasoning, verbatim in substance:** it is a *nice-to-have* at this
+**Sam's reasoning, verbatim in substance:** it is a _nice-to-have_ at this
 point; he can see it causing issues with other animation; the payoff is "a tiny
 subtle wink," and that is **not worth the extra work or the fallout**. Residual
 transition issues without a big payoff.
@@ -1622,8 +1670,8 @@ moving thing with its own clock, living on the card group, that had to release
 at exactly the right moment relative to a flight it did not own. It was
 introducing a **two-clock desync surface** (the standing failure mode — see
 §20.1, §18.x) into the sibling promotion path in exchange for a sub-perceptual
-flourish. The day's own doctrine applies to itself here: *perception tracks the
-moving object's salience* (§20.1.2) — a 15px translate on a large stationary
+flourish. The day's own doctrine applies to itself here: _perception tracks the
+moving object's salience_ (§20.1.2) — a 15px translate on a large stationary
 card is near the perception floor, exactly the "spouse chip at 3.61px reads
 fainter than the card at 1.84px" lesson in another costume. It was paying a
 coordination cost in a category of coordination that has burned this project
@@ -1640,7 +1688,7 @@ predicted.
 **What dies with it:** §7's "the nudge is a transform on the card GROUP, never a
 layout change" and its "it yields, it doesn't relocate" framing; §20.2's
 soap-bubble push ("a family thing — like taking a step to the left to let the
-siblings in… occupying and sharing the same space gracefully"). The *reasoning*
+siblings in… occupying and sharing the same space gracefully"). The _reasoning_
 in those passages remains correct and is preserved for reference — a
 transform-not-layout nudge IS how you would build one. The judgment is simply
 that this project should not build one.
@@ -1660,10 +1708,11 @@ answer stays no.
 ---
 
 ## 21. SIBLING EXPANSION AS BUILT — AND THE NOTCH-CUTOUT DOCTRINE
-*(July 17, 2026, in the small hours. §21.1 SUPERSEDES §20.2 wherever they
+
+_(July 17, 2026, in the small hours. §21.1 SUPERSEDES §20.2 wherever they
 differ — §20.2 was the design; this is what survived contact with pixels. §21.2
 is the durable one: a single unstated fact about the card's geometry that caused
-three separate ghost bugs. §21.3 is the session's epistemic lesson.)*
+three separate ghost bugs. §21.3 is the session's epistemic lesson.)_
 
 ### 21.1 The sibling panel, as it actually shipped
 
@@ -1712,7 +1761,7 @@ literal, uniform, and needs no special-casing), delay `i × 38ms`, duration
 seat's 851px needing ~5px; see §20.1.2).
 
 **THE STAGGER REVERSAL.** §20.2 says NO STAGGER, earned when chips arrived
-*alongside a card flight* (the gather beat, the reveal gate, the 540ms crawl) —
+_alongside a card flight_ (the gather beat, the reveal gate, the 540ms crawl) —
 supporting cast slowed while the main event competed. **This is a standalone
 reveal with nothing competing, and per Gestalt COMMON FATE, objects moving in
 lockstep are perceived as ONE GROUP no matter how well each is animated.**
@@ -1761,6 +1810,7 @@ with the spouse carets byte-identical), `cursor: pointer`, and an `:active`
 depress (sinks 1px, shadow flattens).
 
 **The flight (Slice 3) — a HYBRID, as §20.3 predicted.**
+
 - **ARRIVAL:** grows from the sibling chip's captured rect, WITH the promotion
   settle. Standard chip-nav machinery.
 - **Velocity — clocked off CENTER travel, not corner travel.** `growFrom` clocks
@@ -1788,8 +1838,9 @@ depress (sinks 1px, shadow flattens).
   lateral-vector work is retained on the ARRIVAL only.
 
 ### 21.2 THE NOTCH-CUTOUT DOCTRINE
-*(The durable finding of the session. One unstated fact caused three separate
-bugs — D, E, and F in the ghost taxonomy.)*
+
+_(The durable finding of the session. One unstated fact caused three separate
+bugs — D, E, and F in the ghost taxonomy.)_
 
 **THE FEATURED CARD IS NOT A SOLID RECTANGLE.** The spouse notch is a CUTOUT in
 its top-right corner. Therefore:
@@ -1804,6 +1855,7 @@ its top-right corner. Therefore:
    between them.** The dangerous window is the frame the cutout reforms.
 
 **The three bugs this one fact produced:**
+
 - **D** — the sibling retraction rode at `z:1`; at `introend` the landed hero
   cleared to `z:auto(0)`, so `1 > 0` and the departing card **painted over the
   new card's content**. (Fixed: `z:-1`.)
@@ -1811,7 +1863,7 @@ its top-right corner. Therefore:
   then became visible for **2 frames (~17ms) at its destination**, because its
   endpoint sat in the corner where the reformed cutout left no card behind it.
   Fixed by **ending the retraction below the notch line** (`SIB_SEAT_TOP_INSET
-  = 100`) so it lands in the opaque card body. Note the pleasing consequence: its
+= 100`) so it lands in the opaque card body. Note the pleasing consequence: its
   endpoint is now **the card-edge resume** — the same anchor line the sibling
   column and the caret already use (§21.1).
 - **F** — the outgoing spouse chip is visible at op1 for ~50ms during fetch
@@ -1827,19 +1879,20 @@ occluder is actually opaque **at every phase and across every state transition**
 of the flight — not just at the moment you happen to screenshot.
 
 ### 21.3 THE FALSE-GREEN TAXONOMY — six in one session, all the same shape
-*(The epistemic lesson. Worth more than any individual fix.)*
+
+_(The epistemic lesson. Worth more than any individual fix.)_
 
 Six times in one session a probe reported GREEN on a bug Sam could see in
 seconds. **Every one measured a NEAR-MISS of the real invariant:**
 
-| # | The probe asked | The real invariant | Why it missed |
-|---|---|---|---|
-| 1 | did the new spouse chip stay hidden? | is ANY stale element visible? | measured the incoming, never the outgoing |
-| 2 | did person X leave? | did person X leave IN THIS ROLE? | X legitimately persisted as a parent chip while a stale SPOUSE-role render flickered |
-| 3 | "0 orphans" (stress) | are there two renders of one person? | counted a different thing entirely |
-| 4 | pristine "clean — chips gone by t=415" | was the same person doubled mid-flight? | the identity-only measure; the chip DID leave, while a second render existed |
-| 5 | is the spouse chip hidden during flight? | HOW does it arrive — fade or fly? | nobody ever asserted the arrival MECHANISM |
-| 6 | `elementsFromPoint` — what's on top? | numeric z + overlap | flight elements are `pointer-events:none`, so the DOM answered "nothing" |
+| #   | The probe asked                          | The real invariant                      | Why it missed                                                                        |
+| --- | ---------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------ |
+| 1   | did the new spouse chip stay hidden?     | is ANY stale element visible?           | measured the incoming, never the outgoing                                            |
+| 2   | did person X leave?                      | did person X leave IN THIS ROLE?        | X legitimately persisted as a parent chip while a stale SPOUSE-role render flickered |
+| 3   | "0 orphans" (stress)                     | are there two renders of one person?    | counted a different thing entirely                                                   |
+| 4   | pristine "clean — chips gone by t=415"   | was the same person doubled mid-flight? | the identity-only measure; the chip DID leave, while a second render existed         |
+| 5   | is the spouse chip hidden during flight? | HOW does it arrive — fade or fly?       | nobody ever asserted the arrival MECHANISM                                           |
+| 6   | `elementsFromPoint` — what's on top?     | numeric z + overlap                     | flight elements are `pointer-events:none`, so the DOM answered "nothing"             |
 
 **The pattern: every probe checked whether the INCOMING element behaved, and
 none checked that the OUTGOING one left.** A ghost is by definition an old
@@ -1854,6 +1907,7 @@ Frances Tracy renders, one correct (`morphIn` to the parent slot, op1), one ghos
 node count swelling 2→3 mid-flight and settling to 1** — the flicker, quantified.
 
 **Standing rules earned:**
+
 - **The identity unit is (id + `data-relation`), never id alone.** A person may
   change roles; a stale render in the OLD role must not survive.
 - **Assert the mechanism, not just the state.** "Hidden during flight" is not the
@@ -1877,15 +1931,15 @@ node count swelling 2→3 mid-flight and settling to 1** — the flicker, quanti
   Same shape as the child settle reading "swoopy" only because the glide was
   sliding beneath it: **fix the ground, then re-judge** (§20.1).
 
-
 ---
 
 ## 22. THE DECK PUSH — the Zoom-1-era CC transition (AS BUILT)
-*(July 22 design → July 23 as built, probe-guarded, committed to main (Stream B).
+
+_(July 22 design → July 23 as built, probe-guarded, committed to main (Stream B).
 Supersedes the flat directional pan as the SHIPPING CC transition for the Card
 era. The §19 altitude arc remains the Table-era candidate, ON HOLD (§23) behind
 `ARC_ENABLED=false` — the deck proved sufficient; the arc may never be needed,
-and that is a fine outcome.)*
+and that is a fine outcome.)_
 
 **What shipped vs. what was proposed.** The July-22 proposal was an archival
 RIFFLE — a convoy of blurred ghost cards streaming past between the old card and
@@ -1908,6 +1962,7 @@ year.** Decided in `deckDirFor`/`resolveLateralDir` (flight.ts) from a build-tim
 `gen_delta` baked per CC (regenerate-data.js). Seat-targeted direction was
 explicitly REJECTED by Sam (the first lateral CC must be predictable, not a
 function of where the target happens to sit).
+
 - **VERTICAL** iff `gen_delta ≠ 0` AND same-line — where same-line =
   `relationClass === 'direct'` OR seat-near (`|Δseats| ≤ SEAT_NEAR`, 180). Older
   tier (`gen_delta < 0`) enters from the TOP, younger (`> 0`) from the BOTTOM; the
@@ -1953,6 +2008,7 @@ the durable rule is the effGen ladder above.)
 
 **22.2b Lateral ping-pong memory (one-deep, edge-exact) — direction is HISTORY,
 not seat.**
+
 - A FRESH lateral CC exits the old card LEFT / enters the new from the RIGHT — a
   fixed, predictable default.
 - Clicking the RECIPROCAL link straight back (reversing the exact edge just
@@ -1960,13 +2016,14 @@ not seat.**
   left, right).
 - ANY other move — a fresh lateral CC to a NEW card, a vertical/family CC, or a
   chip nav — resets to the fresh default and ENDS the back-and-forth.
-Vertical needs no memory: it self-reciprocates through the `gen_delta` sign (A→B
-and B→A negate). Resolved ONCE per nav (deckDirFor is a pure READ — it runs
-several times per flight for the two cards, so it must never mutate, or the
-ping-pong would double-flip). This replaces the July-22 "return memory," which
-armed permanently while ping-ponging (every hop looked like a return).
+  Vertical needs no memory: it self-reciprocates through the `gen_delta` sign (A→B
+  and B→A negate). Resolved ONCE per nav (deckDirFor is a pure READ — it runs
+  several times per flight for the two cards, so it must never mutate, or the
+  ping-pong would double-flip). This replaces the July-22 "return memory," which
+  armed permanently while ping-ponging (every hop looked like a return).
 
 **22.3 The weight physics — cards have weight, not engines.**
+
 - **Exit (old card):** accelerates from rest (easeIn) on EVERY axis — it leans
   into leaving its slot and builds speed. Heft, not a uniform dart.
 - **The empty gap:** the old card fully exits BEFORE the new one appears — they
@@ -1993,6 +2050,7 @@ armed permanently while ping-ponging (every hop looked like a return).
   no tempo touches them.
 
 **22.4 Offscreen honesty, the belt, the connector cut, the flight lock.**
+
 - **Viewport-honest offscreen + the belt (no frozen jut):** every offscreen
   coordinate is derived from the LIVE viewport at flight time — never a fixed
   constant that sits INSIDE a real window and leaves a delayed card frozen-visible.
@@ -2058,8 +2116,9 @@ spacing are independent of the tempo dials by construction.
 ---
 
 ## 23. HOLD REGISTER — deliberate pauses, preserved in full
-*(July 22. Sam's call. Nothing here is removed or superseded; each item resumes
-exactly where its spec left off. Do not re-litigate; do not delete.)*
+
+_(July 22. Sam's call. Nothing here is removed or superseded; each item resumes
+exactly where its spec left off. Do not re-litigate; do not delete.)_
 
 - **THE TABLE (Zoom 2)** — ON HOLD at the v1 scaffold checkpoint (roadmap §9.8:
   `/table` shipped, tiles at true seats, pan/inertia/culling proven; entry
@@ -2077,10 +2136,12 @@ exactly where its spec left off. Do not re-litigate; do not delete.)*
 ---
 
 ## 24. PHOTO LOADING — the neighborhood is the load unit (AS BUILT)
-*(July 23. Earned the hard way: a hover-enlarge preload experiment degraded
+
+\*(July 23. Earned the hard way: a hover-enlarge preload experiment degraded
 foundational chip loading; the fix returned the site to "how it used to be" and
 made the loading model explicit so it isn't relitigated. Lives in `$lib/photo.ts`
-+ a one-line `$effect` in the person `+page`; the components render through it.)*
+
+- a one-line `$effect` in the person `+page`; the components render through it.)\*
 
 **The lesson, first, because it's the load-bearing one: photos load by
 NEIGHBORHOOD, not by `<img>`.** A person page's neighborhood (§types

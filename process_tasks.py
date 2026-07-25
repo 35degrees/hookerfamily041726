@@ -49,7 +49,7 @@ from collections import Counter
 NB_CATEGORY = {
     'career','military','education','religion','family','character','politics',
     'law','social_reform','death','legacy','marriage','crime','literature',
-    'science','business','arts',
+    'science','business','arts','music','sports',
 }
 RECOGNIZED_FIELDS = {
     'photo_url','birth_date','death_date','bio_blurb','notable_blurb',
@@ -76,6 +76,28 @@ RECOGNIZED_FIELDS = {
 # authorizes a loss only when one of these names the exact target.
 DESTROY_FIELDS = {'tag_remove','nb_remove','cc_remove','blurb_remove','nb_replace',
                   'career_set','education_set'}
+
+# --- canonical tag vocabulary: DATA, not code --------------------------------
+# The approved tag set lives in canonical_tags.txt beside this script (one tag per
+# line; blank lines and #-comments ignored). Approving a new tag = add a line, no
+# code edit. If the file is absent or empty the gate is INERT -- tags apply exactly
+# as before -- so this can never block a batch on a missing/partial file. A
+# non-canonical tag_add is FLAGGED (not applied) for review, never silently added,
+# and never aborts the batch.
+def _load_canonical_tags():
+    import os
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'canonical_tags.txt')
+    try:
+        with open(path) as f:
+            tags = {ln.strip() for ln in f
+                    if ln.strip() and not ln.lstrip().startswith('#')}
+    except FileNotFoundError:
+        print("NOTE: canonical_tags.txt not found -- tag_add canonicality gate OFF "
+              "(tags apply unchecked).", file=sys.stderr)
+        return None
+    return frozenset(tags) or None
+
+CANONICAL_TAGS = _load_canonical_tags()
 
 
 def slugify(p):
@@ -171,6 +193,9 @@ def apply_mechanical(field, val, p, tp):
         else: p.setdefault('notable', {})['notable_blurb'] = val
         return f"OK {field} set", True
     if field == 'tag_add':
+        if CANONICAL_TAGS is not None and val not in CANONICAL_TAGS:
+            return (f"FLAG: tag '{val}' not in canonical set -- add it to "
+                    "canonical_tags.txt to approve, or drop this row", False)
         tags = p.setdefault('tags', [])
         if val not in tags: tags.append(val)
         return f"OK tag '{val}' added", True
@@ -197,7 +222,10 @@ def apply_mechanical(field, val, p, tp):
                     pm[0].setdefault('children_ids', []).append(p['id'])
         return "OK parents set (bidirectional)", True
     if field in ('education', 'career'):
-        p.setdefault(field, []).append(parse_kv(val))
+        rec = parse_kv(val)
+        p.setdefault(field, []).append(rec)
+        if field == 'career' and not rec.get('start_year'):
+            return "OK career appended -- WARN: no start_year, row will NOT render", True
         return f"OK {field} record appended", True
     if field == 'cc':
         kv = parse_kv(val); rid = kv.get('related')

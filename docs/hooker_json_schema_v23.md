@@ -1050,7 +1050,7 @@ cross_connections
 
 related_id — single ID only. Never an array.
 
-display_label — ≤ ~65 characters — a character budget, not a word count. The
+display_label — ≤ 70 characters — a character budget, not a word count. The
 grammatical predicate of a sentence whose subject is the linked person’s name
 ( link_text ). In the UI the card places link_text immediately before display_label ,
 and the two MUST read as one complete, factual sentence: link_text +
@@ -1166,7 +1166,7 @@ Bidirectional CC example:
 
 CC display_label form — the predicate of “[linked name] ___”
 
-The display_label is governed by a character budget (~65 characters), not a word
+The display_label is governed by a character budget (70 characters), not a word
 count, so it stays on one UI line. Write it as the predicate of a sentence whose subject is
 the linked person’s name ( link_text ) — read it as “[linked name] ___” and confirm the
 whole thing is a true, grammatical sentence. Begin lowercase with a verb; no terminal

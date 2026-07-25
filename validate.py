@@ -2,16 +2,16 @@
 """
 validate.py  --  Hooker Descendants canonical validator
 =========================================================
-Executable enforcement of schema v22 (§B.2 enums, §C issues register, §D.3 sweep).
+Executable enforcement of schema v23 (§B.2 enums, §C issues register, §D.3 sweep).
 
 This is the STRUCTURAL gate. It answers "can this be saved?" — not "should this
 be shipped?" (that judgment lives in WORKFLOW.md). Run it after every batch,
-before promoting canonical_draft.json -> canonical.json.
+against canonical.json (edited in place; the git commit is the revert point — no draft file).
 
 Usage:
-    python validate.py canonical_draft.json
-    python validate.py canonical_draft.json --baseline canonical.json   # also diff for silent loss
-    python validate.py canonical_draft.json --strict                     # exit 1 on ANY finding
+    python validate.py canonical.json
+    python validate.py canonical.json --baseline /tmp/baseline.json   # diff vs git HEAD for silent loss
+    python validate.py canonical.json --strict                        # exit 1 on ANY finding
 
 Exit codes:
     0  = no ERRORS (warnings may exist)
@@ -30,7 +30,7 @@ import json, re, sys, argparse
 from collections import Counter, defaultdict
 
 # ----------------------------------------------------------------------------
-# CONTROLLED VOCABULARIES  (schema v22 §B.2 — the two NON-interchangeable enums)
+# CONTROLLED VOCABULARIES  (schema v23 §B.2 — the two NON-interchangeable enums)
 # ----------------------------------------------------------------------------
 NB_CATEGORY = {
     'career','military','education','religion','family','character','politics',
@@ -77,6 +77,23 @@ FILLER_PATTERNS = [
 
 ID_PREFIX_RE = re.compile(r'^(HD|H|X|I|TD|T)\d')
 ANY_ID_IN_TEXT = re.compile(r'\b(HD|H|X|I|T|TD|INST|ART|VID|DOC|LM|CEM|STAT|WAR|BTL)\d{3,}\b')
+
+# Canonical tag vocabulary (DATA, not code): approved tags live in canonical_tags.txt
+# beside this script, one per line (# comments / blanks ignored). Absent or empty ->
+# the tag check is OFF. Non-canonical tags are WARNINGS (the §6 vocabulary debt),
+# never ERRORS, so legacy junk tags surface without blocking promotion.
+def _load_canonical_tags():
+    import os
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'canonical_tags.txt')
+    try:
+        with open(path) as f:
+            tags = {ln.strip() for ln in f
+                    if ln.strip() and not ln.lstrip().startswith('#')}
+    except FileNotFoundError:
+        return None
+    return frozenset(tags) or None
+
+CANONICAL_TAGS = _load_canonical_tags()
 
 
 def sentence_count(body: str) -> int:
@@ -258,6 +275,19 @@ def validate(path, baseline_path=None):
                 if (tp[other].get('classification') or {}).get('is_searchable') is False:
                     errors.append(f"{who}: searchable person has a CC to NON-searchable {other}")
 
+        # --- non-canonical tags (the §6 vocabulary debt — WARNING, never blocks) ---
+        if CANONICAL_TAGS is not None:
+            for t in (p.get('tags') or []):
+                if t not in CANONICAL_TAGS:
+                    debt['tag_non_canonical'] += 1
+                    warnings.append(f"{who}: non-canonical tag '{t}'")
+
+        # --- career rows that will not render (missing start_year) ---
+        for cr in (p.get('career') or []):
+            if not cr.get('start_year'):
+                debt['career_no_start_year'] += 1
+                warnings.append(f"{who}: career '{cr.get('role') or '?'}' has no start_year (will not render)")
+
     # ========================================================================
     # 3. TOP-LEVEL ARRAY BIDIRECTIONALITY  (videos/documents/institutions/landmarks)
     # ========================================================================
@@ -301,8 +331,8 @@ def validate(path, baseline_path=None):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Validate Hooker canonical against schema v22.")
-    ap.add_argument('path', help='canonical_draft.json to validate')
+    ap = argparse.ArgumentParser(description="Validate Hooker canonical against schema v23.")
+    ap.add_argument('path', help='canonical.json to validate')
     ap.add_argument('--baseline', help='prior canonical.json — enables silent-loss diff')
     ap.add_argument('--strict', action='store_true', help='exit 1 on any finding (errors OR warnings)')
     args = ap.parse_args()
