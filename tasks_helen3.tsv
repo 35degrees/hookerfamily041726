@@ -1,0 +1,4 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+H03203	field_set	cross_connections[0].display_label=was his nephew, and helped found the Old Lyme art colony	OK set cross_connections[0].display_label = 'was his nephew, and helped found the Old Lyme art colony'	/person/john-talcott-1824		
+H03203	field_set	cross_connections[1].display_label=incorporated the New Britain Institute alongside him	OK set cross_connections[1].display_label = 'incorporated the New Britain Institute alongside him'	/person/john-talcott-1824		
+H03203	field_set	cross_connections[2].display_label=painted Hudson River landscapes and showed at the 1876 Centennial	OK set cross_connections[2].display_label = 'painted Hudson River landscapes and showed at the 1876 Centennial'	/person/john-talcott-1824		
