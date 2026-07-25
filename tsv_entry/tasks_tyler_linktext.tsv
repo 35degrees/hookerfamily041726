@@ -1,0 +1,3 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD6129	field_set	cross_connections[0].link_text=Brig. Gen. Daniel Tyler	OK set cross_connections[0].link_text = 'Brig. Gen. Daniel Tyler'	/person/brig-1831		
+HD2280	field_set	cross_connections[1].link_text=Brig. Gen. Robert Ogden Tyler	OK set cross_connections[1].link_text = 'Brig. Gen. Robert Ogden Tyler'	/person/daniel-tyler-1799		

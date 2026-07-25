@@ -1,0 +1,18 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+U00038	field_set	birth.city=Bridgehampton	OK set birth.city = 'Bridgehampton'	/person/henrietta-francis-1842		
+U00038	field_set	birth.county=Suffolk County	OK set birth.county = 'Suffolk County'	/person/henrietta-francis-1842		
+TD0105	blurb_remove	field=bio_blurb	OK bio_blurb cleared (was: 'New Yorker of the Hope family')	/person/marian-smith-1912		
+TD0105	nb_remove	Her only child lived one day	OK NB 'Her only child lived one day' removed (explicit)	/person/marian-smith-1912		
+H03189	nb_replace	"old=""Afterwards he sold dry goods in New York"" header=""Afterwards he sold dry goods in New York"" body=""He went to New York when it was over and took a place with James Talcott's dry goods house. Talcott was his first cousin, and from 1860 his half-sister Henrietta's husband besides. A stroke of paralysis found him in later life, and he died in the Catskills at Stamford in 1885."" category=career"	OK nb_replace: 'Afterwards he sold dry goods in New York' -> 'Afterwards he sold dry goods in New York' placed verbatim in place	/person/roger-francis-1826		
+H03189	cc	"related=HD6129 link=""Brig. Gen. Robert Ogden Tyler"" label=""commanded at Cold Harbor, where both of them were shot"""	OK cc->HD6129 added; FLAG needs reciprocal cc row on HD6129	/person/roger-francis-1826		
+HD6129	cc	"related=H03189 link=""Capt. Roger A. Francis"" label=""served on generals' staffs and was wounded at Cold Harbor"""	OK cc->H03189 added (reciprocal present)	/person/brig-1831		
+X03769	cc	"related=HD7247 link=""Troy Hazard Hunter"" label=""died in Vietnam the same year and is on the same wall"""	OK cc->HD7247 added; FLAG needs reciprocal cc row on HD7247	/person/peter-johnson-1944		
+HD7247	cc	"related=X03769 link=""Lt. Peter Wyeth Johnson"" label=""died in Vietnam the same year and is on the same wall"""	OK cc->X03769 added (reciprocal present)	/person/troy-hunter-1947		
+X03769	cc	"related=HD1788 link=""Robert Louis Tracy"" label=""died in Vietnam the same year and is on the same wall"""	OK cc->HD1788 added; FLAG needs reciprocal cc row on HD1788	/person/peter-johnson-1944		
+HD1788	cc	"related=X03769 link=""Lt. Peter Wyeth Johnson"" label=""died in Vietnam the same year and is on the same wall"""	OK cc->X03769 added (reciprocal present)	/person/robert-tracy-1947		
+X03765	cc	"related=T02312 link=""James Talcott Van Norden"" label=""left Princeton for the same air force, but flew the Pacific"""	OK cc->T02312 added; FLAG needs reciprocal cc row on T02312	/person/clark-travell-1923		
+T02312	cc	"related=X03765 link=""Clark Travell"" label=""left Princeton for the same air force, but flew over Europe"""	OK cc->X03765 added (reciprocal present)	/person/james-van-norden-1923		
+X03765	cc	"related=T02316 link=""Peter Talcott Curry"" label=""flew for the RAF and took the George Medal in the same war"""	OK cc->T02316 added; FLAG needs reciprocal cc row on T02316	/person/clark-travell-1923		
+T02316	cc	"related=X03765 link=""Clark Travell"" label=""flew for the Americans and took the Croix de Guerre"""	OK cc->X03765 added (reciprocal present)	/person/peter-curry-1920		
+T02296	cc	"related=H03207 link=""James Talcott"" label=""founded the firm he went to work for four generations later"""	OK cc->H03207 added; FLAG needs reciprocal cc row on H03207	/person/hooker-talcott-1932		
+H03207	cc	"related=T02296 link=""Hooker Talcott Jr."" label=""worked for the firm four generations after he founded it"""	OK cc->T02296 added (reciprocal present)	/person/james-talcott-1835		
