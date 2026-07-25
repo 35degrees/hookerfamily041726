@@ -1,0 +1,10 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X03769	bio_blurb	Green Beret killed in Vietnam	OK bio_blurb set	/person/peter-johnson-1944		
+X03769	career	"role=""Lieutenant, Special Forces"" organization=""U.S. Army"" end_year=1968"	OK career appended -- WARN: no start_year, row will NOT render	/person/peter-johnson-1944		
+X03769	nb_approved	"header=""He was twenty-three at Qui Nhon"" body=""A Green Beret, he was killed at Qui Nhon in Binh Dinh province on the thirteenth of February 1968. They brought him home to Hillside Cemetery in Wilton, the town he was born in."" category=military"	OK nb_approved appended verbatim: 'He was twenty-three at Qui Nhon'	/person/peter-johnson-1944		
+X03769	cc	"related=HD0901 link=""Gridley Barstow Strong"" label=""was killed in Vietnam the same year, and is on the same wall"""	OK cc->HD0901 added; FLAG needs reciprocal cc row on HD0901	/person/peter-johnson-1944		
+HD0901	cc	"related=X03769 link=""Lt. Peter Wyeth Johnson"" label=""was killed in Vietnam the same year, and is on the same wall"""	OK cc->X03769 added (reciprocal present)	/person/gridley-strong-1947		
+I02635	career	"role=""Standard Oil Company"" organization=""Buenos Aires"" start_year=1919"	OK career record appended	/person/francis-curry-1892		
+I02635	career	"role=""Shipping"" organization=""Buenos Aires and London"" start_year=1922"	OK career record appended	/person/francis-curry-1892		
+I02635	career	"role=""Director"" start_year=1937"	OK career record appended	/person/francis-curry-1892		
+I02635	career	"role=""Lieutenant"" organization=""Royal Air Service"" start_year=1916 end_year=1919"	OK career record appended	/person/francis-curry-1892		
