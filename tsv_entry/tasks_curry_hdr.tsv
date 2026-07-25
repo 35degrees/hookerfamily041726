@@ -1,0 +1,2 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+T02318	nb_replace	"old=""He was lost at sea while his brother flew"" header=""Lost at sea while his brother flew"" body=""He died at sea on the eighth of July 1944 and is commemorated at Portsmouth. His elder brother Peter had come through the war with the George Medal three years earlier."" category=death"	OK nb_replace: 'He was lost at sea while his brother flew' -> 'Lost at sea while his brother flew' placed verbatim in place	/person/allan-curry-1927		
