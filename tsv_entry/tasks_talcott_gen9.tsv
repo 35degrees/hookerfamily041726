@@ -1,0 +1,34 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+T01931	field_set	education[0].notes=null	OK set education[0].notes = None	/person/agnew-talcott-1908		
+T01931	field_set	education[2].notes=null	OK set education[2].notes = None	/person/agnew-talcott-1908		
+HD7861	field_set	education[0].notes=null	OK set education[0].notes = None	/person/roger-hooker-1941		
+I02610	field_set	education[0].notes=null	OK set education[0].notes = None	/person/joan-wiggins		
+I00285	field_set	education[0].notes=null	OK set education[0].notes = None	/person/shirley-whitney-1918		
+I00179	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785011681/Screenshot_2026-07-25_at_1.34.12_PM_kx8hrg.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/katharine-agnew-1870		
+T01460	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785011767/Screenshot_2026-07-25_at_1.35.53_PM_mzvc5s.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/charles-talcott-1870		
+T01460	bio_blurb	Hartford wholesale druggist and bank trustee	OK bio_blurb set	/person/charles-talcott-1870		
+T01460	education	"institution_name=""Trinity College"" dates=""1891"""	OK education record appended	/person/charles-talcott-1870		
+T01460	career	"role=""Trustee"" organization=""Bankers Trust Company"" start_year=1927"	OK career record appended	/person/charles-talcott-1870		
+T01460	career	"role=""Principal owner"" organization=""Charles H. Talcott & Co."""	OK career appended -- WARN: no start_year, row will NOT render	/person/charles-talcott-1870		
+T01460	nb_approved	"header=""The drug firm fell to him, not Allen"" body=""Their father wanted a successor for the wholesale drug house he had built in Hartford. Allen filled his schoolbooks with drawings instead and went to France to paint, and the business came to Charles."" category=family"	OK nb_approved appended verbatim: 'The drug firm fell to him, not Allen'	/person/charles-talcott-1870		
+T01460	field_set	marriages[0].date_year=1895	OK set marriages[0].date_year = 1895	/person/charles-talcott-1870		
+T01460	field_set	marriages[0].date_month=6	OK set marriages[0].date_month = 6	/person/charles-talcott-1870		
+T01460	field_set	marriages[0].date_day=20	OK set marriages[0].date_day = 20	/person/charles-talcott-1870		
+I00180	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785011869/Screenshot_2026-07-25_at_1.37.36_PM_e2ygwc.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/mary-vaill-1869		
+I00180	bio_blurb	Hartford diarist	OK bio_blurb set	/person/mary-vaill-1869		
+I00180	field_set	birth.year=1870	OK set birth.year = 1870	/person/mary-vaill-1869		
+I00180	field_set	birth.city=Litchfield	OK set birth.city = 'Litchfield'	/person/mary-vaill-1870		
+I00180	field_set	birth.county=Litchfield County	OK set birth.county = 'Litchfield County'	/person/mary-vaill-1870		
+I00180	field_set	marriages[0].date_year=1895	OK set marriages[0].date_year = 1895	/person/mary-vaill-1870		
+I00180	field_set	marriages[0].date_month=6	OK set marriages[0].date_month = 6	/person/mary-vaill-1870		
+I00180	field_set	marriages[0].date_day=20	OK set marriages[0].date_day = 20	/person/mary-vaill-1870		
+I00180	nb_approved	"header=""Her diaries became a book about Hartford"" body=""She kept diaries of ordinary Hartford life through the early years of the century. Her daughter Alice edited them and put them into print."" category=literature"	OK nb_approved appended verbatim: 'Her diaries became a book about Hartford'	/person/mary-vaill-1870		
+TD0061	bio_blurb	Hartford architect	OK bio_blurb set	/person/seth-talcott-1896		
+TD0061	education	"school_name=""Yale University"""	OK education record appended	/person/seth-talcott-1896		
+TD0061	education	"school_name=""École des Beaux-Arts"" notes=""Paris."""	OK education record appended	/person/seth-talcott-1896		
+TD0061	career	"role=""Architect"" organization=""Talcott & Talcott"" start_year=1928 end_year=1946"	OK career record appended	/person/seth-talcott-1896		
+TD0061	career	"role=""Commander"" organization=""U.S. Navy Bureau of Ordnance"""	OK career appended -- WARN: no start_year, row will NOT render	/person/seth-talcott-1896		
+TD0061	nb_replace	"old=""Died in Blois, France — 1961"" header=""He died in the Loire Valley at sixty-five"" body=""He spent much of his later life in Europe and died at Blois, on the Loire, in the October of 1961. They brought him home to Cedar Hill in Hartford."" category=death"	OK nb_replace: 'Died in Blois, France — 1961' -> 'He died in the Loire Valley at sixty-five' placed verbatim in place	/person/seth-talcott-1896		
+TD0061	nb_approved	"header=""Ambulance corps first, then the Navy"" body=""He drove with the American Field Service ambulance corps, and in the Second World War served as a commander in the Navy's bureau of ordnance."" category=military"	OK nb_approved appended verbatim: 'Ambulance corps first, then the Navy'	/person/seth-talcott-1896		
+TD0064	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785012089/alice_ziub4a.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/alice-enders-1905		
+TD0064	nb_approved	"header=""She hired her brothers to build Northington"" body=""She and Ostrom Enders named their fifty-seven-acre Avon farm Northington, after an old name for the place. They commissioned her brothers Charles and Seth to build the house in the International Style then arriving from Europe."" category=arts"	OK nb_approved appended verbatim: 'She hired her brothers to build Northington'	/person/alice-enders-1905		
