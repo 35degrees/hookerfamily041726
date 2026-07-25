@@ -1,0 +1,6 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+H03203	field_set	marriages[1].date_year=1880	OK set marriages[1].date_year = 1880	/person/john-talcott-1824		
+H03203	field_set	marriages[1].date_month=3	OK set marriages[1].date_month = 3	/person/john-talcott-1824		
+H03203	field_set	marriages[1].date_day=18	OK set marriages[1].date_day = 18	/person/john-talcott-1824		
+H03203	field_set	marriages[1].location_city=New Britain	OK set marriages[1].location_city = 'New Britain'	/person/john-talcott-1824		
+H03203	field_set	marriages[1].location_state=Connecticut	OK set marriages[1].location_state = 'Connecticut'	/person/john-talcott-1824		
