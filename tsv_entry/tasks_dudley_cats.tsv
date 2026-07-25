@@ -1,0 +1,3 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+TD0062	field_set	narrative_blocks[1].category=character	OK set narrative_blocks[1].category = 'character'	/person/dudley-talcott-1899		
+TD0062	field_set	narrative_blocks[2].category=sports	OK set narrative_blocks[2].category = 'sports'	/person/dudley-talcott-1899		

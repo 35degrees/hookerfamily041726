@@ -1,0 +1,17 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+I00188	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785012887/Screenshot_2026-07-25_at_1.54.34_PM_go5mxv.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/ruth-pratt-1906		
+I00188	field_set	bio.chip_first_name=Mima	OK set bio.chip_first_name = 'Mima'	/person/ruth-pratt-1906		
+TD0063	bio_blurb	Hartford architect	OK bio_blurb set	/person/charles-talcott-1901		
+TD0063	education	"school_name=""Yale University"""	OK education record appended	/person/charles-talcott-1901		
+TD0063	career	"role=""Architect"" organization=""Talcott & Talcott"" start_year=1928 end_year=1946"	OK career record appended	/person/charles-talcott-1901		
+TD0063	nb_replace	"old=""Second wife married and died in the same"" header=""His second wife died the year they married"" body=""He married Hope Amory Cheney in 1940 and she was dead by the December, at twenty-seven. He married again in 1942 and lived on to eighty-seven."" category=marriage"	OK nb_replace: 'Second wife married and died in the same' -> 'His second wife died the year they married' placed verbatim in place	/person/charles-talcott-1901		
+TD0063	nb_approved	"header=""Talcott and Talcott, brothers and architects"" body=""He practised with his brother Seth as Talcott and Talcott from 1928 to 1946. Their International Style house for their sister Alice at Avon was published in Architectural Record."" category=career"	OK nb_approved appended verbatim: 'Talcott and Talcott, brothers and architects'	/person/charles-talcott-1901		
+TD0062	notable_blurb	Sculptor, author, and Arctic voyager	OK notable_blurb set	/person/dudley-talcott-1899		
+TD0062	education	"school_name=""Taft School"""	OK education record appended	/person/dudley-talcott-1899		
+TD0062	education	"school_name=""Yale University School of Fine Arts"" dates=""1919"" notes=""One year."""	OK education record appended	/person/dudley-talcott-1899		
+TD0062	education	"school_name=""Académie de la Grande Chaumière"" dates=""1920"" notes=""Paris. Sketch classes; no degree sought."""	OK education record appended	/person/dudley-talcott-1899		
+TD0062	career	"role=""Sculptor"""	OK career appended -- WARN: no start_year, row will NOT render	/person/dudley-talcott-1899		
+TD0062	career	"role=""Co-owner"" organization=""Arctic schooner Norkap II"" start_year=1929"	OK career record appended	/person/dudley-talcott-1899		
+TD0062	career	"role=""Author and illustrator"""	OK career appended -- WARN: no start_year, row will NOT render	/person/dudley-talcott-1899		
+TD0062	video	"title=""Kopernik by Dudley Talcott"" url=https://www.youtube.com/watch?v=PnVaWgjNe-s platform=youtube summary=""Kopernik Sculpture Film"""	OK video created VID070 'Kopernik Sculpture Film'; backlink wired (bidirectional)	/person/dudley-talcott-1899		
+T01459	nb_replace	"old=""More talented than the ones who got famous"" header=""His father opposed France; his mother paid"" body=""Seth Talcott wanted a successor for his drug house, not a painter, and set himself against the trip. The family remembered that his mother Sarah found the money. She went with him to Europe, and later kept her own room at the Griswold house in Old Lyme."" category=family"	OK nb_replace: 'More talented than the ones who got famous' -> 'His father opposed France; his mother paid' placed verbatim in place	/person/allen-talcott-1867		
