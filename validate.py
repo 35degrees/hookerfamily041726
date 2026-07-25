@@ -314,12 +314,17 @@ def validate(path, baseline_path=None):
                 warnings.append(f"BASELINE DIFF: {pid} ({nm(bp)}) was DELETED — confirm intentional")
                 continue
             cur = tp[pid]
-            # NB headers lost?
-            b_hdrs = {nb.get('header') for nb in (bp.get('narrative_blocks') or [])}
-            c_hdrs = {nb.get('header') for nb in (cur.get('narrative_blocks') or [])}
-            lost = b_hdrs - c_hdrs
-            if lost:
-                errors.append(f"SILENT LOSS: {pid} ({nm(bp)}) lost NB(s): {sorted(lost)}")
+            # NB lost? Detect DISAPPEARANCE by block COUNT, not header text. An
+            # authorized nb_replace rewrites a header IN PLACE (count unchanged) and
+            # must NOT read as loss — keying on header text cried wolf on every
+            # replace. A genuine deletion drops the count; report the vanished headers.
+            b_nbs = bp.get('narrative_blocks') or []
+            c_nbs = cur.get('narrative_blocks') or []
+            if len(c_nbs) < len(b_nbs):
+                c_hdrs = {nb.get('header') for nb in c_nbs}
+                gone = sorted(nb.get('header') for nb in b_nbs if nb.get('header') not in c_hdrs)
+                errors.append(f"SILENT LOSS: {pid} ({nm(bp)}) NB count {len(b_nbs)}->{len(c_nbs)}"
+                              f" — no longer present: {gone}")
             # photo_url lost?
             if (bp.get('bio') or {}).get('photo_url') and not (cur.get('bio') or {}).get('photo_url'):
                 errors.append(f"SILENT LOSS: {pid} ({nm(bp)}) lost its photo_url")
