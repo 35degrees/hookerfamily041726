@@ -1,0 +1,35 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD7861	career_set	index=1 role="Assistant Secretary" organization="U.S. Department of Transportation" start_year=1975 notes="Senate-confirmed 1975; Congressional and intergovernmental relations."
+H04636	field_set	marriages[0].date_year=1935
+I02493	field_set	marriages[0].date_year=1935
+H01789	career	role="Farmer" location="West Hartford, Connecticut"
+H01789	nb_approved	header="He died twelve days after his son's wedding" body="His son John married Jane Croswell Goodwin on the thirteenth of September, 1848, at West Hartford. Seth was dead at his own farm twelve days later, at forty-seven." category=death
+H03203	nb_remove	Compiler's generation 8 ancestor on the maternal Talcott-Hoo…
+H03203	nb_replace	old="Founded the New Britain Museum of American Art" header="His fund founded a museum of American art" body="In 1903 he gave the New Britain Institute a fund restricted to original modern oil paintings — figure, landscape and genre subjects. Advised from New York that American pictures could still be had whole and cheap, the trustees bought American, beginning with a landscape by George Inness. What grew out of that restriction is the oldest museum in the country devoted solely to American art." category=legacy
+H03203	nb_replace	old="Created the Talcott Art Fund in 1903" header="He sat behind Frederic Church at school" body="At Hartford Public High School he sat behind Frederic Edwin Church and set down a verdict the family still repeats: “He was not a very good student. He was always looking out the window and drawing.” The boy at the window became the great painter of the Hudson River School, and Talcott spent his last years endowing the purchase of American pictures." category=character
+H03203	nb_replace	old="One of the original incorporators of the New" header="Hooks and eyes paid for the paintings" body="He came to New Britain in 1851 and went into the plainest trade a manufacturing town had — hooks and eyes, and knit underwear. He ran the New Britain Knitting Company as treasurer and general manager for fourteen years, then founded the American Hosiery Company with his brother James and took its presidency in 1885. At the St. Louis fair of 1904 its goods carried off a silver medal." category=business
+H03203	nb_replace	old="Classmate of Frederic Edwin Church at Hartford Public" header="A free reading room for the factory hands" body="He was one of the original incorporators of the New Britain Institute, which set out to put a free reading room and a library within reach of the men who worked the city's factories and the immigrant families arriving to fill them. He served on its building and finance committees, and was its president without a break from 1882 until he died." category=social_reform
+H03203	nb_replace	old="Yale College 1846" header="Illness kept him from play, so he read" body="A serious illness in boyhood left him unable to join the other children at their games, and he turned to books instead. He was salutatorian of the Yale class of 1846, read law in a Hartford office, and tutored at Middlebury and then at Yale. Ill health kept him from ever practicing, and he went into business instead." category=education
+H03203	nb_replace	old="His $20,000 gift founded an American art museum" header="Every party wanted him for mayor" body="He sat on the New Britain common council, served three years as alderman, and was twice elected mayor of the city. Contemporaries noted that all parties united behind his candidacy, and reckoned his administration among the most successful New Britain had had." category=politics
+H03203	education_set	index=0 notes="Fitted for college; taught here in his last college year."
+H03203	education_set	index=1 dates="1846" notes="A.B. and A.M.; salutatorian of his class."
+H03203	education_set	index=2 notes="Tutor, while reading law."
+H03203	career	role="President" organization="American Hosiery Company" start_year=1885
+H03203	career	role="Treasurer and General Manager" organization="New Britain Knitting Company"
+H03203	career	role="Mayor" organization="City of New Britain"
+U00039	nb_approved	header="A son named Hooker who lived four weeks" body="Her third child was christened Samuel Hooker Talcott, carrying the old Hartford name down one more generation. He was born in 1865 and lived twenty-eight days." category=family
+U00039	nb_approved	header="She shares a cemetery with his second wife" body="She died in the spring of 1878, after thirty years of marriage, and John Butler Talcott married again two years later. Both of his wives were buried at Cedar Hill in Hartford." category=death
+U00040	birth_date	1849-07-27
+U00040	field_set	birth.city=Williamstown
+U00040	field_set	birth.state=Massachusetts
+U00040	field_set	birth.country=United States
+U00040	death_date	1922-01-16
+U00040	cemetery	cem_id=CEM025
+U00040	field_set	marriages[0].date_year=1880
+U00040	field_set	marriages[0].date_month=3
+U00040	field_set	marriages[0].date_day=18
+U00040	field_set	marriages[0].location_city=New Britain
+U00040	field_set	marriages[0].location_state=Connecticut
+U00040	nb_approved	header="A minister's daughter from the Berkshires" body="She was born at Williamstown in the summer of 1849, daughter of the Reverend James Alexander Hazen — Yale 1834, and pastor at Hanover, Connecticut — and his second wife Fanny Lucinda Grant. She was thirteen when her father died." category=family
+U00040	nb_approved	header="She married a man of fifty-five at thirty" body="She married John Butler Talcott at New Britain in March of 1880, his second wife and twenty-five years his junior. Their daughter Helen would carry his museum forward, giving it a gallery and a lifetime of patronage." category=marriage
+U00040	field_set	research_notes=Second wife of John Butler Talcott. Parents per the Hazen genealogy (entry 669): Rev. James Alexander Hazen (b. West Springfield MA 2 May 1813, d. Hanover CT 29 Oct 1862; Yale 1834) and his second wife Fanny Lucinda Grant (b. Stafford CT 30 Mar 1821, d. Bostonia CA 23 Dec 1893), married Stafford CT 18 Oct 1844. Born at Williamstown MA 27 Jul 1849; married JBT at New Britain 18 Mar 1880. Two daughters: Florence Hazen (TD0055, b. 2 Mar 1881) and Helen Hooker (TD0050, b. 20 Jan 1884). Her full sister was Helen Rockwell Hazen (b. Hanover CT 5 Feb 1853, d. Bostonia CA 26 Jan 1920), who married David Gilchrist Gordon at Hartford 17 Oct 1878 — NOTE: that is a different Helen from her daughter Helen Hooker Talcott (TD0050). Neither parent nor sister built as entries.
