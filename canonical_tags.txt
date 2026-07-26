@@ -248,3 +248,5 @@ durham_newton
 cherokee_mission
 
 # --- add reconciled live tags below (family dynasties, blessed drift) ---
+distinguished_service_medal
+order_of_the_bath
