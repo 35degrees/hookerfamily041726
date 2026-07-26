@@ -1,0 +1,4 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD04922	field_set	cross_connections[0].display_label=captained the first U.S. women's Olympic ski team a generation later	"OK set cross_connections[0].display_label = ""captained the first U.S. women's Olympic ski team a generation later"""	/person/mary-horne-1880		
+HD04893	field_set	cross_connections[1].display_label=won the national women's golf championship a generation earlier	"OK set cross_connections[1].display_label = ""won the national women's golf championship a generation earlier"""	/person/elizabeth-woolsey-1908		
+HD04893	field_set	cross_connections[1].link_text=Mary Elizabeth Anthony Horne	OK set cross_connections[1].link_text = 'Mary Elizabeth Anthony Horne'	/person/elizabeth-woolsey-1908		
