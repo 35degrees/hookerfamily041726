@@ -1,0 +1,20 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X03780	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785091038/images_12_knvmgk.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/caresse-jacob-1892		
+HD0574	blurb_remove	bio_blurb	OK bio_blurb cleared (was: 'New Haven man of the Russell family')	/person/william-russell-1888		
+HD0574	field_set	"research_notes=Named for his grandfather William Huntington Russell, Skull and Bones co-founder. NEEDS MATERIAL: nothing in the record beyond vitals, the 1917 marriage to Evelyn Van Santvoord Knox, and the Grove Street burial - no career, no education, no NBs. The prior bio_blurb (""New Haven man of the Russell family"") was filler and has been cleared rather than replaced."	"OK set research_notes = 'Named for his grandfather William Huntington Russell, Skull and Bones co-founder. NEEDS MATERIAL: nothing in the record beyond vitals, the 1917 marriage to Evelyn Van Santvoord Knox, and the Grove Street burial - no career, no education, no NBs. The prior bio_blurb (""New Haven man of the Russell family"") was filler and has been cleared rather than replaced.'"	/person/william-russell-1888		
+HD8131	birth_date	1918-01-08	OK birth set 1918-01-08	/person/margaret-leavy-1918		
+HD8131	death_date	2007-06-21	OK death set 2007-06-21	/person/margaret-leavy-1918		
+HD8131	field_set	birth.city=New Haven	OK set birth.city = 'New Haven'	/person/margaret-leavy-1918		
+HD8131	field_set	birth.county=New Haven County	OK set birth.county = 'New Haven County'	/person/margaret-leavy-1918		
+HD8131	field_set	birth.state=Connecticut	OK set birth.state = 'Connecticut'	/person/margaret-leavy-1918		
+HD8131	field_set	death.city=Hamden	OK set death.city = 'Hamden'	/person/margaret-leavy-1918		
+HD8131	field_set	death.county=New Haven County	OK set death.county = 'New Haven County'	/person/margaret-leavy-1918		
+HD8131	field_set	death.state=Connecticut	OK set death.state = 'Connecticut'	/person/margaret-leavy-1918		
+HD8131	field_set	burial.cemetery_id=CEM009	OK set burial.cemetery_id = 'CEM009'	/person/margaret-leavy-1918		
+HD8132	birth_date	1920-03-24	OK birth set 1920-03-24	/person/thomas-russell-1920		
+HD8132	death_date	2005-01-29	OK death set 2005-01-29	/person/thomas-russell-1920		
+HD8132	field_set	birth.city=New Haven	OK set birth.city = 'New Haven'	/person/thomas-russell-1920		
+HD8132	field_set	birth.county=New Haven County	OK set birth.county = 'New Haven County'	/person/thomas-russell-1920		
+HD8132	field_set	birth.state=Connecticut	OK set birth.state = 'Connecticut'	/person/thomas-russell-1920		
+HD8132	field_set	research_notes=Buried at West Hartford, Hartford County, Connecticut per FamilySearch; no cemetery named, so no burial record wired.	OK set research_notes = 'Buried at West Hartford, Hartford County, Connecticut per FamilySearch; no cemetery named, so no burial record wired.'	/person/thomas-russell-1920		
+HD8133	field_set	research_notes=FamilySearch gives his birth as 1925 and no death; this entry holds 1924-2007. Not changed.	OK set research_notes = 'FamilySearch gives his birth as 1925 and no death; this entry holds 1924-2007. Not changed.'	/person/john-russell-1924		
