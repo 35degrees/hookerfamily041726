@@ -1,0 +1,2 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X03776	nb_replace	"old=""The doctor drove out to her almost daily"" header=""She never made it back to Boston"" body=""She came up from Washington to summer at her son's place in West Manchester, fell ill at midsummer, and by winter was too weak to be moved. The doctor drove out to her nearly every day until she died there in December."" category=death"	OK nb_replace: 'The doctor drove out to her almost daily' -> 'She never made it back to Boston' placed verbatim in place	/person/harriet-van-rensselaer-1838		

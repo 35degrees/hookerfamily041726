@@ -1,0 +1,2 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X03776	nb_replace	"old=""The last patroon's youngest daughter"" header=""The last patroon's youngest daughter"" body=""Her father was the last American landlord to hold an estate under the old manorial system. She married John Schuyler Crosby in 1863, when he had just come home a colonel from the war."" category=family"	OK nb_replace: 'The last patroon's youngest daughter' -> 'The last patroon's youngest daughter' placed verbatim in place	/person/harriet-van-rensselaer-1838		
