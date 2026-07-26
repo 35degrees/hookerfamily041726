@@ -1,0 +1,71 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD8154	birth_date	1859-08-14	OK birth set 1859-08-14	/person/lucy-morton-1859		
+HD8154	death_date	1911-07-17	OK death set 1911-07-17	/person/lucy-morton-1859		
+HD8154	field_set	birth.city=Springfield	OK set birth.city = 'Springfield'	/person/lucy-morton-1859		
+HD8154	field_set	birth.county=Hampden County	OK set birth.county = 'Hampden County'	/person/lucy-morton-1859		
+HD8154	field_set	death.city=Springfield	OK set death.city = 'Springfield'	/person/lucy-morton-1859		
+HD8154	field_set	death.county=Hampden County	OK set death.county = 'Hampden County'	/person/lucy-morton-1859		
+HD8154	field_set	death.state=Massachusetts	OK set death.state = 'Massachusetts'	/person/lucy-morton-1859		
+HD8154	field_set	burial.cemetery_id=CEM413	OK set burial.cemetery_id = 'CEM413'	/person/lucy-morton-1859		
+I02657	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785072613/thumbMobile_32_zqsfvx.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/jerry-brooks		
+I02657	birth_date	1922-04-19	OK birth set 1922-04-19	/person/jerry-brooks		
+I02657	death_date	2008-12-27	OK death set 2008-12-27	/person/jerry-brooks-1922		
+I02657	field_set	birth.city=Clarksdale	OK set birth.city = 'Clarksdale'	/person/jerry-brooks-1922		
+I02657	field_set	birth.county=Coahoma County	OK set birth.county = 'Coahoma County'	/person/jerry-brooks-1922		
+I02657	field_set	birth.state=Mississippi	OK set birth.state = 'Mississippi'	/person/jerry-brooks-1922		
+I02657	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/jerry-brooks-1922		
+I02657	field_set	death.city=Brierfield	OK set death.city = 'Brierfield'	/person/jerry-brooks-1922		
+I02657	field_set	death.state=Alabama	OK set death.state = 'Alabama'	/person/jerry-brooks-1922		
+I02657	field_set	death.country=United States	OK set death.country = 'United States'	/person/jerry-brooks-1922		
+I02657	field_set	bio.title=Doctor	OK set bio.title = 'Doctor'	/person/jerry-brooks-1922		
+I02657	field_set	bio.display_name=Dr. Jerry Elizabeth Brooks Taintor	OK set bio.display_name = 'Dr. Jerry Elizabeth Brooks Taintor'	/person/jerry-brooks-1922		
+I02657	field_set	"research_notes=Obituary gives birth as 19 April 1921; FamilySearch (3 sources) gives 19 April 1922. Entry follows 1922. Obituary also names her husband ""Charles Wilson Taintor II, M.D."" where this tree numbers him III (HD8160), and dates the marriage to June 1942 against the 27 May 1942 record already held."	"OK set research_notes = 'Obituary gives birth as 19 April 1921; FamilySearch (3 sources) gives 19 April 1922. Entry follows 1922. Obituary also names her husband ""Charles Wilson Taintor II, M.D."" where this tree numbers him III (HD8160), and dates the marriage to June 1942 against the 27 May 1942 record already held.'"	/person/jerry-brooks-1922		
+I02657	bio_blurb	Clinical psychologist and registered nurse	OK bio_blurb set	/person/jerry-brooks-1922		
+I02657	education	"school_name=""University of Mississippi"" dates=""B.S. 1944"" notes=""Psychology; Taylor Medal in German. Later a B.S. in nursing."""	OK education record appended	/person/jerry-brooks-1922		
+I02657	education	"school_name=""Clarksdale High School"" dates=""Class of 1939"""	OK education record appended	/person/jerry-brooks-1922		
+I02657	nb_approved	"header=""First woman to take the Taylor Medal"" body=""She left the University of Mississippi in 1944 with a degree in psychology and the Taylor Medal in German, the first woman ever awarded it. She went back later for a nursing degree, and later still for a doctorate in clinical psychology."" category=education"	OK nb_approved appended verbatim: 'First woman to take the Taylor Medal'	/person/jerry-brooks-1922		
+I02657	nb_approved	"header=""She buried three husbands"" body=""Charles Taintor, married in 1942, died in 1980; Alan Gresky, married in 1983, died six years later after a brief illness; Edwin Forrest, married in 1990, died in 2002 of wounds he had carried since the war. Forrest lies at Arlington."" category=family"	OK nb_approved appended verbatim: 'She buried three husbands'	/person/jerry-brooks-1922		
+I02657	nb_approved	"header=""They wrote his war down together"" body=""With her third husband she wrote A Rifleman Remembers, an account of his infantry service in the Second World War. Copies went out to veterans' hospitals across the Southeast, and the book sits in the World War II Institute archive at Florida State."" category=literature"	OK nb_approved appended verbatim: 'They wrote his war down together'	/person/jerry-brooks-1922		
+HD8160	death_date	1980	OK death set 1980	/person/charles-taintor-1922		
+HD8160	field_set	bio.title=Doctor	OK set bio.title = 'Doctor'	/person/charles-taintor-1922		
+HD8160	career	"role=""Captain, Medical Corps"" organization=""United States Army, Camp Kilmer, New Jersey"" start_year=1943"	OK career record appended	/person/charles-taintor-1922		
+HD8164	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785072697/thumbMobile_33_ctar7a.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/charlotte-taintor-1944		
+HD8164	birth_date	1944-10-08	OK birth set 1944-10-08	/person/charlotte-taintor-1944		
+HD8164	death_date	1990-07-12	OK death set 1990-07-12	/person/charlotte-taintor-1944		
+HD8164	field_set	birth.city=Clarksdale	OK set birth.city = 'Clarksdale'	/person/charlotte-taintor-1944		
+HD8164	field_set	birth.county=Coahoma County	OK set birth.county = 'Coahoma County'	/person/charlotte-taintor-1944		
+HD8164	field_set	birth.state=Mississippi	OK set birth.state = 'Mississippi'	/person/charlotte-taintor-1944		
+HD8164	field_set	death.city=Paynes	OK set death.city = 'Paynes'	/person/charlotte-taintor-1944		
+HD8164	field_set	death.county=Tallahatchie County	OK set death.county = 'Tallahatchie County'	/person/charlotte-taintor-1944		
+HD8164	field_set	death.state=Mississippi	OK set death.state = 'Mississippi'	/person/charlotte-taintor-1944		
+HD8163	field_set	bio.title=Doctor	OK set bio.title = 'Doctor'	/person/jesse-taintor-1943		
+HD8163	birth_date	1943-10-24	OK birth set 1943-10-24	/person/jesse-taintor-1943		
+HD8163	death_date	2018-02-01	OK death set 2018-02-01	/person/jesse-taintor-1943		
+HD8163	field_set	birth.city=Clarksdale	OK set birth.city = 'Clarksdale'	/person/jesse-taintor-1943		
+HD8163	field_set	birth.county=Coahoma County	OK set birth.county = 'Coahoma County'	/person/jesse-taintor-1943		
+HD8163	field_set	birth.state=Mississippi	OK set birth.state = 'Mississippi'	/person/jesse-taintor-1943		
+HD8163	field_set	death.state=Florida	OK set death.state = 'Florida'	/person/jesse-taintor-1943		
+HD8161	birth_date	1923-03-14	OK birth set 1923-03-14	/person/frederick-taintor-1923		
+HD8161	death_date	2009-08-21	OK death set 2009-08-21	/person/frederick-taintor-1923		
+HD8161	field_set	birth.city=Cambridge	OK set birth.city = 'Cambridge'	/person/frederick-taintor-1923		
+HD8161	field_set	birth.county=Middlesex County	OK set birth.county = 'Middlesex County'	/person/frederick-taintor-1923		
+HD8161	field_set	birth.state=Massachusetts	OK set birth.state = 'Massachusetts'	/person/frederick-taintor-1923		
+HD8161	field_set	death.city=Scarborough	OK set death.city = 'Scarborough'	/person/frederick-taintor-1923		
+HD8161	field_set	death.county=Cumberland County	OK set death.county = 'Cumberland County'	/person/frederick-taintor-1923		
+HD8161	field_set	death.state=Maine	OK set death.state = 'Maine'	/person/frederick-taintor-1923		
+HD8161	bio_blurb	Lewiston lawyer; counsel to Bates College	OK bio_blurb set	/person/frederick-taintor-1923		
+HD8161	education	"school_name=""Yale University"" dates=""B.A.; LL.B."""	OK education record appended	/person/frederick-taintor-1923		
+HD8161	career	"role=""Partner"" organization=""Skelton, Taintor & Abbott, Lewiston"" start_year=1951 end_year=2009"	OK career record appended	/person/frederick-taintor-1923		
+HD8161	career	"role=""College Counsel"" organization=""Bates College"" start_year=1960 end_year=1982"	OK career record appended	/person/frederick-taintor-1923		
+HD8161	nb_approved	"header=""He met his wife and his firm at Yale"" body=""He took his bachelor's and his law degree at Yale, where he met Jane Skelton. They married in 1951 and moved to Lewiston, where he joined his father-in-law's firm, Skelton and Mahon — which carries his name today as Skelton, Taintor and Abbott."" category=career"	OK nb_approved appended verbatim: 'He met his wife and his firm at Yale' (WARN header 9 words > 8)	/person/frederick-taintor-1923		
+HD8161	nb_approved	"header=""Twenty-two years as the college's lawyer"" body=""As counsel to Bates he created the Bates-Morse Mountain Conservation Area, helped bring in the papers of Edmund Muskie, and settled the estate that paid for the college's skating rink. He left the board a trustee emeritus."" category=education"	OK nb_approved appended verbatim: 'Twenty-two years as the college's lawyer'	/person/frederick-taintor-1923		
+HD8161	nb_approved	"header=""Remembered for bread and wooden bowls"" body=""He served in the Army in Panama and Puerto Rico before Yale, and afterward held directorships and trusteeships across an exhausting range of Lewiston-Auburn concerns. What people recalled was his unshakeable integrity, his home-baked bread, and the bowls he turned by hand."" category=character"	OK nb_approved appended verbatim: 'Remembered for bread and wooden bowls'	/person/frederick-taintor-1923		
+I02658	birth_date	1926-08-04	OK birth set 1926-08-04	/person/jane-skelton-1926		
+I02658	death_date	2013-01-07	OK death set 2013-01-07	/person/jane-skelton-1926		
+I02658	field_set	birth.city=Boston	OK set birth.city = 'Boston'	/person/jane-skelton-1926		
+I02658	field_set	birth.county=Suffolk County	OK set birth.county = 'Suffolk County'	/person/jane-skelton-1926		
+I02658	field_set	birth.state=Massachusetts	OK set birth.state = 'Massachusetts'	/person/jane-skelton-1926		
+I02658	field_set	death.city=Scarborough	OK set death.city = 'Scarborough'	/person/jane-skelton-1926		
+I02658	field_set	death.county=Cumberland County	OK set death.county = 'Cumberland County'	/person/jane-skelton-1926		
+I02658	field_set	death.state=Maine	OK set death.state = 'Maine'	/person/jane-skelton-1926		
+I02658	nb_approved	"header=""Her family and the college grew up together"" body=""The Skeltons of Lewiston were bound up with Bates for generations, and her father's firm, Skelton and Mahon, was the town's law office. She met Frederick Taintor at Yale, married him in 1951, and brought him back to Lewiston, where he joined the firm and became the college's counsel."" category=family"	OK nb_approved appended verbatim: 'Her family and the college grew up together'	/person/jane-skelton-1926		
