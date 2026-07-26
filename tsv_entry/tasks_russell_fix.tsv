@@ -1,0 +1,3 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD1408	nb_replace	"old=""His father founded the society, he taught the sons"" header=""His father founded the society at Yale"" body=""Gen. William Huntington Russell had co-founded Skull and Bones a generation earlier and run a school that turned out four thousand boys. The son stayed in New Haven too, and spent his life at the medical school."" category=family"	OK nb_replace: 'His father founded the society, he taught the sons' -> 'His father founded the society at Yale' placed verbatim in place	/person/thomas-russell-1851		
+HD1408	notable	false	FLAG notable=true but no url given	/person/thomas-russell-1851		
