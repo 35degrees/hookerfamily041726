@@ -1,0 +1,4 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X03153	field_set	bio.display_name=Edward Estlin Cummings	OK set bio.display_name = 'Edward Estlin Cummings'	/person/edward-estlin-cummings-1894		
+X03153	field_set	bio.chip_first_name=e. e.	OK set bio.chip_first_name = 'e. e.'	/person/edward-estlin-cummings-1894		
+X03153	field_set	bio.chip_name=e. e. cummings	OK set bio.chip_name = 'e. e. cummings'	/person/edward-estlin-cummings-1894		
