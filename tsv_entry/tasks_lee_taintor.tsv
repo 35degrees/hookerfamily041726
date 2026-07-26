@@ -1,0 +1,19 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+I02658	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785040675/thumbMobile_31_or5mwy.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/jane-skelton-1926		
+HD0789	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785045018/103672915_1e736ec0-efc3-440f-9a2e-db4cd0100a3d_pmejvf.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/william-lee-1818		
+HD0789	birth_date	1818-05-19	OK birth set 1818-05-19	/person/william-lee-1818		
+HD0789	death_date	1895-04-09	OK death set 1895-04-09	/person/william-lee-1818		
+HD0789	field_set	birth.county=Hartford County	OK set birth.county = 'Hartford County'	/person/william-lee-1818		
+HD0789	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/william-lee-1818		
+HD0789	field_set	death.city=Hartford	OK set death.city = 'Hartford'	/person/william-lee-1818		
+HD0789	field_set	death.state=Connecticut	OK set death.state = 'Connecticut'	/person/william-lee-1818		
+HD0789	field_set	death.country=United States	OK set death.country = 'United States'	/person/william-lee-1818		
+HD0789	field_set	burial.cemetery_id=CEM112	OK set burial.cemetery_id = 'CEM112'	/person/william-lee-1818		
+HD0789	nb_approved	"header=""The brother who went to New York"" body=""He was born at New Britain in 1818, tenth of Thomas and Electa Lee's eleven children. When his brother-in-law Mark Howard died at Hartford in 1887, the notice named his widow only as a sister of W. H. Lee of New York. He died at Hartford himself in 1895 and was buried in the Bronx."" category=family"	OK nb_approved appended verbatim: 'The brother who went to New York'	/person/william-lee-1818		
+HD0504	field_set	marriages[1].date_year=1831	OK set marriages[1].date_year = 1831	/person/thomas-lee-1776		
+HD0504	field_set	marriages[2].date_year=1838	OK set marriages[2].date_year = 1838	/person/thomas-lee-1776		
+HD8157	bio_blurb	Pittsburgh law professor	OK bio_blurb set	/person/charles-taintor-1896		
+HD8157	education	"school_name=""Harvard Law School"" dates=""S.J.D."""	OK education record appended	/person/charles-taintor-1896		
+HD8157	career	"role=""Acting Dean"" organization=""University of Pittsburgh School of Law"" start_year=1954 end_year=1957"	OK career record appended	/person/charles-taintor-1896		
+HD8157	career	"role=""Professor of Law"" organization=""University of Pittsburgh"" start_year=1930"	OK career record appended	/person/charles-taintor-1896		
+HD8157	nb_approved	"header=""He ran the law school for three years"" body=""He taught at the University of Pittsburgh and was acting dean of its law school from 1954 to 1957. His doctorate in law and judicial science came from Harvard; among the Allegheny County bar he was the authority on property law."" category=career"	OK nb_approved appended verbatim: 'He ran the law school for three years'	/person/charles-taintor-1896		
