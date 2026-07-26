@@ -1,0 +1,6 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD3787	cc	"related=H04934 link=""Prof. Henrietta Edgecomb Hooker"" label=""taught botany at Mount Holyoke, which named a hall for her"""	OK cc->H04934 added; FLAG needs reciprocal cc row on H04934	/person/henry-cowles-1869		
+H04934	cc	"related=HD3787 link=""Henry Chandler Cowles"" label=""made plant ecology a science, and a bog carries his name"""	OK cc->HD3787 added (reciprocal present)	/person/henrietta-hooker-1851		
+HD3787	cc	"related=X02256 link=""John Muir"" label=""founded the Sierra Club while he was fighting for the dunes"""	OK cc->X02256 added; FLAG needs reciprocal cc row on X02256	/person/henry-cowles-1869		
+X02256	cc	"related=HD3787 link=""Henry Chandler Cowles"" label=""fought for the Indiana Dunes as he fought for the Sierra"""	OK cc->HD3787 added (reciprocal present)	/person/john-muir-1838		
+HD3786	nb_approved	"header=""Nine generations on the same Connecticut land"" body=""The Cowleses had worked that ground since the 1750s and he was the ninth generation of them in Connecticut. He farmed it, gardened for market, and kept the Sunday school."" category=career"	OK nb_approved appended verbatim: 'Nine generations on the same Connecticut land'	/person/henry-cowles-1831		
