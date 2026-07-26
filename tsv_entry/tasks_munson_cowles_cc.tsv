@@ -1,0 +1,8 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD0570	cc_remove	Y00010	OK CC to Y00010 removed (explicit)	/person/lyman-munson-1822		
+Y00010	cc_remove	HD0570	OK CC to HD0570 removed (explicit)	/person/samuel-huntington-1765		
+HD0570	cc	"related=HD3710 link=""Hon. Samuel Cowles"" label=""judged San Francisco after riding with its vigilance committee"""	OK cc->HD3710 added; FLAG needs reciprocal cc row on HD3710	/person/lyman-munson-1822		
+HD3710	cc	"related=HD0570 link=""Lyman Ezra Munson"" label=""held a Montana bench against the vigilantes who overruled it"""	OK cc->HD0570 added (reciprocal present)	/person/samuel-cowles-1823		
+HD2059	field_set	narrative_blocks[0].category=career	OK set narrative_blocks[0].category = 'career'	/person/arthur-dwight-1864		
+HD2059	field_set	narrative_blocks[1].category=military	OK set narrative_blocks[1].category = 'military'	/person/arthur-dwight-1864		
+HD2059	field_set	notable.notable_category[0]=business	FLAG index 0 out of range (len 0)	/person/arthur-dwight-1864		
