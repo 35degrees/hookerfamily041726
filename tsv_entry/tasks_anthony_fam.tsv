@@ -1,0 +1,50 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD1994	field_set	birth.city=New York	OK set birth.city = 'New York'	/person/elizabeth-anthony-1853		
+HD1994	field_set	birth.state=New York	OK set birth.state = 'New York'	/person/elizabeth-anthony-1853		
+HD1994	death_date	1874-12-21	OK death set 1874-12-21	/person/elizabeth-anthony-1853		
+HD1994	field_set	death.county=Cook County	OK set death.county = 'Cook County'	/person/elizabeth-anthony-1853		
+HD1994	field_set	death.state=Illinois	OK set death.state = 'Illinois'	/person/elizabeth-anthony-1853		
+HD1994	field_set	burial.cemetery_id=CEM268	OK set burial.cemetery_id = 'CEM268'	/person/elizabeth-anthony-1853		
+HD1993	field_set	birth.city=Chicago	OK set birth.city = 'Chicago'	/person/charles-anthony-1856		
+HD1993	field_set	birth.county=Cook County	OK set birth.county = 'Cook County'	/person/charles-anthony-1856		
+HD1993	field_set	birth.state=Illinois	OK set birth.state = 'Illinois'	/person/charles-anthony-1856		
+HD1993	death_date	1936-02-22	OK death set 1936-02-22	/person/charles-anthony-1856		
+HD1993	field_set	death.city=Chicago	OK set death.city = 'Chicago'	/person/charles-anthony-1856		
+HD1993	field_set	death.county=Cook County	OK set death.county = 'Cook County'	/person/charles-anthony-1856		
+HD1993	field_set	death.state=Illinois	OK set death.state = 'Illinois'	/person/charles-anthony-1856		
+HD1993	field_set	burial.cemetery_id=CEM268	OK set burial.cemetery_id = 'CEM268'	/person/charles-anthony-1856		
+HD1993	bio_blurb	Chicago lawyer	OK bio_blurb set	/person/charles-anthony-1856		
+HD1993	field_set	research_notes=Death year conflict: FindAGrave gives 22 Feb 1936 (aged 79, consistent with a 1 Sep 1856 birth); the Wikipedia article on his father gives 1856-1937. Entry follows 1936.	OK set research_notes = 'Death year conflict: FindAGrave gives 22 Feb 1936 (aged 79, consistent with a 1 Sep 1856 birth); the Wikipedia article on his father gives 1856-1937. Entry follows 1936.'	/person/charles-anthony-1856		
+HD1993	education_set	"index=0 school_name=""Phillips Academy Andover"" dates=""Class of 1875"" notes=null degree_or_field=null class_year=null"	OK education[0] updated in place	/person/charles-anthony-1856		
+HD1993	education_set	"index=1 school_name=""Union College of Law"" dates=""Class of 1878"" notes=""Chicago; admitted to the Illinois bar the same year."" degree_or_field=null class_year=null"	OK education[1] updated in place	/person/charles-anthony-1856		
+HD1993	nb_replace	"old=""Phillips Academy Andover class of 1875"" header=""He went to Andover, then straight to law"" body=""He finished Phillips Academy Andover in 1875 and the Union College of Law in Chicago three years later, and was admitted to the Illinois bar at twenty-two. His father was already a fixture of the Chicago bar, and he practised in the same city for the rest of his life."" category=career"	OK nb_replace: 'Phillips Academy Andover class of 1875' -> 'He went to Andover, then straight to law' placed verbatim in place	/person/charles-anthony-1856		
+HD1993	nb_replace	"old=""Father of America's first 4-time golf champion"" body=""He married Mary P. Green at Chicago in September 1879, and they had four daughters. The eldest, Bessie, took the first three Women's Western Amateur championships and then the national title in 1903; her sister Miriam played in the same tournaments."" header=""Two of his four daughters played championship golf"" category=family"	OK nb_replace: 'Father of America's first 4-time golf champion' -> 'Two of his four daughters played championship golf' placed verbatim in place	/person/charles-anthony-1856		
+X00640	birth_date	1858-10-23	OK birth set 1858-10-23	/person/mary-green-1861		
+X00640	death_date	1924-03-18	OK death set 1924-03-18	/person/mary-green-1858		
+X00640	field_set	birth.city=Chicago	OK set birth.city = 'Chicago'	/person/mary-green-1858		
+X00640	field_set	birth.county=Cook County	OK set birth.county = 'Cook County'	/person/mary-green-1858		
+X00640	field_set	birth.state=Illinois	OK set birth.state = 'Illinois'	/person/mary-green-1858		
+X00640	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/mary-green-1858		
+X00640	field_set	death.city=Chicago	OK set death.city = 'Chicago'	/person/mary-green-1858		
+X00640	field_set	death.county=Cook County	OK set death.county = 'Cook County'	/person/mary-green-1858		
+X00640	field_set	death.state=Illinois	OK set death.state = 'Illinois'	/person/mary-green-1858		
+X00640	field_set	death.country=United States	OK set death.country = 'United States'	/person/mary-green-1858		
+X00640	field_set	burial.cemetery_id=CEM268	OK set burial.cemetery_id = 'CEM268'	/person/mary-green-1858		
+X00640	nb_replace	"old=""Mother of America's first 4-time WWGA champion"" header=""Four daughters in nine years, two of them golfers"" body=""She married Charles Elliott Anthony at Chicago in September 1879, at twenty, and bore four daughters in nine years. Bessie and Miriam both played in the western championships; Bessie won the first three, and then the national."" category=family"	OK nb_replace: 'Mother of America's first 4-time WWGA champion' -> 'Four daughters in nine years, two of them golfers' placed verbatim in place (WARN header 9 words > 8)	/person/mary-green-1858		
+HD1995	field_set	birth.city=Chicago	OK set birth.city = 'Chicago'	/person/henry-anthony-1860		
+HD1995	field_set	birth.county=Cook County	OK set birth.county = 'Cook County'	/person/henry-anthony-1860		
+HD1995	field_set	birth.state=Illinois	OK set birth.state = 'Illinois'	/person/henry-anthony-1860		
+HD1995	field_set	death.city=Chicago	OK set death.city = 'Chicago'	/person/henry-anthony-1860		
+HD1995	field_set	death.county=Cook County	OK set death.county = 'Cook County'	/person/henry-anthony-1860		
+HD1995	field_set	death.state=Illinois	OK set death.state = 'Illinois'	/person/henry-anthony-1860		
+HD1995	field_set	burial.cemetery_id=CEM268	OK set burial.cemetery_id = 'CEM268'	/person/henry-anthony-1860		
+HD1996	birth_date	1862-02-18	OK birth set 1862-02-18	/person/george-anthony-1861		
+HD1996	field_set	birth.city=Catskill	OK set birth.city = 'Catskill'	/person/george-anthony-1862		
+HD1996	field_set	birth.county=Greene County	OK set birth.county = 'Greene County'	/person/george-anthony-1862		
+HD1996	field_set	birth.state=New York	OK set birth.state = 'New York'	/person/george-anthony-1862		
+HD1996	field_set	death.city=Cedar Rapids	OK set death.city = 'Cedar Rapids'	/person/george-anthony-1862		
+HD1996	field_set	death.county=Linn County	OK set death.county = 'Linn County'	/person/george-anthony-1862		
+HD1996	field_set	death.state=Iowa	OK set death.state = 'Iowa'	/person/george-anthony-1862		
+HD1996	field_set	burial.cemetery_id=CEM268	OK set burial.cemetery_id = 'CEM268'	/person/george-anthony-1862		
+HD1996	field_set	research_notes=Birth conflict: FamilySearch and the Wikipedia article give 18 Feb 1862 at Catskill NY; FindAGrave gives 18 Feb 1861 at Chicago (aged 76 at death). Entry follows 1862, Catskill.	OK set research_notes = 'Birth conflict: FamilySearch and the Wikipedia article give 18 Feb 1862 at Catskill NY; FindAGrave gives 18 Feb 1861 at Chicago (aged 76 at death). Entry follows 1862, Catskill.'	/person/george-anthony-1862		
+HD1996	nb_approved	"header=""He married in Los Angeles and lost them all"" body=""He married Emma Niblock at Los Angeles in June 1895. Their daughter Mary Elizabeth died the year she was born and their son Elliott before his second birthday; Emma died in 1899, at thirty-three. He outlived them by thirty-eight years and died at Cedar Rapids."" category=family"	OK nb_approved appended verbatim: 'He married in Los Angeles and lost them all' (WARN header 9 words > 8)	/person/george-anthony-1862		
