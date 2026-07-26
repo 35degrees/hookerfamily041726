@@ -1,0 +1,59 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD4945	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785040201/eashmun_epjday.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/elizabeth-ashmun-1829		
+HD8154	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785040279/lash_qplfwx.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/lucy-morton-1859		
+I02654	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785040414/gilest_squd4d.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/giles-taintor-1866		
+HD8157	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785040483/thumbMobile_29_avqrjj.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/charles-taintor-1896		
+HD8160	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785040570/Screenshot_2026-07-25_at_9.36.02_PM_jx5xbs.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/charles-taintor-1922		
+HD8161	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785040622/thumbMobile_30_iimpgj.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/frederick-taintor-1923		
+X01610	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785043843/mhoward_p5matf.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/mark-howard		
+HD0790	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785043875/14715228_2acc8fcf-ebd7-4509-a106-b7526a499917_luhjsq.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/angeline-howard-1824		
+HD8172	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785043942/whoward_vfaafe.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/william-howard-1860		
+HD0613	cc_remove	HD0790	OK CC to HD0790 removed (explicit)	/person/george-ashmun-1804		
+HD0613	cc	"related=X01610 link=""Mark Howard"" label=""helped organize the Republican Party in Connecticut"""	OK cc->X01610 added; FLAG needs reciprocal cc row on X01610	/person/george-ashmun-1804		
+X01610	cc	"related=HD0613 link=""George Ashmun"" label=""chaired the 1860 convention that nominated Lincoln"""	OK cc->HD0613 added (reciprocal present)	/person/mark-howard		
+X01610	birth_date	1817-05-27	OK birth set 1817-05-27	/person/mark-howard		
+X01610	death_date	1887-01-24	OK death set 1887-01-24	/person/mark-howard-1817		
+X01610	field_set	birth.city=Maidstone	OK set birth.city = 'Maidstone'	/person/mark-howard-1817		
+X01610	field_set	birth.county=Kent	OK set birth.county = 'Kent'	/person/mark-howard-1817		
+X01610	field_set	birth.country=England	OK set birth.country = 'England'	/person/mark-howard-1817		
+X01610	field_set	death.city=Hartford	OK set death.city = 'Hartford'	/person/mark-howard-1817		
+X01610	field_set	death.state=Connecticut	OK set death.state = 'Connecticut'	/person/mark-howard-1817		
+X01610	field_set	death.country=United States	OK set death.country = 'United States'	/person/mark-howard-1817		
+X01610	field_set	burial.cemetery_id=CEM025	OK set burial.cemetery_id = 'CEM025'	/person/mark-howard-1817		
+X01610	bio_blurb	Hartford fire insurance president	OK bio_blurb set	/person/mark-howard-1817		
+X01610	career	"role=""President"" organization=""National Fire Insurance Company"" start_year=1871 end_year=1887"	OK career record appended	/person/mark-howard-1817		
+X01610	career	"role=""President"" organization=""Merchants' Insurance Company"" start_year=1857 end_year=1871"	OK career record appended	/person/mark-howard-1817		
+X01610	career	"role=""Collector of Internal Revenue"" organization=""Hartford District, Connecticut"" start_year=1862"	OK career record appended	/person/mark-howard-1817		
+X01610	career	"role=""Postmaster"" organization=""Ann Arbor, Michigan"" start_year=1849"	OK career record appended	/person/mark-howard-1817		
+X01610	nb_approved	"header=""A toy cannon took one of his eyes"" body=""He was apprenticed in the Ann Arbor Journal printing office about 1838. A friend who stood beside him one Fourth of July remembered the little lead cannon bursting and destroying the sight of one eye. He owned the office before long, by what the same man called sheer industry and economy."" category=character"	OK nb_approved appended verbatim: 'A toy cannon took one of his eyes'	/person/mark-howard-1817		
+X01610	nb_approved	"header=""He walked into cholera to pay the claims"" body=""When fire took St. Louis in May 1849 the cholera was raging there, and Howard went into the city anyway and stayed until every loss was adjusted. People trusted Hartford insurance afterward, and his companies in particular."" category=business"	OK nb_approved appended verbatim: 'He walked into cholera to pay the claims'	/person/mark-howard-1817		
+X01610	nb_approved	"header=""He helped start the party in Connecticut"" body=""An intense partisan, he was one of the organizers of the Republican Party in Connecticut and the first internal revenue collector appointed at Hartford. His brother John went west instead and became a leading lawyer in Montana."" category=politics"	OK nb_approved appended verbatim: 'He helped start the party in Connecticut'	/person/mark-howard-1817		
+X01610	nb_approved	"header=""The money came out of western land"" body=""The Ann Arbor friend who wrote his notice thought him neither brilliant nor stupid but plain, steady-going and hard-working. What he left had been made largely from land bought early in the west, not from the insurance offices he ran."" category=business"	OK nb_approved appended verbatim: 'The money came out of western land'	/person/mark-howard-1817		
+HD0790	nb_approved	"header=""Her mother died when she was two"" body=""She was the last of Thomas and Electa Lee's eleven children, born at New Britain in 1824. Her mother died there in December 1826, and her father married twice more before his own death in 1840."" category=family"	OK nb_approved appended verbatim: 'Her mother died when she was two'	/person/angeline-howard-1824		
+HD8172	bio_blurb	Baltimore physician and writer on sex hygiene	OK bio_blurb set	/person/william-howard-1860		
+HD8172	education	"school_name=""University of Vermont"" dates=""M.D. 1890"""	OK education record appended	/person/william-howard-1860		
+HD8172	education	"school_name=""Columbia University"""	OK education record appended	/person/william-howard-1860		
+HD8172	education	"school_name=""University of Oxford"""	OK education record appended	/person/william-howard-1860		
+HD8172	career	"role=""Physician"" organization=""Baltimore, Maryland"" start_year=1891 end_year=1906 notes=""Nervous diseases; hypnotic suggestion."""	OK career record appended	/person/william-howard-1860		
+HD8172	career	"role=""Correspondent"" organization=""New York Herald"" start_year=1881 end_year=1885"	OK career record appended	/person/william-howard-1860		
+HD8172	field_set	research_notes=Death date conflict: FindAGrave gives 10 Mar 1918 at Boston; Kelly's medical biography and WikiTree give 11 Mar 1918 at Westborough. Entry follows 11 March, Westborough.	"OK set research_notes = ""Death date conflict: FindAGrave gives 10 Mar 1918 at Boston; Kelly's medical biography and WikiTree give 11 Mar 1918 at Westborough. Entry follows 11 March, Westborough."""	/person/william-howard-1860		
+HD8172	nb_approved	"header=""He shipped out on a whaler mid-degree"" body=""He left medical school for a two-year whaling voyage, came back to study, then left again as second mate on a ship bound for Africa. He was in Iceland in 1880 and 1881, and took his M.D. at Vermont only in 1890, near thirty."" category=character"	OK nb_approved appended verbatim: 'He shipped out on a whaler mid-degree'	/person/william-howard-1860		
+HD8172	nb_approved	"header=""The Herald sent him after the Jeannette"" body=""He went north with the party searching for the Jeannette, the ship that had sailed from San Francisco in 1879 for the Pole; his own party was wrecked and badly used before it was over. The Herald sent him to Siberia in 1883 and afterward to the Soudan campaign."" category=character"	OK nb_approved appended verbatim: 'The Herald sent him after the Jeannette'	/person/william-howard-1860		
+HD8172	nb_approved	"header=""He wrote the books doctors would not"" body=""Settled in Baltimore from 1891, he specialised in nervous disease and hypnotic suggestion and wrote for the public on subjects the profession would not touch. The Perverts came in 1892, Plain Facts on Sex Hygiene in 1910, Sex Structure of Society in 1914."" category=literature"	OK nb_approved appended verbatim: 'He wrote the books doctors would not'	/person/william-howard-1860		
+HD8172	nb_approved	"header=""Readers liked him better than doctors"" body=""His notice in the medical press called him eccentric and irresponsible, a native ability wasted in a desultory, rambling life, and allowed that he was held in more esteem by the laity than by the profession. He had studied under Charcot in Paris and called on Albert Moll, and he ended at a house called Mossfell at Westboro."" category=character"	OK nb_approved appended verbatim: 'Readers liked him better than doctors'	/person/william-howard-1860		
+X01209	birth_date	1783	OK birth set 1783	/person/laura-whittlesey		
+X01209	death_date	1837-02-07	OK death set 1837-02-07	/person/laura-whittlesey-1783		
+X01209	field_set	death.city=New Britain	OK set death.city = 'New Britain'	/person/laura-whittlesey-1783		
+X01209	field_set	death.state=Connecticut	OK set death.state = 'Connecticut'	/person/laura-whittlesey-1783		
+X01209	field_set	bio.maiden_name=Kellogg	OK set bio.maiden_name = 'Kellogg'	/person/laura-whittlesey-1783		
+X01209	field_set	marriages[0].date_year=1831	OK set marriages[0].date_year = 1831	/person/laura-kellogg-1783		
+X01210	birth_date	1791	OK birth set 1791	/person/esther-lusk		
+X01210	death_date	1865-03-18	OK death set 1865-03-18	/person/esther-lusk-1791		
+X01210	field_set	birth.city=Middletown	OK set birth.city = 'Middletown'	/person/esther-lusk-1791		
+X01210	field_set	birth.state=Connecticut	OK set birth.state = 'Connecticut'	/person/esther-lusk-1791		
+X01210	field_set	death.city=New Britain	OK set death.city = 'New Britain'	/person/esther-lusk-1791		
+X01210	field_set	death.state=Connecticut	OK set death.state = 'Connecticut'	/person/esther-lusk-1791		
+X01210	field_set	bio.maiden_name=Meigs	OK set bio.maiden_name = 'Meigs'	/person/esther-lusk-1791		
+X01210	field_set	marriages[0].date_year=1838	OK set marriages[0].date_year = 1838	/person/esther-meigs-1791		
+HD0778	field_set	birth.city=Northampton	OK set birth.city = 'Northampton'	/person/electa-riley-1776		
+HD0778	field_set	birth.state=Massachusetts	OK set birth.state = 'Massachusetts'	/person/electa-riley-1776		
