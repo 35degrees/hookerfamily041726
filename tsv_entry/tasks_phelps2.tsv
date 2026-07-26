@@ -1,0 +1,62 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X03192	birth_date	1876-08-16	OK birth set 1876-08-16	/person/alma		
+X03192	death_date	1955-10-26	OK death set 1955-10-26	/person/alma-1876		
+X03192	field_set	birth.city=Fort Worth	OK set birth.city = 'Fort Worth'	/person/alma-1876		
+X03192	field_set	birth.county=Tarrant County	OK set birth.county = 'Tarrant County'	/person/alma-1876		
+X03192	field_set	birth.state=Texas	OK set birth.state = 'Texas'	/person/alma-1876		
+X03192	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/alma-1876		
+X03192	field_set	death.county=Tarrant County	OK set death.county = 'Tarrant County'	/person/alma-1876		
+X03192	field_set	death.country=United States	OK set death.country = 'United States'	/person/alma-1876		
+X03192	field_set	burial.cemetery_id=CEM1381	OK set burial.cemetery_id = 'CEM1381'	/person/alma-1876		
+HD6281	death_date	2001-09-29	OK death set 2001-09-29	/person/eleanor-1907		
+HD6281	field_set	death.city=Scranton	OK set death.city = 'Scranton'	/person/eleanor-1907		
+HD6281	field_set	death.county=Lackawanna County	OK set death.county = 'Lackawanna County'	/person/eleanor-1907		
+HD6281	field_set	death.state=Pennsylvania	OK set death.state = 'Pennsylvania'	/person/eleanor-1907		
+HD6281	field_set	death.country=United States	OK set death.country = 'United States'	/person/eleanor-1907		
+HD6281	field_set	burial.cemetery_id=CEM1382	OK set burial.cemetery_id = 'CEM1382'	/person/eleanor-1907		
+HD6282	birth_date	1905-03-30	OK birth set 1905-03-30	/person/katharine		
+HD6282	death_date	1993-12-02	OK death set 1993-12-02	/person/katharine-1905		
+HD6282	field_set	birth.city=Baltimore	OK set birth.city = 'Baltimore'	/person/katharine-1905		
+HD6282	field_set	birth.state=Maryland	OK set birth.state = 'Maryland'	/person/katharine-1905		
+HD6282	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/katharine-1905		
+HD6282	field_set	death.city=Madrid	OK set death.city = 'Madrid'	/person/katharine-1905		
+HD6282	field_set	death.country=Spain	OK set death.country = 'Spain'	/person/katharine-1905		
+X03194	birth_date	1900-11-27	OK birth set 1900-11-27	/person/col		
+X03194	death_date	1988-01-23	OK death set 1988-01-23	/person/col-1900		
+X03194	field_set	birth.city=Austin	OK set birth.city = 'Austin'	/person/col-1900		
+X03194	field_set	birth.county=Travis County	OK set birth.county = 'Travis County'	/person/col-1900		
+X03194	field_set	birth.state=Texas	OK set birth.state = 'Texas'	/person/col-1900		
+X03194	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/col-1900		
+X03194	field_set	death.city=Dallas	OK set death.city = 'Dallas'	/person/col-1900		
+X03194	field_set	death.county=Dallas County	OK set death.county = 'Dallas County'	/person/col-1900		
+X03194	field_set	death.state=Texas	OK set death.state = 'Texas'	/person/col-1900		
+X03194	field_set	death.country=United States	OK set death.country = 'United States'	/person/col-1900		
+X03194	field_set	burial.cemetery_id=CEM187	OK set burial.cemetery_id = 'CEM187'	/person/col-1900		
+X03197	birth_date	1904-01-04	OK birth set 1904-01-04	/person/capt		
+X03197	death_date	1973-09-24	OK death set 1973-09-24	/person/capt-1904		
+X03197	field_set	birth.city=Savannah	OK set birth.city = 'Savannah'	/person/capt-1904		
+X03197	field_set	birth.county=Chatham County	OK set birth.county = 'Chatham County'	/person/capt-1904		
+X03197	field_set	birth.state=Georgia	OK set birth.state = 'Georgia'	/person/capt-1904		
+X03197	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/capt-1904		
+X03197	field_set	death.city=Madrid	OK set death.city = 'Madrid'	/person/capt-1904		
+X03197	field_set	death.country=Spain	OK set death.country = 'Spain'	/person/capt-1904		
+HD6289	birth_date	1927-10-16	OK birth set 1927-10-16	/person/henry		
+HD6289	death_date	2015-01-08	OK death set 2015-01-08	/person/henry-1927		
+HD6289	field_set	birth.city=Austin	OK set birth.city = 'Austin'	/person/henry-1927		
+HD6289	field_set	birth.county=Travis County	OK set birth.county = 'Travis County'	/person/henry-1927		
+HD6289	field_set	birth.state=Texas	OK set birth.state = 'Texas'	/person/henry-1927		
+HD6289	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/henry-1927		
+HD6289	field_set	death.city=Great Falls	OK set death.city = 'Great Falls'	/person/henry-1927		
+HD6289	field_set	death.county=Fairfax County	OK set death.county = 'Fairfax County'	/person/henry-1927		
+HD6289	field_set	death.state=Virginia	OK set death.state = 'Virginia'	/person/henry-1927		
+HD6289	field_set	death.country=United States	OK set death.country = 'United States'	/person/henry-1927		
+HD6289	field_set	research_notes=FamilySearch records him as Peter Louis Hilgartner; this entry holds Henry Louis Hilgartner Jr. Same dates and parents. Name not changed pending Sam's call.	"OK set research_notes = ""FamilySearch records him as Peter Louis Hilgartner; this entry holds Henry Louis Hilgartner Jr. Same dates and parents. Name not changed pending Sam's call."""	/person/henry-1927		
+HD6290	birth_date	1930-02-18	OK birth set 1930-02-18	/person/fielding		
+HD6290	death_date	1980-10-21	OK death set 1980-10-21	/person/fielding-1930		
+HD6290	field_set	birth.city=Baltimore	OK set birth.city = 'Baltimore'	/person/fielding-1930		
+HD6290	field_set	birth.state=Maryland	OK set birth.state = 'Maryland'	/person/fielding-1930		
+HD6290	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/fielding-1930		
+HD6290	field_set	death.city=Rowley	OK set death.city = 'Rowley'	/person/fielding-1930		
+HD6290	field_set	death.county=Essex County	OK set death.county = 'Essex County'	/person/fielding-1930		
+HD6290	field_set	death.state=Massachusetts	OK set death.state = 'Massachusetts'	/person/fielding-1930		
+HD6290	field_set	death.country=United States	OK set death.country = 'United States'	/person/fielding-1930		
