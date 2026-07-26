@@ -1,0 +1,20 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X01873	bio_blurb	First wife of Dr. Elial Todd Foote	OK bio_blurb set	/person/anna-cheney-1800		
+X01873	nb_approved	"header=""She died at forty in Jamestown"" body=""She married Elial Todd Foote at Jamestown on the last day of 1817 and bore him five children there. She died in the town in the July of 1840, and he married again the following spring."" category=family"	OK nb_approved appended verbatim: 'She died at forty in Jamestown'	/person/anna-cheney-1800		
+HD8141	nb_approved	"header=""She married her own stepbrother"" body=""Her mother married Dr. Elial Todd Foote in 1841, which made her his stepdaughter at fourteen. She afterwards married his son Charles Cheney Foote — which is how a Jenkins girl came to be a Foote."" category=marriage"	OK nb_approved appended verbatim: 'She married her own stepbrother'	/person/amelia-foote-1827		
+HD8145	bio_blurb	New Haven Foote daughter	OK bio_blurb set	/person/amelia-hill-1855		
+HD8150	bio_blurb	Author and horticulturalist	OK bio_blurb set	/person/amelia-hill-1884		
+HD8150	education	"school_name=""Barnard College"" dates=""1905"""	OK education record appended	/person/amelia-hill-1884		
+HD8150	career	"role=""Author and horticulturalist"" start_year=1920"	OK career record appended	/person/amelia-hill-1884		
+HD8150	nb_approved	"header=""She wrote for people of modest purses"" body=""Her books took the domestic arts to middle-class households that wanted a handsome room without the money for one. Redeeming Old Homes said as much in its subtitle — Country Homes for Modest Purses."" category=literature"	OK nb_approved appended verbatim: 'She wrote for people of modest purses'	/person/amelia-hill-1884		
+HD8150	nb_approved	"header=""Her papers went to Winterthur"" body=""She took her degree at Barnard in 1905 and wrote on table settings, flower arrangement, landscaping and the saving of old houses. The Winterthur Museum keeps her papers."" category=legacy"	OK nb_approved appended verbatim: 'Her papers went to Winterthur'	/person/amelia-hill-1884		
+HD8150	cc	"related=H01355 link=""Mary Ann Hooker Cornelius"" label=""wrote the household manual that fed a generation before her"""	OK cc->H01355 added; FLAG needs reciprocal cc row on H01355	/person/amelia-hill-1884		
+H01355	cc	"related=HD8150 link=""Amelia Leavitt Hill"" label=""wrote the same kind of book for the century after hers"""	OK cc->HD8150 added (reciprocal present)	/person/mary-cornelius-1796		
+I02649	bio_blurb	New York lawyer at Sullivan and Cromwell	OK bio_blurb set	/person/edward-hill-1853		
+I02649	education	"institution_id=""INST002"" dates=""1874"" notes=""A.B.; LL.B. 1876 and A.M. 1877."""	OK education record appended	/person/edward-hill-1853		
+I02649	career	"role=""Partner"" organization=""Sullivan and Cromwell"" start_year=1891"	OK career record appended	/person/edward-hill-1853		
+I02649	career	"role=""Assistant United States Attorney"" organization=""New York City"" start_year=1877 end_year=1883"	OK career record appended	/person/edward-hill-1853		
+I02649	nb_approved	"header=""A charter Mayflower descendant at the bar"" body=""He prosecuted for the United States at New York for six years, practised alone for eight more, and went into Sullivan and Cromwell in 1891. He was a charter member of the Society of Mayflower Descendants."" category=career"	OK nb_approved appended verbatim: 'A charter Mayflower descendant at the bar'	/person/edward-hill-1853		
+I02648	bio_blurb	New Haven physician	OK bio_blurb set	/person/charles-foote-1825		
+HD8148	bio_blurb	New Haven physician	OK bio_blurb set	/person/charles-foote-1861		
+HD8147	nb_approved	"header=""She died the day after her ninety-sixth birthday"" body=""Born in the February of 1859, she lived to see 1955. She died on the fifteenth, one day past her birthday, and was buried at Grove Street with her parents."" category=death"	OK nb_approved appended verbatim: 'She died the day after her ninety-sixth birthday'	/person/sarah-foote-1859		
