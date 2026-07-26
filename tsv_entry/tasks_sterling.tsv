@@ -1,0 +1,67 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD5380	birth_date	1805-05-07	OK birth set 1805-05-07	/person/james-sterling-1805		
+HD5380	death_date	1860-11-15	OK death set 1860-11-15	/person/james-sterling-1805		
+HD5380	field_set	birth.county=Wyoming County	OK set birth.county = 'Wyoming County'	/person/james-sterling-1805		
+HD5380	field_set	birth.state=Pennsylvania	OK set birth.state = 'Pennsylvania'	/person/james-sterling-1805		
+HD5380	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/james-sterling-1805		
+HD5380	field_set	death.city=Dixon	OK set death.city = 'Dixon'	/person/james-sterling-1805		
+HD5380	field_set	death.county=Lee County	OK set death.county = 'Lee County'	/person/james-sterling-1805		
+HD5380	field_set	death.state=Illinois	OK set death.state = 'Illinois'	/person/james-sterling-1805		
+HD5380	field_set	death.country=United States	OK set death.country = 'United States'	/person/james-sterling-1805		
+HD5380	field_set	death.cause=Quick consumption	OK set death.cause = 'Quick consumption'	/person/james-sterling-1805		
+HD5380	field_set	residence.city=Dixon	OK set residence.city = 'Dixon'	/person/james-sterling-1805		
+HD5380	field_set	residence.state=Illinois	OK set residence.state = 'Illinois'	/person/james-sterling-1805		
+HD5380	field_set	marriages[0].date_year=1824	OK set marriages[0].date_year = 1824	/person/james-sterling-1805		
+HD5380	field_set	marriages[0].date_month=5	OK set marriages[0].date_month = 5	/person/james-sterling-1805		
+HD5380	field_set	marriages[0].date_day=30	OK set marriages[0].date_day = 30	/person/james-sterling-1805		
+HD5380	field_set	marriages[1].date_year=1831	OK set marriages[1].date_year = 1831	/person/james-sterling-1805		
+HD5380	field_set	marriages[1].date_month=2	OK set marriages[1].date_month = 2	/person/james-sterling-1805		
+HD5380	field_set	marriages[1].date_day=3	OK set marriages[1].date_day = 3	/person/james-sterling-1805		
+HD5380	field_set	research_notes=Birth place conflict: FindAGrave gives Wyoming County PA; FamilySearch gives Luzerne PA. Wyoming County was formed out of Luzerne in 1842, after his birth, so both can describe the same ground. Death date of his second wife also conflicts - FindAGrave 1 Oct 1889, the county biography 13 Oct 1889.	OK set research_notes = 'Birth place conflict: FindAGrave gives Wyoming County PA; FamilySearch gives Luzerne PA. Wyoming County was formed out of Luzerne in 1842, after his birth, so both can describe the same ground. Death date of his second wife also conflicts - FindAGrave 1 Oct 1889, the county biography 13 Oct 1889.'	/person/james-sterling-1805		
+HD5380	nb_replace	"old=""An Illinois city was named after him"" header=""A Pennsylvanian put his name to the vote"" body=""He was running the state's canal and lock work on the Rock River in 1836 when the settlers met to name their village. Several names were proposed before a Mr. Worthington, a fellow Pennsylvanian, put up Sterling and spoke warmly of the family as he had known it back east. The meeting took it, and the city stands there still."" category=career"	OK nb_replace: 'An Illinois city was named after him' -> 'A Pennsylvanian put his name to the vote' placed verbatim in place	/person/james-sterling-1805		
+HD5380	nb_approved	"header=""The state went broke and took him with it"" body=""His contracts were with Illinois, and when the state failed he was ruined by it. He worked where he could across the West and back in Pennsylvania, and in 1847 brought his family to Dixon, where he built canals and bridges, kept a store, milled, and cut lumber."" category=business"	OK nb_approved appended verbatim: 'The state went broke and took him with it' (WARN header 9 words > 8)	/person/james-sterling-1805		
+HD5380	nb_approved	"header=""The title was not a military one"" body=""He was called Major, as his father had been before him, and in neither case did the rank mean anything martial. Both men were contractors on public works, and the courtesy travelled with them."" category=character"	OK nb_approved appended verbatim: 'The title was not a military one'	/person/james-sterling-1805		
+HD5380	nb_approved	"header=""Quick consumption took him at Dixon"" body=""He had retired to a farm three miles west of Dixon while the state's insolvency ground on through the courts. He died there on 15 November 1860, at fifty-five, of what the record calls quick consumption."" category=death"	OK nb_approved appended verbatim: 'Quick consumption took him at Dixon'	/person/james-sterling-1805		
+X02963	birth_date	1776-07-08	OK birth set 1776-07-08	/person/daniel-theodore-sterling-1776		
+X02963	death_date	1839-08-25	OK death set 1839-08-25	/person/daniel-theodore-sterling-1776		
+X02963	field_set	birth.state=Connecticut	OK set birth.state = 'Connecticut'	/person/daniel-theodore-sterling-1776		
+X02963	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/daniel-theodore-sterling-1776		
+X02963	field_set	death.county=Rock Island County	OK set death.county = 'Rock Island County'	/person/daniel-theodore-sterling-1776		
+X02963	field_set	death.state=Illinois	OK set death.state = 'Illinois'	/person/daniel-theodore-sterling-1776		
+X02963	field_set	death.country=United States	OK set death.country = 'United States'	/person/daniel-theodore-sterling-1776		
+X02963	field_set	death.cause=Malarial fever	OK set death.cause = 'Malarial fever'	/person/daniel-theodore-sterling-1776		
+X02963	field_set	marriages[0].date_year=1799	OK set marriages[0].date_year = 1799	/person/daniel-theodore-sterling-1776		
+X02963	nb_approved	"header=""He saw Illinois when it was wilderness"" body=""He visited the new state soon after it entered the Union, when most of it was still literal wilderness. Twenty years on he came back with his son for the Rock River contracts, and died near the mouth of the river of malarial fever with the work unfinished."" category=business"	OK nb_approved appended verbatim: 'He saw Illinois when it was wilderness'	/person/daniel-theodore-sterling-1776		
+X02963	nb_approved	"header=""A hotel, a store, and a farm"" body=""In Luzerne County he was a public man in several capacities at once, keeping a hotel, selling goods and farming. His son James carried the same trade and the same courtesy title of Major out to Illinois."" category=career"	OK nb_approved appended verbatim: 'A hotel, a store, and a farm'	/person/daniel-theodore-sterling-1776		
+X02964	birth_date	1804-07-17	OK birth set 1804-07-17	/person/keziah-m-canfield-1804		
+X02964	death_date	1830-08-08	OK death set 1830-08-08	/person/keziah-m-canfield-1804		
+X02964	field_set	birth.county=Tioga County	OK set birth.county = 'Tioga County'	/person/keziah-m-canfield-1804		
+X02964	field_set	birth.state=New York	OK set birth.state = 'New York'	/person/keziah-m-canfield-1804		
+X02964	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/keziah-m-canfield-1804		
+X02964	field_set	burial.cemetery_id=CEM643	OK set burial.cemetery_id = 'CEM643'	/person/keziah-m-canfield-1804		
+X02964	nb_approved	"header=""Dead at twenty-six, three children behind"" body=""She married James Sterling in Luzerne County in May 1824 and bore three children in six years — Amanda, and the twins Edward and Edwin. She died in August 1830, in the prime of life, and lies at Black Walnut."" category=family"	OK nb_approved appended verbatim: 'Dead at twenty-six, three children behind'	/person/keziah-m-canfield-1804		
+X02965	birth_date	1809-08-14	OK birth set 1809-08-14	/person/eliza-passmore-1809		
+X02965	death_date	1889-10-01	OK death set 1889-10-01	/person/eliza-passmore-1809		
+X02965	field_set	birth.city=Auburn Center	OK set birth.city = 'Auburn Center'	/person/eliza-passmore-1809		
+X02965	field_set	birth.county=Susquehanna County	OK set birth.county = 'Susquehanna County'	/person/eliza-passmore-1809		
+X02965	field_set	birth.state=Pennsylvania	OK set birth.state = 'Pennsylvania'	/person/eliza-passmore-1809		
+X02965	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/eliza-passmore-1809		
+X02965	field_set	death.city=Dixon	OK set death.city = 'Dixon'	/person/eliza-passmore-1809		
+X02965	field_set	death.county=Lee County	OK set death.county = 'Lee County'	/person/eliza-passmore-1809		
+X02965	field_set	death.state=Illinois	OK set death.state = 'Illinois'	/person/eliza-passmore-1809		
+X02965	field_set	death.country=United States	OK set death.country = 'United States'	/person/eliza-passmore-1809		
+X02965	nb_approved	"header=""She died at her youngest son's house"" body=""She came out to Illinois with her husband when he moved to locate, and helped make the home at Dixon where she raised five children. A steady Methodist to the last, she died in the autumn of 1889 at the house of her youngest son, John Milton, at eighty."" category=family"	OK nb_approved appended verbatim: 'She died at her youngest son's house'	/person/eliza-passmore-1809		
+HD5381	birth_date	1807	OK birth set 1807	/person/lewis-sterling-1807		
+HD5381	death_date	1870-05-25	OK death set 1870-05-25	/person/lewis-sterling-1807		
+HD5381	field_set	research_notes=Birth year conflict: FindAGrave gives 1800; the FamilySearch sibling list gives 1807, which also separates him from the elder Lewis (HD5378, 1803-1806) who died in infancy. Entry follows 1807.	OK set research_notes = 'Birth year conflict: FindAGrave gives 1800; the FamilySearch sibling list gives 1807, which also separates him from the elder Lewis (HD5378, 1803-1806) who died in infancy. Entry follows 1807.'	/person/lewis-sterling-1807		
+X02968	birth_date	1811-06-13	OK birth set 1811-06-13	/person/emily-donnell		
+X02968	death_date	1882-04-10	OK death set 1882-04-10	/person/emily-donnell-1811		
+X02968	field_set	birth.state=Pennsylvania	OK set birth.state = 'Pennsylvania'	/person/emily-donnell-1811		
+X02968	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/emily-donnell-1811		
+X02968	field_set	death.city=Meshoppen	OK set death.city = 'Meshoppen'	/person/emily-donnell-1811		
+X02968	field_set	death.county=Wyoming County	OK set death.county = 'Wyoming County'	/person/emily-donnell-1811		
+X02968	field_set	death.state=Pennsylvania	OK set death.state = 'Pennsylvania'	/person/emily-donnell-1811		
+X02968	field_set	death.country=United States	OK set death.country = 'United States'	/person/emily-donnell-1811		
+X02968	field_set	research_notes=Maiden name conflict: this entry carries Donnell; FamilySearch records her as Emily A. Donald. Not changed pending Sam's call.	"OK set research_notes = ""Maiden name conflict: this entry carries Donnell; FamilySearch records her as Emily A. Donald. Not changed pending Sam's call."""	/person/emily-donnell-1811		
+HD5396	birth_date	1830	OK birth set 1830	/person/henry-d-sterling		
+HD5397	birth_date	1849	OK birth set 1849	/person/susan-sterling		
