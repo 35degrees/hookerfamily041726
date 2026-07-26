@@ -1,0 +1,19 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD8150	nb_approved	"header=""She wrote gardens for Vogue"" body=""Garden Portraits ran to three hundred pages on how to lay a garden out - colour, structure, what will grow where, from the cottage plot to the formal estate. In Vogue in 1921 she asked who, spending summer evenings on a veranda, does not know the strange unearthly beauty of the flowers at night."" category=literature"	OK nb_approved appended verbatim: 'She wrote gardens for Vogue'	/person/amelia-hill-1884		
+HD8145	field_set	research_notes=DAR member #529. Born New Haven 26 Mar 1855, married Edward Bruce Hill there 30 Apr 1878, died New York City 7 Dec 1900. Her source notes that no grave could be found for her; the Woodlawn burial recorded here follows her husband's and is an inference, not a located stone.	"OK set research_notes = ""DAR member #529. Born New Haven 26 Mar 1855, married Edward Bruce Hill there 30 Apr 1878, died New York City 7 Dec 1900. Her source notes that no grave could be found for her; the Woodlawn burial recorded here follows her husband's and is an inference, not a located stone."""	/person/amelia-hill-1855		
+I02648	birth_date	1825-09-05	OK birth set 1825-09-05	/person/charles-foote-1825		
+I02648	death_date	1871-11-09	OK death set 1871-11-09	/person/charles-foote-1825		
+I02648	field_set	burial.cemetery_id=CEM009	OK set burial.cemetery_id = 'CEM009'	/person/charles-foote-1825		
+I02648	field_set	marriages[0].date_year=1852	OK set marriages[0].date_year = 1852	/person/charles-foote-1825		
+I02648	field_set	marriages[0].date_month=4	OK set marriages[0].date_month = 4	/person/charles-foote-1825		
+I02648	field_set	marriages[0].date_day=22	OK set marriages[0].date_day = 22	/person/charles-foote-1825		
+I02648	field_set	marriages[0].location_city=New Haven	OK set marriages[0].location_city = 'New Haven'	/person/charles-foote-1825		
+I02648	field_set	marriages[0].location_state=Connecticut	OK set marriages[0].location_state = 'Connecticut'	/person/charles-foote-1825		
+HD8141	field_set	marriages[0].date_year=1852	OK set marriages[0].date_year = 1852	/person/amelia-foote-1827		
+HD8141	field_set	marriages[0].date_month=4	OK set marriages[0].date_month = 4	/person/amelia-foote-1827		
+HD8141	field_set	marriages[0].date_day=22	OK set marriages[0].date_day = 22	/person/amelia-foote-1827		
+HD8141	field_set	marriages[0].location_city=New Haven	OK set marriages[0].location_city = 'New Haven'	/person/amelia-foote-1827		
+HD8141	field_set	marriages[0].location_state=Connecticut	OK set marriages[0].location_state = 'Connecticut'	/person/amelia-foote-1827		
+HD8141	field_set	burial.cemetery_id=CEM009	OK set burial.cemetery_id = 'CEM009'	/person/amelia-foote-1827		
+I02648	nb_replace	"old=""The two households became one house"" header=""The two households became one house"" body=""His mother died at Jamestown in 1840 and his father remarried the following spring, bringing Amelia Jenkins and her mother into the family; he was sixteen, she was fourteen, and from then on they were raised together. They married at New Haven on 22 April 1852 and had six children there."" category=family"	OK nb_replace: 'The two households became one house' -> 'The two households became one house' placed verbatim in place	/person/charles-foote-1825		
+X00158	nb_approved	"header=""He founded the county temperance society"" body=""He was one of fifteen men who met in 1829 to organise the Chautauqua County Temperance Society and served several years as its president. He led the county Bible society for many years too, and helped found the New Haven Colony Historical Society, staying a director of it until he died."" category=social_reform"	OK nb_approved appended verbatim: 'He founded the county temperance society'	/person/elial-foote-1796		

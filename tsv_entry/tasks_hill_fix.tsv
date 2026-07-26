@@ -1,0 +1,5 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X00158	nb_remove	He founded the county temperance society	OK NB 'He founded the county temperance society' removed (explicit)	/person/elial-foote-1796		
+X00158	nb_replace	"old=""He went over to the Liberty ticket"" header=""He went over to the Liberty ticket"" body=""He was one of fifteen men who met in 1829 to found the Chautauqua County Temperance Society, and led it for years afterwards. About 1843 he took up the anti-slavery cause and voted the Liberty ticket the next year; the papers he kept on that work are held by the county historical society."" category=social_reform"	OK nb_replace: 'He went over to the Liberty ticket' -> 'He went over to the Liberty ticket' placed verbatim in place	/person/elial-foote-1796		
+HD8150	bio_blurb	Household and garden author	OK bio_blurb set	/person/amelia-hill-1884		
+HD8150	field_set	notable.notable_blurb=null	OK set notable.notable_blurb = None	/person/amelia-hill-1884		
