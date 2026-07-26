@@ -1,0 +1,37 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+I01663	birth_date	1935	OK birth set 1935	/person/carol-adele-russell-1935		
+I01663	death_date	2022-08-27	OK death set 2022-08-27	/person/carol-adele-russell-1935		
+I01663	field_set	birth.city=Staten Island	OK set birth.city = 'Staten Island'	/person/carol-adele-russell-1935		
+I01663	field_set	birth.county=Richmond County	OK set birth.county = 'Richmond County'	/person/carol-adele-russell-1935		
+I01663	field_set	birth.state=New York	OK set birth.state = 'New York'	/person/carol-adele-russell-1935		
+I01663	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/carol-adele-russell-1935		
+I01663	field_set	death.city=Orient	OK set death.city = 'Orient'	/person/carol-adele-russell-1935		
+I01663	field_set	death.county=Suffolk County	OK set death.county = 'Suffolk County'	/person/carol-adele-russell-1935		
+I01663	field_set	death.state=New York	OK set death.state = 'New York'	/person/carol-adele-russell-1935		
+I01663	field_set	death.country=United States	OK set death.country = 'United States'	/person/carol-adele-russell-1935		
+I01663	field_set	burial.cemetery_id=CEM768	OK set burial.cemetery_id = 'CEM768'	/person/carol-adele-russell-1935		
+HD6102	field_set	cross_connections[0].link_text=e. e. cummings	OK set cross_connections[0].link_text = 'e. e. cummings'	/person/joseph-willard-roosevelt-1918		
+HD6102	field_set	cross_connections[1].link_text=Elaine Eliot Orr MacDermott	OK set cross_connections[1].link_text = 'Elaine Eliot Orr MacDermott'	/person/joseph-willard-roosevelt-1918		
+HD6102	field_set	cross_connections[3].link_text=Scofield Thayer	OK set cross_connections[3].link_text = 'Scofield Thayer'	/person/joseph-willard-roosevelt-1918		
+HD6102	field_set	"cross_connections[4].link_text=Francis ""Frank"" MacDermot"	"OK set cross_connections[4].link_text = 'Francis ""Frank"" MacDermot'"	/person/joseph-willard-roosevelt-1918		
+HD6102	field_set	cross_connections[5].link_text=Marion Morehouse	OK set cross_connections[5].link_text = 'Marion Morehouse'	/person/joseph-willard-roosevelt-1918		
+HD6102	field_set	cross_connections[6].link_text=James Lord Pierpont	OK set cross_connections[6].link_text = 'James Lord Pierpont'	/person/joseph-willard-roosevelt-1918		
+HD6284	field_set	birth.city=Washington	OK set birth.city = 'Washington'	/person/constance-1900		
+HD6283	birth_date	1884-12-05	OK birth set 1884-12-05	/person/martha		
+HD6283	field_set	birth.city=Baltimore	OK set birth.city = 'Baltimore'	/person/martha-1884		
+HD6283	field_set	birth.state=Maryland	OK set birth.state = 'Maryland'	/person/martha-1884		
+HD6283	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/martha-1884		
+HD6283	field_set	death.country=United States	OK set death.country = 'United States'	/person/martha-1884		
+HD6283	field_set	burial.cemetery_id=CEM797	OK set burial.cemetery_id = 'CEM797'	/person/martha-1884		
+X03191	birth_date	1878-12-13	OK birth set 1878-12-13	/person/eccleston		
+X03191	death_date	1934-03-11	OK death set 1934-03-11	/person/eccleston-1878		
+X03191	field_set	birth.city=Baltimore	OK set birth.city = 'Baltimore'	/person/eccleston-1878		
+X03191	field_set	birth.state=Maryland	OK set birth.state = 'Maryland'	/person/eccleston-1878		
+X03191	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/eccleston-1878		
+X03191	field_set	death.county=Kings County	OK set death.county = 'Kings County'	/person/eccleston-1878		
+X03191	field_set	death.state=New York	OK set death.state = 'New York'	/person/eccleston-1878		
+X03191	field_set	death.country=United States	OK set death.country = 'United States'	/person/eccleston-1878		
+X03191	field_set	burial.cemetery_id=CEM1380	OK set burial.cemetery_id = 'CEM1380'	/person/eccleston-1878		
+X03191	field_set	burial.plot_notes=Interred 13 March 1934.	OK set burial.plot_notes = 'Interred 13 March 1934.'	/person/eccleston-1878		
+HD6279	cc	"related=X02896 link=""Rear Admiral Francis Hoyt Gregory"" label=""ran the Civil War's private shipyards as he ran the navy yards"""	OK cc->X02896 added; FLAG needs reciprocal cc row on X02896	/person/william-phelps-1868		
+X02896	cc	"related=HD6279 link=""Rear Admiral William Woodward Phelps"" label=""commanded Portsmouth and Brooklyn yards as he oversaw the ironclads"""	OK cc->HD6279 added (reciprocal present)	/person/francis-gregory-1789		
