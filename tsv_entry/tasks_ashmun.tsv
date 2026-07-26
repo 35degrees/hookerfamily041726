@@ -1,0 +1,51 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD0856	cc_remove	H00684	OK CC to H00684 removed (explicit)	/person/amelia-leavitt-1799		
+HD0856	field_set	cross_connections[0].display_label=her grandmother; the Underground Railroad Leavitts descend from her	OK set cross_connections[0].display_label = 'her grandmother; the Underground Railroad Leavitts descend from her'	/person/amelia-leavitt-1799		
+H00302	cc	"related=HD0856 link=""Amelia Stiles Leavitt"" label=""granddaughter who married the Liberty-ticket judge Elial Foote"""	OK cc->HD0856 added (reciprocal present)	/person/sarah-hooker-1742		
+X00158	field_set	cross_connections[0].display_label=gaveled the 1860 convention that made Lincoln the nominee	OK set cross_connections[0].display_label = 'gaveled the 1860 convention that made Lincoln the nominee'	/person/elial-foote-1796		
+HD0613	field_set	cross_connections[3].display_label=spoke at the New Haven meeting that organized the party, 1856	OK set cross_connections[3].display_label = 'spoke at the New Haven meeting that organized the party, 1856'	/person/george-ashmun-1804		
+HD0613	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785039888/George_Ashmun_o3pypq.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/george-ashmun-1804		
+HD0613	field_set	bio.photo_notes=Cloudinary; supplied by Sam.	OK set bio.photo_notes = 'Cloudinary; supplied by Sam.'	/person/george-ashmun-1804		
+HD0613	notable_blurb	Congressman; chairman of the 1860 Republican National Convention	OK notable_blurb set	/person/george-ashmun-1804		
+HD0613	field_set	death.date_precision=exact	OK set death.date_precision = 'exact'	/person/george-ashmun-1804		
+HD0613	field_set	death.city=Springfield	OK set death.city = 'Springfield'	/person/george-ashmun-1804		
+HD0613	field_set	death.state=Massachusetts	OK set death.state = 'Massachusetts'	/person/george-ashmun-1804		
+HD0613	field_set	research_notes=Death date conflict: Wikipedia gives 16 July 1870; Appletons and FindAGrave give 17 July 1870. Entry follows 17 July.	OK set research_notes = 'Death date conflict: Wikipedia gives 16 July 1870; Appletons and FindAGrave give 17 July 1870. Entry follows 17 July.'	/person/george-ashmun-1804		
+HD0613	career	"role=""Member, U.S. House of Representatives"" organization=""Massachusetts"" start_year=1845 end_year=1851"	OK career record appended	/person/george-ashmun-1804		
+HD0613	career	"role=""Speaker of the House"" organization=""Massachusetts House of Representatives"" start_year=1841 end_year=1841"	OK career record appended	/person/george-ashmun-1804		
+HD0613	career	"role=""Member"" organization=""Massachusetts Senate"" start_year=1838 end_year=1840"	OK career record appended	/person/george-ashmun-1804		
+HD0613	career	"role=""Member"" organization=""Massachusetts House of Representatives"" start_year=1833 end_year=1837"	OK career record appended	/person/george-ashmun-1804		
+HD0613	career	"role=""Partner"" organization=""Chapman & Ashmun, Springfield"""	OK career appended -- WARN: no start_year, row will NOT render	/person/george-ashmun-1804		
+HD0613	career	"role=""Director"" organization=""Union Pacific Railroad"""	OK career appended -- WARN: no start_year, row will NOT render	/person/george-ashmun-1804		
+HD0613	education_set	"school_name=""Yale College"" dates=""Class of 1823"""	FLAG education_set: needs index=N	/person/george-ashmun-1804		
+HD0613	nb_replace	"old=""Chaired the 1860 convention that nominated Lincoln"" header=""He gaveled Lincoln into the nomination"" body=""Chosen chairman of the Republican National Convention at Chicago in May 1860, he held the Wigwam through three ballots and declared Abraham Lincoln the nominee. He was fifty-five and nine years out of Congress, and it is the thing his name is still attached to."" category=career"	OK nb_replace: 'Chaired the 1860 convention that nominated Lincoln' -> 'He gaveled Lincoln into the nomination' placed verbatim in place	/person/george-ashmun-1804		
+HD0613	nb_replace	"old=""Father a senator; son served four congressional terms"" header=""He carried the news to Springfield"" body=""The convention sent him at the head of the committee that formally notified Lincoln of the nomination, and he made the address in the parlour of the house at Springfield. Lincoln accepted in writing two days later."" category=politics"	OK nb_replace: 'Father a senator; son served four congressional terms' -> 'He carried the news to Springfield' placed verbatim in place	/person/george-ashmun-1804		
+HD0613	nb_replace	"old=""Lincoln wrote to him hours before the assassination"" header=""The last note Lincoln ever wrote"" body=""On April 14, 1865 Ashmun called at the White House, and Lincoln — already leaving for Ford's Theatre — wrote him a card on the spot: 'Allow Mr. Ashmun and friend to come in at 9 A.M. tomorrow.' The President was shot that evening. The appointment was never kept."" category=legacy"	OK nb_replace: 'Lincoln wrote to him hours before the assassination' -> 'The last note Lincoln ever wrote' placed verbatim in place	/person/george-ashmun-1804		
+HD0613	nb_approved	"header=""He walked Douglas over to Lincoln"" body=""In April 1861, with Sumter fallen, Ashmun brought Stephen A. Douglas to the White House — the rival Lincoln had beaten five months earlier. Douglas left pledged to the Union and spent the last weeks of his life saying so in public."" category=politics"	OK nb_approved appended verbatim: 'He walked Douglas over to Lincoln'	/person/george-ashmun-1804		
+HD0613	nb_approved	"header=""He answered the attack on Webster"" body=""When Charles Jared Ingersoll rose in the House in 1846 to accuse Daniel Webster of misusing the secret service fund, the inquiry fell to Ashmun's committee, and its report cleared Webster. It was the fight that fixed him in Washington as Webster's man."" category=politics"	OK nb_approved appended verbatim: 'He answered the attack on Webster'	/person/george-ashmun-1804		
+HD0613	nb_approved	"header=""A seat on the transcontinental board"" body=""After Congress he sat as a director of the Union Pacific Railroad while the line was being driven west across the plains. He died in 1870, the year after the rails met at Promontory."" category=business"	OK nb_approved appended verbatim: 'A seat on the transcontinental board'	/person/george-ashmun-1804		
+HD0613	cc	"related=HD0123 link=""Charles Jared Ingersoll"" label=""the congressman whose 1846 charges against Webster he investigated"""	OK cc->HD0123 added; FLAG needs reciprocal cc row on HD0123	/person/george-ashmun-1804		
+HD0123	cc	"related=HD0613 link=""George Ashmun"" label=""ran the House inquiry into his 1846 charges and cleared Webster"""	OK cc->HD0613 added (reciprocal present)	/person/charles-ingersoll-1782		
+HD0613	cc	"related=HD6682 link=""Benjamin Asel Chaplin"" label=""drove Union Pacific locomotives out of Laramie while he sat on its board"""	FLAG BLOCKED: cc label 72 chars (max 70)	/person/george-ashmun-1804		
+HD6682	cc	"related=HD0613 link=""George Ashmun"" label=""sat on the Union Pacific board while he was firing its engines"""	OK cc->HD0613 added; FLAG needs reciprocal cc row on HD0613	/person/benjamin-chaplin-1853		
+X00230	birth_date	1808-04-08	OK birth set 1808-04-08	/person/martha-hall		
+X00230	death_date	1862-10-14	OK death set 1862-10-14	/person/martha-hall-1808		
+X00230	field_set	birth.city=Greenfield	OK set birth.city = 'Greenfield'	/person/martha-hall-1808		
+X00230	field_set	birth.state=Massachusetts	OK set birth.state = 'Massachusetts'	/person/martha-hall-1808		
+X00230	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/martha-hall-1808		
+X00230	field_set	death.city=Springfield	OK set death.city = 'Springfield'	/person/martha-hall-1808		
+X00230	field_set	death.state=Massachusetts	OK set death.state = 'Massachusetts'	/person/martha-hall-1808		
+X00230	field_set	death.country=United States	OK set death.country = 'United States'	/person/martha-hall-1808		
+X00230	field_set	burial.cemetery_id=CEM413	OK set burial.cemetery_id = 'CEM413'	/person/martha-hall-1808		
+X00230	nb_approved	"header=""She buried two daughters in one year"" body=""Mary was three and Sarah was one when both died in 1838, within months of each other in the same Springfield epidemic. Martha was thirty. She had two older girls, Elizabeth and Lucy, and no more children after."" category=family"	OK nb_approved appended verbatim: 'She buried two daughters in one year'	/person/martha-hall-1808		
+HD4946	birth_date	1831-03-20	OK birth set 1831-03-20	/person/lucy-ashmun-1831		
+HD4946	death_date	1877-03-24	OK death set 1877-03-24	/person/lucy-ashmun-1831		
+HD4946	field_set	birth.city=Greenfield	OK set birth.city = 'Greenfield'	/person/lucy-ashmun-1831		
+HD4946	field_set	birth.state=Massachusetts	OK set birth.state = 'Massachusetts'	/person/lucy-ashmun-1831		
+HD4946	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/lucy-ashmun-1831		
+HD4946	field_set	burial.cemetery_id=CEM413	OK set burial.cemetery_id = 'CEM413'	/person/lucy-ashmun-1831		
+HD4946	nb_approved	"header=""John Quincy Adams wrote her a poem"" body=""On her birthday in March 1846 the former President — then seventy-eight and in his final years in the House — wrote out verses headed 'To Miss Lucy Hooker Ashmun.' She was fifteen, and her father sat with Adams in the Massachusetts delegation. The manuscript survives at the Massachusetts Historical Society."" category=literature"	OK nb_approved appended verbatim: 'John Quincy Adams wrote her a poem'	/person/lucy-ashmun-1831		
+HD4947	field_set	burial.cemetery_id=CEM413	OK set burial.cemetery_id = 'CEM413'	/person/mary-ashmun-1835		
+HD4948	field_set	burial.cemetery_id=CEM413	OK set burial.cemetery_id = 'CEM413'	/person/sarah-ashmun-1837		
+HD4945	field_set	death.city=Springfield	OK set death.city = 'Springfield'	/person/elizabeth-ashmun-1829		
+HD4945	field_set	death.state=Massachusetts	OK set death.state = 'Massachusetts'	/person/elizabeth-ashmun-1829		

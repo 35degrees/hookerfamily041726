@@ -1,0 +1,3 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD0613	education_set	"index=0 school_name=""Yale College"" dates=""Class of 1823"""	OK education[0] updated in place	/person/george-ashmun-1804		
+HD0613	cc	"related=HD6682 link=""Benjamin Asel Chaplin"" label=""drove Union Pacific engines from Laramie while he sat on its board"""	OK cc->HD6682 added (reciprocal present)	/person/george-ashmun-1804		
