@@ -1,0 +1,12 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X02064	bio_blurb	Chicago lawyer; built Hildene in Vermont	OK bio_blurb set	/person/robert-lincoln-1843		
+X02064	cc	"related=HD1170 link=""John Pierpont 'JP' Morgan"" label=""held the controlling interest in the company he ran"""	OK cc->HD1170 added; FLAG needs reciprocal cc row on HD1170	/person/robert-lincoln-1843		
+HD1170	cc	"related=X02064 link=""Robert Todd Lincoln"" label=""was president then chairman of Pullman, which he controlled"""	OK cc->X02064 added (reciprocal present)	/person/john-morgan-1837		
+HD04925	death_date	1984-11-22	OK death set 1984-11-22	/person/grace-anthony-1888		
+HD04925	field_set	death.city=Turnersville	OK set death.city = 'Turnersville'	/person/grace-anthony-1888		
+HD04925	field_set	death.county=Gloucester County	OK set death.county = 'Gloucester County'	/person/grace-anthony-1888		
+HD04925	field_set	death.state=New Jersey	OK set death.state = 'New Jersey'	/person/grace-anthony-1888		
+HD04925	field_set	death.country=United States	OK set death.country = 'United States'	/person/grace-anthony-1888		
+HD04925	field_set	burial.cemetery_id=CEM268	OK set burial.cemetery_id = 'CEM268'	/person/grace-anthony-1888		
+HD04925	field_set	research_notes=FindAGrave gives her birth as 1887 against the 1888 held here; not changed. NOTE: Sam supplied this same block (b.1887, d. 22 Nov 1984 Turnersville NJ, Graceland) for both Miriam HD04923 and Grace HD04925. It cannot describe both. The 1887 birth fits Grace, so it is applied here only; Miriam is left untouched pending Sam's call.	"OK set research_notes = ""FindAGrave gives her birth as 1887 against the 1888 held here; not changed. NOTE: Sam supplied this same block (b.1887, d. 22 Nov 1984 Turnersville NJ, Graceland) for both Miriam HD04923 and Grace HD04925. It cannot describe both. The 1887 birth fits Grace, so it is applied here only; Miriam is left untouched pending Sam's call."""	/person/grace-anthony-1888		
+HD04925	nb_approved	"header=""She outlived all three of her sisters"" body=""Bessie died at thirty-two in Virginia, Eleanor at thirty-nine, and Miriam before her. Grace lived to ninety-six, dying in New Jersey in 1984, and was brought back to the family ground at Graceland."" category=family"	OK nb_approved appended verbatim: 'She outlived all three of her sisters'	/person/grace-anthony-1888		

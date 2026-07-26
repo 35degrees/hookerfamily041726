@@ -1,0 +1,2 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD04925	nb_replace	"old=""She outlived all three of her sisters"" header=""She outlived her sisters by decades"" body=""Bessie died at thirty-two in Virginia and Eleanor at thirty-nine. Grace lived to ninety-six, dying in New Jersey in 1984, and was brought back to the family ground at Graceland."" category=family"	OK nb_replace: 'She outlived all three of her sisters' -> 'She outlived her sisters by decades' placed verbatim in place	/person/grace-anthony-1888		
