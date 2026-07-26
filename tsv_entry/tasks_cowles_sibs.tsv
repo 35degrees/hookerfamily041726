@@ -1,0 +1,32 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD8192	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785085763/pstar_wzo3w9.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/eugene-pomeroy-1913		
+HD8192	tag_add	pow	OK tag 'pow' added	/person/eugene-pomeroy-1913		
+I00322	cc	"related=HD7695 link=""Gertrude Vanderbilt Whitney"" label=""paid for Rothschild's bird museum after he asked her to"""	OK cc->HD7695 added; FLAG needs reciprocal cc row on HD7695	/person/leonard-sanford-1868		
+HD7695	cc	"related=I00322 link=""Dr. Leonard Cutler Sanford"" label=""asked her to buy Rothschild's birds for the museum, 1932"""	OK cc->I00322 added (reciprocal present)	/person/gertrude-vanderbilt-1875		
+HD3734	birth_date	1855-04-01	OK birth set 1855-04-01	/person/eugene-hutchinson-cowles-1855		
+HD3734	death_date	1892-04-21	OK death set 1892-04-21	/person/eugene-hutchinson-cowles-1855		
+HD3734	field_set	death.city=El Paso	OK set death.city = 'El Paso'	/person/eugene-hutchinson-cowles-1855		
+HD3734	field_set	death.county=El Paso County	OK set death.county = 'El Paso County'	/person/eugene-hutchinson-cowles-1855		
+HD3734	field_set	death.state=Texas	OK set death.state = 'Texas'	/person/eugene-hutchinson-cowles-1855		
+HD3734	field_set	death.country=United States	OK set death.country = 'United States'	/person/eugene-hutchinson-cowles-1855		
+HD3734	field_set	burial.cemetery_id=CEM085	OK set burial.cemetery_id = 'CEM085'	/person/eugene-hutchinson-cowles-1855		
+HD3734	nb_approved	"header=""He took his own daughter off a platform"" body=""In June, a few years after his father died, he carried his little girl away from her aunt in Cleveland and swung aboard a moving Lake Shore train heading west. The sheriff went after him with a writ of habeas corpus. He had married a banker's daughter, and the papers noted the union was not a happy one."" category=crime"	OK nb_approved appended verbatim: 'He took his own daughter off a platform'	/person/eugene-hutchinson-cowles-1855		
+HD3734	nb_approved	"header=""Dead at thirty-seven in El Paso"" body=""He married Alice Hale in 1879 and Claire Luneschloss in 1891, and died the next spring at El Paso, a long way from Cleveland. He was thirty-seven, and was brought home to Lake View."" category=death"	OK nb_approved appended verbatim: 'Dead at thirty-seven in El Paso'	/person/eugene-hutchinson-cowles-1855		
+HD3735	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785085961/78104097_1493552485_g7cq6f.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/alfred-hutchinson-cowles-1858		
+HD3735	birth_date	1858-12-08	OK birth set 1858-12-08	/person/alfred-hutchinson-cowles-1858		
+HD3735	death_date	1929-08-13	OK death set 1929-08-13	/person/alfred-hutchinson-cowles-1858		
+HD3735	field_set	death.city=Sewaren	OK set death.city = 'Sewaren'	/person/alfred-hutchinson-cowles-1858		
+HD3735	field_set	death.county=Middlesex County	OK set death.county = 'Middlesex County'	/person/alfred-hutchinson-cowles-1858		
+HD3735	field_set	death.state=New Jersey	OK set death.state = 'New Jersey'	/person/alfred-hutchinson-cowles-1858		
+HD3735	field_set	death.country=United States	OK set death.country = 'United States'	/person/alfred-hutchinson-cowles-1858		
+HD3735	field_set	burial.cemetery_id=CEM085	OK set burial.cemetery_id = 'CEM085'	/person/alfred-hutchinson-cowles-1858		
+HD3736	birth_date	1861-06-27	OK birth set 1861-06-27	/person/lewis-hutchinson-cowles-1861		
+HD3736	death_date	1940-05-17	OK death set 1940-05-17	/person/lewis-hutchinson-cowles-1861		
+HD3736	field_set	death.city=Cleveland	OK set death.city = 'Cleveland'	/person/lewis-hutchinson-cowles-1861		
+HD3736	field_set	death.county=Cuyahoga County	OK set death.county = 'Cuyahoga County'	/person/lewis-hutchinson-cowles-1861		
+HD3736	field_set	death.state=Ohio	OK set death.state = 'Ohio'	/person/lewis-hutchinson-cowles-1861		
+HD3736	field_set	death.country=United States	OK set death.country = 'United States'	/person/lewis-hutchinson-cowles-1861		
+HD3736	field_set	burial.cemetery_id=CEM085	OK set burial.cemetery_id = 'CEM085'	/person/lewis-hutchinson-cowles-1861		
+HD3736	nb_approved	"header=""He married again at sixty, after thirty years"" body=""Sarah Hutchison married him in 1891 and they lost their only child Isabell at four. Sarah died at Cincinnati in 1927; six years earlier he had already married Ellen Clendon, who outlived him by nineteen years. All four lie at Lake View."" category=family"	OK nb_approved appended verbatim: 'He married again at sixty, after thirty years'	/person/lewis-hutchinson-cowles-1861		
+I02669	field_set	research_notes=Birth date and year unrecorded; FindAGrave gives only New Orleans as her birthplace and January 1944 in New York County for her death. She is buried at Green-Wood, apart from the Cowles plot at Lake View.	OK set research_notes = 'Birth date and year unrecorded; FindAGrave gives only New Orleans as her birthplace and January 1944 in New York County for her death. She is buried at Green-Wood, apart from the Cowles plot at Lake View.'	/person/claire-luneschloss		
+HD8194	nb_approved	"header=""The girl carried onto the moving train"" body=""She was the child her father took from her aunt and carried aboard a westbound Lake Shore train, with the sheriff following after. She was ten or so; she married Paul Hurst in 1915 and they are buried together at Marion on Buzzards Bay."" category=family"	OK nb_approved appended verbatim: 'The girl carried onto the moving train'	/person/florence-hurst-1880		
