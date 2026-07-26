@@ -1,0 +1,5 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD04893	field_set	bio.display_name=Elizabeth Davenport Woolsey	OK set bio.display_name = 'Elizabeth Davenport Woolsey'	/person/elizabeth-woolsey-1908		
+HD04893	field_set	cross_connections[1].link_text=Bessie	OK set cross_connections[1].link_text = 'Bessie'	/person/elizabeth-woolsey-1908		
+HD04919	field_set	cross_connections[0].link_text=Elizabeth Davenport Woolsey	OK set cross_connections[0].link_text = 'Elizabeth Davenport Woolsey'	/person/elizabeth-la-farge-1947		
+HD04922	field_set	cross_connections[0].link_text=Elizabeth Davenport Woolsey	OK set cross_connections[0].link_text = 'Elizabeth Davenport Woolsey'	/person/mary-horne-1880		
