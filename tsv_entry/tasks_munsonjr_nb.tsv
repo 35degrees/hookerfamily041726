@@ -1,0 +1,2 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD3016	nb_replace	"old=""Born on an Army post, died a general"" header=""He built the Army's research branch"" body=""He organized and ran the Research Branch of the War Department, the unit that set out to find what American soldiers actually thought. What it learned shaped how the Army informed and led them."" category=science"	OK nb_replace: 'Born on an Army post, died a general' -> 'He built the Army's research branch' placed verbatim in place	/person/edward-munson-1904		
