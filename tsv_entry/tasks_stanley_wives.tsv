@@ -1,0 +1,29 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+TD0053	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785129534/Screenshot_2026-07-26_at_10.18.38_PM_hrjjc5.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/frances-stout-1915		
+TD0053	field_set	bio.display_name=Frances Talcott Stanley Stout	OK set bio.display_name = 'Frances Talcott Stanley Stout'	/person/frances-stout-1915		
+I00216	birth_date	1925-07-20	OK birth set 1925-07-20	/person/marjorie-trotter		
+I00216	death_date	1994-12-27	OK death set 1994-12-27	/person/marjorie-trotter-1925		
+I00216	field_set	birth.city=Springfield	OK set birth.city = 'Springfield'	/person/marjorie-trotter-1925		
+I00216	field_set	birth.county=Hampden County	OK set birth.county = 'Hampden County'	/person/marjorie-trotter-1925		
+I00216	field_set	birth.state=Massachusetts	OK set birth.state = 'Massachusetts'	/person/marjorie-trotter-1925		
+I00216	field_set	death.city=West Hartford	OK set death.city = 'West Hartford'	/person/marjorie-trotter-1925		
+I00216	field_set	death.county=Hartford County	OK set death.county = 'Hartford County'	/person/marjorie-trotter-1925		
+I00216	field_set	death.state=Connecticut	OK set death.state = 'Connecticut'	/person/marjorie-trotter-1925		
+I00216	education	"school_name=""Pine Manor College"" location=""Chestnut Hill, Massachusetts"""	OK education record appended	/person/marjorie-trotter-1925		
+I00216	nb_approved	"header=""She came to West Hartford from Greenwich"" body=""Born at Springfield and schooled at Pine Manor, she had raised four Trotter children in Greenwich before she married Talcott Stanley. She died at their West Hartford house after a long illness, two days after Christmas in 1994."" category=family"	OK nb_approved appended verbatim: 'She came to West Hartford from Greenwich'	/person/marjorie-trotter-1925		
+X02489	gender	female	OK gender=female (drives Wife/Husband/Spouse label)	/person/marguerite-sundheim		
+X02489	birth_date	1923-08-21	OK birth set 1923-08-21	/person/marguerite-sundheim		
+X02489	death_date	2010-03-26	OK death set 2010-03-26	/person/marguerite-sundheim-1923		
+X02489	field_set	birth.city=Chicago	OK set birth.city = 'Chicago'	/person/marguerite-sundheim-1923		
+X02489	field_set	birth.county=Cook County	OK set birth.county = 'Cook County'	/person/marguerite-sundheim-1923		
+X02489	field_set	birth.state=Illinois	OK set birth.state = 'Illinois'	/person/marguerite-sundheim-1923		
+X02489	field_set	bio.display_name=Marguerite Sundheim Stanley	OK set bio.display_name = 'Marguerite Sundheim Stanley'	/person/marguerite-sundheim-1923		
+X02489	field_set	bio.maiden_name=Sundheim	OK set bio.maiden_name = 'Sundheim'	/person/marguerite-sundheim-1923		
+X02489	field_set	bio.chip_first_name=Marg	OK set bio.chip_first_name = 'Marg'	/person/marguerite-sundheim-1923		
+X02489	bio_blurb	Hartford museum and hospital volunteer	OK bio_blurb set	/person/marguerite-sundheim-1923		
+X02489	education	"school_name=""Denison University"""	OK education record appended	/person/marguerite-sundheim-1923		
+X02489	nb_approved	"header=""She gave West Hartford her whole calendar"" body=""She came east from Illinois in 1963 and volunteered at nearly everything within reach — the Wadsworth, the Hartford Hospital women's auxiliary, the Noah Webster House, the Mark Twain House, the Bushnell, and Literacy Volunteers. She later married Talcott Stanley, who had given the Wadsworth fifty years of his own."" category=legacy"	OK nb_approved appended verbatim: 'She gave West Hartford her whole calendar'	/person/marguerite-sundheim-1923		
+X02489	nb_approved	"header=""She buried three of her sons"" body=""Two of her sons, Robert and Scott Hennessy, died before her, and an infant son, William, before them. Her daughter Joan and her son John survived her, with two grandchildren."" category=family"	OK nb_approved appended verbatim: 'She buried three of her sons'	/person/marguerite-sundheim-1923		
+X02489	nb_approved	"header=""Class officer and sorority president at Denison"" body=""She graduated from Denison University, where she was vice president of her senior class and president of Kappa Kappa Gamma. She kept up the sorority's Hartford alumnae group for the rest of her life."" category=education"	OK nb_approved appended verbatim: 'Class officer and sorority president at Denison'	/person/marguerite-sundheim-1923		
+X02489	nb_approved	"header=""Two lakes and an island of summers"" body=""She was a camper and then a counselor at Camp Kamaji in Bemidji, Minnesota, and spent summers at Williams Bay on Lake Geneva. The later ones she spent with Talcott on Fishers Island."" category=character"	OK nb_approved appended verbatim: 'Two lakes and an island of summers'	/person/marguerite-sundheim-1923		
+X02489	nb_approved	"header=""Bridge, duck pins, and a practical joke"" body=""She played bridge, tennis and golf, skied, and bowled duck pins. She had a green thumb and a flair for practical jokes."" category=character"	OK nb_approved appended verbatim: 'Bridge, duck pins, and a practical joke'	/person/marguerite-sundheim-1923		
