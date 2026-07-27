@@ -1,0 +1,21 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+T02299	field_set	bio.chip_first_name=Hope	OK set bio.chip_first_name = 'Hope'	/person/mary-goodwin-1920		
+T02298	field_set	marriages[0].date_year=1942	OK set marriages[0].date_year = 1942	/person/frances-chalmers-1918		
+T02298	field_set	marriages[0].date_month=8	OK set marriages[0].date_month = 8	/person/frances-chalmers-1918		
+T02298	field_set	marriages[0].date_day=31	OK set marriages[0].date_day = 31	/person/frances-chalmers-1918		
+T02298	field_set	marriages[0].location_city=Rye	OK set marriages[0].location_city = 'Rye'	/person/frances-chalmers-1918		
+T02298	field_set	marriages[0].location_state=New York	OK set marriages[0].location_state = 'New York'	/person/frances-chalmers-1918		
+I02616	field_set	marriages[0].date_year=1942	OK set marriages[0].date_year = 1942	/person/thomas-chalmers-1917		
+I02616	field_set	marriages[0].date_month=8	OK set marriages[0].date_month = 8	/person/thomas-chalmers-1917		
+I02616	field_set	marriages[0].date_day=31	OK set marriages[0].date_day = 31	/person/thomas-chalmers-1917		
+I02616	field_set	marriages[0].location_city=Rye	OK set marriages[0].location_city = 'Rye'	/person/thomas-chalmers-1917		
+I02616	field_set	marriages[0].location_state=New York	OK set marriages[0].location_state = 'New York'	/person/thomas-chalmers-1917		
+T01932	nb_approved	"header=""His brother gave the firm a career too"" body=""His younger brother Hooker went into James Talcott, Inc. as well and stayed in it his whole working life, rising to vice president and then vice chairman. Between the two of them and their father, the family held the top of the house from the eighteen-fifties to the nineteen-sixties."" category=family"	OK nb_approved appended verbatim: 'His brother gave the firm a career too'	/person/james-talcott-1893		
+T02298	education	"school_name=""Miss Hall's School"" dates=""Pittsfield, Massachusetts"""	OK education record appended	/person/frances-chalmers-1918		
+T02298	education	"school_name=""Vassar College"""	OK education record appended	/person/frances-chalmers-1918		
+T02298	nb_approved	"header=""She married in her mother's gown"" body=""She wore her mother's ivory satin wedding gown to Christ Church at Rye at the end of August 1942 — princess lace, rose point motifs, a cape of the same lace and a full skirt looped up into a court train. Her sister Hope was maid of honour and two more sisters, Joan and Anne, walked behind her. The reception was at Bramble Hill, her parents' house."" category=marriage"	OK nb_approved appended verbatim: 'She married in her mother's gown'	/person/frances-chalmers-1918		
+T02298	nb_approved	"header=""A dance at the Apawamis Club, 1936"" body=""Her parents brought her out at a dance at the Apawamis Club in September 1936, after Miss Hall's School at Pittsfield and before Vassar. Six years later she married a man still finishing medical school."" category=character"	OK nb_approved appended verbatim: 'A dance at the Apawamis Club, 1936'	/person/frances-chalmers-1918		
+I02616	education	"school_name=""Phillips Exeter Academy"""	OK education record appended	/person/thomas-chalmers-1917		
+I02616	education	"school_name=""Yale University"""	OK education record appended	/person/thomas-chalmers-1917		
+I02616	education	"school_name=""College of Physicians and Surgeons, Columbia University"""	OK education record appended	/person/thomas-chalmers-1917		
+I02616	nb_approved	"header=""He married in his last year of medicine"" body=""He married Frances Talcott at Rye at the end of August 1942, still a student at Columbia's College of Physicians and Surgeons and already a second lieutenant in the Army Medical Corps, carried on the inactive list until his degree came through the following March. Phillips Exeter and Yale had come before."" category=marriage"	OK nb_approved appended verbatim: 'He married in his last year of medicine'	/person/thomas-chalmers-1917		
