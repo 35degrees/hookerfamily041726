@@ -1,0 +1,15 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X03401	field_set	marriages[0].date_year=1943	OK set marriages[0].date_year = 1943	/person/mary-morse-1920		
+X03410	field_set	marriages[0].date_year=1943	OK set marriages[0].date_year = 1943	/person/richard-osborne-1921		
+T01933	field_set	bio.display_name=Hooker Talcott Sr.	OK set bio.display_name = 'Hooker Talcott Sr.'	/person/hooker-talcott-1895		
+T01933	field_set	bio.suffix=Sr.	OK set bio.suffix = 'Sr.'	/person/hooker-talcott-1895		
+T01933	education	"school_name=""Harvard College"" dates=""1918"""	OK education record appended	/person/hooker-talcott-1895		
+T01933	career	"role=""Vice president, later vice chairman"" organization=""James Talcott, Inc."" notes=""His entire business career; exact years not given in the obituary."""	OK career appended -- WARN: no start_year, row will NOT render	/person/hooker-talcott-1895		
+T01933	career	"role=""Owner"" organization=""Derrydale Press"" notes=""Publisher of sporting books and prints, New York."""	OK career appended -- WARN: no start_year, row will NOT render	/person/hooker-talcott-1895		
+T01933	nb_approved	"header=""His whole working life was one firm"" body=""He spent his entire business career at James Talcott, Inc., the New York factoring and financing house his grandfather had founded, and rose through it to vice president and then vice chairman. He was the third generation of the family inside it, and his son joined its successor company after him."" category=career"	OK nb_approved appended verbatim: 'His whole working life was one firm'	/person/hooker-talcott-1895		
+T01933	nb_approved	"header=""He owned a press for sporting books"" body=""Away from the factoring house he owned the Derrydale Press in New York, a publisher of sporting books and prints. He was a financial executive and a publisher at once."" category=business"	OK nb_approved appended verbatim: 'He owned a press for sporting books'	/person/hooker-talcott-1895		
+T01933	cc	"related=H03207 link=""James Talcott"" label=""founded the factoring house where he spent his whole career"""	OK cc->H03207 added; FLAG needs reciprocal cc row on H03207	/person/hooker-talcott-1895		
+H03207	cc	"related=T01933 link=""Hooker Talcott Sr."" label=""spent his whole career in the firm, rising to vice chairman"""	OK cc->T01933 added (reciprocal present)	/person/james-talcott-1835		
+T02296	career	"role=""Associate"" organization=""J.P. Morgan"""	OK career appended -- WARN: no start_year, row will NOT render	/person/hooker-talcott-1932		
+T02296	career	"role=""Executive"" organization=""Talcott National Corporation"""	OK career appended -- WARN: no start_year, row will NOT render	/person/hooker-talcott-1932		
+T02296	nb_approved	"header=""Morgan, the family firm, then Hancock"" body=""After Army service in Germany he went to J.P. Morgan, then to Talcott National Corporation, the successor to the factoring house his great-great-grandfather had founded. From there he moved to John Hancock in Boston, where he first saw what high-yield could do."" category=career"	OK nb_approved appended verbatim: 'Morgan, the family firm, then Hancock'	/person/hooker-talcott-1932		
