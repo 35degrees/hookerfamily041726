@@ -1,0 +1,61 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+I02682	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785110923/colchar_lovjdl.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/arthur-cornelson-1909		
+HD8219	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785111588/thumbMobile_34_w4fg15.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/elizabeth-cornelson-1909		
+HD8217	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785111712/c3_jrmfen.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/charles-leavitt-1903		
+I02680	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785111775/thumbMobile_35_mqxkga.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/muriel-ring-1911		
+HD8220	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785111775/thumbMobile_35_mqxkga.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/charles-leavitt-1938		
+HD8221	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785111775/thumbMobile_35_mqxkga.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/william-leavitt-1941		
+HD8218	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785111862/thumbMobile_36_swi6vs.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/susan-cory-1906		
+I02681	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785111920/thumbMobile_37_mjoxvl.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/benjamin-cory-1896		
+HD8222	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785112010/thumbMobile_38_i6gngs.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/carolyn-cory-1928		
+I02683	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785112094/thumbMobile_39_erg3y5.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/john-ahrens-1923		
+HD8224	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785112176/thumbMobile_40_tco8zl.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/john-ahrens-1951		
+HD8223	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785112245/thumbMobile_41_vvcvv2.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/susan-cory-1932		
+I02679	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785112332/thumbMobile_42_cnzvwq.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/elizabeth-edelen-1879		
+HD8215	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785112394/thumbMobile_43_fwxvxu.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/charles-leavitt-1868		
+I02678	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785112474/thumbMobile_44_rdvudp.jpg	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/charles-leavitt-1832		
+I02678	field_set	death.city=San Francisco	OK set death.city = 'San Francisco'	/person/charles-leavitt-1832		
+I02678	field_set	death.county=San Francisco County	OK set death.county = 'San Francisco County'	/person/charles-leavitt-1832		
+I02678	field_set	death.state=California	OK set death.state = 'California'	/person/charles-leavitt-1832		
+I02679	field_set	birth.city=Oakland	OK set birth.city = 'Oakland'	/person/elizabeth-edelen-1879		
+I02679	field_set	birth.county=Alameda County	OK set birth.county = 'Alameda County'	/person/elizabeth-edelen-1879		
+I02679	field_set	birth.state=California	OK set birth.state = 'California'	/person/elizabeth-edelen-1879		
+I02679	field_set	death.city=Carmel-by-the-Sea	OK set death.city = 'Carmel-by-the-Sea'	/person/elizabeth-edelen-1879		
+I02679	field_set	death.county=Monterey County	OK set death.county = 'Monterey County'	/person/elizabeth-edelen-1879		
+I02679	field_set	death.state=California	OK set death.state = 'California'	/person/elizabeth-edelen-1879		
+I02681	birth_date	1896-10-25	OK birth set 1896-10-25	/person/benjamin-cory-1896		
+I02681	death_date	1983-12-14	OK death set 1983-12-14	/person/benjamin-cory-1896		
+I02681	field_set	birth.city=Fresno	OK set birth.city = 'Fresno'	/person/benjamin-cory-1896		
+I02681	field_set	birth.county=Fresno County	OK set birth.county = 'Fresno County'	/person/benjamin-cory-1896		
+I02681	field_set	birth.state=California	OK set birth.state = 'California'	/person/benjamin-cory-1896		
+I02681	field_set	death.city=Santa Clara	OK set death.city = 'Santa Clara'	/person/benjamin-cory-1896		
+I02681	field_set	death.state=California	OK set death.state = 'California'	/person/benjamin-cory-1896		
+HD8222	birth_date	1928-03-01	OK birth set 1928-03-01	/person/carolyn-cory-1928		
+HD8222	death_date	2020-12-27	OK death set 2020-12-27	/person/carolyn-cory-1928		
+HD8222	field_set	birth.city=Fresno	OK set birth.city = 'Fresno'	/person/carolyn-cory-1928		
+HD8222	field_set	birth.county=Fresno County	OK set birth.county = 'Fresno County'	/person/carolyn-cory-1928		
+HD8222	field_set	birth.state=California	OK set birth.state = 'California'	/person/carolyn-cory-1928		
+HD8222	field_set	death.city=Santa Cruz	OK set death.city = 'Santa Cruz'	/person/carolyn-cory-1928		
+HD8222	field_set	death.state=California	OK set death.state = 'California'	/person/carolyn-cory-1928		
+HD8223	birth_date	1932-04-22	OK birth set 1932-04-22	/person/susan-cory-1932		
+HD8223	death_date	2023-07-01	OK death set 2023-07-01	/person/susan-cory-1932		
+HD8223	field_set	birth.city=Fresno	OK set birth.city = 'Fresno'	/person/susan-cory-1932		
+HD8223	field_set	birth.county=Fresno County	OK set birth.county = 'Fresno County'	/person/susan-cory-1932		
+HD8223	field_set	birth.state=California	OK set birth.state = 'California'	/person/susan-cory-1932		
+HD8223	field_set	death.county=King County	OK set death.county = 'King County'	/person/susan-cory-1932		
+HD8223	field_set	death.state=Washington	OK set death.state = 'Washington'	/person/susan-cory-1932		
+HD3692	field_set	research_notes=Birth conflict: the Cowles book gives 15 March 1833 at Belleville Illinois, FindAGrave 1837. Entry follows 1833. Buried Mountain View Cemetery, Oakland, with her husband and her son Charles II.	OK set research_notes = 'Birth conflict: the Cowles book gives 15 March 1833 at Belleville Illinois, FindAGrave 1837. Entry follows 1833. Buried Mountain View Cemetery, Oakland, with her husband and her son Charles II.'	/person/elizabeth-leavitt-1833		
+HD8215	bio_blurb	Mining engineer, United Verde Extension	OK bio_blurb set	/person/charles-leavitt-1868		
+HD8215	field_set	death.cause=Intestinal ulceration	OK set death.cause = 'Intestinal ulceration'	/person/charles-leavitt-1868		
+HD8215	career	"role=""Engineer"" organization=""United Verde Extension, Jerome, Arizona"" start_year=1916 end_year=1917"	OK career record appended	/person/charles-leavitt-1868		
+HD8215	nb_approved	"header=""Ill on Wednesday, dead by Thursday night"" body=""He had been six months at Jerome as an engineer for the United Verde Extension, and his wife and three small children had joined him a fortnight before. He was taken suddenly ill on the Wednesday afternoon, carried to the company hospital on Thursday morning, and dead that night. The post-mortem gave intestinal ulceration."" category=death"	OK nb_approved appended verbatim: 'Ill on Wednesday, dead by Thursday night'	/person/charles-leavitt-1868		
+HD8215	nb_approved	"header=""The Masons carried him home to Oakland"" body=""The funeral was at Christ Church in Jerome under the auspices of the Masons, and afterwards the order took the body across to Oakland and laid it in the family plot beside his father. His widow and the children went on to Los Angeles to make their home."" category=death"	OK nb_approved appended verbatim: 'The Masons carried him home to Oakland'	/person/charles-leavitt-1868		
+I02682	bio_blurb	Army colonel; chief of transportation in Korea	OK bio_blurb set	/person/arthur-cornelson-1909		
+I02682	career	"role=""Commander"" organization=""Gulf Terminal Command, New Orleans"" start_year=1962 end_year=1965"	OK career record appended	/person/arthur-cornelson-1909		
+I02682	career	"role=""Chief Transportation Officer"" organization=""United States forces, South Korea"" start_year=1946 end_year=1948"	OK career record appended	/person/arthur-cornelson-1909		
+I02682	education	"school_name=""University of California, Los Angeles"" dates=""early 1930s"""	OK education record appended	/person/arthur-cornelson-1909		
+I02682	education	"school_name=""Army War College"""	OK education record appended	/person/arthur-cornelson-1909		
+I02682	nb_approved	"header=""He ran the railroads of South Korea"" body=""As chief transportation officer under the occupation he headed an organisation of sixty thousand people, rebuilding and running more than two thousand miles of railroad, the merchant marine, and the port of Pusan. He was a principal delegate to the first American-Soviet conference on Korea."" category=military"	OK nb_approved appended verbatim: 'He ran the railroads of South Korea'	/person/arthur-cornelson-1909		
+I02682	nb_approved	"header=""Saipan with the Marines, then Okinawa"" body=""Commissioned out of the reserve corps at UCLA and called up in 1940, he went to the Pacific as a logistics officer attached to the 4th Marine Division for Saipan, and served with the Army's XXIV Corps at Okinawa."" category=military"	OK nb_approved appended verbatim: 'Saipan with the Marines, then Okinawa'	/person/arthur-cornelson-1909		
+I02682	nb_approved	"header=""He came back for Bloody and Heartbreak"" body=""In the Korean War he was a staff officer with the 2nd Infantry Division through the fighting for Bloody Ridge and Heartbreak Ridge in 1952. He took the Legion of Merit three times, and the Bronze Star with it."" category=military"	OK nb_approved appended verbatim: 'He came back for Bloody and Heartbreak'	/person/arthur-cornelson-1909		
+I02682	nb_approved	"header=""Fifty-seven years, and he outlived her"" body=""He kept the house at Burke from 1950 and retired to it in 1965 after commanding the Gulf Terminal Command at New Orleans, having taught at the NATO Defense College in Paris along the way. Elizabeth died in 1992 after fifty-seven years; he followed four years later at Whiteoaks."" category=family"	OK nb_approved appended verbatim: 'Fifty-seven years, and he outlived her'	/person/arthur-cornelson-1909		
