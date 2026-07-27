@@ -1,0 +1,11 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X03416	field_set	marriages[0].date_year=1925	OK set marriages[0].date_year = 1925	/person/harry-clow-1901		
+X03416	field_set	marriages[0].marriage_number=1	OK set marriages[0].marriage_number = 1	/person/harry-clow-1901		
+X02254	field_set	marriages[0].date_year=1925	OK set marriages[0].date_year = 1925	/person/josephine-dunham-1906		
+X02254	field_set	marriages[0].marriage_number=1	OK set marriages[0].marriage_number = 1	/person/josephine-dunham-1906		
+X02254	field_set	marriages[1].date_year=1934	OK set marriages[1].date_year = 1934	/person/josephine-dunham-1906		
+X02254	field_set	marriages[1].date_month=10	OK set marriages[1].date_month = 10	/person/josephine-dunham-1906		
+X02254	field_set	marriages[1].date_day=15	OK set marriages[1].date_day = 15	/person/josephine-dunham-1906		
+X02254	field_set	marriages[1].location_city=San Francisco	OK set marriages[1].location_city = 'San Francisco'	/person/josephine-dunham-1906		
+X02254	field_set	marriages[1].location_county=San Francisco County	OK set marriages[1].location_county = 'San Francisco County'	/person/josephine-dunham-1906		
+X02254	field_set	marriages[1].location_state=California	OK set marriages[1].location_state = 'California'	/person/josephine-dunham-1906		
