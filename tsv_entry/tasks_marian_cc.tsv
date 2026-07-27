@@ -1,0 +1,3 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD1535	cc	"related=H04280 link=""Dr. Marian Osgood Hooker"" label=""was the first woman up Mt Whitney, and took her M.D. in 1910"""	OK cc->H04280 added; FLAG needs reciprocal cc row on H04280	/person/florilla-white-1871		
+H04280	cc	"related=HD1535 link=""Dr. Florilla White"" label=""took her M.D. two years earlier, and rode the desert canyons"""	OK cc->HD1535 added (reciprocal present)	/person/marian-hooker-1875		
