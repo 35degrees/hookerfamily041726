@@ -225,7 +225,10 @@ def apply_mechanical(field, val, p, tp):
         rec = parse_kv(val)
         p.setdefault(field, []).append(rec)
         if field == 'career' and not rec.get('start_year'):
-            return "OK career appended -- WARN: no start_year, row will NOT render", True
+            # Renders fine without years: RightColumn shows "role, organization" and just omits
+            # the date suffix. A year-less row sorts last, so it only drops off when a person
+            # already has more than CAREER_LIMIT (3) career rows.
+            return "OK career appended (no year -- renders without a date, sorts last)", True
         return f"OK {field} record appended", True
     if field == 'cc':
         kv = parse_kv(val); rid = kv.get('related')
