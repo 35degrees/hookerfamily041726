@@ -1,0 +1,7 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+TD0057	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785125382/lhook_b6kga2.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/lea-hooker-1946		
+HD3384	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785125452/mhook_cfxapa.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/michael-hooker-1935		
+HD3388	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785125529/shr_w2kifi.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/katherine-shepherd		
+I00330	photo_url	https://res.cloudinary.com/dc5clrqtw/image/upload/v1785125676/ccoll_gkc2ik.png	OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa	/person/constance-colladay		
+X02367	bio_blurb	California attorney at Reed Smith	OK bio_blurb set	/person/albert-norris-1935		
+X02367	career	"role=""Attorney"" organization=""Reed Smith"" location=""California"" notes=""Arbitration and mediation, business law, environmental law."""	OK career appended -- WARN: no start_year, row will NOT render	/person/albert-norris-1935		
