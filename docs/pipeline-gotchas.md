@@ -41,7 +41,12 @@ school lives in `education[].school_name`, not a new INST.
 
 ## Render rules (discovered empirically -- the validator does not catch these)
 
-- **Career rows need `start_year` or they do not render.** No start_year = an invisible row.
+- **Career rows render WITHOUT years.** (Corrected 072726 -- the earlier claim that a year-less row is
+  invisible was wrong and was propagating from here into `process_tasks.py`'s warning text.) `RightColumn`
+  sorts by `end_year ?? start_year ?? -Infinity` and slices to 3; it never *filters* on years. `careerLine()`
+  always prints `role, organization`; `careerDates()` returns null when both years are absent, which omits
+  only the date suffix. The one real effect: a year-less row sorts last, so it can be pushed out of the top 3
+  when a person already has more than three career rows. Verified against live cards, not inferred.
 - **Education renders `notes`, not `class_year` / `degree`.** Put the degree in `notes` ("B.A., Class of 1848.").
 - **Education `notes` must not repeat the school name** -- the INST field already supplies it. `notes="Yale College, 1848"` double-prints; use `notes="Class of 1848"`.
 - **Right-column budget is ~3 rows.** education[] and career[] render as stacked one-line quick-hits in the narrow column; long text truncates with an ellipsis. Anything needing exposition is an NB, not an array note. No sentences/paragraphs in a `notes` field.
