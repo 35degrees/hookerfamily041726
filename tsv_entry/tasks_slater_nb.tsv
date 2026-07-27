@@ -1,0 +1,2 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+T02196	nb_replace	"old=""He provided for the family's museum"" header=""He provided for the museum in his estate"" body=""He and his wife Caryl joined the Heritage Society of the New Britain Museum of American Art, the roll of those who provide for it through their estate plans."" category=legacy"	OK nb_replace: 'He provided for the family's museum' -> 'He provided for the museum in his estate' placed verbatim in place	/person/john-slater-1935		
