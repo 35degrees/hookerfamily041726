@@ -1,0 +1,3 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+TD0055	nb_replace	"old=""Widowed within weeks of the wedding"" header=""Widowed young, remarried at twenty-eight"" body=""John Leete Rogers was twenty-five when he died at Englewood in December 1905. She married Walter Ewing Hope in April 1909 and stayed married to him for nearly forty years."" category=marriage"	OK nb_replace: 'Widowed within weeks of the wedding' -> 'Widowed young, remarried at twenty-eight' placed verbatim in place	/person/florence-hope-1881		
+TD0055	nb_remove	Vassar, class of 1903	OK NB 'Vassar, class of 1903' removed (explicit)	/person/florence-hope-1881		
