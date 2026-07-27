@@ -1,0 +1,3 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+T01463	cc	"related=X00627 link=""Christian Abraham Fleetwood"" label=""graduated the same college in 1860, when it was Ashmun Institute"""	OK cc->X00627 added; FLAG needs reciprocal cc row on X00627	/person/james-talcott-1866		
+X00627	cc	"related=T01463 link=""J. Frederick Talcott"" label=""sat on the same college's board and built it a library"""	OK cc->T01463 added (reciprocal present)	/person/christian-fleetwood-1840		
