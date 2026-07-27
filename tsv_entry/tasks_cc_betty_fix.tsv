@@ -1,0 +1,4 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+T01463	field_set	cross_connections[0].display_label=graduated from Lincoln University in 1860, when it was Ashmun Institute	OK set cross_connections[0].display_label = 'graduated from Lincoln University in 1860, when it was Ashmun Institute'	/person/james-talcott-1866		
+X00627	field_set	cross_connections[1].display_label=served on Lincoln's board as a trustee and built it a library	"OK set cross_connections[1].display_label = ""served on Lincoln's board as a trustee and built it a library"""	/person/christian-fleetwood-1840		
+TD0075	nb_replace	"old=""The only Stanley child to die young"" header=""The youngest of the four Stanley children"" body=""She was nine years old when she died at Hartford in the summer of 1930."" category=death"	OK nb_replace: 'The only Stanley child to die young' -> 'The youngest of the four Stanley children' placed verbatim in place	/person/elizabeth-stanley-1921		
