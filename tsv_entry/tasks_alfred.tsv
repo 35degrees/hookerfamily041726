@@ -1,0 +1,34 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+H01139	cc_remove	I00384	OK CC to I00384 removed (explicit)	/person/alfred-cowles-1787		
+I00384	cc_remove	H01139	OK CC to H01139 removed (explicit)	/person/charlotte-cowles		
+H01139	death_date	1887-11-01	OK death set 1887-11-01	/person/alfred-cowles-1787		
+H01139	field_set	death.date_precision=month	OK set death.date_precision = 'month'	/person/alfred-cowles-1787		
+H01139	field_set	death.city=San Diego	OK set death.city = 'San Diego'	/person/alfred-cowles-1787		
+H01139	field_set	death.county=San Diego County	OK set death.county = 'San Diego County'	/person/alfred-cowles-1787		
+H01139	field_set	death.state=California	OK set death.state = 'California'	/person/alfred-cowles-1787		
+H01139	field_set	death.country=United States	OK set death.country = 'United States'	/person/alfred-cowles-1787		
+H01139	notable_blurb	Illinois prosecutor; Alton riot lawyer	OK notable_blurb set	/person/alfred-cowles-1787		
+H01139	field_set	marriages[0].date_year=1816	OK set marriages[0].date_year = 1816	/person/alfred-cowles-1787		
+H01139	field_set	marriages[0].date_month=10	OK set marriages[0].date_month = 10	/person/alfred-cowles-1787		
+H01139	field_set	marriages[0].date_day=7	OK set marriages[0].date_day = 7	/person/alfred-cowles-1787		
+I00384	field_set	marriages[0].date_year=1816	OK set marriages[0].date_year = 1816	/person/charlotte-cowles		
+I00384	field_set	marriages[0].date_month=10	OK set marriages[0].date_month = 10	/person/charlotte-cowles		
+I00384	field_set	marriages[0].date_day=7	OK set marriages[0].date_day = 7	/person/charlotte-cowles		
+H01139	career	"role=""Register of the General Land Office"" organization=""Chicago, appointed by President Taylor"" start_year=1849 end_year=1853"	OK career record appended	/person/alfred-cowles-1787		
+H01139	career	"role=""State's Attorney"" organization=""Second Judicial District, Illinois"" start_year=1825 end_year=1835"	OK career record appended	/person/alfred-cowles-1787		
+H01139	nb_replace	"old=""The books never recorded his death"" header=""He married his first cousin at twenty-nine"" body=""Charlotte Cowles of Farmington was his first cousin, out of the parallel Cowles line; they married there on 7 October 1816. Seven children followed, four of whom were born after the family went west."" category=marriage"	OK nb_replace: 'The books never recorded his death' -> 'He married his first cousin at twenty-nine' placed verbatim in place	/person/alfred-cowles-1787		
+H01139	nb_approved	"header=""He argued both sides of the same riot"" body=""When the mob that killed Elijah Lovejoy at Alton in November 1837 came to court, he defended the men who had held the press and killed Lyman Bishop, and he prosecuted the leaders of the mob that came for them. He had been the district's state's attorney under Governor Coles, appointed in 1825 and reappointed three times."" category=law"	OK nb_approved appended verbatim: 'He argued both sides of the same riot'	/person/alfred-cowles-1787		
+H01139	nb_approved	"header=""A dead child sent them west"" body=""He read law in his twenties, came to the Connecticut bar, and practised there until his fifteen-month-old son died in 1821. He and Charlotte left for Illinois that year and settled at Belleville, where he was admitted to the bar that September."" category=family"	OK nb_approved appended verbatim: 'A dead child sent them west'	/person/alfred-cowles-1787		
+H01139	nb_approved	"header=""The panic took the Alton fortune"" body=""By 1839 he had moved up to Upper Alton and gone into partnership with John Krum, and was among the wealthiest men in the town. The Panic of 1837 and the pro-slavery riots collapsed the market under him and carried off most of what he had; the firm lasted to 1844, and he went to Chicago."" category=business"	OK nb_approved appended verbatim: 'The panic took the Alton fortune'	/person/alfred-cowles-1787		
+H01139	nb_approved	"header=""He lived to a hundred in San Diego"" body=""Taylor made him register of the Chicago land office in 1849, a Whig reward he held until 1853; when the Whigs died he became a Republican and stayed one. He sold up and followed his eldest son to California - San Francisco, then San Jose, then San Diego, where he died in November 1887 at a hundred years old."" category=politics"	OK nb_approved appended verbatim: 'He lived to a hundred in San Diego'	/person/alfred-cowles-1787		
+I00384	birth_date	1797	OK birth set 1797	/person/charlotte-cowles		
+I00384	death_date	1881-10-02	OK death set 1881-10-02	/person/charlotte-cowles-1797		
+I00384	field_set	death.city=San Diego	OK set death.city = 'San Diego'	/person/charlotte-cowles-1797		
+I00384	field_set	death.county=San Diego County	OK set death.county = 'San Diego County'	/person/charlotte-cowles-1797		
+I00384	field_set	death.state=California	OK set death.state = 'California'	/person/charlotte-cowles-1797		
+I00384	field_set	death.country=United States	OK set death.country = 'United States'	/person/charlotte-cowles-1797		
+I00384	nb_approved	"header=""She married her own first cousin"" body=""Alfred Cowles of Farmington was her first cousin, from the other Cowles line in the same town; they married there on 7 October 1816 when she was nineteen. She bore seven children and followed him from Connecticut to Illinois and on to California, dying at San Diego in 1881."" category=marriage"	OK nb_approved appended verbatim: 'She married her own first cousin'	/person/charlotte-cowles-1797		
+HD3689	death_date	1844	OK death set 1844	/person/jane-cowles-1821		
+HD3690	death_date	1908	OK death set 1908	/person/frederick-cowles-1825		
+HD3691	death_date	1906	OK death set 1906	/person/cornelia-french-1829		
+HD3693	field_set	research_notes=FamilySearch lists an eighth child, Frederick Hooker Cowles (1837-1906), alongside Frederick H. Cowles (1825-1908) who is HD3690. Alfred's biography says seven children, and this tree holds seven. The 1837 entry looks like a duplicate of HD3690 and has not been built.	"OK set research_notes = ""FamilySearch lists an eighth child, Frederick Hooker Cowles (1837-1906), alongside Frederick H. Cowles (1825-1908) who is HD3690. Alfred's biography says seven children, and this tree holds seven. The 1837 entry looks like a duplicate of HD3690 and has not been built."""	/person/alfred-cowles-1835		
