@@ -1,0 +1,3 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+I00329	field_set	bio.display_name=Katherine Woodward Mellon	OK set bio.display_name = 'Katherine Woodward Mellon'	/person/katherine-woodward-1937		
+I00329	field_set	bio.chip_first_name=Kitty	OK set bio.chip_first_name = 'Kitty'	/person/katherine-woodward-1937		
