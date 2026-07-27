@@ -1,0 +1,3 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD1535	cc	"related=HD3346 link=""Ellen Terry Brinley"" label=""turned her Colorado Springs YWCA into a flu hospital that same winter"""	OK cc->HD3346 added; FLAG needs reciprocal cc row on HD3346	/person/florilla-white-1871		
+HD3346	cc	"related=HD1535 link=""Dr. Florilla White"" label=""raised a volunteer nursing corps against the same 1918 epidemic"""	OK cc->HD1535 added (reciprocal present)	/person/ellen-brinley-1856		
