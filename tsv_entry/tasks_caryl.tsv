@@ -1,0 +1,4 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X02488	field_set	bio.display_name=Caryl Slater	OK set bio.display_name = 'Caryl Slater'	/person/caryl		
+X02488	field_set	bio.last_name=Slater	OK set bio.last_name = 'Slater'	/person/caryl		
+X02488	gender	female	OK gender=female (drives Wife/Husband/Spouse label)	/person/caryl-slater		
