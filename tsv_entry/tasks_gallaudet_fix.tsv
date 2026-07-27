@@ -1,0 +1,4 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD8242	nb_replace	"old=""He and his wife died in the same rooms"" header=""They died eight months apart, same address"" body=""He died at 112 West 78th Street in New York in August 1902, eighty years and not quite three months old, and was carried back to Hartford for burial. His wife died at that same address eight months later, and was buried beside him."" category=death"	OK nb_replace: 'He and his wife died in the same rooms' -> 'They died eight months apart, same address' placed verbatim in place	/person/thomas-gallaudet-1822		
+HD8242	tag_add	clergy	OK tag 'clergy' added	/person/thomas-gallaudet-1822		
+HD8242	tag_add	episcopal	OK tag 'episcopal' added	/person/thomas-gallaudet-1822		
