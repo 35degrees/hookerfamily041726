@@ -1,0 +1,7 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+I00330	birth_date	1949-01-28	OK birth set 1949-01-28	/person/constance-colladay		
+I00330	field_set	birth.city=Fort Sill	OK set birth.city = 'Fort Sill'	/person/constance-colladay-1949		
+I00330	field_set	birth.county=Comanche County	OK set birth.county = 'Comanche County'	/person/constance-colladay-1949		
+I00330	field_set	birth.state=Oklahoma	OK set birth.state = 'Oklahoma'	/person/constance-colladay-1949		
+I00330	field_set	birth.country=United States	OK set birth.country = 'United States'	/person/constance-colladay-1949		
+I00330	field_set	birth.date_precision=exact	OK set birth.date_precision = 'exact'	/person/constance-colladay-1949		
