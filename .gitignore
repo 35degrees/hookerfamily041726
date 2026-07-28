@@ -66,3 +66,6 @@ test-results
 
 # card-probe harness screenshots (regenerable)
 scripts/probe-out/
+
+# --- frozen read-only exports (see _exports/README.md); never the source ---
+_exports/
