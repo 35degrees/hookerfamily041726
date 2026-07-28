@@ -4,6 +4,8 @@ export interface PersonCompact {
 	n: string;
 	by: number | null;
 	dy: number | null;
+	/** dates are PRIVATE (living, non-notable): present in the payload for sorting, never rendered. */
+	pv?: boolean;
 	sx: string;
 	hd: boolean;
 	td: boolean;
@@ -30,6 +32,8 @@ export interface SpouseEntry {
 	order: number;
 	spouse: PersonCompact | null;
 	year: number | null;
+	/** relationship_type from canonical — 'partner' when the union was never a marriage. */
+	rel?: string | null;
 	children: PersonCompact[];
 }
 

@@ -7,11 +7,34 @@
 		person: PersonCompact;
 		relation: 'spouse' | 'parent' | 'child' | 'sibling' | 'grandparent' | 'grandchild';
 		marriageYear?: number | null;
+		/** 'partner' when the union was never a marriage — the chip must not imply a wedding. */
+		relationshipType?: string | null;
 		compact?: boolean;
 		dimmed?: boolean;
 	};
 
-	let { person, relation, marriageYear = null, compact = false, dimmed = false }: Props = $props();
+	let {
+		person,
+		relation,
+		marriageYear = null,
+		relationshipType = null,
+		compact = false,
+		dimmed = false
+	}: Props = $props();
+
+	// The spouse chip's third line answers "what was this union": normally the marriage year, but a
+	// partner who was never married gets said so outright. Some partnerships carry a start year and
+	// some (Martha Fay, Suzzy Roche) carry none, so the label stands alone when there is no date.
+	let isPartner = $derived(relation === 'spouse' && relationshipType === 'partner');
+	let unionLine = $derived(
+		isPartner
+			? marriageYear
+				? `(partner) ${marriageYear}`
+				: '(partner)'
+			: marriageYear
+				? `m. ${marriageYear}`
+				: null
+	);
 
 	// The person's ONE shared photo derivative (same URL the FeaturedCard uses) — loaded EAGER at HIGH
 	// priority so a chip is never seen painting in, and so promoting the chip to featured is a cache hit,
@@ -21,7 +44,9 @@
 	// SIBLING chips are their own size tier — ~20% smaller than a normal spouse/child chip (220×75 → 176×60).
 	// Existing relations keep their exact classes (sibling only ADDS a branch), so no spouse/child chip moves.
 	let isSibling = $derived(relation === 'sibling');
-	let boxSize = $derived(isSibling ? 'h-[54px] w-[119px]' : compact ? 'h-[65px] w-[160px]' : 'h-[75px] w-[220px]');
+	let boxSize = $derived(
+		isSibling ? 'h-[54px] w-[119px]' : compact ? 'h-[65px] w-[160px]' : 'h-[75px] w-[220px]'
+	);
 	let photoW = $derived(compact && !isSibling ? 'w-[30%]' : 'w-[25%]');
 	let nameText = $derived(compact || isSibling ? 'text-[11px]' : 'text-[13px]');
 	let dateText = $derived(compact || isSibling ? 'text-[10px]' : 'text-xs');
@@ -53,7 +78,12 @@
 	// §16 chip-date degrade: when BOTH lifespan ends are unknown, suppress the dates line entirely — no
 	// "?–?" anywhere, at any scale (this box, the featured card, and the demote chip-face all read it).
 	// One end known ("1850–?" / "?–1900") still shows.
-	let hasDates = $derived(person.by != null || person.dy != null);
+	// `pv` (living, non-notable) suppresses the whole date line — the same degrade path §16 already
+	// uses when both ends are unknown, so no new geometry. The payload still carries by/dy; only the
+	// display is gated. died-young signals go with it: a living person can't have one, and rendering
+	// the branch at all would leak that we know their dates.
+	let hasDates = $derived(!person.pv && (person.by != null || person.dy != null));
+	let showDiedYoung = $derived(!person.pv && dimmed);
 </script>
 
 <!-- Sibling chips clamp the first name with shrinkToFit — the SAME machinery as the FeaturedCard's main
@@ -103,16 +133,16 @@
 			{@render nameEl()}
 			{#if hasDates}
 				<div class="text-stone-500 {dateText}">
-					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && dimmed}
+					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && showDiedYoung}
 						{' '}(died young){/if}
 				</div>
 			{/if}
-			{#if isSibling && dimmed}
+			{#if isSibling && showDiedYoung}
 				<div class="leading-none text-stone-400 {diedYoungText}">died young</div>
 			{/if}
-			{#if relation === 'spouse' && marriageYear}
+			{#if relation === 'spouse' && unionLine}
 				<div class="text-stone-500 {dateText}">
-					m. {marriageYear}
+					{unionLine}
 				</div>
 			{/if}
 		</div>
@@ -141,16 +171,16 @@
 			{@render nameEl()}
 			{#if hasDates}
 				<div class="text-stone-500 {dateText}">
-					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && dimmed}
+					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && showDiedYoung}
 						{' '}(died young){/if}
 				</div>
 			{/if}
-			{#if isSibling && dimmed}
+			{#if isSibling && showDiedYoung}
 				<div class="leading-none text-stone-400 {diedYoungText}">died young</div>
 			{/if}
-			{#if relation === 'spouse' && marriageYear}
+			{#if relation === 'spouse' && unionLine}
 				<div class="text-stone-500 {dateText}">
-					m. {marriageYear}
+					{unionLine}
 				</div>
 			{/if}
 		</div>

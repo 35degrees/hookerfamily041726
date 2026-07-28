@@ -177,6 +177,8 @@ export interface Person {
 	gender: string | null;
 	birth: Birth;
 	death: Death;
+	/** dates are PRIVATE (living, non-notable): kept on the record, never rendered. */
+	pv?: boolean;
 	baptism: Baptism;
 	residence: Residence;
 	burial: Burial;

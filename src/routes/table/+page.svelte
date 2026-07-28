@@ -10,7 +10,18 @@
 	import { onMount } from 'svelte';
 	import { tableCamera } from '$lib/state/tableCamera.svelte';
 
-	type Row = { id: string; n: string; by: number | null; dy: number | null; hd: boolean; td: boolean; x: number; y: number };
+	type Row = {
+		id: string;
+		n: string;
+		by: number | null;
+		dy: number | null;
+		/** dates are PRIVATE (living, non-notable) — the seat still uses y, the tile shows no lifespan. */
+		pv?: boolean;
+		hd: boolean;
+		td: boolean;
+		x: number;
+		y: number;
+	};
 
 	// ── dials ──────────────────────────────────────────────────────────────────────────────────────
 	const PX_X = 46; // px per seat unit at scale 1 (spreads siblings so names fit)
@@ -31,7 +42,10 @@
 	onMount(() => {
 		vw = window.innerWidth;
 		vh = window.innerHeight;
-		const onResize = () => { vw = window.innerWidth; vh = window.innerHeight; };
+		const onResize = () => {
+			vw = window.innerWidth;
+			vh = window.innerHeight;
+		};
 		window.addEventListener('resize', onResize);
 
 		(async () => {
@@ -39,7 +53,9 @@
 			try {
 				const res = await fetch('/data/table-index.json');
 				rows = await res.json();
-			} catch { rows = []; }
+			} catch {
+				rows = [];
+			}
 			for (const r of rows) {
 				if (r.y == null || r.x == null || !r.n) continue;
 				const key = `${Math.floor(r.x / BUCKET_X)},${Math.floor(r.y / BUCKET_Y)}`;
@@ -60,9 +76,14 @@
 		const { cx, cy, scale } = tableCamera;
 		const halfW = (vw / 2 + CULL_MARGIN) / (PX_X * scale);
 		const halfH = (vh / 2 + CULL_MARGIN) / (PX_Y * scale);
-		const xLo = cx - halfW, xHi = cx + halfW, yLo = cy - halfH, yHi = cy + halfH;
-		const bxLo = Math.floor(xLo / BUCKET_X), bxHi = Math.floor(xHi / BUCKET_X);
-		const byLo = Math.floor(yLo / BUCKET_Y), byHi = Math.floor(yHi / BUCKET_Y);
+		const xLo = cx - halfW,
+			xHi = cx + halfW,
+			yLo = cy - halfH,
+			yHi = cy + halfH;
+		const bxLo = Math.floor(xLo / BUCKET_X),
+			bxHi = Math.floor(xHi / BUCKET_X);
+		const byLo = Math.floor(yLo / BUCKET_Y),
+			byHi = Math.floor(yHi / BUCKET_Y);
 		const out: Row[] = [];
 		for (let bx = bxLo; bx <= bxHi; bx++)
 			for (let by = byLo; by <= byHi; by++) {
@@ -83,13 +104,24 @@
 
 	// ── pan + inertia (Pointer Events, pointer capture, touch-action:none) ──────────────────────────
 	let dragging = false;
-	let lastX = 0, lastY = 0, vX = 0, vY = 0, lastT = 0;
+	let lastX = 0,
+		lastY = 0,
+		vX = 0,
+		vY = 0,
+		lastT = 0;
 	let inertia = 0;
 
 	function onPointerDown(e: PointerEvent) {
-		if (inertia) { cancelAnimationFrame(inertia); inertia = 0; }
+		if (inertia) {
+			cancelAnimationFrame(inertia);
+			inertia = 0;
+		}
 		dragging = true;
-		lastX = e.clientX; lastY = e.clientY; vX = 0; vY = 0; lastT = e.timeStamp;
+		lastX = e.clientX;
+		lastY = e.clientY;
+		vX = 0;
+		vY = 0;
+		lastT = e.timeStamp;
 		(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 	}
 	function onPointerMove(e: PointerEvent) {
@@ -100,18 +132,28 @@
 		tableCamera.cx -= dxSeat;
 		tableCamera.cy -= dyYear;
 		const dt = Math.max(1, e.timeStamp - lastT);
-		vX = dxSeat / dt; vY = dyYear / dt; // seats/ms
-		lastX = e.clientX; lastY = e.clientY; lastT = e.timeStamp;
+		vX = dxSeat / dt;
+		vY = dyYear / dt; // seats/ms
+		lastX = e.clientX;
+		lastY = e.clientY;
+		lastT = e.timeStamp;
 	}
 	function onPointerUp(e: PointerEvent) {
 		dragging = false;
-		try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch { /* ignore */ }
+		try {
+			(e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+		} catch {
+			/* ignore */
+		}
 		// fling: decay the release velocity
-		let vx = vX, vy = vY;
+		let vx = vX,
+			vy = vY;
 		const FRICTION = 0.94;
 		const step = () => {
-			vx *= FRICTION; vy *= FRICTION;
-			tableCamera.cx -= vx * 16; tableCamera.cy -= vy * 16;
+			vx *= FRICTION;
+			vy *= FRICTION;
+			tableCamera.cx -= vx * 16;
+			tableCamera.cy -= vy * 16;
 			if (Math.hypot(vx, vy) > 0.0002) inertia = requestAnimationFrame(step);
 			else inertia = 0;
 		};
@@ -132,12 +174,11 @@
 >
 	<div class="world" style="transform: translate({tx}px, {ty}px) scale({tableCamera.scale});">
 		{#each visible as r (r.id)}
-			<div
-				class="tile {region(r)}"
-				style="transform: translate({r.x * PX_X}px, {r.y * PX_Y}px);"
-			>
+			<div class="tile {region(r)}" style="transform: translate({r.x * PX_X}px, {r.y * PX_Y}px);">
 				<span class="name">{r.n}</span>
-				<span class="life">{r.by ?? ''}{r.dy ? '–' + r.dy : r.by ? '–' : ''}</span>
+				<span class="life"
+					>{r.pv ? '' : (r.by ?? '')}{r.pv ? '' : r.dy ? '–' + r.dy : r.by ? '–' : ''}</span
+				>
 			</div>
 		{/each}
 	</div>
@@ -155,7 +196,9 @@
 		cursor: grab;
 		user-select: none;
 	}
-	.viewport:active { cursor: grabbing; }
+	.viewport:active {
+		cursor: grabbing;
+	}
 	.world {
 		position: absolute;
 		top: 0;
@@ -182,9 +225,18 @@
 		background: var(--tint);
 		box-shadow: inset 0 0 0 1px var(--edge);
 	}
-	.tile.spine { --tint: rgba(180, 83, 60, 0.1); --edge: rgba(180, 83, 60, 0.35); }
-	.tile.grove { --tint: rgba(58, 122, 90, 0.1); --edge: rgba(58, 122, 90, 0.35); }
-	.tile.orbit { --tint: rgba(110, 110, 120, 0.08); --edge: rgba(110, 110, 120, 0.28); }
+	.tile.spine {
+		--tint: rgba(180, 83, 60, 0.1);
+		--edge: rgba(180, 83, 60, 0.35);
+	}
+	.tile.grove {
+		--tint: rgba(58, 122, 90, 0.1);
+		--edge: rgba(58, 122, 90, 0.35);
+	}
+	.tile.orbit {
+		--tint: rgba(110, 110, 120, 0.08);
+		--edge: rgba(110, 110, 120, 0.28);
+	}
 	.name {
 		font-size: 10px;
 		font-weight: 600;
@@ -207,6 +259,12 @@
 		color: #78716c;
 		font-variant-numeric: tabular-nums;
 	}
-	.loading { top: 12px; left: 12px; bottom: auto; }
-	.count { right: 12px; }
+	.loading {
+		top: 12px;
+		left: 12px;
+		bottom: auto;
+	}
+	.count {
+		right: 12px;
+	}
 </style>

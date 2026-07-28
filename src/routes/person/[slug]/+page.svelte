@@ -101,7 +101,8 @@
 			for (const prop of ['position', 'left', 'top', 'width', 'height', 'transform', 'margin']) {
 				el.style.removeProperty(prop);
 			}
-			if (import.meta.env.DEV) console.warn('[flight sweep] reset stranded flight element:', el.dataset.flightId);
+			if (import.meta.env.DEV)
+				console.warn('[flight sweep] reset stranded flight element:', el.dataset.flightId);
 		}
 	}
 	// An orphan can manifest on ANY frame its interrupted animation happens to end, so a few fixed
@@ -276,7 +277,8 @@
 			if (seq !== navSeq) return; // a newer nav is in flight; its pins are legitimate
 			for (const el of document.querySelectorAll<HTMLElement>('.flight')) {
 				if (getComputedStyle(el).position !== 'fixed') continue;
-				if (import.meta.env.DEV) console.warn('[flight janitor] removed orphaned pinned chip:', el.dataset.flightId);
+				if (import.meta.env.DEV)
+					console.warn('[flight janitor] removed orphaned pinned chip:', el.dataset.flightId);
 				el.remove();
 			}
 		}, 700);
@@ -409,7 +411,9 @@
 	const isEasterEgg = $derived(f.person.classification?.is_easter_egg ?? false);
 
 	const focalFirstName = $derived(f.person.bio?.first_name ?? f.person.name?.first_name ?? null);
-	const parentsLabel = $derived(focalFirstName ? `${possessive(focalFirstName)} parents` : 'Parents');
+	const parentsLabel = $derived(
+		focalFirstName ? `${possessive(focalFirstName)} parents` : 'Parents'
+	);
 
 	const childrenLabel = $derived.by(() => {
 		if (childrenTotal === 0) return null;
@@ -449,7 +453,11 @@
 		{/each}
 	</div>
 
-	<div class="connector connector-parents" class:landed={familyLanded} class:cc-hidden={ccRoster.hidden}>
+	<div
+		class="connector connector-parents"
+		class:landed={familyLanded}
+		class:cc-hidden={ccRoster.hidden}
+	>
 		{#if hasParents}
 			<div class="connector-line"></div>
 			<span class="connector-label">{parentsLabel}</span>
@@ -522,7 +530,13 @@
 							animate:flip={{ duration: flipMs }}
 						>
 							<div class="chip-slide">
-								<PersonBox person={chip.spouse} relation="spouse" marriageYear={chip.year} compact={useCompact} />
+								<PersonBox
+									person={chip.spouse}
+									relation="spouse"
+									marriageYear={chip.year}
+									relationshipType={chip.rel}
+									compact={useCompact}
+								/>
 							</div>
 						</div>
 					{/each}

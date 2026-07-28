@@ -104,6 +104,41 @@ const bioOf = (p) => p.bio || p.name || {};
 const birthYear = (p) => (p.birth && p.birth.year) ?? null;
 const deathYear = (p) => (p.death && p.death.year) ?? null;
 
+// ---------------------------------------------------------------------------
+// LIVING-PERSON DATE PRIVACY
+// ---------------------------------------------------------------------------
+// A living person's dates are not shown: no chip date line, no Birth/Death vitals, no lifespan
+// on the table tile, and no birth year baked into their slug (the slug is the widest leak —
+// /person/samuel-mctavey-1983 defeats the whole point while the card sits there hiding it).
+//
+// DERIVED, never stored. No death year AND born within a lifetime => presumed living. That is
+// ~190 people today and it re-evaluates itself every build, where a `true` written into
+// canonical in 2026 would quietly be a lie by 2060 on records nobody revisits. It also matches
+// the grain here: diedYoung, table coords and generation labels are all emit-time.
+//
+// canonical MAY override with a sparse boolean `is_living` for the cases the rule gets wrong —
+// someone born 1935 who died in 2008 with no death record. The field is absent on ~18,000
+// records and that is correct; absent means "let the rule decide", not false.
+//
+// NOTABLE CARVE-OUT (Sam's): a public figure's dates are already public, so is_notable wins.
+const BUILD_YEAR = new Date().getFullYear();
+const MAX_LIFESPAN = 100;
+
+function presumedLiving(p) {
+	if (typeof p.is_living === 'boolean') return p.is_living; // explicit canonical override
+	if (deathYear(p) != null) return false;
+	const by = birthYear(p);
+	return by != null && by >= BUILD_YEAR - MAX_LIFESPAN;
+}
+
+// The single gate every render site reads, emitted as `pv`. NOTE what this does NOT do: it does
+// not strip `by`/`dy` from the payload. roster.ts and SiblingPanel sort children and siblings on
+// `by`, and a null sorts into a DIFFERENT group — so nulling it would shunt every living person
+// to the end of their row, which is itself a tell. Emit the dates, suppress the display.
+function datesPrivate(p) {
+	return presumedLiving(p) && !(p.notable && p.notable.is_notable);
+}
+
 function firstName(p) {
 	const b = bioOf(p);
 	return b.first_name || (b.display_name || '').split(/\s+/)[0] || '';
@@ -112,11 +147,7 @@ function firstName(p) {
 // Cleaned display_name tokens (qualifiers like "(...)" / "[...]" stripped). Shared by the
 // surname + generationalSuffix display-name fallbacks below.
 function displayTokens(p) {
-	return (bioOf(p).display_name || '')
-		.split(/[([]/)[0]
-		.trim()
-		.split(/\s+/)
-		.filter(Boolean);
+	return (bioOf(p).display_name || '').split(/[([]/)[0].trim().split(/\s+/).filter(Boolean);
 }
 
 // Structured surname by descent, not gender (bloodline women carry married name). No fallback.
@@ -165,11 +196,13 @@ function isPlaceholder(p) {
 	return /\[|unknown/i.test(d) || !firstName(p) || !surname(p);
 }
 
-// Base slug (pre-collision). Returns { base, sticky }.
+// Base slug (pre-collision). Returns { base, sticky, priorBase }.
+// priorBase is the year-bearing slug a now-private person USED to have, so the old URL can be
+// redirected forward without writing former_ids into canonical for ~140 people.
 function baseSlug(p) {
 	if (isPlaceholder(p)) {
 		const desc = slugify((bioOf(p).display_name || 'unnamed').split(/[([]/)[0]) || 'unnamed';
-		return { base: `${desc}-${p.id.toLowerCase()}`, sticky: true }; // ID-anchored => stable
+		return { base: `${desc}-${p.id.toLowerCase()}`, sticky: true, priorBase: null }; // ID-anchored => stable
 	}
 	const f = slugify(firstName(p));
 	let s = slugify(surname(p));
@@ -178,8 +211,12 @@ function baseSlug(p) {
 	// guard against a surname that already ends with the suffix token
 	if (sufSlug && s.endsWith('-' + sufSlug)) sufSlug = null;
 	const yr = birthYear(p);
-	const base = [f, s, sufSlug].filter(Boolean).join('-') + (yr ? `-${yr}` : '');
-	return { base, sticky: Boolean(yr) };
+	const priv = datesPrivate(p);
+	const stem = [f, s, sufSlug].filter(Boolean).join('-');
+	// A living person's slug drops the year. `sticky` still keys off HAVING a birth year, not off
+	// printing it — the year-less slug is locked and indexable for as long as they are living.
+	const base = stem + (yr && !priv ? `-${yr}` : '');
+	return { base, sticky: Boolean(yr), priorBase: priv && yr ? `${stem}-${yr}` : null };
 }
 
 // ---------------------------------------------------------------------------
@@ -196,11 +233,23 @@ function sex(p) {
 // from the full record. enrich reads `compact.sn ?? computeShortName(full)`, so a matching compact.sn makes
 // enrich a no-op and lets the chip render its short name WITHOUT the full record in context. KEEP IN SYNC.
 const TITLE_ABBREVIATIONS = {
-	Reverend: 'Rev.', Captain: 'Capt.', Doctor: 'Dr.', Colonel: 'Col.', General: 'Gen.', Lieutenant: 'Lt.',
-	Major: 'Maj.', Governor: 'Gov.', Deacon: 'Dea.', Elder: 'Eld.', Honorable: 'Hon.',
-	'Lieutenant Colonel': 'Lt. Col.', 'Lt.-Col.': 'Lt. Col.', 'Lieut.-Col.': 'Lt. Col.', 'Rev. Capt.': 'Rev. Capt.'
+	Reverend: 'Rev.',
+	Captain: 'Capt.',
+	Doctor: 'Dr.',
+	Colonel: 'Col.',
+	General: 'Gen.',
+	Lieutenant: 'Lt.',
+	Major: 'Maj.',
+	Governor: 'Gov.',
+	Deacon: 'Dea.',
+	Elder: 'Eld.',
+	Honorable: 'Hon.',
+	'Lieutenant Colonel': 'Lt. Col.',
+	'Lt.-Col.': 'Lt. Col.',
+	'Lieut.-Col.': 'Lt. Col.',
+	'Rev. Capt.': 'Rev. Capt.'
 };
-const abbreviateTitle = (title) => (!title ? null : TITLE_ABBREVIATIONS[title] ?? title);
+const abbreviateTitle = (title) => (!title ? null : (TITLE_ABBREVIATIONS[title] ?? title));
 // Chip surname — the last name a chip displays: the MAIDEN (birth) name for a woman / anyone who has
 // one, else last_name. Shared by computeShortName (sn) and the chip_first_name override (nk) so a
 // curated chip keeps the SAME last name it would otherwise show — chip_first_name swaps ONLY the first
@@ -234,6 +283,9 @@ function compact(p, slugMap) {
 		n: bioOf(p).chip_name || bioOf(p).display_name || p.id,
 		by: birthYear(p),
 		dy: deathYear(p),
+		// pv — dates are in the payload (sorting needs them) but must not be DISPLAYED.
+		// Absent on everyone else; consumers test `person.pv`.
+		...(datesPrivate(p) ? { pv: true } : {}),
 		sx: sex(p),
 		hd: Boolean(c.is_thomas_descendant),
 		td: Boolean(c.is_talcott_descendant),
@@ -276,7 +328,8 @@ function compact(p, slugMap) {
 			if (p.gender !== 'female') return null;
 			const b = bioOf(p);
 			if (b.chip_name) return b.chip_name;
-			const surname = (b.married_names && b.married_names[b.married_names.length - 1]) || b.last_name || null;
+			const surname =
+				(b.married_names && b.married_names[b.married_names.length - 1]) || b.last_name || null;
 			const first = b.chip_first_name ?? b.first_name;
 			if (!surname || !first) return null;
 			return `${first} ${surname}`;
@@ -327,6 +380,11 @@ function neighborhood(p, byId, slugMap) {
 			order: m.marriage_number ?? 1,
 			spouse: cm(m.spouse_id),
 			year: m.date_year ?? null,
+			// rel — the NATURE of the union, not just its date. A long-term partner who was never a
+			// spouse still rides in `marriages[]`, because that array is the only thing that links a
+			// child to both parents; canonical marks those with relationship_type: 'partner'. Without
+			// carrying it here the chip silently calls them a spouse (Martha Fay, Suzzy Roche).
+			rel: m.relationship_type ?? null,
 			children: (m.children_ids || []).map(cm).filter(Boolean)
 		}));
 
@@ -372,8 +430,11 @@ function neighborhood(p, byId, slugMap) {
 	//          possibly-empty array anyway; the UI gates the tier on non-empty.
 	const fatherKids = par.father_id && byId[par.father_id] ? childrenOf(byId[par.father_id]) : [];
 	const motherKids = par.mother_id && byId[par.mother_id] ? childrenOf(byId[par.mother_id]) : [];
-	const fSet = new Set(fatherKids), mSet = new Set(motherKids);
-	const full = [], half = [], seen = new Set();
+	const fSet = new Set(fatherKids),
+		mSet = new Set(motherKids);
+	const full = [],
+		half = [],
+		seen = new Set();
 	for (const cid of [...fatherKids, ...motherKids]) {
 		if (cid === p.id || seen.has(cid)) continue;
 		seen.add(cid);
@@ -521,25 +582,71 @@ function youtubeThumb(url) {
 // registry location can be rendered "City, ST" at build time. Kept in sync manually — this is the
 // static US state table; drift here only affects the landmark subtitle, never core location render.
 const STATE_ABBREV = {
-	Alabama: 'AL', Alaska: 'AK', Arizona: 'AZ', Arkansas: 'AR', California: 'CA', Colorado: 'CO',
-	Connecticut: 'CT', Delaware: 'DE', Florida: 'FL', Georgia: 'GA', Hawaii: 'HI', Idaho: 'ID',
-	Illinois: 'IL', Indiana: 'IN', Iowa: 'IA', Kansas: 'KS', Kentucky: 'KY', Louisiana: 'LA',
-	Maine: 'ME', Maryland: 'MD', Massachusetts: 'MA', Michigan: 'MI', Minnesota: 'MN',
-	Mississippi: 'MS', Missouri: 'MO', Montana: 'MT', Nebraska: 'NE', Nevada: 'NV',
-	'New Hampshire': 'NH', 'New Jersey': 'NJ', 'New Mexico': 'NM', 'New York': 'NY',
-	'North Carolina': 'NC', 'North Dakota': 'ND', Ohio: 'OH', Oklahoma: 'OK', Oregon: 'OR',
-	Pennsylvania: 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC', 'South Dakota': 'SD',
-	Tennessee: 'TN', Texas: 'TX', Utah: 'UT', Vermont: 'VT', Virginia: 'VA', Washington: 'WA',
-	'West Virginia': 'WV', Wisconsin: 'WI', Wyoming: 'WY', 'District of Columbia': 'DC'
+	Alabama: 'AL',
+	Alaska: 'AK',
+	Arizona: 'AZ',
+	Arkansas: 'AR',
+	California: 'CA',
+	Colorado: 'CO',
+	Connecticut: 'CT',
+	Delaware: 'DE',
+	Florida: 'FL',
+	Georgia: 'GA',
+	Hawaii: 'HI',
+	Idaho: 'ID',
+	Illinois: 'IL',
+	Indiana: 'IN',
+	Iowa: 'IA',
+	Kansas: 'KS',
+	Kentucky: 'KY',
+	Louisiana: 'LA',
+	Maine: 'ME',
+	Maryland: 'MD',
+	Massachusetts: 'MA',
+	Michigan: 'MI',
+	Minnesota: 'MN',
+	Mississippi: 'MS',
+	Missouri: 'MO',
+	Montana: 'MT',
+	Nebraska: 'NE',
+	Nevada: 'NV',
+	'New Hampshire': 'NH',
+	'New Jersey': 'NJ',
+	'New Mexico': 'NM',
+	'New York': 'NY',
+	'North Carolina': 'NC',
+	'North Dakota': 'ND',
+	Ohio: 'OH',
+	Oklahoma: 'OK',
+	Oregon: 'OR',
+	Pennsylvania: 'PA',
+	'Rhode Island': 'RI',
+	'South Carolina': 'SC',
+	'South Dakota': 'SD',
+	Tennessee: 'TN',
+	Texas: 'TX',
+	Utah: 'UT',
+	Vermont: 'VT',
+	Virginia: 'VA',
+	Washington: 'WA',
+	'West Virginia': 'WV',
+	Wisconsin: 'WI',
+	Wyoming: 'WY',
+	'District of Columbia': 'DC'
 };
 const COUNTRY_ABBREV = {
-	England: 'UK', 'United Kingdom': 'UK', Scotland: 'UK', Wales: 'UK', 'Northern Ireland': 'UK',
-	Britain: 'UK', 'Great Britain': 'UK'
+	England: 'UK',
+	'United Kingdom': 'UK',
+	Scotland: 'UK',
+	Wales: 'UK',
+	'Northern Ireland': 'UK',
+	Britain: 'UK',
+	'Great Britain': 'UK'
 };
 function formatCityState(city, state, country) {
 	const isUS = !country || country === 'United States' || country === 'USA';
-	const st = state ? STATE_ABBREV[state] ?? state : null;
-	const ct = country ? COUNTRY_ABBREV[country] ?? country : null;
+	const st = state ? (STATE_ABBREV[state] ?? state) : null;
+	const ct = country ? (COUNTRY_ABBREV[country] ?? country) : null;
 	if (city && state && isUS) return `${city}, ${st}`;
 	if (city && state && !isUS) return `${city}, ${state}, ${ct}`;
 	if (city && country && !isUS) return `${city}, ${ct}`;
@@ -594,7 +701,7 @@ function resolveLandmarks(p, byId) {
 			url: r.primary_url ?? r.url ?? null,
 			thumbUrl: r.photo_url ?? r.image_url ?? null,
 			alt: r.photo_notes ?? r.image_caption ?? r.primary_name ?? null,
-			tooltip: loc ? `${r.primary_name} — ${loc}` : r.primary_name ?? null
+			tooltip: loc ? `${r.primary_name} — ${loc}` : (r.primary_name ?? null)
 		});
 	});
 }
@@ -621,8 +728,7 @@ function resolveDocuments(p, byId) {
 		const r = byId[id];
 		if (!r) return null;
 		// person-side ref carries the per-person note under `blurb` (older rows used `document_blurb`)
-		const blurb =
-			bl && typeof bl === 'object' ? (bl.blurb ?? bl.document_blurb ?? null) : null;
+		const blurb = bl && typeof bl === 'object' ? (bl.blurb ?? bl.document_blurb ?? null) : null;
 		return mediaRow({
 			name: r.title,
 			typeLabel: null,
@@ -642,7 +748,8 @@ function resolveStatues(p, bySubject) {
 		const nm = r.name ?? r.description ?? 'Statue';
 		// Second line = the statue's place, like a landmark (its own `location` label, else "City, ST").
 		// Falls back to the type label (Bust/Relief) when no place is recorded.
-		const loc = r.location ?? formatCityState(r.city, r.state, r.country) ?? statueTypeLabel(r.type);
+		const loc =
+			r.location ?? formatCityState(r.city, r.state, r.country) ?? statueTypeLabel(r.type);
 		return mediaRow({
 			name: nm,
 			typeLabel: statueTypeLabel(r.type),
@@ -704,7 +811,8 @@ function isAncestorOf(ancId, descId, byId) {
 // from her grandmother's centroid yet is genealogically straight-down).
 function relationClass(sourceId, targetId, byId) {
 	if (!sourceId || !targetId || sourceId === targetId) return 'collateral';
-	if (isAncestorOf(targetId, sourceId, byId) || isAncestorOf(sourceId, targetId, byId)) return 'direct';
+	if (isAncestorOf(targetId, sourceId, byId) || isAncestorOf(sourceId, targetId, byId))
+		return 'direct';
 	return 'collateral';
 }
 
@@ -760,7 +868,9 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 		// build time so the cold path works before table-index loads.
 		const tgt = byId[cc.related_id];
 		const tc = tgt && tgt.classification;
-		const talcottOnly = Boolean(tc && tc.is_talcott_descendant === true && tc.is_thomas_descendant !== true);
+		const talcottOnly = Boolean(
+			tc && tc.is_talcott_descendant === true && tc.is_thomas_descendant !== true
+		);
 		const out = {
 			type: cc.type,
 			related_id: cc.related_id,
@@ -850,9 +960,11 @@ function main() {
 	// 1) compute base slugs, then resolve collisions deterministically by ID
 	const groups = new Map(); // base -> [ids]
 	const stickyOf = new Map();
+	const priorOf = new Map(); // id -> year-bearing slug this person had before privacy dropped it
 	for (const p of people) {
-		const { base, sticky } = baseSlug(p);
+		const { base, sticky, priorBase } = baseSlug(p);
 		stickyOf.set(p.id, sticky);
+		if (priorBase) priorOf.set(p.id, priorBase);
 		if (!groups.has(base)) groups.set(base, []);
 		groups.get(base).push(p.id);
 	}
@@ -869,10 +981,17 @@ function main() {
 	log(
 		`  slugs: ${sticky} sticky / ${people.length - sticky} provisional, ${collisions} collision suffixes`
 	);
+	const privateCount = people.filter(datesPrivate).length;
+	log(
+		`  living: ${privateCount} people with dates suppressed (${priorOf.size} slugs lost their year)`
+	);
 
 	// 2) people.json — full records, slug written, research_notes (etc.) stripped
 	const clientPeople = people.map((p) => {
 		const out = { ...p, slug: slugMap.get(p.id), t: tableCoords.get(p.id) ?? null };
+		// FeaturedCard reads person.birth / person.death off the FULL record, not the compact,
+		// so the gate has to ride here too.
+		if (datesPrivate(p)) out.pv = true;
 		for (const f of CONFIG.stripFromClient) delete out[f];
 		return out;
 	});
@@ -896,6 +1015,13 @@ function main() {
 				...(p.merged_ids || [])
 			];
 			for (const old of olds) redirects[old] = current;
+		}
+		// Living people lost the birth year off their slug; forward the retired form so an old
+		// link still lands. Computed here rather than written as former_ids into canonical —
+		// the mapping is a function of the privacy rule, so it must move when the rule does.
+		for (const [id, prior] of priorOf) {
+			const current = slugMap.get(id);
+			if (prior && current && prior !== current && !redirects[prior]) redirects[prior] = current;
 		}
 
 		// 5) write the bundle
@@ -950,6 +1076,7 @@ function main() {
 				mother_id: par.mother_id ?? null
 			};
 			if (t.e) row.e = true;
+			if (datesPrivate(p)) row.pv = true;
 			return row;
 		});
 		const tiFull = W(join(CONFIG.dataDir, 'table-index.json'), tableIndex);
@@ -961,7 +1088,10 @@ function main() {
 		// list shrinks as enrichment touches them. Written at the repo root (not shipped to the client).
 		const anomHeader = 'id\tname\treason\tdetail';
 		const anomRows = coordResult.anomalies.map((r) => r.join('\t'));
-		writeFileSync(join(CONFIG.repoRoot, 'seating-anomalies.tsv'), [anomHeader, ...anomRows].join('\n') + '\n');
+		writeFileSync(
+			join(CONFIG.repoRoot, 'seating-anomalies.tsv'),
+			[anomHeader, ...anomRows].join('\n') + '\n'
+		);
 		const anomBy = coordResult.anomalies.reduce((a, r) => ((a[r[2]] = (a[r[2]] || 0) + 1), a), {});
 		log(`  seating-anomalies.tsv: ${anomRows.length} rows (${JSON.stringify(anomBy)})`);
 	}

@@ -14,7 +14,7 @@ import type { FeaturedData } from '$lib/state/featured.svelte';
 import type { Person } from '$lib/types/person';
 import type { PersonCompact } from '$lib/types/neighborhood';
 
-export type SpouseChip = { spouse: PersonCompact; year: number | null };
+export type SpouseChip = { spouse: PersonCompact; year: number | null; rel: string | null };
 
 export type Roster = {
 	featured: Person;
@@ -35,7 +35,8 @@ export function buildRoster(f: FeaturedData, _zoom: number): Roster {
 	// Priority order: spouse > parent > child (featured already claimed above).
 	const spouses: SpouseChip[] = [];
 	for (const m of f.neighborhood.spouses) {
-		if (m.spouse && take(m.spouse.id)) spouses.push({ spouse: m.spouse, year: m.year });
+		if (m.spouse && take(m.spouse.id))
+			spouses.push({ spouse: m.spouse, year: m.year, rel: m.rel ?? null });
 	}
 
 	const parents: PersonCompact[] = [];

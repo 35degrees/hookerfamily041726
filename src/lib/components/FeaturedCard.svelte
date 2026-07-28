@@ -53,9 +53,14 @@
 	// the card clip / overflow, pointer-events-none so the card stays interactive). Anchored ABOVE the
 	// cursor with a smart flip below when near the top edge, and clamped horizontally to the viewport.
 	// Hidden the instant the pointer leaves the photo.
-	let zoom = $state<{ src: string; alt: string; w: number; h: number; ax: number; y: number } | null>(
-		null
-	);
+	let zoom = $state<{
+		src: string;
+		alt: string;
+		w: number;
+		h: number;
+		ax: number;
+		y: number;
+	} | null>(null);
 
 	// Instant + lightweight: reuse the ALREADY-LOADED portrait src (no new network request → the
 	// enlargement appears the moment you hover, no first-hover lag). Sized to 200% of the displayed
@@ -81,7 +86,14 @@
 			h = w * ar;
 		}
 		// Horizontal is pinned to the photo's right edge (constant as the mouse moves), not the cursor.
-		zoom = { src: portraitSrc ?? photoUrl, alt: displayName || 'Portrait', w, h, ax: r.right, y: e.clientY };
+		zoom = {
+			src: portraitSrc ?? photoUrl,
+			alt: displayName || 'Portrait',
+			w,
+			h,
+			ax: r.right,
+			y: e.clientY
+		};
 	}
 	function closeZoom() {
 		zoom = null;
@@ -108,11 +120,15 @@
 		return { destroy: () => node.remove() };
 	}
 
-	let birthDate = $derived(formatDate(person.birth));
+	// Living, non-notable: the Birth and Death vitals are withheld entirely — date AND place AND the
+	// map link, which are the same disclosure class. Gated here rather than in formatDate so the
+	// formatters stay pure and policy lives in one place.
+	let datesPrivate = $derived(Boolean(person.pv));
+	let birthDate = $derived(datesPrivate ? '' : formatDate(person.birth));
 	let birthLocation = $derived(formatLocationShort(person.birth));
 	let birthMapUrl = $derived(buildMapUrl(person.birth));
 
-	let deathDate = $derived(formatDate(person.death));
+	let deathDate = $derived(datesPrivate ? '' : formatDate(person.death));
 	let deathLocation = $derived(formatLocationShort(person.death));
 	let deathMapUrl = $derived(buildMapUrl(person.death));
 
@@ -248,7 +264,8 @@
 						use:shrinkToFit={{ max: 24, min: 17, key: displayName }}
 					>
 						<span data-fit class="inline-block whitespace-nowrap"
-							>{displayName}<span class="ml-2 align-middle font-mono text-sm font-normal text-stone-400"
+							>{displayName}<span
+								class="ml-2 align-middle font-mono text-sm font-normal text-stone-400"
 								>{person.id}</span
 							></span
 						>
@@ -306,12 +323,7 @@
 						<div class="aspect-[3/4] w-full rounded-sm bg-stone-100"></div>
 					{/if}
 					<div class="vitals space-y-2.5 pl-1">
-						{#snippet vital(
-							label: string,
-							date: string,
-							loc: string | null,
-							mapUrl: string | null
-						)}
+						{#snippet vital(label: string, date: string, loc: string | null, mapUrl: string | null)}
 							<div>
 								<div class="text-[10px] font-semibold tracking-wider text-stone-500 uppercase">
 									{label}
@@ -335,7 +347,7 @@
 					</div>
 				</div>
 
-				<div class="narrative min-w-0 min-h-0 overflow-hidden pr-4 pl-4">
+				<div class="narrative min-h-0 min-w-0 overflow-hidden pr-4 pl-4">
 					<div class="max-w-[60ch]">
 						<NarrativeBlocks blocks={person.narrative_blocks ?? []} />
 					</div>
