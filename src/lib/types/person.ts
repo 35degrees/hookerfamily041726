@@ -10,6 +10,8 @@ export interface Name {
 	display_name: string;
 	bio_blurb?: string | null;
 	photo_url?: string | null;
+	/** CSS object-position override for this one portrait (e.g. 'right top'); optional. */
+	photo_position?: string | null;
 	photo_notes: string | null;
 	notes?: string | null;
 	extra_names?: string | null;

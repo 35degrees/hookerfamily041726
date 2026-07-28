@@ -12,6 +12,8 @@ export interface PersonCompact {
 	ee: boolean;
 	g: number | null;
 	p?: string | null;
+	/** per-person CSS object-position override for a badly-cropping portrait; absent = object-top. */
+	pp?: string | null;
 	sn?: string | null;
 	fn?: string | null; // first name — sibling chips render this (falls back to sn); other chips use sn
 	cf?: string | null; // chip_first_name alone ("Lent") — SIBLING chips show just this (first-name-only)

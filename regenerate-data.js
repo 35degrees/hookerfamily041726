@@ -295,6 +295,10 @@ function compact(p, slugMap) {
 		// prefers these (`compact.p ?? …`, `compact.sn ?? …`), so it no-ops when they're present. This is what
 		// lets siblings drop out of contextIds (they were shipping ~2.9KB full records to surface ~100 bytes).
 		p: p.bio?.photo_url ?? p.name?.photo_url ?? null,
+		// pp (photo position) — a per-person CSS object-position override for the rare portrait the
+		// default `object-top` crop cuts badly (a landscape photo, a subject off to one side). Absent
+		// on ~18,000 records, which is the point: nobody else's crop moves.
+		...(bioOf(p).photo_position ? { pp: bioOf(p).photo_position } : {}),
 		sn: computeShortName(p),
 		// fn (first name) — sibling chips render just the first name ("from the POV of the card, he knows them
 		// as Abigail"). A DATA field, not a UI split of sn/n (which breaks on titles/maiden names/suffixes).

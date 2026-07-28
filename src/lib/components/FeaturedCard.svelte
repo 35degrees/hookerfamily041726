@@ -124,6 +124,9 @@
 	// map link, which are the same disclosure class. Gated here rather than in formatDate so the
 	// formatters stay pure and policy lives in one place.
 	let datesPrivate = $derived(Boolean(person.pv));
+	// One-off crop override for a portrait the default top-centre crop mangles (landscape shots,
+	// off-centre subjects). Set per person in canonical as bio.photo_position; absent everywhere else.
+	let photoPosition = $derived(person.bio?.photo_position ?? null);
 	let birthDate = $derived(datesPrivate ? '' : formatDate(person.birth));
 	let birthLocation = $derived(formatLocationShort(person.birth));
 	let birthMapUrl = $derived(buildMapUrl(person.birth));
@@ -312,7 +315,10 @@
 						<img
 							src={portraitSrc}
 							alt={person.bio?.display_name ?? person.name?.display_name ?? 'Portrait'}
-							class="aspect-[3/4] w-full rounded-sm bg-stone-100 object-cover object-top"
+							class="aspect-[3/4] w-full rounded-sm bg-stone-100 object-cover {photoPosition
+								? ''
+								: 'object-top'}"
+							style={photoPosition ? `object-position: ${photoPosition}` : undefined}
 							loading="eager"
 							fetchpriority="high"
 							onmouseenter={trackZoom}

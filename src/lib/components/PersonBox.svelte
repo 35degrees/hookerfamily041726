@@ -121,7 +121,8 @@
 				<img
 					src={chipSrc}
 					alt={person.n}
-					class="h-full w-full object-cover object-top"
+					class="h-full w-full object-cover {person.pp ? '' : 'object-top'}"
+					style={person.pp ? `object-position: ${person.pp}` : undefined}
 					loading="eager"
 					fetchpriority="high"
 					decoding="async"
@@ -159,7 +160,8 @@
 				<img
 					src={chipSrc}
 					alt={person.n}
-					class="h-full w-full object-cover object-top"
+					class="h-full w-full object-cover {person.pp ? '' : 'object-top'}"
+					style={person.pp ? `object-position: ${person.pp}` : undefined}
 					loading="eager"
 					fetchpriority="high"
 					decoding="async"
