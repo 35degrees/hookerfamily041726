@@ -1,0 +1,6 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+X02907,cc,"related=HD5589 link=""Loudon Snowden Wainwright Jr."" label=""carried her maiden name onto the masthead of Life magazine""",OK cc->HD5589 added; FLAG needs reciprocal cc row on HD5589,/person/margery-loudon-1808,,
+X02907,cc,"related=HD5590 link=""Loudon Wainwright III"" label=""carries her maiden name five generations down""",OK cc->HD5590 added; FLAG needs reciprocal cc row on HD5590,/person/margery-loudon-1808,,
+HD5589,cc,"related=X02907 link=""Margery Bines Loudon Snowden"" label=""was born a Loudon, and four generations after her carried it""",OK cc->X02907 added (reciprocal present),/person/loudon-wainwright-jr-1924,,
+HD5590,cc,"related=X02907 link=""Margery Bines Loudon Snowden"" label=""was born a Loudon, and five generations after her carried it""",OK cc->X02907 added (reciprocal present),/person/loudon-wainwright-iii-1946,,
+X02907,nb_approved,"header=""Her maiden name outlasted her by five generations"" body=""She was born a Loudon and gave the name to her son. It travelled down through his daughter to Loudon Wainwright Jr. of Life magazine, and then to the folk singer Loudon Wainwright III, born a hundred and thirty-eight years after her."" category=legacy",OK nb_approved appended verbatim: 'Her maiden name outlasted her by five generations',/person/margery-loudon-1808,,
