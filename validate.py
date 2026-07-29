@@ -210,6 +210,23 @@ def validate(path, baseline_path=None):
             debt['REM_gender_missing_married'] += 1
             warnings.append(f"{who}: gender missing but has a marriage (card shows 'Spouse of' not Wife/Husband)")
 
+        # --- SEVERANCE GUARD: a VISIBLE person must not cross-connect to a HIDDEN one ---
+        # regenerate-data.js drops these from the emitted payload, so the card is not broken today.
+        # But the CC is the one emit path that cannot self-degrade — it resolves its href through
+        # slugMap, which deliberately still holds hidden people so their slugs stay reserved. If the
+        # build-time filter is ever removed or reordered, every one of these becomes a live-looking
+        # link to a page that was never written. An ERROR, not a warning: a batch should not be able
+        # to add one silently, and re-sewing the line is what clears it.
+        if not (p.get('classification') or {}).get('hidden'):
+            for cc in (p.get('cross_connections') or []):
+                rid = cc.get('related_id')
+                tgt = tp.get(rid) if rid else None
+                if tgt and (tgt.get('classification') or {}).get('hidden'):
+                    debt['SEV_cc_to_hidden'] += 1
+                    errors.append(f"{who}: CC to {rid} ({nm(tgt)}) which is HIDDEN "
+                                  f"({(tgt['classification'] or {}).get('hidden')}) — dropped at build, "
+                                  f"remove the CC or un-hide the target")
+
         # --- thomas descendant with no generation number (the "Nth Generation" line goes blank) ---
         cls = p.get('classification') or {}
         if cls.get('is_thomas_descendant') and cls.get('generation_from_thomas') is None:
