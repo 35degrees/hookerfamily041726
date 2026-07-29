@@ -1,0 +1,870 @@
+id	name	birth	death	notable	blurb	breaks	breaks_on_HOOKER_cards	registries	what_breaks
+I01517	George Welles	1756	1813		Yale-educated Pennsylvania land agent and innkeeper	1	0		child chip on I01518 John Welles
+T00002	John Talcott	1562	1604			2	0		spouse chip on X01725 Anne Skinner | parent chip on T00011 John Talcott
+T00034	Mary Talcott Russell	1625	1650			3	0		spouse chip on U00014 Rev. John Russell | child chip on U00011 Dorothy Mott Talcott
+T00035	Lieut.-Col. John Talcott Jr.	1632	1688	YES	Colonial military commander, King Philip's War	7	0	landmarks;notable_stories;soldiers_index;wars	spouse chip on U00012 Helena Wakeman Talcott | parent chip on T00045 Gov. Joseph Talcott
+T00036	Captain Samuel Talcott	1635	1691	YES	Connecticut colonial official	6	1	institutions;notable_stories;soldiers_index	CC on H00001 Rev. Thomas Hooker
+T00037	John Russell	1650	1670			1	0		child chip on U00014 Rev. John Russell
+T00038	Rev. Jonathan Russell	1655	1711		Harvard-trained minister of Barnstable, Massachusetts	3	0		spouse chip on U00015 Martha Moody Russell | child chip on U00014 Rev. John Russell
+T00039	John Talcott	1653	1683			2	0		child chip on U00012 Helena Wakeman Talcott | spouse chip on X01728 Abigail Tibbetts
+T00040	Elizabeth Talcott	1655	1710			2	0		child chip on U00012 Helena Wakeman Talcott | spouse chip on U00018 Captain Joseph Wadsworth
+T00041	Samuel Talcott	1658	1681			1	0		child chip on U00012 Helena Wakeman Talcott
+T00043	Hannah Talcott	1663	1696			2	0		child chip on U00012 Helena Wakeman Talcott | spouse chip on U00020 Nathan Gold
+T00044	Dorothy Talcott	1666	1696			3	0		spouse chip on U00021 Captain Thomas Stoughton | child chip on U00012 Helena Wakeman Talcott
+T00046	Helena Talcott	1674	1703			2	0		child chip on U00012 Helena Wakeman Talcott | spouse chip on X01730 Cyprian Nichols
+T00047	Ruth Talcott	1677				2	0		spouse chip on U00023 John Read | child chip on U00013 Mary Cook Talcott
+T00049	Rachel Talcott	1681				2	0		spouse chip on X01731 Gershom Buckley | child chip on U00013 Mary Cook Talcott
+T00051	Hezekiah Talcott	1686	1764			2	0		spouse chip on U00024 Jemima Parsons Talcott | child chip on U00013 Mary Cook Talcott
+T00052	Jonathan Edwards	1693	1693			2	0		child chip on U00016 Richard Edwards | child chip on T00042 Mary Talcott
+T00053	John Edwards	1694	1769			3	0		spouse chip on X01749 Christian Williamson | child chip on U00016 Richard Edwards
+T00054	Hannah Edwards	1696	1747			3	0		child chip on U00016 Richard Edwards | spouse chip on X01750 Joseph Backus Jr
+T00055	Richard Edwards	1698	1713			2	0		child chip on U00016 Richard Edwards | child chip on T00042 Mary Talcott
+T00057	Samuel Edwards	1702	1732		Half-uncle of Jonathan Edwards, Talcott line	3	0		spouse chip on X01751 Jerusha Pitkin | child chip on U00016 Richard Edwards
+T00058	Abigail Gold	1687				2	0		child chip on U00020 Nathan Gold | spouse chip on X01753 Rev. Thomas Hawley
+T00059	John Gold	1688	1766			2	0		spouse chip on X01754 Hannah Slawson | child chip on U00020 Nathan Gold
+T00060	Nathan Gold	1690				1	0		child chip on U00020 Nathan Gold
+T00061	Samuel Gold	1693				2	0		child chip on U00020 Nathan Gold | spouse chip on X01755 Ellen Bradley
+T00062	Joseph Gold		1769			1	0		child chip on U00020 Nathan Gold
+T00063	Rev. Hezekiah Gold	1694	1761			2	0	institutions;notable_stories	spouse chip on X01756 Mary Ruggles Gold | child chip on U00020 Nathan Gold
+T00064	Mary Stoughton Allyn	1693				3	0		child chip on U00021 Captain Thomas Stoughton | spouse chip on X01757 Pelaliah Allyn
+T00065	John Talcott	1699	1777			3	0		child chip on U00022 Abigail Clark Talcott | child chip on T00045 Gov. Joseph Talcott
+T00066	Joseph Talcott	1701	1799			3	0		child chip on U00022 Abigail Clark Talcott | child chip on T00045 Gov. Joseph Talcott
+T00067	Nathaniel Talcott	1703				3	0		child chip on U00022 Abigail Clark Talcott | child chip on T00045 Gov. Joseph Talcott
+T00071	Samuel Talcott	1711	1797		Hartford sheriff and colonel	3	0	cemeteries;institutions	child chip on T00045 Gov. Joseph Talcott | child chip on U00017 Eunice Howell Talcott
+T00072	Jerusha Talcott	1717	1805			3	0	institutions;notable_stories	child chip on T00045 Gov. Joseph Talcott | child chip on U00017 Eunice Howell Talcott
+T00073	Helena Talcott	1720				4	0	institutions	spouse chip on X01766 Rev. Robert Breck | child chip on T00045 Gov. Joseph Talcott
+T00074	Elizabeth Nichols	1700				2	0		spouse chip on X01767 William Davenport | child chip on X01730 Cyprian Nichols
+T00075	John Read	1700	1786			3	0	institutions	spouse chip on X01768 (unknown spouse) | child chip on U00023 John Read
+T00076	William Read					2	0		child chip on U00023 John Read | spouse chip on X01770 Hawley
+T00077	Ruth Read					2	0		child chip on U00023 John Read | spouse chip on X01771 Rev.
+T00078	Mary Read					2	0		child chip on U00023 John Read | spouse chip on X01772 (unknown spouse)
+T00079	Abigail Read					1	0		child chip on U00023 John Read
+T00080	Deborah Read					1	0		child chip on U00023 John Read
+T00081	John Talcott	1713	1765			2	0		child chip on U00024 Jemima Parsons Talcott | spouse chip on X01773 Sarah Parsons
+T00082	Jemima Talcott	1719				1	0		child chip on U00024 Jemima Parsons Talcott
+T00083	Mary Talcott	1723				1	0		child chip on U00024 Jemima Parsons Talcott
+T00084	Ann Talcott	1725	1765			2	0		spouse chip on X01774 Israel Camp | child chip on U00024 Jemima Parsons Talcott
+T00085	Rachel Talcott	1728				2	0		child chip on U00024 Jemima Parsons Talcott | spouse chip on X01775 Job Camp
+T00086	Rhoda Talcott	1731	1771			2	0		child chip on U00024 Jemima Parsons Talcott | spouse chip on X01776 Jesse Cook
+T00087	Eunice Talcott	1736	1804			2	0		child chip on U00024 Jemima Parsons Talcott | spouse chip on X01777 Elnathan Camp
+T00135	Deacon Benjamin Talcott	1674	1727			3	0	notable_stories	spouse chip on U00044 [Unknown] [Talcott 2nd wife] | spouse chip on U00030 Sarah Hollister Talcott
+T00383	Abigail Wadsworth	1734				2	0	cemeteries	child chip on T00068 Abigail Talcott | child chip on X00418 Rev. Daniel Wadsworth
+T00384	Eunice Wadsworth	1736	1825			2	0	cemeteries	child chip on T00068 Abigail Talcott | child chip on X00418 Rev. Daniel Wadsworth
+T00385	Elizabeth Wadsworth	1738	1810			2	0	cemeteries	child chip on T00068 Abigail Talcott | child chip on X00418 Rev. Daniel Wadsworth
+T00386	Daniel Wadsworth	1741	1750			2	0	cemeteries	child chip on T00068 Abigail Talcott | child chip on X00418 Rev. Daniel Wadsworth
+T00388	Ruth Wadsworth	1748	1750			2	0	cemeteries	child chip on T00068 Abigail Talcott | child chip on X00418 Rev. Daniel Wadsworth
+T00394	Samuel Talcott	1740	1798		Revolutionary colonel; Yale 1757	2	0	cemeteries	spouse chip on U00066 Abigail Ledyard Talcott | child chip on X01763 Mabel Wyllys Talcott
+T00430	Cornet Samuel Talcott	1662	1698			2	0		spouse chip on U00027 Mary Ellery Patterson | child chip on U00025 Hannah Holyoke Talcott
+T00431	John Talcott	1663				1	0		child chip on U00025 Hannah Holyoke Talcott
+T00432	Hannah Talcott	1665	1741			2	0		spouse chip on U00028 Major John Chester | child chip on U00025 Hannah Holyoke Talcott
+T00433	Elizur Talcott	1669				2	0		spouse chip on X01781 Sarah [unknown] | child chip on U00025 Hannah Holyoke Talcott
+T00434	Deacon Joseph Talcott	1671	1732			2	0		spouse chip on U00029 Sarah Deming Talcott | child chip on U00025 Hannah Holyoke Talcott
+T00436	Rachel Talcott	1676	1725		Twice-married woman the records nearly lost	3	0		spouse chip on X02153 Lt. Henry Wolcott | child chip on U00025 Hannah Holyoke Talcott
+T00437	Sgt. Nathaniel Talcott	1678	1758			2	0		child chip on U00025 Hannah Holyoke Talcott | spouse chip on U00031 Elizabeth Talcott
+T00438	Anne Talcott	1691	1776			2	0		child chip on U00027 Mary Ellery Patterson | spouse chip on U00051 Elizur Goodrich
+T00439	Samuel Talcott	1696	1739			2	0		child chip on U00027 Mary Ellery Patterson | spouse chip on U00032 Thankful Belding Talcott
+T00440	Mary Talcott	1698	1784			2	0		child chip on U00027 Mary Ellery Patterson | spouse chip on U00053 Lieut. Ebenezer Belding
+T00441	Penelope Chester	1687	1688			1	0		child chip on U00028 Major John Chester
+T00442	Mehitabel Chester	1689	1773			2	0		child chip on U00028 Major John Chester | spouse chip on U00054 Nathaniel Burnham
+T00443	Mary Chester	1691	1766			2	0		child chip on U00028 Major John Chester | spouse chip on U00055 Jonathan Burnham
+T00444	Penelope Chester	1693	1764			2	0		child chip on U00028 Major John Chester | spouse chip on X01784 Rev. Ebenezer Williams
+T00445	Hannah Chester	1696	1749			2	0		child chip on U00028 Major John Chester | spouse chip on X01785 Gideon Wells
+T00446	Prudence Chester	1699	1780			2	0		child chip on U00028 Major John Chester | spouse chip on X01786 Col. John Stoddard
+T00447	Eunice Chester	1701	1756			2	0		child chip on U00028 Major John Chester | spouse chip on X01787 Col. John Pitkin
+T00448	John Chester	1703	1771			2	0	institutions	child chip on U00028 Major John Chester | spouse chip on X01788 Sarah Noyes
+T00449	Sarah Chester	1707	1770			2	0		child chip on U00028 Major John Chester | spouse chip on X01789 Israel Williams
+T00450	Isaac Talcott					1	0		child chip on X01781 Sarah [unknown]
+T00451	John Talcott	1695				1	0		child chip on X01781 Sarah [unknown]
+T00452	Josiah Talcott	1703				2	0		child chip on U00029 Sarah Deming Talcott | spouse chip on X01790 Dinah Wyat
+T00453	Hezekiah Talcott	1704	1734			1	0		child chip on U00029 Sarah Deming Talcott
+T00454	Sarah Talcott	1699	1743			2	0		spouse chip on U00045 Capt. Jonathan Hale | child chip on U00030 Sarah Hollister Talcott
+T00455	Benjamin Talcott	1702	1785		First Talcott to settle in Bolton	3	0		spouse chip on U00046 Esther Lyman Talcott | spouse chip on X02472 Deborah Gillett
+T00456	John Talcott	1704	1745			2	0		spouse chip on U00047 Lucy Burnham | child chip on U00030 Sarah Hollister Talcott
+T00457	Hannah Talcott	1706	1796			2	0		child chip on U00030 Sarah Hollister Talcott | spouse chip on U00048 Benjamin Hale
+T00458	Capt. Samuel Talcott Sr.	1708	1768		Glastonbury militia captain	3	0	cemeteries;notable_stories	parent chip on T01001 Col. Samuel Talcott Jr. | child chip on U00030 Sarah Hollister Talcott
+T00459	Col. Elizur Talcott	1709	1797			3	1	documents;wars	CC on H00228 Samuel Hooker
+T00460	Mehitabel Talcott	1713	1781			2	0		child chip on U00030 Sarah Hollister Talcott | spouse chip on U00050 Hezekiah Wright
+T00461	Abigail Talcott	1715	1715			1	0		child chip on U00030 Sarah Hollister Talcott
+T00462	Elizabeth Talcott	1704				1	0		child chip on U00031 Elizabeth Talcott
+T00463	Rachel Talcott	1706				1	0		child chip on U00031 Elizabeth Talcott
+T00464	Mary Talcott	1709				1	0		child chip on U00031 Elizabeth Talcott
+T00465	Joshua Talcott	1711	1799			2	0		child chip on U00031 Elizabeth Talcott | spouse chip on U00033 Rachel Hollister Talcott
+T00466	Abigail Talcott	1717	1813			1	0		child chip on U00031 Elizabeth Talcott
+T00467	Nathaniel Talcott	1720	1783			2	0		spouse chip on X01792 Sarah Hale | child chip on U00031 Elizabeth Talcott
+T00468	Joseph Talcott	1723	1788			2	0		spouse chip on X01793 Sarah Kilbourn | child chip on U00031 Elizabeth Talcott
+T00469	Samuel Talcott	1724	1765			1	0		child chip on U00032 Thankful Belding Talcott
+T00470	Elizur Talcott	1728				1	0		child chip on U00032 Thankful Belding Talcott
+T00471	Ebenezer Talcott	1731	1795			1	0		child chip on U00032 Thankful Belding Talcott
+T00472	Mary Talcott	1733	1808			1	0		child chip on U00032 Thankful Belding Talcott
+T00473	Joseph Talcott Sr.	1752	1826			1	0	cemeteries;soldiers_index;wars	spouse chip on U00057 Mary Thomas Talcott
+T00476	Joseph Talcott Jr.	1777	1858			2	0	cemeteries	child chip on U00057 Mary Thomas Talcott | spouse chip on U00058 Rebecca Warren Talcott
+T00477	Daniel Talcott	1779	1843			2	0		child chip on U00057 Mary Thomas Talcott | spouse chip on U00059 Abigail Stearns Talcott
+T00478	Samuel Talcott	1785	1846			2	0		spouse chip on U00060 Hannah Reed Talcott | child chip on U00057 Mary Thomas Talcott
+T00479	Betsey Talcott Swetland	1794	1871			2	0		child chip on U00057 Mary Thomas Talcott | spouse chip on I01734 Salmon Swetland
+T00480	Dolly Talcott Rawson	1792	1851			2	0		child chip on U00057 Mary Thomas Talcott | spouse chip on I01735 Grindall Rawson Jr.
+T00481	Asa Talcott	1801	1870			2	0	cemeteries	spouse chip on U00064 Leona Caroline Newcomb Talcott | child chip on U00058 Rebecca Warren Talcott
+T00482	Polly Talcott Adams	1803	1820			1	0		child chip on U00058 Rebecca Warren Talcott
+T00483	Martin Canary Talcott	1806	1874			1	0		child chip on U00058 Rebecca Warren Talcott
+T00484	Ezra W. Talcott	1807	1830			1	0		child chip on U00058 Rebecca Warren Talcott
+T00485	Eliza Dean Talcott Hallowell	1809	1830			1	0		child chip on U00058 Rebecca Warren Talcott
+T00486	Rebecca Talcott Wood	1811	1850			1	0		child chip on U00058 Rebecca Warren Talcott
+T00487	Caroline Talcott Steward Fuller	1813	1890			1	0		child chip on U00058 Rebecca Warren Talcott
+T00488	William C. Talcott	1815				1	0		child chip on U00058 Rebecca Warren Talcott
+T00489	Silas N. Talcott	1818				1	0		child chip on U00058 Rebecca Warren Talcott
+T00490	Melissa A. Talcott Garis	1820				1	0		child chip on U00058 Rebecca Warren Talcott
+T00491	Asenath C. Talcott Foss Bartlett	1822				1	0		child chip on U00058 Rebecca Warren Talcott
+T00492	Rhoda Talcott Rush	1811				1	0		child chip on U00060 Hannah Reed Talcott
+T00493	Samuel Talcott Jr.	1813				1	0		child chip on U00060 Hannah Reed Talcott
+T00494	Mary Talcott Prowley	1815				1	0		child chip on U00060 Hannah Reed Talcott
+T00495	Daniel Talcott	1818	1825			1	0		child chip on U00060 Hannah Reed Talcott
+T00496	Louisa Talcott Lockwood	1820				1	0		child chip on U00060 Hannah Reed Talcott
+T00497	Eunice Talcott	1822	1857			1	0		child chip on U00060 Hannah Reed Talcott
+T00498	Joseph Talcott	1826				1	0		child chip on U00060 Hannah Reed Talcott
+T00499	Daniel Talcott	1828				1	0		child chip on U00060 Hannah Reed Talcott
+T00500	Cynthia Talcott Brook	1831				1	0		child chip on U00060 Hannah Reed Talcott
+T00501	John Talcott	1834	1840			1	0		child chip on U00060 Hannah Reed Talcott
+T00502	Harriet Swetland Gager	1817				1	0		child chip on I01734 Salmon Swetland
+T00503	Rosett Swetland Scoville	1819				1	0		child chip on I01734 Salmon Swetland
+T00504	Salmon Swetland Jr.	1821				1	0		child chip on I01734 Salmon Swetland
+T00505	Mariette Swetland Crocker	1823				1	0		child chip on I01734 Salmon Swetland
+T00506	Leonard Swetland	1825				1	0		child chip on I01734 Salmon Swetland
+T00507	Mary Rawson Deeds	1813	1851			1	0		child chip on I01735 Grindall Rawson Jr.
+T00508	Joseph Talcott Rawson	1814	1874			1	0		child chip on I01735 Grindall Rawson Jr.
+T00509	Laura Rawson Starks	1816	1874			2	0	cemeteries	spouse chip on I01736 Chester Bates Starks | child chip on I01735 Grindall Rawson Jr.
+T00510	Orange Rawson	1819	1846			1	0		child chip on I01735 Grindall Rawson Jr.
+T00511	George Leander Rawson Sr.	1821	1885			1	0		child chip on I01735 Grindall Rawson Jr.
+T00512	Philander Rawson	1825	1905			3	0	cemeteries	spouse chip on U00062 Ellen White Rawson | child chip on I01735 Grindall Rawson Jr.
+T00513	Mariva Rawson Cunningham	1827	1876			1	0		child chip on I01735 Grindall Rawson Jr.
+T00514	Grindall Rawson	1829	1897			1	0		child chip on I01735 Grindall Rawson Jr.
+T00515	Adaline Rawson Fowler	1832	1895			1	0		child chip on I01735 Grindall Rawson Jr.
+T00516	Eunice Euphrasia Talcott Davis	1821				1	0		child chip on U00064 Leona Caroline Newcomb Talcott
+T00517	Fitz Henry Talcott	1822	1900			3	0		spouse chip on U00065 Amelia Harned Talcott | spouse chip on U00063 Elmira Ann Nye Talcott
+T00518	Mary Angeline Talcott Hammond	1824	1872			1	0		child chip on U00064 Leona Caroline Newcomb Talcott
+T00519	Bradford Newcomb Talcott	1827	1896			2	0		spouse chip on I01749 Mary A. Nye Talcott | child chip on U00064 Leona Caroline Newcomb Talcott
+T00520	Elvina F. Talcott	1829	1831			1	0	cemeteries	child chip on U00064 Leona Caroline Newcomb Talcott
+T00521	Edward Plympton Talcott	1831	1904			2	0	cemeteries;soldiers_index	child chip on U00064 Leona Caroline Newcomb Talcott | spouse chip on I01750 Eliza White Adams Talcott
+T00522	Walter Burroughs Talcott	1833	1865			2	0	cemeteries;soldiers_index	child chip on U00064 Leona Caroline Newcomb Talcott | spouse chip on I01752 Chloe Sophia Holbrook Talcott
+T00523	Horace Plimon Talcott	1835	1910			2	0	cemeteries;soldiers_index	spouse chip on I01756 Elizabeth Serana Kemp Talcott | child chip on U00064 Leona Caroline Newcomb Talcott
+T00524	Elvina C. Talcott Strong	1837				1	0		child chip on U00064 Leona Caroline Newcomb Talcott
+T00525	Lydia E. Talcott Allen	1839				1	0		child chip on U00064 Leona Caroline Newcomb Talcott
+T00526	William A. Talcott	1841				1	0		child chip on U00064 Leona Caroline Newcomb Talcott
+T00527	Mabel O. Talcott Hollister	1845				1	0		child chip on U00064 Leona Caroline Newcomb Talcott
+T00528	Silas A. Talcott	1848				1	0		child chip on U00064 Leona Caroline Newcomb Talcott
+T00773	Samuel Talcott	1758	1794			0	0		
+T00774	Ebenezer Talcott					0	0		
+T00775	Samuel Talcott	1758	1794			1	0		spouse chip on X02402 Mary Hurlbut Talcott
+T00776	Josiah Talcott	1763				0	0		
+T00777	John Talcott	1762				0	0		
+T00778	Sarah Talcott Treat					1	0		spouse chip on X02403 Captain James Treat
+T00779	Deacon William Talcott	1771	1813			1	0		spouse chip on X02408 Amelia Hanmer Talcott
+T00780	Mary Talcott	1773	1836			0	0		
+T00781	Joseph Talcott	1776	1832			1	0	cemeteries	spouse chip on X02404 Anna Boardman Talcott
+T00794	Amelia Hanmer Talcott Hills	1801	1847			1	0	cemeteries	child chip on X02408 Amelia Hanmer Talcott
+T00795	Celia Talcott Robbins	1804	1886			2	0		spouse chip on X02405 Henry Robbins | child chip on X02408 Amelia Hanmer Talcott
+T00796	Colonel William Talcott	1806	1886			2	0		spouse chip on X02406 Eliza H Harris Talcott | child chip on X02408 Amelia Hanmer Talcott
+T00797	Sarah Treat Talcott Loveland	1809	1873			2	0		child chip on X02408 Amelia Hanmer Talcott | spouse chip on X02407 John Loveland
+T00798	Francis H Talcott	1812	1854			1	0		child chip on X02408 Amelia Hanmer Talcott
+T00909	Deacon Benjamin Talcott	1725	1811			2	0	cemeteries	child chip on U00046 Esther Lyman Talcott | spouse chip on I00207 Elizabeth Lyman Talcott
+T01010	Rachel Talcott	1736	1824			1	0		child chip on U00049 Ruth Wright
+T01012	Isaac Talcott	1740	1815			3	0		spouse chip on I01513 Sarah Goodrich | child chip on U00049 Ruth Wright
+T01016	Elizur Talcott	1750	1831		Talcott pioneer settler at Owego, New York	2	0		child chip on U00049 Ruth Wright | spouse chip on I01515 Dorothy Lord
+T01017	Ruth Talcott	1753	1821			2	0		child chip on U00049 Ruth Wright | spouse chip on I01516 Thomas White
+T01018	George Talcott	1755	1813		Glastonbury farmer and Revolutionary soldier	3	0		spouse chip on I00200 Abigail Goodrich Talcott | child chip on U00049 Ruth Wright
+T01019	Prudence Talcott	1757	1839			1	0		child chip on U00049 Ruth Wright
+T01020	Samuel Wright	1737				1	0		child chip on U00050 Hezekiah Wright
+T01021	Josiah Wright	1738				1	0		child chip on U00050 Hezekiah Wright
+T01022	Abigail Wright	1740				1	0		child chip on U00050 Hezekiah Wright
+T01023	Mehitabel Wright	1742				1	0		child chip on U00050 Hezekiah Wright
+T01024	Hezekiah Wright	1744				1	0		child chip on U00050 Hezekiah Wright
+T01025	David Wright	1745				1	0		child chip on U00050 Hezekiah Wright
+T01026	Sarah Wright	1748				1	0		child chip on U00050 Hezekiah Wright
+T01027	Isaac Wright	1753				1	0		child chip on U00050 Hezekiah Wright
+T01028	Benjamin Talcott	1754	1829			4	0		spouse chip on I00251 Betsey Field Baker Talcott | spouse chip on I00250 Hannah Percival Talcott
+T01029	Deacon Elijah Talcott	1755	1826			4	0	cemeteries;institutions	spouse chip on I00208 Rebecca Olmstead Talcott | spouse chip on U00049 Ruth Wright
+T01030	Deacon Samuel Talcott	1757	1813			2	0	cemeteries	spouse chip on I00259 Sarah Smith Talcott | child chip on I00207 Elizabeth Lyman Talcott
+T01031	Deacon Phineas Talcott	1758	1835	YES	Connecticut legislator; 1818 Constitutional Convention delegate	2	0	cemeteries	spouse chip on I00195 Hannah Kellogg Talcott | child chip on I00207 Elizabeth Lyman Talcott
+T01032	Elizabeth Talcott Griswold	1760	1843			2	0	cemeteries	child chip on I00207 Elizabeth Lyman Talcott | spouse chip on I00217 Theophilus Griswold
+T01033	Daniel Talcott	1762	1807			3	0	cemeteries	spouse chip on I00222 Abigail Holt Talcott | child chip on I00207 Elizabeth Lyman Talcott
+T01034	Jacob Talcott	1766	1835			2	0	cemeteries	spouse chip on I00225 Anna Carpenter Talcott | child chip on I00207 Elizabeth Lyman Talcott
+T01035	Rachel Talcott Howard	1766	1805			2	0	cemeteries;notable_stories	spouse chip on I00227 Samuel Howard | child chip on I00207 Elizabeth Lyman Talcott
+T01036	Olive Talcott Smith	1768	1829			2	0	cemeteries	child chip on I00207 Elizabeth Lyman Talcott | spouse chip on I00239 David Smith
+T01037	Esther Talcott Keeney	1770	1813			2	0	notable_stories	spouse chip on I00244 Alexander Keeney | child chip on I00207 Elizabeth Lyman Talcott
+T01038	Alvan Talcott	1773	1835			2	0	cemeteries;institutions	spouse chip on I00245 Philomela Root Talcott | child chip on I00207 Elizabeth Lyman Talcott
+T01039	Jerusha Talcott	1783				1	0		child chip on I00249 Jerusha Olmstead Talcott
+T01040	Benjamin Talcott	1789				1	0		child chip on I00249 Jerusha Olmstead Talcott
+T01041	Hannah Talcott	1804				1	0		child chip on I00250 Hannah Percival Talcott
+T01042	Elijah Talcott	1784	1857			2	0		child chip on I00208 Rebecca Olmstead Talcott | child chip on U00049 Ruth Wright
+T01043	Deacon Flavel Talcott	1786	1844			3	0	cemeteries	child chip on I00208 Rebecca Olmstead Talcott | child chip on U00049 Ruth Wright
+T01044	Rev. Hart Talcott	1787	1836		Congregational minister	4	0	institutions	child chip on I00208 Rebecca Olmstead Talcott | spouse chip on X02482 Clarina Warner
+T01045	Rebecca Talcott Stone	1789	1841			2	0		child chip on I00208 Rebecca Olmstead Talcott | child chip on U00049 Ruth Wright
+T01046	Asa Talcott	1793	1793			2	0		child chip on I00208 Rebecca Olmstead Talcott | child chip on U00049 Ruth Wright
+T01047	Dr. William Olmstead Talcott	1794	1831			3	0	cemeteries;institutions	child chip on I00208 Rebecca Olmstead Talcott | child chip on U00049 Ruth Wright
+T01048	Julius Talcott	1796	1854			3	0		child chip on I00208 Rebecca Olmstead Talcott | child chip on U00049 Ruth Wright
+T01049	Wealthy Talcott	1806				1	0		child chip on X02480 Wealthy Strong
+T01050	Luna Talcott	1808				1	0		child chip on X02480 Wealthy Strong
+T01051	Lura Talcott	1808				1	0		child chip on X02480 Wealthy Strong
+T01052	Samuel Smith Talcott	1793	1882	YES	Founded the Granite Mills paper company on the	3	0	cemeteries;institutions	child chip on I00259 Sarah Smith Talcott | spouse chip on X02487 Sophia E. Keeney
+T01053	Sarah Talcott	1796	1796			1	0		child chip on I00259 Sarah Smith Talcott
+T01054	Sarah Talcott Landfear	1797	1838			2	0	cemeteries	child chip on I00259 Sarah Smith Talcott | spouse chip on I00260 Harry L. Landfear
+T01055	Juliana Talcott	1799				1	0		child chip on I00259 Sarah Smith Talcott
+T01056	Martha Talcott Gleason	1801				2	0		child chip on I00259 Sarah Smith Talcott | spouse chip on I00261 Lathrop B. Gleason
+T01057	Elihu Talcott	1804	1866			2	0	cemeteries	child chip on I00259 Sarah Smith Talcott | spouse chip on I00262 Chloe McKinney Talcott
+T01058	Philenda Talcott Barber	1806	1873			2	0	cemeteries	child chip on I00259 Sarah Smith Talcott | spouse chip on I00263 Erastus Barber
+T01059	James Tudor Talcott	1811	1811			1	0		child chip on I00259 Sarah Smith Talcott
+T01060	James Tudor Talcott	1813	1887			2	0	cemeteries	child chip on I00259 Sarah Smith Talcott | spouse chip on I00264 Sarah H. Parker Talcott
+T01061	Hannah Talcott	1791	1866			1	0		child chip on I00195 Hannah Kellogg Talcott
+T01062	Phineas Talcott Jr.	1793	1863	YES	Founded American Mills; probate judge; state senator	2	0	cemeteries;institutions;landmarks	spouse chip on I00197 Lora McLean Talcott | child chip on I00195 Hannah Kellogg Talcott
+T01063	Ralph Talcott	1795	1847		Woolen manufacturer; Rockville co-founder	2	0	cemeteries	child chip on I00195 Hannah Kellogg Talcott | spouse chip on I00196 Susan Bull Talcott Cotter
+T01064	Joel Talcott	1797	1871			1	0		child chip on I00195 Hannah Kellogg Talcott
+T01065	Allyn Talcott	1800	1863			1	0		child chip on I00195 Hannah Kellogg Talcott
+T01066	Clement Talcott	1802	1802			1	0		child chip on I00195 Hannah Kellogg Talcott
+T01067	Belinda Talcott	1804	1846			1	0		child chip on I00195 Hannah Kellogg Talcott
+T01068	Eunice Talcott	1807	1895			1	0		child chip on I00195 Hannah Kellogg Talcott
+T01071	Frederick Talcott	1824	1849			1	0	cemeteries	child chip on I00197 Lora McLean Talcott
+T01072	George Talcott	1827	1919	YES	Fifty-one years president of Rockville’s bank	2	0	cemeteries	spouse chip on I00198 Rosanna McLean Talcott | child chip on I00197 Lora McLean Talcott
+T01080	Henrietta Elizabeth Talcott Kibbe	1843				2	0	cemeteries	spouse chip on I00205 Horace W Kibbe | child chip on I00203 Amanda Stoughton Talcott
+T01081	Elizabeth O Talcott	1831	1861			1	0	cemeteries	child chip on I00206 Elizabeth Mitchell Wilcox Huntington
+T01089	Samuel Howard	1790	1861			1	0		child chip on I00227 Samuel Howard
+T01090	Ulysses Howard	1791	1794			1	0		child chip on I00227 Samuel Howard
+T01091	Rachel Bingham	1794	1872			1	0		child chip on I00227 Samuel Howard
+T01092	Talcott Howard	1796				1	0		child chip on I00227 Samuel Howard
+T01093	Emily Veazey	1798	1871			1	0		child chip on I00227 Samuel Howard
+T01094	Julia Howard Ward	1800	1880			2	0	cemeteries	spouse chip on I00233 Phichol Munroe Ward | child chip on I00227 Samuel Howard
+T01095	Walter Howard	1802	1867			2	0		child chip on I00227 Samuel Howard | spouse chip on I00248 Ruth Keeney Howard
+T01096	Anson Howard	1805	1887			2	0	cemeteries	spouse chip on I00229 Hannah C Hurd Howard | child chip on I00227 Samuel Howard
+T01174	Nathaniel Hubbard Talcott	1816	1895			2	0	cemeteries	child chip on I00202 Eunice A Hubbard Talcott | spouse chip on X02484 Betsey T. Chapman
+T01175	James Morris Talcott	1817	1904			3	0	cemeteries	spouse chip on I00204 Julia Hyde Talcott | child chip on I00202 Eunice A Hubbard Talcott
+T01176	William Flavel Talcott	1819	1873			1	0	cemeteries	child chip on I00202 Eunice A Hubbard Talcott
+T01177	Samuel Olmsted Talcott	1821	1825			1	0		child chip on I00202 Eunice A Hubbard Talcott
+T01178	Philander Parmele Talcott	1823	1862			1	0	cemeteries	child chip on I00202 Eunice A Hubbard Talcott
+T01179	Elizabeth Ann Perrin	1825	1889			1	0	cemeteries	child chip on I00202 Eunice A Hubbard Talcott
+T01180	Royal Talcott	1828	1833			1	0		child chip on I00202 Eunice A Hubbard Talcott
+T01181	William Hart Talcott	1822	1866			1	0		child chip on X02481 Parthenia Brainard
+T01182	Susan Maria Talcott	1823	1845			1	0		child chip on X02481 Parthenia Brainard
+T01183	Henry Warner Talcott	1827	1846			1	0		child chip on X02482 Clarina Warner
+T01184	Elizabeth Parthenia Talcott	1829	1850			1	0		child chip on X02482 Clarina Warner
+T01185	Clarina Rebecca Talcott	1833	1870			1	0		child chip on X02482 Clarina Warner
+T01186	Edward Olmstead Talcott	1835	1840			1	0		child chip on X02482 Clarina Warner
+T01187	Sarah W Talcott	1830	1830			1	0		child chip on I00206 Elizabeth Mitchell Wilcox Huntington
+T01189	Edward Charles Talcott	1824	1900			1	0		child chip on X02483 Maria Schoonmaker
+T01190	Parthenia Maria Talcott	1826	1854			1	0		child chip on X02483 Maria Schoonmaker
+T01191	Elijah Julius Talcott	1828	1858			1	0		child chip on X02483 Maria Schoonmaker
+T01192	Eliza Jane Talcott	1830	1865			1	0		child chip on X02483 Maria Schoonmaker
+T01193	Harriet Talcott	1819	1824			1	0		child chip on X02486 Harriet Smith
+T01194	Caroline Talcott	1823	1900			1	0		child chip on X02486 Harriet Smith
+T01195	Samuel Tudor Talcott	1825	1827			1	0		child chip on X02486 Harriet Smith
+T01196	Samuel Tudor Talcott	1829	1908			1	0		child chip on X02486 Harriet Smith
+T01197	Harriette Talcott	1830				1	0		child chip on X02486 Harriet Smith
+T01198	Henriette Talcott	1830	1831			1	0		child chip on X02486 Harriet Smith
+T01199	Revilo J. Talcott	1838	1858			1	0		child chip on I00262 Chloe McKinney Talcott
+T01200	Philinda A. Talcott Brooks	1839	1906			1	0		child chip on I00262 Chloe McKinney Talcott
+T01201	Jane Talcott	1843	1847			1	0		child chip on I00262 Chloe McKinney Talcott
+T01202	Samuel E. Talcott	1845	1888			1	0		child chip on I00262 Chloe McKinney Talcott
+T01203	Henry E. Talcott	1849	1880			1	0		child chip on I00262 Chloe McKinney Talcott
+T01204	James Herbert Talcott					1	0		child chip on I00264 Sarah H. Parker Talcott
+T01205	Julianna Talcott					1	0		child chip on I00264 Sarah H. Parker Talcott
+T01206	Charles Talcott					1	0		child chip on I00264 Sarah H. Parker Talcott
+T01207	Charles Talcott					1	0		child chip on I00264 Sarah H. Parker Talcott
+T01208	Lucy Talcott					1	0		child chip on I00264 Sarah H. Parker Talcott
+T01211	Edward Talcott	1831	1831			1	0		child chip on I00196 Susan Bull Talcott Cotter
+T01212	Susan Bull Talcott	1833	1917			1	0		child chip on I00196 Susan Bull Talcott Cotter
+T01213	Eliza Talcott	1836	1911	YES	Co-founded Kobe College, Japan, 1875	4	2	institutions	CC on H04378 Annie Hooker Capron | CC on HD2818 Dr. Mary Floyd Cushman
+T01214	Lora Elizabeth Talcott	1838	1924			1	0		child chip on I00196 Susan Bull Talcott Cotter
+T01215	Maria Talcott	1839				1	0		child chip on I00196 Susan Bull Talcott Cotter
+T01216	Mary Talcott	1846	1856			1	0		child chip on I00196 Susan Bull Talcott Cotter
+T01375	Royal Talcott	1842				1	0		child chip on X02484 Betsey T. Chapman
+T01376	N. Flavel Talcott	1848	1853			1	0		child chip on X02484 Betsey T. Chapman
+T01377	Abbie Ann Talcott	1853	1854			1	0		child chip on X02484 Betsey T. Chapman
+T01387	Mary Talcott Perrin	1758	1828			4	1	cemeteries;landmarks	CC on HD0233 David Newton
+T01388	Hannah Talcott Hills	1759	1848			3	0	cemeteries	child chip on T01001 Col. Samuel Talcott Jr. | child chip on U00042 Mary Smith Talcott
+T01390	Captain Nehemiah Talcott	1766	1848			4	0	cemeteries	child chip on T01001 Col. Samuel Talcott Jr. | child chip on U00042 Mary Smith Talcott
+T01391	Polly Perrin	1781	1798			1	0		child chip on X01832 Zachariah Perrin Esq.
+T01393	Samuel Perrin	1785	1844			2	0		child chip on X01832 Zachariah Perrin Esq. | spouse chip on X02392 Sally Reed Perrin
+T01394	Pamela Perrin Nye	1787	1813			2	0		child chip on X01832 Zachariah Perrin Esq. | spouse chip on X02393 Deacon David Nye
+T01395	Porter Perrin	1790	1871			2	0	landmarks	child chip on X01832 Zachariah Perrin Esq. | spouse chip on X02394 Lucy Kinney Perrin
+T01396	Reverend William Perrin	1792	1824			2	0	cemeteries;institutions	child chip on X01832 Zachariah Perrin Esq. | spouse chip on X02395 Fanny Thompson Perrin
+T01399	Sophia Perrin Somerby	1801				2	0		child chip on X01832 Zachariah Perrin Esq. | spouse chip on X02396 Captain Joseph Somerby
+T01469	Polly Talcott Northrup	1790	1874			1	0		child chip on X01834 Tirzah Platt Talcott
+T01470	Betsey Talcott Hall	1792	1880			1	0		child chip on X01834 Tirzah Platt Talcott
+T01471	Pamelia Talcott	1794	1796			1	0	cemeteries	child chip on X01834 Tirzah Platt Talcott
+T01472	Samuel Platt Talcott	1796	1879			1	0		child chip on X01834 Tirzah Platt Talcott
+T01474	Pamela Talcott Butler	1799	1880			2	0	cemeteries	spouse chip on X02443 Silas Butler Jr. | child chip on X01834 Tirzah Platt Talcott
+T01475	Tirzah Talcott	1800	1802			1	0	cemeteries	child chip on X01834 Tirzah Platt Talcott
+T01476	Emeline Adah Talcott Tower	1806	1891			1	0		child chip on X01834 Tirzah Platt Talcott
+T01477	Tirzah Ophelia Talcott Sherman	1810	1879			2	0	cemeteries	spouse chip on X02444 Joel Bradley Sherman | child chip on X01834 Tirzah Platt Talcott
+T01478	William Augustus Talcott	1812	1890			2	0	cemeteries	spouse chip on X02445 Laura Louisa Bradly Talcott | child chip on X01834 Tirzah Platt Talcott
+T01479	Mary A. Butler	1838	1861			1	0	cemeteries	child chip on X02443 Silas Butler Jr.
+T01480	Silas P. Butler	1841	1921			1	0	cemeteries	child chip on X02443 Silas Butler Jr.
+T01481	Baby Butler		1825			1	0	cemeteries	child chip on X02443 Silas Butler Jr.
+T01482	Ellen Louisa Butler		1828			1	0	cemeteries	child chip on X02443 Silas Butler Jr.
+T01483	William H. Butler		1847			1	0	cemeteries	child chip on X02443 Silas Butler Jr.
+T01484	Caroline L Talcott Wood	1840	1912			2	0	cemeteries	spouse chip on X02447 Manton Augustus Wood | child chip on X02445 Laura Louisa Bradly Talcott
+T01485	William Platt Talcott	1856	1908			2	0	cemeteries	spouse chip on X02451 Mary A. Wood Talcott | child chip on X02445 Laura Louisa Bradly Talcott
+T01486	George A Talcott	1859	1929			1	0		child chip on X02445 Laura Louisa Bradly Talcott
+T01487	Martha E Talcott		1868			1	0		child chip on X02445 Laura Louisa Bradly Talcott
+T01489	Merton T. Wood	1867	1870			1	0		child chip on X02447 Manton Augustus Wood
+T01490	Allen Talcott Wood	1870	1952			2	0	cemeteries	spouse chip on X02449 Charlotte Elizabeth Chase Wood | child chip on X02447 Manton Augustus Wood
+T01491	Leon Manton Wood	1876	1957			1	0		child chip on X02447 Manton Augustus Wood
+T01492	Charles Lawrence Wood	1898	1980			2	0	cemeteries	child chip on X02449 Charlotte Elizabeth Chase Wood | spouse chip on X02450 Harriet Maud Wilson Wood
+T01493	George Bradley Sherman	1836	1929			2	0	cemeteries	child chip on X02444 Joel Bradley Sherman | spouse chip on X02448 Mary Jane Williams Sherman
+T01494	William Bradley Sherman	1874	1954			1	0		child chip on X02448 Mary Jane Williams Sherman
+T01495	Helen Augusta Talcott Bissell	1829	1893			3	0		child chip on X01881 Judith W. Bulkley Talcott | child chip on T01473 Nehemiah Platt Talcott
+T01496	Frank P Talcott	1830	1863			2	0	cemeteries	child chip on X01881 Judith W. Bulkley Talcott | child chip on T01473 Nehemiah Platt Talcott
+T01497	William Henry Talcott	1833	1897			2	0	cemeteries	child chip on X01881 Judith W. Bulkley Talcott | child chip on T01473 Nehemiah Platt Talcott
+T01498	Martha A Talcott	1835	1880			2	0	cemeteries	child chip on X01881 Judith W. Bulkley Talcott | child chip on T01473 Nehemiah Platt Talcott
+T01499	Frances Amelia Talcott	1840	1855			2	0	cemeteries	child chip on X01881 Judith W. Bulkley Talcott | child chip on T01473 Nehemiah Platt Talcott
+T01500	Samuel Platt Talcott	1842	1858			2	0	cemeteries	child chip on X01881 Judith W. Bulkley Talcott | child chip on T01473 Nehemiah Platt Talcott
+T01501	Sarah Sherwood Bissell	1855	1894			1	0		child chip on X02446 George A. Bissell
+T01802	Brevet Brig. Gen. George Talcott	1786	1862	YES	Third Chief of U.S. Army Ordnance, 1848-1851	2	0	institutions	child chip on I00200 Abigail Goodrich Talcott | spouse chip on I00280 Angelica Bogart Reed Talcott
+T01806	Jared G Talcott	1795				2	0		spouse chip on I00201 Electa Bissell Talcott | child chip on I00200 Abigail Goodrich Talcott
+T01807	Captain Andrew Talcott	1797	1883	YES	USMA 1818 #2; built Maximilian's Mexico-Pacific Railway	4	0	cemeteries;institutions;notable_stories	CC on X03306 Richard Shippey Hackley | child chip on I00200 Abigail Goodrich Talcott
+T01808	Henry Welles	1781	1833	YES	Pennsylvania general and state senator	2	0		spouse chip on I01520 Sarah Spalding Welles | spouse chip on I01519 Phoebe Patrick Welles
+T01809	Susan Welles	1783	1865			2	0		CC on X03090 Matthias Hollenback | spouse chip on I01521 John Hollenback
+T01810	Charles Fisher Welles	1789	1866		Bradford County's first prothonotary and clerk	1	0		"spouse chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
+T01812	Mary H. Welles	1803				1	0		spouse chip on I01523 William Pumpelly
+T01818	Bvt. Lt. Col. George Henry Talcott	1811	1854	YES	Mexican War: wounded at Molino del Rey 1847	2	0	cemeteries;institutions	child chip on I00280 Angelica Bogart Reed Talcott | spouse chip on I00282 Catharine Jane Starke Talcott
+T01819	Brig. Gen. Sebastian Visscher Talcott	1812	1888	YES	Compiler of the 1876 Talcott Genealogy book	6	3	cemeteries;institutions	CC on HD1988 Rev. Benjamin Woodbridge Dwight | CC on H01628 Commander Edward Hooker | CC on HD3790 Col. Henry Martyn Whittlesey
+T01838	Lucia Beverly Talcott	1833	1856			1	0		child chip on I00270 Harriet Randolph Hackley Talcott
+T01839	Charles Gratiot Talcott Sr.	1834	1867	YES	Confederate engineer who built the Erie Canal expansion	2	0	cemeteries;documents;notable_stories	"child chip on I00270 Harriet Randolph Hackley Talcott | spouse chip on I00265 Theodosia Lawrence ""Thedie"" Barnard Hambleton"
+T01840	Harriet Randolph Talcott Southgate	1835	1886			2	0	cemeteries;institutions;landmarks	child chip on I00270 Harriet Randolph Hackley Talcott | spouse chip on I00271 Rev. William Scott Southgate, DD
+T01841	Mary Gray Talcott	1837	1921			1	0		child chip on I00270 Harriet Randolph Hackley Talcott
+T01842	Col. Thomas Mann Randolph Talcott	1838	1920	YES	Colonel on Lee's staff at Appomattox; engineer	4	0	cemeteries;institutions;artworks;documents;wars	"CC on X02149 John Blair McPhail Sr. | spouse chip on I00278 Nancy Carrington ""Nannie"" McPhail Talcott"
+T01843	Richard Hackley Talcott	1839	1923			1	0		child chip on I00270 Harriet Randolph Hackley Talcott
+T01844	George Russell Talcott Sr.	1841	1899			1	0		child chip on I00270 Harriet Randolph Hackley Talcott
+T01845	Frances Lewis Talcott	1843				1	0		child chip on I00270 Harriet Randolph Hackley Talcott
+T01846	Ann Cary Talcott Boleslowski	1845	1906			2	0		spouse chip on X02502 Boleslowski | child chip on I00270 Harriet Randolph Hackley Talcott
+T01847	Edward Talcott	1849	1849			1	0		child chip on I00270 Harriet Randolph Hackley Talcott
+T01848	Henry Cary Talcott	1851	1851			1	0		child chip on I00270 Harriet Randolph Hackley Talcott
+T01849	Starke Talcott	1848				1	0		child chip on I00282 Catharine Jane Starke Talcott
+T01850	George Talcott	1844	1895			1	0		child chip on I00281 Olivia Maria Shearman Talcott
+T01851	Angelica Bogart Talcott Rathbone	1846	1938			2	0		spouse chip on X02504 Rathbone | child chip on I00281 Olivia Maria Shearman Talcott
+T01852	Robert Shearman Talcott	1847	1926			1	0		child chip on I00281 Olivia Maria Shearman Talcott
+T01853	Anna Maria Talcott	1849	1925			1	0		child chip on I00281 Olivia Maria Shearman Talcott
+T01854	Sarah Gibson Talcott Pruyn	1851	1914			2	0		spouse chip on X02505 Pruyn | child chip on I00281 Olivia Maria Shearman Talcott
+T01869	"Lieut. Charles Gratiot ""Charlie"" Talcott Jr."	1859	1889	YES	Youngest cadet engineer ever admitted to Annapolis (1875)	1	0	cemeteries;institutions;documents	"child chip on I00265 Theodosia Lawrence ""Thedie"" Barnard Hambleton"
+T01870	Harry Randolph Talcott	1861	1937	YES	Ran the railroad through Alaska’s White Pass	1	0	cemeteries;documents	"child chip on I00265 Theodosia Lawrence ""Thedie"" Barnard Hambleton"
+T01871	Robert Barnard Talcott	1863	1910			1	0		"child chip on I00265 Theodosia Lawrence ""Thedie"" Barnard Hambleton"
+T01872	Lucia Beverly Talcott Hollerith	1865	1944	YES	Born in Veracruz during the Imperial Mexican Railway	2	0	cemeteries;landmarks;documents;notable_stories	"spouse chip on I00272 Herman Hollerith Sr. | child chip on I00265 Theodosia Lawrence ""Thedie"" Barnard Hambleton"
+T01873	Edmund Meyers Talcott	1866	1960	YES	last of the five Talcott siblings to die	2	0	cemeteries;notable_stories	"child chip on I00265 Theodosia Lawrence ""Thedie"" Barnard Hambleton | spouse chip on I00266 Cordelia Vass Hughes Talcott"
+T01874	Randolph Southgate	1860	1904			1	0		child chip on I00271 Rev. William Scott Southgate, DD
+T01875	William Scott Southgate	1862	1918			1	0		child chip on I00271 Rev. William Scott Southgate, DD
+T01876	Mary King Southgate					1	0	institutions	child chip on I00271 Rev. William Scott Southgate, DD
+T01877	Grace Helen Southgate	1863				1	0		child chip on I00271 Rev. William Scott Southgate, DD
+T01878	Frances Southgate Gray	1865	1932			1	0		child chip on I00271 Rev. William Scott Southgate, DD
+T01879	Harry Randolph Southgate	1868	1869			1	0		child chip on I00271 Rev. William Scott Southgate, DD
+T01880	Eleanor Southgate	1869	1869			1	0		child chip on I00271 Rev. William Scott Southgate, DD
+T01881	Anita Mary Southgate Pusey	1871	1921			1	0		child chip on I00271 Rev. William Scott Southgate, DD
+T01882	George Talcott Southgate	1873	1909			1	0		child chip on I00271 Rev. William Scott Southgate, DD
+T01883	Nannie Carrington Talcott	1867	1873			1	0	cemeteries	"child chip on I00278 Nancy Carrington ""Nannie"" McPhail Talcott"
+T01884	Mary Gray Talcott	1869	1956			1	0	cemeteries	"child chip on I00278 Nancy Carrington ""Nannie"" McPhail Talcott"
+T01885	Harriet Randolph Talcott	1870	1956			1	0	cemeteries	"child chip on I00278 Nancy Carrington ""Nannie"" McPhail Talcott"
+T01886	Lilias Blair Talcott	1874	1874			1	0	cemeteries	"child chip on I00278 Nancy Carrington ""Nannie"" McPhail Talcott"
+T01887	Thomas Mann Randolph Talcott Jr.	1875	1875			1	0	cemeteries	"child chip on I00278 Nancy Carrington ""Nannie"" McPhail Talcott"
+T01888	Augusta McVickers Talcott Parker	1876	1940			1	0	cemeteries	"child chip on I00278 Nancy Carrington ""Nannie"" McPhail Talcott"
+T01892	Rachel Talcott	1735				2	0		spouse chip on X01796 Ezra Loomis | child chip on U00033 Rachel Hollister Talcott
+T01893	Prudence Talcott	1737				2	0		spouse chip on X01797 Charles Strong | child chip on U00033 Rachel Hollister Talcott
+T01894	David Talcott	1740				2	0		spouse chip on X01798 Elizabeth Parker | child chip on U00033 Rachel Hollister Talcott
+T01895	Irene Talcott	1741	1742			1	0		child chip on U00033 Rachel Hollister Talcott
+T01896	Chloe Talcott	1743				2	0		spouse chip on X01799 John Howland | child chip on U00033 Rachel Hollister Talcott
+T01897	Jonathan Talcott	1745				1	0		child chip on U00033 Rachel Hollister Talcott
+T01898	Elizabeth Talcott	1748				1	0		child chip on U00033 Rachel Hollister Talcott
+T01899	Joshua Talcott	1750	1789			2	0		spouse chip on X01800 Jemima [unknown] | child chip on U00033 Rachel Hollister Talcott
+T01900	Ruth Talcott	1752	1793			2	0		spouse chip on X01801 Theophilus Huntington | child chip on U00033 Rachel Hollister Talcott
+T01901	Job Talcott	1755				2	0		spouse chip on X01802 Abigail Huntington | child chip on U00033 Rachel Hollister Talcott
+T01902	Josiah Talcott	1757	1766			1	0		child chip on U00033 Rachel Hollister Talcott
+T01903	Nehemiah Talcott					0	0		
+T01904	George Talcott					0	0		
+T01905	Aaron Talcott					0	0		
+T01906	Abigail Talcott					1	0		spouse chip on X01809 Elizur Hubbard
+T01907	Dorothy Talcott					1	0		spouse chip on X01810 Hudson unknown]
+T01908	Ruth Talcott					1	0		spouse chip on X01811 Isaac Hills
+T01909	Mary Ann Talcott	1748				1	0		child chip on X01792 Sarah Hale
+T01910	Fanny Talcott	1752				1	0		child chip on X01792 Sarah Hale
+T01911	Nathaniel Talcott	1755	1801			2	0		child chip on X01792 Sarah Hale | spouse chip on X01812 Penelope Hale
+T01912	Samuel Talcott	1758	1760			1	0		child chip on X01792 Sarah Hale
+T01913	Timothy Talcott	1761	1818			2	0		child chip on X01792 Sarah Hale | spouse chip on X01813 Rachel Case
+T01914	Samuel Talcott	1763	1770			1	0		child chip on X01792 Sarah Hale
+T01915	Lucretia Talcott	1766				1	0		child chip on X01792 Sarah Hale
+T01916	Sarah Talcott	1770				1	0		child chip on X01792 Sarah Hale
+T01917	Sarah Talcott	1749	1814			2	0		spouse chip on X01814 Edward Benton | child chip on X01793 Sarah Kilbourn
+T01918	Mary Talcott	1751	1847			2	0		child chip on X01793 Sarah Kilbourn | spouse chip on X01815 George House
+T01919	Jonathan Talcott	1754	1847			2	0		child chip on X01793 Sarah Kilbourn | spouse chip on X01816 Sarah Hubbard
+T01920	Abraham Talcott	1757	1839			2	0		spouse chip on X01817 Maria Bathsheba Hale | child chip on X01793 Sarah Kilbourn
+T01921	Oliver Talcott	1759				3	0		spouse chip on X01818 Alice Miller | child chip on X01793 Sarah Kilbourn
+T01922	Anna Talcott	1762	1815			2	0		child chip on X01793 Sarah Kilbourn | spouse chip on X01820 James Stevens
+T01923	John Talcott	1765				2	0		child chip on X01793 Sarah Kilbourn | spouse chip on X01821 Mercy Hubbard
+T01924	Parker Talcott					2	0		spouse chip on X01803 Achsah Binner | child chip on X01798 Elizabeth Parker
+T01925	Josiah Talcott	1767				2	0		spouse chip on X01804 Abigail Pomeroy Rose Talcott | child chip on X01798 Elizabeth Parker
+T01926	David Talcott					1	0		child chip on X01798 Elizabeth Parker
+T01927	Zelah Talcott					2	0		spouse chip on X01805 Prudence Goodrich | child chip on X01798 Elizabeth Parker
+T01928	Jonathan Talcott	1773	1802			2	0		spouse chip on X01806 Jerusha Morton | child chip on X01798 Elizabeth Parker
+T01929	Betsey Talcott	1775				2	0		child chip on X01798 Elizabeth Parker | spouse chip on X01807 Henry Fay
+T01930	Anna Talcott	1778				2	0		spouse chip on X01808 Edmund Downer | child chip on X01798 Elizabeth Parker
+T01935	Smith Stephen Talcott	1834	1888	YES	Agent and co-owner of Granite Mills, Talcottville	1	0	institutions	child chip on I00209 Asenath Fitch Talcott
+T02018	Gurdon Talcott	1782	1851			2	0		spouse chip on I00209 Asenath Fitch Talcott | child chip on X01802 Abigail Huntington
+T02182	Joseph Abbott Talcott	1815				1	0		child chip on I00209 Asenath Fitch Talcott
+T02183	Anson F Talcott	1817				1	0	institutions	child chip on I00209 Asenath Fitch Talcott
+T02184	Norman W Talcott	1819				1	0		child chip on I00209 Asenath Fitch Talcott
+T02185	George A Talcott	1821	1846			1	0		child chip on I00209 Asenath Fitch Talcott
+T02186	Hiram W Talcott		1863			1	0		child chip on I00209 Asenath Fitch Talcott
+T02187	Lucius Talcott	1826	1864			1	0		child chip on I00209 Asenath Fitch Talcott
+T02188	Charlotte A Talcott	1828				1	0		child chip on I00209 Asenath Fitch Talcott
+T02189	Emily Talcott	1831				1	0		child chip on I00209 Asenath Fitch Talcott
+T02191	Lydia M Talcott	1835				1	0		child chip on I00209 Asenath Fitch Talcott
+T02197	Phila Griswold Clark	1785	1844			2	0	cemeteries	spouse chip on I00218 Robert Clark | child chip on I00217 Theophilus Griswold
+T02198	Elizabeth Griswold	1784	1802			1	0	cemeteries	child chip on I00217 Theophilus Griswold
+T02199	Aurelia Griswold Parmenter	1789	1817			1	0	cemeteries	child chip on I00217 Theophilus Griswold
+T02200	Talcott Griswold	1791	1796			1	0		child chip on I00217 Theophilus Griswold
+T02201	Lyman Griswold	1793	1863			2	0	cemeteries	spouse chip on I00220 Urania Barrett Griswold | child chip on I00217 Theophilus Griswold
+T02202	Rev. John Flavel Griswold	1793	1872			3	0	cemeteries;institutions	spouse chip on X02490 Unknown second wife | spouse chip on I00252 Catharine Gillet Griswold
+T02203	Charlotte Griswold Sawyer	1797	1857			1	0	cemeteries	child chip on I00217 Theophilus Griswold
+T02204	Emily Griswold Richards	1800	1884			1	0	cemeteries	child chip on I00217 Theophilus Griswold
+T02205	Adeline Griswold Sawyer	1802	1827			1	0	cemeteries	child chip on I00217 Theophilus Griswold
+T02206	Melitta Griswold Munn	1805	1844			1	0	cemeteries	child chip on I00217 Theophilus Griswold
+T02207	Philena Ann Clark Reynolds	1820	1907			1	0		child chip on I00218 Robert Clark
+T02208	John Wrisley Clark	1829	1885			1	0		child chip on I00218 Robert Clark
+T02209	Theophilus Lyman Griswold	1829	1884			1	0		child chip on I00220 Urania Barrett Griswold
+T02210	Mary Ellen Burrows Griswold	1835	1924			1	0		child chip on I00220 Urania Barrett Griswold
+T02211	Bela Talcott	1797	1802			1	0		child chip on I00221 Betsey Keeney Talcott
+T02212	Betsey Talcott Griswold	1799	1844			2	0		spouse chip on I00253 George Griswold | child chip on I00221 Betsey Keeney Talcott
+T02214	Bartsheba Williams Talcott Cotter	1804	1847			2	0		spouse chip on I00254 Eber Cotter | child chip on I00222 Abigail Holt Talcott
+T02215	Abigail Talcott Hubbard	1806	1880			2	0	cemeteries	spouse chip on I00224 Jeduthan Hubbard | child chip on I00222 Abigail Holt Talcott
+T02216	Royal Talcott	1797	1823			2	0	cemeteries	child chip on I00225 Anna Carpenter Talcott | spouse chip on I00226 Martha Warner Talcott
+T02217	Anna Talcott	1799	1817			1	0		child chip on I00225 Anna Carpenter Talcott
+T02218	Twin Son 1 Talcott	1802	1802			1	0		child chip on I00225 Anna Carpenter Talcott
+T02219	Twin Son 2 Talcott	1803	1803			1	0		child chip on I00225 Anna Carpenter Talcott
+T02220	Elizabeth Lyman Talcott	1804	1824			1	0		child chip on I00225 Anna Carpenter Talcott
+T02221	Olive Talcott	1807	1821			1	0		child chip on I00225 Anna Carpenter Talcott
+T02222	Harriet Martha Ann Talcott	1823	1826			1	0		child chip on I00226 Martha Warner Talcott
+T02230	Dr. Riley D. Howard	1847	1924			2	0	cemeteries;institutions	child chip on I00229 Hannah C Hurd Howard | spouse chip on I00255 Cordelia A. Welles Howard
+T02231	Phebe Ward	1829	1877			1	0		child chip on I00233 Phichol Munroe Ward
+T02232	John Howard Ward	1833	1871			1	0		child chip on I00233 Phichol Munroe Ward
+T02233	Catherine Bertha Ward	1834	1876			1	0		child chip on I00233 Phichol Munroe Ward
+T02234	Rachel Lorain Ward	1837	1842			1	0		child chip on I00233 Phichol Munroe Ward
+T02235	Eliza McPherson Ward	1839	1873			1	0		child chip on I00233 Phichol Munroe Ward
+T02236	Sidney Ward	1830	1904			2	0	cemeteries	spouse chip on I00238 Emeline Morgan Ward | child chip on I00233 Phichol Munroe Ward
+T02237	Arthur Ward	1844	1927			1	0		child chip on I00233 Phichol Munroe Ward
+T02238	Julia Gertrude Ward	1848	1930			1	0		child chip on I00233 Phichol Munroe Ward
+T02239	Morgan Bulkeley Ward		1869			1	0		child chip on I00238 Emeline Morgan Ward
+T02240	Aurora Smith	1792	1830			1	0	cemeteries	child chip on I00239 David Smith
+T02241	Olive Smith	1798	1831			1	0	cemeteries	child chip on I00239 David Smith
+T02242	Warren Smith	1800	1870			1	0	cemeteries	child chip on I00239 David Smith
+T02243	David Talcott Smith	1804	1855			3	0	cemeteries	spouse chip on I00241 Margaret M Thompson Smith | spouse chip on I00240 Mary McLean Smith
+T02244	Mary Taylor	1807	1876			1	0	cemeteries	child chip on I00239 David Smith
+T02246	Zolvah Smith	1813	1897			1	0	cemeteries	child chip on I00239 David Smith
+T02247	Daniel Smith	1810	1876			2	0	cemeteries	spouse chip on I00243 Clarissa Adaline Pearl Smith | child chip on I00239 David Smith
+T02248	Infant Daughter Smith		1795			1	0		child chip on I00239 David Smith
+T02249	Infant Son Smith		1796			1	0		child chip on I00239 David Smith
+T02250	Francis Smith	1829	1919			1	0	cemeteries	child chip on I00240 Mary McLean Smith
+T02251	Helen M Smith Bly	1835	1908			1	0		child chip on I00243 Clarissa Adaline Pearl Smith
+T02252	Adelia H Smith Carey	1840	1917			1	0		child chip on I00243 Clarissa Adaline Pearl Smith
+T02253	Alexander Keeney	1796	1819			1	0		child chip on I00244 Alexander Keeney
+T02254	Chester Keeney	1797				1	0		child chip on I00244 Alexander Keeney
+T02255	George Keeney	1800				1	0		child chip on I00244 Alexander Keeney
+T02256	Talcott Keeney	1802	1859			3	0		spouse chip on I00257 Sarah Cravath Keeney | spouse chip on I00256 Rhoda Wells Keeney
+T02257	Eli Keeney	1804	1832			1	0		child chip on I00244 Alexander Keeney
+T02258	Samuel Lyman Keeney	1806	1863			2	0		spouse chip on I00258 Sarah Reddish Keeney | child chip on I00244 Alexander Keeney
+T02259	Benjamin Keeney	1810	1811			1	0		child chip on I00244 Alexander Keeney
+T02260	Amelia Smith	1798	1859			2	0	cemeteries	child chip on I00245 Philomela Root Talcott | child chip on I00244 Alexander Keeney
+T02261	Mary Talcott	1802				2	0		child chip on I00245 Philomela Root Talcott | child chip on I00244 Alexander Keeney
+T02262	Rachel Howard Case	1806	1872			1	0	cemeteries	child chip on I00245 Philomela Root Talcott
+T02264	Dr. Alvan Talcott Jr.	1804	1891	YES	Yale BA 1824, Yale MD 1831	2	0	cemeteries;institutions	child chip on I00245 Philomela Root Talcott | spouse chip on I00247 Olive Norton Chittenden Talcott
+T02265	Rosanna Miles	1811	1838			1	0	cemeteries	child chip on I00245 Philomela Root Talcott
+T02266	Emeline Tracy	1815	1867			1	0	cemeteries	child chip on I00245 Philomela Root Talcott
+T02270	William Henry Talcott	1832	1856			1	0	institutions	child chip on I00247 Olive Norton Chittenden Talcott
+T02271	Mary Elizabeth Talcott	1836	1837			1	0	cemeteries	child chip on I00247 Olive Norton Chittenden Talcott
+T02272	Sarah Talcott	1841	1866			1	0	cemeteries	child chip on I00247 Olive Norton Chittenden Talcott
+T02274	Peter Wolcott	1705	1733			1	0		child chip on X02153 Lt. Henry Wolcott
+T02275	Rachel Wolcott Hunt	1704	1776			2	0		child chip on X02153 Lt. Henry Wolcott | spouse chip on X02506 Joseph Huntof Northampton MA
+T02276	Captain Gideon Wolcott	1712	1761			3	0		spouse chip on X02508 Naomi Olmstead | child chip on X02153 Lt. Henry Wolcott
+T02277	Elizabeth Talcott	1741				1	0		child chip on X01763 Mabel Wyllys Talcott
+T02278	William Talcott	1743	1751			1	0		child chip on X01763 Mabel Wyllys Talcott
+T02279	James Talcott	1745				1	0		child chip on X01763 Mabel Wyllys Talcott
+T02280	Elizabeth Talcott	1746	1755			1	0		child chip on X01763 Mabel Wyllys Talcott
+T02281	James Talcott	1749	1751			1	0		child chip on X01763 Mabel Wyllys Talcott
+T02282	Mary Talcott Watson	1752	1806			1	0		child chip on X01763 Mabel Wyllys Talcott
+T02283	Jerusha Talcott Wyllys	1756	1783			1	0		child chip on X01763 Mabel Wyllys Talcott
+T02284	Abigail Talcott Wilcox	1768	1789			1	0		child chip on U00066 Abigail Ledyard Talcott
+T02285	Elizabeth Talcott	1770	1863			1	0		child chip on U00066 Abigail Ledyard Talcott
+T02286	Anna Talcott	1772	1839			1	0		child chip on U00066 Abigail Ledyard Talcott
+T02287	William Talcott	1775	1855			1	0		child chip on U00066 Abigail Ledyard Talcott
+T02288	Sarah Talcott	1777	1779			1	0		child chip on U00066 Abigail Ledyard Talcott
+T02289	Helen Talcott	1779	1856			1	0		child chip on U00066 Abigail Ledyard Talcott
+T02290	Mathew Talcott	1782	1837			1	0		child chip on U00066 Abigail Ledyard Talcott
+T02291	Samuel Austin Talcott	1789	1836	YES	Attorney General of New York	1	0	cemeteries	child chip on U00066 Abigail Ledyard Talcott
+T02292	Child Talcott	1777	1778			1	0		child chip on U00066 Abigail Ledyard Talcott
+T02293	Infant Talcott	1788	1789			1	0		child chip on U00066 Abigail Ledyard Talcott
+TD0001	Joseph Wadsworth	1682	1778			2	0		spouse chip on X01737 Joanna Hovey | child chip on U00018 Captain Joseph Wadsworth
+TD0002	Jonathan Wadsworth		1739			3	0		spouse chip on X01738 Abigail Camp | spouse chip on U00019 Hepzibah Marsh Wadsworth
+TD0003	Ichabod Wadsworth	1688	1778			2	0		spouse chip on X01739 Sarah Smith | child chip on U00018 Captain Joseph Wadsworth
+TD0004	Elizabeth Wadsworth		1722			2	0		spouse chip on X01740 Jonathan Marsh | child chip on U00018 Captain Joseph Wadsworth
+TD0005	Hannah Wadsworth	1690	1786			2	0		spouse chip on X01741 Aaron Cook | child chip on U00018 Captain Joseph Wadsworth
+TD0006	Hepzibah Wadsworth	1712	1770			2	0		child chip on U00019 Hepzibah Marsh Wadsworth | spouse chip on X01742 Hezekiah Collyer
+TD0007	Hannah Wadsworth	1714				2	0		child chip on U00019 Hepzibah Marsh Wadsworth | spouse chip on X01743 Daniel Bull
+TD0008	Samuel Wadsworth	1716	1798			2	0		child chip on U00019 Hepzibah Marsh Wadsworth | spouse chip on X01744 Melicent Cook
+TD0009	Abigail Wadsworth	1719	1758			2	0		spouse chip on X01745 Aaron Bull | child chip on U00019 Hepzibah Marsh Wadsworth
+TD0010	Rebecca Wadsworth	1721				1	0		child chip on U00019 Hepzibah Marsh Wadsworth
+TD0011	Helena Wadsworth	1724	1796			1	0		child chip on U00019 Hepzibah Marsh Wadsworth
+TD0012	Rebecca Wadsworth	1726				2	0		spouse chip on X01746 Daniel Perkins | child chip on X01738 Abigail Camp
+TD0013	Mary Wadsworth	1728	1811			1	0		child chip on X01738 Abigail Camp
+TD0014	Jonathan Wadsworth	1730	1777			2	0		spouse chip on X01747 Abigail Flagg | child chip on X01738 Abigail Camp
+TD0015	Lydia Wadsworth	1732	1817			2	0		child chip on X01738 Abigail Camp | spouse chip on X01748 John Seymour Jr
+TD00441	Jonathan Gurley Talcott	1794	1866			1	0		child chip on X01804 Abigail Pomeroy Rose Talcott
+TD00442	Timothy Talcott	1798				1	0		child chip on X01804 Abigail Pomeroy Rose Talcott
+TD00443	Electa Talcott	1801				1	0		child chip on X01804 Abigail Pomeroy Rose Talcott
+TD00444	Eliza Talcott	1805				1	0		child chip on X01804 Abigail Pomeroy Rose Talcott
+TD00445	Ebenezer Talcott	1804	1865			1	0		child chip on X02404 Anna Boardman Talcott
+TD00446	Julia Ann Talcott Loomis	1806	1889			1	0		child chip on X02404 Anna Boardman Talcott
+TD00447	Joseph Talcott	1808	1863			1	0		child chip on X02404 Anna Boardman Talcott
+TD00448	Mariah Talcott	1810	1887			1	0		child chip on X02404 Anna Boardman Talcott
+TD00449	John Talcott	1813	1841			1	0		child chip on X02404 Anna Boardman Talcott
+TD00450	Samuel Talcott	1816	1874			1	0		child chip on X02404 Anna Boardman Talcott
+TD00451	William Talcott	1818	1870			1	0		child chip on X02404 Anna Boardman Talcott
+TD0058	Joseph Wadsworth III	1717	1758			2	0	cemeteries	child chip on X01737 Joanna Hovey | spouse chip on X01998 Elizabeth Talcott Wadsworth
+TD0059	Gen. Elijah Wadsworth	1747	1817	YES	Maj. Gen., War of 1812	5	1	cemeteries;institutions;landmarks;soldiers_index;wars	CC on H00757 Maj. Benjamin Tallmadge Jr.
+TD0060	Frederick Wadsworth	1786	1869	YES	Mayor of Akron 1852-53	1	0	landmarks;soldiers_index	child chip on X01999 Rhoda Hopkins Wadsworth
+TD0076	Jennie Talcott McKee	1851	1940			1	0		child chip on I00262 Chloe McKinney Talcott
+TD0077	Martha Talcott Barber Emerson	1828	1920			2	0		spouse chip on X02497 Richard Van Cortland Emerson | child chip on I00263 Erastus Barber
+TD0078	Dorothy Laurence Talcott Barclay	1894	1980			2	0	cemeteries	spouse chip on I00267 Hugh Gaylord Barclay Jr. | child chip on I00266 Cordelia Vass Hughes Talcott
+TD0079	Charles Gratiot Talcott (II)	1896	1900			1	0		child chip on I00266 Cordelia Vass Hughes Talcott
+TD0080	LT Edmund Talcott Barclay	1918	2009	YES	IBM executive 37 years; WWII airman	3	0	cemeteries;notable_stories	spouse chip on I00268 Ruth Barclay | child chip on I00267 Hugh Gaylord Barclay Jr.
+TD0081	Dorothy Lawrence Talcott Barclay Huse	1921	2013	YES	1984 Olympics judge; Red Cross war worker	2	0		child chip on I00267 Hugh Gaylord Barclay Jr. | spouse chip on I00269 Barnett Huse II
+TD0082	Lawrence Barnett Huse	1954	1972			1	0	cemeteries	child chip on I00269 Barnett Huse II
+TD0090	Frederic Charles Southgate	1878	1883			1	0		child chip on I00271 Rev. William Scott Southgate, DD
+TD0091	Lucia Beverly Hollerith (II)	1891	1982			1	0	cemeteries;landmarks	child chip on I00272 Herman Hollerith Sr.
+TD0092	Herman Hollerith Jr.	1892	1976			3	0	cemeteries;landmarks;notable_stories	spouse chip on I00274 Elisabeth Carter Guest Hollerith | child chip on I00272 Herman Hollerith Sr.
+TD0093	Charles Hollerith	1893	1972			1	0	landmarks	child chip on I00272 Herman Hollerith Sr.
+TD0094	"Nannie Talcott ""Nan"" Hollerith"	1898	1985			1	0	landmarks	child chip on I00272 Herman Hollerith Sr.
+TD0095	Richard Hollerith	1900	1967			1	0	landmarks	child chip on I00272 Herman Hollerith Sr.
+TD0096	Virginia Hollerith	1902	1994			1	0	landmarks	child chip on I00272 Herman Hollerith Sr.
+TD0097	"Sarah Fox ""Sally"" Hollerith Nietsch"	1922	2007			2	0		spouse chip on I00275 Herman Erich Nietsch | child chip on I00273 Sarah Valentine Fox Waddell Hollerith
+TD0098	Herman Hollerith III	1923	1991			2	0	cemeteries;notable_stories	spouse chip on I00276 Agnes Boxley Newton Hollerith | child chip on I00273 Sarah Valentine Fox Waddell Hollerith
+TD0099	"Lucia Beverly ""C.C."" Hollerith Lefferts"	1925	2011			2	0	cemeteries	"child chip on I00273 Sarah Valentine Fox Waddell Hollerith | spouse chip on I00277 Gillet ""Gil"" Lefferts Jr."
+TD0100	Hugh Gaylord Barclay III	1916	2008			2	0		child chip on I00267 Hugh Gaylord Barclay Jr. | spouse chip on X02499 Midge W. Barclay
+TD0101	"Rt. Rev. Herman ""Holly"" Hollerith IV"	1955		YES	10th Episcopal Bishop of Southern Virginia	3	0	institutions;notable_stories	child chip on I00276 Agnes Boxley Newton Hollerith | CC on I00272 Herman Hollerith Sr.
+TD0102	"Very Rev. Randolph ""Randy"" Marshall Hollerith"	1963		YES	11th Dean of Washington National Cathedral	3	0	institutions;notable_stories	spouse chip on X02501 Rev. Melissa Kaye Hollerith | child chip on I00276 Agnes Boxley Newton Hollerith
+TD0103	Jennie McPhail Talcott	1879	1959			1	0	cemeteries	"child chip on I00278 Nancy Carrington ""Nannie"" McPhail Talcott"
+TD0104	Nathan Edmondson Berry Talcott	1884	1918			1	0	cemeteries	"child chip on I00278 Nancy Carrington ""Nannie"" McPhail Talcott"
+TD0120	Betsey Perrin Hobart	1783	1876			3	0	cemeteries	child chip on X01832 Zachariah Perrin Esq. | spouse chip on X02368 Rev. James Hobart
+TD0121	Betsy Hobart	1805	1843			1	0		child chip on X02368 Rev. James Hobart
+TD0122	James Hobart Jr.	1807	1897			1	0	cemeteries	child chip on X02368 Rev. James Hobart
+TD0123	Samuel Hobart					1	0		child chip on X02368 Rev. James Hobart
+TD0124	Emeline Hobart Evans	1811	1894			2	0	cemeteries	spouse chip on X02383 Dr. Ira Evans | child chip on X02368 Rev. James Hobart
+TD0125	Mary Hobart Kinney					2	0		child chip on X02368 Rev. James Hobart | spouse chip on X02546 Hon. Amary Kinney of Terre Haute IA
+TD0126	Pamelia Hobart Child					2	0		spouse chip on X02547 Rev. Rufus Child | child chip on X02368 Rev. James Hobart
+TD0127	Harriet N. Hobart	1816	1834			1	0		child chip on X02368 Rev. James Hobart
+TD0129	David Hobart	1821	1901			2	0	cemeteries	spouse chip on X02370 Caroline Elizabeth Reed Hobart | child chip on X02368 Rev. James Hobart
+TD0130	Hannah Hobart Craven	1824	1908			2	0		spouse chip on X02548 Rev. George Craven | child chip on X02368 Rev. James Hobart
+TD0131	Timothy Dwight Hobart	1826	1853			1	0	institutions	child chip on X02368 Rev. James Hobart
+TD0132	Isaac Watts Hobart	1829	1850			1	0		child chip on X02368 Rev. James Hobart
+TD0133	Timothy Dwight Hobart	1855	1935	YES	Texas Panhandle rancher; founded Pampa Texas	3	1	cemeteries;institutions	CC on H00914 Timothy Dwight III
+TD0134	Warren Dwight Hobart	1891	1910			1	0		child chip on X02371 Minnie Wood Warren Hobart
+TD0135	Fredrick Able Hobart	1898	1972			1	0		child chip on X02371 Minnie Wood Warren Hobart
+TD0136	Laura Prescott Hobart Fatheree	1899	1990			1	0		child chip on X02371 Minnie Wood Warren Hobart
+TD0137	Mary Reed Hobart Hutchinson	1902	1994			2	0		child chip on X02371 Minnie Wood Warren Hobart | spouse chip on X02372 Wilbur Guy Hutchinson
+TD0138	Mary Polly Perrin Dewey	1799	1843			2	0	cemeteries	spouse chip on X02373 Dr. Julius Yemans Dewey | child chip on X01832 Zachariah Perrin Esq.
+TD0139	Charles Dewey	1826	1905			2	0	cemeteries;institutions	child chip on X02373 Dr. Julius Yemans Dewey | spouse chip on X02374 Betsey Tarbox Dewey
+TD0140	Edward Dewey	1829	1900			2	0	cemeteries;institutions;landmarks	spouse chip on X02375 Susan Griggs Lilley Dewey | child chip on X02373 Dr. Julius Yemans Dewey
+TD0141	Adm. George Dewey	1837	1917	YES	Admiral of the Navy; Manila Bay 1898 hero	6	1	cemeteries;institutions	CC on H03330 Horace Andrews
+TD0142	Mary Perrin Dewey	1839	1918			1	0		child chip on X02373 Dr. Julius Yemans Dewey
+TD0143	Frances Isabella Dewey Fifield	1849	1922			1	0	cemeteries	child chip on X02374 Betsey Tarbox Dewey
+TD0144	William Tarbox Dewey	1852	1911			1	0	cemeteries	child chip on X02374 Betsey Tarbox Dewey
+TD0145	Jennie Dewey Blackwell	1854	1913			1	0	cemeteries	child chip on X02374 Betsey Tarbox Dewey
+TD0146	Mary Grace Dewey	1858	1930			1	0	cemeteries	child chip on X02374 Betsey Tarbox Dewey
+TD0147	George Perrin Dewey	1860	1925			1	0	cemeteries	child chip on X02374 Betsey Tarbox Dewey
+TD0148	Gertrude Dewey McCuen	1862	1947			1	0	cemeteries	child chip on X02374 Betsey Tarbox Dewey
+TD0149	Charles Robert Dewey	1867	1909			1	0	cemeteries	child chip on X02374 Betsey Tarbox Dewey
+TD0150	Cdr. Theodore Gibbs Dewey	1859	1950			2	0	cemeteries;institutions	child chip on X02375 Susan Griggs Lilley Dewey | spouse chip on X02376 Maria Gillis Bradley Dewey
+TD0151	Jessie Dewey Martin	1862	1947			2	0	cemeteries	child chip on X02375 Susan Griggs Lilley Dewey | spouse chip on X02377 James Loren Martin
+TD0152	Margaret Dewey Howland	1875	1952			2	0		child chip on X02375 Susan Griggs Lilley Dewey | spouse chip on X02549 Howland
+TD0153	Julius Edward Dewey	1878	1960			1	0		child chip on X02375 Susan Griggs Lilley Dewey
+TD0154	Edward Bradley Dewey	1891	1962			1	0		child chip on X02376 Maria Gillis Bradley Dewey
+TD0155	Theodore MacRae Dewey	1895	1962			1	0		child chip on X02376 Maria Gillis Bradley Dewey
+TD0156	Margaret Susan Martin Tucker	1885	1957			2	0	cemeteries	spouse chip on X02378 Murray Montague Tucker | child chip on X02377 James Loren Martin
+TD0157	George Goodwin Dewey	1872	1963			1	0	cemeteries;institutions	child chip on X02379 Susan Boardman Goodwin Dewey
+TD0158	Mary E. Evans	1834	1837			1	0	cemeteries	child chip on X02383 Dr. Ira Evans
+TD0159	Ira Evans	1836	1838			1	0	cemeteries	child chip on X02383 Dr. Ira Evans
+TD0160	Mary Emeline Evans Yale	1838	1899			2	0	cemeteries	child chip on X02383 Dr. Ira Evans | spouse chip on X02384 Captain Thomas Blossom Yale
+TD0161	J. Annette Evans	1840	1842			1	0	cemeteries	child chip on X02383 Dr. Ira Evans
+TD0162	Edward P. Evans	1842	1913			1	0	cemeteries	child chip on X02383 Dr. Ira Evans
+TD0163	Ira Hobart Evans	1844	1922	YES	Civil War Medal of Honor; Texas House Speaker	3	0	cemeteries;institutions;landmarks	child chip on X02383 Dr. Ira Evans | spouse chip on X02386 Jessie M. Stewart Evans
+TD0164	William Dwight Evans	1849	1861			1	0	cemeteries	child chip on X02383 Dr. Ira Evans
+TD0165	Wilber Leslie Evans	1872	1943			2	0		spouse chip on X02387 Josephine Willa Taylor Evans | child chip on X02385 Francese Abi 'Fannie' Hurlbut Evans
+TD0166	Hobart Yale Evans	1876	1951			1	0	cemeteries	child chip on X02385 Francese Abi 'Fannie' Hurlbut Evans
+TD0167	Francis Hurlbut Evans	1880	1963			2	0	cemeteries	child chip on X02385 Francese Abi 'Fannie' Hurlbut Evans | spouse chip on X02388 May Bess Orr Evans
+TD0168	Roma Evans Ives	1900	1988			1	0		child chip on X02387 Josephine Willa Taylor Evans
+TD0169	H. Leslie Evans	1903	1991			1	0		child chip on X02387 Josephine Willa Taylor Evans
+TD0170	Rev. Truman 'Freeman' Perrin	1796	1869			2	0	cemeteries;institutions	child chip on X01832 Zachariah Perrin Esq. | spouse chip on X02389 Pronecy B. Tindall Perrin
+TD0171	Mary Caroline Perrin Pollard	1837	1866			2	0	cemeteries	spouse chip on X02550 Mr. Pollard | child chip on X02389 Pronecy B. Tindall Perrin
+TD0172	William Alexander Perrin	1838	1903			3	0		child chip on X02389 Pronecy B. Tindall Perrin | spouse chip on X02551 Mrs. Sarah Bullard (NOT BUILT per Jalapeño)
+TD0173	Amanda L. Perrin	1839	1912			1	0		child chip on X02389 Pronecy B. Tindall Perrin
+TD0174	Louise Matilda 'Lula' Perrin Frizzell	1862	1925			2	0	cemeteries	spouse chip on X02391 Dr. Daniel Harrison 'Douglas' Frizzell Jr. | child chip on X02390 Clarentine 'Clara' Cowling Niven Perrin
+TD0175	William Niven Perrin	1864	1933			1	0		child chip on X02390 Clarentine 'Clara' Cowling Niven Perrin
+TD0176	Mary Amanda Perrin	1868	1946			1	0		child chip on X02390 Clarentine 'Clara' Cowling Niven Perrin
+TD0177	John Tindall Perrin	1869	1943			1	0		child chip on X02390 Clarentine 'Clara' Cowling Niven Perrin
+TD0178	James Austin Perrin	1870	1894			1	0		child chip on X02390 Clarentine 'Clara' Cowling Niven Perrin
+TD0179	Clara Amanda Alvira Frizzell Thompson	1891	1983			1	0		child chip on X02391 Dr. Daniel Harrison 'Douglas' Frizzell Jr.
+TD0180	Francis Niven Frizzell	1892	1968			1	0		child chip on X02391 Dr. Daniel Harrison 'Douglas' Frizzell Jr.
+TD0181	Lillie Irene Frizzell Johnson	1897	1972			1	0		child chip on X02391 Dr. Daniel Harrison 'Douglas' Frizzell Jr.
+TD0182	Garland Frizzell	1897	1984			1	0		child chip on X02391 Dr. Daniel Harrison 'Douglas' Frizzell Jr.
+TD0183	James Austin Frizzell	1899	1973			1	0		child chip on X02391 Dr. Daniel Harrison 'Douglas' Frizzell Jr.
+TD0184	Major Porter Kendrick Perrin	1833	1903		Michigan lawyer and probate judge	2	0	cemeteries;soldiers_index	child chip on X02394 Lucy Kinney Perrin | spouse chip on X02397 Ella M Sessions Perrin
+TD0185	Archer M Perrin	1863	1927			1	0	cemeteries	child chip on X02397 Ella M Sessions Perrin
+TD0186	Paul Rex Perrin	1869	1869			1	0	cemeteries	child chip on X02397 Ella M Sessions Perrin
+TD0187	Epaphras Hills Jr.	1779	1869			2	0	cemeteries	child chip on X01833 Epaphras Hills | spouse chip on X02400 Permelia Meacham Hills
+TD0188	Hannah Hills	1784	1878			1	0	cemeteries	child chip on X01833 Epaphras Hills
+TD0189	Laura Hills Cole	1789	1865			2	0		spouse chip on X02398 Nathan Cole | child chip on X01833 Epaphras Hills
+TD0190	Fanny Hills Brewer	1792	1842			2	0		spouse chip on X02399 David I Brewer | child chip on X01833 Epaphras Hills
+TD0191	Eunice Hills	1795	1833			1	0		child chip on X01833 Epaphras Hills
+TD0192	David Hills	1800	1856			1	0	cemeteries	child chip on X01833 Epaphras Hills
+TD0193	Talcott Hills	1803	1869			2	0	cemeteries	spouse chip on X02401 Laura Brewer Hills | child chip on X01833 Epaphras Hills
+TD0194	Elizabeth Hills	1820	1856			1	0		child chip on X02400 Permelia Meacham Hills
+TD0195	Julius M Hills	1822	1836			1	0		child chip on X02400 Permelia Meacham Hills
+TD0196	Christopher E Hills	1840	1925			1	0		child chip on X02401 Laura Brewer Hills
+TD0197	Lucius Henry Hills		1852			1	0		child chip on X02401 Laura Brewer Hills
+TD0198	Laura S Hills		1852			1	0		child chip on X02401 Laura Brewer Hills
+TD0199	Joseph E Hills		1868			1	0		child chip on X02401 Laura Brewer Hills
+TD0200	Justus Newton Perrin	1822	1914			3	0	cemeteries	child chip on X02394 Lucy Kinney Perrin | spouse chip on X02409 Arethusa Rosette Hosford Perrin
+TD0201	Lucy Helen Perrin	1848				1	0		child chip on X02409 Arethusa Rosette Hosford Perrin
+TD0202	Harriet Eliza Perrin	1850	1926			1	0		child chip on X02409 Arethusa Rosette Hosford Perrin
+TD0203	Elisha Newton Perrin	1858	1926			1	0		child chip on X02410 Mary Wild Perrin
+TD0204	Porter Elisha Perrin	1858	1946			1	0	landmarks	child chip on X02410 Mary Wild Perrin
+TD0205	Mary Newton Perrin	1860	1932			1	0		child chip on X02410 Mary Wild Perrin
+TD0206	Reverend Justus Newton Perrin Jr.	1863	1940			3	0	cemeteries;institutions	spouse chip on X02411 Laura Athelia Gale Perrin | spouse chip on X02412 Gertrude L Greely Perrin
+TD0207	Porter Gale Perrin	1896				1	0		child chip on X02411 Laura Athelia Gale Perrin
+TD0208	George K. Perrin	1827				1	0	institutions	child chip on X02394 Lucy Kinney Perrin
+TD0209	Henry M. Perrin	1829				1	0	institutions	child chip on X02394 Lucy Kinney Perrin
+TD0210	William B. Perrin	1839				2	1	institutions;soldiers_index	CC on H03199 Arthur De Neufville Talcott
+TD0211	George Edward Cole	1826	1906	YES	6th Governor of Washington Territory (1867)	3	0	cemeteries	spouse chip on X02419 Annie Augusta King Cole | child chip on X02398 Nathan Cole
+TD0212	Cecella A 'Ella' Cole DeVere	1854	1908			3	0		spouse chip on X02420 William Joseph Lehigh | child chip on X02418 Mary E Cardwell Cole
+TD0213	George Frederick 'Fred' Cole	1858	1879			1	0	cemeteries	child chip on X02418 Mary E Cardwell Cole
+TD0214	Sophia Brewer Risley	1816	1906			2	0		child chip on X02399 David I Brewer | spouse chip on X02422 Chauncey Risley
+TD0215	Edwin Hills Risley	1842	1921			1	0		child chip on X02422 Chauncey Risley
+TD0216	Sylvester Risley	1846	1920			2	0	cemeteries	child chip on X02422 Chauncey Risley | spouse chip on X02423 Mary Ann Nower Risley
+TD0217	Florence Mabel Risley Wratten	1873	1923			2	0		spouse chip on X02424 James Sims Wratten | child chip on X02423 Mary Ann Nower Risley
+TD0218	Eva Mae Wratten Hendry	1890	1949			2	0		spouse chip on X02429 Mr. Hendry | child chip on X02424 James Sims Wratten
+TD0219	Ellena Ruth Wratten Odell	1891	1948			2	0		spouse chip on X02430 Mr. Odell | child chip on X02424 James Sims Wratten
+TD0220	Mary Ann Wratten Belden	1894	1964			2	0		spouse chip on X02431 Mr. Belden | child chip on X02424 James Sims Wratten
+TD0221	Minnie Blanche Wratten Putnam	1898	1992			2	0		child chip on X02424 James Sims Wratten | spouse chip on X02432 Mr. Putnam
+TD0222	Sylvester Risley Wratten	1902	1934			1	0		child chip on X02424 James Sims Wratten
+TD0223	Alice Marie Wratten Stapleton	1906	1986			2	0		spouse chip on X02425 Richard P. Stapleton | child chip on X02424 James Sims Wratten
+TD0224	Everett James Wratten	1908	1973			1	0		child chip on X02424 James Sims Wratten
+TD0225	Ralph Stephen Wratten	1910	1955			1	0		child chip on X02424 James Sims Wratten
+TD0226	Barbara Bernice Stapleton Fisk	1926	2009			2	0		child chip on X02425 Richard P. Stapleton | spouse chip on X02434 Mr. Fisk
+TD0227	Beverly Anne Stapleton Larkin	1929	1994			2	0		child chip on X02425 Richard P. Stapleton | spouse chip on X02435 Mr. Larkin
+TD0228	Cecille Eva Stapleton Eisenhut	1936	1989			2	0		child chip on X02425 Richard P. Stapleton | spouse chip on X02436 Mr. Eisenhut
+TD0229	Howard W. Stapleton	1938	2020			2	0		child chip on X02425 Richard P. Stapleton | spouse chip on X02426 Elizabeth Horgan Stapleton
+TD0230	Jennifer Stapleton Smith					2	0		spouse chip on X02427 Lorne Smith | child chip on X02426 Elizabeth Horgan Stapleton
+TD0231	Bethany Stapleton					2	0		spouse chip on X02428 Randy | child chip on X02426 Elizabeth Horgan Stapleton
+TD0232	Ruth Ellen Wratten Eiholzer	1919	1993			2	0		spouse chip on X02433 Mr. Eiholzer | child chip on X02424 James Sims Wratten
+TD0234	Ellen Amelia 'Nellie' Barnard Hall	1849	1924			2	0		child chip on X02369 Rev. Pliny Fisk Barnard | child chip on TD0128 Julia Hobart Barnard
+TD0235	Alice Theresa Barnard	1851	1866			2	0		child chip on X02369 Rev. Pliny Fisk Barnard | child chip on TD0128 Julia Hobart Barnard
+TD0236	Capt. Jonathan Hale	1721	1776			2	0		child chip on U00045 Capt. Jonathan Hale | spouse chip on U00056 Elizabeth Welles Hale
+TD0237	Elizabeth Hale Huntington	1747	1806			2	0		spouse chip on Y00008 Rev. Joseph Huntington | child chip on U00056 Elizabeth Welles Hale
+TD0238	Elizabeth Hale Huntington Jones	1774	1843			2	0	institutions	child chip on Y00008 Rev. Joseph Huntington | spouse chip on I01135 Amasa Jones
+TD0239	Judge Joel Jones	1795	1860	YES	Mayor of Philadelphia 1849, Girard College first president	3	0	institutions;artworks	spouse chip on I01136 Elizabeth Perkins Sparhawk Jones | CC on X02863 Dr. John Sparhawk
+TD0240	Rev. John Sparhawk Jones	1841	1910		Founding minister of Brown Memorial, Baltimore	2	0	institutions	child chip on I01136 Elizabeth Perkins Sparhawk Jones | spouse chip on I01137 Harriet Sterett Winchester Jones
+TD0241	Elizabeth Sparhawk-Jones	1885	1968	YES	American Impressionist painter, Mary Smith Prize twice	2	1	institutions;artworks	CC on HD0735 Jessie Willcox Smith
+TD0242	Margaret Carroll Jones Turnbull	1887	1981			3	1	institutions;landmarks	CC on HD3083 Helen Herron Taft Manning
+TD0243	Frances Litchfield Turnbull Kidder	1917	2013		Real estate saleswoman and museum docent	2	0	landmarks	"child chip on I01138 Bayard Turnbull | spouse chip on I01141 Jerome Herrick Tyson ""Jerry"" Kidder"
+TD0244	Andrew Winchester Turnbull	1921	1970	YES	Definitive biographer of F. Scott Fitzgerald, 1962	3	2	institutions;landmarks	CC on HD1759 Millicent Todd Bingham | CC on HD2606 Henry Richardson Labouisse
+TD0245	Eleanor Sterett Turnbull Pope	1923	2013			2	0	landmarks	child chip on I01138 Bayard Turnbull | spouse chip on I01142 Frederick Pope Jr.
+TD0246	David Sterett Pope	1955	2009			1	0		child chip on I01142 Frederick Pope Jr.
+TD0247	Matthew Hale Jones	1811	1883			2	0	institutions	spouse chip on I01139 Mary Elizabeth Innes Jones | child chip on I01135 Amasa Jones
+TD0248	Elizabeth Huntington Jones Kirkpatrick	1846	1918			2	0	institutions	child chip on I01139 Mary Elizabeth Innes Jones | spouse chip on I01140 William Sebring Kirkpatrick
+TD0249	William Huntington Kirkpatrick	1885	1970	YES	Federal Judge Eastern District PA 1927-1970, Coolidge appointee	1	0	institutions	child chip on I01140 William Sebring Kirkpatrick
+TD0250	Donald Morris Kirkpatrick	1887	1966	YES	Paris Prize 1912 ninth recipient	3	1	institutions	CC on HD1241 Alexander Perry Morgan Sr.
+TD0251	Miles Wells Kirkpatrick	1918	1998	YES	Federal Trade Commission Chairman 1970-1973, Nixon appointee	2	1	institutions	CC on HD3073 Henry Waters Taft
+TD0252	Anna 'Nan' Kirkpatrick Urban	1949	2009			2	0		child chip on I01143 Anne Skerrett Kirkpatrick | spouse chip on I01144 Lee Urban
+TD0253	William H. Kirkpatrick II					1	0		child chip on I01143 Anne Skerrett Kirkpatrick
+TD0254	Mary K. Gillett					1	0		child chip on I01143 Anne Skerrett Kirkpatrick
+TD0255	Rev. Joseph Huntington Jones DD	1797	1868			2	0	cemeteries;institutions	spouse chip on I01145 Anna Maria Howell Jones | child chip on I01135 Amasa Jones
+TD0256	Samuel Howell Jones	1826	1885			1	0	cemeteries	child chip on I01145 Anna Maria Howell Jones
+TD0257	Anna Howell Jones					1	0		child chip on I01145 Anna Maria Howell Jones
+TD0258	Elizabeth Jones					1	0		child chip on I01145 Anna Maria Howell Jones
+TD0259	Ellen A. Jones					1	0		child chip on I01145 Anna Maria Howell Jones
+TD0260	Septimus George Huntington	1778	1844			2	0		child chip on Y00008 Rev. Joseph Huntington | spouse chip on I01146 Mary Tyler Morse Huntington
+TD0261	Mary Elizabeth Huntington	1811				1	0		child chip on I01146 Mary Tyler Morse Huntington
+TD0262	Louisa Augusta Huntington Ritchey	1813	1849			2	0		spouse chip on I01147 Dr. James Ritchey | child chip on I01146 Mary Tyler Morse Huntington
+TD0263	Henry Augustus Huntington	1816	1895			2	0		spouse chip on I01149 Sarah Ann Edwards Huntington | child chip on I01146 Mary Tyler Morse Huntington
+TD0264	Dr. Julious Huntington	1818	1901			1	0		child chip on I01146 Mary Tyler Morse Huntington
+TD0265	Septimius George Huntington Jr.	1823	1882			1	0		child chip on I01146 Mary Tyler Morse Huntington
+TD0266	William Charles Huntington	1825	1884			1	0		child chip on I01146 Mary Tyler Morse Huntington
+TD0267	Emily Ritchey Douthitt	1834				1	0		child chip on I01147 Dr. James Ritchey
+TD0268	Angelina Elizabeth Ritchey Sadler	1837	1894			1	0		child chip on I01147 Dr. James Ritchey
+TD0269	Augustus Ritchey	1839	1843			1	0		child chip on I01147 Dr. James Ritchey
+TD0270	Mary Louisa Ritchey Hess	1842	1922			1	0		child chip on I01147 Dr. James Ritchey
+TD0271	James Lawrence Ritchey	1844	1844			1	0		child chip on I01147 Dr. James Ritchey
+TD0272	Clarinda E. Ritchey Coen	1846	1903			2	0		child chip on I01147 Dr. James Ritchey | spouse chip on I01148 Thomas Marquis Coen
+TD0273	Eliza Huntington Snyder	1853	1939			1	0		child chip on I01149 Sarah Ann Edwards Huntington
+TD0274	Thomas Hendricks Huntington	1854	1928			1	0		child chip on I01149 Sarah Ann Edwards Huntington
+TD0275	Abbie Huntington Becker	1856	1941			1	0		child chip on I01149 Sarah Ann Edwards Huntington
+TD0276	Maggie Huntington Allen	1859	1920			1	0		child chip on I01149 Sarah Ann Edwards Huntington
+TD0277	John Edwards Huntington	1861	1930		Luther general storekeeper	2	0		spouse chip on I01153 Belle Sellman Huntington | child chip on I01149 Sarah Ann Edwards Huntington
+TD0278	George B. Huntington	1863	1956			2	0		spouse chip on I01150 Amanda Ferris Huntington | child chip on I01149 Sarah Ann Edwards Huntington
+TD0279	Charles William Huntington	1865	1958			2	0		child chip on I01149 Sarah Ann Edwards Huntington | spouse chip on I01151 Louisa Huntington Huntington
+TD0280	Frank Cordell Huntington	1869	1951			2	0		child chip on I01149 Sarah Ann Edwards Huntington | spouse chip on I01152 Gertrude A. Huntington
+TD0281	Abbie Huntington Taylor	1888	1933			1	0		child chip on I01150 Amanda Ferris Huntington
+TD0282	Ben Ferris Huntington	1891	1960			1	0		child chip on I01150 Amanda Ferris Huntington
+TD0283	Walter Huntington	1893	1893			1	0		child chip on I01150 Amanda Ferris Huntington
+TD0284	Olive A. Huntington	1893	1900			1	0		child chip on I01150 Amanda Ferris Huntington
+TD0285	Ruth Somers Huntington	1898	1900			1	0		child chip on I01150 Amanda Ferris Huntington
+TD0286	George Frederick Huntington Sr.	1902	1965			1	0		child chip on I01150 Amanda Ferris Huntington
+TD0287	Dorothy Louise Huntington Shelden	1900	1968			1	0		child chip on I01151 Louisa Huntington Huntington
+TD0288	Dolores Estelle Huntington Nace	1901	1998			1	0		child chip on I01151 Louisa Huntington Huntington
+TD0289	Roberta Huntington Cox	1909	2008			2	0		"child chip on I01153 Belle Sellman Huntington | spouse chip on I01154 Luther E. ""Luke"" Cox"
+TD0290	"Joseph Henry ""Joe"" Huntington"	1911	1978			1	0		child chip on I01153 Belle Sellman Huntington
+TD0291	Ralph Edwards Huntington	1915	1962			1	0		child chip on I01153 Belle Sellman Huntington
+TD0292	Jessie R. Coen	1872	1959			1	0		child chip on I01148 Thomas Marquis Coen
+TD0293	James Thomas Coen	1874	1906			1	0		child chip on I01148 Thomas Marquis Coen
+TD0294	Ella Rae Coen	1876	1949			1	0		child chip on I01148 Thomas Marquis Coen
+TD0295	Latha Coen	1880	1944			1	0		child chip on I01148 Thomas Marquis Coen
+TD0296	Fannie Coen	1881	1971			1	0		child chip on I01148 Thomas Marquis Coen
+TD0297	Case Louise Coen Wallace	1884	1964			1	0		child chip on I01148 Thomas Marquis Coen
+TD0298	Septimus Huntington	1773	1776			1	0		child chip on Y00008 Rev. Joseph Huntington
+TD0299	George Washington Huntington	1776	1777			1	0		child chip on Y00008 Rev. Joseph Huntington
+TD0300	Hannah Huntington	1779	1794			1	0		child chip on Y00008 Rev. Joseph Huntington
+TD0301	Henry Huntington	1781	1806			1	0		child chip on Y00008 Rev. Joseph Huntington
+TD0302	Lucretia Norton Huntington	1783	1876		Long-lived last survivor of her family	1	0		child chip on Y00008 Rev. Joseph Huntington
+TD0303	Mercy Penelope Huntington	1788	1794			1	0		child chip on Y00008 Rev. Joseph Huntington
+TD0304	James Huntington	1790	1793			1	0		child chip on Y00008 Rev. Joseph Huntington
+TD0305	Theodore Hale	1735	1807			1	0		child chip on U00045 Capt. Jonathan Hale
+TD0306	Ruth Talcott	1731	1747			1	0		child chip on U00049 Ruth Wright
+TD0307	Prudence Talcott	1734	1752			2	0		child chip on U00049 Ruth Wright | spouse chip on I01524 Capt. John Goodrich
+TD0308	Elizur Talcott	1738	1750			1	0		child chip on U00049 Ruth Wright
+TD0309	Daniel Talcott	1743	1748			1	0		child chip on U00049 Ruth Wright
+TD0310	George Talcott	1745	1750			1	0		child chip on U00049 Ruth Wright
+TD0311	Daniel Talcott	1748	1751			1	0		child chip on U00049 Ruth Wright
+TD0312	Jerusha Edwards Welles	1732	1778			4	2		CC on H00377 Jerusha Edwards | CC on H00302 Sarah Hooker Leavitt
+TD0313	Clarissa Welles	1793				0	0		
+TD0314	James M. Welles	1795	1817			0	0		
+TD0315	George Henry Welles	1813	1866			1	0		child chip on I01520 Sarah Spalding Welles
+TD0316	Susan Phoebe Welles Perkins	1815	1847			1	0		child chip on I01520 Sarah Spalding Welles
+TD0317	Emma L. Welles	1817	1818			1	0		child chip on I01520 Sarah Spalding Welles
+TD0318	James H. Welles	1819	1873			1	0		child chip on I01520 Sarah Spalding Welles
+TD0319	Henry Spalding Welles	1821	1895			1	0		child chip on I01520 Sarah Spalding Welles
+TD0320	Frances Maria Welles Stuart	1824	1899			1	0		child chip on I01520 Sarah Spalding Welles
+TD0321	Sarah I. Welles	1817	1822			1	0		"child chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
+TD0322	Matthias H. Welles	1819				1	0		"child chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
+TD0323	Jane Mary Welles Bixby	1820	1869			1	0		"child chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
+TD0324	George H. Welles	1822				1	0		"child chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
+TD0325	Henry H. Welles	1824				1	0		"child chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
+TD0326	Raymond M. Welles	1825				1	0		"child chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
+TD0327	John Welles Hollenback	1827				1	0		"child chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
+TD0328	William Welles	1829	1860			1	0		"child chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
+TD0329	Edward Welles	1832				1	0		"child chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
+TD0330	John Hollenbeck Pumpelly	1826	1907			2	0		spouse chip on I01552 Mary Ann Foote Pumpelly | child chip on I01523 William Pumpelly
+TD0331	Susan W. Pumpelly	1828	1830			1	0		child chip on I01523 William Pumpelly
+TD0332	Antoinette Pumpelly Loder	1832				1	0		child chip on I01523 William Pumpelly
+TD0333	Josephine Pumpelly	1835	1838			1	0		child chip on I01523 William Pumpelly
+TD0334	Raphael Pumpelly	1837	1923	YES	Geologist and explorer of Asia's interior	5	0		CC on X00898 Edward Salisbury Dana | spouse chip on I01540 Eliza Frances Shepard Pumpelly
+TD0335	"Margarita ""Daisy"" Pumpelly Smyth"	1873	1959			2	0		spouse chip on I01541 Henry Lloyd Smyth | child chip on I01540 Eliza Frances Shepard Pumpelly
+TD0336	Elise Pumpelly Cabot	1875	1958			3	0		CC on X03117 James Elliot Cabot | child chip on I01540 Eliza Frances Shepard Pumpelly
+TD0337	Raphael Welles Pumpelly	1881	1949			3	0		CC on X03114 Brig. Gen. Edward Hastings Ripley | child chip on I01540 Eliza Frances Shepard Pumpelly
+TD0338	Charlotte Pumpelly Smyth Russell	1895	1925			2	0		child chip on I01541 Henry Lloyd Smyth | spouse chip on I01544 Otis Tenney Russell
+TD0339	Pauline Pumpelly Smyth Otis	1900	1982			2	0		child chip on I01541 Henry Lloyd Smyth | spouse chip on I01545 Arnold Fraser-Campbell
+TD0340	Henry Lloyd Smyth Jr.	1906	1937		Harvard man who died young in Vermont	2	0		child chip on I01541 Henry Lloyd Smyth | spouse chip on I01546 Elinor Scott Smyth
+TD0341	Barbara Elliot Smyth Boeckeler	1910	1973			3	0		child chip on I01541 Henry Lloyd Smyth | spouse chip on I01547 Edwin Arthur Shuman Jr.
+TD0342	Thomas Handasyd Cabot Jr.	1904	1983		Of Bush Farm, Dublin, New Hampshire	2	0		child chip on I01542 Thomas Handasyd Cabot | spouse chip on I01556 Thea DeForest Brush Cabot
+TD0343	Elizabeth Dwight Cabot Prince	1902	1975			6	0		spouse chip on I01559 Edwin Ginn | CC on X03119 Henry Holt
+TD0344	Pauline Pumpelly Cabot Metcalf	1903	1976			4	0		CC on X03121 Stephen Olney Metcalf | child chip on I01542 Thomas Handasyd Cabot
+TD0345	Amelie Welles Pumpelly Bates	1910	1951			2	0		spouse chip on I01549 John Henry Bates | child chip on I01543 Amelie Sybil Van Doren Ripley
+TD0346	Raphael Ripley Pumpelly	1911	2006			3	0		spouse chip on I01553 Marta Marie Szalonek | child chip on I01543 Amelie Sybil Van Doren Ripley
+TD0347	Ripley Huntington Pumpelly	1913	1967			2	0		spouse chip on I01555 Shirley Madeline L'Esperance Pumpelly | child chip on I01543 Amelie Sybil Van Doren Ripley
+TD0348	Pauline Pumpelly Fraser-Campbell Trumbull	1921	1996			1	0		child chip on I01545 Arnold Fraser-Campbell
+TD0349	Charlotte Pumpelly Smyth Jackson	1925	1948			1	0		child chip on I01546 Elinor Scott Smyth
+TD0350	William W. Smyth Pumpelly	1928	1983			1	0		child chip on I01546 Elinor Scott Smyth
+TD0351	Henry Lloyd Smyth III	1930	2011			1	0		child chip on I01546 Elinor Scott Smyth
+TD0352	Capt. Edwin Arthur Shuman III	1931	2013			1	0		child chip on I01547 Edwin Arthur Shuman Jr.
+TD0353	Peter Somers Boeckeler	1944	1944		An infant who died at Detroit in 1944	1	0		child chip on I01548 Benjamin Clark Boeckeler
+TD0354	Joan Pumpelly Bates	1936	1971			1	0		child chip on I01549 John Henry Bates
+TD0355	Bess Irmgard Bates	1949	1999			3	0		"child chip on I01549 John Henry Bates | spouse chip on I01550 Clyde Lynwood ""Jay"" Burr"
+TD0356	Diana Bates					1	0		child chip on I01549 John Henry Bates
+TD0357	Grace Ann Bates					1	0		child chip on I01549 John Henry Bates
+TD0358	Solomon William Leroy Foster	1976	2018			1	0		child chip on I01551 Ronald Dean Foster
+TD0359	Mkali Ronald Dean Foster					1	0		child chip on I01551 Ronald Dean Foster
+TD0360	Changa Howard John Foster					1	0		child chip on I01551 Ronald Dean Foster
+TD0361	Dakota Edmund Burr	1981				1	0		"child chip on I01550 Clyde Lynwood ""Jay"" Burr"
+TD0362	Ason William Leroy Foster	2009				0	0		
+TD0363	Lieut. Henry Holt III	1923	1943		Army pilot killed in 1943	2	0		spouse chip on I01561 Margaret Danforth Johnston Waters | child chip on I01557 Henry Holt Jr.
+TD0364	Elise Pumpelly Holt Fallow	1925	1996		Married John Stuart Fallow Jr.	2	0		spouse chip on I01562 John Stuart Fallow Jr. | child chip on I01557 Henry Holt Jr.
+TD0365	Esther Elise Metcalf Mauran	1932	2014			2	0	institutions	spouse chip on I01565 Frank Mauran III | child chip on I01563 George Pierce Metcalf
+TD0366	Michael Pierce Metcalf	1933	1987			1	0		child chip on I01563 George Pierce Metcalf
+TD0367	Eliza Pumpelly Mauran Blackwell	1960	1995		Died in England in 1995	2	0		child chip on I01565 Frank Mauran III | spouse chip on I01567 Nigel Stirling Blackwell
+TD0368	Frank Mauran IV					2	0		child chip on I01565 Frank Mauran III | spouse chip on I01566 Elizabeth Rollins Mauran
+TD0369	Marion Rollins Mauran					1	0		child chip on I01566 Elizabeth Rollins Mauran
+TD0370	Cecily Lippitt Mauran					1	0		child chip on I01566 Elizabeth Rollins Mauran
+TD0371	John Ormsbee Ames Mauran					1	0		child chip on I01566 Elizabeth Rollins Mauran
+TD0372	Georgina Stirling Blackwell O’Sullivan					1	0		child chip on I01567 Nigel Stirling Blackwell
+TD0373	Richard Raphael Holliday Blackwell					1	0		child chip on I01567 Nigel Stirling Blackwell
+TD0374	Connie Eliza Hedderwick O’Sullivan					0	0		
+TD0375	Nancy Susan Blackwell O’Sullivan					0	0		
+TD0376	Henry August Metcalf Blackwell					0	0		
+TD0377	Comfort Talcott		1751			2	0		spouse chip on X01794 John Loveland | child chip on U00031 Elizabeth Talcott
+TD0378	Elizabeth Rawson Talcott	1847	1925			2	0	cemeteries	spouse chip on I01737 Henry S. Palmer | child chip on U00061 Marinda Calista Genung Rawson
+TD0379	Walter Rawson	1848	1909			1	0		child chip on U00061 Marinda Calista Genung Rawson
+TD0380	Buell Grindall Rawson	1850	1935			1	0		child chip on U00061 Marinda Calista Genung Rawson
+TD0381	Edward Rawson	1853	1929			1	0		child chip on U00061 Marinda Calista Genung Rawson
+TD0382	Albert Rawson	1860	1921			1	0		child chip on U00061 Marinda Calista Genung Rawson
+TD0383	Minnie Rawson	1864	1865			1	0		child chip on U00061 Marinda Calista Genung Rawson
+TD0384	Harry Genung Rawson	1866	1939			1	0		child chip on U00061 Marinda Calista Genung Rawson
+TD0385	Minnie Victoria Rawson Abel	1895	1978			1	0		child chip on U00062 Ellen White Rawson
+TD0386	Frank Durell Talcott	1846	1935			1	0	cemeteries	child chip on U00063 Elmira Ann Nye Talcott
+TD0387	Hannah Talcott	1736	1750			1	0		child chip on U00041 Hannah Moseley
+TD0388	Abigail Talcott Hamlin Starr	1738	1804			3	0	cemeteries	child chip on U00041 Hannah Moseley | spouse chip on I01740 Christopher Hamlin
+TD0389	Elizabeth Talcott	1740	1741			1	0		child chip on U00041 Hannah Moseley
+TD0390	Capt. William Talcott	1742	1807			1	0		child chip on U00041 Hannah Moseley
+TD0391	Capt. Gad Talcott	1745	1830			1	0		child chip on U00041 Hannah Moseley
+TD0392	Asa Talcott	1750	1786			1	0		child chip on U00041 Hannah Moseley
+TD0393	Christopher Hamlin Starr	1771	1834			2	0	cemeteries	spouse chip on I01742 Elizabeth Taylor Starr | child chip on I01741 Capt. Timothy Starr
+TD0394	Timothy Starr	1796	1874			2	0		spouse chip on I01744 Mary Ann Kent Starr | child chip on I01742 Elizabeth Taylor Starr
+TD0395	Abigail Taylor Starr Williard	1797	1890			2	0		child chip on I01742 Elizabeth Taylor Starr | spouse chip on I01745 John Bernard Williard Sr.
+TD0396	Levi Starr	1799	1826			1	0		child chip on I01742 Elizabeth Taylor Starr
+TD0397	Adaline Starr Welton	1801	1847			1	0		child chip on I01742 Elizabeth Taylor Starr
+TD0398	Stephen Morehouse Starr	1803	1873			1	0		child chip on I01742 Elizabeth Taylor Starr
+TD0399	Christopher Hamlin Starr Jr.	1806	1898			1	0		child chip on I01742 Elizabeth Taylor Starr
+TD0400	Edward Starr	1808	1873			1	0		child chip on I01742 Elizabeth Taylor Starr
+TD0401	Talcott Seymour Starr	1810	1900			2	0		child chip on I01742 Elizabeth Taylor Starr | spouse chip on I01743 Julia O’Brian Starr
+TD0402	Amanda Malvina Starr Howard	1812	1844			1	0		child chip on I01742 Elizabeth Taylor Starr
+TD0403	Almira Taylor Starr Gallup	1816	1907			1	0		child chip on I01742 Elizabeth Taylor Starr
+TD0404	Almira Starr	1845	1920			1	0		child chip on I01743 Julia O’Brian Starr
+TD0405	Augustus Starr	1846	1846			1	0		child chip on I01743 Julia O’Brian Starr
+TD0406	Norman M Starr	1847	1931			1	0		child chip on I01743 Julia O’Brian Starr
+TD0407	Martin Luther Starr	1850	1919			1	0		child chip on I01743 Julia O’Brian Starr
+TD0408	Sarah Elizabeth Starr	1851	1910			1	0		child chip on I01743 Julia O’Brian Starr
+TD0409	Levi Hartman Starr	1827	1896			1	0		child chip on I01744 Mary Ann Kent Starr
+TD0410	Mary Adaline Starr Osborn	1830	1870			1	0		child chip on I01744 Mary Ann Kent Starr
+TD0411	Seymour Talcott Starr	1833	1886			1	0		child chip on I01744 Mary Ann Kent Starr
+TD0412	Carrie Almira Starr Wood	1837	1914			1	0		child chip on I01744 Mary Ann Kent Starr
+TD0413	Martha Eleanor Starr Meader	1841	1936			1	0		child chip on I01744 Mary Ann Kent Starr
+TD0414	John Bernard Williard Jr.	1817	1895			2	0		child chip on I01745 John Bernard Williard Sr. | spouse chip on I01746 Elizabeth Jane Raw Williard
+TD0415	Hettie Jane Williard Cooper	1866	1948			1	0		child chip on I01746 Elizabeth Jane Raw Williard
+TD0416	William Talcott	1844				1	0		child chip on U00063 Elmira Ann Nye Talcott
+TD0417	Charles A. Talcott	1848	1929			1	0		child chip on U00063 Elmira Ann Nye Talcott
+TD0418	Fitz Edward Talcott	1850	1935			1	0		child chip on U00063 Elmira Ann Nye Talcott
+TD0419	Rosella Inez Talcott	1856	1880			1	0		child chip on U00063 Elmira Ann Nye Talcott
+TD0420	Ettie Lettie Talcott	1860	1936			1	0		child chip on U00063 Elmira Ann Nye Talcott
+TD0421	Ida May Talcott	1862				1	0		child chip on U00063 Elmira Ann Nye Talcott
+TD0422	Henry Talcott	1864				1	0		child chip on U00063 Elmira Ann Nye Talcott
+TD0423	Ellen M. Talcott	1853	1871			1	0		child chip on I01749 Mary A. Nye Talcott
+TD0424	Asa Bradford Talcott	1860	1927			1	0		child chip on I01749 Mary A. Nye Talcott
+TD0425	Walter Melvin Talcott	1851	1924			2	0	cemeteries	spouse chip on I01751 Rosa Ghastin Talcott | child chip on I01750 Eliza White Adams Talcott
+TD0426	Allen Manley Talcott	1875	1953			1	0		child chip on I01751 Rosa Ghastin Talcott
+TD0427	Joseph Earl Talcott	1884	1976			1	0		child chip on I01751 Rosa Ghastin Talcott
+TD0428	Genevieve A. Talcott Forbes	1861	1910			2	0	cemeteries	spouse chip on I01753 Francis Henry Forbes | child chip on I01752 Chloe Sophia Holbrook Talcott
+TD0429	Walter Talcott Forbes	1885	1943			2	0	cemeteries	spouse chip on I01754 Elizabeth Scott Andrick Forbes | child chip on I01753 Francis Henry Forbes
+TD0430	Roba Forbes Field	1889	1915			1	0		child chip on I01753 Francis Henry Forbes
+TD0431	Field Bradford Forbes	1892	1953			1	0		child chip on I01753 Francis Henry Forbes
+TD0432	John Lawrence Forbes	1913	1988			2	0	cemeteries	child chip on I01754 Elizabeth Scott Andrick Forbes | spouse chip on I01755 Genevieve Wood Forbes
+TD0433	Josephine Jessamine Forbes Burnap	1914	1998			1	0		child chip on I01754 Elizabeth Scott Andrick Forbes
+TD0434	Fred Arthur Talcott	1867	1947			2	0	cemeteries	child chip on I01756 Elizabeth Serana Kemp Talcott | spouse chip on I01757 Harriet Alice Manchester Talcott
+TD0435	Bernice E. Talcott Davis	1893	1960			1	0		child chip on I01757 Harriet Alice Manchester Talcott
+TD0436	Blanche Mildred Talcott Oelrich	1895	1977			1	0		child chip on I01757 Harriet Alice Manchester Talcott
+TD0437	Arthur Kemp Talcott	1897	1969			1	0		child chip on I01757 Harriet Alice Manchester Talcott
+TD0438	Alice Vivian Talcott Smith	1899	1963			1	0		child chip on I01757 Harriet Alice Manchester Talcott
+TD0439	Mertie May Talcott Dexter	1872	1940			1	0		child chip on I01756 Elizabeth Serana Kemp Talcott
+TD0440	Bert Wallace Talcott	1872	1944			1	0		child chip on I01756 Elizabeth Serana Kemp Talcott
+X00436	Abby Talcott	1784				2	0		child chip on U00022 Abigail Clark Talcott | child chip on T00045 Gov. Joseph Talcott
+X01791	Thomas Hollister					1	0		child chip on U00033 Rachel Hollister Talcott
+X01795	Sarah Talcott	1732	1801			0	0		
+X03092	Charles F. Welles	1812	1873		Pennsylvania railroad developer; adopted Welles son	1	0		"child chip on I01522 Eleanor ""Ellen"" Hollenback Welles"
