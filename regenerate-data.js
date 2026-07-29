@@ -42,6 +42,10 @@ import { computeTableCoords } from './table-coords.mjs';
 // Phase 3a Block 1: table coordinates, computed at emit time only (never at runtime, never stored in
 // canonical). Set once in main(), read by compact() so `t:{x,y,e?}` rides on every payload.
 let tableCoords = new Map();
+// Ids carrying classification.hidden — set in main(). Module-level for the same reason tableCoords
+// is: personPayload() needs it to drop cross-connections that would otherwise render a live-looking
+// link to a page that was never written. It is the ONE place the emit path does not self-degrade.
+let hiddenIds = new Set();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -866,36 +870,43 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 	const cemeteryId = p.burial && p.burial.cemetery_id;
 	const burialCemetery = (cemeteryId && cemById[cemeteryId]) || null;
 
-	const crossConnections = (p.cross_connections || []).map((cc) => {
-		// hidden_by_default: the CC target is Talcott-only (grove) — the Talcott toggle (a later block)
-		// suppresses these on Hooker cards. Render annotation only; the data is untouched. Baked at
-		// build time so the cold path works before table-index loads.
-		const tgt = byId[cc.related_id];
-		const tc = tgt && tgt.classification;
-		const talcottOnly = Boolean(
-			tc && tc.is_talcott_descendant === true && tc.is_thomas_descendant !== true
-		);
-		const out = {
-			type: cc.type,
-			related_id: cc.related_id,
-			link_text: cc.link_text,
-			display_label: cc.display_label ?? '',
-			slug: slugMap.get(cc.related_id) ?? null,
-			// Phase 3b: the CC target's table seat, baked at build time — a CC link is NOT a chip (no
-			// data-flight-id box), so this is how the camera store gets a real `to` for the directional
-			// arrival. y may be null (no time basis: the consumer degrades to a screen-vector-only move).
-			t: tableCoords.get(cc.related_id) ?? null,
-			// direct-vs-collateral, walked from the parent graph (see relationClass). Still baked for other
-			// consumers, but the DECK direction now keys off gen_delta below, not this.
-			relation_class: relationClass(p.id, cc.related_id, byId),
-			// KINSHIP generation gap (see genDelta) — the deck's direction signal. null → lateral (orbit,
-			// unrelated, OR a same-generation cousin: kin, but not up/down the line); < 0 → target is an
-			// ancestor tier (rides in from TOP); > 0 → a descendant tier (from BOTTOM). Never a birth-year gap.
-			gen_delta: genDelta(p.id, cc.related_id, byId)
-		};
-		if (talcottOnly) out.hidden_by_default = true;
-		return out;
-	});
+	const crossConnections = (p.cross_connections || [])
+		// SEVERANCE: drop connections whose target is hidden. This is the ONE emit path that does not
+		// self-degrade — the row below reads `slugMap.get(...)`, and slugMap deliberately still holds
+		// hidden people (slug reservation), so without this filter a hidden target would render a
+		// live-looking link to a page that was never written. The reciprocal stays in canonical.json
+		// untouched, so re-sewing restores both sides.
+		.filter((cc) => !hiddenIds.has(cc.related_id))
+		.map((cc) => {
+			// hidden_by_default: the CC target is Talcott-only (grove) — the Talcott toggle (a later block)
+			// suppresses these on Hooker cards. Render annotation only; the data is untouched. Baked at
+			// build time so the cold path works before table-index loads.
+			const tgt = byId[cc.related_id];
+			const tc = tgt && tgt.classification;
+			const talcottOnly = Boolean(
+				tc && tc.is_talcott_descendant === true && tc.is_thomas_descendant !== true
+			);
+			const out = {
+				type: cc.type,
+				related_id: cc.related_id,
+				link_text: cc.link_text,
+				display_label: cc.display_label ?? '',
+				slug: slugMap.get(cc.related_id) ?? null,
+				// Phase 3b: the CC target's table seat, baked at build time — a CC link is NOT a chip (no
+				// data-flight-id box), so this is how the camera store gets a real `to` for the directional
+				// arrival. y may be null (no time basis: the consumer degrades to a screen-vector-only move).
+				t: tableCoords.get(cc.related_id) ?? null,
+				// direct-vs-collateral, walked from the parent graph (see relationClass). Still baked for other
+				// consumers, but the DECK direction now keys off gen_delta below, not this.
+				relation_class: relationClass(p.id, cc.related_id, byId),
+				// KINSHIP generation gap (see genDelta) — the deck's direction signal. null → lateral (orbit,
+				// unrelated, OR a same-generation cousin: kin, but not up/down the line); < 0 → target is an
+				// ancestor tier (rides in from TOP); > 0 → a descendant tier (from BOTTOM). Never a birth-year gap.
+				gen_delta: genDelta(p.id, cc.related_id, byId)
+			};
+			if (talcottOnly) out.hidden_by_default = true;
+			return out;
+		});
 
 	// Resolved media arrays live ON the focus person record (person.landmarksResolved,
 	// etc.) so the component reads them through its existing `person` prop. Spread a
@@ -924,8 +935,32 @@ function main() {
 	log(`Reading canonical: ${CONFIG.input}`);
 	const data = JSON.parse(readFileSync(CONFIG.input, 'utf8'));
 	const people = data.people || [];
-	const byId = Object.fromEntries(people.map((p) => [p.id, p]));
-	log(`  ${people.length} people`);
+
+	// TALCOTT SEVERANCE — Phase 2. `classification.hidden` (a tag string, e.g. 'talcott_2026')
+	// means: this person stays in canonical.json in full, and stops being emitted. Absent = visible.
+	//
+	// THE SPLIT IS THE WHOLE DESIGN. Two lists, two jobs:
+	//   `people`  — ALL of them. Feeds slugMap and computeTableCoords ONLY.
+	//   `visible` — what gets emitted, and what byId is built from.
+	//
+	// byId is the VISIBILITY GRAPH. Every chip in neighborhood() is built through
+	// `cm = (id) => (id && byId[id] ? compact(...) : null)`, and children/grandchildren/siblings
+	// all `.filter(Boolean)` while parents are `if (byId[...])`-guarded — so dropping a person
+	// from byId makes them vanish from every chip through machinery that already exists and is
+	// already exercised by dangling ids. No chip filter is written, or wanted.
+	//
+	// slugMap keeps the FULL list on purpose: a hidden person's slug stays RESERVED, so
+	// (a) collision suffixes on visible people never shift, and (b) no future person can claim
+	// `samuel-talcott-sr-1708` and collide when this is re-sewn. The page is simply never written,
+	// so the URL 404s as a static miss — no redirect, because they did not move.
+	//
+	// computeTableCoords also keeps the FULL list: seating it on `visible` would repack the x-axis
+	// and MOVE EVERY REMAINING SEAT, reflowing the table view and invalidating flight captures.
+	// Hidden people get seats nothing consumes; every visible seat stays exactly where it was.
+	hiddenIds = new Set(people.filter((p) => (p.classification || {}).hidden).map((p) => p.id));
+	const visible = people.filter((p) => !hiddenIds.has(p.id));
+	const byId = Object.fromEntries(visible.map((p) => [p.id, p]));
+	log(`  ${people.length} people (${visible.length} visible, ${hiddenIds.size} hidden)`);
 
 	// Table coordinates (Phase 3a Block 1) — derived at emit time, one seat per person. Set the
 	// module-level map so compact() emits `t` on every payload; the aggregates (table-index +
@@ -991,7 +1026,7 @@ function main() {
 	);
 
 	// 2) people.json — full records, slug written, research_notes (etc.) stripped
-	const clientPeople = people.map((p) => {
+	const clientPeople = visible.map((p) => {
 		const out = { ...p, slug: slugMap.get(p.id), t: tableCoords.get(p.id) ?? null };
 		// FeaturedCard reads person.birth / person.death off the FULL record, not the compact,
 		// so the gate has to ride here too.
@@ -1008,10 +1043,10 @@ function main() {
 	let talcottDescendants = 0;
 	if (!only) {
 		// 3) search-index.json
-		searchIndex = people.map((p) => searchRow(p, slugMap));
+		searchIndex = visible.map((p) => searchRow(p, slugMap));
 
 		// 4) redirects: every former/merged id -> current slug
-		for (const p of people) {
+		for (const p of visible) {
 			const current = slugMap.get(p.id);
 			const olds = [
 				...(p.former_ids || []),
@@ -1043,13 +1078,13 @@ function main() {
 
 		// 5b) stats.json — corpus tallies computed at build time so the client ships
 		// the number, never counts. Strict === true so null/undefined never count.
-		for (const p of people) {
+		for (const p of visible) {
 			const c = p.classification || {};
 			if (c.is_thomas_descendant === true) thomasDescendants++;
 			if (c.is_talcott_descendant === true) talcottDescendants++;
 		}
 		W(join(CONFIG.dataDir, 'stats.json'), {
-			total: people.length,
+			total: visible.length,
 			thomasDescendants,
 			talcottDescendants
 		});
@@ -1059,7 +1094,7 @@ function main() {
 		// the spouse-of flags (visibility filter, no second source) + parent pointers + x/y/e.
 		// CONSUMER CONTRACT: y may be null (no time basis, never fabricated) — SKIP null-y people,
 		// degrade, never throw (the NaN doctrine's null-shaped sibling).
-		const tableIndex = people.map((p) => {
+		const tableIndex = visible.map((p) => {
 			const c = p.classification || {};
 			const par = p.parents || {};
 			const t = tableCoords.get(p.id) || { x: null, y: null };
@@ -1129,7 +1164,7 @@ function main() {
 	if (!only && existsSync(personDir)) rmSync(personDir, { recursive: true, force: true });
 	mkdirSync(personDir, { recursive: true });
 	let pgCount = 0;
-	for (const p of people) {
+	for (const p of visible) {
 		if (only && !only.has(p.id)) continue;
 		const slug = slugMap.get(p.id);
 		const payload = personPayload(p, byId, clientById, slugMap, cemById, instById, reg);
