@@ -756,8 +756,17 @@ function resolveStatues(p, bySubject) {
 		const nm = r.name ?? r.description ?? 'Statue';
 		// Second line = the statue's place, like a landmark (its own `location` label, else "City, ST").
 		// Falls back to the type label (Bust/Relief) when no place is recorded.
+		// `location` is a plain string on most records but an OBJECT on some (STAT002 carries
+		// {institution, city, state}); an object here would print as "[object Object]" on the card.
+		const locStr = typeof r.location === 'string' ? r.location : null;
+		const locObj = r.location && typeof r.location === 'object' ? r.location : null;
 		const loc =
-			r.location ?? formatCityState(r.city, r.state, r.country) ?? statueTypeLabel(r.type);
+			locStr ??
+			(locObj
+				? (locObj.institution ?? formatCityState(locObj.city, locObj.state, locObj.country))
+				: null) ??
+			formatCityState(r.city, r.state, r.country) ??
+			statueTypeLabel(r.type);
 		return mediaRow({
 			name: nm,
 			typeLabel: statueTypeLabel(r.type),
@@ -1153,10 +1162,19 @@ function main() {
 	const artworkById = Object.fromEntries((data.artworks || []).map((x) => [x.id, x]));
 	const documentById = Object.fromEntries((data.documents || []).map((x) => [x.id, x]));
 	const videoById = Object.fromEntries((data.videos || []).map((x) => [x.id, x]));
+	// A statue reaches a card ONLY through this index. It keys on the depicted subject
+	// (`subject_id`) AND on any other people the record names (`person_ids`), so one memorial can
+	// sit on several cards — the subject, a spouse, a child — without duplicating the record.
+	// Before this, `person_ids` was ignored entirely and STAT002 (the Saint-Gaudens bust of
+	// Edwards Pierrepont, which carries only person_ids) rendered on nobody's card at all.
+	// Deduped, so a record naming the same id in both fields still renders once.
 	const statuesBySubject = {};
 	for (const s of data.statues || []) {
-		if (!s || !s.subject_id) continue;
-		(statuesBySubject[s.subject_id] ||= []).push(s);
+		if (!s) continue;
+		const ids = new Set(
+			[s.subject_id, ...(Array.isArray(s.person_ids) ? s.person_ids : [])].filter(Boolean)
+		);
+		for (const id of ids) (statuesBySubject[id] ||= []).push(s);
 	}
 	const reg = { landmarkById, artworkById, documentById, videoById, statuesBySubject };
 
