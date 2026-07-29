@@ -1,6 +1,25 @@
 import type { Person } from '$lib/types/person';
 
 /**
+ * TALCOTT SEVERANCE — Phase 1 (labels only).
+ *
+ * The tree is being narrowed to the Hooker line. Talcott descent no longer earns a label
+ * anywhere: not the person's own line ("Fourth Generation Descendant of John Talcott"), not
+ * the derived spouse/in-law phrases built off it ("Husband of Granddaughter of John Talcott",
+ * "Wife of Talcott Descendant").
+ *
+ * This is a RENDER decision, not a data one. `is_talcott_descendant` stays true in
+ * canonical.json on every person it is true of — those people ARE Talcott descendants and
+ * writing a falsehood into the source to change a label would be murder to unwind. Flip this
+ * one constant back to `true` and every label returns exactly as it was.
+ *
+ * Deliberately NOT gated: the two hardcoded founder labels below (John Talcott T00011 and his
+ * mother Anne Skinner X01725). T00011 stays as an orbit figure — a Hartford founder who
+ * cross-connects to Thomas Hooker — and that label is what earns him the connection.
+ */
+const SHOW_TALCOTT_DESCENT = false;
+
+/**
  * Compute the generation label lines for a person.
  * Returns 0-2 strings to display under the dates in the featured card.
  *
@@ -43,7 +62,7 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 	if (cls.is_thomas_descendant && cls.generation_from_thomas != null) {
 		hookerLine = buildDescendantLabel(cls.generation_from_thomas, person.gender, 'Thomas Hooker');
 	}
-	if (cls.is_talcott_descendant && cls.generation_from_john_talcott != null) {
+	if (SHOW_TALCOTT_DESCENT && cls.is_talcott_descendant && cls.generation_from_john_talcott != null) {
 		talcottLine = buildDescendantLabel(
 			cls.generation_from_john_talcott,
 			person.gender,
@@ -119,7 +138,7 @@ function computeSpouseCompact(person: Person, byId: Record<string, Person>): str
 		const word = getRelationshipWord(person.gender);
 		const founder = spouse.classification.is_thomas_descendant
 			? 'Hooker Descendant'
-			: spouse.classification.is_talcott_descendant
+			: SHOW_TALCOTT_DESCENT && spouse.classification.is_talcott_descendant
 				? 'Talcott Descendant'
 				: descendantShort;
 		return `${word} of ${founder}`;
@@ -171,7 +190,7 @@ function getDescendantOrdinalShort(person: Person): string | null {
 		if (relation) return `${relation} of Thomas Hooker`;
 		return `${ordinalWord(cls.generation_from_thomas)} Generation Hooker`;
 	}
-	if (cls.is_talcott_descendant && cls.generation_from_john_talcott != null) {
+	if (SHOW_TALCOTT_DESCENT && cls.is_talcott_descendant && cls.generation_from_john_talcott != null) {
 		const relation = getRelationWord(cls.generation_from_john_talcott, person.gender);
 		if (relation) return `${relation} of John Talcott`;
 		return `${ordinalWord(cls.generation_from_john_talcott)} Generation Talcott`;
