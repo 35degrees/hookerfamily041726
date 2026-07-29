@@ -108,7 +108,10 @@ def show(key, idx, raw=False):
     print(f"\n  CROSS-CONNECTIONS ({len(ccs)}" + (", card shows first 6" if len(ccs) > 6 else "") + ")")
     for c in ccs:
         lab = c.get('display_label') or ''
-        print(f"    “{c.get('link_text')} {lab}”   [{len(lab)}/70{' ⚠ OVER' if len(lab) > 70 else ''}]"
+        # The card joins these with an em dash — print it the same way, or this tool and the
+        # rendered row disagree about what the reader actually sees.
+        subj = c.get('link_text') or '⚠ NO NAME'
+        print(f"    “{subj} — {lab}”   [{len(lab)}/70{' ⚠ OVER' if len(lab) > 70 else ''}]"
               f" → {c.get('slug') or '(no page)'}")
     if not ccs:
         print("    — none —")
