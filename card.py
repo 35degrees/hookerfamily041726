@@ -81,13 +81,26 @@ def show(key, idx, raw=False):
         if not items:
             print("    — none —")
 
-    rows('CAREER', p.get('career') or [],
+    # RightColumn sorts career LATEST -> EARLIEST on (end_year ?? start_year) and caps at 3.
+    # Printing canonical order here would name the wrong three as on-card.
+    def _recency(c):
+        for k in ('end_year', 'start_year'):
+            v = c.get(k)
+            if v not in (None, ''):
+                try:
+                    return int(v)
+                except (TypeError, ValueError):
+                    pass
+        return float('-inf')
+    rows('CAREER (sorted latest first, as the card does)',
+         sorted(p.get('career') or [], key=_recency, reverse=True),
          lambda c: ', '.join([x for x in [c.get('role'), c.get('organization')] if x])
                    + (f"   {c.get('start_year') or ''}–{c.get('end_year') or ''}"
                       if (c.get('start_year') or c.get('end_year')) else '   (no dates)'))
     rows('EDUCATION', p.get('education') or [],
          lambda e: f"{e.get('institution_name') or e.get('school_name') or '—'}"
-                   f"   {e.get('dates') or '(no dates — degree/end_year do NOT render)'}")
+                   f"   {e.get('dates') or '(no dates — degree/graduation_year do NOT render)'}"
+                   + (f"  | {e.get('notes')}" if e.get('notes') else '  | (no notes line)'))
 
     for label, kk in (('LANDMARKS', 'landmarksResolved'), ('ART', 'artworksResolved'),
                       ('DOCUMENTS', 'documentsResolved'), ('STATUES', 'statuesResolved')):
