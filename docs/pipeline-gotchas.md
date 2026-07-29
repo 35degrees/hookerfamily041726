@@ -53,6 +53,55 @@ school lives in `education[].school_name`, not a new INST.
 - **No raw ID strings in any user-facing field** (NB body, blurb, label).
 - **No `+` signs in career rows.**
 
+### Which KEY the card reads (072926 -- cost a full discovery pass; don't re-derive it)
+
+`regenerate-data.js` resolvers read specific keys, and the schema doc is behind the code in
+places. **Don't verify a batch by reading canonical -- that proves the data is STORED, not
+SEEN. Run `python3 card.py <ID>`,** which prints the emitted payload's visible surface.
+
+| you write | the card actually reads | trap |
+|---|---|---|
+| LM/ART/DOC `name` | **`primary_name`** | a record with only `name` renders a BLANK row (LM058 does today) |
+| LM `city` / `state` | **`location.{city,state}`** nested (flat tolerated) | the subtitle is "City, ST" -- **the street address NEVER renders** |
+| LM `primary_url` / `url` | `primary_url ?? url` | either works |
+| LM `photo_url` / `image_url` | `photo_url ?? image_url` | either works |
+| person-side `landmark_blurb` | **nothing** -- `resolveLandmarks` hard-codes `blurb: null` | write it for the record, never for the card |
+| `bio_blurb` | `notable_blurb ?? bio_blurb` | on a notable, bio_blurb is invisible |
+| `person.cross_connections` | the payload's **top-level `crossConnections`** (resolved + hidden-filtered) | the raw array is not the render path |
+| `sources` | **nothing** -- no component reads it | it is the interior source field in practice; the sources UI is unbuilt (roadmap §11) |
+| `research_notes` | **nothing** -- stripped from every payload at emit | safe for anything |
+| institution `hooker_connected_people` / cemetery `hooker_connections` | **nothing** -- `/institution/[slug]` is a one-line placeholder | rosters are research surface, not card surface |
+
+**Slugs are emitted, not derivable.** Two things a hand-rolled slug cannot know: a presumed-living
+non-notable **loses the birth year** (178 people, 150 slugs), and the 2nd..Nth person on a base slug
+takes a `-2`/`-3` suffix (123 today). `process_tasks.py` now reads the real slug out of
+`static/data/search-index.json`; a leading **`~`** means "approximated, not yet emitted" -- regenerate
+and re-read before trusting the link.
+
+---
+
+## The fast loop (072926) -- one command, ~12s, instead of six calls
+
+```bash
+python3 batch.py tasks.csv                    # sheet: commit -> process -> validate delta -> regen -> verify
+python3 batch.py --ids X03821,HD8480          # same checks after a HAND edit to canonical
+python3 batch.py tasks.csv --commit "message" # commit only if the delta was clean
+python3 card.py X03821                        # what the card SHOWS (read-only, any time)
+```
+
+Nothing in the pipeline is slow -- measured: parse 0.4s, validate 0.9s, process 1.6s, full
+regenerate 8.3s. **The cost was always re-derivation, not compute.** Two flags carry most of it:
+
+- **`validate.py --since <baseline>`** reports ONLY what this batch introduced. A plain run prints
+  `BLOCKED` every time because the standing §C debt is ~1,300 errors by design, so the question that
+  matters -- *did I break anything?* -- had to be grepped out by eye. `--since` answers it and exits
+  on the DELTA. (Red-proven: injected an over-long NB header and a dropped NB; both fired, exit 1.)
+  The full report is still `validate.py canonical.json`.
+- **`regenerate-data.js --only ID1,ID2`** rebuilds just those page payloads and skips every
+  aggregate: **0.9s vs 8.3s**. It was already there and undocumented. Aggregates go stale, so run a
+  FULL rebuild before pushing, and always for a NEW person (they must reach search-index).
+  `batch.py` forces full automatically when a touched id is missing from the index.
+
 ---
 
 ## Enum asymmetries (the two vocabularies are different)

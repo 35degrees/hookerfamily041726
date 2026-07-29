@@ -352,12 +352,69 @@ def validate(path, baseline_path=None):
     return errors, warnings, debt, len(people)
 
 
+def _key(f):
+    """Comparison key for a finding: drop the parenthetical display name so a legitimate
+    rename ('X03821 (Marcella M. …)' -> 'X03821 (Marcella Callery …)') doesn't read as a
+    finding disappearing and a new one arriving."""
+    return re.sub(r'^(\S+) \([^)]*\)', r'\1', f)
+
+
+def run_delta(path, baseline_path, quiet_ok):
+    """--since: report ONLY what THIS batch changed.
+
+    The standing §C debt is ~1,300 errors and ~4,200 warnings by design (see WORKFLOW §7),
+    so a plain run prints BLOCKED every time and the one question that matters — *did my
+    batch break anything?* — has to be grepped out of the pile by eye. This answers it
+    directly: findings present now and absent in the baseline, plus the silent-loss guard,
+    with the exit code keyed to the DELTA rather than the absolute count.
+
+    The full report is still one flag away; this does not replace it."""
+    cur_e, cur_w, cur_debt, n = validate(path, baseline_path)   # baseline_path adds SILENT LOSS
+    base_e, base_w, base_debt, bn = validate(baseline_path)
+
+    loss = [e for e in cur_e if e.startswith('SILENT LOSS')]
+    base_ek, base_wk = {_key(x) for x in base_e}, {_key(x) for x in base_w}
+    new_e = [e for e in cur_e if e not in loss and _key(e) not in base_ek]
+    new_w = [w for w in cur_w if _key(w) not in base_wk]
+    fixed_e = len(base_ek - {_key(x) for x in cur_e})
+
+    print(f"\n=== validate.py --since — {path} ({n:,} people, baseline {bn:,}) ===\n")
+
+    def block(label, items, mark):
+        if items:
+            print(f"{label} ({len(items)}):")
+            for x in items[:60]:
+                print(f"  {mark}", x)
+            if len(items) > 60:
+                print(f"  ... and {len(items)-60} more")
+            print()
+        else:
+            print(f"{label}: none ✓")
+
+    block("SILENT LOSS", loss, "✗")
+    block("NEW ERRORS", new_e, "✗")
+    block("NEW WARNINGS", new_w, "·")
+    if fixed_e:
+        print(f"(resolved {fixed_e} pre-existing error(s) — drawdown, not a regression)")
+    print(f"\nstanding debt unchanged at {len(base_e):,} errors / {len(base_w):,} warnings"
+          f"  →  now {len(cur_e)-len(loss):,} / {len(cur_w):,}")
+
+    blocked = bool(loss or new_e) or (quiet_ok and new_w)
+    print("\nRESULT:", "BLOCKED — this batch introduced the findings above."
+          if blocked else "CLEAN — this batch introduced nothing new ✓")
+    sys.exit(1 if blocked else 0)
+
+
 def main():
     ap = argparse.ArgumentParser(description="Validate Hooker canonical against schema v23.")
     ap.add_argument('path', help='canonical.json to validate')
     ap.add_argument('--baseline', help='prior canonical.json — enables silent-loss diff')
+    ap.add_argument('--since', help='prior canonical.json — report ONLY findings THIS batch added')
     ap.add_argument('--strict', action='store_true', help='exit 1 on any finding (errors OR warnings)')
     args = ap.parse_args()
+
+    if args.since:
+        run_delta(args.path, args.since, args.strict)
 
     errors, warnings, debt, n = validate(args.path, args.baseline)
 

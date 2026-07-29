@@ -50,13 +50,30 @@ dates, bio blurbs, tags, cross-connections, institutions, landmarks, the schema,
 The Woodward entry (X00804) is the NB quality bar -- re-read its blocks before
 writing NBs.
 
-**The data loop -- you (Code) run every step; Sam types no git or shell commands:**
-1. **`git add -A && git commit -m "pre-batch <desc>"`** -- the revert point. Local, instant. Do this BEFORE editing.
-2. Edit **`canonical.json` directly** -- there is no draft file. `process_tasks.py` v2 loads canonical.json, applies changes in place, and writes back to the same path (and writes status/slug back into the task sheet). Batches enter via the sheet: `python process_tasks.py tasks.tsv` (`.csv` -> comma-delimited, anything else -> tab; auto-detected).
-3. **Two passes:** mechanical fields auto-apply append/set-only. NB prose is draft-for-approval per the Second Law -- draft to the sheet's `proposed` column, APPEND to canonical only after Sam marks APPROVE.
-4. **`git show HEAD:canonical.json > /tmp/baseline.json`** then **`python validate.py canonical.json --baseline /tmp/baseline.json`**. ERRORS or unauthorized loss -> STOP, report, `git revert`. Do not proceed.
-5. **`node regenerate-data.js canonical.json`** -- run **on Sam's command** (he wants this offloaded). Prompt when a batch is validated and ready: "Clean -- want me to regenerate so you can see it on the cards?"
-6. Sam reviews the live cards. Good -> keep the commit. Bad -> **`git revert`**, it never happened.
+**The data loop -- ONE COMMAND (072926). You (Code) run it; Sam types no git or shell commands:**
+
+```bash
+python3 batch.py tasks.csv           # a sheet batch
+python3 batch.py --ids X03821        # after a HAND edit to canonical (surgical, one entry)
+python3 batch.py tasks.csv --commit "message"     # commits only if the delta was clean
+```
+
+`batch.py` runs the whole contract in order and **stops itself** on any new error or silent loss
+(nothing regenerated, nothing committed): revert point -> `process_tasks.py` -> baseline ->
+**`validate.py --since`** (reports ONLY what THIS batch introduced, because the standing §C debt
+makes a plain run print BLOCKED every time) -> regenerate (`--only` the touched ids, ~1s; forced
+full for a new person) -> **`card.py`** verify -> review links. ~12s total.
+
+Two things that do not change:
+- **NB prose is still draft-for-approval** per the Second Law -- `nb_angle`/`nb_full` stage to
+  `proposed`; only `nb_approved` writes prose. batch.py does not alter the two-pass rule.
+- **Sam's rendered-pixel verdict outranks a clean run.** Bad card -> `git checkout canonical.json`
+  (uncommitted) or `git revert` (committed); it never happened.
+
+**Verify with `card.py <ID>`, never by reading canonical.** Canonical proves the data is STORED;
+`card.py` prints the emitted payload's VISIBLE surface -- which keys actually render is a real trap
+(`primary_name` not `name`, `landmark_blurb` never renders, a street address never renders). The
+table lives in `docs/pipeline-gotchas.md`; read it instead of re-deriving it.
 
 **NB quality (no script can enforce this -- this is why it lives here, not in the
 validator):** lead with the specific human detail, never the Hooker connection

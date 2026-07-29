@@ -43,7 +43,7 @@ WORKFLOW around this script (Code runs all of it; Sam types none of it):
     node regenerate-data.js canonical.json             # Code: on Sam's command
 """
 
-import json, re, sys, csv, argparse
+import json, re, sys, os, csv, argparse
 from collections import Counter
 
 NB_CATEGORY = {
@@ -100,7 +100,38 @@ def _load_canonical_tags():
 CANONICAL_TAGS = _load_canonical_tags()
 
 
+def _load_emitted_slugs():
+    """id -> the slug regenerate-data.js ACTUALLY emitted, read from search-index.json.
+
+    The approximation below cannot know two things the emitter does, and both produce
+    review links that 404:
+      * privacy — a presumed-living non-notable loses the birth year from the slug
+        (178 people today, 150 of whom lost the year), and
+      * collisions — the 2nd..Nth person on a base slug gets a `-2`/`-3` suffix (123 today).
+    The emitted index is the truth. Absent (fresh clone, never regenerated) or a
+    brand-new person not yet emitted -> fall back to the approximation and mark it ~.
+    """
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'data', 'search-index.json')
+    try:
+        with open(p, encoding='utf-8') as f:
+            rows = json.load(f)
+        return {r['id']: r['slug'] for r in rows if r.get('id') and r.get('slug')}
+    except Exception:
+        return {}
+
+
+EMITTED_SLUGS = _load_emitted_slugs()
+
+
 def slugify(p):
+    """The REVIEW LINK for a person. Prefers the emitted slug; approximates only as fallback.
+
+    A '~' prefix on the returned value means "approximate, not yet emitted" — regenerate
+    and re-read if the link 404s.
+    """
+    hit = EMITTED_SLUGS.get(p.get('id'))
+    if hit:
+        return hit
     b = p.get('bio') or {}
     # full first name: if first_name is set use it whole; else first word of display_name
     first = b.get('first_name') or ((b.get('display_name') or '').split() or [''])[0]
@@ -116,7 +147,7 @@ def slugify(p):
         return x.strip('-')
     yr = (p.get('birth') or {}).get('year')
     base = '-'.join([x for x in [s(first), s(last)] if x])
-    return base + (f'-{yr}' if yr else '')
+    return '~' + base + (f'-{yr}' if yr else '')
 
 
 def snapshot(people):
