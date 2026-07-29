@@ -44,11 +44,15 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 	if (person.id === 'T00011') {
 		// The Talcott progenitor (gen 0). Was hardcoded as T00010, which no longer exists (merged
 		// away); T00011 is is_talcott_descendant:false, so without this it would get no label at all.
-		return ['Founder of the American Talcott Line'];
+		// Post-severance he is an ORBIT figure — a Hartford founder who cross-connects to Thomas
+		// Hooker — and the Hartford half is what earns him that place, so it leads.
+		return ['Hartford Founder & Founder of the American Talcott Line'];
 	}
 	if (person.id === 'X01725') {
 		// Anne Skinner — T00011's mother. is_talcott_descendant:false + no generation, so the gen≤0
 		// rule below can't reach her; label her directly as the founder's mother.
+		// NOTE: she is currently classification.hidden (talcott_2026), so this branch cannot fire —
+		// it is kept, not removed, because un-hiding her must bring the label back with her.
 		return ['Mother of the Talcott Founder'];
 	}
 

@@ -11,6 +11,7 @@
 
 # --- generated data artifacts (rebuilt by `node regenerate-data.js canonical.json`) ---
 static/data/people.json
+static/data/table-index.json
 static/data/search-index.json
 static/data/stats.json
 static/data/redirects.json
