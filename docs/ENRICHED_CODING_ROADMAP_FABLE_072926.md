@@ -1,6 +1,6 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: July 24, 2026 — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_072426.md (the what/why for every item below).**
+**Date: July 29, 2026 — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Companion: ENRICHED_DESIGN_FABLE_072926.md (the what/why for every item below).**
 **The 072426 edition (July 24) adds §15 — DECK VERTICAL MISFIRE (uncle/nephew rides horizontal). A confirmed bug surfaced during a content session: John Pierpont H00388 → uncle-guardian James Pierpont II H00116 transitions HORIZONTAL when it should be vertical. Diagnosed: the CC data is correct (`gen_delta = −1`); the flight engine's `sameLine` test proxies "same line" by seat distance (`|Δseats| ≤ 180`), and these genuine uncle/nephew sit far apart, so it falls through to lateral. NOT hacked mid-content-session. The proper fix is the long-planned §19.4 LCA/kin-distance bake (per-CC shared-common-ancestor depth, used instead of seat proximity). Deferred, scoped, and specced below. Design rationale: design doc §22.2b.**
 
 **This 071226 edition records the July 11 session: the (unplanned) CARD-TRANSITION MAINTENANCE PHASE is CLOSED and pushed — spouse carousel, demotion baseball-card model, velocity-ceiling physics, six ghosts dispositioned, Playwright probe arsenal standing. Statuses updated throughout; §7 added (state of play + what Phase 3a inherits). Repo-side session record: docs/CODING_HANDOFF.md.**
@@ -1248,3 +1248,70 @@ distance ≠ kin distance.
 
 **Status:** deferred to a Stream-B session (touches flight.ts + the bake + a probe).
 Not started; no code changed. Pick up on Sam's word.
+
+**The 072926 edition (July 29) adds §16 — THE TALCOTT SEVERANCE SHIPPED. Phases 0/1/2a/2b and the validator guard, all landed and verified rather than assumed: zero chips reference a hidden id across 16,855 payloads, zero CC links resolve to a missing page, zero slugs moved. Also fixed a missing payload returning 500 instead of 404 — the dev server throws ENOENT and escapes the `res.ok` check — which had been mis-reporting retired slugs all along. Six open severance items (the 48 SEV_cc_to_hidden errors, `is_orbit` and the compact flag the tile styling needs, the empty grove, the stale `hidden_by_default` test, one interrupted payload audit, and the lateral-vs-vertical decision on John Talcott), plus the Stream-A debt the work surfaced. Design rationale: design doc §25.**
+
+---
+
+## 16. JULY 28–29 — THE TALCOTT SEVERANCE SHIPPED (design §25)
+
+A Stream-A/Stream-B hybrid. **1,264 people hidden, none deleted.** Design rationale and the
+re-sew procedure: design doc §25.
+
+### 16.1 What shipped
+
+| phase | what | state |
+|---|---|---|
+| **0** | Roster built from a descent walk ∪ the `is_talcott_descendant` flag, minus Hooker descendants, minus keeps. Spouse rule to fixpoint (4 rounds). | `_review/talcott-sever.tsv` (1,264, `why` column) + `talcott-keep.tsv` (11) |
+| **1** | `SHOW_TALCOTT_DESCENT = false` — labels only, no data touched | shipped |
+| **2a** | `classification.hidden: "talcott_2026"` written to canonical | shipped |
+| **2b** | The `visible`/`hidden` split in `regenerate-data.js`; CC filter in `personPayload` | shipped |
+| **guard** | `validate.py`: a visible person may not CC a hidden one | shipped, fires 48× |
+
+**Verified, not assumed:** zero chips reference a hidden id across all 16,855 payloads; zero CC
+links resolve to a missing page; zero slugs moved; collision-suffix count held at 122.
+
+Also fixed en route: a **missing payload returned 500, not 404** — the dev server reads static
+assets off disk and throws ENOENT, escaping the `res.ok` check in `person/[slug]/+page.ts`. Had
+been mis-reporting retired slugs all along; would have hit all 1,264 severed URLs. Wrapped.
+
+### 16.2 Open — severance
+
+1. **The 48 `SEV_cc_to_hidden` errors.** Visible people cross-connecting into the grove. Dropped
+   at build, so nothing renders broken; they are the marker of where the line was cut and they
+   clear automatically on re-sew. **Decision needed:** strip them, or leave them as the record.
+2. **`is_orbit` never added.** 23 clean orbit figures identified in
+   `_review/orbit-candidates.tsv` (easter-egg, no descent, no marriage, ≥1 CC edge), plus 4 of
+   Sam's own personal entries excluded and 7 floating records that need his eye. Sam wants
+   orbit-plus-`hartford_founder` to carry unique styling — **which needs a compact flag**, since
+   tags reach the card but not chips or tiles (design §25.6).
+3. **The empty grove band** (design §25.4). Accepted cost; revisit if the table reads wrong.
+4. **`hidden_by_default` keys on the wrong test** (design §25.4). Harmless until the Talcott
+   toggle is built; then it must key on `hidden`.
+5. **One audit interrupted.** Aggregates and page files are confirmed free of hidden ids. **Not
+   yet checked:** whether a hidden id survives *inside* a payload — in the `context` block, a
+   registry roster, or a `marriages[].spouse_name` string. One scan.
+6. **`T01001 → T00011` rides lateral.** John Talcott has no Hooker anchor anywhere in his
+   descent, so `effectiveGen` cannot place him and `gen_delta` is null; `relationClass` also
+   returns collateral because the three intervening ancestors left `byId`. **Design decision
+   pending:** accept it (orbit → lateral is correct per §19.6), or let `effectiveGen`/
+   `relationClass` walk the full map so hidden people act as invisible scaffolding for motion.
+
+### 16.3 Open — carried, not severance
+
+- **Production 404s unverified.** The `+page.ts` fix is confirmed in dev only. Run
+  `npm run build && npm run preview` before shipping.
+- **`redirects.json` is still unwired** — 510 entries, nothing in `src/` reads them.
+- **`table-index.json` is now gitignored** (3.4 MB off every push). Note CLAUDE.md's claim that
+  `static/data/` is ignored is inexact — the `.gitignore` lists members individually.
+
+### 16.4 Stream-A debt surfaced (routed to the data stream)
+
+Not UX work, but each one distorts what a card renders:
+
+- **751 records carry a parent's *name* with no parent *id*.** They read as unconnected orphans.
+  Four people nearly deleted as such turned out to be fathers-in-law of the tree.
+- **229 people have a marriage and no gender** in either field → label degrades to "Spouse of".
+  (Was 3,138; a normalization pass cleared 2,909 — design §25.6.)
+- **341 education rows** carry a degree or year in a non-rendering key with no `dates`.
+- **2,087 career rows have no `start_year`** and render without a date.

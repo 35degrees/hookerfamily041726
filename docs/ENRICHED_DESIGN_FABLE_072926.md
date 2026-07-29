@@ -1,6 +1,6 @@
 # HOOKER FAMILY DESCENDANTS — ENRICHED DESIGN (FABLE PASS)
 
-**Date: July 24, 2026 — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
+**Date: July 29, 2026 — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
 **Prepared by the architect stream for Samuel Talcott Hooker's review. Nothing here is a decision until Sam says so.**
 **The 070926 edition added §13 (viewport-lock / scrollbar doctrine) and §14 (Zoom 1 card-grid refinements). This 071226 edition adds §17 (motion physics doctrine — learned the hard way in the July 11 card-transition maintenance phase) and threads the one-physics/velocity-ceiling lessons into §3. The card-transition layer is now CLOSED, probe-guarded, and pushed; see docs/CODING_HANDOFF.md in the repo for the session record and ghost taxonomy.**
 
@@ -16,7 +16,7 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 **The 072426 edition (July 24) adds §22.2b — a CONFIRMED DEFECT in the deck's vertical/lateral choice: the `sameLine` seat-distance proxy (`|Δseats| ≤ SEAT_NEAR`) misfires for genuine close kin who happen to sit FAR apart in the tidy tree, so a real up/down-the-line CC rides lateral. First live case: John Pierpont H00388 ↔ his uncle-guardian James Pierpont II H00116 (uncle/nephew, `gen_delta = −1`, correctly baked) renders HORIZONTAL because their seats are >180 apart. The data is right; the direction test is wrong. This is exactly the failure the §19.4 LCA/kin-distance bake exists to fix — logged now with a repro. Deferred (Stream B); tracked in the roadmap (§15).**
 
 This doc follows the house convention: it holds _what and why_ (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_072426.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_072926.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
@@ -2211,3 +2211,138 @@ invisible in practice.
 Verified by `scripts/probe-photo-preload.mjs`: on a warm nav, every chip relation
 (parent / spouse / child / …) is loaded (`img.complete && naturalWidth > 0`) by
 the time it reveals at landing.
+
+**The 072926 edition (July 29) adds §25 — THE TALCOTT SEVERANCE AS BUILT. 1,264 people are hidden from the UX and none are deleted. Records the visibility field (`classification.hidden`, a string tag and a curation fact rather than a genealogy claim), the one architectural idea that made it cheap (`byId` IS the visibility graph — every chip already degrades through `cm()`, so NO chip-filtering code was written), why `slugMap` and `computeTableCoords` deliberately keep the FULL list (slug reservation; seat stability), the single emit path that cannot self-degrade (the CC resolver reads slugMap, not byId), and THE RE-SEW PROCEDURE in five steps. Amends §19.6 (the three-band table is now two — the grove is empty), §14.6 and §15 (the dual-descent header wrap and its open styling decision are both moot while the gate is off), and flags `hidden_by_default` as keying on the wrong test. §25.6 records three smaller doctrines earned alongside: `genderOf()` and the rule that a gendered word must never fall through to a default; the wholesale married-surname display convention and why it left slugs untouched; and that `hartford_founder` reaches the card but not the compact.**
+
+---
+
+## 25. THE TALCOTT SEVERANCE — a visibility layer, not a deletion (AS BUILT, July 28–29)
+
+Sam narrowed the project to the Hooker line. The Talcott grove — people who descend from
+John Talcott and **not** from Thomas Hooker — leaves the UX. His framing, and the whole
+constraint: *"this is not a deletion. it's a pause for many years, hiding them, they can sit
+in the JSON."*
+
+**1,264 people are hidden. Zero are deleted.** Every one is complete in `canonical.json`.
+
+### 25.1 The field
+
+```
+classification.hidden: "talcott_2026"      // absent = visible
+```
+
+A **string tag, not a boolean**, so a later severance uses its own tag and one cohort can be
+re-sewn without disturbing another.
+
+This is a **curation fact about the project, not a genealogy claim**, which is why it is a new
+field rather than a flipped `is_talcott_descendant`. Those people *are* Talcott descendants;
+writing a falsehood into the source to change a render would be murder to unwind. The same
+reasoning governs the label gate (§25.3).
+
+### 25.2 `byId` IS the visibility graph — the one architectural idea
+
+`regenerate-data.js:main()` derives **two lists** from one canonical:
+
+| list | membership | feeds |
+|---|---|---|
+| `people` | **all 18,119** | `slugMap`, `computeTableCoords` — **only** |
+| `visible` | the 16,855 without `hidden` | `byId`, and every emission loop |
+
+Everything follows from that split.
+
+**Why chips needed no filter.** `neighborhood()` builds every chip through one helper —
+`cm = (id) => (id && byId[id] ? compact(...) : null)` — with children/grandchildren/siblings
+`.filter(Boolean)` and parents `if`-guarded. Dropping a person from `byId` makes them vanish
+from every chip **through machinery that already existed and was already exercised by dangling
+ids**. Verified across all 16,855 payloads: zero chips reference a hidden id. *No chip-filtering
+code was written, and none should be.*
+
+**Why `slugMap` keeps the full list.** A hidden person's slug stays **reserved**. Two reasons:
+collision suffixes on visible people never shift, and no future person can claim
+`samuel-talcott-sr-1708` and collide on re-sew. The page is simply never written, so the URL
+404s as a static miss. **No redirect** — they did not move.
+
+**Why `computeTableCoords` keeps the full list.** Seating on `visible` would repack the x-axis
+and **move every remaining seat**, reflowing the table and invalidating flight captures. Hidden
+people hold seats nothing consumes; every visible seat is exactly where it was.
+
+**The one path that does not self-degrade.** `personPayload`'s CC resolver reads
+`slugMap.get(related_id)`, never `byId` — and slugMap still holds hidden people by design. So a
+CC to a hidden target would render a **live-looking link to a page that was never written**.
+That needs an explicit `.filter()`, and it is the only new logic the whole severance required.
+`validate.py` now errors on it as a second net (`SEV_cc_to_hidden`, firing 48× at the seam).
+
+**Marriage rows survive their spouse.** `spouses[].spouse` is deliberately left `null` rather
+than dropped, so the row keeps its order, year and children. 120 cards read *married 1732* with
+no wife chip. That is correct, not a hole.
+
+### 25.3 Labels — a render switch, never a data edit
+
+`SHOW_TALCOTT_DESCENT = false` in `src/lib/utils/generation.ts` gates four call sites: the
+person's own Talcott line, the derived spouse phrase, `computeSpouseCompact`'s founder string,
+and `getDescendantOrdinalShort`'s Talcott branch. **1,918 labels changed; one word reverts all
+of them.**
+
+**The seam labels compute themselves.** Setting `is_easter_egg` on a kept in-law makes
+`computeInLawLabel` walk that person's children's spouses and derive *"Father-in-law of Fourth
+Generation Hooker"* unaided. Of eight seam people, **six needed nothing**; only two took a
+`relational_label_override`. Do not hand-write what the graph can derive.
+
+### 25.4 CONSEQUENCES FOR EXISTING SECTIONS
+
+- **§19.6 — the three-band table is now two.** Regions derive from `hd` → spine, `td && !hd` →
+  grove, else orbit. **`td && !hd` is exactly the severed set**, so the grove band at
+  x 7834–8515 is empty. `/table` still renders; it is spine and orbit. A known, accepted cost —
+  the doc's argument that the bands exist so the reader can "SEE that you left your branch" is
+  now half-served.
+- **§14.6 — the dual-descent header wrap can no longer occur.** The two-line
+  `9th-Gen Hooker · 8th-Gen Talcott` case that ate the content row does not exist while the gate
+  is off. The header-height fix remains worth doing on its own merit; the compact-notation half
+  is moot.
+- **§15 — "open decision: dual-descent card treatment" is moot** for the same reason. No card
+  carries two descent lines.
+- **`hidden_by_default` on CCs is now semantically stale.** It still keys on the old
+  `td && !hd` grove test, so it stamps kept in-law eggs (Gov. Joseph Talcott, Samuel Talcott
+  Jr.). Nothing consumes it, so nothing is broken — but when the Talcott toggle is built it must
+  key on `hidden`, not on Talcott descent.
+
+### 25.5 SEWING THEM BACK — the procedure, for whoever needs it
+
+Designed to be cheap. In order:
+
+1. **Un-hide.** Strip `classification.hidden` from the cohort (`process_tasks.py` `field_set`,
+   or one script). `_review/talcott-sever.tsv` is the roster, with a `why` column on every row.
+2. **Rebuild.** `node regenerate-data.js canonical.json`. Pages, search rows, table seats and
+   chips all return **by themselves** — `byId` refills, and every degrade path reverses. Slugs
+   are unchanged because they were never released.
+3. **Labels.** `SHOW_TALCOTT_DESCENT = true`. Every Talcott descent line returns verbatim.
+4. **CCs return by themselves** — the reciprocals were never removed from canonical, only
+   filtered at emit. The 48 `SEV_cc_to_hidden` errors clear on their own.
+5. **Then, and only then, the hand work.** Un-hiding does *not* undo the editorial decisions
+   taken alongside it: seven Bryan-side records and several others were genuinely **deleted**
+   (their content is preserved verbatim in surviving relatives' `research_notes` — search
+   `DELETED` there); `relational_label_override` strings on the seam people; and the blocks
+   rewritten to stop describing a Hooker-Talcott convergence. Those are re-authored, not
+   restored.
+
+**Partial re-sew is supported by design** — the tag is a string, so `hidden == "talcott_2026"`
+can be lifted for a subset (one branch, one notable) without touching the rest.
+
+### 25.6 SMALLER DOCTRINES EARNED ALONGSIDE (durable, done)
+
+- **`genderOf()` — null is a real answer.** All gender reads in `generation.ts` route through one
+  resolver that takes the first valid value from `person.gender`, `bio.gender` or `name.gender`
+  and normalises case. It returns **null** rather than guessing, and every consumer degrades on
+  it: the ordinal form, "Spouse of", "Parent-in-law". `computeInLawLabel` previously had no
+  guard and silently defaulted to **"Father-in-law"** — nine women were labelled that way.
+  *Never let a gendered word fall through to a default.*
+- **Display-name convention, applied wholesale.** A woman whose `married_names` is non-empty
+  carries her married surname in `display_name` — *Mehitable Russell Wadsworth*, not *Mehitable
+  Russell*. 300 records. **Slugs are unaffected**: slugging reads `first_name` and
+  `structuredSurname`, never `display_name`, except as a fallback when the structured fields are
+  empty. Chips are unchanged by design — the spouse chip keeps the maiden short name (`sn`),
+  only **child** chips prefer the married surname (`cm`).
+- **`hartford_founder` reaches the card but not the compact.** It is a **tag** (11 holders), and
+  `person.tags` ships in full on the person payload — so featured-card styling can read it
+  today. It is **not** in `compact()`, so chips and table tiles cannot see it. Orbit-plus-founder
+  styling on the tiles needs one flag emitted beside `ee`/`hd`/`td`. Not built.
