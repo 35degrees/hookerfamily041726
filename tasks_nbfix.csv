@@ -1,0 +1,2 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD8480,nb_replace,"old=""Twenty years at the Bank of New York"" header=""Twenty years at the Bank of New York"" body=""He took a science degree at American University in 1965 and went straight to the bank, where he stayed until 1984. Seven years at Merrill Lynch followed, and from 1992 the work was out in East Hampton."" category=career",OK nb_replace: 'Twenty years at the Bank of New York' -> 'Twenty years at the Bank of New York' placed verbatim in place,/person/stuyvesant-wainwright-iii,,

@@ -25,8 +25,19 @@ def load_index():
     return {r['id']: r['slug'] for r in rows if r.get('id') and r.get('slug')}
 
 
-def sentences(t):
-    return len([s for s in re.split(r'(?<=[.!?])\s+(?=[A-Z])', (t or '').strip()) if s])
+# Sentence counting is BORROWED from validate.py, never reimplemented. A verifier with its
+# own stricter rule invents violations: this file once split "E. T. Dayton" into two extra
+# sentences and reported a clean 2-sentence body as a 4-sentence error. validate.py protects
+# initials and abbreviations (Mr./Dr./Gen./A. B.) and IS the rule the batch is judged against.
+try:
+    import importlib.util as _il
+    _spec = _il.spec_from_file_location('_v', os.path.join(ROOT, 'validate.py'))
+    _v = _il.module_from_spec(_spec)
+    _spec.loader.exec_module(_v)
+    sentences = _v.sentence_count
+except Exception:                                    # validate.py unreadable — say so, don't guess
+    def sentences(t):
+        return -1
 
 
 def show(key, idx, raw=False):
