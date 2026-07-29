@@ -108,11 +108,20 @@ def show(key, idx, raw=False):
     print(f"\n  CROSS-CONNECTIONS ({len(ccs)}" + (", card shows first 6" if len(ccs) > 6 else "") + ")")
     for c in ccs:
         lab = c.get('display_label') or ''
-        # The card joins these with an em dash — print it the same way, or this tool and the
-        # rendered row disagree about what the reader actually sees.
+        # Mirrors ccTail() in FeaturedCard.svelte: NO separator dash (removed 072926). A label
+        # opening with punctuation joins tight (", her grandmother"), anything else takes one
+        # space. Flags labels that cannot read as a sentence after the name.
         subj = c.get('link_text') or '⚠ NO NAME'
-        print(f"    “{subj} — {lab}”   [{len(lab)}/70{' ⚠ OVER' if len(lab) > 70 else ''}]"
-              f" → {c.get('slug') or '(no page)'}")
+        tail = lab if re.match(r'^[,;:.!?]', lab) else ' ' + lab
+        warn = ''
+        if lab and re.match(r'^[A-Z]', lab):
+            warn += '  ⚠ starts uppercase — reads as a run-on'
+        if lab.endswith('.'):
+            warn += '  ⚠ terminal period'
+        if len(lab) > 70:
+            warn += '  ⚠ OVER 70'
+        print(f"    “{subj}{tail}”   [{len(lab)}/70]{warn}"
+              f"  → {c.get('slug') or '(no page)'}")
     if not ccs:
         print("    — none —")
 

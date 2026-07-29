@@ -135,6 +135,19 @@
 	let deathLocation = $derived(formatLocationShort(person.death));
 	let deathMapUrl = $derived(buildMapUrl(person.death));
 
+	// CC tail: the label reads straight on from the linked name, with NO separator dash
+	// (removed 072926 on Sam's call — the dash was doing the work the prose should do).
+	// Two legal label shapes, and they need different spacing:
+	//   predicate       "was his father-in-law…"   -> one space:  "Name was his father-in-law…"
+	//   leading appositive ", her grandmother, …"  -> no space:   "Name, her grandmother, …"
+	// Getting this wrong prints "Name , her grandmother", which is why it is a function and not
+	// a space in the markup. The markup around it is deliberately whitespace-free for the same reason.
+	function ccTail(label: string): string {
+		const t = (label ?? '').trim();
+		if (!t) return '';
+		return /^[,;:.!?]/.test(t) ? t : ' ' + t;
+	}
+
 	// Header blurb: notable people use notable_blurb; non-notable people fall back to
 	// bio_blurb (e.g. HD3249 "Documentary artist of the Tuskegee Airmen").
 	let blurb = $derived(person.notable?.notable_blurb ?? person.bio?.bio_blurb ?? null);
@@ -407,12 +420,11 @@
 										class="font-medium text-blue-700 hover:text-blue-900 hover:underline"
 										>{cc.link_text}</a
 									>
-								{:else}
-									<span class="font-medium text-stone-700">{cc.link_text}</span>
-								{/if}
-								{#if cc.display_label}
-									<span class="text-stone-600"> — {cc.display_label}</span>
-								{/if}
+								{:else}<span class="font-medium text-stone-700">{cc.link_text}</span
+									>{/if}{#if cc.display_label}<span class="text-stone-600">{ccTail(
+										cc.display_label
+									)}</span
+									>{/if}
 							</div>
 						{/each}
 					</div>

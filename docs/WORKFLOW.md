@@ -117,8 +117,14 @@ padding. Filler to fill a slot is the failure this whole document exists to prev
 A CC needs exactly **four** things. Nothing else matters:
 1. **Reciprocal** — exists on both entries.
 2. **`link_text`** — the connected person's name (the grammatical subject).
-3. **`display_label`** — the predicate fragment completing "[this person] ___", lowercase verb start.
-4. **≤70 characters** on the display_label.
+3. **`display_label`** — completes the sentence the linked name starts. **No separator is
+   printed between them** (the em dash was removed 072926), so there are two legal shapes:
+   a **predicate** with a lowercase verb (`was his father-in-law…`), joined with a space; or a
+   **leading appositive** opening with a comma (`, her grandmother, who…`), joined tight.
+   A capitalised noun phrase reads as a run-on after the name — it is no longer legal.
+   No terminal period.
+4. **≤70 characters** on the display_label. Mind that a spelled-out relationship eats the
+   budget fast: "great-great-great-grandmother" alone is 29 characters.
 
 **The `type` field is IGNORED.** Do not deliberate over `parallel_careers` vs
 `professional_peer` vs `naming_pattern`. Fill a generic default and move on. Never ask Sam

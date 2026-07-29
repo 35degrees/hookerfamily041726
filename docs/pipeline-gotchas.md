@@ -68,6 +68,8 @@ SEEN. Run `python3 card.py <ID>`,** which prints the emitted payload's visible s
 | person-side `landmark_blurb` | **nothing** -- `resolveLandmarks` hard-codes `blurb: null` | write it for the record, never for the card |
 | `bio_blurb` | `notable_blurb ?? bio_blurb` | on a notable, bio_blurb is invisible |
 | `person.cross_connections` | the payload's **top-level `crossConnections`** (resolved + hidden-filtered) | the raw array is not the render path |
+| CC `display_label` | printed straight after `link_text`, **no dash** (`ccTail()` in FeaturedCard) | space before a predicate, none before a leading comma; a capitalised label reads as a run-on |
+| CC `link_text` | the clickable subject | empty = a row with no name and nothing to click; 271 were repaired 072926, 14 remain because `related_id` is null |
 | `sources` | **nothing** -- no component reads it | it is the interior source field in practice; the sources UI is unbuilt (roadmap §11) |
 | `research_notes` | **nothing** -- stripped from every payload at emit | safe for anything |
 | institution `hooker_connected_people` / cemetery `hooker_connections` | **nothing** -- `/institution/[slug]` is a one-line placeholder | rosters are research surface, not card surface |

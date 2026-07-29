@@ -85,8 +85,16 @@ category, and enum membership are all validator-enforced -- see WORKFLOW.md §3 
 the full editorial rules; don't restate them from memory.)
 
 **CC rule (simplified):** four things only -- reciprocal, `link_text`,
-`display_label` (lowercase-verb predicate completing "[linked name] ___"), within
-the `validate.py` character cap. The `type` field is **ignored**: default it, never
+`display_label`, within the `validate.py` character cap (70).
+
+**There is NO separator between the two (dash removed 072926).** The card prints
+`link_text` and the label as one continuous line, so the label must complete the sentence
+the name starts, in one of exactly two shapes:
+- **predicate** -- lowercase verb, joined with a space: `was his father-in-law; First Mayor of New York`
+- **leading appositive** -- opens with a comma, joined tight: `, her grandmother, who found him the job`
+
+Anything else (a capitalised noun phrase, a terminal period) now reads as a run-on on the
+card. `card.py` flags both. The `type` field is **ignored**: default it, never
 deliberate, never ask Sam about it. A searchable person must never CC a
 non-searchable one.
 
