@@ -60,12 +60,20 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 	let talcottLine: string | null = null;
 
 	if (cls.is_thomas_descendant && cls.generation_from_thomas != null) {
-		hookerLine = buildDescendantLabel(cls.generation_from_thomas, person.gender, 'Thomas Hooker');
+		hookerLine = buildDescendantLabel(
+			cls.generation_from_thomas,
+			genderOf(person),
+			'Thomas Hooker'
+		);
 	}
-	if (SHOW_TALCOTT_DESCENT && cls.is_talcott_descendant && cls.generation_from_john_talcott != null) {
+	if (
+		SHOW_TALCOTT_DESCENT &&
+		cls.is_talcott_descendant &&
+		cls.generation_from_john_talcott != null
+	) {
 		talcottLine = buildDescendantLabel(
 			cls.generation_from_john_talcott,
-			person.gender,
+			genderOf(person),
 			'John Talcott'
 		);
 	}
@@ -84,7 +92,7 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 	//        generation are dropped in this merged form only.
 	if (hookerLine) {
 		if (spouseLabel && cls.generation_from_thomas != null) {
-			const compactDescent = compactHookerDescent(cls.generation_from_thomas, person.gender);
+			const compactDescent = compactHookerDescent(cls.generation_from_thomas, genderOf(person));
 			const compactSpouse = computeSpouseCompact(person, byId) ?? spouseLabel;
 			lines.push(`${compactDescent} & ${compactSpouse}`);
 		} else {
@@ -135,7 +143,7 @@ function computeSpouseCompact(person: Person, byId: Record<string, Person>): str
 		if (!spouse) continue;
 		const descendantShort = getDescendantOrdinalShort(spouse);
 		if (!descendantShort) continue;
-		const word = getRelationshipWord(person.gender);
+		const word = getRelationshipWord(genderOf(person));
 		const founder = spouse.classification.is_thomas_descendant
 			? 'Hooker Descendant'
 			: SHOW_TALCOTT_DESCENT && spouse.classification.is_talcott_descendant
@@ -158,7 +166,8 @@ function buildDescendantLabel(generation: number, gender: string | null, founder
 	if (generation <= 0) {
 		const line = founder.split(' ').pop() || founder; // "John Talcott" → "Talcott"
 		if (generation === 0) return `Founder of the American ${line} Line`;
-		if (generation === -1) return `${gender === 'female' ? 'Mother' : 'Father'} of the ${line} Founder`;
+		if (generation === -1)
+			return `${gender === 'female' ? 'Mother' : 'Father'} of the ${line} Founder`;
 		const greats = 'Great-'.repeat(-generation - 2);
 		return `${greats}Grand${gender === 'female' ? 'mother' : 'father'} of the ${line} Founder`;
 	}
@@ -186,12 +195,16 @@ function getDescendantOrdinalShort(person: Person): string | null {
 	}
 	const cls = person.classification;
 	if (cls.is_thomas_descendant && cls.generation_from_thomas != null) {
-		const relation = getRelationWord(cls.generation_from_thomas, person.gender);
+		const relation = getRelationWord(cls.generation_from_thomas, genderOf(person));
 		if (relation) return `${relation} of Thomas Hooker`;
 		return `${ordinalWord(cls.generation_from_thomas)} Generation Hooker`;
 	}
-	if (SHOW_TALCOTT_DESCENT && cls.is_talcott_descendant && cls.generation_from_john_talcott != null) {
-		const relation = getRelationWord(cls.generation_from_john_talcott, person.gender);
+	if (
+		SHOW_TALCOTT_DESCENT &&
+		cls.is_talcott_descendant &&
+		cls.generation_from_john_talcott != null
+	) {
+		const relation = getRelationWord(cls.generation_from_john_talcott, genderOf(person));
 		if (relation) return `${relation} of John Talcott`;
 		return `${ordinalWord(cls.generation_from_john_talcott)} Generation Talcott`;
 	}
@@ -228,7 +241,7 @@ function computeSpouseLabel(person: Person, byId: Record<string, Person>): strin
 
 		const spouseMarriageOfThis = findMarriageNumber(spouse, person.id);
 		const spouseTotalMarriages = (spouse.marriages || []).length;
-		const relationshipWord = getRelationshipWord(person.gender);
+		const relationshipWord = getRelationshipWord(genderOf(person));
 
 		const prefix =
 			spouseTotalMarriages > 1 && spouseMarriageOfThis
@@ -254,7 +267,10 @@ function computeInLawLabel(person: Person, byId: Record<string, Person>): string
 			const descendantShort = getDescendantOrdinalShort(childSpouse);
 			if (!descendantShort) continue;
 
-			const inLawWord = person.gender === 'female' ? 'Mother-in-law' : 'Father-in-law';
+			const g = genderOf(person);
+			// No guess. An unrecorded gender used to fall through to 'Father-in-law'.
+			const inLawWord =
+				g === 'female' ? 'Mother-in-law' : g === 'male' ? 'Father-in-law' : 'Parent-in-law';
 			return `${inLawWord} of ${descendantShort}`;
 		}
 	}
@@ -265,6 +281,26 @@ function getRelationshipWord(gender: string | null): string {
 	if (gender === 'female') return 'Wife';
 	if (gender === 'male') return 'Husband';
 	return 'Spouse';
+}
+
+/**
+ * The ONE place gender is read from. Canonical carries it at the top level on most records and
+ * inside `bio` on others (4,534 were normalised in July 2026; ~20 still disagree between the two,
+ * and casing varies — 'M' occurs). Every label in this file goes through here so a record whose
+ * gender is merely stored in the other place can never silently render as the wrong sex.
+ *
+ * Returns 'male' | 'female' | null. NULL IS A REAL ANSWER — ~950 people have no gender recorded
+ * at all — and every consumer below degrades on it rather than guessing: getRelationWord falls
+ * through to the ordinal form, getRelationshipWord says 'Spouse', computeInLawLabel says
+ * 'Parent-in-law'. Guessing here is how nine women came to be labelled Father-in-law.
+ */
+function genderOf(person: Person): string | null {
+	for (const raw of [person.gender, person.bio?.gender, person.name?.gender]) {
+		const g = (raw ?? '').toString().trim().toLowerCase();
+		if (g === 'male' || g === 'm') return 'male';
+		if (g === 'female' || g === 'f') return 'female';
+	}
+	return null;
 }
 
 function findMarriageNumber(spouse: Person, thisPersonId: string): number | null {

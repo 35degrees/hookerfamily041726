@@ -8,6 +8,8 @@ export interface Name {
 	married_names: string[];
 	nickname: string | null;
 	display_name: string;
+	/** Some records carry gender HERE instead of at the top level — see genderOf() in generation.ts. */
+	gender?: string | null;
 	bio_blurb?: string | null;
 	photo_url?: string | null;
 	/** CSS object-position override for this one portrait (e.g. 'right top'); optional. */
