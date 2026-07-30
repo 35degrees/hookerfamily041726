@@ -87,14 +87,23 @@ the full editorial rules; don't restate them from memory.)
 **CC rule (simplified):** four things only -- reciprocal, `link_text`,
 `display_label`, within the `validate.py` character cap (70).
 
-**There is NO separator between the two (dash removed 072926).** The card prints
-`link_text` and the label as one continuous line, so the label must complete the sentence
-the name starts, in one of exactly two shapes:
-- **predicate** -- lowercase verb, joined with a space: `was his father-in-law; First Mayor of New York`
-- **leading appositive** -- opens with a comma, joined tight: `, her grandmother, who found him the job`
+**There is NO separator between the two (dash removed 072926), so `link_text` + label must be
+ONE ENGLISH SENTENCE** -- schema §5: the label is the PREDICATE of a sentence whose subject is
+the linked name, and it **begins lowercase with a verb**.
 
-Anything else (a capitalised noun phrase, a terminal period) now reads as a run-on on the
-card. `card.py` flags both. The `type` field is **ignored**: default it, never
+```
+GOOD  "Aaron Burr Jr."          + "shot him at Weehawken in July 1804"
+GOOD  "Col. Matthew Talcott"    + "was his uncle, and raised him from the age of four"
+BAD   "Adrian Terry"            + ", adjutant-general of the assault he watched"   <- no verb
+BAD   "John Butler Talcott"     + ", who founded New Britain's art museum"         <- no MAIN verb
+BAD   "Solomon Cowles"          + "Five Hooker generations on the same ground."    <- noun phrase
+```
+
+A comma may open the label ONLY as an appositive that is then followed by a main verb
+(`, his uncle, raised him from four`). A comma followed by nothing but an appositive or a
+`who`/`whose` clause is a fragment. No capitalised opener, no terminal period. `card.py` flags
+the capitalised and terminal-period cases; the fragment case is on you to read aloud.
+(55 labels written 072926-073026 had to be rewritten for exactly this -- don't repeat it.) The `type` field is **ignored**: default it, never
 deliberate, never ask Sam about it. A searchable person must never CC a
 non-searchable one.
 

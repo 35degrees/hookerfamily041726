@@ -117,12 +117,13 @@ padding. Filler to fill a slot is the failure this whole document exists to prev
 A CC needs exactly **four** things. Nothing else matters:
 1. **Reciprocal** — exists on both entries.
 2. **`link_text`** — the connected person's name (the grammatical subject).
-3. **`display_label`** — completes the sentence the linked name starts. **No separator is
-   printed between them** (the em dash was removed 072926), so there are two legal shapes:
-   a **predicate** with a lowercase verb (`was his father-in-law…`), joined with a space; or a
-   **leading appositive** opening with a comma (`, her grandmother, who…`), joined tight.
-   A capitalised noun phrase reads as a run-on after the name — it is no longer legal.
-   No terminal period.
+3. **`display_label`** — the PREDICATE of a sentence whose subject is `link_text`. **No
+   separator is printed between them** (the em dash was removed 072926), so the two together
+   must read as one complete English sentence, and the label **begins lowercase with a verb**.
+   `"Aaron Burr Jr." + "shot him at Weehawken in July 1804"`. A comma may open the label only
+   as an appositive with a main verb after it (`, his uncle, raised him from four`); a comma
+   followed by only an appositive or a `who`/`whose` clause is a **fragment** and is invalid.
+   No capitalised noun-phrase opener, no terminal period. Read it aloud with the name in front.
 4. **≤70 characters** on the display_label. Mind that a spelled-out relationship eats the
    budget fast: "great-great-great-grandmother" alone is 29 characters.
 
