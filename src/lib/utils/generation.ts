@@ -24,9 +24,10 @@ const SHOW_TALCOTT_DESCENT = false;
  * Returns 0-2 strings to display under the dates in the featured card.
  *
  * Phrasing rules:
- * - Gen 1-3 use relational words: "Son of Thomas Hooker", "Granddaughter of John Talcott", etc.
- * - Gen 4+ use ordinal: "Fourth Generation Descendant of Thomas Hooker"
- * - Derived labels (spouse, in-law) carry "of [Founder]" for gen 1-3, drop it for gen 4+
+ * - Gen 2-4 use relational words: "Son of Thomas Hooker", "Granddaughter of John Talcott", etc.
+ *   (generation is an INDEX with the founder at 1 — see getRelationWord.)
+ * - Gen 5+ use ordinal: "Fifth Generation Descendant of Thomas Hooker"
+ * - Derived labels (spouse, in-law) carry "of [Founder]" for gen 2-4, drop it for gen 5+
  */
 export function computeGenerationLabels(person: Person, byId: Record<string, Person>): string[] {
 	// === Rare one-off override — render verbatim, skip all computation ===
@@ -90,7 +91,7 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 
 	// 1. HOOKER line. Cousin marriage (person is a Hooker descendant AND married to a
 	//    descendant) merges the spouse onto THIS line with '&', both sides compact:
-	//      • descent: gen 4+ → "Eleventh Generation Hooker Descendant"; gen 1-3 keep the
+	//      • descent: gen 5+ → "Eleventh Generation Hooker Descendant"; gen 2-4 keep the
 	//        relational wording ("Granddaughter of Thomas Hooker").
 	//      • spouse: "Husband/Wife of Hooker Descendant" — marriage ordinal AND the spouse's
 	//        generation are dropped in this merged form only.
@@ -125,8 +126,8 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 
 /**
  * Compact Hooker-descent phrase for the merged cousin-marriage line.
- *   gen 1-3 → relational wording, unchanged ("Granddaughter of Thomas Hooker")
- *   gen 4+  → reordered compact ("Eleventh Generation Hooker Descendant")
+ *   gen 2-4 → relational wording, unchanged ("Granddaughter of Thomas Hooker")
+ *   gen 5+  → reordered compact ("Eleventh Generation Hooker Descendant")
  */
 function compactHookerDescent(generation: number, gender: string | null): string {
 	const relation = getRelationWord(generation, gender);
@@ -160,9 +161,9 @@ function computeSpouseCompact(person: Person, byId: Record<string, Person>): str
 
 /**
  * Build a direct descendant label.
- *   gen 1 male → "Son of Thomas Hooker"
- *   gen 2 female → "Granddaughter of Thomas Hooker"
- *   gen 4+ → "Fourth Generation Descendant of Thomas Hooker"
+ *   gen 2 male → "Son of Thomas Hooker"
+ *   gen 3 female → "Granddaughter of Thomas Hooker"
+ *   gen 5+ → "Fifth Generation Descendant of Thomas Hooker"
  */
 function buildDescendantLabel(generation: number, gender: string | null, founder: string): string {
 	// Ancestors of a line founder sit at generation ≤ 0 (e.g. the Talcott founder's father at −1).
@@ -184,8 +185,8 @@ function buildDescendantLabel(generation: number, gender: string | null, founder
 
 /**
  * For derived labels (spouse, in-law), get the SHORT form referring to the descendant.
- *   gen 1-3: full relational phrase including "of Thomas Hooker"
- *   gen 4+: abbreviated, just "Fourth Generation Hooker" (drops "of Thomas Hooker")
+ *   gen 2-4: full relational phrase including "of Thomas Hooker"
+ *   gen 5+: abbreviated, just "Fifth Generation Hooker" (drops "of Thomas Hooker")
  */
 function getDescendantOrdinalShort(person: Person): string | null {
 	// Honor a stored relationship (ancestor/collateral cases like "Sister of Thomas
@@ -217,17 +218,29 @@ function getDescendantOrdinalShort(person: Person): string | null {
 
 /**
  * Map generation + gender to a relational word.
- * Returns null for generations beyond 3 or for unknown gender.
+ * Returns null for generations beyond 4 or for unknown gender.
+ *
+ * `generation_from_thomas` is a GENERATION INDEX, not a step count: THOMAS HIMSELF IS 1.
+ * H00001 Thomas = 1, his son Samuel (H00007) = 2, his granddaughter Sarah Wilson Torrey
+ * (H00020) = 3, his great-granddaughter Sarah Batt White (HD0067) = 4, and Samuel Talcott
+ * Hooker (HD3386) = 12 renders "Twelfth Generation Descendant", which Sam confirms is right.
+ *
+ * These cases were written against the other reading — step count, 1 = a child — so every
+ * relational label came out one degree too far: Thomas's own son read "Grandson of Thomas
+ * Hooker". The ordinal fall-through below was already correct on the index reading, so the
+ * two halves of this function disagreed with each other and the seam showed at gen 3/4.
+ * Shifted up by one; ordinals deliberately NOT touched (Sam's call, option 1), so gen 5+
+ * still reads "Fifth Generation Descendant" and no stored generation number changes.
  */
 function getRelationWord(generation: number, gender: string | null): string | null {
 	if (gender !== 'male' && gender !== 'female') return null;
 	const male = gender === 'male';
 	switch (generation) {
-		case 1:
-			return male ? 'Son' : 'Daughter';
 		case 2:
-			return male ? 'Grandson' : 'Granddaughter';
+			return male ? 'Son' : 'Daughter';
 		case 3:
+			return male ? 'Grandson' : 'Granddaughter';
+		case 4:
 			return male ? 'Great-Grandson' : 'Great-Granddaughter';
 		default:
 			return null;

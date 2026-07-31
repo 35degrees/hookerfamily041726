@@ -195,7 +195,7 @@ export const DECK_TRAVEL = 1300; // px — FALLBACK offscreen reach only (live c
 const DECK_EDGE_MARGIN = 80; // px past the window edge every offscreen coord clears — no car/hero peeks at any window size
 const DECK_STAGGER_BASE = 120; // ms between cars — breathes wider now the count is smaller (dial 110–130)
 const DECK_LANE_FAN = 70; // ±px PERPENDICULAR scatter — the spread-deck fan (dial 40–100; ghost density lives here)
-const SEAT_NEAR = 180; // |Δseats| ≤ this + a generation gap = SAME LINE (uncle/niece) → vertical; farther = cross-branch → lateral
+const SEAT_NEAR = 180; // RETIRED from the vertical test (see isVerticalMove) — kept for the §19.4 LCA/kin-distance bake to reuse.
 // The TWO real cards (push) get a seeded but FLOORED draw — angle + lane always present (never flat-axial),
 // yet no two flights identical (protected variation). v4.1: tilt is per-axis — a VERTICAL fall reads with a
 // real lean (2.5–4°), a LATERAL slide only banks slightly (1.5–2°, more = speedboat). Ghosts keep the fan.
@@ -270,11 +270,15 @@ export function deckExit(
 type LateralEdge = { source: string; target: string; dir: { x: number; y: number } };
 let lastLateral: LateralEdge | null = null;
 let currentLateralDir: { x: number; y: number } = { x: 1, y: 0 };
-export function resolveLateralDir(m: CameraMove | null, source: string, target: string): void {
+// The ONE vertical test. Both deckDirFor (which axis the convoy flies) and resolveLateralDir (whether the
+// ping-pong memory survives) must agree, or a move reads lateral in one and vertical in the other. See the
+// long note above deckDirFor for why 'direct' is the whole test.
+function isVerticalMove(m: CameraMove | null): boolean {
 	const gd = m?.genDelta ?? null;
-	const dxSeat = m?.to && m?.from ? m.to.x - m.from.x : 0;
-	const sameLine = m?.relationClass === 'direct' || Math.abs(dxSeat) <= SEAT_NEAR;
-	if (gd != null && gd !== 0 && sameLine) {
+	return gd != null && gd !== 0 && m?.relationClass === 'direct';
+}
+export function resolveLateralDir(m: CameraMove | null, source: string, target: string): void {
+	if (isVerticalMove(m)) {
 		lastLateral = null; // a VERTICAL CC ends the lateral back-and-forth
 		return;
 	}
@@ -294,21 +298,27 @@ export function clearLateralMemory(): void {
 // OWN family line: gen_delta < 0 → an ANCESTOR tier (uncle, grandparent) → enters from the TOP; > 0 → a
 // DESCENDANT tier (niece) → from the BOTTOM. But a generation gap alone is NOT enough — two people on
 // DIFFERENT branches can differ in generation yet not be up/down each other's line (the Pennoyer→Strong
-// bug). So vertical requires gen_delta ≠ 0 AND same-line: relationClass 'direct' (one is literally the
-// other's ancestor/descendant) OR seat-near (|Δseats| ≤ SEAT_NEAR — an uncle/niece sits close in the
-// tidy tree). A cross-branch peer (gen ≠ 0, collateral, seat-far) rides LATERAL. gen_delta null (orbit)
-// or 0 (same-gen cousin) is lateral too. (SEAT_NEAR is the interim proxy for the §19.4 LCA/kin-distance
-// bake — replace it when that ships.) BOTH axes now follow GEOGRAPHY, never navigation history: vertical by
+// bug). So vertical requires gen_delta ≠ 0 AND relationClass 'direct' — one is LITERALLY the other's
+// ancestor or descendant. Everything collateral rides LATERAL, and so does gen_delta null (orbit) or 0
+// (same-gen cousin).
+//
+// The seat-near escape hatch (|Δseats| ≤ SEAT_NEAR) is GONE. It was the interim proxy for the §19.4
+// LCA/kin-distance bake, and it misfired exactly as its own comment predicted: Lovejoy→J.P. Morgan is
+// collateral with gen_delta −2, and the tidy layout happened to seat them 0.4 apart (5292.15 vs 5291.75),
+// so two strangers from opposite ends of the tree flew a family-line vertical. Cost of removing it: a real
+// uncle/niece — collateral but genuinely up/down your line — now rides lateral until the LCA bake lands and
+// can say so honestly. A wrong lateral reads as neutral; a wrong vertical asserts kinship that isn't there.
+// SEAT_NEAR is kept (unused here) for that bake to reuse.
+//
+// BOTH axes still follow GEOGRAPHY, never navigation history: vertical by
 // the gen_delta SIGN (older→top / younger→bottom), lateral by the SEAT SIGN (target seated right→enters from
 // the right / left→from the left). A directed edge and its reverse are exact opposites, so toggling A↔B
 // ping-pongs (each hop swings the convoy the other way) and repeating A→B is always identical — no memory,
 // no "return" special case that got stuck armed while ping-ponging.
 export function deckDirFor(m: CameraMove | null): { x: number; y: number } {
 	const gd = m?.genDelta ?? null;
-	const dxSeat = m?.to && m?.from ? m.to.x - m.from.x : 0; // signed: target seat − source seat
-	const sameLine = m?.relationClass === 'direct' || Math.abs(dxSeat) <= SEAT_NEAR;
-	if (gd != null && gd !== 0 && sameLine) {
-		return { x: 0, y: gd < 0 ? -1 : 1 }; // VERTICAL: ancestor tier → from TOP; descendant tier → from BOTTOM
+	if (isVerticalMove(m)) {
+		return { x: 0, y: (gd as number) < 0 ? -1 : 1 }; // ancestor tier → from TOP; descendant tier → from BOTTOM
 	}
 	return currentLateralDir; // LATERAL: resolved once per nav (resolveLateralDir) — fresh=left, reciprocal flips
 }
