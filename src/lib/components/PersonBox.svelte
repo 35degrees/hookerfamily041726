@@ -48,7 +48,22 @@
 		isSibling ? 'h-[54px] w-[119px]' : compact ? 'h-[65px] w-[160px]' : 'h-[75px] w-[220px]'
 	);
 	let photoW = $derived(compact && !isSibling ? 'w-[30%]' : 'w-[25%]');
-	let nameText = $derived(compact || isSibling ? 'text-[11px]' : 'text-[13px]');
+	// df (display font) — the person's own typeface, allow-listed. CHIP MODE ONLY, and only on the
+	// NAME line: dates, relation and the third line keep the chip's normal face so the row still
+	// reads as a chip. Absent for everyone without bio.display_font.
+	const CHIP_FONTS: Record<string, string> = { rokkitt: 'font-rokkitt' };
+	let chipFontClass = $derived(CHIP_FONTS[(person.df ?? '').toLowerCase()] ?? '');
+	// A slab serif sets optically smaller than Inter, so the override carries a +15% step of its
+	// own (13→15, 11→12.5) rather than moving the chip size for everyone.
+	let nameText = $derived(
+		chipFontClass
+			? compact || isSibling
+				? 'text-[12.5px]'
+				: 'text-[15px]'
+			: compact || isSibling
+				? 'text-[11px]'
+				: 'text-[13px]'
+	);
 	let dateText = $derived(compact || isSibling ? 'text-[10px]' : 'text-xs');
 	// Sibling chips carry a THIRD line ("died young") below by–dy when dy_young — so the text stack is tighter
 	// (less vertical padding, no inter-line gap) and that line is smaller than the years. Name + years keep
@@ -95,14 +110,20 @@
 {#snippet nameEl()}
 	{#if isSibling}
 		<div
-			class="min-w-0 font-medium text-stone-900 {nameText}"
+			class="min-w-0 font-medium text-stone-900 {nameText} {chipFontClass}"
 			data-chip-name
-			use:shrinkToFit={{ max: 11, min: 8, key: displayName }}
+			use:shrinkToFit={{
+				max: chipFontClass ? 12.5 : 11,
+				min: chipFontClass ? 9 : 8,
+				key: displayName
+			}}
 		>
 			<span data-fit class="inline-block whitespace-nowrap">{displayName}</span>
 		</div>
 	{:else}
-		<div class="font-medium text-stone-900 {nameText}" data-chip-name>{displayName}</div>
+		<div class="font-medium text-stone-900 {nameText} {chipFontClass}" data-chip-name>
+			{displayName}
+		</div>
 	{/if}
 {/snippet}
 

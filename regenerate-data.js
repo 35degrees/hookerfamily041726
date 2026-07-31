@@ -303,6 +303,10 @@ function compact(p, slugMap) {
 		// default `object-top` crop cuts badly (a landscape photo, a subject off to one side). Absent
 		// on ~18,000 records, which is the point: nobody else's crop moves.
 		...(bioOf(p).photo_position ? { pp: bioOf(p).photo_position } : {}),
+		// df (display font) — bio.display_font, opt-in exactly like pp. A chip's NAME renders in this
+		// person's typeface; absent on ~18,000 records, so nobody else's chip changes. The value is a
+		// KEY resolved through an allow-list in the components, never a class or raw CSS.
+		...(bioOf(p).display_font ? { df: bioOf(p).display_font } : {}),
 		sn: computeShortName(p),
 		// fn (first name) — sibling chips render just the first name ("from the POV of the card, he knows them
 		// as Abigail"). A DATA field, not a UI split of sn/n (which breaks on titles/maiden names/suffixes).

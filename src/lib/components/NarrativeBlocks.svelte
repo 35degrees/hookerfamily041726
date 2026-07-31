@@ -4,9 +4,21 @@
 
 	type Props = {
 		blocks: NarrativeBlock[];
+		/** Optional per-person typeface key from bio.display_font. Resolved through FONTS below;
+		    anything unrecognised falls through to the card default. */
+		font?: string | null;
 	};
 
-	let { blocks }: Props = $props();
+	let { blocks, font = null }: Props = $props();
+
+	// Allow-list, not a passthrough: canonical.json supplies a KEY, never a class or CSS.
+	// The token itself lives in layout.css @theme (--font-rokkitt).
+	const FONTS: Record<string, string> = { rokkitt: 'font-rokkitt' };
+	let fontClass = $derived(FONTS[(font ?? '').toLowerCase()] ?? '');
+	// The typeface lands on the HEADER only — bodies stay in the card's reading face. A slab serif
+	// sets optically smaller than Inter at the same px, so the override carries its own +20% step
+	// (15px → 18px) rather than changing the default header size for all 18,000 cards.
+	let headerClass = $derived(fontClass ? `${fontClass} text-[18px]` : 'text-[15px]');
 
 	const MAX_DISPLAYED = 6;
 
@@ -61,7 +73,7 @@
 							{block.category}
 						</div>
 					{/if}
-					<h3 class="text-[15px] font-semibold text-blue-900 transition-colors select-none">
+					<h3 class="font-semibold text-blue-900 transition-colors select-none {headerClass}">
 						{block.header}<span
 							class="ml-2 inline-flex align-baseline text-lg leading-none text-slate-500"
 							aria-hidden="true">{openKey === key ? '−' : '+'}</span

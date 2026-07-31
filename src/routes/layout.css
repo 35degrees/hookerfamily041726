@@ -4,6 +4,10 @@
 	--font-inter: 'Inter Variable', sans-serif;
 	--font-lora: 'Lora Variable', Georgia, serif;
 	--font-source: 'Source Sans Pro', sans-serif;
+	/* Open slab-serif in the Rockwell line (Rokkitt, Vernon Adams). Rockwell itself is
+	   Monotype's and not web-licensable, so the real face is named only as a fallback for
+	   anyone who has it installed locally. */
+	--font-rokkitt: 'Rokkitt Variable', 'Rockwell', Georgia, serif;
 }
 /* Reserve the vertical scrollbar's gutter always, so pages that grow past one viewport (or do
    so mid-flight) don't shift the centered card sideways — the "arc-wobble" on child-click. */

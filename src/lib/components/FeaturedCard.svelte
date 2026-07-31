@@ -47,6 +47,10 @@
 	// eager + high-priority; the zoom reuses it verbatim (same URL → no second fetch).
 	let portraitSrc = $derived(cldSize(photoUrl, PHOTO_TRANSFORM));
 	let displayName = $derived(person.bio?.display_name ?? person.name?.display_name ?? '');
+	// Per-person typeface (bio.display_font) — allow-list, never a passthrough. Lands on this card's
+	// NAME and its NB headers; the same key rides the compacts as `df` so the person's CHIP matches.
+	const NAME_FONTS: Record<string, string> = { rokkitt: 'font-rokkitt' };
+	let nameFontClass = $derived(NAME_FONTS[(person.bio?.display_font ?? '').toLowerCase()] ?? '');
 
 	// ── Main-portrait hover-zoom ──────────────────────────────────────────────
 	// Same mechanism as RightColumn's thumbnail popout (mouse-anchored, portaled to <body> so it escapes
@@ -276,8 +280,12 @@
 					     available width against the span's natural text width. Without min-w-0 up the
 					     chain the wrapper grows to the text and nothing ever shrinks (the HD3384 blowup). -->
 					<h1
-						class="w-full min-w-0 text-2xl leading-tight font-medium text-stone-900"
-						use:shrinkToFit={{ max: 24, min: 17, key: displayName }}
+						class="w-full min-w-0 text-2xl leading-tight font-medium text-stone-900 {nameFontClass}"
+						use:shrinkToFit={{
+							max: nameFontClass ? 28 : 24,
+							min: nameFontClass ? 20 : 17,
+							key: displayName
+						}}
 					>
 						<span data-fit class="inline-block whitespace-nowrap"
 							>{displayName}<span
@@ -368,7 +376,10 @@
 
 				<div class="narrative min-h-0 min-w-0 overflow-hidden pr-4 pl-4">
 					<div class="max-w-[60ch]">
-						<NarrativeBlocks blocks={person.narrative_blocks ?? []} />
+						<NarrativeBlocks
+							blocks={person.narrative_blocks ?? []}
+							font={person.bio?.display_font}
+						/>
 					</div>
 				</div>
 

@@ -11,6 +11,8 @@
 	import '@fontsource/source-sans-pro';
 	import '@fontsource/source-sans-pro/300.css';
 	import '@fontsource/source-sans-pro/400.css';
+	// Supports weights 100-900 — per-person narrative typeface (bio.display_font)
+	import '@fontsource-variable/rokkitt/wght.css';
 	import favicon from '$lib/assets/favicon.svg';
 
 	let { children } = $props();

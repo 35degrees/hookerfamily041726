@@ -14,6 +14,10 @@ export interface Name {
 	photo_url?: string | null;
 	/** CSS object-position override for this one portrait (e.g. 'right top'); optional. */
 	photo_position?: string | null;
+	/** Optional per-person typeface for this card's narrative blocks. Resolved through an
+	    allow-list in NarrativeBlocks.svelte — an unknown value falls back to the card default,
+	    so canonical.json can never inject arbitrary CSS. Currently: 'rokkitt'. */
+	display_font?: string | null;
 	photo_notes: string | null;
 	notes?: string | null;
 	extra_names?: string | null;
