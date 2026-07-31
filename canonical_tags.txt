@@ -252,3 +252,4 @@ distinguished_service_medal
 order_of_the_bath
 pow
 prisoner_of_war
+distinguished_service_cross
