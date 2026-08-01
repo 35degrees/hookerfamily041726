@@ -70,6 +70,21 @@ SEEN. Run `python3 card.py <ID>`,** which prints the emitted payload's visible s
 | `person.cross_connections` | the payload's **top-level `crossConnections`** (resolved + hidden-filtered) | the raw array is not the render path |
 | CC `display_label` | printed straight after `link_text`, **no dash** (`ccTail()` in FeaturedCard) | must begin lowercase with a VERB so name+label is one sentence; a bare appositive or `who`-clause after a comma is a fragment (55 were rewritten 073026); a capitalised label reads as a run-on |
 | CC `link_text` | the clickable subject | empty = a row with no name and nothing to click; 271 were repaired 072926, 14 remain because `related_id` is null |
+
+**The CC target key is `related_id`.** Not `connected_person_id`, not `person_id`, not `target_id`
+-- and this one bites specifically when you are hand-patching canonical instead of going through
+the `cc` op. A CC object is exactly:
+
+```json
+{"related_id": "HD6418", "link_text": "Submit Newton Camp",
+ "display_label": "was her great-aunt, and she alone remembered how Mitty wore her hair",
+ "type": "family_orbit"}
+```
+
+Write the wrong key and the row stores fine, reads as valid JSON, and `validate.py` reports
+`CC related_id=None is a dangling reference` -- which sounds like a *missing person* and sends you
+hunting for a bad id when the id is right there under the wrong name. `type` is ignored at render
+(schema §5); default it and move on.
 | `sources` | **nothing** -- no component reads it | it is the interior source field in practice; the sources UI is unbuilt (roadmap §11) |
 | `research_notes` | **nothing** -- stripped from every payload at emit | safe for anything |
 | institution `hooker_connected_people` / cemetery `hooker_connections` | **nothing** -- `/institution/[slug]` is a one-line placeholder | rosters are research surface, not card surface |
