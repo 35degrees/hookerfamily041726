@@ -70,3 +70,15 @@ scripts/probe-out/
 
 # --- frozen read-only exports (see _exports/README.md); never the source ---
 _exports/
+
+# --- screenshots dropped in the repo root while working ---
+# Sam pastes these in to show a rendered card; they are never source. Root-anchored
+# so nothing under static/ or docs/ is affected. Added 080126 after a `git add -A`
+# swept eight of them into history.
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+/*.webp
+/*.heic
+/Screenshot*
