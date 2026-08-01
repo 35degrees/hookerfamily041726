@@ -136,3 +136,58 @@ Peer-reviewed scholarship > **Edward Hooker 1909 (EH)** > vital records >
 FindAGrave (with stone) > FamilySearch curated > FamilySearch/WikiTree user trees >
 Ancestry user trees. EH wins descent claims over any user tree. Grokipedia is
 machine-written -- use only load-bearing facts from it, **never build a CC on it**.
+
+---
+
+## Slugs and identity (080126 -- every one of these cost a round trip)
+
+The page URL is **emitted**, never stored. `baseSlug()` in `regenerate-data.js` builds it as
+`slugify(first_name) + surname + birth_year`. Three consequences that are not obvious:
+
+- **Editing a NAME FIELD moves the URL.** Splitting `first_name: "Elisha Fairchild"` into
+  `first_name: "Elisha"` + `middle_name: "Fairchild"` -- a pure tidy-up, no new information --
+  moved `/person/elisha-fairchild-newton-1793` to `/person/elisha-newton-1793`. Same for adding
+  a married surname (`Susannah Newton` -> `Susannah Newton Pierce` moved her too). **Any name
+  edit: work out the new slug first, then write the old one into `former_ids`.**
+- **`former_ids` is TOP-LEVEL on the person, not inside `bio`.** The redirect builder reads
+  `p.former_ids`. Writing `bio.former_ids` stores fine, validates clean, and produces **no
+  redirect** -- the old URL just 404s. Verify with
+  `python3 -c "import json;print(json.load(open('static/data/redirects.json')).get('<old-slug>'))"`.
+- **Which surname slugs depends on the ID PREFIX, not on gender.** `I`-prefix (married-in)
+  people slug by **`maiden_name`**; `HD`/`H`/`X` slug by **`last_name`**. So a new in-law wife
+  entered as `Sarah Waite Pierce` lands at `/person/sarah-waite-1815`, while a bloodline woman
+  entered as `Sarah Lurinda Pierce Green` lands at `/person/sarah-green-1871`. Don't guess the
+  slug when link-checking -- read it off `card.py`, which prints it on line 3.
+
+**Placeholder people.** A `display_name` containing `[` (or the word "unknown", or a missing
+first/surname) is treated as a placeholder and slugged `<desc>-<id.lower()>`, e.g.
+`[Husband] Ward` -> `/person/unnamed-i03040`. This is the right pattern when a spouse's given
+name is genuinely absent from the source but the marriage must exist for children to render at
+all (children come ONLY from `marriages[].children_ids`). When the real name later arrives,
+add the placeholder slug to `former_ids` like any other rename.
+
+**Living-person privacy is derived at build time.** No death year + born within 100 years =>
+presumed living => dates suppressed AND the birth year dropped from the slug. Relevant when you
+add a 20th-century person whose death is unrecorded: their URL will have no year in it.
+
+## Fields that store but have no home on the card
+
+- **`burial` has no date field anywhere in the file.** It is `{cemetery_id, plot_notes}`. A
+  burial *date* from a source goes in `plot_notes` ("Colebrook Cemetery, Whitman; buried
+  20 Sep 1957") or `research_notes`. Do not invent a `date_year` key on it.
+- **`bio.photo_notes` exists and is the place to park a superseded `photo_url`.** When Sam sends
+  a joint portrait to replace two individual ones, setting `photo_url` alone destroys the old
+  URLs. Write the new one, and record the ones you displaced in `photo_notes`.
+
+## Post-batch schema sweep (new records skip these silently)
+
+`validate.py --since` will pass a batch that is missing all of the following, because none of
+them are errors. Sweep for them before you call a batch done:
+
+- **`gender`** -- omitted, the card prints "Spouse of" instead of Wife/Husband. Hand-built
+  skeletons miss it constantly.
+- **`date_precision`** on every non-empty `birth`/`death`/`baptism`.
+- **`number_of_marriages`** -- goes stale the moment you append a marriage by hand.
+- **`baptism`** -- FamilySearch pastes label it "Christening" and it is easy to skip past. A
+  christening date is also the cheapest way to adjudicate a disputed birth year (a Sept 1775
+  christening kills a 1776 birth claim outright).

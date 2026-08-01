@@ -1,7 +1,10 @@
-# HANDOFF — content stream, 29 July 2026
+# HANDOFF — content stream, 29 July – 1 August 2026
 
 Written for the next bot picking up **early-years entries and NB rebuilds**. Short-lived:
 delete this once the early-years pass is done, or fold what survives into `WORKFLOW.md`.
+
+**§1–§5 are the 29 July session (early-years / Talcott severance). §7–§9 were added 1 August
+after a long Newton-descent build and are the more current picture.** §6 has been refreshed.
 
 Read `CLAUDE.md`, then `docs/WORKFLOW.md`, then this. This file only holds what those two
 don't, plus the state of a large change that just landed underneath the early generations.
@@ -171,20 +174,114 @@ Each of these cost me a round trip this session.
 
 ---
 
-## 6. STATE AT HANDOFF
+## 6. STATE AT HANDOFF (refreshed 1 August 2026)
 
 ```
-18,119 people   16,855 visible / 1,264 hidden
-errors 1297     warnings 4205        (standalone validate.py)
-git: committed, 1 commit ahead of origin/main
+19,247 people   17,983 visible / 1,264 hidden
+errors 989      warnings 4163        (standalone validate.py -- this is the standing §C debt)
+git: committed and PUSHED through 81a67edf; working tree clean
 dev server: localhost:5173
 ```
 
-**One open question I did not finish:** whether any hidden id survives *inside* an emitted
-payload — in the `context` block, a registry roster, or a `marriages[].spouse_name` string. The
-aggregates and page files are confirmed clean; that last scan is one command and was interrupted.
+Note the error count **fell** from 1,297 to 989 across these sessions while the file grew by
+~1,100 people. Nothing was deleted to achieve that; it is the §C drawdown plus the fact that
+`validate.py --since` catches new defects at the moment they are introduced.
 
-**Unbuilt / unresolved, all flagged in the relevant `research_notes`:** Lathrop Stiles Ellis
-died 1888 Manistee or 1900 Chicago; Story Wright's husband is Thomas P. or John P. Wright;
-Mary Newton (HD0003) may be a ghost of H00048; Sandra Ingalls's three children; Sjohytta in
-Maine; Vivian Bertram; the HD5603/HD5604 merge.
+**Always validate with `--since`**, never plain:
+```
+cp canonical.json /tmp/baseline.json      # BEFORE the edit script
+python3 validate.py canonical.json --since /tmp/baseline.json
+```
+A plain run prints `BLOCKED` every single time because of the standing debt, which teaches you
+to ignore it. `--since` prints only what *your* batch introduced, and `SILENT LOSS: none ✓` is
+the line that matters most.
+
+---
+
+## 7. WHAT THE 1 AUGUST SESSION ACTUALLY DID
+
+A single long descent build out of the printed **Newton family history** Sam pasted in
+fragments, plus FamilySearch extracts. Roughly 75 new people. The shape, so you can navigate it:
+
+- **Dea. Abner Newton (HD6420)** and Abigail Fairchild (I01775), Durham CT — eight children,
+  all now dated and NB'd. This is the anecdote-rich core; the source is a family memoir with
+  real voice in it (a candle held up to a dead twin's face, eight cents postage due on a
+  farewell letter, "a knock in the jaw" meaning a glass of bitters). **If more of that memoir
+  arrives, it is the best NB material in the file after Woodward.**
+- **Elisha Fairchild Newton (HD6442)** → Sally Camp → Israel Camp Newton and Abigail Maria,
+  who married her first cousin **Henry Ward (HD9360)**, son of Elisha's sister **Parnell
+  (HD6441)** and **John Ward (I03040)**. The cousin marriage is told from all three angles —
+  that is deliberate, each card needs it from its own owner's point of view.
+- **Parnell → Harriet Elizabeth Ward → Loomis → Pierce**, ending in Glenn Racine Pierce and
+  Helen Elizabeth Loomis (five children, gen 11).
+- **Rev. Roger Newton D.D. (H00151) → Susannah Newton Pierce (HD3323) × Proctor Pierce** →
+  John R. Pierce → **John Warren Pierce (HD9384)** of Cohasset MA → six children → Sarah
+  Lurinda × Clarence O. Green → six more → **Irving Osborne Green (HD9393)** × Josephine St
+  Onge → four. This is a wholly separate Pierce family from Glenn Racine Pierce; do not merge
+  them.
+- **Ozias Hall Newton (HD3321)** and the Bates marriages — **Dr. Stephen Bates married two
+  Newton sisters**, Hannah then Harriet, and had three children by the first and two by the
+  second. Both of Harriet's are daughters named for aunts.
+
+**Recurring shapes in this family, worth knowing before you write:** cousin marriages (four
+found), a man marrying two sisters (twice), names reused after a child's death (two Carolines,
+two Theodores elsewhere, an Abner in three generations), and surname drift inside one sibling
+group (four `Green`, two `Greene`; `Pierce` vs `Peirce`). **These are the NBs Sam keeps.** He
+does not keep "farmer who lived in Durham."
+
+---
+
+## 8. EDITORIAL CORRECTIONS SAM MADE THIS SESSION
+
+Additive to §2; same standing.
+
+- **"Easy on the 'dead sister' words — soften it."** A header may carry bad news only if it
+  does not land it coldly. `"She married her dead sister's husband"` was rejected;
+  `"She came into her sister's house"` was kept. **The body may state the death plainly.** The
+  header is the doorway and must not read as a verdict on the person.
+- **Never write "British Colonial America"** (or "Massachusetts Bay Colony" pasted from
+  FamilySearch). Sam: *"i can't help but copy it."* Use the plain modern state and country.
+  Currently 0 occurrences in canonical — keep it that way.
+- **Never write "not on the record" / "not recorded" / "the source does not say" into NB
+  prose.** Sam, earlier: *"please control yourself about 'not on the record' … please never
+  make assumptions you are out of your mind."* This is the fourth-wall rule (§2) in its most
+  common disguise. If you catch yourself hedging, the fact does not belong in the block at all
+  — it belongs in `research_notes`. **~8 blocks elsewhere in the file still carry this tic;
+  they are reported but not yet rewritten.**
+- **Arithmetic in an NB gets checked.** Two blocks shipped this session had to be rewritten
+  within minutes because the maths was wrong ("outlived all seven" when two siblings survived
+  her; "outlasted every one" when the youngest sister outlived him by three years). **If a
+  block claims longest / last / first / oldest, verify it against every sibling's dates before
+  writing it.** Sam will notice on the card.
+
+---
+
+## 9. OPEN / UNBUILT — all flagged in the relevant `research_notes`
+
+Carried forward from this session. Each one is waiting on Sam, not on work.
+
+| item | state |
+|---|---|
+| **Mary Newton HD0166 × Jonathan Hall** | printed genealogy says "No ch."; Sam's data hangs William Hall (b. 1791 Russell MA) and a ~35-record Minnesota Bates line off them. **Not built** pending his call. |
+| **George Leister Ward HD9362** | b. 14 Jun 1850, two years *before* his father Henry Ward's 13 May 1852 marriage. Built with father only, no mother, deliberately NOT in the marriage's `children_ids`. **This is the one standing validator warning from this work** and it is intentional. Presumably an unrecorded first wife. |
+| **Annie Selina Dakin** (1871–1963, m. 31 Oct 1898) | named in a paste, never attached to anyone. Fits John Warren Pierce Jr. (HD9387) on dates. **Not built.** |
+| **Virginia Pierce HD9374 / Helen Elizabeth Pierce HD9375** | identical 1927–2017 dates on two separate FamilySearch IDs. Both entered as supplied; may be twins or one person recorded twice. |
+| **Robert Ward Loomis HD9363 / Anna I03042** | no dates for either; Anna's maiden name unknown. Robert is placed as Joab & Harriet's son by inference from his `Ward` middle name — noted in his `research_notes`. |
+| **Sarah Content Ward** | named in the memoir as "now 87, remembers Aunt Mitty". A Ward carrying Content Newton's name; reads as a third child of Parnell. **Not built** — the relationship is inference. |
+| **Isaac Newton HD0170** | b. Dec 1770, wife Anna Southmayd b. Jan 1773, eldest child Dwight b. 1788. Seventeen and fifteen. Unresolved. |
+| **Submit Newton Camp HD6418** | marriage date to Dea. Samuel C. Camp lost in a garbled paste. |
+| **Harriet Newton Bates HD9345** | RESOLVED 1 Aug — Caroline Newton Elizabeth (1844) and Elizabeth Cook (1847). Left here as the worked example: her `children_ids` sat empty for a day because the two names were the exact bytes a repeated paste block had overwritten. |
+| **Ozias Hall Newton HD3321** | birth held at 1 Apr 1775; his stone says aged 39 at death 10 Apr 1815, which wants a birth *after* 10 Apr 1775. Year is safe, day/month is the loose end. |
+| **git history** | six image files were swept into history by an early `git add -A` and are now in the pushed remote. Harmless; stripping them needs a force-push. Sam knows. |
+
+### Carried over verbatim from the 29 July §6 (still open)
+
+**One open question from that session, never finished:** whether any hidden id survives *inside*
+an emitted payload — in the `context` block, a registry roster, or a `marriages[].spouse_name`
+string. The aggregates and page files are confirmed clean; that last scan is one command and was
+interrupted.
+
+**Unbuilt / unresolved as of 29 July, all flagged in the relevant `research_notes`:** Lathrop
+Stiles Ellis died 1888 Manistee or 1900 Chicago; Story Wright's husband is Thomas P. or John P.
+Wright; Mary Newton (HD0003) may be a ghost of H00048; Sandra Ingalls's three children; Sjohytta
+in Maine; Vivian Bertram; the HD5603/HD5604 merge.

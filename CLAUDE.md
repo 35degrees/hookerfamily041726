@@ -166,6 +166,24 @@ phrasing. But terseness is exactly when the no-delete law matters most -- a fast
 "redo these NBs" means *add/refine*, never *destroy*. When a request is genuinely
 ambiguous about scope or removal, do the preserving thing and ask.
 
+**His FamilySearch pastes get clobbered, and the damage is invisible unless you look
+for it (080126).** One block -- a name, a sex, a birth, a death -- will repeat five to
+fifteen times through a long paste, having overwritten the content that belonged
+there. What it destroys is almost always the thing immediately after an instruction
+verb: "add spouse **[clobbered]**", "and they had two children **[clobbered]**".
+The signature is the same name and date appearing over and over in a message that
+should be naming different people. When you see it: build everything that survived,
+and report the loss by **quoting the exact instruction that lost its payload** so Sam
+can re-paste that one block instead of the whole thing.
+
+**But do not use a clobbered paste as licence to stop.** Sam's verdict when I held a
+whole generation back for this reason: *"you really choked on all that."* The line is
+**infer STRUCTURE from arithmetic, never invent NAMES.** A mother who would be 46 and
+52 at those births is a grandmother -- build the intervening couple if the paste named
+them anywhere, even out of position. Only the genuinely absent (a given name, an
+unstated parent) is a blocker, and a blocker is a one-line question at the end of
+delivered work, not a reason to hold the work.
+
 Repo layout:
 ```
 CLAUDE.md                     <- this file (auto-read every session)
