@@ -10,7 +10,6 @@ HD1420	Thomas Hooker Rawson	detached-td-root	is_thomas_descendant but no in-tree
 HD4399	Julia Belden Saint John	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 H03798	Lovice Hooker H02380	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD1758	David Peck Todd	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
-X00094	Miles Merwin	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X00434	John Chaffee	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X00478	Joel Blakeslee	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X00745	George Richards Minot	archipelago	orbit figure: documented CCs but no blood/marriage anchor
@@ -64,8 +63,6 @@ X00005	William Shepard	true-orphan	no blood/egg flag, no marriage anchor, no CC 
 X00014	Rev. Henry Flint	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00017	Captain John Mills	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00018	Hannah Hayward Mills	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00027	Samuel Burwell	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00028	Deborah Merwin Burwell	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00029	Samuel Smith	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00030	Rachel Lambert Smith	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00046	Captain William Burnham	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -76,12 +73,9 @@ X00058	Sarah Boosey Standley	true-orphan	no blood/egg flag, no marriage anchor, 
 X00063	Thomas Weld	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00064	Dorothy Whiting Weld	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00078	Jacob Woodruff	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00079	Captain John Miles	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00080	Mary Alsop Miles	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00092	John Stone	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00093	Mary Simson Stone	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00095	Capt. William Fowler Jr.	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00100	Sarah Platt Merwin	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00101	John Prudden	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00102	Mary Clark Prudden	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00110	Captain Aaron Cooke IV	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -137,12 +131,8 @@ X01831	Isabella G Hedges	true-orphan	no blood/egg flag, no marriage anchor, no C
 X01836	(unknown spouse)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01838	Anne Griswold	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01839	Lucy Farnum	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01840	Elizabeth Harriman	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01847	First wife (unknown)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01848	Second wife (unknown)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01849	Mary Tapp	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01850	Elizabeth Alsop (widow) Baldwin	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01851	Thomas Beach	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01854	Captain Thomas Willett	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01860	Abigail Judson	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01887	John Hart	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
