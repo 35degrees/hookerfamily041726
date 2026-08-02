@@ -253,3 +253,4 @@ order_of_the_bath
 pow
 prisoner_of_war
 distinguished_service_cross
+chaplain_of_senate
