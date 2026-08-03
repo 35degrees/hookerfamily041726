@@ -417,6 +417,21 @@ let panDir: 'up' | 'down' | 'lateral' = 'lateral';
 export function capturePanDir(dir: 'up' | 'down' | 'lateral'): void {
 	panDir = dir;
 }
+/** THE ARMY (see ROW_TRAVEL): every row — leaving AND arriving — travels this one direction. */
+export function getPanDir(): 'up' | 'down' | 'lateral' {
+	return panDir;
+}
+/**
+ * Is a parents-row → notch HAND-OFF about to happen? True when a PARENT was promoted (pan 'down') and
+ * one of the incoming card's spouses was standing in the outgoing PARENTS row at click time — i.e. the
+ * other parent is crossing to the notch. Answerable synchronously at flight start, from the click-time
+ * snapshot, which is why the anticipated notch can be armed before anything has moved. The clicked
+ * person is excluded: they are becoming the card, not a chip.
+ */
+export function handoffPending(spouseIds: readonly string[]): boolean {
+	if (panDir !== 'down') return false;
+	return spouseIds.some((id) => id !== clickedId && rectSnapshot.get(id)?.dir === 'up');
+}
 
 // The PIVOT — the box the demoted card shrinks INTO (the focus we're leaving, which becomes a
 // relative of the new focus). Captured at click as the OLD featured id. Every OTHER incoming box
@@ -435,7 +450,7 @@ export function getPivotId(): string | null {
 // snapshot rect for the whole out-transition, so it leaves layout flow at the RIGHT spot and the
 // incoming boxes settle without being shoved. This is why animate:flip had to go: its fix() runs
 // AFTER the new boxes are inserted (each.js), so it measured — and pinned — the shoved position.
-type PinRect = { left: number; top: number; width: number; height: number };
+type PinRect = { left: number; top: number; width: number; height: number; dir?: string };
 let rectSnapshot = new Map<string, PinRect>();
 export function captureRects(boxes: Iterable<Element>): void {
 	const next = new Map<string, PinRect>();
@@ -444,7 +459,9 @@ export function captureRects(boxes: Iterable<Element>): void {
 		const id = el.dataset.flightId;
 		if (!id) continue;
 		const r = el.getBoundingClientRect();
-		next.set(id, { left: r.left, top: r.top, width: r.width, height: r.height });
+		// dir = the box's ZONE (data-flight-dir). Carried so a consumer can ask which row a person was
+		// standing in when the click happened — see handoffPending.
+		next.set(id, { left: r.left, top: r.top, width: r.width, height: r.height, dir: el.dataset.flightDir });
 	}
 	rectSnapshot = next;
 }
@@ -452,6 +469,7 @@ export function captureRects(boxes: Iterable<Element>): void {
 // Clear the per-navigation captures one frame after the transition flush consumed them, so a
 // later nav with NO click (back/forward) can't reuse a stale id / direction / pinned rect.
 export function clearFlightCaptures(): void {
+	rowClock = null; // per-navigation: the next nav derives its own row/demote tempo
 	clickedId = null;
 	panDir = 'lateral';
 	pivotId = null;
@@ -468,7 +486,10 @@ export function clearFlightCaptures(): void {
 // missiles Sam flagged are still capped (1000px 625ms, 1300px 813ms — vs uncapped 554/604). The crossover
 // (where the cap starts extending duration past the 410ms floor) is ~656px. Raise it → faster/lighter;
 // lower it → slower/heavier. (Was 1.28, which overcorrected — it slowed typical flights too.)
-const RELATIVE_V_CEIL = 1.6; // avg px/ms — tune by feel
+const RELATIVE_V_CEIL = 1.68; // avg px/ms — tune by feel. 1.6 → 1.68 on Sam's verdict; a further
+// step to 1.76 was tried and REVERTED ("faster than human eye") — 1.68 is the settled pace. ONE number now moves everything the eye reads as tempo: the
+// parent/child promotion, the demotion that follows it, and — through rowClockMs — every row's march.
+// That coupling is the point: the board shifts as one object, so its pace is one dial.
 // The SPOUSE demote travels a touch faster than the relative family (its own honest ceiling), which — via
 // the coupled clock (hero = max(curve, demote+60)) — speeds up the spouse PROMOTION too, without cramming
 // (the demote genuinely covers its path faster). Guarded by probe-demote-velocity staying well green.
@@ -640,7 +661,16 @@ export function growFrom(node: Element) {
 	} else if (flightKind === 'sibling') {
 		duration = siblingGrowMs(durDistance); // center travel at the gentler sibling dial (~1.2 px/ms)
 	} else {
-		duration = relativeGrowMs(durDistance); // parent/child → corner distance (unchanged)
+		// HONEST VELOCITY on the PROMOTION (Aug 3) — the same correction the spouse DEMOTE got as the
+		// photo-whiplash fix, finally applied to the growing card. Clocking a parent/child promotion off the
+		// TOP-LEFT corner understates it badly, because a card grows as much as it travels: promoting a parent
+		// moves that corner 276px while the BOTTOM-RIGHT corner covers 977px, so the fastest corner ran
+		// 1.91 px/ms against a 1.6 ceiling (child promotion: 545 vs 975, 2.06 px/ms). Both sat on the 410ms
+		// floor and neither obeyed the ceiling the constant exists to enforce — which is exactly Sam's
+		// "beyond human capacity to see weight and heft" on the parent promotion, where the ratio is worst
+		// (3.5×: the card explodes off a corner that barely moves, so there is no travel for the eye to hold).
+		// maxCornerTravel times the FASTEST point of the card, so nothing on it exceeds RELATIVE_V_CEIL.
+		duration = relativeGrowMs(maxCornerTravel(origin, dest));
 	}
 	// SETTLE — the whole-path easeOutBack overshoot on the PROMOTION, now on BOTH regimes (Layer 3:
 	// extended from spouse to relative parent/child promotions). Active only on a WARM click whose camera
@@ -873,7 +903,10 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	const heroOrigin = clickedId ? rectSnapshot.get(clickedId) : undefined;
 	const heroDist = heroOrigin ? Math.hypot(heroOrigin.left - card.left, heroOrigin.top - card.top) : 0;
 	if (relative) {
-		if (heroOrigin) demoteDuration = relativeGrowMs(heroDist) * DEMOTE_LEAD;
+		// Same honest-velocity clock as the hero above (maxCornerTravel over the identical rect pair), so the
+		// demote keeps its exact DEMOTE_LEAD relationship and still finishes first. Timing it off heroDist
+		// while the hero timed off max-corner would silently break that lead.
+		if (heroOrigin) demoteDuration = relativeGrowMs(maxCornerTravel(heroOrigin, card)) * DEMOTE_LEAD;
 	} else {
 		// SPOUSE demote at HONEST VELOCITY: time off the MAX-corner travel (the photo's fast bottom-left
 		// path), not the top-left corner — so the photo never strobes. It shares the hero's extended clock
@@ -1070,12 +1103,14 @@ export function morphIn(node: Element, params: { id: string }) {
 			}
 		};
 	}
-	// No on-screen origin → slide UP from below into the slot, fading in. 150px so the rise reads.
-	const D = 150;
+	// No on-screen origin → arrive from the ARMY's trailing edge (see ROW_TRAVEL): the pan direction
+	// decides, so this row steps in with every other row instead of always rising from below. One tier
+	// pitch, on the shared row clock.
+	const D = panDir === 'down' ? -ROW_TRAVEL : ROW_TRAVEL;
 	return {
-		duration: 300,
+		duration: rowClockMs(),
 		easing: cubicOut,
-		// u = 1 - t: starts offset DOWN + transparent, settles up to rest, opaque.
+		// u = 1 - t: starts one tier back + transparent, settles into the seat, opaque.
 		css: (t: number, u: number) => `opacity: ${t}; transform: translate(0px, ${u * D}px);`
 	};
 }
@@ -1111,6 +1146,333 @@ export function slideChip(_node: Element) {
 	};
 }
 
+// ── THE COUPLED PUSH + THE HAND-OFF (Aug 3) ────────────────────────────────────────────────────
+// ROW_TRAVEL is ONE constant with TWO consumers: the entering row's rise/settle (revealPending, in
+// +page.svelte, which imports it) and the leaving row's push (flyOut, below). They must be the same
+// number, on the same clock, with the same curve, or the two rows are not one motion. Exported for
+// exactly that reason — a second literal would drift the moment either side is tuned.
+//
+// WHY: a leaver used to drift a flat 28px in the CAMERA-PAN direction while the incoming row swept in
+// 150px from the other side. The two were unrelated motions on unrelated distances, so on a parent
+// promotion the incoming children crossed straight through the outgoing ones — measured: the old child
+// sits at y=958, the new card is 148px taller so the new row lands at 1106, and the entrance starts them
+// 150px above that landing (≈956), i.e. exactly on top of the old row. Sam: "they should never cross …
+// the new child chips should push out the old child chips as if they were objects pushing each other."
+//
+// SO: the leaving row travels the SAME distance, in the SAME direction the arriving row travels, over the
+// SAME duration with the SAME curve. Not "an exit" — the far half of one displacement. Direction comes
+// from the row's OWN zone (children always pushed DOWN, parents always UP, matching how each row enters),
+// never from the camera pan, because a pan-direction exit sends the outgoing row INTO the incoming one.
+//
+// AND: the leaver is dropped a stacking level. Contact motion still leaves overlap possible whenever the
+// row's layout position glides between two cards of different height (the featured slot animates its
+// height, so the row's own y is moving underneath both animations — a purely geometric "contact distance"
+// would be chasing a target that moves during the flight). Occlusion makes the guarantee absolute rather
+// than arithmetic: an outgoing chip can never paint over an incoming one, which is the artefact Sam saw.
+// THE TIER PITCH. 145px is not a tuned number — it is measured, and it is the same on every card:
+// a chip row is 75px and the connector under it is 70px, so 145 is EXACTLY the distance from one tier's
+// seat to the next tier's seat. A parents row leaving upward is therefore not "exiting the screen"; it
+// is moving into the seat a GRANDPARENTS row would occupy, above a connector that would read "John's
+// parents" — the tier that isn't drawn but is unambiguously there. A children row leaving downward moves
+// into the GRANDCHILDREN seat below a connector that would read "Five grandchildren". They fade out
+// before they arrive, so the seat is implied and never asserted. Destination, not escape.
+export const ROW_TRAVEL = 145;
+const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+// THE ARMY. Direction is the CAMERA PAN, never the row's own zone — every row moves the same way at the
+// same moment, leavers and arrivers alike, like ranks of soldiers stepping off together. Nobody marches
+// down while everybody else marches up. This also makes crossing structurally impossible rather than
+// merely occluded: arrivers enter from the pan's trailing edge and leavers exit through its leading edge,
+// so an arriving chip is always behind a departing one and can never pass through it.
+const ROW_MS_FALLBACK = 420; // only when the demote clock can't be derived (no click origin)
+// The rows ride the DEMOTION's clock — "the same speed and timing that the Featured Card demotes to a
+// parent chip" (Sam). Not their own 300ms dash: at 145px over 300ms a row read as racing to leave. Same
+// inputs as shrinkTo's demoteDuration, so the rows and the demoting card are literally one tempo.
+let rowClock: number | null = null;
+export function rowClockMs(): number {
+	if (rowClock !== null) return rowClock;
+	const heroOrigin = clickedId ? rectSnapshot.get(clickedId) : undefined;
+	const slot = document.querySelector('.featured-slot')?.getBoundingClientRect();
+	rowClock =
+		heroOrigin && slot && slot.width
+			? relativeGrowMs(maxCornerTravel(heroOrigin, slot)) * DEMOTE_LEAD
+			: ROW_MS_FALLBACK;
+	return rowClock;
+}
+const ROW_SOLID = 0.5; // fully opaque this far along — a card being shoved is a solid object for as
+const ROW_GONE = 0.92; // long as you can see it, and it is GONE before it reaches the tier seat it is
+// heading for, so the implied row is never asserted. Alpha only; the motion is unchanged.
+// These are fractions of DISTANCE COVERED, and the march decelerates, so they are far later in TIME than
+// they look: at 0.5/0.92 a chip is solid through the first ~21% of the clock and gone by ~57% of it,
+// having covered 92% of the ground — roughly 12px short of the tier seat. Raised from 0.35/0.85 (Sam:
+// "they fade out a little too quickly"), which spent them by 47% of the clock. Pushing ROW_GONE much
+// past this starts to ASSERT the invisible row: chips would visibly park in a seat that isn't there.
+const HANDOFF_MS = 420; // the hand-off owns its box for longer than a row push — it has a diagonal to cover
+// The traveller's OWN tempo, on top of the shared row clock: she was reaching her seat before the card
+// had finished settling around her, and two arrivals landing out of step read as a wobble even when each
+// is correct on its own. 1.08 puts her landing just inside the card's.
+const HANDOFF_TEMPO = 1.08;
+// Band over which a DIFFERENT-TIER traveller crossfades from her old face to the destination's, in
+// fractions of DISTANCE COVERED — not of the clock. The distinction is the whole fix: the travel
+// decelerates hard, so 55% of the CLOCK is already 98% of the DISTANCE, and a band that looked
+// mid-journey on paper was finishing as she came to rest. A chip changing its contents while parked
+// reads as a correction being applied to it, rather than as something that happened on the way.
+// (Same rule ROW_SOLID/ROW_GONE follow, and for the same reason.)
+// 0.45 → 0.85 of the distance is 19% → 47% of the clock: visibly in flight, done well before she stops.
+// Not earlier: the destination face is over-height while the shell is still wide (the two tiers have
+// different aspects and the face is held uniform), and that mismatch — ~8px at 45%, ~2px at 85% — has to
+// stay under a near-zero opacity while it is large.
+const FACE_SWAP_FROM = 0.45;
+const FACE_SWAP_TO = 0.85;
+const HANDOFF_HOLD = 0.72; // the hand-off stays solid this far along, then fades into its seat
+// A/B toggle (the DECK_GHOSTS pattern): true = the traveller crosses IN FRONT of the growing card via a
+// portalled ghost; false = she rides behind it at z −1 with the rest of the row. Sam's eye decides.
+const HANDOFF_IN_FRONT = true;
+const HANDOFF_GHOST_MAX_MS = 4000; // hard cap: the traveller can never outlive its own navigation
+const UNION_GROW_FROM = 0.45; // the union row holds at nothing this far into the journey, then grows in
+const HANDOFF_SAMPLES = 30; // keyframes the settle curve is sampled into (WAAPI takes no JS easing)
+
+/**
+ * A parent chip carries two rows; the spouse chip it becomes carries three — the union line ("m. 1752",
+ * or "(partner)"). That row used to arrive with the swap: one frame absent, the next frame present, a
+ * clunk at the end of an otherwise continuous journey. So the traveller GROWS it on the way, and by the
+ * time the real chip is uncovered underneath, both are already saying the same thing.
+ *
+ * The row is built from the DESTINATION's text but the TRAVELLER's own type: data-chip-union supplies
+ * the words, data-chip-dates supplies the line to clone. Cloning the destination's element outright
+ * would import its type scale, and a compact 160×65 seat renders its rows at 10px where this 220×75
+ * traveller renders at 12 — the swap would then correct a font size in the same frame it adds a row.
+ * (Same reasoning as data-chip-name, which the demote flight mirrors for exactly this class of flash.)
+ *
+ * Height is animated, not just opacity: the text block is a centred flex column, so a third row
+ * redistributes the two above it. Growing 0 → natural height lets that settle over the journey instead
+ * of jumping. No union row on the destination (an undated partner, a seat without dates to clone) →
+ * nothing happens, and the chip simply arrives as it always did.
+ */
+function growUnionRow(ghost: HTMLElement, seat: HTMLElement, ms: number): void {
+	const text = seat.querySelector('[data-chip-union]')?.textContent?.trim();
+	if (!text) return;
+	const area = ghost.querySelector('.text-area');
+	const template = ghost.querySelector('[data-chip-dates]');
+	if (!area || !template) return;
+	const row = template.cloneNode(true) as HTMLElement;
+	row.removeAttribute('data-chip-dates');
+	row.textContent = text;
+	row.style.cssText = 'opacity: 0; height: 0; overflow: hidden;';
+	area.appendChild(row);
+	const full = row.scrollHeight; // natural height of the row, in the traveller's own scale
+	if (!full) return;
+	row.animate(
+		[
+			{ opacity: 0, height: '0px', offset: 0 },
+			{ opacity: 0, height: '0px', offset: UNION_GROW_FROM },
+			{ opacity: 1, height: `${full}px`, offset: 1 }
+		],
+		{ duration: ms, easing: 'cubic-bezier(0.33, 1, 0.68, 1)', fill: 'forwards' }
+	);
+}
+
+/**
+ * A chip's photo is a PERCENTAGE of its box, and the two tiers disagree: a normal 220×75 chip gives the
+ * photo 25%, a compact 160×65 seat gives it 30% (PersonBox photoW). A traveller cloned from a parent chip
+ * therefore lands carrying the wrong proportion, and the swap corrected it in one frame — the photo
+ * stepped wider and shoved the text rows right. Reading the DESTINATION's real proportion and morphing to
+ * it over the journey means the traveller is already the right shape when it is exchanged. Same idea as
+ * the union row: arrive as what you are becoming, not as what you were.
+ */
+function morphPhotoWidth(ghost: HTMLElement, seat: HTMLElement, ms: number): void {
+	const from = ghost.querySelector('.photo') as HTMLElement | null;
+	const to = seat.querySelector('.photo') as HTMLElement | null;
+	if (!from || !to || !seat.offsetWidth || !ghost.offsetWidth) return;
+	const fromPct = (from.offsetWidth / ghost.offsetWidth) * 100;
+	const toPct = (to.offsetWidth / seat.offsetWidth) * 100;
+	if (Math.abs(fromPct - toPct) < 0.5) return; // same tier — nothing to morph
+	from.animate([{ width: `${fromPct}%` }, { width: `${toPct}%` }], {
+		duration: ms,
+		easing: 'cubic-bezier(0.33, 1, 0.68, 1)',
+		fill: 'forwards'
+	});
+}
+
+/**
+ * A traveller bound for a DIFFERENT CHIP TIER cannot simply be scaled into her seat: a 220×75 parent chip
+ * and a 160×65 compact notch seat have different aspect ratios, so the transform that lands her footprint
+ * exactly is the same transform that squashes her photo and text. Scaling uniformly instead would land the
+ * wrong footprint. There is no single transform that does both — which is why the demote solves the same
+ * problem with two faces rather than one.
+ *
+ * So she carries the DESTINATION's face as a second layer and crosses over to it mid-journey. That layer
+ * is laid out at the seat's natural size and counter-scaled against the shell every frame so its composite
+ * scale stays UNIFORM (never squashed) and reaches exactly 1.0 at the seat — where it is then pixel-
+ * identical to the real chip waiting underneath, which is what makes the retirement invisible. The
+ * horizontal counter-scale is constant (snap.width / dst.width) and the vertical one carries the aspect
+ * change; before the crossfade band the layer is transparent, so its early over-height never paints.
+ */
+function crossfadeToSeatFace(
+	ghost: HTMLElement,
+	seat: HTMLElement,
+	snap: PinRect,
+	dst: DOMRect,
+	ms: number,
+	sx: number,
+	sy: number,
+	settleS: number
+): void {
+	const src = seat.querySelector('.person-box');
+	const own = ghost.querySelector('.person-box') as HTMLElement | null;
+	if (!src || !own) return;
+	const face = src.cloneNode(true) as HTMLElement;
+	face.style.cssText =
+		`position: absolute; left: 0; top: 0; width: ${dst.width}px; height: ${dst.height}px; ` +
+		`transform-origin: top left; opacity: 0; pointer-events: none;`;
+	ghost.appendChild(face);
+	const cx = snap.width / dst.width; // constant: the shell's own width ratio, undone
+	// keyed off `e` (distance covered), never `t` (clock) — see FACE_SWAP_FROM
+	const band = (e: number) =>
+		e <= FACE_SWAP_FROM ? 0 : Math.min(1, (e - FACE_SWAP_FROM) / (FACE_SWAP_TO - FACE_SWAP_FROM));
+	const frames: Keyframe[] = Array.from({ length: HANDOFF_SAMPLES + 1 }, (_v, i) => {
+		const t = i / HANDOFF_SAMPLES;
+		const e = settleS ? easeOutBack(t, settleS) : cubicOut(t);
+		const Sx = 1 + e * (sx - 1);
+		const Sy = 1 + e * (sy - 1);
+		return {
+			transform: `scale(${cx}, ${(snap.width * Sx) / (dst.width * Sy)})`,
+			opacity: band(e),
+			offset: t
+		};
+	});
+	face.animate(frames, { duration: ms, easing: 'linear', fill: 'forwards' });
+	// The outgoing face fades on the SAME distance-keyed band, sampled the same way, so the two are one
+	// crossfade rather than two schedules that happen to overlap.
+	own.animate(
+		Array.from({ length: HANDOFF_SAMPLES + 1 }, (_v, i) => {
+			const t = i / HANDOFF_SAMPLES;
+			const e = settleS ? easeOutBack(t, settleS) : cubicOut(t);
+			return { opacity: 1 - band(e), offset: t };
+		}),
+		{ duration: ms, easing: 'linear', fill: 'forwards' }
+	);
+}
+
+/**
+ * The hand-off: a leaver that is not leaving the scene at all — the OTHER parent on a parent promotion,
+ * who becomes the new focus's spouse — travels the diagonal to her notch seat instead of dissolving in
+ * the parents row and rematerialising in the notch a beat later. Two events for one person broke the
+ * discrete-object illusion (§20): a baseball card does not dissolve here and reappear there.
+ *
+ * The seat does NOT exist when the outro is configured — blocks mount in source order and .spouse-notch
+ * renders after .parents-slot, so the query returns nothing at config time and the real seat one frame
+ * later (measured: [] then [notch 1075,250]). Hence the deferred lookup, with the travel driven by WAAPI,
+ * which per the animation composite order supersedes the css keyframes for the properties it names while
+ * the css keeps owning the pin. Scoped to notch seats: a destination in .parents-slot already morphs
+ * itself from this same captured rect via in:morphIn, and flying the leaver there too would put two
+ * copies of one person on one path.
+ */
+function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: number): void {
+	if (typeof requestAnimationFrame === 'undefined') return;
+	requestAnimationFrame(() => {
+		if (!node.isConnected) return;
+		const seat = [...document.querySelectorAll(`[data-flight-id="${key}"]`)].find(
+			(el) => el !== node && el.closest('.spouse-notch')
+		) as HTMLElement | undefined;
+		if (!seat) return;
+		const dst = seat.getBoundingClientRect();
+		if (!dst.width || !dst.height || !snap.width || !snap.height) return;
+		// NO FADE (Sam, Aug 3). The traveller is opaque from the first frame to the last. Fading her out as
+		// she arrived left a GAP — she was gone by ~490ms and the real chip only fades in at ~660ms with the
+		// rest of the notch — so she dissolved on the seat and then blinked back into it. That is precisely
+		// the "dies here, rematerialises there" the hand-off exists to abolish; a discrete card does not
+		// flicker at the end of its own journey. She now holds the seat, solid, until the real chip is
+		// fully revealed underneath her, and is retired in that instant (see the watcher below).
+		// THE SETTLE. Every other arrival in this system overshoots its seat and rocks back — the hero's
+		// whole-path easeOutBack, morphIn's reciprocal of it. The traveller was the one object still
+		// gliding flatly to a stop, next to a card visibly overshooting around her, and the mismatch read
+		// as a wobble. She now carries the SAME curve off the SAME solver morphIn uses for a chip landing
+		// in a seat, amplitude scaled to the seat's own footprint. WAAPI cannot take a JS easing, so the
+		// curve is SAMPLED into keyframes rather than approximated by a bezier — the overshoot then comes
+		// from the house math, not from a lookalike.
+		const dx = dst.left - snap.left;
+		const dy = dst.top - snap.top;
+		const sx = dst.width / snap.width;
+		const sy = dst.height / snap.height;
+		const settleS = demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(dst.width, dst.height));
+		const frames: Keyframe[] = Array.from({ length: HANDOFF_SAMPLES + 1 }, (_v, i) => {
+			const t = i / HANDOFF_SAMPLES;
+			const e = settleS ? easeOutBack(t, settleS) : cubicOut(t);
+			return {
+				transform: `translate(${e * dx}px, ${e * dy}px) scale(${1 + e * (sx - 1)}, ${1 + e * (sy - 1)})`,
+				opacity: 1,
+				offset: t
+			};
+		});
+		const timing: KeyframeAnimationOptions = {
+			duration: ms,
+			// LINEAR here on purpose: the curve is already baked into the sampled offsets above. An easing
+			// on top would compose with it and bend the settle into something the solver never described.
+			easing: 'linear',
+			fill: 'forwards',
+			composite: 'replace'
+		};
+		// IN FRONT OF THE CARD (Sam, Aug 3). Every other leaver is parked at z-index −1 so it can never paint
+		// over an incoming chip; the hand-off is the exception, because she is not leaving — she is crossing
+		// the stage to her own seat, and you are meant to follow her the whole way.
+		//
+		// A z-index on the chip CANNOT do this, and the first attempt at it was a no-op that measured as a
+		// success: `.parents-slot` is position:relative with z-index 0, so it ESTABLISHES A STACKING CONTEXT.
+		// Any z the chip carries is therefore scoped inside that slot, and the real contest is .parents-slot
+		// (z 0) against .featured-slot (z 1) — the slot loses whatever the chip does. Reading the chip's
+		// computed z-index confirms the property was set and says nothing about what paints on top.
+		//
+		// So the traveller has to LEAVE that stacking context. A clone is portalled to <body> — the root
+		// context, above everything — and the real node is hidden while Svelte removes it on its own
+		// schedule. Cloning rather than reparenting deliberately: the real node is mid-outro and owned by
+		// Svelte, and moving it out from under the framework is how transition teardown gets stranded. The
+		// ghost carries neither .flight nor data-flight-id, so the orphan sweep, the janitor and every
+		// seat query ignore it, and it removes itself when its own animation finishes.
+		if (HANDOFF_IN_FRONT && node.parentElement) {
+			const ghost = node.cloneNode(true) as HTMLElement;
+			ghost.className = 'handoff-ghost';
+			ghost.removeAttribute('data-flight-id');
+			ghost.style.cssText =
+				`position: fixed; left: ${snap.left}px; top: ${snap.top}px; width: ${snap.width}px; ` +
+				`height: ${snap.height}px; margin: 0; z-index: 50; pointer-events: none; transform-origin: top left;`;
+			document.body.appendChild(ghost);
+			node.style.visibility = 'hidden'; // the real leaver steps aside; the ghost carries the motion
+			// A 3+-spouse card's notch seat is a SMALLER TIER (160×65 with its own type scale, PersonBox
+			// `compact`), and scaling a 220×75 traveller into it is a NON-UNIFORM squeeze — she arrived
+			// with her photo and text compressed, then snapped open at the swap. Same tier → the two are
+			// already the same object and only the union row has to grow. Different tier → she crosses
+			// over to the destination's own face mid-journey, so she lands as the thing she is replacing.
+			if (Math.abs(sx - sy) > 0.02) crossfadeToSeatFace(ghost, seat, snap, dst, ms, sx, sy, settleS);
+			else {
+				growUnionRow(ghost, seat, ms);
+				morphPhotoWidth(ghost, seat, ms);
+			}
+			const anim = ghost.animate(frames, timing);
+			// THE RETIREMENT. The ghost is NOT dropped when its travel ends — that is what produced the blink.
+			// It holds its seat, opaque, and is removed only once the REAL chip has finished revealing beneath
+			// it (the notch reveal runs at landing, well after the travel). At that moment the chip underneath
+			// is already at full opacity, so the removal exposes an identical, already-solid object: the swap
+			// is invisible and the seat is never empty for a frame. The seat leaving the DOM (a newer
+			// navigation) retires the ghost too, and a hard cap guarantees it can never outlive the page.
+			const retire = () => ghost.remove();
+			anim.finished.catch(retire);
+			const t0 = performance.now();
+			const watch = () => {
+				if (!ghost.isConnected) return;
+				if (!seat.isConnected || performance.now() - t0 > HANDOFF_GHOST_MAX_MS) return retire();
+				const revealed =
+					!seat.hasAttribute('data-pending') && Number(getComputedStyle(seat).opacity) > 0.98;
+				if (revealed) return retire();
+				requestAnimationFrame(watch);
+			};
+			requestAnimationFrame(watch);
+			return;
+		}
+		node.animate(frames, timing);
+		node.style.transformOrigin = 'top left'; // matches the scale anchor, as morphIn/growFrom pin it
+	});
+}
+
 /**
  * `out:flyOut` — the leaving transition for a relative box. A DIRECT out-transition, not a
  * crossfade `send`: there is never an `in:receive` to pair with, and crossfade's deferred pairing
@@ -1124,7 +1486,7 @@ export function slideChip(_node: Element) {
  *           mis-pinned at the post-insertion position.
  *   BUG 2 — drift in the navigation's PAN direction (camera pan) while fading.
  */
-export function flyOut(_node: Element, params: { key: string }) {
+export function flyOut(node: Element, params: { key: string }) {
 	if (prefersReducedMotion.current) return { duration: 0 };
 	// CC ARRIVAL (item 4): the roster already GATHERED into the card (faded to nothing) in the pre-flight
 	// beat. These leavers must NOT re-animate from opacity 1 (that re-showed them mid-flight — the bug);
@@ -1149,7 +1511,30 @@ export function flyOut(_node: Element, params: { key: string }) {
 	if (params.key === clickedId) {
 		return { duration: 360, easing: cubicOut, css: () => `${pin}opacity: 0;` };
 	}
-	// BUG 2: pan direction (parent→down, child→up, spouse→lateral), shared by all leavers.
+	// THE COUPLED PUSH (see above): a box in a ROW leaves as the far half of that row's one displacement —
+	// same distance, same direction, same clock, same curve as the row arriving behind it. z-index −1 so it
+	// can never paint over an incoming chip.
+	const zoneDir = (node as HTMLElement).dataset.flightDir;
+	if (snap && (zoneDir === 'up' || zoneDir === 'down') && (panDir === 'up' || panDir === 'down')) {
+		// THE ARMY: the pan direction, not the row's zone. Every row steps the same way.
+		const push = panDir === 'down' ? ROW_TRAVEL : -ROW_TRAVEL;
+		// A parent leaving on a PARENT promotion is the hand-off case (the other parent becomes the new
+		// focus's spouse), and it needs a longer life than a row push to cover its diagonal. It is not a
+		// coupled push either way: on that navigation the arriving parents morph in from their own captured
+		// rects (in:morphIn), not on the row's 300ms slide, so there is no displacement to stay in contact
+		// with. Every other leaver is a row push and MUST hold ROW_MS exactly.
+		const handoffCase = zoneDir === 'up' && panDir === 'down';
+		const ms = handoffCase ? Math.max(HANDOFF_MS, rowClockMs()) * HANDOFF_TEMPO : rowClockMs();
+		scheduleHandoff(node as HTMLElement, params.key, snap, ms);
+		return {
+			duration: ms,
+			easing: cubicOut, // === the entrance's cubic-bezier(0.33, 1, 0.68, 1)
+			// u = 1 - t: solid through ROW_SOLID of the march, gone by ROW_GONE — before the tier seat.
+			css: (_t: number, u: number) =>
+				`${pin}z-index: -1; opacity: ${clamp01((ROW_GONE - u) / (ROW_GONE - ROW_SOLID))}; transform: translateY(${u * push}px);`
+		};
+	}
+	// Spouse-swap leavers (lateral) are not a row displacement — unchanged.
 	const D = 28;
 	const dx = panDir === 'lateral' ? D : 0;
 	const dy = panDir === 'up' ? -D : panDir === 'down' ? D : 0;
@@ -1190,7 +1575,17 @@ export function chipExit(node: Element, params: { key: string }) {
 		flightKind === 'sibling' ||
 		(node as HTMLElement).dataset.offwindow === 'true'
 	) {
-		return { duration: 60, css: () => 'opacity: 0; visibility: hidden;' };
+		// position:absolute is load-bearing, not tidiness. Hidden is not the same as GONE: a chip that
+		// merely goes invisible keeps its seat in the strip's flex flow for the whole outro, and the
+		// INCOMING chip is then laid out one chip-width + gap (228px) to the LEFT of the seat it is
+		// actually going to, snapping right only when the leaver is finally removed. That was invisible
+		// while incoming chips were held at opacity 0 until landing — nothing painted at the wrong x —
+		// but the hand-off traveller measures that seat to know where to fly, so it flew to the stale
+		// position and held there: the chip appeared beside the notch, then jumped into it. Same rule
+		// flyOut's pin already enforces for the parent/child rows ("incoming boxes settle without being
+		// shoved"); the notch strip simply never got it. No coordinates needed — the chip is invisible,
+		// so only its removal from flow matters.
+		return { duration: 60, css: () => 'position: absolute; opacity: 0; visibility: hidden;' };
 	}
 	return flyOut(node, params); // cc only — flyOut short-circuits it to invisible internally
 }

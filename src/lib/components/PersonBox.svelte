@@ -154,7 +154,11 @@
 		<div class="text-area flex flex-col justify-center {textAreaPad} leading-tight">
 			{@render nameEl()}
 			{#if hasDates}
-				<div class="text-stone-500 {dateText}">
+				<!-- data-chip-dates: the TYPEFACE TEMPLATE for a row the hand-off flight has to grow on a
+				     travelling chip (see data-chip-union). Cloning this line rather than building one keeps
+				     the new row in the traveller's own type scale, so a compact seat can never hand a
+				     10px line to a 13px box. -->
+				<div class="text-stone-500 {dateText}" data-chip-dates>
 					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && showDiedYoung}
 						{' '}(died young){/if}
 				</div>
@@ -163,7 +167,12 @@
 				<div class="leading-none text-stone-400 {diedYoungText}">died young</div>
 			{/if}
 			{#if relation === 'spouse' && unionLine}
-				<div class="text-stone-500 {dateText}">
+				<!-- data-chip-union is the same kind of hook as data-chip-name: a stable handle the flight
+				     reads off the DESTINATION chip. A parent chip has two lines and the spouse chip it
+				     becomes has three, so without this the union row simply appeared the instant the
+				     traveller retired. The hand-off now grows this row on the traveller mid-journey, so
+				     the swap lands on a chip that already says the same thing. -->
+				<div class="text-stone-500 {dateText}" data-chip-union>
 					{unionLine}
 				</div>
 			{/if}
@@ -193,7 +202,11 @@
 		<div class="text-area flex flex-col justify-center {textAreaPad} leading-tight">
 			{@render nameEl()}
 			{#if hasDates}
-				<div class="text-stone-500 {dateText}">
+				<!-- data-chip-dates: the TYPEFACE TEMPLATE for a row the hand-off flight has to grow on a
+				     travelling chip (see data-chip-union). Cloning this line rather than building one keeps
+				     the new row in the traveller's own type scale, so a compact seat can never hand a
+				     10px line to a 13px box. -->
+				<div class="text-stone-500 {dateText}" data-chip-dates>
 					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && showDiedYoung}
 						{' '}(died young){/if}
 				</div>
@@ -202,7 +215,12 @@
 				<div class="leading-none text-stone-400 {diedYoungText}">died young</div>
 			{/if}
 			{#if relation === 'spouse' && unionLine}
-				<div class="text-stone-500 {dateText}">
+				<!-- data-chip-union is the same kind of hook as data-chip-name: a stable handle the flight
+				     reads off the DESTINATION chip. A parent chip has two lines and the spouse chip it
+				     becomes has three, so without this the union row simply appeared the instant the
+				     traveller retired. The hand-off now grows this row on the traveller mid-journey, so
+				     the swap lands on a chip that already says the same thing. -->
+				<div class="text-stone-500 {dateText}" data-chip-union>
 					{unionLine}
 				</div>
 			{/if}

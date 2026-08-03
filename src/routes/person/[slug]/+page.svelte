@@ -20,7 +20,11 @@
 		markPending,
 		morphIn,
 		getPivotId,
-		getFlightKind
+		getFlightKind,
+		getPanDir,
+		rowClockMs,
+		handoffPending,
+		ROW_TRAVEL
 	} from '$lib/transitions/flight';
 	import { ccRoster } from '$lib/state/ccRoster.svelte';
 	import { unlockFlight } from '$lib/state/flightLock';
@@ -201,13 +205,26 @@
 				// morphIn uses. When a held parent reveals HERE (CC arrival), it emanates from the landed card
 				// exactly as the children do, instead of the flat opacity fade it used to get. 150px travel,
 				// gradual deceleration tail (the old 28px / hard-out covered ~1/3 the distance, "hit a wall").
-				const fromY = el.dataset.flightDir === 'down' ? -150 : 150;
+				// THE ARMY (flight.ts, ROW_TRAVEL): direction is the CAMERA PAN, not the row's own zone, so
+				// every row — arriving and leaving — steps the same way at the same moment. The arriving row
+				// enters from the pan's TRAILING edge, which is why it can never cross the row leaving through
+				// the leading edge. One tier pitch, on the shared demote clock: same constants as flyOut, so
+				// tuning either side without the other is impossible by construction.
+				const pan = getPanDir();
+				const fromY =
+					pan === 'lateral'
+						? el.dataset.flightDir === 'down'
+							? -ROW_TRAVEL
+							: ROW_TRAVEL
+						: pan === 'down'
+							? -ROW_TRAVEL
+							: ROW_TRAVEL;
 				el.animate(
 					[
 						{ opacity: 0, transform: `translateY(${fromY}px)` },
 						{ opacity: 1, transform: 'translateY(0)' }
 					],
-					{ duration: 300, easing: 'cubic-bezier(0.33, 1, 0.68, 1)' }
+					{ duration: rowClockMs(), easing: 'cubic-bezier(0.33, 1, 0.68, 1)' }
 				);
 			} else {
 				el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: fadeMs, easing: 'ease-out' });
@@ -227,6 +244,31 @@
 		if (prefersReducedMotion.current) return;
 		navSeq++;
 		node.classList.add('flat'); // suppress notch → solid rectangle for the flight
+		// THE ANTICIPATED NOTCH. `.flat` normally holds until landing, because a carved corner on a card
+		// that is still growing reads as a blur. But in ONE scenario the card acquires a passenger before
+		// it lands: a promoted parent whose partner is crossing from the parents row to the notch (see
+		// flight.ts handoffPending). She was arriving onto a card with no notch yet — sitting ON the corner
+		// for ~90ms until landing carved it out from under her — which breaks the docking read the notch
+		// exists to create. So for that case only, the notch is carved EARLY, once the card is within
+		// NOTCH_ANTICIPATE of its final size and the cutout is therefore already at its settled dimensions.
+		// Gated on measured GEOMETRY, not a timer: the card's painted width against its layout width, which
+		// is the same "tie it to the cause, not the clock" rule featuredLanded follows. Every other arrival
+		// — a promoted child, a sibling, a CC from offscreen — keeps the flat card all the way in.
+		if (handoffPending(roster.spouses.map((s) => s.spouse.id))) {
+			const watch = () => {
+				if (!node.isConnected || !node.classList.contains('flat')) return;
+				if (node.offsetWidth && node.getBoundingClientRect().width >= node.offsetWidth * NOTCH_ANTICIPATE) {
+					// `notch-armed`, NOT removing `.flat`. `.flat` means "this card is in flight" to more than
+					// the clip rule — probe-flight reads it as the landing boundary — so dropping it early
+					// would not un-flatten a card, it would tell every reader the flight had ended. The new
+					// class only suspends the flattening; the flight's own signal is left alone.
+					node.classList.add('notch-armed');
+					return;
+				}
+				requestAnimationFrame(watch);
+			};
+			requestAnimationFrame(watch);
+		}
 		featuredLanded = false; // hold the PIVOT + spouse chips hidden until we land (see reveal below)
 		// Close the bare-screen gap: reveal the incoming PARENT and CHILD boxes NOW — as the outgoing
 		// ones fade — so the screen above and below the card is never bare. Two kinds of box are HELD
@@ -249,8 +291,13 @@
 	// notch with less lag AFTER the hero lands. NOT an earlier start (that would be a mid-flight rise,
 	// the flash-then-cover bug); the chips are still gated on landing, they just resolve faster once there.
 	const CHIP_REVEAL_MS = 120;
+	// Fraction of its final width the incoming card must reach before the anticipated notch is carved
+	// (see onIncomingStart). High enough that the cutout is at settled size, early enough to beat the
+	// traveller's arrival — she lands at ~566ms and this fires around ~300ms.
+	const NOTCH_ANTICIPATE = 0.92;
 	function onIncomingLand(node: HTMLElement) {
 		node.classList.remove('flat'); // re-form the notch ON the real landing (no timer)
+		node.classList.remove('notch-armed'); // the anticipation is spent — the resting rule owns the notch now
 		// Clear the inline origin transform growFrom set for the first-frame-flash fix — the animation is
 		// done, so the landed card must rest at identity (its natural layout position), not snap to origin.
 		node.style.transform = '';
@@ -707,7 +754,10 @@
 	/* `.flat` is added at RUNTIME (classList, not markup) and `.featured-card` lives in the
 	   child component, so both must be :global or Svelte tree-shakes this rule as "unused" and
 	   silently strips it. `.featured-flight` stays scoped, keeping the rule bound to this page. */
-	.featured-flight:global(.flat) :global(.featured-card) {
+	/* `notch-armed` (the anticipated notch, onIncomingStart) suspends the flattening WITHOUT clearing
+	   `.flat` — the card is still in flight and still says so; it has simply reached a size where its
+	   notch is worth carving, because a passenger is about to dock in it. */
+	.featured-flight:global(.flat):not(:global(.notch-armed)) :global(.featured-card) {
 		clip-path: var(--flat-shape) !important;
 	}
 
