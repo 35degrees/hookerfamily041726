@@ -117,7 +117,7 @@ cascade, the deck/CC transition, components, Svelte, layout, animation,
 
 **Read before acting (these are the CURRENT docs -- July 24 Fable pass):**
 - `docs/ENRICHED_DESIGN_FABLE_072926.md` -- the design: *what and why* (durable design decisions, the motion-physics doctrine, the deck/sibling/photo-loading doctrines).
-- `docs/ENRICHED_CODING_ROADMAP_FABLE_072926.md` -- the sequencing: *what's next* and the risk/phase order.
+- `docs/ENRICHED_CODING_ROADMAP_FABLE_080326.md` -- the sequencing: *what's next* and the risk/phase order.
 - `docs/CODING_HANDOFF.md` -- the repo-side session record (as-shipped models, ghost taxonomy, probe gate). The ENRICHED roadmap treats this as the live session log.
 - `docs/DESIGN.md` (070126) -- the base design the ENRICHED design *overlays*; consult when the ENRICHED doc names a base section it extends.
 - Pattern files in `docs/examples/` (e.g. `REFERENCE_PhotoGrid_crossfade.svelte` -- take the keyed-list + send/receive/flip principle, not the photo-app specifics).
@@ -199,7 +199,7 @@ docs/
   hooker_json_schema_v23.md               <- structural law (reference, not a preload)
   DESIGN.md                               <- frontend base design (070126)
   ENRICHED_DESIGN_FABLE_072926.md         <- current frontend design (what/why)
-  ENRICHED_CODING_ROADMAP_FABLE_072926.md <- current frontend sequencing (what's next)
+  ENRICHED_CODING_ROADMAP_FABLE_080326.md <- current frontend sequencing (what's next)
   CODING_HANDOFF.md                       <- frontend session record
   examples/                               <- frontend pattern references
 static/data/                  <- GENERATED (gitignored); rebuilt by regenerate-data.js

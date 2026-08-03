@@ -1,6 +1,8 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: July 29, 2026 — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Date: August 3, 2026 — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_072926.md (the what/why for every item below).**
+**The 080326 edition (August 3) adds §18 — THE BOARD MOVES AS ONE. The card-transition layer reopened after a long pause and closed again the same day, on three findings that were all the same finding: distance and time were being decided SEPARATELY in each place instead of once for the whole stage. `growFrom` clocked a promotion off the card's top-left corner while its far corner covered 3.5× the ground; the leaving rows drifted a flat 28px in the camera-pan direction while the arriving rows swept 150px from elsewhere, so they crossed through each other; and the non-promoted parent dissolved in the parents row to reappear in the notch a beat later. Now: honest max-corner velocity, a measured 145px tier pitch every row shares, one direction (the pan) and one clock (the demotion's) for every row at once, and a hand-off that travels in front of the card and lands wearing the destination's own face. Also records the STACKING-CONTEXT TRAP (a z-index that measured as applied and did nothing), two latent bugs the work exposed (`chipExit` holding a seat in the flex flow; `.flat` nearly overloaded as two signals), and the false-red/false-green lessons from both.**
+
 **The 080326 edition (August 3) adds §17 — THE KIN-DISTANCE BAKE SHIPPED, closing §15 and the §19.4 debt behind it. The deck's SAME-LINE test no longer proxies kinship with anything: `regenerate-data.js` stamps a per-CC `kin_distance` (edges through the nearest shared ancestor, ONE marriage allowed to bridge the two blood lines at a cost of 2), and `isVerticalMove` reads it. Uncles, aunts and parents-in-law ride vertical wherever the tidy tree seated them; second cousins, the in-laws of distant collaterals, and true strangers stay lateral. Also records the probe that was asserting the WRONG THING (a father-in-law logged as a cross-branch-peer control), and §17.4 — redirects.json wired as 301s after 673 entries of accumulated dead URLs.**
 
 **The 072426 edition (July 24) adds §15 — DECK VERTICAL MISFIRE (uncle/nephew rides horizontal). A confirmed bug surfaced during a content session: John Pierpont H00388 → uncle-guardian James Pierpont II H00116 transitions HORIZONTAL when it should be vertical. Diagnosed: the CC data is correct (`gen_delta = −1`); the flight engine's `sameLine` test proxies "same line" by seat distance (`|Δseats| ≤ 180`), and these genuine uncle/nephew sit far apart, so it falls through to lateral. NOT hacked mid-content-session. The proper fix is the long-planned §19.4 LCA/kin-distance bake (per-CC shared-common-ancestor depth, used instead of seat proximity). Deferred, scoped, and specced below. Design rationale: design doc §22.2b.**
@@ -1449,3 +1451,183 @@ hidden people act as invisible scaffolding for motion.
 Also unchanged: `kin_distance` is baked for CC edges only. When the arc reopens (§19.4) or a
 connect-to-anyone modal needs it, the same function serves both — that was the point of baking a
 distance rather than a boolean.
+
+---
+
+## 18. AUGUST 3 — THE BOARD MOVES AS ONE (card-transition layer, reopened and closed)
+
+*(Stream B, same day as §17. Sam's verdict on the result: "this is the first time where I get the sense
+of the board shifting up and down as we move up and down the generations, like discrete baseball cards
+on a table." Design rationale belongs in design §17/§20 — this section is the sequencing record and the
+measurements, and the design doc wants an as-built amendment.)*
+
+### 18.1 One finding wearing three hats
+
+Three complaints came in as separate items — a promotion that moved "beyond human capacity to see weight
+and heft", exiting rows that were "silly, distracting, theatrical", and a spouse chip that "magically
+appears elsewhere on the screen a second or two later". They were one defect: **distance and time were
+being decided separately in each place instead of once for the whole stage.** Every fix below is the same
+correction applied to a different consumer, which is why they had to land together.
+
+### 18.2 Honest velocity, finally applied to the PROMOTION
+
+`growFrom` clocked a parent/child promotion off the card's TOP-LEFT corner. But a card GROWS as much as
+it travels, and the top-left is the corner that moves least:
+
+| | top-left travel | fastest corner | ratio |
+|---|---|---|---|
+| parent promotion | 276px | **977px** | 3.5× |
+| child promotion | 545px | **975px** | 1.8× |
+
+Both sat on the 410ms floor, so the fastest point of the card ran **1.91 px/ms** (parent) and **2.06**
+(child) against a ceiling of 1.6 — the constant that exists to bound exactly this. The parent reads worse
+because its motion is almost all SCALE from a near-stationary anchor: the card explodes off a corner that
+barely moves, leaving the eye no translation to hold. Clocked off `maxCornerTravel` now — the same
+correction the spouse demote received as the photo-whiplash fix, which had never been applied to the
+growing card. The relative demote rides the identical rect pair so its `DEMOTE_LEAD` finish-first
+relationship is preserved exactly.
+
+`RELATIVE_V_CEIL` 1.6 → **1.68** on Sam's ear. 1.76 was tried and refused ("faster than human eye"). At
+1.68: parent 658ms, child 605ms, no corner over the ceiling.
+
+### 18.3 THE ARMY, and the tier pitch that is measured rather than chosen
+
+A leaver drifted a flat 28px in the camera-pan direction while the incoming row swept in 150px from the
+other side — two unrelated motions over unrelated distances. On a parent promotion the incoming children
+therefore crossed straight THROUGH the outgoing ones: measured, the old child sat at y=958, the new card
+was 148px taller so the new row landed at 1106, and the entrance started them 150px above that landing —
+y≈956, exactly on top of the old row.
+
+Three rules replaced it, and each is derived rather than tuned:
+
+- **ROW_TRAVEL = 145px is measured, not picked.** A chip row is 75px and the connector beneath it is 70px,
+  identically on every card. So 145 is exactly one tier's seat to the next: a parents row leaving upward
+  is not exiting the screen, it is moving into the seat a GRANDPARENTS row would occupy above a connector
+  reading "John's parents"; a children row leaving downward moves into the GRANDCHILDREN seat. They fade
+  before they arrive, so the row is implied and never asserted.
+- **Direction is the camera pan, never the row's own zone** — the army rule. Every row steps the same way
+  at the same moment, leavers and arrivers alike. This also makes crossing STRUCTURALLY impossible rather
+  than merely occluded: arrivers enter from the pan's trailing edge, leavers exit through the leading one,
+  so an arriving chip is always behind a departing one.
+- **One clock: the demotion's own** (`rowClockMs`, the same computation `shrinkTo` uses). Not a 300ms dash
+  of their own — at 145px over 300ms a row read as racing to leave. Sam: "the same speed and timing that
+  the Featured Card demotes to a parent chip."
+
+`ROW_TRAVEL` and `rowClockMs()` are exported and imported by `revealPending`, so the entrance and the exit
+cannot be tuned apart. That decoupling is what produced the crossing in the first place.
+
+Fade is keyed to DISTANCE COVERED (`ROW_SOLID` 0.5, `ROW_GONE` 0.92), not to the clock — the march
+decelerates, so those are ~21% and ~57% of the TIME. A departing row is solid while you can see it and
+gone ~12px short of its tier seat.
+
+### 18.4 THE HAND-OFF — the other parent crosses the stage
+
+On a parent promotion the other parent is not leaving at all: she becomes the new focus's spouse. She
+faded out in the parents row and reappeared in the notch a beat later — two events for one person, and
+the discrete-card illusion broken (§20: a baseball card does not dissolve here and rematerialise there).
+
+She now travels the diagonal to her seat. As built:
+
+- **The seat does not exist when the outro is configured.** Blocks mount in source order and
+  `.spouse-notch` renders after `.parents-slot`, so the query returns nothing at config time and the real
+  seat one frame later (measured: `[]` then `[notch 1075,250]`). Hence a deferred lookup, with the travel
+  driven by WAAPI.
+- **In FRONT of the card, via a clone portalled to `<body>`.** See §18.6 — a z-index cannot do this.
+  Cloning rather than reparenting is deliberate: the real node is mid-outro and owned by Svelte, and
+  moving it out from under the framework is how transition teardown gets stranded. The ghost carries
+  neither `.flight` nor `data-flight-id`, so the orphan sweep, the janitor and every seat query ignore it.
+- **Solid the whole way, and retired on a signal rather than a timer.** Fading her out as she arrived left
+  a GAP — gone by ~490ms, real chip revealed at ~660ms — so she dissolved on the seat and blinked back
+  into it. She now holds the seat until the real chip has finished revealing UNDERNEATH her (watched off
+  the seat's own opacity), so the removal exposes an already-solid identical object.
+- **She arrives as what she is becoming.** The union row ("m. 1752") grows on her mid-journey via
+  `data-chip-union` — the `data-chip-name` pattern, built from the destination's TEXT but the traveller's
+  own TYPE (`data-chip-dates` as the template), because a compact seat renders 10px where she renders 12.
+  Height is animated, not just opacity: the text block is a centred flex column, so a third row
+  redistributes the two above it.
+- **A different-tier seat gets a face crossfade.** A 3+-spouse notch seat is 160×65 with its own type
+  scale, and there is NO single transform that both lands that footprint and keeps a 220×75 face
+  undistorted — the same wall the demote hits, which is why it uses two faces. She carries the
+  destination's face as a second layer, counter-scaled every frame to stay uniform and reach exactly 1.0
+  at the seat. The crossfade band is keyed to DISTANCE (0.45→0.85), not the clock: the travel decelerates
+  so hard that 55% of the clock is already 98% of the distance, and a band that read as mid-journey
+  finished as she came to rest — a chip changing its contents while parked reads as a correction being
+  applied to it.
+- **The settle**, off the same solver `morphIn` uses, sampled into 30 keyframes because WAAPI takes no JS
+  easing (approximating with a bezier would have been a lookalike, not the house curve). And
+  `HANDOFF_TEMPO` 1.08, because she was reaching her seat before the card had settled around her.
+- **The ANTICIPATED NOTCH.** She was docking onto a card whose notch had not been carved yet. For this one
+  scenario — identified synchronously by `handoffPending()` from the click-time snapshot — the notch is
+  carved once the card is within 92% of final width (measured: t=395ms, **106ms before she lands**). Gated
+  on geometry, not a timer. Every other arrival keeps the flat card all the way in.
+
+### 18.5 Two latent bugs the work exposed (fixed at the root, not worked around)
+
+1. **`chipExit` held a seat it was vacating.** A leaving notch chip went to `opacity: 0; visibility:
+   hidden` — invisible, but still occupying its place in the strip's flex flow for the whole outro. The
+   INCOMING chip was therefore laid out 228px (one chip + gap) LEFT of its true seat, snapping right when
+   the leaver was finally removed. Invisible for as long as incoming chips were held at opacity 0 — until
+   a traveller measured that seat to know where to fly, and flew to the stale one. Reproduced by racing up
+   the Newton male line: `strip(2) 847sP 1075s`, both static. Now `position: absolute`, the same rule
+   `flyOut`'s pin already enforced for the parent/child rows. This also silently fixed the real chip's
+   transient misplacement for everyone.
+2. **`.flat` was nearly overloaded as two signals.** The first cut of the anticipated notch armed it by
+   dropping `.flat` early. `probe-flight` went red — correctly: `.flat` is not only the clip rule, it is
+   what the probe reads as the landing boundary, so dropping it early did not un-flatten a card, it told
+   every reader the flight had ended. The anticipation got its own class (`notch-armed`, suspending the
+   flattening via `:not()`), leaving `.flat` meaning what it has always meant.
+
+### 18.6 THE STACKING-CONTEXT TRAP (the lesson worth keeping)
+
+Putting the traveller in front of the card by raising her `z-index` did **nothing**, and the verification
+said it worked: `getComputedStyle(chip).zIndex === '3'` against the card's `2`. Both true, both
+irrelevant. `.parents-slot` is `position: relative; z-index: 0` and therefore ESTABLISHES A STACKING
+CONTEXT, so any z the chip carries is scoped inside that slot and the real contest is `.parents-slot`
+(z 0) against `.featured-slot` (z 1) — which the slot loses whatever the chip does.
+
+**Reading a computed property confirms the property was set and says nothing about what paints on top.**
+The fix was to leave the stacking context entirely (§18.4). Verified the second time by screenshotting the
+overlap and looking at the pixels.
+
+### 18.7 Verification, and what stayed red
+
+Green throughout the final state: flight, ghosts, reveal-gate, choreography, sibling-notch, sibling-zorder,
+neighbor-stability, settle, smoothness, stress (120 moves, zero orphans, zero page errors), cards,
+demote-velocity, deck-kin, deck-direction, deck-phantom. `svelte-check` unchanged (the 2 pre-existing
+`@fontsource` errors). SSR 200. A dedicated leak run — 20–25 parent promotions with every third click
+interrupted mid-flight — returned 0 ghosts, 0 stuck `notch-armed`, 0 stranded fixed elements, 0 errors.
+
+**The wobble question, measured and answered NO.** Asked whether anything cheap would add stability, the
+suspicion was that `.featured-slot`'s 300ms height glide had been left behind when the rows moved onto
+`rowClockMs()` — its own comment warns that a mismatch there manufactured the old child-row jello. Measured:
+the slot glide and the incoming child row settle **0ms apart with zero direction reversals**. A second pass
+counted turnarounds per actor: one each, the apparent "two" on the card being the flight's own start
+(+69px) rather than a second settle. No uncoordinated clock and no double-settle remain; the residual is
+the SUM of four independently-correct overshoots resolving within ~100ms, with the subject last. The only
+lever left is amplitude (`DEMOTE_SETTLE_RATIO` / `settleBackFor`), untouched.
+
+### 18.8 STALE PROBE EXPECTATIONS — a debt list, not a bug list
+
+Five probes report RED while the app is behaving correctly. Each was verified against a baseline by
+stashing the working changes and re-running, so these are recorded expectations that have gone out of
+date, NOT regressions. They should be re-recorded deliberately, in their own pass, because a suite that
+cries wolf is worth less than one with fewer checks:
+
+| probe | why it is red | fix |
+|---|---|---|
+| `probe-carousel-regression` | asserts chip NAMES; the data stream added `chip_first_name`, so "Rodman/Kenneth/William" now render "Lent/Ken/Bill". The x/right geometry it exists to guard is byte-identical. | re-record the expected names |
+| `probe-demote-settle` (check F only) | its recorded CC baseline (874.5px / 93.6°) predates §17's direction change; checks A–E, the load-bearing demote geometry, pass | re-run `probe-demote-baseline.mjs` for the CC case |
+| `probe-reciprocity` | asserts the pre-deck true-vector reciprocity model; the deck's lateral direction is ping-pong MEMORY now (§22.2b), by design | rewrite against the deck or retire |
+| `probe-arrival` | same era: asserts the flat directional-slide arrival the deck replaced | rewrite against the deck or retire |
+| `probe-passage` | far-dive decade markers report 0; red at HEAD before any of today's work | investigate separately |
+
+### 18.9 Carried forward
+
+- Design doc §22.2b still reads "deferred" for the kin bake (§17) and has no as-built section for any of
+  §18. By house convention the DECISIONS belong there: the marriage-cost-2 ruling, the tier pitch, the
+  army rule, the hand-off doctrine.
+- `probe-flight` is the only probe covering the hand-off, and only incidentally. The traveller deserves its
+  own probe: lands on the seat, solid throughout, retires only after the real chip reveals, and — the case
+  that actually broke — measures a seat that is not stale under rapid navigation.
+- Production 404s and the new 301 path remain dev-verified only (§16.3): `npm run build && npm run preview`
+  before shipping.
