@@ -195,7 +195,8 @@ export const DECK_TRAVEL = 1300; // px — FALLBACK offscreen reach only (live c
 const DECK_EDGE_MARGIN = 80; // px past the window edge every offscreen coord clears — no car/hero peeks at any window size
 const DECK_STAGGER_BASE = 120; // ms between cars — breathes wider now the count is smaller (dial 110–130)
 const DECK_LANE_FAN = 70; // ±px PERPENDICULAR scatter — the spread-deck fan (dial 40–100; ghost density lives here)
-const SEAT_NEAR = 180; // RETIRED from the vertical test (see isVerticalMove) — kept for the §19.4 LCA/kin-distance bake to reuse.
+const SEAT_NEAR = 180; // DEAD. The §19.4 bake landed as KIN_NEAR below and keys on the parent graph, not seats;
+// nothing reads this. Left in place (not deleted) as the tombstone of the seat-proxy era — see isVerticalMove.
 // The TWO real cards (push) get a seeded but FLOORED draw — angle + lane always present (never flat-axial),
 // yet no two flights identical (protected variation). v4.1: tilt is per-axis — a VERTICAL fall reads with a
 // real lean (2.5–4°), a LATERAL slide only banks slightly (1.5–2°, more = speedboat). Ghosts keep the fan.
@@ -270,12 +271,27 @@ export function deckExit(
 type LateralEdge = { source: string; target: string; dir: { x: number; y: number } };
 let lastLateral: LateralEdge | null = null;
 let currentLateralDir: { x: number; y: number } = { x: 1, y: 0 };
+// KIN_NEAR — the SAME-LINE radius, in family-graph edges (the build-time bake; see regenerate
+// kinDistance). Blood ladder: 1 parent/child, 2 sibling/grandparent, 3 uncle/niece, 4 grandaunt,
+// 5 first-cousin-once-removed, 6 second cousin. A marriage edge costs 2, so the in-law ladder runs
+// 3 parent/child-in-law, 4 spouse's grandparent, 5 spouse's uncle.
+// 5 admits every class that reads as up/down your own line — blood through 1C1R, and the in-laws Sam
+// named (Esther Edwards Burr → Daniel Burr, her husband's father, at 3) — while second cousins and the
+// in-laws of distant collaterals (the husband of a grandniece, 6) stay lateral. THE dial: 3 keeps only
+// blood uncles and direct in-laws; it is a radius on the graph, never a seat distance.
+const KIN_NEAR = 5;
 // The ONE vertical test. Both deckDirFor (which axis the convoy flies) and resolveLateralDir (whether the
-// ping-pong memory survives) must agree, or a move reads lateral in one and vertical in the other. See the
-// long note above deckDirFor for why 'direct' is the whole test.
+// ping-pong memory survives) must agree, or a move reads lateral in one and vertical in the other.
+// A generation gap alone is NOT enough (the Pennoyer→Strong bug: cross-branch peers differ in generation
+// without being up/down each other's line), so vertical also requires SAME LINE — which is now honest:
+// 'direct' (one is literally the other's ancestor/descendant) OR close kin by the LCA bake. Everything
+// else — far collateral, gen_delta null (orbit) or 0 (same-gen cousin) — rides lateral.
 function isVerticalMove(m: CameraMove | null): boolean {
 	const gd = m?.genDelta ?? null;
-	return gd != null && gd !== 0 && m?.relationClass === 'direct';
+	if (gd == null || gd === 0) return false;
+	if (m?.relationClass === 'direct') return true;
+	const kd = m?.kinDistance ?? null;
+	return kd != null && kd <= KIN_NEAR;
 }
 export function resolveLateralDir(m: CameraMove | null, source: string, target: string): void {
 	if (isVerticalMove(m)) {
@@ -298,17 +314,21 @@ export function clearLateralMemory(): void {
 // OWN family line: gen_delta < 0 → an ANCESTOR tier (uncle, grandparent) → enters from the TOP; > 0 → a
 // DESCENDANT tier (niece) → from the BOTTOM. But a generation gap alone is NOT enough — two people on
 // DIFFERENT branches can differ in generation yet not be up/down each other's line (the Pennoyer→Strong
-// bug). So vertical requires gen_delta ≠ 0 AND relationClass 'direct' — one is LITERALLY the other's
-// ancestor or descendant. Everything collateral rides LATERAL, and so does gen_delta null (orbit) or 0
-// (same-gen cousin).
+// bug). So vertical requires gen_delta ≠ 0 AND SAME LINE — either relationClass
+// 'direct' (one is LITERALLY the other's ancestor or descendant) or close kin by the LCA bake
+// (kin_distance ≤ KIN_NEAR — uncle, grandaunt, 1C1R, and in-laws: a father-in-law is up your line as
+// surely as an uncle is, which is why the bake bridges one marriage). FAR collateral rides LATERAL,
+// and so does gen_delta null (orbit) or 0 (same-gen cousin).
 //
-// The seat-near escape hatch (|Δseats| ≤ SEAT_NEAR) is GONE. It was the interim proxy for the §19.4
-// LCA/kin-distance bake, and it misfired exactly as its own comment predicted: Lovejoy→J.P. Morgan is
-// collateral with gen_delta −2, and the tidy layout happened to seat them 0.4 apart (5292.15 vs 5291.75),
-// so two strangers from opposite ends of the tree flew a family-line vertical. Cost of removing it: a real
-// uncle/niece — collateral but genuinely up/down your line — now rides lateral until the LCA bake lands and
-// can say so honestly. A wrong lateral reads as neutral; a wrong vertical asserts kinship that isn't there.
-// SEAT_NEAR is kept (unused here) for that bake to reuse.
+// SEATS ARE GONE FROM THIS TEST; KINSHIP REPLACED THEM (the §19.4 bake, Aug 3). The old escape hatch
+// (|Δseats| ≤ SEAT_NEAR) misfired in BOTH directions, because seat distance is where the tidy layout put
+// someone, not who they are: Lovejoy→J.P. Morgan happened to land 0.4 seats apart (5292.15 vs 5291.75) and
+// two strangers flew a family-line vertical, while John Pierpont and his uncle-guardian James Pierpont II
+// sit >180 seats apart and rode lateral. Dropping the hatch killed the false verticals and left the real
+// uncles lateral — the accepted interim cost, on the principle that a wrong lateral reads as neutral while
+// a wrong vertical asserts kinship that isn't there. That interim is over: isVerticalMove now asks the
+// PARENT GRAPH directly (kin_distance ≤ KIN_NEAR), so close kin ride vertical wherever they sit and far
+// cross-branch peers still do not. SEAT_NEAR survives above only as a tombstone.
 //
 // BOTH axes still follow GEOGRAPHY, never navigation history: vertical by
 // the gen_delta SIGN (older→top / younger→bottom), lateral by the SEAT SIGN (target seated right→enters from

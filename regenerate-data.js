@@ -837,6 +837,104 @@ function relationClass(sourceId, targetId, byId) {
 	return 'collateral';
 }
 
+// ── KIN DISTANCE (the §19.4 LCA bake — design §22.2b) ──────────────────────────────────────────
+// How far apart two people are on the FAMILY graph: edges through their nearest shared ancestor,
+// |source→LCA| + |LCA→target|, with ONE marriage allowed to bridge the two blood lines.
+// The blood ladder: parent/child 1, sibling or grandparent 2, uncle/niece 3, grandaunt/grandnephew 4,
+// first-cousin-once-removed 5, second cousin 6.  null = no route inside the cap (true orbit/strangers).
+//
+// MARRIAGE IS A REAL EDGE, AND IT COSTS KIN_MARRIAGE_COST (Sam, Aug 3). A father-in-law is up your
+// line — Esther Edwards Burr H00378 → Daniel Burr X03446 is her husband's father and must fall in from
+// the TOP, with the reciprocal rising from the BOTTOM. Blood-only kinship called that pair strangers
+// and sent it sideways, which ALSO made this bake disagree with its own other half: effectiveGen below
+// already rides marriages (a spouse of a grandparent is grandparent-tier), so gen_delta said "one tier
+// up" while kin distance said "unrelated". One graph, one answer — both halves ride the marriage now.
+//
+// The hop costs 2, not 1, and that is the whole tuning: at 2 the in-laws Sam named ride vertical
+// (father/mother-in-law 1+2 = 3, spouse's grandparent 4, spouse's uncle 5) while the blood ladder keeps
+// its exact meaning and the IN-LAWS OF DISTANT COLLATERALS fall out — James Pierpont II → William
+// Bristol, the husband of his grandniece, lands at 6 and stays lateral, where at cost 1 it would have
+// verticalized on a tie nobody would call "up my line".
+//
+// This is what the DECK's "same line" test rides on now. It REPLACES the retired seat-distance proxy
+// (|Δseats| ≤ 180), which conflated "same genealogical line" with "seated near each other in the tidy
+// tree" and got it wrong in BOTH directions: John Pierpont H00388 and his uncle-guardian James
+// Pierpont II H00116 sit >180 seats apart and rode lateral; Lovejoy and J.P. Morgan happened to land
+// 0.4 seats apart and flew a family vertical as strangers. Seats measure where the layout put someone;
+// kin distance measures the graph. Build-time only, per the §2 doctrine — never walked at runtime.
+//
+// Shared infrastructure, not deck-only: the same value is the arc's felt-distance trigger (§19.4) and
+// the substrate for any future "how far apart are these two" affordance / the connect-to-anyone modal.
+const KIN_MAX_DEPTH = 10; // generations walked up each side before we call it "far"
+const KIN_EMIT_CAP = 8; // beyond this the deck treats it as null anyway — don't fatten 3k CC rows
+const KIN_MARRIAGE_COST = 2; // a marriage edge, priced against the blood ladder (see the note above)
+const ancestorDepthCache = new Map(); // id -> Map(ancestorId -> min depth). One build, one graph.
+// Every ancestor of `id` with its MINIMUM depth (id itself at 0). Breadth-first so the first depth
+// recorded is the shortest — a pedigree collapse (cousin marriage) can reach the same ancestor twice.
+function ancestorDepths(id, byId) {
+	const hit = ancestorDepthCache.get(id);
+	if (hit) return hit;
+	const depths = new Map([[id, 0]]);
+	let frontier = [id];
+	for (let depth = 1; depth <= KIN_MAX_DEPTH && frontier.length; depth++) {
+		const next = [];
+		for (const cur of frontier) {
+			const par = (byId[cur] && byId[cur].parents) || {};
+			for (const q of [par.father_id, par.mother_id]) {
+				if (q && byId[q] && !depths.has(q)) {
+					depths.set(q, depth);
+					next.push(q);
+				}
+			}
+		}
+		frontier = next;
+	}
+	ancestorDepthCache.set(id, depths);
+	return depths;
+}
+// Pure BLOOD distance: edges through the nearest common ancestor, or null if the two ancestor sets
+// never meet inside KIN_MAX_DEPTH.
+function bloodDistance(sourceId, targetId, byId) {
+	if (!sourceId || !targetId || sourceId === targetId) return null;
+	if (!byId[sourceId] || !byId[targetId]) return null;
+	let a = ancestorDepths(sourceId, byId);
+	let b = ancestorDepths(targetId, byId);
+	if (a.size > b.size) [a, b] = [b, a]; // scan the smaller side
+	let best = null;
+	for (const [id, da] of a) {
+		const db = b.get(id);
+		if (db == null) continue;
+		const sum = da + db;
+		if (best === null || sum < best) best = sum;
+	}
+	return best;
+}
+function spouseIds(id, byId) {
+	const p = byId[id];
+	if (!p) return [];
+	return (p.marriages || []).map((m) => m && m.spouse_id).filter((s) => s && byId[s]);
+}
+// The shortest route between two people over blood edges plus AT MOST ONE marriage on each side —
+// which is what "in-law" means: my spouse's blood line, or my blood line's spouse. Two marriage hops
+// (my spouse's parent's spouse — a step-parent-in-law) is the outer limit and is priced accordingly.
+function kinDistance(sourceId, targetId, byId) {
+	if (!sourceId || !targetId || sourceId === targetId) return null;
+	if (!byId[sourceId] || !byId[targetId]) return null;
+	let best = bloodDistance(sourceId, targetId, byId);
+	const consider = (d, hops) => {
+		if (d == null) return;
+		const total = d + hops * KIN_MARRIAGE_COST;
+		if (best === null || total < best) best = total;
+	};
+	const sourceSpouses = spouseIds(sourceId, byId);
+	const targetSpouses = spouseIds(targetId, byId);
+	for (const s of sourceSpouses) consider(bloodDistance(s, targetId, byId), 1);
+	for (const t of targetSpouses) consider(bloodDistance(sourceId, t, byId), 1);
+	for (const s of sourceSpouses)
+		for (const t of targetSpouses) consider(bloodDistance(s, t, byId), 2);
+	return best !== null && best <= KIN_EMIT_CAP ? best : null;
+}
+
 // Effective generation for the DECK direction: a person's own generation_from_thomas, else a married
 // partner's (a spouse of a grandparent is grandparent-tier — they ride the line via marriage), else — for
 // EASTER EGGS only — one generation ABOVE a child-in-law (a famous figure who joins the tree solely through
@@ -917,6 +1015,12 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 				// ancestor tier (rides in from TOP); > 0 → a descendant tier (from BOTTOM). Never a birth-year gap.
 				gen_delta: genDelta(p.id, cc.related_id, byId)
 			};
+			// KIN DISTANCE (see kinDistance) — edges to the nearest shared ancestor. The deck's SAME-LINE
+			// test: a close-kin pair with a generation gap rides VERTICAL no matter where the tidy tree
+			// seated them. Omitted (absent, not null) when there is no shared ancestor inside the cap, so
+			// the far/orbit majority costs nothing on the wire.
+			const kd = kinDistance(p.id, cc.related_id, byId);
+			if (kd != null) out.kin_distance = kd;
 			if (talcottOnly) out.hidden_by_default = true;
 			return out;
 		});

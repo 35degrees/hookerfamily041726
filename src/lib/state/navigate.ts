@@ -151,13 +151,17 @@ export function warmPersonLinks(node: HTMLElement) {
 		// DECK direction: the kinship generation gap, baked onto the CC anchor (see regenerate genDelta).
 		// Siblings are same-generation (adjacent seats) → 0 → lateral. Chip navs carry none (not a deck flight).
 		const genDelta = isCC ? numOr((anchor as HTMLElement).dataset.genDelta) : isSibling ? 0 : null;
+		// DECK same-line test: parent-graph edges to the nearest shared ancestor, baked per CC (see
+		// regenerate kinDistance). Absent on the anchor = no shared ancestor within the cap → far/orbit.
+		// Siblings share both parents (distance 2), but their genDelta is 0, so they ride lateral regardless.
+		const kinDistance = isCC ? numOr((anchor as HTMLElement).dataset.kinDistance) : null;
 		// duration reuses flight.ts's per-kind curve directly (single source of truth — no drift; the
 		// published value is informational metadata, the real flight clock lives in growFrom).
 		const duration = kind === 'spouse' ? spouseGrowMs(distance) : relativeGrowMs(distance);
 		// ALTITUDE ARC: a FAR COLLATERAL CC pulls the camera back (scaleMin) to reveal the real table, then
 		// descends. Publish scaleMin so the card + substrate read it; start the shared arc clock. Direct dives
 		// and short collateral hops stay flat (scaleMin null). Reduced motion never arcs.
-		const provisional = { from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, seq: 0 } as CameraMove;
+		const provisional = { from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, kinDistance, seq: 0 } as CameraMove;
 		const arc = !prefersReducedMotion.current && isArcMove(provisional);
 		const scaleMin = arc ? arcScaleMinFor(provisional) : null;
 		// DECK lateral direction: resolve the ping-pong memory ONCE here, before the flight reads deckDirFor.
@@ -167,7 +171,7 @@ export function warmPersonLinks(node: HTMLElement) {
 			const source = decodeURIComponent(window.location.pathname.replace(/^\/person\//, ''));
 			resolveLateralDir(provisional, source, decodeURIComponent(match[1]));
 		}
-		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, scaleMin });
+		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, kinDistance, scaleMin });
 		// The arc clock is started at the STATE SWAP (below), not here — so it shares its time origin with the
 		// card + substrate transitions that mount then, guaranteeing one clock (no fetch-time offset).
 		const arcFrom = from && to ? { x: from.x, y: from.y ?? to.y ?? 0 } : null;

@@ -37,6 +37,11 @@ export type CameraMove = {
 	// keys off THIS, not birth-years: null/0 → lateral (orbit/unrelated/same-gen cousin), <0 → target is an
 	// ancestor tier (enters from top), >0 → a descendant tier (from bottom). Absent for chip navs.
 	genDelta?: number | null;
+	// KIN DISTANCE (graph-derived at build time; see regenerate kinDistance). Parent-graph edges to the
+	// nearest shared ancestor: uncle/niece 3, grandaunt 4, first-cousin-once-removed 5. null/absent = no
+	// shared ancestor within the bake's depth cap (orbit, in-laws, far branches). With genDelta it is the
+	// deck's SAME-LINE test — it replaced the seat-distance proxy (design §22.2b). Absent for chip navs.
+	kinDistance?: number | null;
 	// ALTITUDE ARC (far collateral CCs): the camera pulls back to this scale, traverses, descends. The
 	// subject card and the tile substrate both read it. Absent/null → a flat flight (no pull-back).
 	scaleMin?: number | null;

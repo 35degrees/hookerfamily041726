@@ -11,9 +11,15 @@ const CASES = [
 	{ start: 'aaron-burr-jr-1756', target: 'maria-edwards-1778', gd: 0, expect: 'LATERAL', note: 'same-generation' },
 	{ start: 'mary-pierpont-1673', target: 'mary-talcott-1720', gd: 2, expect: 'BOTTOM', note: 'descendant (granddaughter, direct/seat-far → still vertical)' },
 	{ start: 'thomas-hooker-1586', target: 'john-haynes-1594', gd: null, expect: 'LATERAL', note: 'orbit (Heman class — no family tie)' },
-	// v4.1 SAME-LINE fix (Pennoyer→Strong bug): gen ≠ 0 but COLLATERAL + seat-far → a cross-branch peer, NOT
-	// up/down the own line → must ride LATERAL despite the generation gap.
-	{ start: 'aaron-burr-sr-1716', target: 'jonathan-edwards-1703', gd: -1, expect: 'LATERAL', note: 'cross-branch peer (gen≠0, collateral, seat-far)' }
+	// EXPECTATION CORRECTED Aug 3 (Sam's ruling; was LATERAL). This pair was logged as the cross-branch-peer
+	// control, but Jonathan Edwards is Aaron Burr Sr.'s FATHER-IN-LAW (Burr married his daughter Esther) —
+	// the same class as Esther Edwards Burr → Daniel Burr, which Sam ruled must ride vertical. An in-law
+	// parent is up your line, so this rides from the TOP; the kin bake reaches it over one marriage (3).
+	{ start: 'aaron-burr-sr-1716', target: 'jonathan-edwards-1703', gd: -1, expect: 'TOP', note: 'father-in-law over one marriage (kin 3)' },
+	// The cross-branch-peer control the case above was mistakenly standing in for — a REAL one: gen ≠ 0,
+	// collateral, and no route on the family graph at all (no blood, no marriage bridge). Must stay LATERAL,
+	// and it is the pair that sits 0.4 seats apart, so it also guards the retired seat proxy's grave.
+	{ start: 'john-morgan-1837', target: 'francis-lovejoy-1854', gd: 2, expect: 'LATERAL', note: 'true cross-branch peer (gen≠0, no kinship route)' }
 ];
 
 function classify(hero, vw, vh) {
