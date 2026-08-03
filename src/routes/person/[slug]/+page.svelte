@@ -24,6 +24,7 @@
 		getPanDir,
 		rowClockMs,
 		handoffPending,
+		handoffSpouseId,
 		ROW_TRAVEL
 	} from '$lib/transitions/flight';
 	import { ccRoster } from '$lib/state/ccRoster.svelte';
@@ -232,6 +233,9 @@
 		}
 	}
 
+	// WHO is crossing from the parents row to the notch this navigation, captured at flight START because
+	// the click-time captures handoffSpouseId reads are cleared a frame later. Consumed at landing.
+	let handoffChipId: string | null = null;
 	// The pivot the current demotion owns — set at outrostart, consumed at outroend. The introend
 	// safety-net excludes it for relative+motion so it can't pre-empt the atomic swap with a fade.
 	let demotingPivotId: string | null = null;
@@ -254,7 +258,8 @@
 		// Gated on measured GEOMETRY, not a timer: the card's painted width against its layout width, which
 		// is the same "tie it to the cause, not the clock" rule featuredLanded follows. Every other arrival
 		// — a promoted child, a sibling, a CC from offscreen — keeps the flat card all the way in.
-		if (handoffPending(roster.spouses.map((s) => s.spouse.id))) {
+		handoffChipId = handoffSpouseId(roster.spouses.map((s) => s.spouse.id));
+		if (handoffChipId) {
 			const watch = () => {
 				if (!node.isConnected || !node.classList.contains('flat')) return;
 				if (node.offsetWidth && node.getBoundingClientRect().width >= node.offsetWidth * NOTCH_ANTICIPATE) {
@@ -308,7 +313,18 @@
 		// the still-flying card. Doing it here (with the quicker CHIP_REVEAL_MS fade) instead of waiting
 		// for the featuredLanded $effect to schedule + run shaves the post-landing lag, so the chips
 		// appear sooner. Still strictly gated on landing → CHIPS-SOON stays green.
+		// THE TRAVELLER'S CHIP REVEALS INSTANTLY, everyone else's fades. She is sitting on that seat,
+		// opaque and on top of it, so its 120ms fade-in is a fade nobody can see — and the traveller is
+		// retired only once it completes, which left her parked on a settled stage for ~125ms after every
+		// other part of the navigation had stopped moving. That dangling tail is what made an otherwise
+		// tight sequence feel loose. Revealed as a STEP, she retires as the card lands, with the rows.
+		// The other notch chips are not covered by anything and keep their fade.
+		if (handoffChipId) {
+			const id = handoffChipId;
+			revealPending((el) => el.dataset.flightDir === 'lateral' && el.dataset.flightId === id, 0);
+		}
 		revealPending((el) => el.dataset.flightDir === 'lateral', CHIP_REVEAL_MS);
+		handoffChipId = null;
 		featuredLanded = true; // → reveals the pivot box + any remaining pending boxes (safety-net effect)
 		landedPersonId = f.person.id; // the shown person has now landed → ungate its trigger (see above)
 		unlockFlight(); // card is in final position, chips extending → nav clicks honored again
@@ -425,12 +441,24 @@
 	$effect(() => {
 		f.person.id; // dependency
 		untrack(() => {
-			const pivot = getPivotId();
 			const spouses = roster.spouses;
+			// The person whose seat MUST be in the open window. Two of them can need it, never at once:
+			// the PIVOT on a spouse swap (the card we are leaving demotes onto its chip), and the
+			// HAND-OFF traveller on a parent promotion (the other parent crosses to her chip). On a
+			// parent promotion the pivot becomes a CHILD, not a spouse, so it never competes.
+			//
+			// Without this the traveller was told to fly to a seat outside the mask: Anderson Cooper →
+			// his mother Gloria Vanderbilt, whose FOURTH husband is Anderson's father, sent that chip
+			// sailing past the right edge of the card to a 4th-spouse position that is not rendered.
+			// Same failure the pivot rule was written for, reached by the other traveller.
+			const pivot = getPivotId();
+			const anchor =
+				(pivot && spouses.some((s) => s.spouse.id === pivot) ? pivot : null) ??
+				handoffSpouseId(spouses.map((s) => s.spouse.id));
 			const maxOffset = Math.max(0, spouses.length - WINDOW);
 			let init = 0;
-			if (pivot) {
-				const i = spouses.findIndex((s) => s.spouse.id === pivot);
+			if (anchor) {
+				const i = spouses.findIndex((s) => s.spouse.id === anchor);
 				if (i >= WINDOW) init = Math.min(i - (WINDOW - 1), maxOffset);
 			}
 			spouseOffset = init;

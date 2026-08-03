@@ -422,15 +422,22 @@ export function getPanDir(): 'up' | 'down' | 'lateral' {
 	return panDir;
 }
 /**
- * Is a parents-row → notch HAND-OFF about to happen? True when a PARENT was promoted (pan 'down') and
+ * WHO is crossing from the parents row to the notch, if anyone — and the boolean form of the same
+ * question. The identity matters because the carousel has to open a window that CONTAINS her seat
+ * before she is told to fly to it (see the offset effect in +page.svelte).
+ *
+ * A parents-row → notch HAND-OFF is pending when a PARENT was promoted (pan 'down') and
  * one of the incoming card's spouses was standing in the outgoing PARENTS row at click time — i.e. the
  * other parent is crossing to the notch. Answerable synchronously at flight start, from the click-time
  * snapshot, which is why the anticipated notch can be armed before anything has moved. The clicked
  * person is excluded: they are becoming the card, not a chip.
  */
+export function handoffSpouseId(spouseIds: readonly string[]): string | null {
+	if (panDir !== 'down') return null;
+	return spouseIds.find((id) => id !== clickedId && rectSnapshot.get(id)?.dir === 'up') ?? null;
+}
 export function handoffPending(spouseIds: readonly string[]): boolean {
-	if (panDir !== 'down') return false;
-	return spouseIds.some((id) => id !== clickedId && rectSnapshot.get(id)?.dir === 'up');
+	return handoffSpouseId(spouseIds) !== null;
 }
 
 // The PIVOT — the box the demoted card shrinks INTO (the focus we're leaving, which becomes a
