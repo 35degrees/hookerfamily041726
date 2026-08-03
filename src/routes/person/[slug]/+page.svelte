@@ -232,6 +232,12 @@
 		}
 	}
 
+	// Did we arrive by PROMOTING A CHILD? Captured at flight start (the click-time captures are cleared a
+	// frame later) and consumed at landing, where it opens the sibling panel. Only this arrival opens it:
+	// it is the one where the siblings on screen ARE the chips the user just left behind, so the cascade
+	// answers "where did they go". Every other arrival keeps §21.1's peripheral trigger, which Sam set on
+	// pixels precisely so the panel would not compete with the card.
+	let openSiblingsOnLand = false;
 	// WHO is crossing from the parents row to the notch this navigation, captured at flight START because
 	// the click-time captures handoffSpouseId reads are cleared a frame later. Consumed at landing.
 	let handoffChipId: string | null = null;
@@ -257,6 +263,7 @@
 		// Gated on measured GEOMETRY, not a timer: the card's painted width against its layout width, which
 		// is the same "tie it to the cause, not the clock" rule featuredLanded follows. Every other arrival
 		// — a promoted child, a sibling, a CC from offscreen — keeps the flat card all the way in.
+		openSiblingsOnLand = getPanDir() === 'up'; // a child promotion — see the declaration
 		handoffChipId = handoffSpouseId(roster.spouses.map((s) => s.spouse.id));
 		if (handoffChipId) {
 			const watch = () => {
@@ -324,6 +331,14 @@
 		}
 		revealPending((el) => el.dataset.flightDir === 'lateral', CHIP_REVEAL_MS);
 		handoffChipId = null;
+		// The siblings arrive WITH the spouse chip, on the panel's own per-chip cascade (§21.1: each chip
+		// drops from where its predecessor sits, 38ms apart, with a 2.5px micro-overshoot). Reusing that
+		// reveal rather than animating anything new is the whole point — the children that faded out below
+		// reappear here, as one gesture, whether there are two of them or sixteen.
+		if (openSiblingsOnLand) {
+			openSiblingsOnLand = false;
+			if (showSiblings) siblingsOpen = true;
+		}
 		featuredLanded = true; // → reveals the pivot box + any remaining pending boxes (safety-net effect)
 		landedPersonId = f.person.id; // the shown person has now landed → ungate its trigger (see above)
 		unlockFlight(); // card is in final position, chips extending → nav clicks honored again

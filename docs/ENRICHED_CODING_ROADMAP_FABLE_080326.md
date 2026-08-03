@@ -1678,7 +1678,38 @@ A review pass over the day's work, before pushing:
 - **Dead weight removed:** `HANDOFF_HOLD` (from the era when the traveller faded) and `handoffPending`
   (every caller wants the identity — `handoffSpouseId`). `PinRect.dir` typed to the zone union.
 
-### 18.12 Carried forward
+### 18.12 SIBLINGS — re-filed, not departed (and the one exception to §21.1)
+
+**The bug that was really a gap.** Roderick Tower, two children; promote Pamela and her brother Whitney
+"just kind of moves up and then stops and fades out all in view of the user" (Sam). The motion was telling
+the wrong story: on a child click `panDir` is `'up'`, so the other children rode the army — the gesture for
+LEAVING THE SCENE. But they are not leaving. Promote a child and the other children become the new focus's
+SIBLINGS: they are still on the card, in the panel on the right. They had nowhere visible to go, so the
+transition had nothing to say.
+
+**Rejected: fly each child to its sibling seat.** Not for the obvious reason (10–16 simultaneous flights)
+but for a structural one: the sibling window is a FIXED HEIGHT whose visible chip count depends on how many
+TIER HEADERS are present (§21.1 — headers consume slots), so beyond the first few chips there is no
+destination rect at all, and on a card with both Half- and Step- headers even the fifth may have none. Some
+children would fly to seats that exist while others flew to seats that do not — which reads as a bug, not
+as a system.
+
+**Adopted.** The children FADE WHERE THEY STAND (`refiled` in flyOut: pan 'up' + zone 'down' → zero
+travel, alpha only), and the panel's own per-chip cascade plays as the card lands. Reusing §21.1's reveal —
+each chip dropping from exactly where its predecessor sits, 38ms apart, 2.5px micro-overshoot — rather than
+animating anything new is the point: the same gesture serves two siblings or sixteen, and the overflow is
+already the vertical carousel's problem. Measured: leaving children travel **0px** on a child promotion and
+still the full 145px tier pitch on a parent promotion; panel opens at landing with 11 items on an 11-child
+family; parent promotions and CC arrivals are untouched.
+
+**The exception, named so it is not mistaken for drift.** §21.1 set the trigger peripheral on Sam's
+rendered-pixel verdict — "the button takes away from the other elements". The panel now auto-opens on ONE
+arrival: a child promotion, the case where the siblings on screen ARE the chips the user just watched fade.
+The cascade is the answer to "where did they go". Every other arrival — parent, spouse, sibling, CC — keeps
+the closed trigger exactly as §21.1 specified. Opening it on every card was considered and declined: it
+would restyle every navigation, including the ones §18.10 just tightened.
+
+### 18.13 Carried forward
 
 - Design doc §22.2b still reads "deferred" for the kin bake (§17) and has no as-built section for any of
   §18. By house convention the DECISIONS belong there: the marriage-cost-2 ruling, the tier pitch, the

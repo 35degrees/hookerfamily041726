@@ -1556,9 +1556,20 @@ export function flyOut(node: Element, params: { key: string }) {
 	// can never paint over an incoming chip.
 	const zoneDir = (node as HTMLElement).dataset.flightDir;
 	if (snap && (zoneDir === 'up' || zoneDir === 'down') && (panDir === 'up' || panDir === 'down')) {
-		// THE ARMY: the pan direction, not the row's zone. Every row steps the same way.
+		// THE ARMY: the pan direction, not the row's zone. Every row steps the same way — EXCEPT a row
+		// that is not actually leaving.
+		//
+		// RE-FILED, NOT DEPARTING. Promote a child and the other children become the new focus's SIBLINGS:
+		// they are still on the card, in the panel on the right. Marching them off with the army told the
+		// wrong story — Sam, watching Whitney Tower leave as his sister was promoted: "it's clear we've
+		// given the non-promoted siblings nothing to do." They now fade where they stand, and the sibling
+		// panel cascades open as the card lands (see +page.svelte), which is where they went. No travel:
+		// their seats live in a fixed-height window whose visible count depends on how many tier headers
+		// are present, so beyond the first few there is no destination rect to fly to — and a chip flying
+		// to a seat that does not exist reads as a bug, not as a system.
+		const refiled = panDir === 'up' && zoneDir === 'down';
 		const pitch = rowTravel();
-		const push = panDir === 'down' ? pitch : -pitch;
+		const push = refiled ? 0 : panDir === 'down' ? pitch : -pitch;
 		// A parent leaving on a PARENT promotion is the hand-off case (the other parent becomes the new
 		// focus's spouse), and it needs a longer life than a row push to cover its diagonal. It is not a
 		// coupled push either way: on that navigation the arriving parents morph in from their own captured
