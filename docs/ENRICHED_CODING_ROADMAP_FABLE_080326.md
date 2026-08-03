@@ -1500,8 +1500,14 @@ y≈956, exactly on top of the old row.
 
 Three rules replaced it, and each is derived rather than tuned:
 
-- **ROW_TRAVEL = 145px is measured, not picked.** A chip row is 75px and the connector beneath it is 70px,
-  identically on every card. So 145 is exactly one tier's seat to the next: a parents row leaving upward
+- **The tier pitch is DERIVED, not picked — `rowTravel()`.** A chip row is 75px and the connector beneath
+  it is 70px, identically on every card, and the sum is measurable in one subtraction (a row's top to the
+  slot's top). It is READ rather than frozen because it is a layout fact, not a design choice, and **Phase
+  2.75's density steps will change it** — at which point a literal 145 would quietly become wrong in the
+  way that is hardest to see: the rows would still move, just not by a tier. Reading it keeps the RULE
+  true instead of the number (verified: derives to exactly 145 at the current density; falls back to the
+  measured constant when there is no parents row to measure against). 145 is exactly one tier's seat to
+  the next: a parents row leaving upward
   is not exiting the screen, it is moving into the seat a GRANDPARENTS row would occupy above a connector
   reading "John's parents"; a children row leaving downward moves into the GRANDCHILDREN seat. They fade
   before they arrive, so the row is implied and never asserted.
@@ -1597,14 +1603,8 @@ demote-velocity, deck-kin, deck-direction, deck-phantom. `svelte-check` unchange
 `@fontsource` errors). SSR 200. A dedicated leak run — 20–25 parent promotions with every third click
 interrupted mid-flight — returned 0 ghosts, 0 stuck `notch-armed`, 0 stranded fixed elements, 0 errors.
 
-**The wobble question, measured and answered NO.** Asked whether anything cheap would add stability, the
-suspicion was that `.featured-slot`'s 300ms height glide had been left behind when the rows moved onto
-`rowClockMs()` — its own comment warns that a mismatch there manufactured the old child-row jello. Measured:
-the slot glide and the incoming child row settle **0ms apart with zero direction reversals**. A second pass
-counted turnarounds per actor: one each, the apparent "two" on the card being the flight's own start
-(+69px) rather than a second settle. No uncoordinated clock and no double-settle remain; the residual is
-the SUM of four independently-correct overshoots resolving within ~100ms, with the subject last. The only
-lever left is amplitude (`DEMOTE_SETTLE_RATIO` / `settleBackFor`), untouched.
+**The wobble question is answered in §18.10** — measured, one real cause found and fixed, one suspected
+cause measured and cleared.
 
 ### 18.8 STALE PROBE EXPECTATIONS — a debt list, not a bug list
 
@@ -1621,7 +1621,64 @@ cries wolf is worth less than one with fewer checks:
 | `probe-arrival` | same era: asserts the flat directional-slide arrival the deck replaced | rewrite against the deck or retire |
 | `probe-passage` | far-dive decade markers report 0; red at HEAD before any of today's work | investigate separately |
 
-### 18.9 Carried forward
+### 18.9 The carousel window follows the traveller (the Vanderbilt case)
+
+Anderson Cooper → his mother Gloria Vanderbilt sent his father's chip sailing past the right edge of the
+card. Gloria has four spouses, so the notch is a WINDOWED carousel; Wyatt is her fourth; at offset 0 his
+seat sits at x=1303 with `data-offwindow="true"` while the mask ends at 1295. The traveller was told to
+fly to a position that is never rendered.
+
+This is precisely the failure the PIVOT-AWARE offset already existed to prevent — "so the demotion morph
+lands on a VISIBLE docked rect instead of flying to an off-mask position" — reached by the OTHER
+traveller. The pivot got a guaranteed-visible seat; the hand-off did not. The offset effect now anchors on
+whichever of the two needs it, and they can never compete: on a parent promotion the pivot becomes a
+CHILD, not a spouse. Offset 1, seat x=1135, `offwindow=false` — the first spouse slides out of the window
+to the left and the traveller takes the trailing visible seat.
+
+**The general rule this is the second instance of:** anything that flies to a seat must be sure the seat
+is RENDERED, not merely present in the roster. A windowed carousel makes "exists" and "is on screen" two
+different questions, and every traveller has to ask the second one.
+
+### 18.10 The tail, and what a settled stage should look like
+
+Sam: the whole thing feels loose "for an extra 300ms". Measured rather than guessed, and the cluster
+turned out to be tight — parents and children rows at rest 553ms after the click, demoting card gone and
+featured card at rest by 603, traveller on her seat at 621 — and then **nothing moved until the traveller
+retired at 786.** She was waiting for the real chip to finish a 120ms fade UNDERNEATH her: a fade nobody
+can see, because she is opaque and on top of it. That left her parked on a settled stage for 125ms after
+the navigation had otherwise finished.
+
+Her chip now reveals as a STEP (`fadeMs 0`) while every other notch chip keeps its fade — a fade is only
+worth paying for where something can see it. She retires as the card lands. **The navigation resolves in a
+100ms window (549–649) instead of 237ms.**
+
+Also measured and deliberately NOT changed, because the suspicion was wrong: `.featured-slot`'s height
+glide and the incoming child row settle 0ms apart with zero direction reversals, and every actor turns
+around exactly once (the apparent "two" on the card is the flight's own start, +69px, not a second
+settle). No uncoordinated clock and no double-settle remain. The residual is the sum of four
+independently-correct overshoots resolving within ~100ms, subject last, and the only lever left is
+amplitude (`DEMOTE_SETTLE_RATIO` / `settleBackFor`) — untouched.
+
+### 18.11 Close-out pass (optimization + future-proofing)
+
+A review pass over the day's work, before pushing:
+
+- **`rowTravel()` derived** (§18.3) — the one change that outlives a density change.
+- **The retirement is OBSERVED, not polled.** The traveller's watcher ran `getComputedStyle` on the seat
+  every frame until the reveal — a forced style recalc per frame, mid-flight, to answer a question the DOM
+  can announce. Now a `MutationObserver` on `data-pending` (+ a timeout belt for the case where a newer
+  navigation removes the seat without touching the attribute). The attribute going away IS the reveal
+  completing, now that her chip reveals as a step.
+- **One curve sampler** (`sampleCurve`). The shell, the destination face and the outgoing face each
+  sampled the house curve independently; they are now guaranteed to read the same curve at the same
+  offsets, which is the only thing keeping a two-layer traveller in register.
+- **The ghost is `inert` + `aria-hidden`.** It is a CLONE of a real `<a href>`: `pointer-events: none`
+  stops the mouse but not the keyboard or a screen reader, so it was a duplicate link to the same person
+  in the tab order for the length of the flight. Same instrument `.demote-chipface` already uses.
+- **Dead weight removed:** `HANDOFF_HOLD` (from the era when the traveller faded) and `handoffPending`
+  (every caller wants the identity — `handoffSpouseId`). `PinRect.dir` typed to the zone union.
+
+### 18.12 Carried forward
 
 - Design doc §22.2b still reads "deferred" for the kin bake (§17) and has no as-built section for any of
   §18. By house convention the DECISIONS belong there: the marriage-cost-2 ruling, the tier pitch, the
@@ -1631,3 +1688,10 @@ cries wolf is worth less than one with fewer checks:
   that actually broke — measures a seat that is not stale under rapid navigation.
 - Production 404s and the new 301 path remain dev-verified only (§16.3): `npm run build && npm run preview`
   before shipping.
+- **The traveller has no probe of its own.** `probe-flight` covers it only incidentally. It wants one that
+  pins what actually broke during the build: lands ON the seat (not near it), stays solid end to end,
+  retires only after the real chip is revealed, measures a seat that is not STALE under rapid navigation,
+  and — the case a probe would have caught first — a seat that is inside a carousel window.
+- **`.featured-slot`'s height glide is still a fixed 300ms** while the rows now ride `rowClockMs()`. It
+  measures in step today (§18.10), because the glide finishes inside the flight either way. If the flight
+  clock moves much further it should be put on the same store rather than re-verified by hand.

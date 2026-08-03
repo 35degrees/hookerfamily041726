@@ -417,7 +417,7 @@ let panDir: 'up' | 'down' | 'lateral' = 'lateral';
 export function capturePanDir(dir: 'up' | 'down' | 'lateral'): void {
 	panDir = dir;
 }
-/** THE ARMY (see ROW_TRAVEL): every row — leaving AND arriving — travels this one direction. */
+/** THE ARMY (see rowTravel): every row — leaving AND arriving — travels this one direction. */
 export function getPanDir(): 'up' | 'down' | 'lateral' {
 	return panDir;
 }
@@ -435,9 +435,6 @@ export function getPanDir(): 'up' | 'down' | 'lateral' {
 export function handoffSpouseId(spouseIds: readonly string[]): string | null {
 	if (panDir !== 'down') return null;
 	return spouseIds.find((id) => id !== clickedId && rectSnapshot.get(id)?.dir === 'up') ?? null;
-}
-export function handoffPending(spouseIds: readonly string[]): boolean {
-	return handoffSpouseId(spouseIds) !== null;
 }
 
 // The PIVOT — the box the demoted card shrinks INTO (the focus we're leaving, which becomes a
@@ -457,7 +454,8 @@ export function getPivotId(): string | null {
 // snapshot rect for the whole out-transition, so it leaves layout flow at the RIGHT spot and the
 // incoming boxes settle without being shoved. This is why animate:flip had to go: its fix() runs
 // AFTER the new boxes are inserted (each.js), so it measured — and pinned — the shoved position.
-type PinRect = { left: number; top: number; width: number; height: number; dir?: string };
+type ZoneDir = 'up' | 'down' | 'lateral';
+type PinRect = { left: number; top: number; width: number; height: number; dir?: ZoneDir };
 let rectSnapshot = new Map<string, PinRect>();
 export function captureRects(boxes: Iterable<Element>): void {
 	const next = new Map<string, PinRect>();
@@ -468,7 +466,7 @@ export function captureRects(boxes: Iterable<Element>): void {
 		const r = el.getBoundingClientRect();
 		// dir = the box's ZONE (data-flight-dir). Carried so a consumer can ask which row a person was
 		// standing in when the click happened — see handoffPending.
-		next.set(id, { left: r.left, top: r.top, width: r.width, height: r.height, dir: el.dataset.flightDir });
+		next.set(id, { left: r.left, top: r.top, width: r.width, height: r.height, dir: el.dataset.flightDir as ZoneDir | undefined });
 	}
 	rectSnapshot = next;
 }
@@ -477,6 +475,7 @@ export function captureRects(boxes: Iterable<Element>): void {
 // later nav with NO click (back/forward) can't reuse a stale id / direction / pinned rect.
 export function clearFlightCaptures(): void {
 	rowClock = null; // per-navigation: the next nav derives its own row/demote tempo
+	rowPitch = null;
 	clickedId = null;
 	panDir = 'lateral';
 	pivotId = null;
@@ -1110,10 +1109,10 @@ export function morphIn(node: Element, params: { id: string }) {
 			}
 		};
 	}
-	// No on-screen origin → arrive from the ARMY's trailing edge (see ROW_TRAVEL): the pan direction
+	// No on-screen origin → arrive from the ARMY's trailing edge (see rowTravel): the pan direction
 	// decides, so this row steps in with every other row instead of always rising from below. One tier
 	// pitch, on the shared row clock.
-	const D = panDir === 'down' ? -ROW_TRAVEL : ROW_TRAVEL;
+	const D = panDir === 'down' ? -rowTravel() : rowTravel();
 	return {
 		duration: rowClockMs(),
 		easing: cubicOut,
@@ -1154,7 +1153,7 @@ export function slideChip(_node: Element) {
 }
 
 // ── THE COUPLED PUSH + THE HAND-OFF (Aug 3) ────────────────────────────────────────────────────
-// ROW_TRAVEL is ONE constant with TWO consumers: the entering row's rise/settle (revealPending, in
+// rowTravel() is ONE measurement with TWO consumers: the entering row's rise/settle (revealPending, in
 // +page.svelte, which imports it) and the leaving row's push (flyOut, below). They must be the same
 // number, on the same clock, with the same curve, or the two rows are not one motion. Exported for
 // exactly that reason — a second literal would drift the moment either side is tuned.
@@ -1183,7 +1182,29 @@ export function slideChip(_node: Element) {
 // parents" — the tier that isn't drawn but is unambiguously there. A children row leaving downward moves
 // into the GRANDCHILDREN seat below a connector that would read "Five grandchildren". They fade out
 // before they arrive, so the seat is implied and never asserted. Destination, not escape.
-export const ROW_TRAVEL = 145;
+const ROW_TRAVEL_FALLBACK = 145;
+/**
+ * The tier pitch, DERIVED rather than hardcoded — one row's seat to the next. It is measurable in one
+ * subtraction: a row's top to the featured slot's top spans exactly that row plus the connector under
+ * it (105 → 250 today = 75 + 70 = 145, identical on every card at the current density).
+ *
+ * Measured rather than frozen because it is a LAYOUT fact, not a design choice, and Phase 2.75 is going
+ * to change it: density steps re-tune card geometry and the children-row cap per viewport height, at
+ * which point a literal 145 would quietly become wrong in exactly the way that is hardest to see — the
+ * rows would still move, just not by a tier. Reading it keeps the rule ("one tier") true instead of the
+ * number. Falls back to the measured constant when there is no parents row to measure against (a card
+ * with no parents, or a cold path with no snapshot).
+ */
+export function rowTravel(): number {
+	if (rowPitch !== null) return rowPitch;
+	const slot = document.querySelector('.featured-slot')?.getBoundingClientRect();
+	let top: number | null = null;
+	for (const r of rectSnapshot.values()) if (r.dir === 'up') top = top === null ? r.top : Math.min(top, r.top);
+	const derived = slot && top !== null ? Math.round(slot.top - top) : 0;
+	// Sanity band: a plausible tier is a chip plus a connector, never a stray reading off a mid-flight rect.
+	rowPitch = derived >= 90 && derived <= 260 ? derived : ROW_TRAVEL_FALLBACK;
+	return rowPitch;
+}
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
 // THE ARMY. Direction is the CAMERA PAN, never the row's own zone — every row moves the same way at the
 // same moment, leavers and arrivers alike, like ranks of soldiers stepping off together. Nobody marches
@@ -1195,6 +1216,7 @@ const ROW_MS_FALLBACK = 420; // only when the demote clock can't be derived (no 
 // parent chip" (Sam). Not their own 300ms dash: at 145px over 300ms a row read as racing to leave. Same
 // inputs as shrinkTo's demoteDuration, so the rows and the demoting card are literally one tempo.
 let rowClock: number | null = null;
+let rowPitch: number | null = null; // per-navigation, cleared with the rest of the captures
 export function rowClockMs(): number {
 	if (rowClock !== null) return rowClock;
 	const heroOrigin = clickedId ? rectSnapshot.get(clickedId) : undefined;
@@ -1230,13 +1252,24 @@ const HANDOFF_TEMPO = 1.08;
 // stay under a near-zero opacity while it is large.
 const FACE_SWAP_FROM = 0.45;
 const FACE_SWAP_TO = 0.85;
-const HANDOFF_HOLD = 0.72; // the hand-off stays solid this far along, then fades into its seat
 // A/B toggle (the DECK_GHOSTS pattern): true = the traveller crosses IN FRONT of the growing card via a
 // portalled ghost; false = she rides behind it at z −1 with the rest of the row. Sam's eye decides.
 const HANDOFF_IN_FRONT = true;
 const HANDOFF_GHOST_MAX_MS = 4000; // hard cap: the traveller can never outlive its own navigation
 const UNION_GROW_FROM = 0.45; // the union row holds at nothing this far into the journey, then grows in
 const HANDOFF_SAMPLES = 30; // keyframes the settle curve is sampled into (WAAPI takes no JS easing)
+/**
+ * WAAPI accepts no JS easing, so every hand-off animation is SAMPLED off the house curve rather than
+ * approximated by a lookalike bezier. One sampler for all of them: the shell, the destination face and
+ * the outgoing face are then guaranteed to be reading the same curve at the same offsets, which is the
+ * only thing keeping a two-layer traveller in register. `build` receives (t = clock, e = distance).
+ */
+function sampleCurve(settleS: number, build: (t: number, e: number) => Keyframe): Keyframe[] {
+	return Array.from({ length: HANDOFF_SAMPLES + 1 }, (_v, i) => {
+		const t = i / HANDOFF_SAMPLES;
+		return build(t, settleS ? easeOutBack(t, settleS) : cubicOut(t));
+	});
+}
 
 /**
  * A parent chip carries two rows; the spouse chip it becomes carries three — the union line ("m. 1752",
@@ -1336,26 +1369,17 @@ function crossfadeToSeatFace(
 	// keyed off `e` (distance covered), never `t` (clock) — see FACE_SWAP_FROM
 	const band = (e: number) =>
 		e <= FACE_SWAP_FROM ? 0 : Math.min(1, (e - FACE_SWAP_FROM) / (FACE_SWAP_TO - FACE_SWAP_FROM));
-	const frames: Keyframe[] = Array.from({ length: HANDOFF_SAMPLES + 1 }, (_v, i) => {
-		const t = i / HANDOFF_SAMPLES;
-		const e = settleS ? easeOutBack(t, settleS) : cubicOut(t);
-		const Sx = 1 + e * (sx - 1);
-		const Sy = 1 + e * (sy - 1);
-		return {
-			transform: `scale(${cx}, ${(snap.width * Sx) / (dst.width * Sy)})`,
-			opacity: band(e),
-			offset: t
-		};
-	});
+	// Sampled through the SAME curve the shell rides (sampleCurve), so the face can never drift out of
+	// register with the box it is riding inside — the one desync that would show as a tearing chip.
+	const frames: Keyframe[] = sampleCurve(settleS, (t, e) => ({
+		transform: `scale(${cx}, ${(snap.width * (1 + e * (sx - 1))) / (dst.width * (1 + e * (sy - 1)))})`,
+		opacity: band(e),
+		offset: t
+	}));
 	face.animate(frames, { duration: ms, easing: 'linear', fill: 'forwards' });
-	// The outgoing face fades on the SAME distance-keyed band, sampled the same way, so the two are one
-	// crossfade rather than two schedules that happen to overlap.
+	// The outgoing face fades on the SAME distance-keyed band, off the same sampler.
 	own.animate(
-		Array.from({ length: HANDOFF_SAMPLES + 1 }, (_v, i) => {
-			const t = i / HANDOFF_SAMPLES;
-			const e = settleS ? easeOutBack(t, settleS) : cubicOut(t);
-			return { opacity: 1 - band(e), offset: t };
-		}),
+		sampleCurve(settleS, (t, e) => ({ opacity: 1 - band(e), offset: t })),
 		{ duration: ms, easing: 'linear', fill: 'forwards' }
 	);
 }
@@ -1402,15 +1426,11 @@ function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: numb
 		const sx = dst.width / snap.width;
 		const sy = dst.height / snap.height;
 		const settleS = demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(dst.width, dst.height));
-		const frames: Keyframe[] = Array.from({ length: HANDOFF_SAMPLES + 1 }, (_v, i) => {
-			const t = i / HANDOFF_SAMPLES;
-			const e = settleS ? easeOutBack(t, settleS) : cubicOut(t);
-			return {
-				transform: `translate(${e * dx}px, ${e * dy}px) scale(${1 + e * (sx - 1)}, ${1 + e * (sy - 1)})`,
-				opacity: 1,
-				offset: t
-			};
-		});
+		const frames: Keyframe[] = sampleCurve(settleS, (t, e) => ({
+			transform: `translate(${e * dx}px, ${e * dy}px) scale(${1 + e * (sx - 1)}, ${1 + e * (sy - 1)})`,
+			opacity: 1,
+			offset: t
+		}));
 		const timing: KeyframeAnimationOptions = {
 			duration: ms,
 			// LINEAR here on purpose: the curve is already baked into the sampled offsets above. An easing
@@ -1439,6 +1459,12 @@ function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: numb
 			const ghost = node.cloneNode(true) as HTMLElement;
 			ghost.className = 'handoff-ghost';
 			ghost.removeAttribute('data-flight-id');
+			// The clone contains a real <a href>. pointer-events:none stops the mouse but not the KEYBOARD
+			// or a screen reader, so without this there is a second, duplicate link to the same person in
+			// the tab order for the length of the flight. `inert` is the same instrument .demote-chipface
+			// already uses for its own decorative copy of a chip.
+			ghost.setAttribute('inert', '');
+			ghost.setAttribute('aria-hidden', 'true');
 			ghost.style.cssText =
 				`position: fixed; left: ${snap.left}px; top: ${snap.top}px; width: ${snap.width}px; ` +
 				`height: ${snap.height}px; margin: 0; z-index: 50; pointer-events: none; transform-origin: top left;`;
@@ -1461,18 +1487,25 @@ function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: numb
 			// is already at full opacity, so the removal exposes an identical, already-solid object: the swap
 			// is invisible and the seat is never empty for a frame. The seat leaving the DOM (a newer
 			// navigation) retires the ghost too, and a hard cap guarantees it can never outlive the page.
-			const retire = () => ghost.remove();
-			anim.finished.catch(retire);
-			const t0 = performance.now();
-			const watch = () => {
-				if (!ghost.isConnected) return;
-				if (!seat.isConnected || performance.now() - t0 > HANDOFF_GHOST_MAX_MS) return retire();
-				const revealed =
-					!seat.hasAttribute('data-pending') && Number(getComputedStyle(seat).opacity) > 0.98;
-				if (revealed) return retire();
-				requestAnimationFrame(watch);
+			const retire = () => {
+				obs.disconnect();
+				clearTimeout(cap);
+				ghost.remove();
 			};
-			requestAnimationFrame(watch);
+			anim.finished.catch(retire);
+			// Observed, not polled. The old watcher ran getComputedStyle on the seat EVERY FRAME until the
+			// reveal — a forced style recalc per frame, mid-flight, to answer a question the DOM can simply
+			// announce. `data-pending` is removed at the instant revealPending accepts the chip, and the
+			// traveller's own chip is now revealed as a STEP (see the split reveal in +page.svelte), so the
+			// attribute going away IS the reveal completing; no opacity sampling is needed to confirm it.
+			const obs = new MutationObserver(() => {
+				if (!seat.isConnected || !seat.hasAttribute('data-pending')) retire();
+			});
+			obs.observe(seat, { attributes: true, attributeFilter: ['data-pending'] });
+			// Belt: a newer navigation can remove the seat without ever touching the attribute, and nothing
+			// may outlive its own flight.
+			const cap = setTimeout(retire, HANDOFF_GHOST_MAX_MS);
+			if (!seat.hasAttribute('data-pending')) retire(); // already revealed (reduced motion / cold path)
 			return;
 		}
 		node.animate(frames, timing);
@@ -1524,7 +1557,8 @@ export function flyOut(node: Element, params: { key: string }) {
 	const zoneDir = (node as HTMLElement).dataset.flightDir;
 	if (snap && (zoneDir === 'up' || zoneDir === 'down') && (panDir === 'up' || panDir === 'down')) {
 		// THE ARMY: the pan direction, not the row's zone. Every row steps the same way.
-		const push = panDir === 'down' ? ROW_TRAVEL : -ROW_TRAVEL;
+		const pitch = rowTravel();
+		const push = panDir === 'down' ? pitch : -pitch;
 		// A parent leaving on a PARENT promotion is the hand-off case (the other parent becomes the new
 		// focus's spouse), and it needs a longer life than a row push to cover its diagonal. It is not a
 		// coupled push either way: on that navigation the arriving parents morph in from their own captured

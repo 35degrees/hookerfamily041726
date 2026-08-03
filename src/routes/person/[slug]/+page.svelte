@@ -23,9 +23,8 @@
 		getFlightKind,
 		getPanDir,
 		rowClockMs,
-		handoffPending,
 		handoffSpouseId,
-		ROW_TRAVEL
+		rowTravel
 	} from '$lib/transitions/flight';
 	import { ccRoster } from '$lib/state/ccRoster.svelte';
 	import { unlockFlight } from '$lib/state/flightLock';
@@ -206,7 +205,7 @@
 				// morphIn uses. When a held parent reveals HERE (CC arrival), it emanates from the landed card
 				// exactly as the children do, instead of the flat opacity fade it used to get. 150px travel,
 				// gradual deceleration tail (the old 28px / hard-out covered ~1/3 the distance, "hit a wall").
-				// THE ARMY (flight.ts, ROW_TRAVEL): direction is the CAMERA PAN, not the row's own zone, so
+				// THE ARMY (flight.ts, rowTravel): direction is the CAMERA PAN, not the row's own zone, so
 				// every row — arriving and leaving — steps the same way at the same moment. The arriving row
 				// enters from the pan's TRAILING edge, which is why it can never cross the row leaving through
 				// the leading edge. One tier pitch, on the shared demote clock: same constants as flyOut, so
@@ -215,11 +214,11 @@
 				const fromY =
 					pan === 'lateral'
 						? el.dataset.flightDir === 'down'
-							? -ROW_TRAVEL
-							: ROW_TRAVEL
+							? -rowTravel()
+							: rowTravel()
 						: pan === 'down'
-							? -ROW_TRAVEL
-							: ROW_TRAVEL;
+							? -rowTravel()
+							: rowTravel();
 				el.animate(
 					[
 						{ opacity: 0, transform: `translateY(${fromY}px)` },
@@ -251,7 +250,7 @@
 		// THE ANTICIPATED NOTCH. `.flat` normally holds until landing, because a carved corner on a card
 		// that is still growing reads as a blur. But in ONE scenario the card acquires a passenger before
 		// it lands: a promoted parent whose partner is crossing from the parents row to the notch (see
-		// flight.ts handoffPending). She was arriving onto a card with no notch yet — sitting ON the corner
+		// flight.ts handoffSpouseId). She was arriving onto a card with no notch yet — sitting ON the corner
 		// for ~90ms until landing carved it out from under her — which breaks the docking read the notch
 		// exists to create. So for that case only, the notch is carved EARLY, once the card is within
 		// NOTCH_ANTICIPATE of its final size and the cutout is therefore already at its settled dimensions.
