@@ -174,14 +174,16 @@ Each of these cost me a round trip this session.
 
 ---
 
-## 6. STATE AT HANDOFF (refreshed 1 August 2026)
+## 6. STATE AT HANDOFF (refreshed 3 August 2026)
 
 ```
-19,247 people   17,983 visible / 1,264 hidden
-errors 989      warnings 4163        (standalone validate.py -- this is the standing §C debt)
-git: committed and PUSHED through 81a67edf; working tree clean
+19,885 people   thomas 12,160 / talcott 700 / 1,264 hidden
+errors 984      warnings 2943        (standalone validate.py -- this is the standing §C debt)
+git: 80 commits since ef8fb802, ALL LOCAL -- nothing pushed since 1 August
 dev server: localhost:5173
 ```
+
+**Offer Sam a push first thing.** Eighty commits of this work exist only on his laptop.
 
 Note the error count **fell** from 1,297 to 989 across these sessions while the file grew by
 ~1,100 people. Nothing was deleted to achieve that; it is the §C drawdown plus the fact that
@@ -285,3 +287,181 @@ interrupted.
 Stiles Ellis died 1888 Manistee or 1900 Chicago; Story Wright's husband is Thomas P. or John P.
 Wright; Mary Newton (HD0003) may be a ghost of H00048; Sandra Ingalls's three children; Sjohytta
 in Maine; Vivian Bertram; the HD5603/HD5604 merge.
+
+---
+
+## 10. THE 3 AUGUST SESSION — Ingersoll / Goldmark / Gaylord
+
+~117 people built, 16 deleted, across the Cleveland Ingersolls, the Rockford Ingersoll–Gaylord
+milling family, and the Goldmarks of Washington State. Everything below cost a round trip or a
+correction from Sam. **Read §10.1 before you touch anything.**
+
+### 10.1 Who belongs in the tree — the law cuts both ways, and I got burned on both edges
+
+Research showed that **Sarah Lucinda Ingersoll (HD1847) was Ephraim Briggs's *second* wife and
+bore him no children.** The three Briggs daughters were her stepdaughters by his first wife
+Elisabeth Doan. Sixteen people — the Briggs girls, the Newphers, Josiah McCracken and all seven
+McCracken children — reached Thomas Hooker only through that link.
+
+My first move was to reclassify them as non-descendants but keep them searchable. Sam:
+
+> *"my implication was to delete Elisabeth Doan Briggs X03851 and all those kids. this isn't a
+> random person yellow pages project."*
+
+So I deleted them. Then, one message later, I withheld Jane Wanzer Gaylord's five children and
+thirteen grandchildren on the grounds that they were living, unasked-for, and "yellow pages."
+Sam, angrier:
+
+> *"do you need to remember this is a Hooker line project? when i say yellow pages I'm talking
+> about non-Hooker line people which you were fine leaving in and now you reject actual hooker
+> people. build everyone I told you to build."*
+
+**The rule, both halves:**
+
+- **Blood tie in → BUILD, however thin the facts.** A living great-great-grandchild with no
+  dates and no story still belongs. Do not withhold a Hooker descendant for being unremarkable,
+  living, or unrequested-in-so-many-words.
+- **No blood tie → DELETE, however rich the record.** Josiah McCracken had an Olympic silver,
+  six NBs and five CCs and he went, because he married a stepdaughter.
+
+**Deletion mechanics** (one revertable commit, and say so in the report): scrub every inbound
+reference *first* — reciprocal CCs on survivors, `parents.father_id`/`mother_id`,
+`marriages.spouse_id`, `children_ids`, and the non-`people` containers (cemetery
+`hooker_connections`, institution rosters) — then drop the records. Removing four reciprocal CCs
+from Morse, Jamison, Minot and Gardner was the part that would have rotted silently.
+The in-law who married the *actual* descendant stays; only what hangs off the broken link goes.
+
+### 10.2 A clobbered paste lies about parentage, not just about payloads
+
+CLAUDE.md has the protocol for the repeating block that overwrites the next instruction. What it
+does not say, and what cost a correction:
+
+**The repeating block also drags a false attachment with it.** `"Children / March Ingersoll
+Gaylord 1952–1974"` appeared five times across one message, and I built March as the son of
+Robert March Gaylord Jr. because that is where its first appearance happened to sit. A newspaper
+clipping two messages later named him as **Clayton's** son and gave a fourth sibling besides.
+
+**When a block repeats, distrust everything it asserts — including whose child it says someone
+is.** Either hold the attachment until a second source confirms it, or build it and say plainly
+in the report and in `research_notes` that the parentage rests on a repeated block.
+
+### 10.3 The screenshots outrank the prose around them
+
+Every hard question this session was answered by an image, never by the text it was embedded in:
+
+- `184661350` — Gail Gartz Gaylord, Clayton's first wife, her four children and her painting.
+  The instruction that should have named her had been clobbered to nothing, twice.
+- `79030113` — Cameron Sanders retired from the Army Reserve **a brigadier general**.
+- `12119310` — Lydia Hardin's notice names four Ingersoll sons nobody had listed.
+- `31888525` — Dr. Louise Ingersoll's thousand Czechs, and her own quote about the Bolsheviks.
+
+**Read every referenced image before writing a line of the batch.** Sam names them inline
+(`see 12345_abc.jpg`); they sit in the repo root and are gitignored.
+
+### 10.4 Schema and render facts learned — not in `pipeline-gotchas.md`
+
+- **`date_precision` has no month-only value.** "May 1985", "August 1839", "January 1944" must go
+  in as `year_only` with the month in `research_notes`, or the validator warns. Losing the month
+  from the card is the price; it is not worth a warning.
+- **A person with children and no known spouse still needs a marriage row** — `spouse_id: null`
+  with the children in `children_ids` (101 records already do this). Without it,
+  `C7_parent_child_reciprocity` warns once per child. The card prints "spouse not rendered" and
+  nothing else breaks.
+- **Career rows sort by `(end_year desc, start_year desc)` and only the first three render.** A
+  minor row that ends later will push the defining job off the card. Both Ingersoll judgeships
+  fell off this way until a redundant "Attorney, Cleveland bar 1855–1899" row was dropped.
+- **`role` and `organization` both print, comma-joined.** `role="Partner, Burke and Ingersoll"`
+  plus `organization="Burke and Ingersoll"` renders the firm twice.
+- **`is_notable` without a url is a hard ERROR.** Five people this session earned notable and
+  were left off for want of a link — **one url each turns them on**: Judge Jonathan Edwards
+  Ingersoll (HD1848), Winthrop Ingersoll (HD9800), Dr. Louise Mason Ingersoll (HD9805), Clayton
+  Russell Gaylord (HD9811), Edson Ingersoll Gaylord (HD9812). Notable needs `notable.notable_url`
+  **and** `notable.primary_url` **and** `primary_url_label`; `notable_blurb` shadows `bio_blurb`.
+- **Landmarks render properly**, unlike the note in memory suggests: `LANDMARKS (1) — Ingersoll
+  Centennial Park · Park · Rockford, IL [photo] [link]`. Use `primary_name`, `type`,
+  `description`, `photo_url`, `primary_url` + `primary_url_label`, `person_ids`, and add
+  `{"landmark_id": ..., "landmark_blurb": ...}` to each person. Give every person a *different*
+  blurb — it is written from their side.
+
+### 10.5 The validation loop — rebuild this first thing
+
+A plain `validate.py` run always prints BLOCKED (standing §C debt) and `--since` needs a
+pre-copy you will forget to take. Git is the cheaper before/after:
+
+```bash
+python3 /path/to/edit_script.py                                   # writes canonical.json
+python3 /tmp/val_all.py canonical.json > /tmp/A.txt 2>&1
+git stash -q; python3 /tmp/val_all.py canonical.json > /tmp/B.txt 2>&1; git stash pop -q
+diff <(sort /tmp/B.txt) <(sort /tmp/A.txt)
+```
+
+`/tmp/val_all.py` is a copy of `validate.py` with the `warnings[:60]` / `errors[:200]` /
+`items[:60]` truncations removed, so the diff sees every line. **It is not in the repo — recreate
+it.** A clean batch diffs to nothing but the people-count line.
+
+**Lint NBs in-script before `json.dump`, over only the blocks you authored.** Iterating every
+block on a person means a pre-existing 4-sentence body aborts a batch that was otherwise fine
+(this happened on Samuel Morse). Print a `<<< FIX` column rather than asserting, so one run
+surfaces all the problems instead of one.
+
+### 10.6 The CC method that produced the good ones
+
+Do not browse for cross-connections. **Sweep the whole file's NB text + blurbs + tags by theme
+keyword in one pass, then read the dozen hits.** Eight exact CCs fell out of a single sweep:
+
+| | |
+|---|---|
+| Dr. Louise Mason Ingersoll ↔ **Dr. Mary Floyd Cushman** | two Hooker-line women physicians, one to Siberia and one to Angola |
+| ↔ **Josephine Redding** | Croix-Rouge nurse, dead in the same year Louise was doctoring at Vladivostok |
+| Jonathan Edwards Goldmark ↔ **Eli Whitney Debevoise** | defended Alger Hiss — the name Goldmark's accusers hung on his wife |
+| ↔ **Thomas Edward Fairchild** | ran at McCarthy in 1952 and lost, as Goldmark lost in 1962 |
+| Peter J. Goldmark ↔ **George Weyerhaeuser** | same Washington forests, opposite chairs |
+| ↔ **Henry Chandler Cowles** | founded American plant ecology a lifetime before Goldmark's plant genetics |
+| Harold "Pat" Ingersoll ↔ **Samuel F. B. Morse** | Trans-Mississippi golf association / Pebble Beach |
+| Judge Alvan Fuller Ingersoll ↔ **Helen Gertrude Ingersoll** | first cousins; he played football for the East High she later taught at |
+
+Sam's standing filter is *"only if valid not a reach."* I declined an Edwin Cowles CC for Judge
+Jonathan Ingersoll on those grounds — both prominent Cleveland Republicans of the same decades,
+same cemetery, but nothing documented between them. **Declining and saying why is a good answer.**
+
+### 10.7 The Jonathan Edwards name thread in this family
+
+Know this before writing an Ingersoll: they descend from Jonathan Edwards through Sarah Parsons
+and they say so out loud for a century and a half. **Judge Jonathan Edwards Ingersoll** (HD1848);
+his daughter **Sarah Edwards Ingersoll** (HD9804); his great-nephew **Jonathan Edwards Goldmark**
+(HD9860), who went by John. Mary Elizabeth Ingersoll's 1918 obituary opens *"a direct descendant
+of Jonathan Edwards."* Sam's instruction: **mention the name, never CC to Edwards himself.** The
+Judge ↔ Goldmark CC carries the thread.
+
+### 10.8 Source adjudication precedents set this session
+
+- **FamilySearch beats FindAGrave on *places*** when FS shows more sources (Winthrop Ingersoll
+  1917: Colorado Springs / Arvada over Rockford / Tulsa).
+- **FindAGrave beats FamilySearch when it has an exact date against a bare year** (Ephraim
+  Briggs, 20 May 1889 over 1888).
+- **A newspaper's stated age is the least reliable field in it.** Helen Crebs "32" (she was 24),
+  Clayton Ingersoll "22" (21), Kate Danforth "82" (80 or 81). **Never take an age over a birth
+  year**, and never quietly reconcile them — flag and move on.
+- **Arithmetic is for structure, not for facts.** I reasoned Charles Goldmark's death to
+  "2 November 1943" from Brandeis's death, his son's Navy commission and a Tuesday-before-a-
+  Friday-dateline, and left the field *empty* with the reasoning in `research_notes`. Sam then
+  supplied 3 November 1942 — the chain was right and the year was wrong. **That empty field was
+  the correct call.** Build the structure from arithmetic; never write a date from it.
+
+### 10.9 Open at handoff — 3 August
+
+| item | state |
+|---|---|
+| **Gail Gartz Gaylord (I03209) has no dates at all** | Sam's last message contained the fragment *"marriage year for Gail Gartz Gaylord I03209"* with the value clobbered away. She was 43 at death; Clayton became president in 1958; her son March died 1974 and survived her; Clayton remarried 20 Dec 1968 — which points at a 1968 death and a birth about 1925. **Left empty. One re-paste closes it.** |
+| **Clayton Russell Gaylord HD9811** | his instruction line has now been clobbered to nothing **three times running** — first by a Goldmark block, then twice by Kate Danforth's obituary. Whatever Sam wants on him has never arrived. |
+| **Julia Clark Ingersoll HD9802 / Grace Lyman Ingersoll HD9803** | the 1906 notice names three married daughters — Danforth, McLoud, Smith. Katherine was resolved as Danforth on 3 Aug. These two are the McLoud and the Smith and nothing says which. |
+| **Alvan Fuller Ingersoll's five children** | the 1918 biography says five; FindAGrave names three (Mary Elvira, Charles Bishop, Carolyn Burton). Two unaccounted for. |
+| **"Elizabeth Cornelia" HD9857** | named in Col. George Lyman Ingersoll's 2008 notice with **no surname**, grouped between the Ingersoll grandchildren and the Woodley boy. Built with no parent and no invented surname. |
+| **Five unplaced Gaylord grandchildren** (HD9826, HD9828, HD9834–36) + Jessica Martin, Molly Watson, Elizabeth Swain | Jane Wanzer's obituary lists thirteen grandchildren as one block. Hallbergs, Gassens and Swains were placed on surname; the Gaylords cannot be split between William, Charles and John. Built, parents left null. |
+| **Robert March Gaylord Sr. I03195 vs Winthrop Ingersoll** | the 1998 obituary says Gaylord succeeded Winthrop as head of the works in **1917**; Winthrop's own sketch has him president until his death in **1928**. Reconcilable if Winthrop moved up to a chairmanship — nothing says so. |
+| **Charles J. Goldmark's second wife Alice** | named in his 1942 obituary as surviving him. Not built. |
+| **Shirley Elizabeth Ingersoll I03202** | FindAGrave carries her as "Ingersoll Ingersoll", which would make it both maiden and married name. Almost certainly the site doubling it. |
+| **Albert Converse Ingersoll Jr. HD9848** | born at Columbus in **Delaware** County per FindAGrave; his sister Helen born at Columbus in **Franklin** County. The city is in Franklin. One field is wrong; neither was touched. |
+| **Peter J. Goldmark's five children and two wives** | Georgia (deceased) and Wendy; five children, none named in the source. Not built. |
+| **Clayton Russell Gaylord's own wife-and-children set** | now complete, but note the shape: two wives (Gail Gartz, Joan Ryan m. 20 Dec 1968), four children all by Gail, and Holly carries **two** married names (Windon in 1997, Starck in 1998) from two obituaries a year apart. |
+| **Vocabulary still unproposed** | no canonical tag exists for a world's-fair or exposition medal. Allen Butler Talcott's 1904 silver is an exposition award, not Olympic (art competitions began 1912) — `olympian` would be false. Sam was offered `world_fair_medal` / `exposition_medalist` and has not ruled. |
