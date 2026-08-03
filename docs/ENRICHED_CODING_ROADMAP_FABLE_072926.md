@@ -1,6 +1,8 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: July 29, 2026 — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_072926.md (the what/why for every item below).**
+**The 080326 edition (August 3) adds §17 — THE KIN-DISTANCE BAKE SHIPPED, closing §15 and the §19.4 debt behind it. The deck's SAME-LINE test no longer proxies kinship with anything: `regenerate-data.js` stamps a per-CC `kin_distance` (edges through the nearest shared ancestor, ONE marriage allowed to bridge the two blood lines at a cost of 2), and `isVerticalMove` reads it. Uncles, aunts and parents-in-law ride vertical wherever the tidy tree seated them; second cousins, the in-laws of distant collaterals, and true strangers stay lateral. Also records the probe that was asserting the WRONG THING (a father-in-law logged as a cross-branch-peer control), and §17.4 — redirects.json wired as 301s after 673 entries of accumulated dead URLs.**
+
 **The 072426 edition (July 24) adds §15 — DECK VERTICAL MISFIRE (uncle/nephew rides horizontal). A confirmed bug surfaced during a content session: John Pierpont H00388 → uncle-guardian James Pierpont II H00116 transitions HORIZONTAL when it should be vertical. Diagnosed: the CC data is correct (`gen_delta = −1`); the flight engine's `sameLine` test proxies "same line" by seat distance (`|Δseats| ≤ 180`), and these genuine uncle/nephew sit far apart, so it falls through to lateral. NOT hacked mid-content-session. The proper fix is the long-planned §19.4 LCA/kin-distance bake (per-CC shared-common-ancestor depth, used instead of seat proximity). Deferred, scoped, and specced below. Design rationale: design doc §22.2b.**
 
 **This 071226 edition records the July 11 session: the (unplanned) CARD-TRANSITION MAINTENANCE PHASE is CLOSED and pushed — spouse carousel, demotion baseball-card model, velocity-ceiling physics, six ghosts dispositioned, Playwright probe arsenal standing. Statuses updated throughout; §7 added (state of play + what Phase 3a inherits). Repo-side session record: docs/CODING_HANDOFF.md.**
@@ -1246,8 +1248,12 @@ distance ≠ kin distance.
    lateral; direct-line dives unchanged. Add a probe asserting the John↔James
    vertical vector, `svelte-check` clean, SSR 200.
 
-**Status:** deferred to a Stream-B session (touches flight.ts + the bake + a probe).
-Not started; no code changed. Pick up on Sam's word.
+**Status: SHIPPED August 3 — see §17.** The diagnosis above held, with one correction found on opening
+the code: `SEAT_NEAR` had ALREADY been cut from the vertical test before this session (the mirror bug —
+Lovejoy and J.P. Morgan sit 0.4 seats apart and flew a family vertical as strangers), leaving
+`relationClass === 'direct'` as the whole test and every real uncle riding lateral as a stated interim
+cost. The bake specced here is what ended that interim. Step 2 landed as written except that `sameLine`
+also bridges ONE MARRIAGE — Sam's ruling the same day; see §17.2.
 
 **The 072926 edition (July 29) adds §16 — THE TALCOTT SEVERANCE SHIPPED. Phases 0/1/2a/2b and the validator guard, all landed and verified rather than assumed: zero chips reference a hidden id across 16,855 payloads, zero CC links resolve to a missing page, zero slugs moved. Also fixed a missing payload returning 500 instead of 404 — the dev server throws ENOENT and escapes the `res.ok` check — which had been mis-reporting retired slugs all along. Six open severance items (the 48 SEV_cc_to_hidden errors, `is_orbit` and the compact flag the tile styling needs, the empty grove, the stale `hidden_by_default` test, one interrupted payload audit, and the lateral-vs-vertical decision on John Talcott), plus the Stream-A debt the work surfaced. Design rationale: design doc §25.**
 
@@ -1301,7 +1307,9 @@ been mis-reporting retired slugs all along; would have hit all 1,264 severed URL
 
 - **Production 404s unverified.** The `+page.ts` fix is confirmed in dev only. Run
   `npm run build && npm run preview` before shipping.
-- **`redirects.json` is still unwired** — 510 entries, nothing in `src/` reads them.
+- ~~**`redirects.json` is still unwired** — 510 entries, nothing in `src/` reads them.~~
+  **CLOSED August 3 (§17.4).** Wired as 301s at 673 entries. The count is the argument: it grew
+  163 in five days off ordinary name corrections and birth-year fills.
 - **`table-index.json` is now gitignored** (3.4 MB off every push). Note CLAUDE.md's claim that
   `static/data/` is ignored is inexact — the `.gitignore` lists members individually.
 
@@ -1315,3 +1323,129 @@ Not UX work, but each one distorts what a card renders:
   (Was 3,138; a normalization pass cleared 2,909 — design §25.6.)
 - **341 education rows** carry a degree or year in a non-rendering key with no `dates`.
 - **2,087 career rows have no `start_year`** and render without a date.
+
+---
+
+## 17. AUGUST 3 — THE KIN-DISTANCE BAKE SHIPPED (closes §15 and the §19.4 debt)
+
+*(Stream B. The deferred item from §15, plus the §16.3 redirect wiring. Design rationale: design doc
+§22.2b, which still reads "deferred" and wants an as-built amendment.)*
+
+### 17.1 What was actually wrong when the session opened
+
+Not what §15 said. The seat proxy was already gone — someone had hit the mirror bug (Lovejoy → J.P.
+Morgan, collateral with `gen_delta −2`, seated 0.4 apart at 5292.15 vs 5291.75, flying a family-line
+vertical between two strangers) and cut `|Δseats| ≤ SEAT_NEAR` out of the test, leaving
+
+```ts
+gd != null && gd !== 0 && m?.relationClass === 'direct'
+```
+
+with a comment naming the cost honestly: every real uncle now rides lateral until the LCA bake lands.
+So the session's job was not "remove a bad proxy" but "supply the thing that was supposed to replace
+it." The standing `probe-deck-direction` was **already RED, 6/7**, on Aaron Burr Jr. → his aunt Mary
+Dwight — the same defect Sam reported on the Pierponts, sitting unnoticed in the probe suite. That was
+the red-first proof; no probe had to be written to manufacture one.
+
+### 17.2 What shipped — the bake
+
+**`regenerate-data.js`.** `bloodDistance()` walks each side's ancestors breadth-first (memoized per id,
+`KIN_MAX_DEPTH` 10) and takes the minimum `|a→LCA| + |LCA→b|`. `kinDistance()` wraps it with **one
+marriage hop allowed on each side**, priced at `KIN_MARRIAGE_COST = 2`. Emitted per CC as
+`kin_distance`, omitted entirely when null (`KIN_EMIT_CAP` 8), so the far/orbit majority costs nothing
+on the wire. Build cost: unmeasurable — full regenerate held at 8.8s.
+
+**Why marriage counts at all (Sam, same day):** `effectiveGen` had ridden marriages since §22.2a — a
+spouse of a grandparent is grandparent-tier — so with a blood-only kin test the two halves of ONE
+direction test disagreed: generation said "one tier up," kinship said "strangers," and the tie-break
+sent it sideways. Esther Edwards Burr H00378 → Daniel Burr X03446, her husband's father, came out
+`gd −1 / kin None` → lateral. One graph, one answer; both halves ride the marriage now.
+
+**Why the hop costs 2, not 1** — this is the whole tuning, and it was chosen on the numbers:
+
+| | ladder |
+|---|---|
+| blood | parent 1 · sibling/grandparent 2 · **uncle/niece 3** · **grandaunt 4** · **1C1R 5** · second cousin 6 |
+| in-law (+2) | **parent/child-in-law 3** · **spouse's grandparent 4** · **spouse's uncle 5** · grandniece's husband 6 |
+
+At cost 1 the in-laws of *distant* collaterals slip in: James Pierpont II → William Bristol, the husband
+of his grandniece, would verticalize on a tie nobody would call "up my line." At cost 2 it lands at 6
+and stays lateral, the documented blood ladder keeps its exact meaning, and every class Sam named goes
+vertical. `KIN_NEAR = 5` in `flight.ts` stays the single dial.
+
+**`flight.ts`.** `isVerticalMove` — the one test `deckDirFor` and `resolveLateralDir` must agree
+through — is now `gen_delta ≠ 0` AND (`'direct'` OR `kin_distance ≤ KIN_NEAR`). `SEAT_NEAR` was left in
+place as a commented tombstone rather than deleted.
+
+**Plumbing:** `camera.ts` (`kinDistance` on `CameraMove`) → `FeaturedCard.svelte`
+(`data-kin-distance` on the CC anchor) → `navigate.ts` (read at capture time, into the provisional move
+before `resolveLateralDir` reads it, and into the publish).
+
+**Scope of the change:** of 2,983 CC edges, 1,435 are collateral with a generation gap. 665 of those now
+ride vertical; the rest — same-generation cousins, orbit, and everything with no route inside the radius
+— are untouched.
+
+### 17.3 The probe that was asserting the wrong thing
+
+`probe-deck-direction` carried `aaron-burr-sr-1716 → jonathan-edwards-1703` as the **"cross-branch peer
+must stay LATERAL"** control, annotated as the Pennoyer→Strong class. It is nothing of the kind:
+Jonathan Edwards is Aaron Burr Sr.'s **father-in-law** (Burr married his daughter Esther) — the identical
+relationship Sam ruled vertical that morning. A mislabelled control had been defending the bug. Its
+expectation is corrected to TOP with the reason written into the case, and the coverage it was pretending
+to give is replaced by a real cross-branch peer: `john-morgan-1837 → francis-lovejoy-1854`, gen-gapped
+with no route on the family graph at all — which is also the pair sitting 0.4 seats apart, so it guards
+the retired seat proxy's grave at the same time.
+
+**Lesson worth keeping:** a green probe proves the code matches the expectation, never that the
+expectation matches the tree. Both of this session's real finds — the already-red aunt case and the
+mislabelled father-in-law — were in the probe suite the whole time.
+
+**New: `scripts/probe-deck-kin.mjs` (6/6).** Asserts the bake AND the flight, because a missing
+`data-kin-distance` would silently reinstate the bug with the flight logic perfectly correct. Cases:
+John Pierpont ↔ James Pierpont II (uncle, kin 3, both directions, reciprocating through the gen sign);
+Esther Edwards Burr ↔ Daniel Burr (parent-in-law, kin 3, both directions); Morgan → Lovejoy (no route);
+James Pierpont II → William Bristol (kin 6, the radius's outer edge).
+
+**Suite state:** deck-kin 6/6, deck-direction 8/8, ping-pong 5/5, phantom 4/4, jut 4/4, connector 2/2,
+physics 3/3, lock 3/3, probe-flight GREEN, probe-cards GREEN. `svelte-check` 2 errors, both the
+pre-existing `@fontsource` side-effect imports in `+layout.svelte`. **`probe-reciprocity` and
+`probe-arrival` are RED and were red at baseline** — verified by reverting `flight.ts` and re-running,
+not assumed. They assert the pre-deck flat-slide vector model and are stale; this change strictly
+improved `probe-arrival` (8 failures → 5, the uncle case stopped flashing both cards). They want
+rewriting against the deck or retiring — do it deliberately, not as a side effect.
+
+Sam's verdict on pixels: "Francis Thomas Fletcher Lovejoy X02851 is lateral, burrs are vertical looks
+good."
+
+### 17.4 redirects.json wired as 301s (roadmap §2.5 item 2, §16.3)
+
+`src/lib/data/redirects.ts` + a miss-branch in `person/[slug]/+page.ts`. Verified dead first:
+`/person/thomas-hooker-iii-1553` returned 404.
+
+**Payload-FIRST is the correctness rule, not an optimization.** The generated map holds 36
+self-redirects and **3 keys that are also live slugs** (`john-newton-1726`, `mary-hooker-1796`,
+`harriet-newton-1866` — a retired slug later re-issued to a different person by the collision rule).
+Consulting the map first would redirect three live pages away from themselves. Chains are followed (11
+exist) under a hop cap with a cycle guard, so a visitor gets ONE 301 to the final slug. The map is
+fetched only on a miss, never on the happy path, and a missing map degrades to a clean 404.
+
+Verified by curl: retired slug → 301 → 200; ID key `T00001` → 301 → `john-talcott-1594`; chain `HD3156`
+→ single 301; live-but-in-map → 200 with no redirect; unknown → 404.
+
+**Known and left alone:** 2 of the 673 entries (`dakota-edmund-burr-1981`,
+`ason-william-leroy-foster-2009`) 301 into the severance hole — both targets are Talcott-hidden, so the
+redirect is correct *data* pointing at a page that does not exist yet. It resolves itself on re-sew.
+**Still open from §16.3:** production 404s remain dev-verified only — `npm run build && npm run preview`
+before shipping, and that check now covers the 301 path too.
+
+### 17.5 What this does NOT fix
+
+`T01001 → T00011` (§16.2 item 6) still rides lateral and is untouched by the bake. John Talcott has no
+Hooker anchor anywhere in his descent, so `effectiveGen` cannot place him and `gen_delta` is null — and
+kin distance cannot help a move that has no generation SIGN to point with. It still needs the design
+decision in §16.2: accept orbit → lateral, or let `effectiveGen`/`relationClass` walk the full map so
+hidden people act as invisible scaffolding for motion.
+
+Also unchanged: `kin_distance` is baked for CC edges only. When the arc reopens (§19.4) or a
+connect-to-anyone modal needs it, the same function serves both — that was the point of baking a
+distance rather than a boolean.
