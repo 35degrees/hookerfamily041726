@@ -157,6 +157,13 @@
 	// The panel opened ITSELF (a child promotion) → it reveals as a plain fade, not the cascade. Cleared by
 	// the panel the moment the user touches the trigger, so a hand-driven toggle is always the loud one.
 	let siblingsQuiet = $state(false);
+	// SESSION PREFERENCE. Once a hand has been on the trigger the panel keeps that state as you travel:
+	// opening it on one card and finding it shut on the next reads as the app forgetting what you asked
+	// for. null = untouched, and only then does the auto-open on a child promotion apply. The panel still
+	// CLOSES for the flight itself and reopens at landing — same rule every incoming chip obeys, so nothing
+	// belonging to the new person paints before the card arrives — but from the user's seat it is simply
+	// open on every card they land on.
+	let siblingsPref: 'open' | 'closed' | null = $state(null);
 	// The panel closes on navigation (§20.5: the nudge was removed — Sam's call; not worth the fallout, and it
 	// leaves one fewer clock in the Slice-3 flight path). No transform anywhere now.
 	$effect(() => {
@@ -339,9 +346,14 @@
 		// drops from where its predecessor sits, 38ms apart, with a 2.5px micro-overshoot). Reusing that
 		// reveal rather than animating anything new is the whole point — the children that faded out below
 		// reappear here, as one gesture, whether there are two of them or sixteen.
+		// A standing preference reopens the panel on EVERY arrival, not just a child promotion.
+		if (siblingsPref === 'open' && showSiblings && !siblingsOpen) {
+			siblingsQuiet = true;
+			siblingsOpen = true;
+		}
 		if (openSiblingsOnLand) {
 			openSiblingsOnLand = false;
-			if (showSiblings) {
+			if (showSiblings && siblingsPref !== 'closed') {
 				siblingsQuiet = true; // self-opened → fade the column in, no cascade
 				siblingsOpen = true;
 			}
@@ -676,6 +688,7 @@
 				landed={featuredLanded && f.person.id === landedPersonId}
 				bind:open={siblingsOpen}
 					bind:quiet={siblingsQuiet}
+					onUserToggle={(o) => (siblingsPref = o ? 'open' : 'closed')}
 			/>
 		{/if}
 		{#each [f] as cur (cur.person.id)}

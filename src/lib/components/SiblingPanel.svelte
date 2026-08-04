@@ -24,6 +24,11 @@
 		 * used, so the next toggle is loud.
 		 */
 		quiet?: boolean;
+		/** Fired ONLY when a hand is on the trigger, never on a nav-driven open/close. The page turns this
+		 *  into a session preference: once you open the panel it stays open as you travel, and once you
+		 *  close it, it stays closed. Reported rather than inferred — the page cannot otherwise tell a user
+		 *  toggle from its own reset, and guessing that is how a sticky preference gets stuck. */
+		onUserToggle?: (open: boolean) => void;
 	};
 	let {
 		siblings,
@@ -31,7 +36,8 @@
 		anchorOffset,
 		landed = true,
 		open = $bindable(false),
-		quiet = $bindable(false)
+		quiet = $bindable(false),
+		onUserToggle
 	}: Props = $props();
 
 	let count = $derived(siblings.full.length + siblings.half.length + siblings.step.length);
@@ -230,6 +236,7 @@
 			paging = false;
 		}
 		open = !open;
+		onUserToggle?.(open);
 	}
 	function collapse(node: HTMLElement) {
 		const animate = userClosing && !prefersReducedMotion.current;

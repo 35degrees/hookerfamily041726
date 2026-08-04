@@ -1743,3 +1743,68 @@ would restyle every navigation, including the ones §18.10 just tightened.
 - **`.featured-slot`'s height glide is still a fixed 300ms** while the rows now ride `rowClockMs()`. It
   measures in step today (§18.10), because the glide finishes inside the flight either way. If the flight
   clock moves much further it should be put on the same store rather than re-verified by hand.
+
+---
+
+## 19. NEXT SESSION — SIBLING↔SIBLING AS AN IN-PLACE MUTATION (specced, not built)
+
+*(Aug 3–4. Sam's model, recorded verbatim in intent so the next session builds to a target rather than
+improvising. Nothing here is implemented.)*
+
+### 19.1 The insight
+
+A sibling promotion barely changes the sibling list. Promote X and the list loses X and gains the person
+you left — everyone else is unchanged. So the panel should **persist and mutate**, not tear down and
+rebuild. Today it closes on nav and reopens at landing, which throws away a list that was 90% correct and
+re-animates it; Sam: *"it's not like the siblings list changes for a sibling promotion, only the one
+sibling needs to be removed from the menu."*
+
+### 19.2 What it should look like
+
+- **The panel stays mounted** through a sibling→sibling navigation (it must still close/reopen for every
+  other arrival — that gating is what keeps incoming chips from painting mid-flight).
+- **The promoted chip vanishes instantly**, exactly as `flyOut`'s BUG-1 clicked-box rule already does: it
+  is becoming the featured card, and a second copy leaving is the ghost.
+- **Its neighbours slide to close the gap.** Chips are discrete objects that occupy real space, so the gap
+  is real and closing it is motion, not a re-layout.
+- **The demoted card flies INTO the vacated list** as a chip — the mirror of the parent→spouse hand-off,
+  and the reversal of §21.2's deliberate occlusion (which was correct only while the panel was always
+  shut: "a sibling has no such box — it lands in the closed panel, not a roster seat").
+- **The carousel scrolls to CATCH it**, visibly, *while* the card flies — Sam's ruling on the fork. The
+  traveller targets the seat's FINAL resting position, so the two motions resolve together rather than
+  sequentially.
+
+### 19.3 What it maps onto (build on these, do not re-roll)
+
+| need | existing machinery |
+|---|---|
+| neighbours closing the gap | `animate:flip` is **already on `.sib-item`** — survivors glide for free |
+| promoted chip vanishing | `flyOut`'s `clickedId` branch (pin + opacity 0, never a leaving copy) |
+| demoted card landing on a real seat | `shrinkTo`'s spouse branch — it already docks into a `[data-flight-id]` box; the sibling branch substitutes a fixed corner rect (`siblingSeat`) purely because no box existed |
+| the seat being off-window | the §18.9 carousel-anchor rule, ported from `spouseOffset` to the sibling `offset` |
+| landing without a blink | the §18.4 hand-off: hold the seat hidden, land on it, retire on `data-pending` |
+
+### 19.4 Known costs, to be accepted deliberately
+
+- **It reverses `probe-sibling-notch` and `probe-sibling-zorder`.** Both exist to keep the retraction
+  hidden — `sibling-notch` was written to kill a visible tic at exactly the endpoint this makes visible.
+  They need REWRITING against the new rule, not repairing.
+- **`probe-ghosts` and `probe-sibling-notch` are already red** from the sticky-panel change (§19.5) and
+  must be re-recorded first, or the next session cannot tell its own breakage from inherited red.
+- The panel persisting through a nav is the one place where "nothing incoming paints before landing" is
+  deliberately relaxed. It is safe only because the list is *mostly the same people*; the newly-added chip
+  (the demoted person) must still be held until the card lands.
+
+### 19.5 Shipped alongside this spec: the sticky panel
+
+Once a hand is on the trigger the panel keeps that state as you travel (`onUserToggle` → a session
+preference; `null` = untouched, and only then does the child-promotion auto-open apply). Sam's bug: open
+the panel, click a sibling, and it came back shut. The panel still closes for the flight and reopens at
+landing, so nothing of the new person paints early.
+
+**This is what put `probe-ghosts` and `probe-sibling-notch` red**, and both are expectation conflicts
+rather than regressions: `probe-ghosts`' own accumulation check stays GREEN (3 → 3 resident nodes, no
+leak), and the "outgoing sibling chips still mounted" it reports are chips that legitimately belong to the
+INCOMING person too — siblings share a sibling set. `probe-sibling-notch` clicks the trigger after a nav
+expecting to open the panel; it is already open, so the click closes it and the chip it wants is gone.
+Both encode "a nav always closes the panel", which is no longer true.
