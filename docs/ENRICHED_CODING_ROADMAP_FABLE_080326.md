@@ -1694,13 +1694,30 @@ destination rect at all, and on a card with both Half- and Step- headers even th
 children would fly to seats that exist while others flew to seats that do not — which reads as a bug, not
 as a system.
 
-**Adopted.** The children FADE WHERE THEY STAND (`refiled` in flyOut: pan 'up' + zone 'down' → zero
-travel, alpha only), and the panel's own per-chip cascade plays as the card lands. Reusing §21.1's reveal —
-each chip dropping from exactly where its predecessor sits, 38ms apart, 2.5px micro-overshoot — rather than
-animating anything new is the point: the same gesture serves two siblings or sixteen, and the overflow is
-already the vertical carousel's problem. Measured: leaving children travel **0px** on a child promotion and
-still the full 145px tier pitch on a parent promotion; panel opens at landing with 11 items on an 11-child
-family; parent promotions and CC arrivals are untouched.
+**First attempt, and BOTH halves reverted on pixels.** The children were frozen in place (zero travel,
+alpha only) and the panel opened with §21.1's per-chip cascade. Sam on both: *"having the non-clicked
+siblings just sitting frozen in place is wrong too even if they eventually fade out … we need to keep the
+army rows in place"* and *"having the siblings drop down menu transition in every single time is very
+distracting."* Two lessons, both worth more than the code they cost:
+
+- **A stationary chip is not restful — it is a chip that stopped taking part.** The frozen children also
+  read as an error the moment the incoming children slid in over the top of them. Where a departing chip is
+  RE-FILED afterwards is the panel's business; the row's business is to hold formation. The army has no
+  exceptions: every leaver marches, fades gradually, and passes under the card.
+- **An animation that answers a question the user asked is not the same animation played at them.** The
+  cascade is a deliberate, attention-taking gesture; correct when a hand is on the trigger, intrusive when
+  it performs itself on arrival while the user is reading the card.
+
+**Adopted.** The children march with the army as before. The panel still opens itself on a child promotion,
+but QUIETLY: the whole column fades in as one (220ms), no cascade, no roll — measured, the first chip's y
+never moves. A USER toggle still gets the full §21.1 cascade (measured: 70px per-chip travel, no fade), and
+the trigger now carries a `+` / `−` mark so the header reads as collapsible even when it opened itself.
+`quiet` is bindable and the panel clears it the instant the trigger is touched, so a hand-driven toggle is
+always the loud one.
+
+**The container-fade caveat.** §21.1 forbids putting the reveal on the CONTAINER — "it animates ONE BOX
+with the chips as cargo". That rule is about GEOMETRY. Alpha touches every chip equally and has no geometry
+to get wrong, so the quiet fade is the one container-level transition it does not cover.
 
 **The exception, named so it is not mistaken for drift.** §21.1 set the trigger peripheral on Sam's
 rendered-pixel verdict — "the button takes away from the other elements". The panel now auto-opens on ONE

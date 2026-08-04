@@ -154,12 +154,16 @@
 		f.neighborhood.siblings_count > 0 && (focusC.hd || focusC.td) && !focusC.ee
 	);
 	let siblingsOpen = $state(false);
+	// The panel opened ITSELF (a child promotion) → it reveals as a plain fade, not the cascade. Cleared by
+	// the panel the moment the user touches the trigger, so a hand-driven toggle is always the loud one.
+	let siblingsQuiet = $state(false);
 	// The panel closes on navigation (§20.5: the nudge was removed — Sam's call; not worth the fallout, and it
 	// leaves one fewer clock in the Slice-3 flight path). No transform anywhere now.
 	$effect(() => {
 		f.person.id; // nav hazard: on any focus change, close the panel
 		untrack(() => {
 			siblingsOpen = false;
+			siblingsQuiet = false;
 		});
 	});
 
@@ -337,7 +341,10 @@
 		// reappear here, as one gesture, whether there are two of them or sixteen.
 		if (openSiblingsOnLand) {
 			openSiblingsOnLand = false;
-			if (showSiblings) siblingsOpen = true;
+			if (showSiblings) {
+				siblingsQuiet = true; // self-opened → fade the column in, no cascade
+				siblingsOpen = true;
+			}
 		}
 		featuredLanded = true; // → reveals the pivot box + any remaining pending boxes (safety-net effect)
 		landedPersonId = f.person.id; // the shown person has now landed → ungate its trigger (see above)
@@ -668,6 +675,7 @@
 				anchorOffset={useCompact ? 78 : 90}
 				landed={featuredLanded && f.person.id === landedPersonId}
 				bind:open={siblingsOpen}
+					bind:quiet={siblingsQuiet}
 			/>
 		{/if}
 		{#each [f] as cur (cur.person.id)}

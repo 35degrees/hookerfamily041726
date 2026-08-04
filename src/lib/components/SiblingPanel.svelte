@@ -2,7 +2,7 @@
 	import type { PersonCompact } from '$lib/types/neighborhood';
 	import PersonBox from './PersonBox.svelte';
 	import Caret from './Caret.svelte';
-	import { fly } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { easeOutBack, solveBackS } from '$lib/transitions/flight';
@@ -14,8 +14,25 @@
 		anchorOffset: number; // notch carve height — the chip column's top (card-edge resume). Confirmed by Sam.
 		landed?: boolean; // featuredLanded — trigger fades in a beat after landing; also the gondola guard
 		open?: boolean; // bindable → the page closes the panel on nav
+		/**
+		 * QUIET reveal. The panel opens by itself on one arrival (a child promotion), and there the §21.1
+		 * per-chip cascade is wrong: it is a deliberate, attention-taking gesture, and playing it on every
+		 * such navigation was "hugely distracting" (Sam) — a drop-down performing itself while the user is
+		 * reading the card they just arrived at. Quiet → the whole column simply FADES in as one, no
+		 * cascade, no roll. A USER opening it still gets the full cascade, because then the gesture is the
+		 * answer to something they just asked for. Bindable: the panel clears it the moment the trigger is
+		 * used, so the next toggle is loud.
+		 */
+		quiet?: boolean;
 	};
-	let { siblings, cardHeight, anchorOffset, landed = true, open = $bindable(false) }: Props = $props();
+	let {
+		siblings,
+		cardHeight,
+		anchorOffset,
+		landed = true,
+		open = $bindable(false),
+		quiet = $bindable(false)
+	}: Props = $props();
 
 	let count = $derived(siblings.full.length + siblings.half.length + siblings.step.length);
 	// Sort each tier by BIRTH YEAR (the parents' children_ids aren't reliably birth-ordered), then keep the
@@ -199,10 +216,12 @@
 	// split is an exact fraction of the clock, independent of any easing curve. The max-height roll-up (with
 	// overflow hidden, content top-anchored) clips BOTTOM-UP: chip 7 vanishes first, chip 1 last — LIFO, the
 	// reverse of the top-down entrance cascade. With opacity no longer masking it, that direction reads.
+	const QUIET_MS = 220; // the self-opening fade — slower than a pop, quieter than the cascade
 	const CLOSE_MS = 170; // tighter + faster than the open cascade (~378ms for a 7-chip window)
 	const FADE_TAIL = 0.2; // DIAL: opacity holds at 1, then fades over the final 20% of the collapse (≈34ms)
 	let userClosing = $state(false);
 	function toggleOpen() {
+		quiet = false; // a hand on the trigger → this toggle and every one after it is the loud gesture
 		if (open) {
 			userClosing = true; // closing via the trigger → animate the collapse (from the current scroll pos)
 		} else {
@@ -273,7 +292,7 @@
 				aria-expanded={open}
 				onclick={toggleOpen}
 			>
-				Siblings ({count})
+				Siblings ({count})<span class="sib-toggle-mark" aria-hidden="true">{open ? '−' : '+'}</span>
 			</button>
 		{/if}
 	</div>
@@ -284,7 +303,11 @@
 		     on a trigger-close and is suppressed on ancestor unmount (nav); `userClosing` gates the same-
 		     component nav-reset to instant. The OPEN cascade is unchanged: the chips' in:fly|global still fire
 		     as this body mounts. -->
-		<div class="sibling-body" out:collapse>
+		<!-- QUIET: one opacity fade on the column instead of the cascade. A fade is the one container-level
+		     transition §21.1's "never animate the container" rule does not apply to — that rule is about
+		     GEOMETRY (a container that grows animates one box with the chips as cargo); alpha touches every
+		     chip equally and has no geometry to get wrong. -->
+		<div class="sibling-body" out:collapse in:fade|global={{ duration: quiet ? QUIET_MS : 0 }}>
 			<!-- FIXED-height window zone (WINDOW_H, never changes) so the caret below it never bobs. The MASK
 			     rides at its top and clips at the last COMPLETE item (maskH ≤ WINDOW_H) — never a partial chip;
 			     leftover space (headers shrink the item count) stays empty below the mask, inside this zone. -->
@@ -299,7 +322,7 @@
 							<div
 								class="sib-item"
 								class:is-header={item.kind === 'header'}
-								in:fly|global={flyIn(i)}
+								in:fly|global={quiet ? { duration: 0 } : flyIn(i)}
 								animate:flip={{ duration: flipMs }}
 							>
 								{#if item.kind === 'header'}
@@ -398,6 +421,14 @@
 			color 150ms ease;
 	}
 	.sibling-trigger:hover,
+	/* The +/- sits to the RIGHT of the label and carries the open/closed state, so the header reads as a
+	   thing you can collapse even when it opened itself. Same muted weight as the label — it is a state
+	   mark, not a button within a button. */
+	.sib-toggle-mark {
+		margin-left: 6px;
+		font-weight: 600;
+		opacity: 0.75;
+	}
 	.sibling-trigger.open {
 		color: rgb(68, 64, 60); /* stone-700 */
 	}
