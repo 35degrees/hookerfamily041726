@@ -15,6 +15,10 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The 072426 edition (July 24) adds §22.2b — a CONFIRMED DEFECT in the deck's vertical/lateral choice: the `sameLine` seat-distance proxy (`|Δseats| ≤ SEAT_NEAR`) misfires for genuine close kin who happen to sit FAR apart in the tidy tree, so a real up/down-the-line CC rides lateral. First live case: John Pierpont H00388 ↔ his uncle-guardian James Pierpont II H00116 (uncle/nephew, `gen_delta = −1`, correctly baked) renders HORIZONTAL because their seats are >180 apart. The data is right; the direction test is wrong. This is exactly the failure the §19.4 LCA/kin-distance bake exists to fix — logged now with a repro. Deferred (Stream B); tracked in the roadmap (§15).**
 
+**The 080426 edition (August 4) adds §26 — THE SIBLING PANEL AS A PERSISTENT COLUMN (as built; SUPERSEDES §21.1 wherever they differ). §21 described the panel as a transient drop-down; this is the panel as a FIXTURE that travels with the card, and almost every finding in it is the same shape: what changed is not the pixels but the panel's LIFETIME. It records the in-place mutation model, the durable rule that a seat in a MOVING container is a resting position rather than a live rect (third instance of the §18.9 family), the SHAPE-EARLY-THEN-SLIDE finding (direction is read from what changes LAST), the way-station rule for a different-tier landing (§18.4's second instance), the RECIPROCAL-GATE rule earned on Alice Lee Roosevelt and 57 other one-way doors, open-by-default, the fixed anchor, the chevron/alpha-hover header, the leaver's-alpha doctrine extending §17 — and §26.12, the NEGATIVE SPACE: four things built and reverted (including one documented-invariant violation) plus two measurement failures that produced confident false greens.**
+
+**Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
+
 This doc follows the house convention: it holds _what and why_ (durable design).
 Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_080326.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
@@ -1975,7 +1979,7 @@ function of where the target happens to sit).
   `SEAT_NEAR` is the interim proxy for the §19.4 LCA/kin-distance bake — replace it
   when that ships.
 
-**22.2b CONFIRMED DEFECT (July 24) — the seat proxy fails close kin who sit far
+**22.2b CONFIRMED DEFECT (July 24) — FIXED August 3 by the §19.4 kin-distance bake (roadmap §17); kept for the reasoning and the repro. The seat proxy fails close kin who sit far
 apart.** `sameLine` conflates "same genealogical line" with "seated within 180
 seats." A real up/down-the-line pair whose tidy-tree seats are far apart therefore
 falls through to LATERAL even though `gen_delta ≠ 0` is baked correctly. Live repro:
@@ -2346,3 +2350,296 @@ can be lifted for a subset (one branch, one notable) without touching the rest.
   `person.tags` ships in full on the person payload — so featured-card styling can read it
   today. It is **not** in `compact()`, so chips and table tiles cannot see it. Orbit-plus-founder
   styling on the tiles needs one flag emitted beside `ee`/`hd`/`td`. Not built.
+
+---
+
+## 26. THE SIBLING PANEL AS A PERSISTENT COLUMN (AS BUILT, August 4)
+
+_(**SUPERSEDES §21.1 wherever they differ.** §21 describes the panel as a
+transient drop-down: a gesture the user performs, which closes on every
+navigation. This describes it as a FIXTURE — something that lives on the card
+and travels with you. Almost every §21.1 decision still holds; the ones that
+change, change because the panel's LIFETIME changed, not because the pixels
+were wrong. Every item below was set on Sam's rendered-pixel verdict, and the
+things that were built and reverted are recorded in §26.11 so they are not
+re-attempted.)_
+
+### 26.1 The insight, and everything that falls out of it
+
+**A sibling promotion barely changes the sibling list.** Promote X and the list
+loses X and gains the person you left; everyone else is unchanged. Sam: _"it's
+not like the siblings list changes for a sibling promotion, only the one sibling
+needs to be removed from the menu."_
+
+So the panel **persists and mutates** rather than tearing down a list that was
+90% correct and re-animating it. Four things follow, and only the first is
+obvious:
+
+1. The promoted chip vanishes, its neighbours close the gap, and the demoted
+   card flies INTO the vacated list as a chip while the carousel scrolls to
+   catch it.
+2. **The panel stops being a gesture and becomes a fixture.** A thing you
+   perform is reasonably hidden until asked for; a thing that lives on the card
+   should be present. This is why it now opens by default (§26.8) and why its
+   anchor stopped following the card (§26.9).
+3. **"Nothing incoming paints before landing" is deliberately relaxed here** —
+   the one place in the app. It is safe only because the list is *mostly the
+   same people*; the single chip that is genuinely new (the demoted person) is
+   still held hidden until the card lands. The exception is bounded by holding
+   the exception's exception.
+4. **Latent bugs in the panel became visible bugs.** A per-card anchor, a
+   carried-over scroll offset, and a 6.4px error in the leading-header layout
+   were all invisible while the panel was rebuilt on every navigation. Making
+   something persistent is a way of auditing it.
+
+### 26.2 RE-FILED, NOT DEPARTED — §18.12 finally has a destination
+
+§18.12 established the half of this that could be built at the time: children
+who become siblings are **re-filed, not departed**, so the row keeps marching
+and holds formation, and where its members end up is the panel's business.
+
+But the DEMOTED CARD had nowhere to go. §21.2 deliberately hid its retraction in
+the card's corner at `z:-1`, on the honest reasoning that _"a sibling has no such
+box — it lands in the closed panel, not a roster seat."_ That was true of a panel
+that was always shut. With the panel open, the seat exists, and the gesture
+inverts: **the card is watched all the way into the list** instead of being
+hidden on the way out.
+
+**Layering, which is not a detail.** The demote rides `z 1` — where every other
+demote rides, under the arriving card — and `.sibling-zone` moved to `z 0` so the
+landing is visible. The first cut put the demote at `z 3` to clear the panel, and
+that is ghost-taxonomy **bug D** all over again: the departing card sat opaque and
+full-detail on top of the arriving one. **The doctrine is two baseball cards
+trading places with the ARRIVING one in front**, and when no single z satisfies
+that, the thing to move is the third object, not the card.
+
+### 26.3 A SEAT IN A MOVING CONTAINER IS A RESTING POSITION, NOT A LIVE RECT
+
+**The durable rule, and the third instance of its family.** §18.9 established
+that anything flying to a seat must be sure the seat is RENDERED, not merely
+present in the roster. `shrinkTo` established that a destination box can MOVE
+mid-flight and must be re-queried. This adds the third: **when the container
+itself is animating, the traveller must target where the seat COMES TO REST.**
+
+Sam's ruling on the fork — the carousel scrolls to catch the card *while* it
+flies, so the two motions resolve together rather than sequentially — means the
+strip is gliding for most of the flight. A seat's live rect during that glide is
+an animating value that is wrong in both directions: too far before, too near
+after. Measuring it is not a small error, it is measuring the wrong quantity.
+
+So the seat is **computed, not measured**, at the one synchronous seam where
+everything needed is knowable: after the incoming payload arrives and before the
+state swap starts the flush. At that instant the incoming list is in hand and the
+outgoing panel is still on screen — and, measured, the panel's geometry is
+invariant across a navigation anyway (the zone is anchored to the featured slot,
+which does not move).
+
+**The layout model was EXTRACTED, not copied.** The seat is a function of the
+panel's cumulative layout — asymmetric header gaps, headers consuming window
+slots, never-a-partial-chip — and a second copy of that arithmetic at the call
+site is how two answers drift apart. One home, two readers.
+
+### 26.4 SHAPE EARLY, THEN SLIDE — direction is read from what changes LAST
+
+**The most transferable finding in this arc.** Sam on the demoted card: it
+_"looks like it's coming down from a high level and being vacuumed up,"_ and its
+direction fights the promotion, which _"doesn't feel like it's moving up, it's
+expanding out."_
+
+The cause: scale and translation rode ONE progress, so the card was still
+shrinking hard in the final 100ms — measured, 271px wide at t=506 of a 555ms
+flight, in full view. **A large, late scale change reads as descent** regardless
+of the actual path, because the eye takes its direction cue from whatever is
+still changing at the end.
+
+So the FOOTPRINT resolves on its own faster progress and finishes at ~55% of the
+travel, decelerating into its final size rather than snapping to it; the rest of
+the journey is pure lateral translation of a finished object. Position keeps the
+original progress, so the landing rect and the settle are untouched.
+
+**And the occlusion window is a resource.** Measured, the arriving card hides the
+demote from t≈200 to t≈470 (peak 93–99%). That window is where the shape change
+and — because every face crossfade is geometry-keyed — the entire content change
+now happen. What emerges has been finished for ~100ms. Sam's spec, and it is a
+good general rule: _"when it emerges into view from below the incoming
+transitioning Featured Card it should be in its final form already for a long
+time."_
+
+### 26.5 A DIFFERENT-TIER LANDING NEEDS THE DESTINATION'S OWN FACE
+
+§18.4 hit this wall with a 3+-spouse notch seat and solved it by carrying the
+destination's face as a second layer. This is the second instance, and it
+confirms the rule is general: **there is no single transform that lands a
+different footprint AND keeps a face undistorted.**
+
+The demote's chip-face is a `relation="parent"` box — 220×75, full short name,
+parent type scale. A sibling seat is 119×54, FIRST NAME ONLY, its own type scale;
+a different aspect ratio and a different object. Mirroring the name got the WORD
+right and could never get the OBJECT right.
+
+**The way-station rule, new here.** The card's own face → a parent-style chip →
+the sibling seat's face is **two content changes where the story has one.** On a
+sibling mutation the intermediate face never paints at all; the seat's face takes
+over its crossfade band outright. An object in flight should change its identity
+once, not pass through a costume it never needed.
+
+### 26.6 A SMALL OVERSHOOT IS WEIGHT; A LARGE ONE IS THEATRE
+
+Sam: _"maybe we even should add overshoot similar to how the spouse chip slightly
+overshoots… not dramatic theatrical overshoot, but it gives a sense of weight and
+timing."_ Measured at **2.0–2.2px** of carry past the seat — deliberately the
+smallest of the three demote settles, sized to the panel's own mount cascade
+(2.5px). The amplitude scales to the DESTINATION footprint, not the travel: a
+119×54 chip at the end of a ~960px path earns a chip-sized carry, not a
+path-sized one.
+
+The exclusion that had kept siblings out of the settle was real, not an
+oversight — this branch is shared with the SPOUSE demote, whose linear curve is
+load-bearing (constant velocity so the photo never strobes). It stopped applying
+only once the footprint resolved early (§26.4), which makes the tail a small chip
+translating rather than a photo shrinking.
+
+### 26.7 A GATE MUST BE RECIPROCAL — the one-way door
+
+**A general rule for every affordance gate in the app, learned here.** §21.1
+gated the sibling trigger on `siblings_count > 0 && (hd || td) && !ee` — no
+trigger for easter eggs, married-in spouses, or anyone off the lines. Correct
+reasoning for a card the user merely *landed on*. Wrong for a card the user
+reached **by clicking a sibling chip**, which makes it a one-way door: the
+relationship the visitor just traversed does not exist from the other side.
+
+Alice Lee Roosevelt Longworth is a half-sibling in Theodore Roosevelt Jr's panel
+and had no panel of her own. **No data fix could reach it** — she genuinely is
+not a Hooker descendant; the line runs through Theodore Sr's second wife, so her
+five half-siblings are on it and she is not. Marking her `hd` would be a lie.
+Scanned across all 18,621 payloads: **58 people** were reachable as a sibling
+chip with no panel of their own, the dominant cause being the off-line clause
+(49), not easter-egg (4).
+
+The gate grew a second, **ADDITIVE** clause: it also renders when at least one of
+the person's own rendered siblings is on the line — which is exactly the
+statement _somebody on the line can reach me here, so I can go back._ Measured:
++57 cards, 0 lost, doors 58 → 3 (the remainder are data gaps where the reciprocal
+sibling edge was never emitted at all).
+
+**It must stay additive.** Gating on the LIST ALONE was measured first and takes
+the panel off **Thomas Hooker himself** — his siblings are not his own
+descendants. A rule that reads better and deletes the root of the tree.
+
+### 26.8 OPEN BY DEFAULT, AND THE PREFERENCE STICKS
+
+Sam: _"it should start for all users default in the visible mode but users can
+close it anytime."_ Once a hand is on the trigger the panel keeps that state as
+you travel — open stays open, closed stays closed. Sam on the sticky half,
+before he asked for the default: _"that wasn't part of my original idea but
+that's very convenient."_
+
+Two rules this makes load-bearing:
+
+- **The first paint must be QUIET.** §18.12's finding — the per-chip cascade is
+  _"a deliberate, attention-taking gesture, correct when a hand is on the
+  trigger, intrusive when it performs itself"_ — becomes critical when the panel
+  is open by default, because otherwise it performs itself on every page load.
+  A user toggle still gets the full cascade.
+- **The panel still closes for the FLIGHT on every non-sibling arrival** and
+  reopens at landing, so nothing belonging to the new person paints early. From
+  the visitor's seat it is simply open on every card they land on.
+
+### 26.9 A PERSISTENT COLUMN DOES NOT TAKE ITS POSITION FROM THE CARD BESIDE IT
+
+§21.1 anchored the chip column to _"the card-edge resume beneath the notch
+carve"_ — 12px higher on a compact notch (≥3 spouses). That was right, and _"the
+15px distinction was worth two passes to get right,"_ while the panel closed and
+reopened on every navigation.
+
+Once it persists, a per-card anchor is a column that **jumps 12px as you travel**.
+Sam, on Rodman Lent Hooker (3 spouses) ↔ his brother John (1): _"the sibling menu
+moves up and down 5-10px each time you toggle between them."_ One value for every
+card now. **What changed is not the anchor; it is the panel's lifetime** — and
+that is the shape of several findings in this section.
+
+The cost is named rather than buried: on a compact-notch card the column starts
+~12px below the carve instead of tight against it, and the trigger's underline no
+longer aligns to the compact spouse chip's bottom edge.
+
+### 26.10 THE HEADER — peripheral still, and hover is ALPHA
+
+§21.1's core ruling holds: the trigger must read **peripheral** — _"the button
+takes away from the other elements"_ — and the page _"already feels crammed with
+details so I'm not looking to make it flashy."_ What changed is the treatment,
+not the weight.
+
+- **A chevron, as an SVG, not a text glyph.** The requirement is that it grow
+  AND hold the same position through the open/closed turn, and a text glyph
+  cannot guarantee that: its ink sits at a font-dependent offset inside its line
+  box, so rotating about the box centre swings the mark. **In an SVG the ink IS
+  the box** — symmetric about the viewBox centre by construction, so the default
+  origin is the mark's own centre and no font metric, size change or typeface
+  swap can move it. Narrowing is done in the GEOMETRY, since
+  `preserveAspectRatio` scales uniformly and shrinking the box would take the
+  height with it.
+- **Hover changes ALPHA only** — 0.6, which is `NarrativeBlocks`' own
+  `hover:opacity-60`. Sam asked for that specific match and it is the right one:
+  **this control and an NB header are the same kind of object** — a quiet,
+  expandable label the reader may never touch — and the same kind of object
+  should give the same response. Applied to the children, never the button's own
+  opacity, which is the reveal gate.
+- **Nothing moves on hover.** A 1px chevron nudge plus a colour deepen plus a
+  press depress read as instability on a small mark: _"all it needs to do is
+  rotate up and down on click… and on hover, you make siblings get lighter."_
+  Two responses, not four.
+- The dashed underline and the `+`/`−` are gone.
+
+### 26.11 THE LEAVER'S ALPHA IS SPENT BEFORE THE KNEE (extends §17)
+
+**Motion doctrine, general to every row, earned here.** §18.3 keys the row fade
+to DISTANCE COVERED because the march decelerates. That is the point of the dial
+— and 0.5/0.92 had it on the wrong side of the knee. Under `cubicOut` the
+instantaneous speed at `ROW_GONE` is `3·(1−g)^(2/3)` of the average: **0.56× at
+0.92, 1.34× at 0.70.**
+
+**A chip that dims while visibly slowing does not read as leaving. It reads as
+stopping.** Sam, three times across two sessions: _"they transition up but then
+freeze — that means stop, halt, pause their transition — and fade on stuck on one
+position."_ Now 0.34/0.70: the chip is spent having covered ~70% of its tier,
+moving at 1.24–1.80× its own average speed, gone by ~33% of the clock.
+
+The companion rule, which is the part that was learned expensively: **a leaver is
+not a thing the user is meant to follow.** Sam: _"the incoming FeaturedCard is
+the main place of attention. the user is not going to be like, it's really
+important to me to watch the child chips exit high up and then I can look at what
+I want."_ When a leaver reads wrong, the answer is almost always to spend it
+SOONER, not to give it further to travel.
+
+### 26.12 BUILT AND REVERTED — the negative space, so it is not re-attempted
+
+- **Linear easing for the army's leavers.** Changed the curve for EVERY row in
+  the app to stop three chips stalling on one card. §18.3 states the coupling in
+  as many words — _"same distance, same direction, same clock, **same curve** as
+  the row arriving behind it"_ — and §17.2 states it at design level: cards and
+  camera share one easing family _"so the whole world speaks one dialect of
+  mass."_ Sam: _"an epic disaster, a violation of the documents."_ **A bug report
+  names a symptom AND a scope; the scope is part of the report.**
+- **Extending a toward-card row's march** so the chips would tuck under the card,
+  tracking the slot's receding bottom edge per frame. Two failures: a row wider
+  than the card has chips outside its horizontal extent that can never be
+  occluded however far they travel (so a longer march is simply more visible
+  travel), and putting the parents row on a per-frame path introduced a new ghost
+  on a row that had none — the css path pins in the keyframe at 0%, a tick path
+  pins one frame later.
+- **`z 3` for the sibling demote** — §26.2.
+- **An ink-bias correction INSIDE the rotating element.** The 180° turn flips it,
+  so the error doubles instead of cancelling; measured, the mark jumped 10.80px.
+  Moving the `transform-origin` instead made it worse again — rotating about an
+  off-centre point TRANSLATES the element.
+
+**Two measurement lessons, both of which produced confident false greens:**
+
+- **`Range.getBoundingClientRect()` returns the LINE BOX, not the glyph's ink.**
+  It reported a ~5px chevron as 20px tall and yielded a "0.00px of travel"
+  reading while the rendered pixels plainly disagreed. §21.3's shape exactly. **A
+  screenshot settled it in seconds**, as it has every other time in this document.
+- **Per-navigation captures must be read at INIT, never inside a frame loop.**
+  `clearFlightCaptures()` resets them one frame after the swap, so a tick that
+  reads `panDir` sees `'lateral'` and silently computes zeros. The css paths never
+  noticed because they bake their direction in at init.

@@ -1107,7 +1107,10 @@ corrected two wrong hypotheses including the architect stream's.
 
 ---
 
-## 12. JULY 22 — HOLD + RESEQUENCE (current marching orders)
+## 12. JULY 22 — HOLD + RESEQUENCE (superseded as "current" — see §27.3)
+
+> **Item 1 (the deck shuffle) SHIPPED July 23 (§13).** Items 2–4 still stand and
+> are the live sequence; §27.3 restates them with their blockers named.
 
 **ON HOLD (design §23 — preserved, not removed):** the Table (Zoom 2, at the
 §9.8 scaffold checkpoint), Zoom 3, and the CC altitude arc (`ARC_ENABLED=false`).
@@ -2419,7 +2422,7 @@ the chevron moves 0.00px on hover, while the label goes 1 → 0.6.
 
 ---
 
-## 26. AUGUST 5 — THE LEAVERS FADE SOONER, AND AN SVG CHEVRON
+## 26. AUGUST 4 — THE LEAVERS FADE SOONER, AND AN SVG CHEVRON
 
 ### 26.1 The receding-edge fix was ALSO wrong, and is also reverted
 
@@ -2488,3 +2491,65 @@ In an SVG the ink IS the box. The stroke is symmetric about the viewBox centre b
 swap can move it. 13×9px, larger than the text glyph it replaces. The probe now measures the SVG's rect
 (reliable) and additionally asserts the chevron sits on the LABEL's optical centre, so drifting out of
 alignment is caught as well as swinging.
+
+---
+
+## 27. AUGUST 4 — THE SIBLING ARC IS CLOSED; DESIGN DEBT PAID; §12 RESEQUENCED
+
+### 27.1 Signed off
+
+Sam signed off the sibling menu and the UX transition, and pushed
+`249b7b6d..1810f169` (three commits: probes re-recorded + `probe-sibling-seat`;
+the §19 in-place mutation; the row-leaver fade dial isolated on its own so it
+can be reverted alone). The arc that ran §19 → §26 is closed.
+
+### 27.2 The design debt is paid — and it should not have taken an ask
+
+**DESIGN §26 is written**: THE SIBLING PANEL AS A PERSISTENT COLUMN, superseding
+§21.1 wherever they differ. The doctrine now lives in the doc whose job is *what
+and why* rather than only in this session log.
+
+This was recorded as OWED three separate times in this file — §18.13, §20.10, and
+again in §23 and §26 — and then not named when Sam asked what the appropriate
+next step was. **The house convention is not decoration: a durable finding parked
+in a session log is a finding that gets re-derived.** Several of §26's entries
+(the reciprocal-gate rule, shape-early-then-slide, a seat in a moving container)
+are general to features that do not exist yet, and would have been lost here.
+
+Also corrected in the same pass: design §22.2b still read "Deferred" for a defect
+the §17 kin-distance bake fixed on August 3.
+
+### 27.3 §12's marching orders are stale — the live sequence
+
+§12 is titled "current marching orders" and is from July 22. Its item 1 (the deck
+shuffle) shipped July 23 (§13). Everything since — the severance, the kin bake,
+the card-transition reopen, the whole sibling arc — was unplanned work that
+arrived on top of it. The live sequence is therefore still §12's, minus item 1:
+
+1. **PARCHMENT GROUND.** Blocked on Sam sourcing one light photo-quality blank
+   scan — a procurement task, not a code task. GATES the line-shading contrast
+   decision (do not start shading without the real ground under it).
+2. **MOBILE/TABLET TIER PLAN.** A design session, no code. GATES the timeline
+   build per Sam's rule.
+3. **THE LEFT TIMELINE RAIL (§3.6).** Only after 1 + 2 exist.
+
+Neither 1 nor 2 is codeable solo today, which is worth stating plainly rather
+than letting the sequence look blocked-by-nobody.
+
+### 27.4 Still open, unchanged by this arc
+
+- **`probe-demote-velocity` does not cover the sibling case.** It is green
+  because it never looks. The sibling demote's average max-corner velocity
+  measures ~1.9–2.2 px/ms against the 1.85 spouse ceiling, and that predates the
+  §19 work. Wants either a sibling case with an honest sibling ceiling, or a
+  stated exemption.
+- **The corner retraction is near-dead code.** With the panel open by default and
+  the gate's second clause, it is reachable only via the three `siblings_count =
+  0` pairs. Guarded by `probe-sibling-notch`; worth a keep-or-retire decision.
+- **CLAUDE.md points at two files that do not exist** — `docs/DESIGN.md` and
+  `docs/CODING_HANDOFF.md`. The ENRICHED pair absorbed both roles. It also claims
+  `static/data/` is gitignored, which §16.3 records as inexact (members are
+  listed individually). A future session will burn time on this.
+- Long-standing and unrelated: `probe-passage`, `probe-reciprocity`,
+  `probe-arrival`, `probe-carousel-regression` (§18.8), and
+  `probe-demote-settle`'s gitignored baseline (§11.5).

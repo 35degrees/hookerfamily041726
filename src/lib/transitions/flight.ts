@@ -519,7 +519,7 @@ const SPOUSE_DEMOTE_V_CEIL = 1.85;
 // floored the arrival to ~410ms (≈1.42 px/ms — Sam: too fast) while the untuned 582ms floated (≈1.01). This
 // is the midpoint: ~1.2 px/ms ≈ 490ms over the ~588px sibling center travel. TUNE BY FEEL. The 1.6 relative
 // ceiling (parent/child) is untouched.
-// 1.2 → 1.0 (Aug 5). Sam: "the transition is happening at super human speeds in sibling chip transitions
+// 1.2 → 1.0 (Aug 4). Sam: "the transition is happening at super human speeds in sibling chip transitions
 // inbound and outbound. the parent and child chips have some heft and feeling of physical discrete
 // baseball cards, and sibling chips too fast by at least 20%." A velocity ceiling is the honest instrument
 // for heft (§17.1 — perceived weight is velocity, not duration), so the dial moves rather than any
