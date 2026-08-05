@@ -15,14 +15,35 @@ const START = 'john-morgan-1837';
 const OLD_H1 = 'JP';
 const OLD_SPOUSE_IDS = ['X00361', 'X00360'];
 const OLD_SIBLING_SLUGS = ['sarah-morgan-1839', 'junius-morgan-jr-1846', 'juliet-morgan-1847', 'mary-burns-1844'];
+// RE-RECORDED (Aug 4). `mustLeave` is the subset of JP's sibling chips that this navigation is entitled to
+// remove — NOT the whole set. The original probe asserted all four on every case, which was right while a nav
+// always tore the panel down, and became wrong the moment the panel went sticky (roadmap §19.5): on a
+// SIBLING→SIBLING navigation the two people SHARE a sibling set, so three of those four chips are the
+// INCOMING person's own siblings, correctly mounted. Asserting them as ghosts made the probe cry wolf on the
+// one case §19 is built around. Only the PROMOTED sibling must go — she is the featured card now, and a chip
+// of her in her own panel is the real ghost. Vertical promotions still land on a genuinely different sibling
+// set, so they keep the full four.
 const CASES = [
-	{ name: 'UP → parent chip', link: 'a[data-relation="parent"][href="/person/junius-morgan-1813"]' },
-	{ name: 'DOWN → child chip', link: 'a[data-relation="child"][href="/person/louisa-satterlee-1866"]' },
-	// Slice 3: LATERAL sibling flight — the old card departs via the CC path (whole slide, no destination
-	// box). Sam's worst case: the panel is OPEN and the click lands ON a chip inside it. The old card, its
-	// spouse chips, and the old panel must all leave; nothing accumulates.
-	{ name: 'LATERAL → sibling chip', link: '.sibling-strip a[data-relation="sibling"][href="/person/sarah-morgan-1839"]' }
+	{ name: 'UP → parent chip', link: 'a[data-relation="parent"][href="/person/junius-morgan-1813"]', mustLeave: OLD_SIBLING_SLUGS },
+	{ name: 'DOWN → child chip', link: 'a[data-relation="child"][href="/person/louisa-satterlee-1866"]', mustLeave: OLD_SIBLING_SLUGS },
+	// Slice 3: LATERAL sibling flight. Sam's worst case: the panel is OPEN and the click lands ON a chip
+	// inside it. The old CARD and its spouse chips must still leave, and the promoted sibling's own chip
+	// must leave — the shared siblings stay, because they belong to the person who just arrived.
+	{
+		name: 'LATERAL → sibling chip',
+		link: '.sibling-strip a[data-relation="sibling"][href="/person/sarah-morgan-1839"]',
+		mustLeave: ['sarah-morgan-1839']
+	}
 ];
+
+// The sibling panel is OPEN BY DEFAULT now (Aug 4). A blind `click('.sibling-trigger')` therefore CLOSES
+// it and every chip this probe needs disappears — the same shape of breakage the sticky panel caused in
+// §19.5. Ask for the STATE, don't assume it.
+const ensurePanelOpen = async (page) => {
+	if (await page.locator('.sibling-window').count()) return;
+	await page.click('.sibling-trigger');
+	await page.waitForSelector('.sibling-window', { timeout: 5000 });
+};
 
 const b = await chromium.launch();
 const ctx = await b.newContext({ viewport: { width: 1440, height: 1100 }, reducedMotion: 'no-preference' });
@@ -30,14 +51,15 @@ const p = await ctx.newPage();
 let pageErrors = [];
 p.on('pageerror', (e) => pageErrors.push(e.message.split('\n')[0]));
 
-const oldSiblingSel = OLD_SIBLING_SLUGS.map((s) => `.sibling-strip a[href="/person/${s}"]`).join(',');
+const sibSel = (slugs) => slugs.map((s) => `.sibling-strip a[href="/person/${s}"]`).join(',');
 
 let failures = 0;
 for (const c of CASES) {
+	const oldSiblingSel = sibSel(c.mustLeave); // per-case: only the chips THIS nav is entitled to remove
 	await p.goto(`${BASE}/person/${START}`, { waitUntil: 'networkidle' });
 	await p.waitForTimeout(900);
 	if (await p.locator('.sibling-trigger').count()) {
-		await p.click('.sibling-trigger'); // Sam's worst case: carousel OPEN before the click
+		await ensurePanelOpen(p); // Sam's worst case: carousel OPEN before the click
 		await p.waitForTimeout(700);
 	}
 	if ((await p.locator(c.link).count()) === 0) { console.log(`  SKIP ${c.name}: link not found`); continue; }
@@ -93,8 +115,8 @@ for (const c of CASES) {
 	if (pageErrors.length) fails.push(`uncaught page error "${pageErrors[0]}" — freezes the reactive flush`);
 	if (endH1.includes(OLD_H1)) fails.push(`outgoing card still showing ("${endH1.trim()}") — old card never left`);
 	if (endCards !== 1) fails.push(`${endCards} featured cards at rest (expected 1)`);
-	if (endOldSib > 0) fails.push(`${endOldSib} of the outgoing person's sibling chips still mounted at rest`);
-	if (lastOldSib > LINGER) fails.push(`outgoing sibling chips linger to t=${lastOldSib} (past landing+500=${LINGER}) — ghost cascade / frozen panel`);
+	if (endOldSib > 0) fails.push(`${endOldSib} sibling chip(s) this nav should have removed [${c.mustLeave.join(', ')}] still mounted at rest`);
+	if (lastOldSib > LINGER) fails.push(`sibling chips this nav should have removed linger to t=${lastOldSib} (past landing+500=${LINGER}) — ghost cascade / frozen panel`);
 	if (lastOldSpouse > LINGER) fails.push(`outgoing spouse chips linger to t=${lastOldSpouse} (past landing+500=${LINGER})`);
 	if (doubleFrames.length) fails.push(`doubled-role render: person ${doubleEg.id} shown as [${doubleEg.roles.join(' + ')}] simultaneously for ${doubleFrames.length} frames — the spouse chip re-animates from opacity 1 while the same person morphs into a parent/child slot (flicker ghost)`);
 

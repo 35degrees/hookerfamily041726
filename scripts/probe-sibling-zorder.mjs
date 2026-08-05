@@ -8,11 +8,20 @@
 // the current build, GREEN after the z-order fix.
 import { chromium } from '@playwright/test';
 const BASE = 'http://localhost:5173';
+// The sibling panel is OPEN BY DEFAULT now (Aug 4). A blind `click('.sibling-trigger')` therefore CLOSES
+// it and every chip this probe needs disappears — the same shape of breakage the sticky panel caused in
+// §19.5. Ask for the STATE, don't assume it.
+const ensurePanelOpen = async (page) => {
+	if (await page.locator('.sibling-window').count()) return;
+	await page.click('.sibling-trigger');
+	await page.waitForSelector('.sibling-window', { timeout: 5000 });
+};
+
 const b = await chromium.launch();
 const p = await (await b.newContext({ viewport: { width: 1440, height: 1100 }, reducedMotion: 'no-preference' })).newPage();
 await p.goto(`${BASE}/person/john-morgan-1837`, { waitUntil: 'networkidle' });
 await p.waitForTimeout(800);
-await p.click('.sibling-trigger'); await p.waitForTimeout(600);
+await ensurePanelOpen(p); await p.waitForTimeout(600);
 await p.evaluate(() => {
 	window.__z = [];
 	const t0 = performance.now();
