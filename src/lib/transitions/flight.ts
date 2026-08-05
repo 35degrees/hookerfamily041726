@@ -1429,14 +1429,31 @@ export function rowClockMs(): number {
 			: ROW_MS_FALLBACK;
 	return rowClock;
 }
-const ROW_SOLID = 0.5; // fully opaque this far along — a card being shoved is a solid object for as
-const ROW_GONE = 0.92; // long as you can see it, and it is GONE before it reaches the tier seat it is
+const ROW_SOLID = 0.34; // fully opaque this far along — a card being shoved is a solid object for as
+const ROW_GONE = 0.7; // long as you can see it, and it is GONE before it reaches the tier seat it is
 // heading for, so the implied row is never asserted. Alpha only; the motion is unchanged.
 // These are fractions of DISTANCE COVERED, and the march decelerates, so they are far later in TIME than
-// they look: at 0.5/0.92 a chip is solid through the first ~21% of the clock and gone by ~57% of it,
-// having covered 92% of the ground — roughly 12px short of the tier seat. Raised from 0.35/0.85 (Sam:
-// "they fade out a little too quickly"), which spent them by 47% of the clock. Pushing ROW_GONE much
-// past this starts to ASSERT the invisible row: chips would visibly park in a seat that isn't there.
+// they look. THAT IS THE WHOLE POINT OF THE DIAL, and 0.5/0.92 had it on the wrong side of the knee: a
+// chip was gone by ~57% of the clock having covered 92% of the ground, which under cubicOut means it
+// vanished travelling at ~0.56× its own average speed. A chip that dims while visibly slowing does not
+// read as leaving, it reads as STOPPING — Sam, three times: "they transition up but then freeze, that
+// means stop, halt, pause their transition, and fade on stuck on one position."
+//
+// 0.34/0.70 spends the alpha BEFORE the knee. Under cubicOut the instantaneous speed at ROW_GONE is
+// 3·(1−ROW_GONE)^(2/3) of the average: 0.56× at 0.92, 1.34× at 0.70. The chip is now moving HALF AGAIN
+// as fast as its own average at the instant it disappears — it cannot read as parked — and it is gone by
+// ~33% of the clock instead of 57%, having covered 101px of its 145px tier rather than 133px.
+//
+// Going SOONER was the ask, not going further. Sam: "the idea is they can fade out a lot sooner… the
+// incoming FeaturedCard is the main place of attention. the user is not going to be like, it's really
+// important to me to watch the child chips exit high up and then I can look at what I want." An earlier
+// attempt extended the MARCH so the chips would tuck under the card — which sent them sailing up past
+// its sides on any row wider than the card, and was worse on exactly the cards where it was reported.
+// The distance, direction, clock and curve are all untouched here; only the alpha moves.
+//
+// The old note "raised from 0.35/0.85 (Sam: they fade out a little too quickly)" is superseded: that
+// complaint was about the RAMP being abrupt, and it was answered by widening the band, not by pushing it
+// late. The band here is wider in time than 0.35/0.85 was (0.11→0.33 of the clock) while ending earlier.
 const HANDOFF_MS = 420; // the hand-off owns its box for longer than a row push — it has a diagonal to cover
 // The traveller's OWN tempo, on top of the shared row clock: she was reaching her seat before the card
 // had finished settling around her, and two arrivals landing out of step read as a wobble even when each
