@@ -15,6 +15,7 @@ import { prefersReducedMotion } from 'svelte/motion';
 import { getCameraMove, type CameraMove } from '../state/camera';
 import { isArcMove, arcDurationMsFor, ARC_DESC, ARC_RISE } from './arc-math';
 import { arcClock } from '../state/arc.svelte';
+import { getSiblingNavPlan, clearSiblingNavPlan } from '../state/siblingNav';
 
 // SETTLE (Block 3) — the promotion carries a few px PAST its final rect along the travel vector, then
 // decelerates back. Done as ONE C1-continuous easeOutBack curve on the TRANSLATE (not a two-phase
@@ -59,6 +60,12 @@ function settleBackFor(distance: number, boost = 1): number {
 // cross-dissolve between two different elements.
 let flightOrigin: DOMRect | null = null;
 
+/** Read the captured origin WITHOUT consuming it. `growFrom` consumes (so a cold load can't reuse a stale
+ *  rect), and it runs in the same flush as the outro — so an outro that needs the hero's origin cannot
+ *  race it for the same variable. §19's plan reads it at the click-time seam instead, before either. */
+export function peekFlightOrigin(): DOMRect | null {
+	return flightOrigin;
+}
 export function captureFlightOrigin(rect: DOMRect | null): void {
 	flightOrigin = rect;
 }
@@ -480,6 +487,13 @@ export function clearFlightCaptures(): void {
 	panDir = 'lateral';
 	pivotId = null;
 	rectSnapshot = new Map();
+	// The §19 sibling plan is a per-navigation capture like every other one here, so it dies with them
+	// rather than on a lifecycle of its own. It can be cleared this early — one rAF after the swap —
+	// because all three of its consumers read it during that flush and none of them polls: shrinkTo takes
+	// it ONCE at outro init and carries it in the transition's closure (the same way it holds `card`,
+	// `face` and `heroOrigin`), the panel's effect applies it once and remembers it by reference, and the
+	// page's close-effect only asks whether this navigation is a mutation.
+	clearSiblingNavPlan();
 }
 
 // VELOCITY-CEILING duration for a RELATIVE (parent/child) flight — shared by the PROMOTION (growFrom)
@@ -505,12 +519,32 @@ const SPOUSE_DEMOTE_V_CEIL = 1.85;
 // floored the arrival to ~410ms (≈1.42 px/ms — Sam: too fast) while the untuned 582ms floated (≈1.01). This
 // is the midpoint: ~1.2 px/ms ≈ 490ms over the ~588px sibling center travel. TUNE BY FEEL. The 1.6 relative
 // ceiling (parent/child) is untouched.
-const SIBLING_V_CEIL = 1.2; // px/ms — sibling arrival dial
+// 1.2 → 1.0 (Aug 5). Sam: "the transition is happening at super human speeds in sibling chip transitions
+// inbound and outbound. the parent and child chips have some heft and feeling of physical discrete
+// baseball cards, and sibling chips too fast by at least 20%." A velocity ceiling is the honest instrument
+// for heft (§17.1 — perceived weight is velocity, not duration), so the dial moves rather than any
+// duration: −20% velocity is +20% duration on BOTH sides of the navigation, because both derive from
+// siblingBaseMs. The promotion keeps its extra 8% on top (SIBLING_PROMOTE_TEMPO).
+const SIBLING_V_CEIL = 1.0; // px/ms — sibling arrival dial
 export function relativeGrowMs(distance: number): number {
 	return Math.min(1000, Math.max(410, distance / RELATIVE_V_CEIL));
 }
-export function siblingGrowMs(centerDist: number): number {
+/**
+ * The sibling clock at its base velocity — the reference BOTH sides of the navigation are derived from.
+ * `siblingGrowMs` is this × a tempo that applies to the PROMOTION ONLY.
+ *
+ * Sam (Aug 4): the promotion "has sped up to where it happens in the blink of an eye — can that promotion
+ * of sibling chip transition be slowed by 8% but the Featured Card to sibling chip demotion stay the same
+ * velocity?" The demote reads this un-tempoed function, so its distance and its duration are both
+ * unchanged and its velocity is therefore identical. One derivation, one tempo knob on one side of it —
+ * NOT two clocks, which is the §18.2 defect this replaced.
+ */
+export function siblingBaseMs(centerDist: number): number {
 	return Math.min(1000, Math.max(410, centerDist / SIBLING_V_CEIL));
+}
+const SIBLING_PROMOTE_TEMPO = 1.08; // +8% on the arriving card only — see siblingBaseMs
+export function siblingGrowMs(centerDist: number): number {
+	return siblingBaseMs(centerDist) * SIBLING_PROMOTE_TEMPO;
 }
 // SPOUSE promotion duration — now the SAME velocity family as the parent/child regime (V-ceiling 1.6),
 // just a higher floor (SPOUSE_FLOOR_MS) so the in-corner swaps carry human weight instead of snapping.
@@ -575,6 +609,9 @@ const DEMOTE_SETTLE_PARENT_FACTOR = 0.6;
 // well above the floor — a real dial, not floor-clamped). At 1.57px the child read too imperceptible (Sam);
 // its ~3× travel + dramatic shrink want MORE overshoot than the parent to read equally. Being bracketed.
 const DEMOTE_SETTLE_CHILD_FACTOR = 1.6;
+// SIBLING seat (§21.3): factor 1 → the solver floors at DEMOTE_SETTLE_FLOOR_PX, a ~2.2px carry at chip
+// scale. Deliberately the smallest of the three — "not dramatic theatrical overshoot" (Sam).
+const DEMOTE_SETTLE_SIBLING_FACTOR = 1;
 // Solve easeOutBack's overshoot parameter s so the carry hits targetPx (footprint-scaled), same Newton
 // solve as settleBackFor. distance = the element's own travel; footprint = the destination box's diagonal;
 // factor trims the amplitude per-direction (1 = full; parent-seat landings pass DEMOTE_SETTLE_PARENT_FACTOR).
@@ -862,6 +899,48 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// seat is a fixed top-right corner rect derived from the card's own geometry — same for every sibling
 	// pair (no vector, no capture). The card shrinks into the corner and is removed (no persistent chip).
 	const sibling = flightKind === 'sibling';
+	// §19 — THE PANEL MUTATION. When the sibling panel is OPEN, the demoted person is not leaving the
+	// scene at all: he is being RE-FILED as a chip in the list the promoted sibling just left. The
+	// retraction below was correct only while the panel was always shut ("a sibling has no such box — it
+	// lands in the closed panel, not a roster seat"), so with a real seat available the card docks into
+	// it exactly the way a spouse demote docks into its notch chip. The plan is computed before the swap
+	// (state/siblingNav.ts) because the strip may be GLIDING to bring that seat into the window, and the
+	// traveller must target where the seat COMES TO REST — Sam's ruling on the fork, so the scroll and
+	// the flight resolve together rather than one after the other.
+	//
+	// Null plan → panel shut, incoming person has no panel, or no seat for him. Everything below then
+	// runs exactly as it did: the fixed corner rect, z:-1, hidden behind the card.
+	const sibPlan = sibling ? getSiblingNavPlan() : null;
+	// Fraction of the demote's clock spent PARKED on the seat once the travel is done (see the tick).
+	// ~2 frames — enough that the card is painted at rest before Svelte removes it, short enough that it
+	// never reads as a pause. Not a fudge for the clock: the clock is right, the last frame was simply
+	// never painted. Trimmed 0.08 → 0.04 once the travel got its easeOutBack tail, which is already
+	// near-stationary at the end; this is now only the guarantee of a painted resting frame.
+	const SEAT_HOLD = 0.04;
+	// §21.3 — SHAPE EARLY, THEN SLIDE. Sam: the demote "looks like it's coming down from a high level and
+	// being vacuumed up into the sibling chip space", and its direction fights the promotion, which
+	// "doesn't feel like it's moving up, it's expanding out". The cause is that scale and translation ride
+	// ONE progress, so the card is still shrinking hard in the last 100ms — measured, still 271px wide at
+	// t=506 of a 555ms flight, in full view. A shrink that large, that late, reads as descent.
+	//
+	// So the FOOTPRINT resolves on its own, faster progress and the rest of the journey is pure lateral
+	// translation of a finished object. Measured, the hero occludes the demote from t≈200 to t≈470 (peak
+	// 93–99%), which is where this puts the whole shape change AND — because every face crossfade below is
+	// keyed to shell width, not to the clock — the whole content change with it. The chip emerges from
+	// behind the arriving card already finished, which is exactly what Sam asked for: "when it emerges
+	// into view from below the incoming transitioning Featured Card it should be in its final form
+	// already for a long time."
+	const SHAPE_AT = 0.55; // travel fraction by which the footprint is final
+	// The demote lands BEFORE the hero — Sam: "they should land at the same time, even the sibling chip in
+	// final position 50ms before the Featured Card is in position." It measured at 0ms, and not by design:
+	// a sibling demote was clocked by `spouseHeroDurationMs`, a formula from the spouse regime, while the
+	// sibling HERO runs on `siblingGrowMs` at its own gentler ceiling. Two clocks for one stage — §18.2's
+	// defect exactly. It now reads the hero's own curve.
+	//
+	// The lead is stated against the moment the chip STOPS MOVING, which is what "in final position" means
+	// and is SEAT_HOLD short of the clock ending — measuring it against the duration instead put the chip
+	// at rest 84ms early, well past what was asked.
+	const SIBLING_FINISH_LEAD_MS = 50;
 	const SIB_SEAT_W = 160; // compact spouse-chip size = the notch seat the retraction sizes down to
 	const SIB_SEAT_H = 65;
 	// The endpoint sits at the CARD-EDGE RESUME (just below the notch cutout), not the top-right corner. The
@@ -874,7 +953,8 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// "behind the card" is not a reliable hiding place — see the ghost taxonomy.)
 	const SIB_SEAT_TOP_INSET = 100; // > max chip-zone height (90) so the endpoint clears the cutout in every regime
 	const siblingSeat = sibling
-		? { left: card.left + card.width - SIB_SEAT_W, top: card.top + SIB_SEAT_TOP_INSET, width: SIB_SEAT_W, height: SIB_SEAT_H }
+		? (sibPlan?.seat ??
+			{ left: card.left + card.width - SIB_SEAT_W, top: card.top + SIB_SEAT_TOP_INSET, width: SIB_SEAT_W, height: SIB_SEAT_H })
 		: null;
 	// The demoting card's chip-face (a PersonBox, natural 220×75) — counter-scaled per frame below so
 	// it renders undistorted inside the shell's non-uniform morph. Cached once. BOTH kinds now use it:
@@ -888,6 +968,26 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	const footer = el.querySelector('.footer') as HTMLElement | null;
 	const FACE_W = 220;
 	const FACE_H = 75;
+	// THE SEAT FACE — §19, and the same wall §18.4 hit with a 3+-spouse notch. The chip-face above is a
+	// PersonBox rendered `relation="parent"`: 220×75, full short name, parent type scale. A sibling seat is
+	// 119×54, FIRST NAME ONLY, and its own smaller type scale — a different aspect ratio (2.20 vs 2.93) and
+	// a different object. There is no single transform that lands that footprint AND keeps the parent face
+	// undistorted, so the card would arrive as a 119×40.5 parent chip and the atomic swap would grow it
+	// 13.5px in one frame. The answer is §18.4's: carry the DESTINATION's face as a second layer, counter-
+	// scaled every frame to stay uniform and reach exactly 1.0 at the seat, and crossfade to it on the way
+	// in. Mirroring the name (onOutgoingStart) got the WORD right; this gets the object right.
+	const SEAT_FACE_W = 119;
+	const SEAT_FACE_H = 54;
+	// The seat face takes over the CHIP-FACE's OWN BAND (REVEAL_LO/REVEAL_HI) rather than running after it,
+	// and on a §19 mutation the parent-style chip-face is then never shown at all. Two reasons, both Sam's:
+	// the intermediate face is a WAY-STATION — the card's own face becoming a parent chip becoming a sibling
+	// chip is two content changes where the story has one — and running it late meant the second change
+	// landed exactly as the object emerged from behind the arriving card (measured at SHAPE_AT 0.55: seat
+	// face complete at t=325, first visible at t=325, no margin at all). On the chip-face's band it
+	// completes around t=230-270, deep inside the occlusion window, so what emerges has been finished for
+	// ~100ms — "plenty of time to have the interior content in perfect condition prior to landing."
+	let seatFace: HTMLElement | null = null;
+	let seatFaceTried = false;
 	// The chip-face's on-screen scale is capped at FACE_SCALE_MAX× its natural chip size — a ceiling on the
 	// geometry; the CROSSFADE below is what keeps the NAME from ever reading billboard (invisible above
 	// REVEAL_HI×). Uniform (aspect preserved), centered. BOTH regimes.
@@ -908,7 +1008,18 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	let demoteDuration = relative ? RELATIVE_EXIT_MS : SPOUSE_EXIT_MS;
 	const heroOrigin = clickedId ? rectSnapshot.get(clickedId) : undefined;
 	const heroDist = heroOrigin ? Math.hypot(heroOrigin.left - card.left, heroOrigin.top - card.top) : 0;
-	if (relative) {
+	if (sibPlan) {
+		// Clocked off the SIBLING HERO's own curve, so the two cards on stage share one clock and the
+		// finish-first relationship is a stated 50ms rather than a coincidence. `siblingGrowMs` is the same
+		// function growFrom calls, on the same centre-travel distance (captured at the seam — see
+		// SiblingNavPlan.heroCenterTravel for why the outro cannot measure it itself).
+		// siblingBaseMs, NOT siblingGrowMs: the +8% tempo Sam asked for is on the PROMOTION only, so the
+		// demote reads the un-tempoed clock and its velocity is untouched. The consequence is stated rather
+		// than hidden — the demote now settles further ahead of the hero than the 50ms it was tuned to,
+		// because the hero got slower and this did not.
+		const heroMs = siblingBaseMs(sibPlan.heroCenterTravel);
+		demoteDuration = Math.max(300, (heroMs - SIBLING_FINISH_LEAD_MS) / (1 - SEAT_HOLD));
+	} else if (relative) {
 		// Same honest-velocity clock as the hero above (maxCornerTravel over the identical rect pair), so the
 		// demote keeps its exact DEMOTE_LEAD relationship and still finishes first. Timing it off heroDist
 		// while the hero timed off max-corner would silently break that lead.
@@ -927,7 +1038,14 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// into the parent row). Cold / back-forward publish no matching move → inactive → the tick reproduces the
 	// pre-settle motion BIT-IDENTICALLY. The SPOUSE-swap demote (relative=false; honest-velocity LINEAR, kept
 	// so the photo never strobes) is deliberately NOT settled — its base curve is preserved untouched.
-	const demoteSettleActive = relative && getCameraMove()?.kind === flightKind;
+	// §21.3: the sibling mutation gets a settle too. Sam: "maybe we even should add overshoot similar to
+	// how the spouse chip slightly overshoots when demoted from parent chip position into the spouse chip
+	// space. Not dramatic theatrical overshoot, but it gives a sense of weight and timing." It was excluded
+	// only because this branch is shared with the SPOUSE demote, whose linear curve is load-bearing
+	// (constant velocity so the photo never strobes) — and with the footprint now resolved early (SHAPE_AT)
+	// the tail of a sibling demote is a small chip translating, not a photo shrinking, so that reason no
+	// longer applies to it.
+	const demoteSettleActive = (relative || !!sibPlan) && getCameraMove()?.kind === flightKind;
 	let demoteSettleS: number | null = null; // solved lazily on the first frame the seat is known (mount-order safe)
 	return {
 		duration: demoteDuration,
@@ -960,7 +1078,20 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// content) keeps it behind the hero at EVERY phase — during the flight (hero z 2) AND after landing
 			// (hero z 0). It stays visible wherever the growing hero hasn't yet covered it; once covered, it is
 			// correctly hidden behind. z-order is now timing-independent — no re-mask.
-			el.style.zIndex = sibling ? '-1' : '1';
+			//
+			// §19 REVERSES THIS FOR THE PANEL MUTATION. Everything above is about HIDING the retraction —
+			// z:-1 is the fix for the tic where its endpoint showed through the reformed notch cutout. A
+			// card being re-filed into the sibling panel has to be SEEN the whole way, because its
+			// destination is outside the card entirely.
+			//
+			// It takes the SAME z the spouse demote rides: 1, above resting content and BELOW the growing
+			// hero. z 3 was tried first — enough to clear `.sibling-zone`, which is z-index 2 — and it is
+			// bug D from the ghost taxonomy all over again: screenshotted, the departing card sat opaque and
+			// full-detail on top of the arriving one, which is the exact thing z:-1 was introduced to stop.
+			// The layering the doctrine wants is two baseball cards trading places with the ARRIVING one in
+			// front, and no single z can be both under the hero (2) and over the panel (2). So the panel
+			// moved instead — `.sibling-zone` is z-index 0 now — and this stays where every other demote is.
+			el.style.zIndex = sibling && !sibPlan ? '-1' : '1';
 			// SOLID object: opacity 1 the whole way to its seat, no terminal fade — the user tracks one
 			// continuous card shrinking into its chip. (Spouse was formerly hidden ["covered by emptiness"]
 			// to retire Artifact A's edge-peek; Layer 2 makes it a visible second baseball card instead, so
@@ -988,12 +1119,35 @@ export function shrinkTo(node: Element, params: { id: string }) {
 				// glide is 300ms and rect.top is monotone, so the child settle is being measured fair for the
 				// first time. Left unchanged — a measurement pass, not a tuning pass.
 				const parentSeat = document.querySelector(`[data-flight-id="${params.id}"]`)?.getAttribute('data-flight-dir') === 'up';
-				const factor = parentSeat ? DEMOTE_SETTLE_PARENT_FACTOR : DEMOTE_SETTLE_CHILD_FACTOR;
+				// A sibling seat is its own tier: a 119×54 chip at the end of a ~960px path. At factor 1 the
+				// solver floors at DEMOTE_SETTLE_FLOOR_PX (2.2px), which is the same scale as the panel's own
+				// mount cascade (SIBLING_SETTLE_PX 2.5) — weight and timing, not theatre, which is the note.
+				const factor = sibPlan
+					? DEMOTE_SETTLE_SIBLING_FACTOR
+					: parentSeat
+						? DEMOTE_SETTLE_PARENT_FACTOR
+						: DEMOTE_SETTLE_CHILD_FACTOR;
 				demoteSettleS = demoteSettleActive ? demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(box.width, box.height), factor) : 0;
 			}
-			const uu = demoteSettleS ? easeOutBack(u, demoteSettleS) : relative ? cubicOut(u) : u;
-			const Sx = 1 - uu * (1 - sx);
-			const Sy = 1 - uu * (1 - sy);
+			// SEAT HOLD — §19 only. A demote is REMOVED by Svelte the instant its own clock runs out, so the
+			// frame at u=1 is computed and never painted: measured, the last frame the card actually appeared
+			// on was 47px short of the seat and 40px too wide, and the atomic swap then exposed the real chip
+			// somewhere the card had never been. A 47px pop at the endpoint. Everywhere else this is
+			// invisible — the corner retraction ends behind the card, a spouse/parent demote is short enough
+			// that the last frame is within a pixel or two — but a chip landing in the panel is watched all
+			// the way in. So the TRAVEL finishes early and the card RESTS on its seat for the remainder: the
+			// swap then happens between two identical stationary objects, which is what §18.4 means by
+			// exposing an already-solid object rather than catching one mid-flight.
+			const uTravel = sibPlan ? Math.min(1, u / (1 - SEAT_HOLD)) : u;
+			const uu = demoteSettleS ? easeOutBack(uTravel, demoteSettleS) : relative ? cubicOut(uTravel) : uTravel;
+			// SHAPE and POSITION are one progress everywhere except a §19 sibling mutation, where the
+			// footprint runs ahead and finishes at SHAPE_AT (see the constant). cubicOut on the sub-progress
+			// so it DECELERATES into its final size rather than stopping dead — the object arrives at its
+			// shape, it does not snap to it. Position keeps `uu`, so the landing rect is unchanged and the
+			// settle still carries the whole path.
+			const uShape = sibPlan ? cubicOut(Math.min(1, uTravel / SHAPE_AT)) : uu;
+			const Sx = 1 - uShape * (1 - sx);
+			const Sy = 1 - uShape * (1 - sy);
 			el.style.transformOrigin = 'top left';
 			el.style.transform = `translate(${uu * dx}px, ${uu * dy}px) scale(${Sx}, ${Sy})`;
 			// GEOMETRY-KEYED CROSSFADE (replaces the time-based CSS fades AND any gated reveal): both the
@@ -1011,11 +1165,20 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// every frame (never stretched), spans the shell's width, and stays vertically centered in the
 			// shell (the whitespace above/below in the tall early shell is honest, not a taffy chip). U =
 			// shellWidth/FACE_W; at landing Sx=box.w/card.w so U→1 and the face lands at natural box size.
+			// How far the hand-over to the SEAT's own face has got (0 = none, 1 = complete). Zero for every
+			// flight that is not a §19 sibling mutation, so nothing below changes for anyone else.
+			const seatBand = sibPlan ? clamp01((REVEAL_HI - uNat) / (REVEAL_HI - REVEAL_LO)) : 0;
 			if (face) {
 				// Chip-face fades IN over [REVEAL_LO, REVEAL_HI]× — the other half of the geometry crossfade,
 				// overlapping the outgoing fade so there's no gap and no billboard (invisible above REVEAL_HI).
 				face.style.transition = 'none';
-				face.style.opacity = String(Math.max(0, Math.min(1, (REVEAL_HI - uNat) / (REVEAL_HI - REVEAL_LO))));
+				// On a §19 mutation this face is SUPERSEDED outright — the seat's own face has taken its
+				// band, so this one would only ever be the way-station Sam does not want seen. Its geometry
+				// below still runs (the counter-scale is what the seat clone is registered against); only
+				// its opacity is held at 0.
+				face.style.opacity = sibPlan
+					? '0'
+					: String(clamp01((REVEAL_HI - uNat) / (REVEAL_HI - REVEAL_LO)));
 				// Uniform on-screen scale U, capped at FACE_SCALE_MAX (see above). afx=U/Sx, afy=U/Sy give
 				// Sx·afx=Sy·afy=U (uniform → aspect preserved at every frame); the face is centered in the
 				// shell. Below the cap the face spans the shell (tx≈0); above it, it holds cap-size, centered.
@@ -1026,6 +1189,45 @@ export function shrinkTo(node: Element, params: { id: string }) {
 				const tfy = card.height / 2 - (U * FACE_H) / (2 * Sy); // center vertically in the shell
 				face.style.transformOrigin = 'top left';
 				face.style.transform = `translate(${tx}px, ${tfy}px) scale(${afx}, ${afy})`;
+			}
+			// THE SEAT FACE (see the constants above). Cloned lazily rather than at init: the seat chip is
+			// created by the panel's own reactive update, in the same flush that starts this outro, so at
+			// init the query can legitimately return nothing — the same mount-order fact §18.4 met head on.
+			// Cloned ONCE, on the first frame it exists; if it never does, the flight keeps the parent
+			// chip-face and behaves exactly as it did before.
+			// RETRIED until the seat exists, not attempted once and abandoned: the panel creates that chip in
+			// the same flush this outro is configured in, and the crossfade band is early enough now that
+			// losing even the first frame or two would show. The flag is set on SUCCESS, so the query stops
+			// the moment it lands.
+			if (sibPlan && face && !seatFaceTried) {
+				const src = document.querySelector(`[data-sib-seat-id="${sibPlan.pivotId}"] .person-box`);
+				if (src) {
+					seatFaceTried = true;
+					seatFace = src.cloneNode(true) as HTMLElement;
+					seatFace.style.cssText =
+						`position: absolute; left: 0; top: 0; width: ${SEAT_FACE_W}px; height: ${SEAT_FACE_H}px; ` +
+						`transform-origin: top left; opacity: 0; pointer-events: none;`;
+					// inert + aria-hidden for the same reason the hand-off ghost carries them (§18.11): this is
+					// a clone of a real <a href>, and pointer-events stops the mouse but not the keyboard or a
+					// screen reader — it would be a duplicate link to the same person for the whole flight.
+					seatFace.setAttribute('aria-hidden', 'true');
+					seatFace.setAttribute('inert', '');
+					// The wrap's own drop-shadow is the object's shadow throughout the flight; .demote-chipface
+					// gets its shadow stripped by a scoped CSS rule, which cannot reach a node created here.
+					seatFace.style.boxShadow = 'none';
+					face.parentElement?.appendChild(seatFace);
+				}
+			}
+			if (seatFace) {
+				// The same counter-scale rule as the chip-face, against the SEAT's natural size: V is the
+				// uniform on-screen scale, bfx·Sx = bfy·Sy = V, so the composite never stretches and reaches
+				// exactly 1.0 — the seat's true 119×54 — as the shell arrives. Centered in the shell.
+				const V = (Sx * card.width) / SEAT_FACE_W;
+				seatFace.style.transition = 'none';
+				seatFace.style.opacity = String(seatBand);
+				seatFace.style.transform =
+					`translate(${card.width / 2 - (V * SEAT_FACE_W) / (2 * Sx)}px, ` +
+					`${card.height / 2 - (V * SEAT_FACE_H) / (2 * Sy)}px) scale(${V / Sx}, ${V / Sy})`;
 			}
 			// The pivot box is revealed by the outro-END callback (onOutgoingEnd) — the atomic swap fires
 			// the frame the card leaves. The card's outer shell/opacity here are unchanged.

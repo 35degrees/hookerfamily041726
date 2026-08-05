@@ -26,6 +26,8 @@
 		handoffSpouseId,
 		rowTravel
 	} from '$lib/transitions/flight';
+	import { getSiblingNavPlan } from '$lib/state/siblingNav';
+	import { anchorOffsetFor, showsSiblingPanel } from '$lib/state/siblingLayout';
 	import { ccRoster } from '$lib/state/ccRoster.svelte';
 	import { unlockFlight } from '$lib/state/flightLock';
 	import { preloadNeighborhood } from '$lib/photo';
@@ -146,29 +148,62 @@
 	});
 
 	// ── Sibling panel (Phase 7 Slice 1) ──────────────────────────────────────────────────────────────
-	// Gate: a blood sibling exists AND the focus is on the Hooker/Talcott lines and NOT an easter egg — so no
-	// button for in-laws (I-prefix), orbit figures, or line-external people. siblings_count is the blood-only
-	// (full+half) field and is the correct > 0 gate; the button LABEL counts the rendered tiers (SiblingPanel).
+	// The gate itself lives in siblingLayout.ts, because planSiblingNav has to ask the same question of the
+	// INCOMING person to know whether there is a seat to fly into — and two copies of one rule is how they
+	// drift. See showsSiblingPanel for what it tests and why it grew a second clause (the one-way door).
 	const focusC = $derived(f.neighborhood.focus);
-	const showSiblings = $derived(
-		f.neighborhood.siblings_count > 0 && (focusC.hd || focusC.td) && !focusC.ee
-	);
-	let siblingsOpen = $state(false);
+	const showSiblings = $derived(showsSiblingPanel(f.neighborhood));
+	// OPEN BY DEFAULT (Sam, Aug 4): "it should start for all users default in the visible mode but users
+	// can close it anytime." The panel was closed until asked for, on §21.1's reasoning that the trigger
+	// must read peripheral; the sticky preference then made travelling with it open convenient enough that
+	// the default itself moved. Closing it is still one click and still sticks.
+	let siblingsOpen = $state(true);
 	// The panel opened ITSELF (a child promotion) → it reveals as a plain fade, not the cascade. Cleared by
 	// the panel the moment the user touches the trigger, so a hand-driven toggle is always the loud one.
-	let siblingsQuiet = $state(false);
+	// Starts QUIET so the first paint of a page is a plain fade, never §21.1's per-chip cascade. The
+	// cascade is "a deliberate, attention-taking gesture, correct when a hand is on the trigger, intrusive
+	// when it performs itself" (§18.12) — and a panel that is open by default performs itself on every
+	// single page load unless this is set.
+	let siblingsQuiet = $state(true);
 	// SESSION PREFERENCE. Once a hand has been on the trigger the panel keeps that state as you travel:
 	// opening it on one card and finding it shut on the next reads as the app forgetting what you asked
 	// for. null = untouched, and only then does the auto-open on a child promotion apply. The panel still
 	// CLOSES for the flight itself and reopens at landing — same rule every incoming chip obeys, so nothing
 	// belonging to the new person paints before the card arrives — but from the user's seat it is simply
 	// open on every card they land on.
-	let siblingsPref: 'open' | 'closed' | null = $state(null);
+	// `null` no longer means "closed until asked" — it means "nobody has expressed a preference yet", and
+	// the DEFAULT for that state is now open (see siblingsOpen). A hand on the trigger still pins it either
+	// way for the rest of the session.
+	let siblingsPref: 'open' | 'closed' | null = $state('open');
+	// Is THIS navigation a §19 in-place mutation? A $derived, not an effect: the panel needs it during the
+	// same render pass that drops the trigger's `.shown`, and an effect runs a pass too late (§21.2). Keyed
+	// on the focus id so it recomputes exactly once per navigation, while the plan is still captured.
+	const siblingMutation = $derived.by(() => {
+		f.person.id;
+		return !!getSiblingNavPlan();
+	});
 	// The panel closes on navigation (§20.5: the nudge was removed — Sam's call; not worth the fallout, and it
 	// leaves one fewer clock in the Slice-3 flight path). No transform anywhere now.
+	// Set once the first run of the close-effect below has been consumed. That effect exists as a NAVIGATION
+	// hazard, but an $effect also runs once on MOUNT — where it was slamming the panel shut before a single
+	// frame had painted, so "open by default" produced a closed panel on every page load. The focus has not
+	// changed on the first run; there is nothing to protect against yet.
+	let siblingsNavSeen = false;
 	$effect(() => {
 		f.person.id; // nav hazard: on any focus change, close the panel
 		untrack(() => {
+			if (!siblingsNavSeen) {
+				siblingsNavSeen = true;
+				return;
+			}
+			// …EXCEPT on a sibling→sibling navigation with the panel open (§19). Closing here is what makes
+			// every other arrival safe — it guarantees nothing belonging to the incoming person paints
+			// mid-flight — but a sibling promotion barely changes this list, so tearing it down throws away
+			// a list that was already 90% correct and re-animates it. The panel mutates in place instead.
+			// The relaxation is bounded: the one chip that is genuinely new (the demoted person) is still
+			// held hidden until the card lands, by SiblingPanel's own chipIn. The plan is null for every
+			// other arrival, so this is the panel's only exception.
+			if (getSiblingNavPlan()) return;
 			siblingsOpen = false;
 			siblingsQuiet = false;
 		});
@@ -307,7 +342,12 @@
 		// roster unfurls out of the new card at landing (the safety-net reveal, its inverse gesture).
 		if (getFlightKind() === 'cc') return;
 		const pivot = getPivotId();
-		revealPending((el) => el.dataset.flightId !== pivot && el.dataset.flightDir !== 'lateral');
+		// isSeatFor, not a bare data-flight-id test: on a §19 sibling mutation the pivot's destination is a
+		// chip in the sibling panel, which carries data-sib-seat-id. A plain attribute comparison read
+		// `undefined !== pivot` on that chip — true — and revealed the demoted person's chip at FLIGHT
+		// START, fading it up beside a card that was still carrying him across the screen. The one chip
+		// §19.4 says must stay held was the one chip this gate could not see.
+		revealPending((el) => !isSeatFor(el, pivot ?? '') && el.dataset.flightDir !== 'lateral');
 	}
 	// Spouse-chip reveal fade — quicker than the default box fade (180ms) so the chips settle into the
 	// notch with less lag AFTER the hero lands. NOT an earlier start (that would be a mid-flight rise,
@@ -390,7 +430,11 @@
 		// lands on its lateral notch seat (pivot-aware offset guarantees that seat is in the visible
 		// window). Either seat is revealed at the demote's landing by the onOutgoingEnd atomic swap. Skip
 		// the flip only if the destination seat isn't mounted (then the card just shrinks plainly).
-		const seat = document.querySelector(`[data-flight-id="${id}"]`);
+		// §19: on a sibling panel mutation the seat is a chip in the sibling list, which carries
+		// data-sib-seat-id rather than data-flight-id (see onOutgoingEnd for why the two are separate).
+		const seat =
+			document.querySelector(`[data-flight-id="${id}"]`) ??
+			document.querySelector(`[data-sib-seat-id="${id}"]`);
 		if (!seat) return;
 		node.classList.add('demoting');
 		// The chip-face is a resting PersonBox rendered relation="parent", so its name is the parent/short
@@ -410,8 +454,13 @@
 	// never a frame after it's gone (a bare destination). This is the explicit landing signal that
 	// replaced the deleted opacity fade-watch; it also nets the degraded case (duration 0 / box
 	// unmounted), where it simply reveals immediately.
+	// `data-sib-seat-id` is the same signal one level over: on a §19 sibling mutation the demoted card
+	// lands in the sibling PANEL, whose chips deliberately don't carry data-flight-id (it would change
+	// what warmPersonLinks reads at click time). Same atomic swap, same instant reveal.
+	const isSeatFor = (el: HTMLElement, id: string) =>
+		el.dataset.flightId === id || el.dataset.sibSeatId === id;
 	function onOutgoingEnd(_node: HTMLElement, id: string) {
-		revealPending((el) => el.dataset.flightId === id, 0);
+		revealPending((el) => isSeatFor(el, id), 0);
 		if (demotingPivotId === id) demotingPivotId = null;
 	}
 
@@ -427,7 +476,7 @@
 				// BOTH kinds now own their pivot via the onOutgoingEnd atomic swap (fires first, DEMOTE_LEAD);
 				// exclude it so this net can't fade-reveal it and double the seat against the shrinking card.
 				const excludePivot = !prefersReducedMotion.current && demotingPivotId != null;
-				revealPending((el) => !(excludePivot && el.dataset.flightId === demotingPivotId));
+				revealPending((el) => !(excludePivot && isSeatFor(el, demotingPivotId!)));
 			}
 			prevLanded = landed;
 		});
@@ -684,8 +733,9 @@
 			<SiblingPanel
 				siblings={f.neighborhood.siblings}
 				{cardHeight}
-				anchorOffset={useCompact ? 78 : 90}
+				anchorOffset={anchorOffsetFor(roster.spouses.length)}
 				landed={featuredLanded && f.person.id === landedPersonId}
+				mutating={siblingMutation}
 				bind:open={siblingsOpen}
 					bind:quiet={siblingsQuiet}
 					onUserToggle={(o) => (siblingsPref = o ? 'open' : 'closed')}

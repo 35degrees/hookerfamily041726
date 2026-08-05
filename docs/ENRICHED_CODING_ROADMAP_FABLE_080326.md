@@ -1808,3 +1808,683 @@ leak), and the "outgoing sibling chips still mounted" it reports are chips that 
 INCOMING person too — siblings share a sibling set. `probe-sibling-notch` clicks the trigger after a nav
 expecting to open the panel; it is already open, so the click closes it and the chip it wants is gone.
 Both encode "a nav always closes the panel", which is no longer true.
+
+---
+
+## 20. AUGUST 4 — §19 AS BUILT: THE PANEL MUTATES IN PLACE
+
+*(Stream B. §19 was specced and unbuilt; this is what it became on contact with pixels. Where this and
+§19 disagree, this governs. The design doc wants the durable half of it — the re-filing doctrine and the
+layering rule — as an amendment to §21.)*
+
+### 20.1 The two probes re-recorded first, as instructed
+
+`probe-ghosts` and `probe-sibling-notch` were re-recorded against HEAD **before** any §19 code, so that
+nothing inherited could be mistaken for new breakage. Both were red for the reason §19.5 predicted:
+
+- **`probe-ghosts`** asserted that all four of the outgoing person's sibling chips leave, on every case.
+  That was right while a navigation always tore the panel down, and wrong the moment it went sticky: on a
+  sibling→sibling promotion the two people **share a sibling set**, so three of those four are the
+  incoming person's own chips, correctly mounted. Each case now declares the subset it is entitled to
+  remove (`mustLeave`) — all four for the vertical promotions, only the promoted sibling for the lateral.
+- **`probe-sibling-notch`** clicked the trigger after a navigation to open a panel that was already open,
+  which closed it and took the chip the probe needed with it. The click is gone; it waits for the chip.
+
+Baseline after re-recording, before any §19 work: ghosts, sibling-notch, sibling-zorder, flight,
+reveal-gate, choreography all GREEN.
+
+### 20.2 The seam — where a mutation is planned
+
+Three parties need one answer (where the demoted person's chip will come to REST) at three different
+moments: `shrinkTo`'s **init** needs it to clock an honest-velocity flight, its **tick** needs it every
+frame, and the **panel** needs the target offset so it can scroll. Init runs during the DOM update, before
+any effect; the tick runs on rAF, after. So no post-swap DOM read can serve all three — and it would
+measure the wrong number anyway, because the strip is mid-glide and a seat's live rect is an animating
+value while Sam's ruling is that the traveller targets the **resting** position.
+
+It is computed instead at the one synchronous seam where everything is knowable: inside `focusPerson`,
+**after the incoming payload arrives and before `featured.set` starts the flush** (`state/siblingNav.ts`).
+At that instant the incoming list is in hand and the outgoing panel is still on screen. Measured, its
+geometry is invariant across the navigation anyway — the zone is anchored to the featured slot, which does
+not move (1205,250 → 1205,250 across a nav that changed the card height by 74px and the spouse count) —
+so only the notch-carve inset needs the incoming person's spouse count.
+
+`state/siblingLayout.ts` was extracted from `SiblingPanel.svelte` to make this possible: the seat is a
+function of the cumulative layout (asymmetric header gaps, headers consuming window slots, never a partial
+chip), and re-deriving that at the call site would have been a second copy of the component's trickiest
+arithmetic. The panel imports every constant it used to declare; its rendered geometry is unchanged.
+
+### 20.3 What §19.3 got for free, and what it did not
+
+Free, exactly as predicted: the promoted chip vanishing (no `out:` on `.sib-item`, so losing its key IS
+the removal) and the neighbours closing the gap (`animate:flip` already on `.sib-item` — measured, a
+survivor glides one pitch over 11–13 frames with no reversal). Not free:
+
+- **The held chip.** `revealPending`'s accept tested `data-flight-id`, which a sibling chip deliberately
+  does not carry (see below), so `undefined !== pivot` was true and the demoted person's chip **faded up
+  at flight start**, beside a card still carrying him across the screen. The one chip §19.4 says must be
+  held was the one chip the gate could not see. Both call sites now ask `isSeatFor`.
+- **`data-sib-seat-id`, not `data-flight-id`.** The obvious move is to give sibling chips the same
+  attribute every other destination box has. It cannot be: `warmPersonLinks` reads `data-flight-id`
+  through `closest()` to decide which box was clicked, so a sibling chip carrying it would silently give
+  every sibling navigation a `clickedId` it has never had and re-clock its flight. A separate name keeps
+  the seat findable without touching the click path.
+
+### 20.4 THE SEAT HOLD — a demote is removed before its last frame is painted
+
+Svelte removes a demote the instant its own clock ends, so the `u=1` frame is computed and **never
+painted**. Measured, the card's last visible frame was **47px short of the seat and 40px too wide**, and
+the atomic swap then exposed the real chip somewhere the card had never been — a pop at the endpoint.
+
+This has always been true and has always been invisible: the corner retraction ends behind the card, and a
+parent/child seat is close enough that the last frame is within a pixel or two. A chip landing out in the
+panel is watched all the way in. So the TRAVEL now finishes at `1 − SEAT_HOLD` (0.08, ~3 frames) and the
+card **rests on its seat** for the remainder. The swap happens between two identical stationary objects,
+which is what §18.4 means by exposing an already-solid object rather than catching one mid-flight.
+Measured after: Δ[left,top,width,height] = **[0,0,0,0]** on both cases, reveal one frame later.
+
+### 20.5 THE SEAT FACE — §18.4's wall, reached from the other side
+
+The demote's chip-face is a `relation="parent"` PersonBox: 220×75, full short name, parent type scale. A
+sibling seat is 119×54, **first name only**, its own type scale — a different aspect (2.20 vs 2.93) and a
+different object. There is no single transform that lands that footprint and keeps the parent face
+undistorted, so the card arrived as a 119×40.5 parent chip and the swap grew it 13.5px in one frame.
+Mirroring the name (`onOutgoingStart`) got the WORD right; it could not get the OBJECT right.
+
+The answer is §18.4's: carry the **destination's** face as a second layer, counter-scaled every frame
+(`bfx·Sx = bfy·Sy = V`) so it is never stretched and reaches exactly 1.0 at the seat, crossfaded in on a
+geometry band that runs late and entirely below the chip-face's own. Cloned lazily on the first frame the
+seat exists — the panel creates it in the same flush that starts this outro, so an init-time query
+legitimately returns nothing. `inert` + `aria-hidden` + shadow stripped, for the reasons §18.11 gives.
+
+### 20.6 THE LAYERING — §19.4's one wrong prediction
+
+§19.4 expected `probe-sibling-notch` and `probe-sibling-zorder` to be **reversed** by this work, since
+both exist to keep the retraction hidden. One was; the other turned out to be right, and caught the
+mistake.
+
+The first cut put the demote at **z 3** — enough to clear `.sibling-zone` (z-index 2), reasoning that a
+card landing among those chips must be in front of them. `probe-sibling-zorder` went red, and the
+screenshot showed why: the departing card sat opaque and full-detail **on top of the arriving one**. That
+is ghost-taxonomy **bug D** exactly, the thing z:-1 was introduced to stop. The doctrine wants two
+baseball cards trading places with the ARRIVING one in front, and no single z is both under the hero (2)
+and over the panel (2).
+
+**So the panel moved, not the card.** `.sibling-zone` is z-index **0**; the demote rides **z 1**, where
+every other demote already rides. Inert at rest — the zone starts 30px clear of the card's right edge, and
+the card already painted above it at equal z by DOM order (verified by screenshotting the settled page,
+per §18.6, not by reading the property back). `probe-sibling-zorder` is **unchanged and green**: its rule
+was never the wrong one.
+
+`probe-sibling-notch` did need rewriting, but by **re-aiming rather than reversing**. Its rule — the
+retraction must not show through the reformed notch cutout — is still correct and still live, because the
+corner retraction survives as the FALLBACK for when there is no list to fly into. The reachable case is a
+sibling who fails §21.1's own render gate, so the incoming card has no panel at all: George Beardsley
+(1855) → Roswell (1809), who is off the Hooker/Talcott lines and is chip 0 (a chip below the window fold
+is mask-clipped and cannot be clicked). It now asserts it is **genuinely on that path** (`z:-1`) before
+asserting the tic, so it can never go green by measuring the other navigation.
+
+### 20.7 `probe-sibling-seat` — new, and every check proven red
+
+Two cases, each isolating one motion: a 4-sibling panel where survivors close a gap with no scrolling, and
+a 20-sibling windowed panel where the seat starts OUTSIDE the window and the strip must glide to catch the
+card. Checks: the panel never unmounts; the demoted person's chip is held for every frame the card exists;
+the promoted chip is gone from the swap frame; **the card's last PAINTED frame is within 1px of the seat's
+resting rect**; the reveal is a step within 60ms; survivors glide rather than snap; the strip scrolls when
+and only when the seat needs it.
+
+Everything is keyed on **ID, never on name**. These families reuse given names (two Florellas, two Annes,
+two Elnathans, two Charleses among the Strongs) and died-young chips sort to the bottom of their tier, so
+a name match follows the wrong chip and reports confidently about it — which it did, twice, during this
+build before the measurements were redone.
+
+The landing check was re-proven red by setting `SEAT_HOLD` to 0: both cases reported the 47px/49px
+shortfall in the terms above.
+
+### 20.8 The carry-over bug, found by running two navigations in sequence
+
+Nothing in the suite navigates twice. Doing so by hand found this: **the panel is ONE component instance
+across every navigation** (it lives inside `{#if showSiblings}`, which does not change), so `offset` is
+the same variable from one card to the next. Promote a sibling — which now deliberately scrolls the strip
+— then promote a parent, and the parent's list reopened **already scrolled**: its first chips above the
+fold, and the trigger replaced by an up-caret for a list nobody had touched. Only `toggleOpen` reset it,
+so a hand on the trigger was the sole way back to the top.
+
+Latent since the sticky panel (§19.5) and made reachable by §19. Every arrival except a §19 mutation now
+starts at the top. Guarded as the probe's third case.
+
+### 20.9 Verification
+
+`probe-sibling-seat` (3 cases), `probe-sibling-notch`, `probe-sibling-zorder`, `probe-ghosts` (3 cases +
+accumulation), `probe-flight`, `probe-reveal-gate`, `probe-choreography`, `probe-neighbor-stability`,
+`probe-settle`, `probe-demote-velocity`, `probe-smoothness`, `probe-deck-kin`, `probe-deck-direction`,
+`probe-deck-phantom` — all GREEN. `probe-stress`: 120 moves, 0 orphans, 0 janitor firings, 0 page errors.
+Rapid sibling clicking (8 clicks at 180ms, inside the flight): 1 card, 0 pending, 0 stranded fixed
+elements, no errors. `svelte-check` unchanged (the 2 pre-existing `@fontsource` errors). SSR 200.
+`probe-carousel-regression` stays red for the reason §18.8 records — it asserts chip NAMES and the data
+stream added `chip_first_name`; its x/right geometry is byte-identical (679/839, 847/1007, 1015/1175).
+
+### 20.10 Open
+
+- **Nothing is committed.** Sam's rendered-pixel verdict comes first.
+- **The closed-panel fallback is now rare.** Every path to a sibling chip goes through an open panel, and
+  opening it sets the session preference, so the corner retraction is only reached when the INCOMING
+  person has no panel. It is still guarded (§20.6), but it is close to dead code and worth a decision.
+- **The demote passes BEHIND the arriving card** for most of its journey and emerges from its right edge
+  to land on the seat. That is the doctrine-correct layering (§20.6) and it is a real change in the read —
+  worth Sam's eye specifically.
+- The design doc still has no as-built section for §18 (§18.13) and now none for this either.
+
+---
+
+## 21. AUGUST 4 — SAM'S VERDICT ON §20, AND THE NEXT PASS (feedback recorded, NOT built)
+
+*(Sam saw §20 running. Verdict on the whole: "overall there is a lot to like about your new sibling
+transition." What follows is his correction list, recorded before any of it is built so the next pass
+builds to a target. Nothing here is implemented.)*
+
+### 21.1 What is already right — do not re-litigate it
+
+**The shuffle and the catch.** "Shuffling and transitioning the siblings to catch and 'receive' the
+demoted FeaturedCard appears to work very well." The in-place mutation, the gap close, and the carousel
+scrolling to catch the card are ACCEPTED. A little jarring when >6 siblings force the strip to rotate,
+"but that's not a primary concern here, it works well." Not a work item; note it and leave it.
+
+### 21.2 The trigger blinks out while its own chips stay put
+
+"The actual text 'Siblings' header disappears with each sibling chip promotion while the siblings in the
+sibling menu persist."
+
+Diagnosed: `.sibling-trigger` carries `class:shown={landed}` and `landed` is
+`featuredLanded && f.person.id === landedPersonId`, which goes false for the whole flight. Base opacity is
+0 with NO transition, so the label vanishes instantly and fades back 220ms after landing. That is §21.3's
+reveal gate working exactly as written — the trigger is hidden mid-flight so it can never show the
+INCOMING person's count on the OUTGOING card (it caused the session's first regression).
+
+The rule is right everywhere else and wrong here, for the reason §19 exists: on a mutation the panel is
+DELIBERATELY already showing the incoming person's list, so the label is the only part of it still obeying
+a rule about not showing the incoming person. The chips change and the header hides — incoherent.
+Worth knowing before tuning: the count usually does not change at all (siblings share a set, so losing one
+and gaining one leaves N the same — JP Morgan 4, Sarah Morgan 4).
+
+### 21.3 THE DEMOTED CARD'S RETURN MUST BE SUBTLER — the main work item
+
+"Overall the transition of a demoted FeaturedCard entry back into the sibling menu needs to be more
+subtle and it's not subtle right now for several reasons." Four distinct complaints:
+
+1. **The interior content changes in full view.** "The interior content of the card like year and text
+   changes in full view of the user, it changes right before it lands." The chip is hidden under the
+   incoming card for most of its journey, so "there's plenty of time to have the interior content of
+   demoted sibling chip in perfect condition prior to landing in sibling menu and before re-entering UX
+   visual view." → the seat-face crossfade (§20.5) is banded far too LATE. It should be complete while
+   the chip is still occluded, and the object should emerge already finished.
+2. **It reads as coming DOWN and being vacuumed up**, not as a discrete object with weight. "There's a way
+   in which the demoted sibling chip looks like it's coming down from a high level and being vacuumed up
+   into the sibling chip space as opposed to the natural movement of the discrete 'Baseball card' like
+   object with its own weight, heft and presence occupying space intentionally."
+3. **The DIRECTION clashes with the promotion.** The promoted chip "doesn't feel like it's moving up, it's
+   expanding out" — a LATERAL expansion. The demote scales linearly all the way to its final position,
+   which reads as descending. "I think the sibling chip final shape should be done very quickly after the
+   promoted sibling chip is clicked so it feels like the chip is sliding laterally from the left into its
+   final position in the sibling menu not coming down. Like when it emerges into view from below the
+   incoming transitioning Featured Card it should be in its final form already for a long time."
+   → **the SHAPE should resolve early and the remaining journey should be pure lateral translation.**
+   This is one change with item 1: reach final form early, then travel.
+4. **Add a small overshoot.** "Maybe we even should add overshoot similar to how the spouse chip slightly
+   overshoots when demoted from parent chip position into the spouse chip space. Not dramatic theatrical
+   overshoot, but it gives a sense of weight and timing." Note the machinery exists —
+   `demoteSettleBackFor` / `easeOutBack` — but the sibling demote runs through the SPOUSE branch, where
+   `demoteSettleActive` requires `relative`, so it is currently solved to 0 (LINEAR, the anti-strobe
+   curve). This is a deliberate exclusion to revisit, not an oversight to patch.
+
+**And the timing.** "It's distracting that the sibling chip settles into its final position several beats
+after the FeaturedCard is in its final position, they should land at the same time, even the sibling chip
+in final position 50ms before the Featured Card is in position." With the caveat, in his words: "I hope
+that doesn't lead to a lightning fast transition faster than human eye can see, that's not ideal either."
+→ the demote currently finishes AFTER the hero, which inverts `DEMOTE_LEAD`'s whole premise (finish-first,
+clear the stage). Measure the two clocks before touching either; the §20.4 SEAT_HOLD moved the demote's
+visible endpoint and may be part of why.
+
+### 21.4 Also open
+
+- The one-way door: 58 people are reachable as a sibling chip but get no panel of their own (§22).
+
+---
+
+## 22. AUGUST 4 — THE ONE-WAY DOOR CLOSED (§21.1's gate grew a second clause)
+
+**Sam's report:** Alice Lee Roosevelt Longworth (X03145) shows as a half-sibling of Theodore Roosevelt Jr
+(HD6086) and his siblings, but when Alice Lee is the featured card the siblings menu disappears for her.
+
+**Not a §19 regression** — §21.1's render gate, working exactly as written. She fails BOTH clauses:
+`hd=false, td=false` **and** `ee=true`. **And no data fix could reach it:** she genuinely is not a Hooker
+descendant. The line runs through Theodore Sr's SECOND wife (Edith Kermit Carow, HD6083), so her five
+half-siblings are on it and she, Alice Hathaway Lee's daughter, is not. Marking her `hd` would be a lie.
+
+**She was one of 58.** Scanned across all 18,621 person payloads: 58 people are reachable as a sibling
+chip and then get no panel of their own — a one-way door, where the relationship the user just traversed
+does not exist from the other side. The dominant cause is the off-line clause (49), not easter-egg (4).
+
+**The rule now (Sam's call, `showsSiblingPanel` in `state/siblingLayout.ts`):**
+
+```
+showSiblings =  (siblings_count > 0 && (hd || td) && !ee)     // unchanged
+             || tiers.some(s => s.hd || s.td)                 // NEW
+```
+
+The second clause says *somebody on the line can reach me here, so I can go back*. Measured: **+57 cards,
+0 lost, doors 58 → 3.** No data change — `hd`/`td` already ride on every sibling compact
+(`types/neighborhood.ts`). The three left over are Stream A gaps where the reciprocal sibling edge was
+never emitted at all (`siblings_count = 0`, empty tiers) — routed to the data stream, not fixable here.
+
+**It has to stay ADDITIVE.** Gating on the LIST ALONE was measured first and takes the panel off **Thomas
+Hooker himself** — his siblings are not his own descendants. A rule that reads better and deletes the root
+of the tree.
+
+**The gate now has ONE home.** `planSiblingNav` had grown its own copy of the same boolean (it asks the
+question of the INCOMING person, to know whether there is a seat to fly into). Both call sites share
+`showsSiblingPanel` now; the duplicate is gone.
+
+### 22.1 The corner retraction is now nearly dead code
+
+Every path to a sibling chip goes through an open panel, and opening it sets the session preference, so
+the §21.1 corner retraction is only reached when the incoming person gets no panel — which is now just
+those three `siblings_count = 0` pairs. It is still guarded (`probe-sibling-notch`, re-aimed at William
+Pierpont 1797 → Elizabeth Collins 1755), but it is a decision waiting to be made: keep it as the honest
+degrade, or retire it and let those three arrivals do something else.
+
+### 22.2 The probe's path guard did its job
+
+`probe-sibling-notch` was pointed at George Beardsley → Roswell Beardsley earlier the same day. The gate
+change gave Roswell a panel, so that navigation became a §19 mutation — and the guard reported
+**"not on the corner-retraction path (departing card z = auto/1, expected -1) — this pair no longer falls
+back, so the rule is untested"** instead of going green about a rule it had stopped exercising. That is
+§21.3's false-green taxonomy caught in advance rather than after Sam sees it.
+
+### 22.3 Architecture audit (Sam asked for a re-read before more work)
+
+Re-read `PersonBox.svelte`, `types/neighborhood.ts`, `+page.svelte`, `SiblingPanel.svelte`. Integrated
+correctly: the layout math was EXTRACTED not duplicated (the panel imports every constant it used to
+declare); the held seat reuses `markPending` → `revealPending` → the `onOutgoingEnd` atomic swap rather
+than a parallel reveal; `shrinkTo`'s sibling branch substitutes only the destination rect into the
+existing spouse branch; the gap close is the `animate:flip` that was already there. Three things were
+appended rather than integrated, and two are now fixed:
+
+1. **A second capture lifecycle (FIXED).** Every other per-navigation capture lives in `flight.ts` and
+   dies in `clearFlightCaptures()`; the §19 plan had its own module and its own clearing point in
+   `onIncomingLand`. It is now cleared by `clearFlightCaptures()` like the rest — safe because all three
+   consumers read it during that flush and none polls (`shrinkTo` takes it once at init and carries it in
+   the transition's closure, the way it already holds `card`, `face` and `heroOrigin`).
+2. **Two homes for the notch-carve inset (FIXED).** The page computed `useCompact ? 78 : 90` inline while
+   `siblingLayout.ts` had `anchorOffsetFor`. The page calls the function now.
+3. **`data-sib-seat-id` as a second identifier (KEPT, named).** It cannot be `data-flight-id` —
+   `warmPersonLinks` reads that through `closest()` to decide which box was clicked, so a sibling chip
+   carrying it would silently give every sibling navigation a `clickedId` it has never had and re-clock
+   its flight. The cost is real and was paid once: `revealPending` has three call sites and the
+   flight-start one was missed, which is what let the held chip fade up early. All three ask `isSeatFor`.
+
+---
+
+## 23. AUGUST 4 — §21.2 AND §21.3 AS BUILT (the demoted card's return)
+
+### 23.1 What was measured first, and what it showed
+
+Before touching anything, the demote was traced frame by frame on two cards. Two of Sam's four complaints
+turned out to be one defect and one of my assumptions was wrong:
+
+- **The demote is NOT hidden for most of its trip.** It is >50% occluded by the arriving card only between
+  t≈200 and t≈470 (peaking 93–99%), fully visible at the start (it IS the card you clicked from) and again
+  from t≈500. Sam's instinct about the occlusion window was right; his estimate of its size was generous.
+- **It emerged at 29–30% of its final size** (687px wide of a final 119) and kept shrinking in full view.
+  That is the whole of "coming down from a high level and being vacuumed up" AND of "the interior content
+  changes in full view" — the face crossfades are keyed to shell width, so a shape still resolving means
+  content still changing.
+- **It did NOT settle "several beats after" the card — it settled at 0ms**, exactly together. But not by
+  design: the demote was clocked by `spouseHeroDurationMs`, a formula from the SPOUSE regime, while a
+  sibling HERO runs on `siblingGrowMs` at its own gentler ceiling. Two clocks for one stage, coinciding by
+  luck — §18.2's defect. What Sam was reading as "late" is that the demote was still visibly resolving in
+  the final 100ms (271px wide at t=506 of a 555ms flight) while the hero had visually finished long before.
+
+### 23.2 SHAPE EARLY, THEN SLIDE — one change for three complaints
+
+Scale and translation rode ONE progress. They are separated for a §19 mutation only: the FOOTPRINT runs on
+its own faster progress and is final at `SHAPE_AT` (0.55) of the travel, `cubicOut` on the sub-progress so
+it decelerates into its final size rather than snapping to it. Position keeps the original progress, so the
+landing rect and the settle are untouched.
+
+That puts the entire shape change — and, because every face crossfade is geometry-keyed, the entire content
+change — inside the occlusion window. Measured after: **the demote emerges at 122px of a final 119**, with
+the seat's own face already fully opaque, and the rest of the journey is a finished chip translating
+laterally. Sam's ask, verbatim: "when it emerges into view from below the incoming transitioning Featured
+Card it should be in its final form already for a long time."
+
+### 23.3 The way-station face, removed
+
+The card's own face → a PARENT-style chip-face → the sibling seat's face is two content changes where the
+story has one. On a mutation the parent chip-face now never paints at all: the seat's face takes over its
+band (`REVEAL_LO`/`REVEAL_HI`) instead of running after it. Its geometry still runs — the counter-scale is
+what the seat clone is registered against — only its opacity is held at 0.
+
+This also bought the margin the late band did not have. At `SHAPE_AT` 0.55 with the old late band, the seat
+face completed at t=325 and the object emerged at t=325 — no margin at all. On the chip-face's band it
+completes at **t=172–213**, roughly 110–150ms before anything is visible.
+
+The clone is also RETRIED until the seat exists rather than attempted once: the panel creates that chip in
+the same flush the outro is configured in, and the band is early enough now that losing a frame would show.
+
+### 23.4 The clock, related rather than coincidental
+
+The demote now reads the hero's OWN curve — `siblingGrowMs`, the same function `growFrom` calls, on the
+same centre-travel distance. That distance is captured at the §19 seam and carried on the plan, because
+`growFrom` CONSUMES the origin rect in the same flush the outro is configured in, so the outro can never
+measure it for itself (`peekFlightOrigin` reads without consuming).
+
+The lead is stated against the moment the chip **stops moving**, which is what "in final position" means
+and is `SEAT_HOLD` short of the clock ending — measuring it against the duration instead put the chip at
+rest 84ms early, well past what was asked. Measured: **51ms and 34ms** before the hero lands.
+`SEAT_HOLD` trimmed 0.08 → 0.04 now that the travel has an `easeOutBack` tail that is already
+near-stationary; it is only the guarantee of a painted resting frame.
+
+### 23.5 The overshoot
+
+`demoteSettleActive` required `relative`, so a sibling demote solved to 0 and ran LINEAR. That exclusion
+was not an oversight — this branch is shared with the SPOUSE demote, whose linear curve is load-bearing
+(constant velocity so the photo never strobes). With the footprint resolved early, the tail of a sibling
+demote is a small chip translating rather than a photo shrinking, so the reason no longer applies to it.
+`DEMOTE_SETTLE_SIBLING_FACTOR = 1` floors the solver at `DEMOTE_SETTLE_FLOOR_PX` — measured **2.0–2.2px**
+of carry, the same scale as the panel's own mount cascade (`SIBLING_SETTLE_PX` 2.5). "Not dramatic
+theatrical overshoot, but it gives a sense of weight and timing."
+
+### 23.6 §21.2 — the trigger, and why an effect could not fix it
+
+First attempt held the trigger visible with a local `$state` set in the plan effect. It still flashed for
+**13 frames**: an effect runs AFTER the DOM update, so for one render pass the class was already gone, and
+`.sibling-trigger` drops to opacity 0 INSTANTLY (no transition on the base state, deliberately) and then
+takes a 160ms-delayed 220ms fade to return. Render-time information has to arrive as a **prop**: the page
+computes `siblingMutation` as a `$derived` keyed on the focus id, evaluated during the render pass while
+the plan is still captured. Measured after: 0 hidden frames on a mutation, and still 0 VISIBLE frames on a
+parent promotion, so the reveal gate is intact everywhere else.
+
+Note the header legitimately becomes an up-caret when the mutation scrolls the strip (§21.1 gives the word
+and the caret one slot). The probe therefore asserts the SLOT is never blank, not that the word is always
+there — the first version of that check failed the very case that scrolls.
+
+### 23.7 Verification
+
+`probe-sibling-seat` grew four §21.3 checks — emerges at final size, seat face up before it emerges, lands
+15–130ms before the hero, overshoot present and ≤6px — plus the §21.2 header check. All were proven RED by
+setting `SHAPE_AT` back to 1.0, which reported *"the demote emerges at 606px wide, not its final 119px"*
+and *"the seat's own face is only at opacity 0 when the demote emerges."*
+
+Green: sibling-seat (3 cases), sibling-notch, sibling-zorder, ghosts, reveal-gate, flight, choreography,
+neighbor-stability, settle, demote-velocity, smoothness, deck-kin. Stress 120 moves, 0 orphans, 0 errors.
+`svelte-check` unchanged. SSR 200.
+
+### 23.8 Open — the velocity gap, stated rather than buried
+
+The house metric (average max-corner over the flight) measures **1.91–2.15 px/ms** on a sibling demote,
+above the 1.85 spouse-demote ceiling. **This predates §21.3** — the clock only shortened ~5%, so the
+average is essentially what it always was. What §21.3 changed is the DISTRIBUTION: the shrink is now
+concentrated in the first ~55%, with a peak per-frame corner velocity of 7.8–11.5 px/ms.
+
+Two things make it acceptable for now and one makes it worth a decision:
+- The fast phase is 38–100% occluded by the arriving card, which is the point of putting it there.
+- Sam asked for exactly this motion ("the sibling chip final shape should be done very quickly").
+- **`probe-demote-velocity` does not cover the sibling case at all** — it is green because it never looks.
+  That is a real hole in the suite, not a clean bill of health, and it should either grow a sibling case
+  with an honest sibling ceiling or the ceiling should be stated as not applying here.
+
+---
+
+## 24. AUGUST 4 — THE LEADING-HEADER OFFSET, AND OPEN BY DEFAULT
+
+### 24.1 The 5px tick — a modelling error, not a flight error
+
+**Sam:** Emily Vanderbilt → Anne → back to Emily, and "right after it lands, Anne's sibling ticks up
+maybe 5px instantly like it didn't land perfectly in place."
+
+It is **6.4px**, and it is not the flight. The header's trimmed gaps are NEGATIVE MARGINS in the CSS, and
+everywhere in the middle of a list that is exactly equivalent to `cumTops`' `gapAfter` — a `margin-top:
+-6.4px` simply eats 6.4 of the 16px flex gap above it. **At index 0 it is not equivalent**: there is no gap
+above the first item, so the margin has nothing to trim and instead lifts the whole strip.
+
+Emily's three siblings are ALL half-siblings, so her panel is the case that has a tier header at index 0.
+Every seat below it was computed 6.4px low; the card flew to the model's answer and the atomic swap then
+exposed the real chip 6.4px higher. Measured: card's last painted top **371.2**, chip at rest **364.8**.
+
+The same error had a second symptom nobody had reported: the leading header itself rendered 6.4px above
+the mask and was clipped by ~2.4px of its own height. Fixing the model fixed both — after: **0.0px** of
+movement after the reveal, header sitting exactly on the mask top. `HEADER_MARGIN_TOP` /
+`HEADER_MARGIN_BOTTOM` are now derived from the gap constants so the CSS pair and the JS pair cannot drift.
+
+`probe-sibling-seat` gained a HEADER-FIRST case (Anne → Emily). Nothing else in the suite has a header at
+the top of its list, which is why five green cases said nothing about it.
+
+### 24.2 Open by default
+
+Sam: "it should start for all users default in the visible mode but users can close it anytime." Done —
+and yes, the sticky preference he liked was §19.5, shipped alongside the spec; the default is what moved.
+
+Two things this needed beyond flipping the initial value:
+
+- **The nav-close `$effect` also runs on MOUNT.** It exists as a navigation hazard, and on the first run
+  there has been no navigation — but it slammed the panel shut before a frame had painted, so "open by
+  default" produced a closed panel on every page load. Guarded by consuming the first run.
+- **The first paint must be QUIET.** §18.12: the per-chip cascade is "a deliberate, attention-taking
+  gesture, correct when a hand is on the trigger, intrusive when it performs itself." A panel that is open
+  by default performs it on every single page load. `siblingsQuiet` now starts true; measured, the first
+  chip holds one y-position through the whole load.
+
+Both are guarded by a DEFAULT OPEN case in `probe-sibling-seat` (cold load visible + quiet, close survives
+a navigation, reopen survives a navigation).
+
+### 24.3 Every probe that opened the panel had to learn to ask
+
+Three probes crashed outright: they click `.sibling-trigger` to OPEN the panel, which now CLOSES it, and
+every chip they need disappears. Exactly the shape of breakage §19.5's stickiness caused, one step further
+on. They share an `ensurePanelOpen` helper now that reads the state instead of assuming it — the standing
+lesson being that a probe which encodes a DEFAULT rather than an INVARIANT will break every time the
+default moves.
+
+### 24.4 The 12px anchor shift — FIXED (Sam's call)
+
+**Sam:** on a 3+-spouse card like Rodman Lent Hooker → his one-spouse brother John Rodman Hooker, "the
+sibling menu moves up and down 5-10px each time you toggle between them, i think this is because the
+sibling menu is set to start at the exact bottom of the spouse chips, but the spouse chip notch is
+slightly shorter when there's three spouse chips instead of 2."
+
+His diagnosis is right and the number is **12px** — `anchorOffsetFor` returns 78 for a compact notch (≥3
+spouses) and 90 otherwise, so the column's top is 328 on Rodman and 340 on John. That is §21.1's anchor
+working exactly as specified: "the chip column's top = the card-edge resume beneath the notch carve —
+t≈340 normal, 328 compact. The 15px distinction was worth two passes to get right."
+
+**What changed is not the anchor, it is the panel's lifetime.** When it closed and reopened on every
+navigation, a per-card anchor was invisible. Now that it persists it is a column that jumps as you travel.
+Sam's call: **fix it at one value.** A persistent column should not take its position from a property of
+the card beside it. `anchorOffsetFor` returns 90 for everyone; measured, the column top holds at 340
+travelling Rodman → John → Rodman, 0.0px in both directions (was 12.0). The parameter is kept so the
+relationship stays legible at the call site, and so Phase 2.75's density steps have one place to
+reintroduce a rule if one is ever wanted.
+
+**The cost, named rather than buried:** on a compact-notch card the column now starts ~12px below the
+card-edge resume instead of tight against it, and the trigger's underline no longer aligns to the compact
+spouse chip's bottom edge (§21.1 set that alignment deliberately). Screenshotted on Rodman before
+accepting — the trigger sits comfortably below the spouse chips with no awkward gap.
+
+Guarded by an ANCHOR case in `probe-sibling-seat`: the only way to see this bug is to travel BETWEEN the
+two notch regimes, which nothing else in the suite does.
+
+---
+
+## 25. AUGUST 4 — THE SIBLING TEMPO SPLIT, THE HEADER, AND A REVERTED OVERREACH
+
+### 25.1 THE CHILD-GHOST REPORT — measured, then OVERREACHED, then REVERTED. Still open.
+
+**Sam's report,** on Samuel Finley Brown Morse with four children, clicking the youngest: "the other three
+child chips… don't totally exit out of view up and under the FeaturedCard, they transition up but freeze
+just below going fully under the transitioning FeaturedCard and stick in place and fade out."
+
+**WHAT I DID, AND WHY IT WAS WRONG.** I changed the army leavers' easing from `cubicOut` to linear — for
+EVERY row in the app, parents included, on every navigation. §18.3 states the coupling in as many words:
+*"a box in a ROW leaves as the far half of that row's one displacement — same distance, same direction,
+same clock, **same curve** as the row arriving behind it."* The curve is the coupling. I overwrote a
+documented, Sam-approved invariant that governs the whole board's feel, to chase a symptom on three chips
+on one card. Sam's verdict: *"an epic disaster, a violation of the documents… you took my bug request as a
+UX overhaul."* Reverted; `flyOut` is byte-identical to its pre-change state and `probe-army.mjs` (which
+encoded the linear rule as an invariant) is deleted.
+
+**THE STANDING LESSON, because this is apparently a repeat:** a bug report names a symptom and a scope.
+The scope is part of the report. "A couple of child chips stall" authorises work on those chips — it does
+not authorise re-deriving the motion doctrine every row in the app shares. When a local symptom appears to
+require changing a documented global rule, that is the moment to STOP and say so, not to proceed. CLAUDE.md
+already says it for deletion ("don't delete a working component, handler, or CSS rule to 'clean up' unless
+Sam asked for that specific removal — refine in place"); it applies identically to replacing a curve.
+
+**The measurements, which remain valid and are the useful residue.** Recorded so the next attempt starts
+here rather than re-deriving them — and so it is clear the diagnosis was not the problem, the response was:
+
+- The row clock is **506–519ms regardless of which child is clicked** — the first hypothesis (that the
+  furthest chip yields a longer clock and a more visible stall) was measured and is WRONG.
+- Under `cubicOut` a leaver covers **84% of its ground in the first third of the clock** and is down to
+  **~27% of its starting speed** at the frame its alpha runs out, so the fade lands on the slow part.
+- The chips **never reach the card.** When a leaver's alpha is spent it is still **19–137px** clear of the
+  card's bottom edge, depending on the incoming card's height. One tier pitch (145px = row + connector) is
+  exactly what the PARENTS row needs to get under the card on a parent promotion (cardTop − parentsTop =
+  250 − 105 = 145), which is why this has never been visible there. The CHILDREN row would need ~260px,
+  because the card is far taller than a connector.
+
+**Still open, and to be scoped narrowly next time.** Any fix must leave the parents row and the shared
+curve alone; the asymmetry above suggests the question is about the CHILDREN row's travel on a child
+promotion specifically, and it is Sam's call whether that is worth touching at all.
+
+### 25.2 The sibling promotion, +8% — and the lead it costs
+
+Sam: the promotion "has sped up to where it happens in the blink of an eye — can that promotion of sibling
+chip transition be slowed by 8% but the Featured Card to sibling chip demotion stay the same velocity?"
+
+Done as asked, and as ONE derivation rather than two clocks: `siblingBaseMs` is the shared reference, and
+`siblingGrowMs` is that × `SIBLING_PROMOTE_TEMPO` (1.08). The demote reads the un-tempoed base, so its
+distance and duration are both unchanged and its velocity is identical.
+
+**The cost, stated rather than buried.** These two requests trade against each other: the demote's landing
+time is fixed by its velocity, the hero's moved later, so the LEAD between them necessarily grows.
+Measured **84ms and 117ms**, against the 50ms §23.4 was tuned to. There is no third option — a delay on
+the demote would buy the 50ms back, but a beat of stillness at the start of a navigation is the class Sam
+rejected three times in one day. If 117ms reads as the chip arriving and waiting, the fix is to let the
+demote take the 8% too, which costs the "same velocity" half of the request.
+
+### 25.3 The overshoot, answered
+
+Yes — the demoted sibling chip carries **2.0–2.2px** of carry past its seat and returns, measured on every
+case and guarded by `probe-sibling-seat`. It is deliberately the smallest of the three demote settles
+(`DEMOTE_SETTLE_SIBLING_FACTOR = 1` floors the solver at `DEMOTE_SETTLE_FLOOR_PX`), sized to the panel's
+own mount cascade (`SIBLING_SETTLE_PX` 2.5). If it is below perception on the rendered card, that factor
+is the single dial.
+
+### 25.4 The header's hover tick — an authoring accident
+
+Sam: "when you hover over the header it ticks right instantly like 3px which feels awkward." It was not a
+design choice. `.sibling-trigger:hover` had been grouped into the `.sib-toggle-mark` selector, so hovering
+the button applied the TOGGLE MARK's `margin-left: 6px` to the whole button — and because the button is
+centred in its slot, a 6px left margin reads as a ~3px jump right. The hover rule has its own body again.
+
+### 25.5 The header restyle — a chevron, then trimmed back to two responses
+
+Sam's brief: "something modern and professional with the click to expand feature, some kind of visual or
+tactile responsiveness", while staying subtle — "the page already feels crammed with details so I'm not
+looking to make it flashy." Content unchanged; the dashed underline and the +/− are both gone.
+
+**One glyph rotated, never two swapped.** `⌄` turns 180° on toggle. Two nested spans, because the two
+transforms must COMPOSE rather than fight: the outer carries the ROTATION, the inner the optical
+correction. `⌄` has asymmetric ink — 4.92px below the font centre, measured with canvas TextMetrics for
+the carousel carets — and correcting it on the INNER span means the correction rides the rotation: with
+the ink pulled to the centre, a 180° turn about that same centre leaves it there. The glyph is dead-centre
+in both states for free, which swapping `⌃` for `⌄` would not have given.
+
+**The first cut then over-animated it**, and Sam's verdict was that the control read as "very unstable" on
+hover: a 1px chevron nudge AND a colour deepen AND an `:active` depress, on top of the rotation. His
+correction is the spec: *"all it needs to do is rotate up and down on click when menu is open or closed,
+and on hover, you make siblings get lighter similar to NB headers."* As built, exactly two responses:
+
+- **Hover changes ALPHA only** — the label and chevron fade to 0.6, which is `NarrativeBlocks`' own
+  `hover:opacity-60`. The same kind of object should give the same response. Applied to the CHILDREN and
+  never to the button's own opacity, because that opacity is the reveal gate (§21.3): a rule on the button
+  would fight `.shown` on identical specificity, and hovering a trigger that is deliberately hidden
+  mid-flight would paint it at 0.6 — the regression the gate exists to prevent.
+- **The rotation is reserved for the open/closed state.** Nothing else moves. The nudge, the colour change
+  and the depress are all gone.
+
+The HEADER case in `probe-sibling-seat` now asserts the strong form: measured, the button moves 0.00px and
+the chevron moves 0.00px on hover, while the label goes 1 → 0.6.
+
+---
+
+## 26. AUGUST 5 — THE LEAVERS FADE SOONER, AND AN SVG CHEVRON
+
+### 26.1 The receding-edge fix was ALSO wrong, and is also reverted
+
+§25.1's overreach was reverted; the replacement — extending a toward-card row's march so it would tuck
+under the card, tracking the slot's receding bottom edge per frame — was wrong for a different reason and
+lasted one round. `flyOut` is byte-identical to HEAD again and `probe-row-occlusion.mjs` is deleted.
+
+Two things it got wrong, both of which Sam saw immediately:
+
+- **It sent the chips too far.** A row wider than the card has chips outside the card's horizontal extent,
+  and those can never be occluded by it however far they travel — so a longer march just meant more
+  visible travel. Sam, on a 5-child row: "now the child chips move up practically halfway up the Featured
+  Card… that's not the idea."
+- **It put the PARENTS row on the tick path** to prove it measured zero recession, which is true and
+  irrelevant: the css path applies its pin in the keyframe at 0%, the tick path applies it on the first
+  rAF, one frame later. That frame of unpinned, already-reflowed chip is a new ghost, on a row that had
+  none. Sam: "you now have moved the ghost chip to the parent."
+
+**The lesson, stated so it is not learned a third time.** I had the diagnosis right twice and the response
+wrong twice, because I kept solving for "get the chip under the card" when the ask was "stop it looking
+like it halted." Sam, plainly: *"the idea is they can fade out a lot sooner. you have to understand what
+distraction means. the incoming FeaturedCard is the main place of attention."* A leaver is not a thing the
+user is meant to follow. Making it travel further is the opposite of the goal even when it removes the
+symptom.
+
+### 26.2 What actually fixes it: the alpha spends BEFORE the deceleration knee
+
+One dial, the one that exists for this, nothing structural. `ROW_SOLID`/`ROW_GONE` 0.5/0.92 → **0.34/0.70**.
+
+These are fractions of DISTANCE, and the march decelerates — which is the point of the dial, and 0.5/0.92
+had it on the wrong side of the knee. Under `cubicOut` the instantaneous speed at `ROW_GONE` is
+3·(1−ROW_GONE)^(2/3) of the average: **0.56× at 0.92, 1.34× at 0.70.** A chip that dims while visibly
+slowing does not read as leaving, it reads as stopping — which is what Sam described three times ("freeze,
+that means stop, halt, pause their transition").
+
+Measured after, across a child promotion on two cards and a parent promotion: the chip is spent having
+covered 70–72% of its tier, **moving at 1.24–1.80× its own average speed**, and gone at ~33% of the clock
+instead of ~57%. The march is still exactly 145px; the direction, clock and curve are untouched.
+
+The old note "raised from 0.35/0.85 (Sam: they fade out a little too quickly)" is superseded: that
+complaint was about the ramp being abrupt and was answered by widening the band, not by pushing it late.
+The band here is wider in time than 0.35/0.85 was (0.11→0.33 of the clock) while ending earlier.
+
+### 26.3 Sibling velocity −20%
+
+`SIBLING_V_CEIL` 1.2 → **1.0 px/ms**. §17.1: perceived weight is VELOCITY, not duration, so the ceiling is
+the instrument — and because both sides derive from `siblingBaseMs`, one constant slows the promotion and
+the demotion together. The promotion keeps its extra 8% (`SIBLING_PROMOTE_TEMPO`); the lead is unchanged.
+
+### 26.4 The chevron is an SVG now, and the measurement lesson behind it
+
+Sam: "increase the size of the chevron and keep it in the same fixed position, not pivoting on the tip."
+A TEXT GLYPH CANNOT GUARANTEE THAT. Its ink sits at a font-dependent offset inside its line box, so
+rotating about the box centre swings the mark, and correcting the offset needs a constant I got wrong
+twice — first by putting it INSIDE the rotating element (where the 180° turn doubles the error rather
+than cancelling it; the ink jumped 10.80px), then by moving the `transform-origin` instead, which
+TRANSLATES the element and put a 1.20px jump back in.
+
+**And the verification was worse than the bug.** I measured the glyph with `Range.getBoundingClientRect()`,
+which returns the LINE BOX — it reported a ~5px chevron as 20px tall, and produced a confident "0.00px of
+travel" while the rendered pixels plainly disagreed. §21.3's false-green shape, and a SCREENSHOT is what
+settled it, as it has every other time in this document.
+
+In an SVG the ink IS the box. The stroke is symmetric about the viewBox centre by construction, so
+`transform-origin: center` rotates it about its own middle and no font metric, size change or typeface
+swap can move it. 13×9px, larger than the text glyph it replaces. The probe now measures the SVG's rect
+(reliable) and additionally asserts the chevron sits on the LABEL's optical centre, so drifting out of
+alignment is caught as well as swinging.

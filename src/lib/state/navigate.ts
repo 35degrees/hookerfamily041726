@@ -20,9 +20,11 @@ import { isFlightLocked, lockFlight } from './flightLock';
 import { startArc } from './arc.svelte';
 import { isArcMove, arcScaleMinFor, arcDurationMsFor } from '$lib/transitions/arc-math';
 import { fetchFeatured } from '$lib/data/buildFeatured';
+import { planSiblingNav, clearSiblingNavPlan } from './siblingNav';
 import {
 	captureFlightOrigin,
 	captureFlightKind,
+	getFlightKind,
 	captureClicked,
 	capturePanDir,
 	capturePivot,
@@ -43,12 +45,25 @@ export async function loadFeatured(slug: string): Promise<boolean> {
 
 /** Warm-path re-focus: set featured state, then pushState the URL (no document nav). */
 export async function focusPerson(slug: string): Promise<void> {
-	const ok = await loadFeatured(slug);
-	if (!ok) {
+	const data = await fetchFeatured(slug);
+	if (!data) {
 		// Unknown/stale slug — fall back to a real navigation so the 404/redirect path runs.
 		window.location.href = `/person/${slug}`;
 		return;
 	}
+	// §19 SEAM — the one instant where the INCOMING sibling list is in hand and the OUTGOING panel is
+	// still on screen with its geometry intact. Plan the in-place mutation here, synchronously, so the
+	// demote's clock (computed at outro init, before any effect runs) and the panel's scroll target
+	// (computed in an effect, after) read the same settled answer. Doing it after the swap could serve
+	// neither: the strip would already be gliding, so a seat's measured rect would be an animating
+	// value rather than the resting one Sam's ruling requires the traveller to target.
+	// Not a sibling flight → clear, so a stale plan can never be read by the next navigation.
+	if (getFlightKind() === 'sibling' && !prefersReducedMotion.current) {
+		planSiblingNav(data.neighborhood, featured.current?.person.id ?? null);
+	} else {
+		clearSiblingNavPlan();
+	}
+	featured.set(data);
 	pushState(`/person/${slug}`, {});
 	// Clear the per-navigation flight captures one frame later — after the transition flush has
 	// read them — so a subsequent back/forward nav (which captures nothing) can't reuse stale data.
