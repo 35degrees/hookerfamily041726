@@ -7,6 +7,8 @@
 
 **The 080626 edition (August 6) adds §28 — THE CC BLADE SHIPPED (`7c191ed4..e3db7c65`, two commits on main). Records what landed, why a three-way commit split was abandoned (the blade and the typography pass interleave inside `FeaturedCard.svelte`, so splitting by hunk would have produced a broken intermediate), the constant card height it buys and what that retires, and — at Sam's request — §28.3, THE ORDER THINGS WENT WRONG and what each cost, including the pattern worth recognising early: the first wrong move (type pinned to the ceiling) made the blade deep, and every subsequent "fix" was downstream of it, each adding a new artefact. Sam's mid-turn intervention — *"i hope you are not 'fixing' things from your first attempt, its a complete re-write"* — was correct, and reverting to the last approved state should have happened two turns earlier. Also §28.5: the open items, headed by `probe-demote-settle`'s stale baseline (RED before this arc began) and ~30 probe scripts carrying the same latent union-box click. Design rationale: design doc §27.**
 
+**The same 080626 edition also adds §29 — THE FEATURED CARD TYPE PASS, the record for the card-surface work that shipped inside the same commit as the blade (which is why the commit split was two and not three: the two interleave inside `FeaturedCard.svelte` and splitting by hunk would have produced a broken intermediate). Flags the open items it leaves: Carlito is a dangling dependency (trialled, returned from, still in package.json, never imported), and `_review/blurb-over-length.tsv` — 65 over-cap blurbs surfaced by removing the blurb's line clamp — is Stream A work left untracked, so it will not survive a clean checkout. Design rationale: design doc §28.**
+
 **The 072426 edition (July 24) adds §15 — DECK VERTICAL MISFIRE (uncle/nephew rides horizontal). A confirmed bug surfaced during a content session: John Pierpont H00388 → uncle-guardian James Pierpont II H00116 transitions HORIZONTAL when it should be vertical. Diagnosed: the CC data is correct (`gen_delta = −1`); the flight engine's `sameLine` test proxies "same line" by seat distance (`|Δseats| ≤ 180`), and these genuine uncle/nephew sit far apart, so it falls through to lateral. NOT hacked mid-content-session. The proper fix is the long-planned §19.4 LCA/kin-distance bake (per-CC shared-common-ancestor depth, used instead of seat proximity). Deferred, scoped, and specced below. Design rationale: design doc §22.2b.**
 
 **This 071226 edition records the July 11 session: the (unplanned) CARD-TRANSITION MAINTENANCE PHASE is CLOSED and pushed — spouse carousel, demotion baseball-card model, velocity-ceiling physics, six ghosts dispositioned, Playwright probe arsenal standing. Statuses updated throughout; §7 added (state of play + what Phase 3a inherits). Repo-side session record: docs/CODING_HANDOFF.md.**
@@ -2655,3 +2657,39 @@ forward.
   near-dead corner retraction, and **CLAUDE.md still points at `docs/DESIGN.md`
   and `docs/CODING_HANDOFF.md`, neither of which exists** — the ENRICHED pair
   absorbed both roles. A future session will burn time on this.
+
+---
+
+## 29. AUGUST 4–6 — THE FEATURED CARD TYPE PASS (design §28)
+
+### 29.1 What it was
+
+A long iterative pass over the card's own surface, run alongside the CC blade
+(§28) and shipped in the same commit (`e3db7c65`) because it interleaves with
+the blade inside `FeaturedCard.svelte` — which is why the commit split was two
+and not three. Every value was set on Sam's rendered-pixel verdict, one
+adjustment at a time.
+
+Landed: constant lower-content start (`HEADER_H`), card height 580 → 575, Outfit
+for the card name at a cap-matched 26px, ink blue across the card and all four
+chip relations, the Open Sans vitals stack, and age-at-death with an explicit
+approximation marker. Design §28 has the reasoning; this is the record.
+
+### 29.2 Two of these are structural, not cosmetic
+
+- **`CARD_TOP_H` is now exact for every person**, the CC footer having been the
+  only thing that varied it. `DeckRiffle` imports it rather than carrying a
+  literal. Anything that assumed variable card height can stop.
+- **`CORNER_R` is exported**, because the CC blade is carved with the card's own
+  radius. Two literals would have diverged.
+
+### 29.3 Open
+
+- **Carlito is a dangling dependency.** In `package.json`, trialled, returned
+  from, never imported. Either drop it or note why it stays.
+- **`_review/blurb-over-length.tsv`** — 65 blurbs over the character cap,
+  surfaced by removing the blurb's line clamp. **Stream A work**, deliberately
+  left untracked; the file will not survive a clean checkout.
+- The vitals numbers (§28.5) are converged-by-eye values. They are recorded so a
+  future pass knows they are measured rather than arbitrary, but nothing enforces
+  them.

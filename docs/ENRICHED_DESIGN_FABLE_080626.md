@@ -19,6 +19,8 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The 080626 edition (August 6) adds §27 — THE CROSS-CONNECTIONS BLADE (as built). The cross-connections leave the featured card's FOOTER and become a carved blade that lives INSIDE the card and is drawn out of it — which makes every card exactly `CARD_TOP_H` tall, the footer having been the only thing that ever varied it. Records the ONE idea that fixed everything else (it is a tool inside the case, not a neighbour: nested, it inherits every transform for free, measured at 0.00px drift, and needs neither an opacity gate nor a shadow of its own), the carved edge's geometry and THE BULGE at 7+ rows (a corner rounded along a slant that had been flattened to vertical, plus the depth cap that should have been deleted with the layout it was built for), the SHEATH and its tang, the CLAMP reasoning end to end (10.8–11.5, why the floor is the dial that matters, and the retired "two 70-character CCs" spec that set the original 10px), type and width as SEARCHES on the real DOM rather than chosen values, the three break rules (bound names, bound years, and the `<wbr/>` after each separator that was the largest single win), and §27.9 — BUILT AND REVERTED, headed by the two-column layout that was deleted rather than patched, with the full downstream chain of every "fix" that followed the first wrong move. §27.10 collects seven measurement failures, each of which produced a confident wrong answer.**
 
+**The same 080626 edition also adds §28 — THE FEATURED CARD'S FIXED GEOMETRY AND TYPE (as built), the card-surface work that ran alongside the blade and is easy to mistake for cosmetics. Two of its constants are now structural (`CARD_TOP_H` is exact for every person and `CORNER_R` is exported, because the blade is carved with the card's own radius — `DeckRiffle` imports rather than duplicating). It records the REVERSED header rule (a fixed header row buys a constant lower-content start and pays with a variable gap; the old auto-sizing rule swung the content start 23px between a blurb card and a no-blurb one), the durable face-swap rule (apparent size is CAP HEIGHT, not px — Outfit at 26 reads as exactly the size Inter read at 24), one ink at different strengths with ALPHA rather than a second colour token (so it composes with the died-young dimming), age-at-death's honesty rule including when it returns null rather than a number it cannot stand behind, and §28.6 — what was tried and returned from, Carlito included.**
+
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
@@ -3040,3 +3042,118 @@ drop-shadow (§27.1); centring a lone connection (§27.6); `text-wrap: pretty` a
 - **`elementFromPoint` never returns an element with `pointer-events: none`** —
   so it cannot be used to verify a tooltip is visible. A screenshot settled it,
   as it has every other time in this document.
+
+---
+
+## 28. THE FEATURED CARD'S FIXED GEOMETRY AND TYPE (AS BUILT, August 4–6)
+
+_(The card's own surface, reworked alongside the CC blade (§27) and easy to
+mistake for cosmetics. It is not: two of these are structural invariants the
+flight and the deck depend on, and the rest are rules about how a face, a
+colour and a number are allowed to change. Every value here was set on Sam's
+rendered-pixel verdict. §28.6 records what was tried and returned from.)_
+
+### 28.1 Two constants the rest of the app now depends on
+
+```
+CARD_TOP_H = 575    // header row + content row. EXPORTED.
+CORNER_R   = 8      // the carved silhouette's radius. EXPORTED.
+HEADER_H   = 82     // the header ROW. Fixed.
+```
+
+**`CARD_TOP_H` is now the WHOLE card.** The CC footer was the only thing that
+ever varied card height; with the connections moved out (§27) every card is
+exactly this tall. That retires the height variance behind the row-leaver
+"receding edge" problem, and it makes `DeckRiffle`'s phantom sizing exact
+instead of approximately right — it imports the constant now, where it used to
+carry its own literal beside a comment saying "matches FeaturedCard's card-top
+height." **A comment is not a mechanism**, and the two would have diverged the
+first time the number moved. `CORNER_R` is exported for the same reason: the CC
+blade is carved with the card's own radius.
+
+**`HEADER_H` REVERSES the previous rule, deliberately.** The header used to
+auto-size (`minmax(72px, auto)`) so that every card had the same ~12px breathing
+gap under its last text line. The cost was that the LOWER CONTENT — the photo,
+the narrative, the RightColumn — began at a different y depending on whether the
+person had a blurb or a second descent line, a 23px swing measured between a
+blurb card and a no-blurb one. A fixed header row buys a **constant content
+start** and pays for it with a variable gap underneath. The dial is `HEADER_H`
+and there are no other height inputs. The rare dual-descent 4-line card keeps
+its own fixed 96px `headerIsCrowded` variant.
+
+### 28.2 A face swap is a CAP-HEIGHT swap, not a px swap
+
+The card's `<h1>` is Outfit 500 at **26px** — chosen because Inter Variable 500
+at 24px has an 18px cap height and Outfit has a 16px cap at the same px. 26px is
+therefore the size at which Outfit reads as **exactly the size the Inter name
+always did**. It is a like-for-like swap, not an enlargement, and the
+`shrinkToFit` floor moved by the same ratio (17 → 18.5).
+
+**This is the durable rule: apparent size is CAP HEIGHT, not font-size.** Swap a
+face at the same px and the name changes size; swap it at the same cap and it
+does not. `NAME_FACE`, `NAME_SIZE` and `NAME_MIN` sit together at the top of the
+component so the pair cannot be moved independently.
+
+Scope is deliberately narrow — Sam: _"this request is 100% only for the
+FeaturedCard name. I am not interested in changing the font for the name on any
+of the other chips."_ The per-person `bio.display_font` override still wins where
+it is set.
+
+### 28.3 One ink, at different strengths
+
+`--color-inkblue: oklch(0.307 0.146 265.522)` carries the card's name, its
+descent lines, its blurb (at 60%), and **every chip's text across every
+relation** — parent, spouse, sibling, child.
+
+**The years drop to 70% ALPHA rather than to a lighter blue.** Alpha keeps them
+the same hue as the name above them, so a chip reads as one object at two
+strengths rather than as two colours. It also composes correctly with the
+died-young dimming — a died-young chip is already `opacity-65`, so its years land
+at 0.65 × 0.7 without a third value to maintain. A second colour token would
+have needed one.
+
+The CC blade's clickable names are the one deliberate exception
+(`--color-darkgreyblue`, §27.8): the blade sits below the card in the hierarchy,
+so its links are quieter than the card's own ink.
+
+### 28.4 Age at death — and the honesty rule
+
+`ageAtDeath()` in `dates.ts` renders `(Age 76)` beside the death date, and
+`(~Age 76)` when the sources cannot support the exact number. The tilde is not
+decoration; it is the whole point.
+
+- **Either end year-only → approximate.** A bare year, or the Jan-1 sentinel
+  this data uses for "year known, date not", makes the difference an upper bound.
+- **Both ends full dates → exact**, decremented when the death month/day falls
+  before the birthday.
+- **Same month, unknown day → approximate**, because the unknown day is what
+  decides it.
+- **A negative span, or one over 120 years → RETURN NULL.** The underlying dates
+  disagree; the card says nothing rather than printing a number it cannot stand
+  behind. This is the §27-era instinct in a different place: null beats weak.
+
+### 28.5 The vitals stack
+
+Open Sans, at sizes and spacings that were converged on by eye and are recorded
+here only so the next pass knows they are measured values rather than round
+numbers: portrait→vitals `10.94px`, inter-vital `7.6px`, date `12.45px/normal`,
+location `12.08px/light`, MAP `9px` on the baseline. Birth and death blocks are
+identical in gap, leading, weight, size and colour — the age span is the only
+difference between them, at 70% alpha.
+
+**The bio blurb is NOT clamped.** A `line-clamp-1` was added and removed on Sam's
+instruction: an over-long blurb is a DATA defect, and hiding it in the UI means
+it never gets fixed. It surfaces. (The 65 over-length blurbs it surfaces are
+logged for a Stream A session in `_review/blurb-over-length.tsv`.)
+
+### 28.6 Tried and returned from
+
+- **Carlito** — trialled for the card name and the chips, returned from. Still in
+  `package.json`, **not imported**; a dangling dependency, logged in roadmap §29.
+- **A 20px card-height cut** — read as too much; the reduction landed at 5px
+  (580 → 575).
+- **`line-clamp-1` on the blurb** — see §28.5.
+- **Slate blue for the blade's links** — §27.8.
+- Two font-size instructions were **misread as increases when they were
+  reductions**. When Sam says "size the font by 4%", the direction is his to
+  state and mine to confirm, not to infer.
