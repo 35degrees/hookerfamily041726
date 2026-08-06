@@ -9,6 +9,8 @@
 
 **The same 080626 edition also adds §29 — THE FEATURED CARD TYPE PASS, the record for the card-surface work that shipped inside the same commit as the blade (which is why the commit split was two and not three: the two interleave inside `FeaturedCard.svelte` and splitting by hunk would have produced a broken intermediate). Flags the open items it leaves: Carlito is a dangling dependency (trialled, returned from, still in package.json, never imported), and `_review/blurb-over-length.tsv` — 65 over-cap blurbs surfaced by removing the blurb's line clamp — is Stream A work left untracked, so it will not survive a clean checkout. Design rationale: design doc §28.**
 
+**The same 080626 edition also adds §30 — THREE DEFECTS FOUND AFTER THE BLADE SHIPPED, two of them introduced by earlier fixes inside the same arc (removing the slant's depth cap was right, but the cap had also been bounding the shaping float's width by accident, and a float's width sets its container's min-content width — the floor of the blade's width search). Records all three with their commits, the durable family behind the third (a measurement taken during a flight must be scale-honest or it measures the flight rather than the content — third appearance in this component alone), the fact that NONE was caught by a probe and two were invisible in a screenshot because they only showed up as a value differing between two entries or two routes to the same entry, and §30.1 — two claims I reported to Sam as settled and had to retract, both drawn from cases that did not exercise the thing being judged.**
+
 **The 072426 edition (July 24) adds §15 — DECK VERTICAL MISFIRE (uncle/nephew rides horizontal). A confirmed bug surfaced during a content session: John Pierpont H00388 → uncle-guardian James Pierpont II H00116 transitions HORIZONTAL when it should be vertical. Diagnosed: the CC data is correct (`gen_delta = −1`); the flight engine's `sameLine` test proxies "same line" by seat distance (`|Δseats| ≤ 180`), and these genuine uncle/nephew sit far apart, so it falls through to lateral. NOT hacked mid-content-session. The proper fix is the long-planned §19.4 LCA/kin-distance bake (per-CC shared-common-ancestor depth, used instead of seat proximity). Deferred, scoped, and specced below. Design rationale: design doc §22.2b.**
 
 **This 071226 edition records the July 11 session: the (unplanned) CARD-TRANSITION MAINTENANCE PHASE is CLOSED and pushed — spouse carousel, demotion baseball-card model, velocity-ceiling physics, six ghosts dispositioned, Playwright probe arsenal standing. Statuses updated throughout; §7 added (state of play + what Phase 3a inherits). Repo-side session record: docs/CODING_HANDOFF.md.**
@@ -2693,3 +2695,50 @@ approximation marker. Design §28 has the reasoning; this is the record.
 - The vitals numbers (§28.5) are converged-by-eye values. They are recorded so a
   future pass knows they are measured rather than arbitrary, but nothing enforces
   them.
+
+---
+
+## 30. AUGUST 6 — THREE DEFECTS FOUND AFTER THE BLADE SHIPPED
+
+§28 records the blade as shipped and pushed. It was, and then three defects
+surfaced in the hour after — **two of them introduced by earlier fixes inside the
+same arc**. That is the part worth carrying forward: this component's failures
+have almost all been measurement failures, and two of these were caused by
+fixing the previous one.
+
+| # | symptom Sam saw | cause | commit |
+|---|---|---|---|
+| 1 | a one-connection blade stuck at 660px wide | the shaping float had grown to 639px, and **a float's width sets its container's min-content width**, which is the floor of the width search | `bf2322f5` |
+| 2 | a tail the metric scored as absent | `AVG_CHAR_W` claimed to be measured and was 5% low; a real tail sat **one pixel** the wrong side of the limit | `3b0598c5` |
+| 3 | the same entry laid out differently depending on the route to it | `getClientRects()` is scaled by the flight's transform; a chip promotion mounts the card scaled DOWN, so the tail preference silently degraded to "narrowest" | `ed9f05b7` |
+
+**#1 was caused by the fix before it.** Removing the slant's depth cap (§27.2)
+was correct — the cap only existed for the deleted two-column layout — but the
+cap had also been bounding the float's width by accident. Nothing in the code
+said so.
+
+**#3 is the third appearance of one family in this component alone** (design
+§27.12): a measurement taken during a flight that is not scale-honest measures
+the flight rather than the content. The other two are recorded at design §27.3
+and §27.4.
+
+**What each was found by: Sam looking at a rendered card and saying "that looks
+inconsistent."** None was caught by a probe, and #2 and #3 were both invisible
+in a screenshot — they only showed up as a value that differed between two
+entries, or between two routes to the same entry. Worth remembering when
+deciding whether a blade change needs a probe: the ones that matter here are
+comparisons, not thresholds.
+
+### 30.1 Two claims I reported as settled and had to retract
+
+Recorded so they are not cited from the transcript:
+
+- **"width alone cannot fix the tails."** Measured before the `<wbr/>` fix,
+  against a layout where connections could not break from each other at all. The
+  conclusion did not survive the constraint changing (design §27.9).
+- **"the tail metric is inert."** Diagnosed on a blade that has no tail, where
+  zero is the correct answer. It agreed with ground truth on eleven of twelve
+  blades, and the twelfth was the 1px threshold of #2 (design §27.11).
+
+Both had the same shape: a conclusion drawn from a case that did not exercise
+the thing being judged.
