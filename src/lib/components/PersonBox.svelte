@@ -44,6 +44,16 @@
 	// SIBLING chips are their own size tier — ~20% smaller than a normal spouse/child chip (220×75 → 176×60).
 	// Existing relations keep their exact classes (sibling only ADDS a branch), so no spouse/child chip moves.
 	let isSibling = $derived(relation === 'sibling');
+	// ── CHIP TEXT COLOUR (Aug 4) ────────────────────────────────────────────────────────────────────
+	// Every chip, every relation, takes INK BLUE — the same value the card's name and descent line use
+	// (see layout.css), so the whole card is one ink at different strengths. The YEARS drop to 70% alpha
+	// rather than to a lighter blue: alpha keeps them the same hue as the name they sit under, so a chip
+	// reads as one object at two strengths, not as two colours.
+	//
+	// Alpha, not a second token, also composes correctly with the died-young dimming — a died-young
+	// chip is already opacity-65, so its years land at 0.65 x 0.7 without a third value to maintain.
+	const CHIP_TEXT = 'text-inkblue';
+	const CHIP_YEARS = 'text-inkblue opacity-70';
 	let boxSize = $derived(
 		isSibling ? 'h-[54px] w-[119px]' : compact ? 'h-[65px] w-[160px]' : 'h-[75px] w-[220px]'
 	);
@@ -110,7 +120,7 @@
 {#snippet nameEl()}
 	{#if isSibling}
 		<div
-			class="min-w-0 font-medium text-stone-900 {nameText} {chipFontClass}"
+			class="min-w-0 font-medium {CHIP_TEXT} {nameText} {chipFontClass}"
 			data-chip-name
 			use:shrinkToFit={{
 				max: chipFontClass ? 12.5 : 11,
@@ -121,7 +131,7 @@
 			<span data-fit class="inline-block whitespace-nowrap">{displayName}</span>
 		</div>
 	{:else}
-		<div class="font-medium text-stone-900 {nameText} {chipFontClass}" data-chip-name>
+		<div class="font-medium {CHIP_TEXT} {nameText} {chipFontClass}" data-chip-name>
 			{displayName}
 		</div>
 	{/if}
@@ -158,13 +168,13 @@
 				     travelling chip (see data-chip-union). Cloning this line rather than building one keeps
 				     the new row in the traveller's own type scale, so a compact seat can never hand a
 				     10px line to a 13px box. -->
-				<div class="text-stone-500 {dateText}" data-chip-dates>
+				<div class="{CHIP_YEARS} {dateText}" data-chip-dates>
 					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && showDiedYoung}
 						{' '}(died young){/if}
 				</div>
 			{/if}
 			{#if isSibling && showDiedYoung}
-				<div class="leading-none text-stone-400 {diedYoungText}">died young</div>
+				<div class="leading-none {CHIP_YEARS} {diedYoungText}">died young</div>
 			{/if}
 			{#if relation === 'spouse' && unionLine}
 				<!-- data-chip-union is the same kind of hook as data-chip-name: a stable handle the flight
@@ -172,7 +182,7 @@
 				     becomes has three, so without this the union row simply appeared the instant the
 				     traveller retired. The hand-off now grows this row on the traveller mid-journey, so
 				     the swap lands on a chip that already says the same thing. -->
-				<div class="text-stone-500 {dateText}" data-chip-union>
+				<div class="{CHIP_YEARS} {dateText}" data-chip-union>
 					{unionLine}
 				</div>
 			{/if}
@@ -206,13 +216,13 @@
 				     travelling chip (see data-chip-union). Cloning this line rather than building one keeps
 				     the new row in the traveller's own type scale, so a compact seat can never hand a
 				     10px line to a 13px box. -->
-				<div class="text-stone-500 {dateText}" data-chip-dates>
+				<div class="{CHIP_YEARS} {dateText}" data-chip-dates>
 					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && showDiedYoung}
 						{' '}(died young){/if}
 				</div>
 			{/if}
 			{#if isSibling && showDiedYoung}
-				<div class="leading-none text-stone-400 {diedYoungText}">died young</div>
+				<div class="leading-none {CHIP_YEARS} {diedYoungText}">died young</div>
 			{/if}
 			{#if relation === 'spouse' && unionLine}
 				<!-- data-chip-union is the same kind of hook as data-chip-name: a stable handle the flight
@@ -220,7 +230,7 @@
 				     becomes has three, so without this the union row simply appeared the instant the
 				     traveller retired. The hand-off now grows this row on the traveller mid-journey, so
 				     the swap lands on a chip that already says the same thing. -->
-				<div class="text-stone-500 {dateText}" data-chip-union>
+				<div class="{CHIP_YEARS} {dateText}" data-chip-union>
 					{unionLine}
 				</div>
 			{/if}

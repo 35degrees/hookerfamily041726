@@ -24,7 +24,8 @@
 		getPanDir,
 		rowClockMs,
 		handoffSpouseId,
-		rowTravel
+		rowTravel,
+		retractBladeIn
 	} from '$lib/transitions/flight';
 	import { getSiblingNavPlan } from '$lib/state/siblingNav';
 	import { anchorOffsetFor, showsSiblingPanel } from '$lib/state/siblingLayout';
@@ -142,6 +143,16 @@
 	// then GLIDES in lockstep with the morph. `mounted` keeps SSR/hydration content-
 	// sized (no explicit height until the client measures), avoiding a 0-height flash.
 	let cardHeight = $state(0);
+	// The CC BLADE's measured height, forwarded up by the card that OWNS the blade. The blade is pinned
+	// absolutely inside the card so it adds no height of its own (see FeaturedCard) — which is exactly
+	// why the slot has to reserve it here, or the connector and children row would sit under it.
+	let bladeHeight = $state(0);
+	// Only the CURRENT person's card may set the reservation. During a navigation the outgoing card is
+	// still mounted (it is flying away) and would otherwise report its blade's height back after the
+	// incoming one has already set the new value, restoring the old gap under the new card.
+	function onBladeHeight(id: string, h: number) {
+		if (id === f.person.id) bladeHeight = h;
+	}
 	let mounted = $state(false);
 	$effect(() => {
 		mounted = true;
@@ -314,7 +325,10 @@
 		if (handoffChipId) {
 			const watch = () => {
 				if (!node.isConnected || !node.classList.contains('flat')) return;
-				if (node.offsetWidth && node.getBoundingClientRect().width >= node.offsetWidth * NOTCH_ANTICIPATE) {
+				if (
+					node.offsetWidth &&
+					node.getBoundingClientRect().width >= node.offsetWidth * NOTCH_ANTICIPATE
+				) {
 					// `notch-armed`, NOT removing `.flat`. `.flat` means "this card is in flight" to more than
 					// the clip rule — probe-flight reads it as the landing boundary — so dropping it early
 					// would not un-flatten a card, it would tell every reader the flight had ended. The new
@@ -422,6 +436,7 @@
 	function onOutgoingStart(node: HTMLElement, id: string) {
 		if (prefersReducedMotion.current) return;
 		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
+		retractBladeIn(node); // the CC blade stows back into the case as the card starts to leave
 		demotingPivotId = id; // this card IS the pivot (getPivotId is already cleared by introend)
 		// "Flip early, land as a chip" — Layer 2 UNIFIES this across both kinds. The .demoting class
 		// cross-fades the chip-face in over the first ~110ms (front-loaded, motion-masked, one flip) while
@@ -627,7 +642,10 @@
 	     so it's created/destroyed on focus change — its send/receive pair with the
 	     box that the same person occupies on the other side (child→featured, old
 	     featured→parent), giving the card↔box content cross-dissolve. -->
-	<div class="featured-slot" style={mounted && cardHeight ? `height: ${cardHeight}px` : ''}>
+	<div
+		class="featured-slot"
+		style={mounted && cardHeight ? `height: ${cardHeight + bladeHeight}px` : ''}
+	>
 		<!-- Spouse chips: dock into the carved notch and swap LATERALLY. Clicking a chip
 		     makes that spouse featured — their card growFroms the click-captured chip rect
 		     (warmPersonLinks already captures it on any /person link), while the previous
@@ -737,8 +755,8 @@
 				landed={featuredLanded && f.person.id === landedPersonId}
 				mutating={siblingMutation}
 				bind:open={siblingsOpen}
-					bind:quiet={siblingsQuiet}
-					onUserToggle={(o) => (siblingsPref = o ? 'open' : 'closed')}
+				bind:quiet={siblingsQuiet}
+				onUserToggle={(o) => (siblingsPref = o ? 'open' : 'closed')}
 			/>
 		{/if}
 		{#each [f] as cur (cur.person.id)}
@@ -760,6 +778,7 @@
 					burialCemetery={cur.burialCemetery}
 					crossConnections={cur.crossConnections}
 					institutionsById={cur.institutionsById}
+					onbladeheight={(h) => onBladeHeight(cur.person.id, h)}
 					settled={featuredLanded && cur.person.id === landedPersonId}
 				/>
 				<!-- Chip-face for the "flip early, land as a chip" relative demotion: a real PersonBox of
@@ -771,6 +790,10 @@
 				</div>
 			</div>
 		{/each}
+		<!-- THE CROSS-CONNECTIONS BLADE. A sibling of the card inside the slot, not a child of it: the
+		     card is clip-path'd to its notch silhouette and every card stacks in grid cell 1/1, so the
+		     blade auto-places into the row beneath and inherits the slot's centring and z-lift. The slot
+		     reserves cardHeight + bladeHeight (above), which keeps the children connector below it. -->
 	</div>
 
 	{#if childrenTotal > 0}

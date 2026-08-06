@@ -10,7 +10,7 @@
  * Click-time captures (origin rect, flight kind, clicked id, pan direction, rect snapshot) live at
  * the top of this file and are read by the transitions during the flush, then cleared one frame on.
  */
-import { cubicOut } from 'svelte/easing';
+import { cubicOut, cubicIn } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
 import { getCameraMove, type CameraMove } from '../state/camera';
 import { isArcMove, arcDurationMsFor, ARC_DESC, ARC_RISE } from './arc-math';
@@ -63,6 +63,21 @@ let flightOrigin: DOMRect | null = null;
 /** Read the captured origin WITHOUT consuming it. `growFrom` consumes (so a cold load can't reuse a stale
  *  rect), and it runs in the same flush as the outro — so an outro that needs the hero's origin cannot
  *  race it for the same variable. §19's plan reads it at the click-time seam instead, before either. */
+/** The last hero flight's clock AND kind, published by growFrom so the CC blade can be placed inside it. */
+type HeroSchedule = {
+	duration: number;
+	delay: number;
+	kind: 'spouse' | 'relative' | 'cc' | 'sibling';
+	/** Which axis the card actually ARRIVES along. A vertical arrival hides a vertical blade draw — see
+	 *  BLADE_DRAW. Taken from the deck's own entry vector, NOT from panDir: panDir is set from the clicked
+	 *  RELATION (parent→down, child→up, spouse→lateral) and says nothing about a CC's deck direction. */
+	axis: 'vertical' | 'lateral';
+};
+let heroSchedule: HeroSchedule = { duration: 0, delay: 0, kind: 'relative', axis: 'lateral' };
+export function getHeroSchedule(): HeroSchedule {
+	return heroSchedule;
+}
+
 export function peekFlightOrigin(): DOMRect | null {
 	return flightOrigin;
 }
@@ -237,13 +252,19 @@ const DECK_SETTLE_BOOST = 1.1; // v4.2.1: +10% arrival overshoot — a heavier c
 // for a real push card: the sign + relative magnitude are kept (so no two flights are identical), but the
 // magnitude is remapped into [MIN, MAX] so a card is NEVER flat-axial (an unfloored seed can land near 0).
 // v4.1: the TILT range is per-axis — a lateral slide only banks (1.5–2°); a vertical fall leans (2.5–4°).
-function pushDraw(seededRot: number, seededLane: number, lateral: boolean): { rot: number; lane: number } {
+function pushDraw(
+	seededRot: number,
+	seededLane: number,
+	lateral: boolean
+): { rot: number; lane: number } {
 	const sr = seededRot / DECK_ROT_JITTER; // ∈ [-1,1]
 	const sl = seededLane / DECK_LANE_FAN; // ∈ [-1,1]
 	const rMin = lateral ? DECK_ROT_LAT_MIN : DECK_ROT_VERT_MIN;
 	const rMax = lateral ? DECK_ROT_LAT_MAX : DECK_ROT_VERT_MAX;
 	const rot = (sr >= 0 ? 1 : -1) * (rMin + Math.abs(sr) * (rMax - rMin));
-	const lane = (sl >= 0 ? 1 : -1) * (DECK_PUSH_LANE_MIN + Math.abs(sl) * (DECK_PUSH_LANE_MAX - DECK_PUSH_LANE_MIN));
+	const lane =
+		(sl >= 0 ? 1 : -1) *
+		(DECK_PUSH_LANE_MIN + Math.abs(sl) * (DECK_PUSH_LANE_MAX - DECK_PUSH_LANE_MIN));
 	return { rot, lane };
 }
 
@@ -258,9 +279,11 @@ export function deckExit(
 	const vh = window.innerHeight;
 	let x = 0;
 	let y = 0;
-	if (dir.x > 0) x = vw - left + DECK_EDGE_MARGIN; // off the RIGHT: left edge past vw
+	if (dir.x > 0)
+		x = vw - left + DECK_EDGE_MARGIN; // off the RIGHT: left edge past vw
 	else if (dir.x < 0) x = -(left + w + DECK_EDGE_MARGIN); // off the LEFT: right edge past 0
-	if (dir.y > 0) y = vh - top + DECK_EDGE_MARGIN; // off the BOTTOM: top edge past vh
+	if (dir.y > 0)
+		y = vh - top + DECK_EDGE_MARGIN; // off the BOTTOM: top edge past vh
 	else if (dir.y < 0) y = -(top + h + DECK_EDGE_MARGIN); // off the TOP: bottom edge past 0
 	return { x, y };
 }
@@ -395,7 +418,8 @@ export function deckScheduleFor(m: CameraMove | null): DeckSchedule {
 	const convoyHeroDelayMs = Math.max(0, (N - 1) * DECK_STAGGER_BASE - 15) * DECK_TEMPO;
 	// PHANTOM BEAT (ghosts off): the empty stage between car 1's full exit and the hero's arrival — the length
 	// of the invisible train, scaled by relation. Direct = a short train; collateral/orbit = a long one.
-	const phantomBeatMs = (direct ? DECK_BEAT_DIRECT + norm * 30 : DECK_BEAT_COLL + norm * 87) * DECK_TEMPO;
+	const phantomBeatMs =
+		(direct ? DECK_BEAT_DIRECT + norm * 30 : DECK_BEAT_COLL + norm * 87) * DECK_TEMPO;
 	return { N, staggerBaseMs: DECK_STAGGER_BASE, jitter, convoyHeroDelayMs, phantomBeatMs };
 }
 
@@ -406,7 +430,6 @@ export function deckScheduleFor(m: CameraMove | null): DeckSchedule {
 
 // The altitude arc's math + trigger live in arc-math.ts (shared with the arc clock + substrate); the arc
 // clock itself (the single rAF the card + substrate both read) lives in arc.svelte.ts.
-
 
 // ── Path A captures (parent/child/spouse rows no longer use animate:flip — we pin leavers
 // ourselves, at the TRUE click-time positions, so Svelte's fix() can't mis-pin them) ──
@@ -473,7 +496,13 @@ export function captureRects(boxes: Iterable<Element>): void {
 		const r = el.getBoundingClientRect();
 		// dir = the box's ZONE (data-flight-dir). Carried so a consumer can ask which row a person was
 		// standing in when the click happened — see handoffPending.
-		next.set(id, { left: r.left, top: r.top, width: r.width, height: r.height, dir: el.dataset.flightDir as ZoneDir | undefined });
+		next.set(id, {
+			left: r.left,
+			top: r.top,
+			width: r.width,
+			height: r.height,
+			dir: el.dataset.flightDir as ZoneDir | undefined
+		});
 	}
 	rectSnapshot = next;
 }
@@ -617,7 +646,10 @@ const DEMOTE_SETTLE_SIBLING_FACTOR = 1;
 // factor trims the amplitude per-direction (1 = full; parent-seat landings pass DEMOTE_SETTLE_PARENT_FACTOR).
 function demoteSettleBackFor(distance: number, footprint: number, factor = 1): number {
 	if (distance < 1) return 0;
-	const targetPx = Math.min(DEMOTE_SETTLE_CAP_PX, Math.max(DEMOTE_SETTLE_FLOOR_PX, DEMOTE_SETTLE_RATIO * footprint * 0.035 * factor));
+	const targetPx = Math.min(
+		DEMOTE_SETTLE_CAP_PX,
+		Math.max(DEMOTE_SETTLE_FLOOR_PX, DEMOTE_SETTLE_RATIO * footprint * 0.035 * factor)
+	);
 	return solveBackS(Math.min(0.14, targetPx / distance));
 }
 
@@ -629,9 +661,17 @@ function demoteSettleBackFor(distance: number, footprint: number, factor = 1): n
 export function growFrom(node: Element) {
 	const origin = flightOrigin;
 	flightOrigin = null; // consume: no click → no stale reuse
-	if (!origin || prefersReducedMotion.current) return { duration: 0 };
+	// A cold load / reduced motion / a card with no box has NO flight — clear the published schedule so
+	// the blade can't inherit the previous navigation's clock and draw on a page that never flew.
+	if (!origin || prefersReducedMotion.current) {
+		heroSchedule = { duration: 0, delay: 0, kind: 'relative', axis: 'lateral' };
+		return { duration: 0 };
+	}
 	const dest = node.getBoundingClientRect();
-	if (!dest.width || !dest.height) return { duration: 0 };
+	if (!dest.width || !dest.height) {
+		heroSchedule = { duration: 0, delay: 0, kind: 'relative', axis: 'lateral' };
+		return { duration: 0 };
+	}
 
 	// CC (directional arrival): IGNORE the click origin (a text-link rect) — the card enters WHOLE from
 	// offscreen along the world vector, full size (no scale morph), and settles into the slot.
@@ -645,14 +685,19 @@ export function growFrom(node: Element) {
 	const sched = cc && !arc ? deckScheduleFor(getCameraMove()) : null; // DECK: convoy shape (hero = last car)
 	// DECK hero entry = the LIVE slot→window-edge distance along ccDir (+ margin), not a fixed constant that
 	// sat inside real windows and left the delayed hero peeking (the frozen jut). Arc: ccDir=0 → dx=dy=0.
-	const ccEntry = cc && !arc ? deckExit(ccDir, dest.left, dest.top, dest.width, dest.height) : { x: 0, y: 0 };
+	const ccEntry =
+		cc && !arc ? deckExit(ccDir, dest.left, dest.top, dest.width, dest.height) : { x: 0, y: 0 };
 	const dx = cc ? ccEntry.x : origin.left - dest.left;
 	const dy = cc ? ccEntry.y : origin.top - dest.top;
 	// PHANTOM BEAT (push): the hero waits until car 1 is FULLY offscreen, then the empty-stage beat. Car 1
 	// exits along −ccDir from THIS same slot rect (it was the outgoing featured card here), so its exit time
 	// is computable right here without cross-talk. Strict EXIT → BEAT → ENTRY; no co-occupancy, ever.
-	const car1Exit = cc && !arc ? deckExit({ x: -ccDir.x, y: -ccDir.y }, dest.left, dest.top, dest.width, dest.height) : { x: 0, y: 0 };
-	const car1ExitMs = (Math.hypot(car1Exit.x, car1Exit.y) / DECK_GHOST_V) * DECK_TEMPO * DECK_TRAVEL_TEMPO;
+	const car1Exit =
+		cc && !arc
+			? deckExit({ x: -ccDir.x, y: -ccDir.y }, dest.left, dest.top, dest.width, dest.height)
+			: { x: 0, y: 0 };
+	const car1ExitMs =
+		(Math.hypot(car1Exit.x, car1Exit.y) / DECK_GHOST_V) * DECK_TEMPO * DECK_TRAVEL_TEMPO;
 	const sx = cc ? 1 : origin.width / dest.width;
 	const sy = cc ? 1 : origin.height / dest.height;
 	const distance = Math.hypot(dx, dy);
@@ -693,12 +738,18 @@ export function growFrom(node: Element) {
 		// DECK v4.2.1: the ENTERING card runs 10% quicker than the exit (DECK_HERO_V_MULT) but still decelerates
 		// through the brake tail into the slot — quick in, slowing to land. Viewport-honest (distance off the
 		// live slot→edge). × DECK_TEMPO for the global 10% speed-up (curve/heft/overshoot all unchanged).
-		duration = sched ? (distance / (DECK_GHOST_V * DECK_HERO_V_MULT) + DECK_BRAKE_MS) * DECK_TEMPO * DECK_TRAVEL_TEMPO : ccDurationMs();
+		duration = sched
+			? (distance / (DECK_GHOST_V * DECK_HERO_V_MULT) + DECK_BRAKE_MS) *
+				DECK_TEMPO *
+				DECK_TRAVEL_TEMPO
+			: ccDurationMs();
 	} else if (flightKind === 'spouse') {
 		// Extend the hero to honor the demote's honest-velocity clock (below), so the two share one clock
 		// and neither the growing hero nor the shrinking demote ever exceeds the ceiling. The demote starts
 		// at THIS slot (dest) and shrinks into the pivot's notch seat; its max-corner travel sets the floor.
-		const seat = pivotId ? document.querySelector(`[data-flight-id="${pivotId}"]`)?.getBoundingClientRect() : null;
+		const seat = pivotId
+			? document.querySelector(`[data-flight-id="${pivotId}"]`)?.getBoundingClientRect()
+			: null;
 		const demoteMax = seat && seat.width ? maxCornerTravel(dest, seat) : distance;
 		duration = spouseHeroDurationMs(distance, demoteMax);
 	} else if (flightKind === 'sibling') {
@@ -725,8 +776,30 @@ export function growFrom(node: Element) {
 	const settleS = settleActive ? settleBackFor(distance, cc ? DECK_SETTLE_BOOST : 1) : 0;
 	if (import.meta.env.DEV && settleActive) {
 		const g = (4 * settleS ** 3) / (27 * (1 + settleS) ** 2);
-		console.log('[settle]', JSON.stringify({ dist: Math.round(distance), s: +settleS.toFixed(2), carryPx: +(g * distance).toFixed(1) }));
+		console.log(
+			'[settle]',
+			JSON.stringify({
+				dist: Math.round(distance),
+				s: +settleS.toFixed(2),
+				carryPx: +(g * distance).toFixed(1)
+			})
+		);
 	}
+	// ── PUBLISH THE HERO'S SCHEDULE ─────────────────────────────────────────────────────────────────
+	// The CC blade draws INSIDE this flight, and where inside it matters: `delay` is dead time before the
+	// hero enters at all (on a deck arrival the card is still offscreen), so the blade has to be placed
+	// against duration-after-delay, not against the wall clock. Same capture-at-the-seam pattern as
+	// captureFlightKind / capturePanDir — written by the hero as it launches, read in the same flush.
+	// The KIND rides along because the blade cannot use one clock for both: a CC arrival is a long
+	// cross-country flight and a chip promotion is a short hop, and a draw sized for one is wrong in the
+	// other (Sam). Reading flightKind later would race clearFlightCaptures, which resets it a frame after
+	// the swap — the same trap panDir set. Captured here, with the clock it belongs to.
+	heroSchedule = {
+		duration,
+		delay: ccDelay,
+		kind: flightKind,
+		axis: Math.abs(ccDir.y) > Math.abs(ccDir.x) ? 'vertical' : 'lateral'
+	};
 	// FIRST-FRAME FLASH FIX: Svelte applies a css-transition's keyframes one frame LATE, so frame 0 paints
 	// the card at its DESTINATION (natural layout) before the animation jumps it to the origin — a visible
 	// flash with a photo. Set the t=0 (origin) transform INLINE now, so frame 0 is already at the clicked
@@ -764,7 +837,9 @@ export function growFrom(node: Element) {
 		const perp = { x: -ccDir.y, y: ccDir.x }; // perpendicular to travel → the draw axis
 		const jH = sched?.jitter[sched.N - 1] ?? { lanePx: 0, rotDeg: 0, dtMs: 0 }; // seeded per flight (protected variation)
 		// Push → a FLOORED seeded draw (never flat), per-axis tilt; convoy → the full un-floored fan character.
-		const draw = DECK_GHOSTS ? { rot: jH.rotDeg, lane: jH.lanePx } : pushDraw(jH.rotDeg, jH.lanePx, horiz);
+		const draw = DECK_GHOSTS
+			? { rot: jH.rotDeg, lane: jH.lanePx }
+			: pushDraw(jH.rotDeg, jH.lanePx, horiz);
 		const lx = draw.lane * perp.x;
 		const ly = draw.lane * perp.y;
 		const rot = draw.rot; // seeded ±2.5–4° draw, ironing to 0 as it settles
@@ -870,7 +945,9 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		const horiz = Math.abs(dir.x) >= Math.abs(dir.y); // lateral exit → banks; vertical → leans
 		const perp = { x: -dir.y, y: dir.x };
 		// Push → a FLOORED seeded draw (never flat), per-axis tilt; convoy → the full un-floored fan character.
-		const draw = DECK_GHOSTS ? { rot: j0.rotDeg, lane: j0.lanePx } : pushDraw(j0.rotDeg, j0.lanePx, horiz);
+		const draw = DECK_GHOSTS
+			? { rot: j0.rotDeg, lane: j0.lanePx }
+			: pushDraw(j0.rotDeg, j0.lanePx, horiz);
 		const lx = draw.lane * perp.x,
 			ly = draw.lane * perp.y;
 		const rot = draw.rot;
@@ -953,8 +1030,12 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// "behind the card" is not a reliable hiding place — see the ghost taxonomy.)
 	const SIB_SEAT_TOP_INSET = 100; // > max chip-zone height (90) so the endpoint clears the cutout in every regime
 	const siblingSeat = sibling
-		? (sibPlan?.seat ??
-			{ left: card.left + card.width - SIB_SEAT_W, top: card.top + SIB_SEAT_TOP_INSET, width: SIB_SEAT_W, height: SIB_SEAT_H })
+		? (sibPlan?.seat ?? {
+				left: card.left + card.width - SIB_SEAT_W,
+				top: card.top + SIB_SEAT_TOP_INSET,
+				width: SIB_SEAT_W,
+				height: SIB_SEAT_H
+			})
 		: null;
 	// The demoting card's chip-face (a PersonBox, natural 220×75) — counter-scaled per frame below so
 	// it renders undistorted inside the shell's non-uniform morph. Cached once. BOTH kinds now use it:
@@ -1007,7 +1088,9 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// not the destination box, sidesteps mount-order (a child box may not be mounted yet at outro init).
 	let demoteDuration = relative ? RELATIVE_EXIT_MS : SPOUSE_EXIT_MS;
 	const heroOrigin = clickedId ? rectSnapshot.get(clickedId) : undefined;
-	const heroDist = heroOrigin ? Math.hypot(heroOrigin.left - card.left, heroOrigin.top - card.top) : 0;
+	const heroDist = heroOrigin
+		? Math.hypot(heroOrigin.left - card.left, heroOrigin.top - card.top)
+		: 0;
 	if (sibPlan) {
 		// Clocked off the SIBLING HERO's own curve, so the two cards on stage share one clock and the
 		// finish-first relationship is a stated 50ms rather than a coincidence. `siblingGrowMs` is the same
@@ -1023,13 +1106,16 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		// Same honest-velocity clock as the hero above (maxCornerTravel over the identical rect pair), so the
 		// demote keeps its exact DEMOTE_LEAD relationship and still finishes first. Timing it off heroDist
 		// while the hero timed off max-corner would silently break that lead.
-		if (heroOrigin) demoteDuration = relativeGrowMs(maxCornerTravel(heroOrigin, card)) * DEMOTE_LEAD;
+		if (heroOrigin)
+			demoteDuration = relativeGrowMs(maxCornerTravel(heroOrigin, card)) * DEMOTE_LEAD;
 	} else {
 		// SPOUSE demote at HONEST VELOCITY: time off the MAX-corner travel (the photo's fast bottom-left
 		// path), not the top-left corner — so the photo never strobes. It shares the hero's extended clock
 		// (spouseHeroDurationMs) and lands exactly SPOUSE_FINISH_LEAD_MS ahead — finish-first without any
 		// cramming multiplier. (Same seat + same slot rect as growFrom, so both compute the same clock.)
-		const seat = siblingSeat ?? document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
+		const seat =
+			siblingSeat ??
+			document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
 		const demoteMax = seat && seat.width ? maxCornerTravel(card, seat) : heroDist;
 		const heroDuration = heroOrigin ? spouseHeroDurationMs(heroDist, demoteMax) : SPOUSE_EXIT_MS;
 		demoteDuration = heroDuration - SPOUSE_FINISH_LEAD_MS;
@@ -1100,7 +1186,9 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			el.style.opacity = '1';
 			// Sibling → the fixed corner rect (no data-flight-id box exists); spouse/relative → the live seat,
 			// re-queried each frame (the moving-destination fix). Sibling's rect is constant, so it just holds.
-			const box = siblingSeat ?? document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
+			const box =
+				siblingSeat ??
+				document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
 			if (!box || !box.width) return;
 			const dx = box.left - card.left;
 			const dy = box.top - card.top;
@@ -1118,7 +1206,10 @@ export function shrinkTo(node: Element, params: { id: string }) {
 				// the 540ms glide, when the child seat docked onto a row that kept sliding ~240ms after; now the
 				// glide is 300ms and rect.top is monotone, so the child settle is being measured fair for the
 				// first time. Left unchanged — a measurement pass, not a tuning pass.
-				const parentSeat = document.querySelector(`[data-flight-id="${params.id}"]`)?.getAttribute('data-flight-dir') === 'up';
+				const parentSeat =
+					document
+						.querySelector(`[data-flight-id="${params.id}"]`)
+						?.getAttribute('data-flight-dir') === 'up';
 				// A sibling seat is its own tier: a 119×54 chip at the end of a ~960px path. At factor 1 the
 				// solver floors at DEMOTE_SETTLE_FLOOR_PX (2.2px), which is the same scale as the panel's own
 				// mount cascade (SIBLING_SETTLE_PX 2.5) — weight and timing, not theatre, which is the note.
@@ -1127,7 +1218,9 @@ export function shrinkTo(node: Element, params: { id: string }) {
 					: parentSeat
 						? DEMOTE_SETTLE_PARENT_FACTOR
 						: DEMOTE_SETTLE_CHILD_FACTOR;
-				demoteSettleS = demoteSettleActive ? demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(box.width, box.height), factor) : 0;
+				demoteSettleS = demoteSettleActive
+					? demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(box.width, box.height), factor)
+					: 0;
 			}
 			// SEAT HOLD — §19 only. A demote is REMOVED by Svelte the instant its own clock runs out, so the
 			// frame at u=1 is computed and never painted: measured, the last frame the card actually appeared
@@ -1139,7 +1232,11 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// swap then happens between two identical stationary objects, which is what §18.4 means by
 			// exposing an already-solid object rather than catching one mid-flight.
 			const uTravel = sibPlan ? Math.min(1, u / (1 - SEAT_HOLD)) : u;
-			const uu = demoteSettleS ? easeOutBack(uTravel, demoteSettleS) : relative ? cubicOut(uTravel) : uTravel;
+			const uu = demoteSettleS
+				? easeOutBack(uTravel, demoteSettleS)
+				: relative
+					? cubicOut(uTravel)
+					: uTravel;
 			// SHAPE and POSITION are one progress everywhere except a §19 sibling mutation, where the
 			// footprint runs ahead and finishes at SHAPE_AT (see the constant). cubicOut on the sub-progress
 			// so it DECELERATES into its final size rather than stopping dead — the object arrives at its
@@ -1156,8 +1253,14 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// never painted above REVEAL_HI× (no billboard name). transition:none so they track geometry exactly.
 			const uNat = (Sx * card.width) / FACE_W;
 			const outOp = Math.max(0, Math.min(1, (uNat - OUT_LO) / (OUT_HI - OUT_LO)));
-			if (cardTop) { cardTop.style.transition = 'none'; cardTop.style.opacity = String(outOp); }
-			if (footer) { footer.style.transition = 'none'; footer.style.opacity = String(outOp); }
+			if (cardTop) {
+				cardTop.style.transition = 'none';
+				cardTop.style.opacity = String(outOp);
+			}
+			if (footer) {
+				footer.style.transition = 'none';
+				footer.style.opacity = String(outOp);
+			}
 			// "flip early, land as a chip": the chip-face is a real PersonBox (identical to the box it
 			// becomes). The shell's morph is NON-uniform (Sx ≠ Sy), which would stretch the face; so
 			// counter-scale it every frame — scale(afx, afy) with afx·Sx = afy·Sy = U — so the composite
@@ -1296,7 +1399,9 @@ export function morphIn(node: Element, params: { id: string }) {
 		// footprint (its own, distinct from the card's — different seats, different angles fall out of the two
 		// rects). Active on a warm chip-nav whose camera move matches; else cubicOut, bit-identical to before.
 		const settleActive = getCameraMove()?.kind === getFlightKind();
-		const settleS = settleActive ? demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(dest.width, dest.height)) : 0;
+		const settleS = settleActive
+			? demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(dest.width, dest.height))
+			: 0;
 		return {
 			duration: 360,
 			// identity easing → t is RAW; the base cubicOut and the settle are applied inside (see growFrom).
@@ -1401,7 +1506,8 @@ export function rowTravel(): number {
 	if (rowPitch !== null) return rowPitch;
 	const slot = document.querySelector('.featured-slot')?.getBoundingClientRect();
 	let top: number | null = null;
-	for (const r of rectSnapshot.values()) if (r.dir === 'up') top = top === null ? r.top : Math.min(top, r.top);
+	for (const r of rectSnapshot.values())
+		if (r.dir === 'up') top = top === null ? r.top : Math.min(top, r.top);
 	const derived = slot && top !== null ? Math.round(slot.top - top) : 0;
 	// Sanity band: a plausible tier is a chip plus a connector, never a stray reading off a mid-flight rect.
 	rowPitch = derived >= 90 && derived <= 260 ? derived : ROW_TRAVEL_FALLBACK;
@@ -1694,7 +1800,8 @@ function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: numb
 			// with her photo and text compressed, then snapped open at the swap. Same tier → the two are
 			// already the same object and only the union row has to grow. Different tier → she crosses
 			// over to the destination's own face mid-journey, so she lands as the thing she is replacing.
-			if (Math.abs(sx - sy) > 0.02) crossfadeToSeatFace(ghost, seat, snap, dst, ms, sx, sy, settleS);
+			if (Math.abs(sx - sy) > 0.02)
+				crossfadeToSeatFace(ghost, seat, snap, dst, ms, sx, sy, settleS);
 			else {
 				growUnionRow(ghost, seat, ms);
 				morphPhotoWidth(ghost, seat, ms);
@@ -1752,7 +1859,9 @@ export function flyOut(node: Element, params: { key: string }) {
 	// hold them INVISIBLE, pinned out of flow, while Svelte removes them. No chip pixels during the flight.
 	if (getFlightKind() === 'cc') {
 		const s = rectSnapshot.get(params.key);
-		const p = s ? `position: fixed; left: ${s.left}px; top: ${s.top}px; width: ${s.width}px; height: ${s.height}px; margin: 0; ` : '';
+		const p = s
+			? `position: fixed; left: ${s.left}px; top: ${s.top}px; width: ${s.width}px; height: ${s.height}px; margin: 0; `
+			: '';
 		return { duration: 200, easing: cubicOut, css: () => `${p}opacity: 0;` };
 	}
 	// BUG 3: pin at the pre-reflow viewport rect so the box leaves layout flow at the right spot
@@ -1855,4 +1964,130 @@ export function chipExit(node: Element, params: { key: string }) {
 		return { duration: 60, css: () => 'position: absolute; opacity: 0; visibility: hidden;' };
 	}
 	return flyOut(node, params); // cc only — flyOut short-circuits it to invisible internally
+}
+
+// ── THE CC BLADE: SHEATH / UNSHEATH ─────────────────────────────────────────────────────────────────
+// "Like a swiss army knife there will always be a transition from sheathed — hidden from view under the
+// Featured Card — to fully exposed" (Sam). The blade lives one z-layer BELOW the card (.blade-slot,
+// z:-1), so hiding it is simply translating it up by its own height: the card is opaque and paints over
+// it. Nothing is faded to hide it; it is genuinely behind the card, which is why the motion reads as a
+// blade retracting into a handle rather than a panel dissolving.
+//
+// STAGING — the one real decision here. The blade cannot expose during the EARLY part of a flight,
+// because the card is not at its resting position yet (a promoting chip is still a chip; a deck arrival
+// is still offscreen) and there would be nothing above the blade to hide behind — it would read as a
+// white strip floating alone. So the exposure is packed into the TAIL of the flight, ending exactly on
+// the settle. By then the card is at (or within its overshoot of) its final position and genuinely IS
+// the thing the blade slides out from under.
+// ── THE BLADE'S DRAW ────────────────────────────────────────────────────────────────────────────────
+// TWO CLOCKS, because a CC arrival and a chip promotion are not the same journey. The deck flight is a
+// long cross-country haul; a chip promotion is a short hop. One draw length cannot serve both — sized
+// for the deck it swamps a chip promotion, sized for the chip it is a twitch inside the deck's flight.
+//
+// `endsAt` is a fraction of the hero's ON-SCREEN travel (after its delay, which on a deck arrival is
+// dead time with the card still offscreen). The draw finishes there and the card flies on for the
+// remainder, so the blade is always seen opening against a still-moving card, never against a parked one.
+// `lagMs` pushes the finish past the settle; `earlier` pulls the whole window back by a fraction of the
+// flight. `carry` is the settle overshoot as a fraction of the blade's own travel — 0 means none.
+const BLADE_DRAW = {
+	cc: { ms: 420, endsAt: 0.95, lagMs: 0, earlier: 0, carry: 0.011 },
+	// A VERTICAL deck arrival hides a vertical draw. Measured: the card waits offscreen until ~900ms,
+	// then falls from y −675 to 252 in ~370ms — and the draw was running inside that descent, extending
+	// the blade ~100px down while the card moved ~350px down. Same direction, three times the distance:
+	// the blade's own motion is arithmetically invisible, which is exactly why it looked like the blade
+	// arrived already open (Sam). Nothing was broken; it was hidden behind a bigger move in its own axis.
+	// So on a vertical arrival the draw is anchored to the SETTLE (endsAt 1) rather than to a fraction of
+	// the flight, and starts as the card parks.
+	ccVertical: { ms: 420, endsAt: 1, lagMs: 300, earlier: 0.05, carry: 0.011 },
+	// NO CARRY on an arrival from an on-screen chip. The card itself lands with an easeOutBack settle,
+	// and a second overshoot underneath it does not add weight — the two read as one another's echo and
+	// blunt the card's own (Sam). The blade just decelerates into its seat and lets the card do the
+	// settling. carry 0 is not a different easing: easeOutBack(u, 0) is 1 + (u−1)³, which IS cubicOut,
+	// so this is the same curve family with the overshoot dialled out rather than a second dialect.
+	chip: { ms: 260, endsAt: 0.88, lagMs: 0, earlier: 0, carry: 0 }
+} as const;
+
+const BLADE_RETRACT_MS = 276; // stowing — the chip draw's clock +15%, so it leaves less abruptly
+
+// The carry is a FRACTION of the blade's own travel, and 0.011 (where it is used at all) is the house
+// ratio lifted straight out of settleBackFor (`distance * 0.011`). Getting this wrong is what made the
+// draw read as a flick: the card carries 4.5–5.4px over a flight of ~900px, well under 1% of its travel,
+// and the blade was carrying 5px over a travel of ~116px — nearly 4%, four to eight times the overshoot
+// the rest of the world uses. As a ratio it also scales the way mass should: a one-line blade settles
+// almost instantly, a nine-line blade carries further. And it needs no pixels, so travel and carry ride
+// ONE curve in ONE unit — easeOutBack in pure percent, no calc(), no rescaling.
+const BLADE_SAMPLES = 24;
+
+/**
+ * Blade OUT of the case — drawn late in its card's flight, finishing before the card settles.
+ *
+ * It does NOT wait for the card to land: nested inside the card, the blade draws WHILE the card flies,
+ * which is the whole point of it being part of the card. It just must not draw so early that the card
+ * has not arrived on screen to be seen drawing it (see BLADE_DRAW).
+ *
+ * A plain WAAPI animation rather than a Svelte `in:` transition because the blade lives INSIDE the card
+ * component: Svelte does not run a nested element's intro when the component around it is created, so
+ * the transition simply never fired (measured — the blade sat fully drawn from frame 0).
+ *
+ * No opacity anywhere. Sheathed means translated up behind the card, and the card is opaque and painted
+ * above (.cc-blade-mount is z:-1 inside it), so the blade is hidden wherever the card is — mid-flight,
+ * offscreen, scaled down to a chip.
+ */
+export function unsheathBlade(node: HTMLElement): void {
+	if (prefersReducedMotion.current) return;
+	const { duration, delay, kind, axis } = getHeroSchedule();
+	if (!duration) return; // no flight (cold load, back/forward) → the blade is simply already out
+	const spec =
+		kind !== 'cc' ? BLADE_DRAW.chip : axis === 'vertical' ? BLADE_DRAW.ccVertical : BLADE_DRAW.cc;
+	const endAt = delay + duration * spec.endsAt + spec.lagMs - spec.earlier * (delay + duration);
+	const draw = Math.min(spec.ms, endAt);
+	// carry 0 → s 0 → easeOutBack collapses to cubicOut, so there is no overshoot and no second curve.
+	const back = spec.carry > 0 ? solveBackS(spec.carry) : 0;
+	const frames = [];
+	const labelFrames = [];
+	for (let i = 0; i <= BLADE_SAMPLES; i++) {
+		const u = i / BLADE_SAMPLES;
+		// Travel is a percentage of the blade's own height — the only measurement-free way to say
+		// "exactly its own depth" when the height is not knowable when the animation is built.
+		const e = easeOutBack(u, back);
+		frames.push({
+			transform: `translateY(${((e - 1) * 100).toFixed(3)}%)`,
+			offset: u,
+			easing: 'linear' // the curve is baked into the samples
+		});
+		// THE LABEL DOES NOT BOUNCE. It rides out with the blade and stops dead at full extension — it
+		// is lettering beside the case, not part of the moving steel, so it has no momentum to carry
+		// (Sam). This cancels only the part of the curve that goes past 1, leaving the identical travel
+		// up to that point; it works because the label's layer is exactly as tall as the blade, so a
+		// percentage means the same distance to both.
+		labelFrames.push({
+			transform: `translateY(${((Math.min(e, 1) - e) * 100).toFixed(3)}%)`,
+			offset: u,
+			easing: 'linear'
+		});
+	}
+	// fill:backwards holds the first keyframe — fully stowed — through the delay, so the blade stays in
+	// the case until its moment instead of resting open and jumping back in to start.
+	const timing = { duration: draw, delay: endAt - draw, fill: 'backwards' as const };
+	node.animate(frames, timing);
+	node.querySelector<HTMLElement>('.cc-label-layer')?.animate(labelFrames, timing);
+}
+
+/**
+ * Blade back INTO the case — stowed as its card starts to leave.
+ *
+ * Driven from the departing card's own outrostart, not from inside the component: once a keyed block is
+ * outroing, Svelte stops running its effects, so the card can no longer notice that it has stopped being
+ * the resting card (measured — the outgoing blade stayed fully drawn and simply vanished with the card).
+ * `node` is the flight element; the blade it owns is found inside it, the same way the outro already
+ * reaches in to flatten the card's silhouette.
+ */
+export function retractBladeIn(node: HTMLElement): void {
+	const mount = node.querySelector<HTMLElement>('.cc-blade-mount');
+	if (!mount || prefersReducedMotion.current) return;
+	mount.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }], {
+		duration: BLADE_RETRACT_MS,
+		easing: 'cubic-bezier(0.32, 0, 0.67, 0)', // cubicIn — accelerating INTO the case, the draw's mirror
+		fill: 'forwards' // stay stowed for the rest of the departure
+	});
 }

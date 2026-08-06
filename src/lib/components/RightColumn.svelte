@@ -425,7 +425,7 @@
 				Burial
 			</div>
 			<div
-				class="relative z-10 mt-0.5 line-clamp-2 text-[10.9px] leading-snug font-medium text-slate-800"
+				class="relative z-10 mt-0.5 line-clamp-2 font-opensans text-[10.9px] leading-snug font-medium text-slate-800"
 				title={burialCemetery.name}
 			>
 				{burialCemetery.name}
@@ -433,12 +433,12 @@
 			<!-- Location + MAP on ONE right-flush line: "City, ST · MAP". Omitted entirely when there's
 			     no location text and no resolvable map destination (name-only degrade). -->
 			{#if burialLocation || burialMapUrl}
-				<div class="relative z-10 mt-px text-[11px] leading-snug text-slate-500">
+				<div class="relative z-10 mt-px font-opensans text-[11px] leading-snug font-light text-slate-500">
 					{#if burialLocation}<span>{burialLocation}</span>{/if}{#if burialMapUrl}<a
 							href={burialMapUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="pointer-events-auto inline align-baseline text-[9px] tracking-wider text-blue-700 uppercase hover:text-blue-900 hover:underline {burialLocation
+							class="pointer-events-auto inline align-baseline font-opensans text-[9px] font-normal tracking-wider text-blue-700 uppercase hover:text-blue-900 hover:underline {burialLocation
 								? 'ml-1.5'
 								: ''}"
 							>Map</a

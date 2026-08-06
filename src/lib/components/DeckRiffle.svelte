@@ -21,6 +21,7 @@
   frame (rapid CC-hopping accumulates zero animation debt). Reduced-motion: renders nothing.
 -->
 <script lang="ts">
+	import { CARD_TOP_H } from './FeaturedCard.svelte';
 	import { onMount } from 'svelte';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { subscribeCameraMove, type CameraMove } from '$lib/state/camera';
@@ -41,7 +42,9 @@
 	let live: Animation[] = []; // in-flight ghost animations, so a re-publish cancels them
 
 	const CARD_W = 925; // matches FeaturedCard's w-[925px]
-	const CARD_MIN_H = 580; // matches FeaturedCard's card-top height
+	// IMPORTED, not restated: the phantom cards must match the real card's top height, and a literal
+	// here drifted the moment that height changed. FeaturedCard owns the geometry.
+	const CARD_MIN_H = CARD_TOP_H;
 
 	function clearLive() {
 		for (const a of live) {

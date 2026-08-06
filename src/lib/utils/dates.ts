@@ -1,18 +1,21 @@
 import type { DateLocation } from '$lib/types/person';
 
+// FULL month names (Aug 4, Sam: "spell out the entire month to be consistent"). Abbreviating some
+// months and not others — "Apr." but "May", "Sept." but "June" — made the vitals column read as two
+// conventions in one list. formatDate is the only consumer that renders (formatDateLocation has none).
 const MONTHS = [
-	'Jan.',
-	'Feb.',
-	'Mar.',
-	'Apr.',
+	'January',
+	'February',
+	'March',
+	'April',
 	'May',
 	'June',
 	'July',
-	'Aug.',
-	'Sept.',
-	'Oct.',
-	'Nov.',
-	'Dec.'
+	'August',
+	'September',
+	'October',
+	'November',
+	'December'
 ];
 
 /**
@@ -34,6 +37,54 @@ export function formatDate(dl: DateLocation | null | undefined): string {
 	if (!monthName) return year; // out-of-range month → year alone, never "undefined"
 	if (dl.day == null) return `${monthName} ${year}`;
 	return `${monthName} ${dl.day}, ${year}`;
+}
+
+/**
+ * Age at death in whole years, and whether the dates actually pin it down.
+ *
+ *   { years, approx: false } — the dates determine it exactly.
+ *   { years, approx: true }  — a best estimate; the card marks it with a tilde, "(~Age 65)".
+ *   null                     — no age can be offered at all (a year is missing on either side).
+ *
+ * Genealogical dates are ragged, so precision has to be REPORTED rather than assumed. The rule:
+ *
+ *   • both dates carry month AND day  → exact.
+ *   • a day is missing on either side → exact if the months DIFFER (the unknown day cannot change the
+ *     answer); approximate if they match, where the unknown day decides it.
+ *   • either side is year-only        → approximate.
+ *
+ * The approximate figure is the plain year difference, which is the UPPER bound — the true age is that
+ * or one less, depending on whether the birthday had come round. Reporting the larger of the two is the
+ * convention, and the tilde is what keeps it honest.
+ *
+ * Year-only follows formatDate's own convention: a null month, or the month:1/day:1 placeholder.
+ */
+export function ageAtDeath(
+	birth: DateLocation | null | undefined,
+	death: DateLocation | null | undefined
+): { years: number; approx: boolean } | null {
+	if (!birth || !death || birth.year == null || death.year == null) return null;
+	const yearOnly = (d: DateLocation) => d.month == null || (d.month === 1 && d.day === 1);
+
+	let years = death.year - birth.year;
+	let approx = false;
+
+	if (yearOnly(birth) || yearOnly(death)) {
+		approx = true; // no month to compare — the year difference is the upper bound
+	} else {
+		const bm = birth.month as number;
+		const dm = death.month as number;
+		if (birth.day != null && death.day != null) {
+			if (dm < bm || (dm === bm && death.day < birth.day)) years -= 1;
+		} else if (dm === bm) {
+			approx = true; // the unknown day decides it
+		} else if (dm < bm) {
+			years -= 1;
+		}
+	}
+	// A negative or implausible span means the underlying dates disagree; say nothing rather than print it.
+	if (years < 0 || years > 120) return null;
+	return { years, approx };
 }
 
 /**

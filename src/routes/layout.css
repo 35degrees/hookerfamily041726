@@ -8,6 +8,27 @@
 	   Monotype's and not web-licensable, so the real face is named only as a fallback for
 	   anyone who has it installed locally. */
 	--font-rokkitt: 'Rokkitt Variable', 'Rockwell', Georgia, serif;
+	/* FEATURED-NAME CANDIDATES (Aug 4 experiment). Carlito is metric-compatible with Calibri —
+	   humanist, noticeably smaller on the cap for a given px. Outfit is a geometric sans. Both are
+	   sized against Inter's CAP HEIGHT rather than its px, since matching px would not match the
+	   apparent size (see NAME_SIZE in FeaturedCard). */
+	--font-carlito: 'Carlito', 'Calibri', sans-serif;
+	--font-outfit: 'Outfit Variable', sans-serif;
+	/* The FEATURED CARD's DESCENT LINE ("Eleventh Generation Descendant of Thomas Hooker"). Named
+	   rather than inlined so the one place it is allowed to appear is greppable.
+	   Darkened 10% on Aug 4: lightness 67% -> 57%, i.e. ten percentage points, which is what a
+	   darken(10%) does. A relative -10% would have been 60.3%; say the word if that was the intent. */
+	--font-opensans: 'Open Sans Variable', 'Open Sans', sans-serif;
+	--color-slateblue: hsl(252, 100%, 57%);
+	/* THE CARD'S INK — the featured NAME, the descent line, and every chip. Tailwind's blue-900 is
+	   oklch(0.379 0.146 265.522);
+	   its lightness has been cut 10% twice — 0.379 -> 0.341 -> 0.307 — each step being x0.9, which is what
+	   "10% darker" means on a 0-1 lightness scale. Chroma and hue are untouched throughout, so it stays
+	   the same blue and only deepens; L is the only channel that moves toward black. */
+	--color-inkblue: oklch(0.307 0.146 265.522);
+	/* The CC blade's clickable names. Greyer and quieter than inkblue — the blade sits below the card
+	   in the hierarchy, so its links should not shout as loudly as the card's own type. */
+	--color-darkgreyblue: hsl(224, 30%, 27%);
 }
 /* Reserve the vertical scrollbar's gutter always, so pages that grow past one viewport (or do
    so mid-flight) don't shift the centered card sideways — the "arc-wobble" on child-click. */
