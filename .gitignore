@@ -65,8 +65,17 @@ static/data/image-gaps.tsv
 # Playwright
 test-results
 
-# card-probe harness screenshots (regenerable)
-scripts/probe-out/
+# card-probe harness screenshots (regenerable) -- 21MB of debug PNGs, never versioned.
+# But the BASELINE JSONs in here are not output, they are FIXTURES: probe-demote-settle and
+# probe-carousel-regression assert against them, and without them those probes silently skip their
+# assertions on a fresh clone. Worse, a baseline that only ever exists on one machine cannot be seen
+# to be STALE -- the demote baseline sat three weeks out of date, across two full rebuilds of the
+# transition it measured, and read as a live regression every time it ran (roadmap 30).
+# Tracked, a re-record shows up as a reviewable diff instead of a silent blessing.
+# NOTE the pattern excludes the CONTENTS, not the directory: git cannot re-include a file whose
+# parent DIRECTORY is excluded, so `scripts/probe-out/` with a trailing slash would defeat the !rule.
+scripts/probe-out/*
+!scripts/probe-out/*.json
 
 # --- frozen read-only exports (see _exports/README.md); never the source ---
 _exports/
