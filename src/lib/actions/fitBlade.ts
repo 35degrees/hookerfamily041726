@@ -130,6 +130,14 @@ export function fitBlade(node: HTMLElement, params: BladeFitParams) {
 		const dots = t.querySelectorAll<HTMLElement>('.cc-dot');
 		if (!dots.length) return 0;
 		const limit = parseFloat(getComputedStyle(t).fontSize) * TAIL_CHARS * AVG_CHAR_W;
+		// DIVIDE OUT THE FLIGHT'S SCALE. getClientRects is the one measurement in this action that a
+		// transform affects — scrollHeight and offsetWidth are layout metrics and ignore it — and this
+		// runs while the card may be mid-flight. A chip promotion mounts the card scaled DOWN, so every
+		// rect came back small, every candidate width looked equally full of tails, and the preference
+		// silently degraded to "narrowest", while a deck arrival (full size) and a cold load (no flight)
+		// measured correctly. Same person, two layouts, decided by how you arrived (Sam).
+		// hypot(a, b) is the uniform scale even when the deck has also tilted the card.
+		const scale = scaleOf(t);
 		let n = 0;
 		for (const dot of dots) {
 			const r = document.createRange();
@@ -137,9 +145,18 @@ export function fitBlade(node: HTMLElement, params: BladeFitParams) {
 			r.setEndBefore(dot);
 			const rects = r.getClientRects();
 			const last = rects[rects.length - 1];
-			if (last && last.width < limit) n++;
+			if (last && last.width / scale < limit) n++;
 		}
 		return n;
+	}
+
+	/** The uniform scale the flight currently has this element under; 1 at rest. */
+	function scaleOf(el: HTMLElement): number {
+		const flight = el.closest('.featured-flight') as HTMLElement | null;
+		if (!flight) return 1;
+		const m = new DOMMatrixReadOnly(getComputedStyle(flight).transform);
+		const s = Math.hypot(m.a, m.b);
+		return s > 0.01 ? s : 1;
 	}
 
 	fit();

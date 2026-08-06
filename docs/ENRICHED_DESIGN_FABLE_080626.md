@@ -3196,3 +3196,43 @@ place.
 **The lesson underneath all three steps: verify a metric against a case that
 exercises it.** A metric tested only where its answer is zero tells you nothing,
 and "this feature does nothing" is a claim that needs an A/B, not an inspection.
+
+### 27.12 The blade's layout must not depend on how you arrived (August 6)
+
+Sam: _"when I arrived at Thomas Shepard via CC from Thomas Hooker, 'verdict.' was
+on the top line. When I navigated to Shepard's father and back down, it had
+wrapped again… why would it shift based on where it comes from?"_
+
+Reproduced exactly — the same person, three routes, two answers:
+
+| arrival | width | line 1 ends |
+|---|---|---|
+| cold load | 675px | `…verdict. ●` |
+| via a CC (deck) | 675px | `…verdict. ●` |
+| **via a chip promotion** | **615px** | `…Wilson's` |
+
+**`getClientRects()` is the one measurement in `fitBlade` that a transform
+affects.** `scrollHeight` and `offsetWidth` are layout metrics and ignore
+transforms entirely, which is why the depth search and the min-content floor
+were identical on every route. The tail metric reads rects, and it runs while
+the card may still be mid-flight:
+
+- a **chip promotion** mounts the card scaled DOWN, so every rect came back
+  small, every candidate width looked equally full of tails, and the preference
+  degraded silently to "narrowest" — which is precisely the 615px the A/B in
+  §27.11 predicts for the no-preference rule;
+- a **deck arrival** enters at full size, and a **cold load** has no flight at
+  all, so both measured correctly.
+
+Fixed by dividing the flight's own scale out of the measurement, taken as
+`hypot(a, b)` of the flight element's transform matrix so it stays correct when
+the deck has also tilted the card. All three routes now produce 675px, and
+`verdict.` stays on line 1. Verified path-independent across six more entries
+(cold load vs leave-by-parent-chip-and-return): zero differ.
+
+**The durable rule: any measurement taken during a flight must be scale-honest,
+or it is measuring the flight rather than the content.** This is the third
+appearance of the same family — §27.3 records travel being expressed as a
+percentage because a pixel measurement read a scaled rect, and §27.4 records the
+type search reading a 17px box against a final 132px. A layout value must be a
+fact about the PERSON, never about the route taken to them.
