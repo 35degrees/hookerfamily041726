@@ -28,7 +28,11 @@ const geo = await page.evaluate(() => {
 	const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/john-haynes-1594'));
 	a?.scrollIntoView({ block: 'center' });
 	const r = a.getBoundingClientRect();
-	return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+	// The FIRST line fragment, not the union box. A CC link that wraps has two client rects and
+	// the centre of their union lands in the gap BETWEEN them, on the paragraph — the click hit
+	// nothing and the nav never started. Larger CC type made links wrap, which is what exposed it.
+	const f = a.getClientRects()[0] ?? r;
+	return { x: f.left + f.width / 2, y: f.top + f.height / 2 };
 });
 
 // 1. start the CC nav (the warm nav is async — pushState fires after the fetch; give it a beat to register)
