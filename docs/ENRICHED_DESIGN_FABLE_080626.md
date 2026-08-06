@@ -1,6 +1,6 @@
 # HOOKER FAMILY DESCENDANTS — ENRICHED DESIGN (FABLE PASS)
 
-**Date: July 29, 2026 — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
+**Date: August 6, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
 **Prepared by the architect stream for Samuel Talcott Hooker's review. Nothing here is a decision until Sam says so.**
 **The 070926 edition added §13 (viewport-lock / scrollbar doctrine) and §14 (Zoom 1 card-grid refinements). This 071226 edition adds §17 (motion physics doctrine — learned the hard way in the July 11 card-transition maintenance phase) and threads the one-physics/velocity-ceiling lessons into §3. The card-transition layer is now CLOSED, probe-guarded, and pushed; see docs/CODING_HANDOFF.md in the repo for the session record and ghost taxonomy.**
 
@@ -22,7 +22,7 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_080326.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_080626.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
