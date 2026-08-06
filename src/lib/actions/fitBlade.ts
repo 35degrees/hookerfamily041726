@@ -37,7 +37,11 @@ export type BladeFitParams = {
 const FONT_STEPS = 7;
 const WIDTH_STEP = 15; // px between candidate widths
 const TAIL_CHARS = 26; // text shorter than this before a separator means the line opened with a tail
-const AVG_CHAR_W = 0.43; // px per character per px of font-size, measured off the rendered blade
+// px per character per px of font-size. RE-MEASURED off rendered blades: 25 characters of real blade
+// text occupy 125px at 11.13px type, i.e. 0.449. The old 0.43 made the limit ~5% tight, which is
+// exactly enough to miss a tail sitting one pixel the wrong side of it (measured: "Pierson was first
+// rector." at 125px against a 124px limit).
+const AVG_CHAR_W = 0.45;
 
 export function fitBlade(node: HTMLElement, params: BladeFitParams) {
 	let current = params;

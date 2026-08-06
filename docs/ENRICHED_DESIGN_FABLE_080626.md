@@ -3157,3 +3157,42 @@ logged for a Stream A session in `_review/blurb-over-length.tsv`.)
 - Two font-size instructions were **misread as increases when they were
   reductions**. When Sam says "size the font by 4%", the direction is his to
   state and mine to confirm, not to infer.
+
+### 27.11 The tail preference, verified (August 6)
+
+§27.4's "prefer fewest tails at equal depth" was challenged on the suspicion
+that it was inert — a documented feature doing nothing. It is not, and the
+check is worth recording because the first two conclusions drawn from it were
+both wrong.
+
+**First wrong conclusion: the metric is broken.** It was diagnosed on a blade
+that has NO tail, where `0` is the correct answer. Measured against a
+line-reconstruction ground truth over twelve blades, the shipped reading agreed
+on eleven.
+
+**Second wrong conclusion: the twelfth proves it misreads.** It does not. The
+disagreement is `"Pierson was first rector."` at **125px against a 124px
+limit** — one pixel. The reading was right; the THRESHOLD was slightly tight,
+because `AVG_CHAR_W` claimed to be measured and was not: real blade text runs
+0.449px per character per px of font-size, not 0.43. Corrected to 0.45, and
+agreement is **12 of 12**.
+
+**Then the actual question — does the preference change anything?** A/B over the
+same candidate widths, one rule picking fewest-tails-then-narrowest and the
+other picking narrowest outright:
+
+| | with | without |
+|---|---|---|
+| Thomas Shepard | 675px, 0 tails | 615px, 1 tail |
+| Alfred Bacon | 690px, 0 tails | 645px, 1 tail |
+| Sherman Thacher | 645px, 0 tails | 615px, 1 tail |
+| all twelve | **8 tails** | 11 tails |
+
+Three blades in twelve, each held 30–60px wider than the absolute minimum to
+avoid stranding a word. **That is the trade, and it is the right way round** —
+Shepard is the entry whose stranded "verdict." prompted the check in the first
+place.
+
+**The lesson underneath all three steps: verify a metric against a case that
+exercises it.** A metric tested only where its answer is zero tells you nothing,
+and "this feature does nothing" is a claim that needs an A/B, not an inspection.
