@@ -191,7 +191,13 @@
 	// first pass (the sheath transition did exactly this) got a too-short blade. Now the text wraps
 	// correctly on pass one and bladeH is a pure output, used only for the clip — which is paint, not
 	// layout, and so cannot feed back.
-	const SHAPE_RUN = 600; // taller than the tallest real blade (the fullest CC list measures ~171px)
+	// How far down the cutout runs. It must exceed the deepest blade — the fullest connection list
+	// measures ~165px, so this is roughly double — and NO MORE than that, because the float's WIDTH is
+	// derived from it and a float's width sets its container's MIN-CONTENT width, which is the floor of
+	// the width search in fitBlade. At 600 the float was 639px wide and no blade could shrink below
+	// ~660px however little text it held (Sam noticed it on a one-connection entry). It only got that
+	// large when the slant's depth cap was removed; the cap had been bounding this by accident.
+	const SHAPE_RUN = 300;
 	// The float starts below the body's top padding, so its polygon must begin at the slant's x THERE,
 	// not at the blade's top. It used to start at BLADE_LEFT_TOP, which put the cutout ~8px left of the
 	// real edge and quietly ate most of the shape-margin — part of why the text read as touching.
@@ -283,7 +289,10 @@
 				     right as it descends and never crosses the slanted edge. In two-column mode it lives
 				     in the LEFT column, which is the only one the slant cuts — the right column is a
 				     plain rectangle. -->
-				<div class="cc-gutter" style="shape-outside: {shape}; width: {SHAPE_W}px;"></div>
+				<div
+					class="cc-gutter"
+					style="shape-outside: {shape}; width: {SHAPE_W}px; height: {SHAPE_RUN}px;"
+				></div>
 				<p class="cc-text" class:solo bind:clientHeight={textH}>
 					<!-- ONE continuous string, not a grid: each connection reads as a sentence and a middot
 					     separates them. Index-keyed because a CC id can legitimately recur as two distinct
@@ -400,7 +409,7 @@
 	.cc-gutter {
 		float: left;
 		/* width is set inline from SHAPE_W — see there for why it is not 100% */
-		height: 600px; /* SHAPE_RUN — tall enough to cut every line the blade can hold; the body clips it */
+		/* height is set inline from SHAPE_RUN — the polygon's bottom and the float's must agree */
 		shape-margin: 12px; /* the text must not touch the slanted edge — it was ~5px off it, and the
 		                       tightest point (a glyph's lower-left against a leaning edge) read as contact */
 	}

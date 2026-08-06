@@ -115,12 +115,20 @@ non-searchable one.
 cascade, the deck/CC transition, components, Svelte, layout, animation,
 `+page.svelte`, flip/send/receive, the children-row glide, scrollbar behavior.
 
-**Read before acting (these are the CURRENT docs -- July 24 Fable pass):**
-- `docs/ENRICHED_DESIGN_FABLE_080626.md` -- the design: *what and why* (durable design decisions, the motion-physics doctrine, the deck/sibling/photo-loading doctrines).
-- `docs/ENRICHED_CODING_ROADMAP_FABLE_080626.md` -- the sequencing: *what's next* and the risk/phase order.
-- `docs/CODING_HANDOFF.md` -- the repo-side session record (as-shipped models, ghost taxonomy, probe gate). The ENRICHED roadmap treats this as the live session log.
-- `docs/DESIGN.md` (070126) -- the base design the ENRICHED design *overlays*; consult when the ENRICHED doc names a base section it extends.
+**Read before acting. THE FILENAMES CARRY A DATE AND THAT DATE MOVES** -- each doc
+is renamed to the day it was last edited, so never hard-code a date: `ls docs/`
+and take the newest match. There is only ever ONE of each pattern, and the
+newest IS the current one.
+- `docs/ENRICHED_DESIGN_FABLE_*.md` -- the design: *what and why* (durable design decisions, the motion-physics doctrine, the deck/sibling/CC-blade/photo-loading doctrines).
+- `docs/ENRICHED_CODING_ROADMAP_FABLE_*.md` -- the sequencing: *what's next*, the risk/phase order, AND the session record (what shipped, what went wrong, what is still open).
 - Pattern files in `docs/examples/` (e.g. `REFERENCE_PhotoGrid_crossfade.svelte` -- take the keyed-list + send/receive/flip principle, not the photo-app specifics).
+
+**That pair is the whole story -- do not go looking for the two docs they
+replaced.** `docs/DESIGN.md` (the base design the ENRICHED design once overlaid)
+and `docs/CODING_HANDOFF.md` (the session record) have NOT existed for some time;
+the ENRICHED pair absorbed both roles and is what actually gets updated. Where an
+ENRICHED section says it *overlays* or *extends* a base section, that base text is
+gone and the ENRICHED section is complete on its own.
 
 **Architecture first -- map the grain before you cut it (learned the hard way,
 072326 photo-loading):** a symptom lives in a component; the fix almost always
@@ -136,7 +144,7 @@ lives in the UNIT the architecture already works in. Before any non-trivial chan
 - `npx svelte-check --tsconfig ./tsconfig.json` before declaring done; report errors/warnings honestly (note pre-existing ones).
 - Verify SSR (page returns 200, not hanging) before saying it works.
 - Nothing committed without Sam's say-so. End by telling Sam exactly what to watch at `localhost:5173`.
-- Update `docs/CODING_HANDOFF.md` when Sam says so.
+- Update the ENRICHED pair when Sam says so -- the DESIGN doc for durable doctrine (what and why, including what was tried and reverted), the ROADMAP for the session record (what shipped, in what order things went wrong, what is still open). Rename both to the current date and fix the references in this file.
 
 ---
 
@@ -197,10 +205,9 @@ docs/
   WORKFLOW.md                             <- data editorial contract
   pipeline-gotchas.md                     <- mechanical pipeline facts (read before first batch)
   hooker_json_schema_v23.md               <- structural law (reference, not a preload)
-  DESIGN.md                               <- frontend base design (070126)
-  ENRICHED_DESIGN_FABLE_080626.md         <- current frontend design (what/why)
-  ENRICHED_CODING_ROADMAP_FABLE_080626.md <- current frontend sequencing (what's next)
-  CODING_HANDOFF.md                       <- frontend session record
+  ENRICHED_DESIGN_FABLE_<date>.md         <- frontend design (what/why) -- TAKE THE NEWEST
+  ENRICHED_CODING_ROADMAP_FABLE_<date>.md <- frontend sequencing + session record -- TAKE THE NEWEST
+  HANDOFF_content_072926.md               <- Stream A content session record
   examples/                               <- frontend pattern references
 static/data/                  <- GENERATED (gitignored); rebuilt by regenerate-data.js
 ```
