@@ -17,6 +17,8 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The 080426 edition (August 4) adds §26 — THE SIBLING PANEL AS A PERSISTENT COLUMN (as built; SUPERSEDES §21.1 wherever they differ). §21 described the panel as a transient drop-down; this is the panel as a FIXTURE that travels with the card, and almost every finding in it is the same shape: what changed is not the pixels but the panel's LIFETIME. It records the in-place mutation model, the durable rule that a seat in a MOVING container is a resting position rather than a live rect (third instance of the §18.9 family), the SHAPE-EARLY-THEN-SLIDE finding (direction is read from what changes LAST), the way-station rule for a different-tier landing (§18.4's second instance), the RECIPROCAL-GATE rule earned on Alice Lee Roosevelt and 57 other one-way doors, open-by-default, the fixed anchor, the chevron/alpha-hover header, the leaver's-alpha doctrine extending §17 — and §26.12, the NEGATIVE SPACE: four things built and reverted (including one documented-invariant violation) plus two measurement failures that produced confident false greens.**
 
+**The 080626 edition (August 6) adds §27 — THE CROSS-CONNECTIONS BLADE (as built). The cross-connections leave the featured card's FOOTER and become a carved blade that lives INSIDE the card and is drawn out of it — which makes every card exactly `CARD_TOP_H` tall, the footer having been the only thing that ever varied it. Records the ONE idea that fixed everything else (it is a tool inside the case, not a neighbour: nested, it inherits every transform for free, measured at 0.00px drift, and needs neither an opacity gate nor a shadow of its own), the carved edge's geometry and THE BULGE at 7+ rows (a corner rounded along a slant that had been flattened to vertical, plus the depth cap that should have been deleted with the layout it was built for), the SHEATH and its tang, the CLAMP reasoning end to end (10.8–11.5, why the floor is the dial that matters, and the retired "two 70-character CCs" spec that set the original 10px), type and width as SEARCHES on the real DOM rather than chosen values, the three break rules (bound names, bound years, and the `<wbr/>` after each separator that was the largest single win), and §27.9 — BUILT AND REVERTED, headed by the two-column layout that was deleted rather than patched, with the full downstream chain of every "fix" that followed the first wrong move. §27.10 collects seven measurement failures, each of which produced a confident wrong answer.**
+
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
@@ -2643,3 +2645,398 @@ SOONER, not to give it further to travel.
   `clearFlightCaptures()` resets them one frame after the swap, so a tick that
   reads `panDir` sees `'lateral'` and silently computes zeros. The css paths never
   noticed because they bake their direction in at init.
+
+---
+
+## 27. THE CROSS-CONNECTIONS BLADE (AS BUILT, August 5–6)
+
+_(The CCs left the featured card's FOOTER and became a carved blade that lives
+INSIDE the card and is drawn out of it. Because the footer was the only thing
+that ever varied card height, every card is now exactly `CARD_TOP_H` tall — a
+constant the deck, the flight and `DeckRiffle` had all been working around.
+Built against Sam's hand drawing `7AFB3D6D`, which measures ~1:1 with the card's
+925px width. §27.9 records what was built and REVERTED; read it before
+re-attempting any of it.)_
+
+### 27.1 The one idea: it is a tool inside the case, not a neighbour
+
+The blade was first mounted by the PAGE, as a sibling of the card inside
+`.featured-slot`. Everything about it was then a tracking problem — it had to
+follow the card's position, its scale, its tilt — and on a vertical CC
+navigation it visibly **detached and flew its own path**. Sam:
+
+> _"The CC blade is 100% a subcomponent of the FeaturedCard. It has no existence
+> outside of the FeaturedCard… imagine the Featured Card is the red case of the
+> Swiss Army knife. I could throw a swiss army knife off a cliff and the blades
+> and inner components will not float off or have their own arcs."_
+
+It now renders inside `.featured-card-wrap`, so it inherits every transform the
+flight applies **for free**. Measured across a full navigation on untilted
+frames: `blade.left − card.left` is **0.00px constant**, `blade.width /
+card.width` constant. On the deck's tilted frames those numbers vary, which is
+what a rigid blade rotating WITH the card looks like — an axis-aligned bounding
+box comparison is not a rigidity test under rotation.
+
+Three things follow, and each one got simpler, not harder:
+
+- **No opacity anywhere.** "Sheathed" means translated up behind the card. The
+  card is opaque and painted above (`.cc-blade-mount` is `z-index: -1` inside
+  it), so the blade is hidden WHEREVER the card is — mid-flight, offscreen,
+  scaled down to a chip. The page-mounted version needed an opacity gate to fake
+  this, because the card wasn't there yet to hide behind.
+- **No shadow of its own.** The wrap's `drop-shadow` filter renders card + blade
+  as ONE silhouette, so the pair casts a single shadow with no seam. What the
+  blade does carry is an INSET shadow at its top, offset down by the tang, so
+  the card's bottom lip casts onto it at ~35% of the card's outer values. Sam's
+  original complaint — the blade's top edge shadowing the CARD — was a z-order
+  bug, not a shadow that shouldn't exist.
+- **It is positioned ABSOLUTELY and contributes no layout height.** This is
+  load-bearing: `.featured-flight`'s rect is the flight's destination geometry,
+  and a taller box rescales the whole chip→card morph (the card renders smaller
+  than the chip it grows from). The page reserves the blade's visible depth
+  separately, in `.featured-slot`.
+
+### 27.2 The carved edge — geometry, and the bulge at 7+ rows
+
+Carved with the card's own `shape()` machinery and the card's own `CORNER_R`,
+now **exported from FeaturedCard** for the same reason `CARD_TOP_H` is: a second
+literal would silently diverge the first time the radius moved. The first
+version used a flat `polygon()` with hard corners; Sam caught it immediately
+(_"did you use similar path carving as the spouse notch?"_ — no, I hadn't).
+
+| constant | value | why |
+|---|---|---|
+| `BLADE_LEFT_TOP` | 125 | where the slant meets the card's bottom edge. Was 145; moved 20px left on Sam's ask to widen the blade |
+| `BLADE_RIGHT_INSET` | 25 | the blade's MAXIMUM right extent, not a fixed inset — see §27.4 |
+| `SLANT_TAN` | 0.83 | ≈40° off vertical; the drawing runs 73px right over an 88px drop |
+| `BLADE_TANG` | 14 | blade that lives permanently up inside the case (§27.3) |
+| `SLANT_X0` | `125 − TANG·TAN` | the slant's x at the top of the TANG, chosen so the edge passes through exactly 125 at the card's bottom edge. The tang EXTENDS the line; it does not bend it |
+
+**Rounded: the two bottom corners. Square: the two top corners**, which sit at
+or above the card's bottom edge and are never seen. The bottom-left vertex is
+stepped back along BOTH its edges (`upX = B − r·sin θ`, `upY = r·cos θ`) so the
+acute corner does not come to a needle.
+
+**THE BULGE — the failure worth remembering.** A `SLANT_MAX_DEPTH = 145` cap
+once flattened the edge to vertical below that depth. The corner rounding still
+stepped back **along the slant**, so on any blade deep enough to reach the cap
+the corner moved ~5px LEFT and the vertical edge then came back right — a
+visible jut on the bottom-left of every 7+ row blade. Sam found it on Jeremiah
+Wadsworth. Traced by hit-testing the silhouette row by row (clip-path governs
+hit-testing, so this reads the REAL carved shape, not the CSS string):
+
+```
+before   232 → 231 → 230 → 229 → 230 → 232      the edge walks left, then back
+after    234 → 234 → 234 → 234 → 234 → 235      vertical
+```
+
+It was fixed twice. First correctly-but-locally: round the corner along
+whichever edge actually meets it (vertical when capped). Then properly — **the
+cap was deleted**, because it had only ever existed to bound the two-column
+layout's insets, and those columns were gone (§27.9). Leaving it behind was
+flattening the last stretch of the deepest blades into a stub with a corner,
+breaking the one continuous line the edge is supposed to be. The lean now runs
+the whole way down, per the drawing's own rule — _"the slant continues as long
+as there are CCs"_. Measured on Wadsworth: a single constant lean, 131 → 246.
+
+**The text follows the edge**, via a `shape-outside` polygon on an invisible
+float. Two non-obvious constraints, both learned by breaking them:
+
+- The cutout is drawn over a FIXED over-tall run, not the measured height.
+  Sizing it from `bladeH` made layout self-referential — height fed the cutout,
+  the cutout re-wrapped the text, the text set the height. It converged, but
+  only on the second pass, so anything reading the height on pass one got a
+  too-short blade.
+- The float must be WIDER than the shape ever gets, because `shape-outside` is
+  clipped to the float's margin box. At `width: 100%` inside a narrow container,
+  everything past the clip counts as blocked. The float is also contained by the
+  nearest block-formatting context, so an over-tall one drags its container to
+  600px unless the body has an explicit height and clips it. The obvious
+  neutraliser — a matching negative bottom margin — does NOT work: the shape is
+  clipped to the margin box, so zeroing the margin box zeroes the cutout with it
+  (measured: every line went back to starting at x=0).
+
+### 27.3 The sheath — and the tang
+
+_"Like a swiss army knife there will always be a transition from sheathed —
+hidden from view under the Featured Card — to fully exposed."_
+
+**The tang.** `BLADE_TANG` (14px) of blade lives permanently inside the case and
+is never seen at rest. Without it the blade's top edge IS the card's edge, so
+the settle overshoot pulled the whole thing clear and **opened a gap** — for a
+few frames the blade was a detached slab floating below the card. With a tang,
+an overshoot simply exposes more blade, which is what a real blade does.
+Measured across a navigation: the gap between the card's bottom and the blade's
+top **never goes positive**; worst case −8.6px, i.e. the overshoot consumed
+5.4px of tang with 8.6px still in hand.
+
+**THE CARRY IS 0.011 OF TRAVEL — the house ratio**, lifted straight out of
+`settleBackFor` (`distance * 0.011`). Getting this wrong is what made the draw
+read as _"someone flicking something off their finger"_: the card carries
+4.5–5.4px over a flight of ~900px, well under 1% of its travel, and the blade
+was carrying a hand-rolled 5px over a travel of ~116px — **nearly 4%, four to
+eight times the overshoot the rest of the world uses**. As a ratio it also
+scales the way mass should: a one-line blade settles almost instantly, a
+nine-line blade carries further. And it needs no pixels, so travel and carry
+ride ONE curve in ONE unit — `easeOutBack` in pure percent.
+
+**Travel is a percentage, never a measured pixel count.** A blade does not know
+its height when its animation is built — the text has not been laid out. Every
+pixel route tried here read the empty 22px padding box (measured: 17px against a
+final 132px), and on a deck arrival a `getBoundingClientRect` reads a SCALED
+rect because the card is mid-flight. `translateY(-100%)` resolves against the
+border box when the browser samples the animation, by which time the real height
+exists.
+
+**TWO CLOCKS, because a CC arrival and a chip promotion are not the same
+journey**, plus a third case that is purely about axis:
+
+| arrival | draw | ends at | carry |
+|---|---|---|---|
+| CC, lateral | 420ms | 0.95 of on-screen travel | 0.011 |
+| CC, vertical | 420ms | the settle, +300ms lag, −5% | 0.011 |
+| from an on-screen chip | 260ms | 0.88 | **0** |
+
+- **`endsAt` is a fraction of the hero's ON-SCREEN travel** (after its `delay`,
+  which on a deck arrival is dead time with the card still offscreen). Run at
+  the start of a flight instead, the draw is simply never seen — the blade
+  appears already open every time.
+- **A VERTICAL deck arrival hides a vertical draw.** Measured: the card waits
+  offscreen until ~900ms, then falls from y −675 to 252 in ~370ms — and the draw
+  was running inside that descent, extending the blade ~100px down while the
+  card moved ~350px down. Same direction, three times the distance: the blade's
+  own motion is **invisible by subtraction**. Nothing was broken; it was hidden
+  behind a bigger move in its own axis. So a vertical arrival waits for the card
+  to stop. Card movement during the draw: **364px before, 6px after**.
+- **The axis comes from the deck's own entry vector (`deckDirFor`), NOT from
+  `panDir`.** `capturePanDir` is set from the clicked RELATION (parent→down,
+  child→up, spouse→lateral) and says nothing about a CC's deck direction.
+- **NO carry on a chip arrival.** The card itself lands with an `easeOutBack`
+  settle, and a second overshoot underneath does not add weight — the two read
+  as one another's echo and blunt the card's own. `easeOutBack(u, 0)` is
+  `1 + (u−1)³`, which IS `cubicOut` (verified numerically, max difference 0), so
+  "no overshoot" stays in the same curve family rather than becoming a second
+  dialect.
+
+**Mechanism, and why it is not a Svelte transition.** Svelte does **not** run a
+nested element's intro when the component around it is created — the `in:`/`out:`
+pair simply never fired and the blade sat fully drawn from frame 0. Both
+directions are plain WAAPI. The stow is DECLARATIVE in the markup (`class:stowed`)
+so there is never a frame painted already-open, and `fill: 'backwards'` holds the
+first keyframe through the delay. The retract is fired from the departing card's
+`outrostart` **in the page**, because once a keyed block is outroing Svelte stops
+running its effects and the card can no longer notice its own departure.
+
+### 27.4 Type and width are MEASURED, not chosen
+
+`fitBlade` (`src/lib/actions/fitBlade.ts`) runs two searches on the real DOM, in
+this order. It is the sibling of `shrinkToFit` and deliberately its mirror:
+`shrinkToFit` keeps one line on one line by SHRINKING; this grows until one more
+line would appear.
+
+1. **TYPE** — grow from the floor while the blade's DEPTH is unchanged.
+2. **WIDTH** — then pull the right edge in. Among the widths that hold that
+   depth, prefer the one leaving the fewest TAILS (§27.5); among equals, the
+   narrowest. **The left edge never moves** — the blade always emerges from the
+   same point under the card, so all the give is on the right.
+
+**Why the DOM and not a predictor.** This is Pretext's idea (binary-search the
+size whose line count is still "nice") with the browser as the oracle instead of
+a canvas re-implementation. Pretext's pitch is avoiding reflow across thousands
+of items; there is ONE blade holding at most eleven connections, so a dozen
+synchronous measurements cost nothing. What is NOT cheap is accuracy: the
+blade's lines are cut by a slanted edge, and the browser is the only thing that
+knows exactly how text wraps around that shape. A canvas predictor would have to
+model the slant itself and agree with CSS perfectly, or silently pick a size
+that then wraps differently.
+
+**THE CLAMP — where the numbers came from.**
+
+| | value | reasoning |
+|---|---|---|
+| floor | **10.8** | Started at 10.2 = the old flat 10px + 2% (Sam: _"the lower clamp font size needs to be even 2% bigger than this"_). Raised to 10.8 when the densest entries bottomed out around 10.4 and read as too small — Sam on Daniel Wadsworth: _"I'd rather have it wrap onto seven rows of text with a slightly larger min font"_ |
+| ceiling | **11.5** | Was 13. At 13 a one-connection blade read as _an extension of the card's NBs when it's really below in hierarchy_. The ceiling is what keeps the blade subordinate to the card |
+
+**The floor is where the TARGET DEPTH is measured**, which is the whole reason it
+is a meaningful dial: lifting it buys type at the price of rows. Daniel
+Wadsworth went 10.39px/6 rows → **11.49px/7 rows** on that change alone.
+
+**The retired spec.** The original flat 10px was sized to a stated rule — _"two
+70 character CCs should fit completely in the first row"_ — measured at the time
+(12px held 115 characters, 10.5px held 135, 10px held 150). That rule described
+a full-width SINGLE column and cannot survive a half-width one; it was retired
+with the two-column experiment and should not be reinstated without re-deriving
+it.
+
+**Two arithmetic traps in the search itself:**
+
+- **FLOOR the chosen size, never round it.** `toFixed(2)` rounds UP, which can
+  write a size larger than any actually tested — and the accepted size sits by
+  definition right against the threshold. Measured: the search accepted
+  11.0390625 (2 lines), wrote `11.04`, and at 900px 11.04 wraps to **3**. A whole
+  extra row out of a hundredth of a pixel.
+- **Write the width with a `style:` DIRECTIVE, not a `style` attribute.** A
+  `style="clip-path: …"` attribute is rewritten WHOLESALE whenever the clip
+  changes — and the clip changes precisely BECAUSE the fit changed the depth, so
+  the two collided on exactly the multi-line blades. A five-line blade snapped
+  back to full width while a one-line blade kept its fit. Same hazard already
+  documented on the card's name with `shrinkToFit`.
+
+### 27.5 Where a connection may break — and where it may not
+
+The blade is ONE continuous flow with `●` separators, not a grid. Three rules
+govern its line breaks, and all three are display transforms only —
+`canonical.json` is frozen in this stream.
+
+- **A name is one thing.** Every space inside a linked name becomes
+  non-breaking. _"Edwards Pierrepont"_ split across two lines reads as two people
+  for the half-second it takes to reassemble, and the name IS the link.
+- **A year never starts a line alone.** `"…ordination, November 25,"` would fill
+  a line and drop `"1706"` onto the next by itself. 419 of 2879 connections (15%)
+  contain a year that can split this way. **`text-wrap: pretty` and `balance` do
+  NOT fix this** — measured on the same blade, both produced identical breaks,
+  because the problem is not how the lines are balanced but that a date is being
+  treated as two separable words.
+- **`<wbr/>` AFTER each separator is the only place a connection may break from
+  the next.** This was the largest single win and the least obvious. There is no
+  whitespace around the separator — the spacing is padding — so the browser read
+  `…prisoner of war●Paul Geddes Pennoyer` as ONE unbreakable word, the linked
+  name having just been made unbreakable itself. A line with 220px still free was
+  handed a ~360px atom and threw the whole thing onto the next line, which is why
+  words appeared to wrap with obvious room beside them. There is deliberately no
+  break opportunity BEFORE the separator, so the dot stays on the line with the
+  connection it closes rather than leading the next one.
+
+Measured as unused space at the end of each non-final line: **mean 92px → 55px,
+worst 182px → 105px**, and one six-line blade collapsed to five.
+
+**TAILS are the structural residue.** A tail is the end of one connection
+stranded at the start of the next line, so the line opens mid-sentence. After
+the `<wbr/>` fix, 6 of 10 sampled blades have none — and for every blade that
+still has one, the count **equals the minimum achievable at that line count**
+(swept across every width from 420 to 900px). The width search prefers fewer
+tails at equal depth and never trades a line for them, so it cannot make a blade
+worse. Removing them entirely requires ONE CONNECTION PER LINE — a block per
+connection — which is a different layout, not a tuning value.
+
+### 27.6 Dynamic width — the blade is sized to what it holds
+
+The blade's left edge is fixed; its right edge is pulled in to the tightest
+width that still holds the text in the same number of lines. `width:
+fit-content` would NOT do this — it sizes a box to its widest WRAPPED line and
+leaves the dead space anyway. The floor for the search is the paragraph's own
+`min-content` width, so an unbreakable atom (a bound name) can never be squeezed
+into overflowing.
+
+This also retired a special case: a lone connection was to be CENTRED so it
+wasn't stranded in a wide blade. A blade sized to its content cannot strand it,
+so there is nothing to centre.
+
+| entry | connections | result |
+|---|---|---|
+| Alexander Morgan Hamilton | 1 | 660px @ 11.49px, 1 row |
+| Alfred Bacon | 2 | 690px @ 11.49px, 2 rows |
+| Daniel Wadsworth | many | 870px @ 11.49px, 7 rows |
+| Jeremiah Wadsworth | 11 | 900px @ 11.15px, 7 rows |
+
+### 27.7 The label
+
+"CROSS / CONNECTIONS" sits OUTSIDE the blade, in the wedge the slant opens,
+always on two rows _"even if there's only one row of Cross Connections"_. Its
+hover tooltip — the only place the site explains what a cross connection IS —
+survived the move from the old footer verbatim, and now opens DOWNWARD: the card
+paints over the blade (it has to, so the blade can slide out from under it), so
+an upward tooltip landed behind the portrait.
+
+**Each row gets its own right edge.** Aligning both rows to one edge cannot hold
+a constant gap against a leaning edge — measured, "Cross" sat 10px off it and
+"Connections" 21px. Stepping them makes the label lean WITH the blade, which is
+the rule the blade's own text follows. The gap is 16px, borrowed from the card's
+own portrait-to-narrative gap (`.narrative`'s `pl-4`) at Sam's instruction.
+
+**The label does not bounce.** It rides out with the blade and stops dead at
+full extension — it is lettering beside the case, not part of the moving steel,
+so it has no momentum to carry. The draw cancels only the part of the curve past
+1, which works because the label's layer is exactly as tall as the blade: a
+percentage has to mean the same distance to both.
+
+### 27.8 Colour
+
+| element | value | |
+|---|---|---|
+| body text | `--color-inkblue` | the card's own ink |
+| **clickable names** | `--color-darkgreyblue` = `hsl(224, 30%, 27%)` | greyer and quieter than inkblue; the blade sits below the card in the hierarchy |
+| non-clickable names | `--color-inkblue`, weight 500 | the difference IS the affordance |
+
+`hsl(252, 100%, 67%)` (slate blue) was trialled and returned from. It is kept as
+a commented line beside the live one in `.cc-blade-row`; the link colour, its
+underline (35%) and the hover state all derive from a single `--cc-link`
+variable, so switching is one line. NOTE: `layout.css` also carries an unused
+`--color-slateblue` at **57%** lightness, not 67 — left untouched.
+
+### 27.9 BUILT AND REVERTED — do not re-attempt without reading this
+
+**The two-column layout for long lists. Deleted, not patched.** The idea is
+sound — a full-width line here runs ~170 characters against the 45–75 that prose
+reads at — but every version of it deepened the blade instead of halving it. Sam:
+
+> _"instead of maximizing space on the existing CC blade, lets just turn the
+> blade into a giant rectangle… I'd rather delete the project and look for a job
+> at Starbucks than ever look at this layout again."_
+
+The root error and its whole downstream chain, because each fix was downstream
+of the first mistake:
+
+1. **Two columns exist to make the blade SHALLOWER** — the same connections in
+   half the lines. Pinning the type to the 13px ceiling in the same breath sent
+   the depth back up. Everything else followed from that.
+2. A deep blade threw the slant far right → so the slant was CAPPED → which made
+   it read as a vestigial notch (and left the corner bug of §27.2 behind).
+3. A deep blade needed a big column inset → which opened a wedge of dead white
+   INSIDE the blade → and the inset **fed back on itself** (deeper → wider inset
+   → narrower columns → deeper), settling at the worst equilibrium.
+4. `shape-outside` cannot survive columns at all. It only shortens LINE boxes
+   inside the float's own formatting context, and a grid item — or a multicol
+   container — establishes its own and CONTAINS the float instead. A
+   three-connection blade rendered **636px tall**, exactly the float's height
+   plus the padding.
+
+If it is rebuilt: the constraint is that two columns must make the blade
+shallower, never deeper, and the type must be FITTED in columns exactly as it is
+in one flow.
+
+**An orphan/tail-scoring width search — built, measured, removed, then partly
+restored.** The first version priced one extra line at two tails and produced
+**twelve tails across ten blades either way**. It was also measured against a
+layout that could not break between connections at all (the missing `<wbr/>`),
+so its conclusion — "width alone cannot fix tails" — was drawn from bad data and
+should not be cited. What survives is the reduced form in §27.4: prefer fewer
+tails at EQUAL depth, never trade a line.
+
+**Also reverted:** a `z-index: 3` demote (ghost-taxonomy bug D); the blade's own
+drop-shadow (§27.1); centring a lone connection (§27.6); `text-wrap: pretty` and
+`balance` (§27.5, no effect).
+
+### 27.10 Measurement lessons — every one of these produced a confident wrong answer
+
+- **A wrapped link has TWO client rects, and the centre of their union is in the
+  gap between them.** Two probes clicked that centre, hit the paragraph, and went
+  red. Nothing was wrong in the app; larger CC type made links wrap, exposing an
+  always-fragile assumption. ~30 other scripts share the pattern.
+- **`scrollHeight` is an INTEGER, so a proportional-height test drifts.** "Did
+  the line count change" tested as "did height grow in step with size" gave up
+  early and cost a one-line blade 1.5px of size. Count line boxes instead.
+- **Count only content.** A per-column line count that walked `children`
+  included the invisible shaping float and reported a three-connection blade as
+  eight lines deep, so the search saw no room and jumped to the ceiling.
+- **Get the tie-break direction right.** "Cheapest wins, narrower wins ties"
+  inverted to "widest wins ties" silently retired the entire dynamic width —
+  every blade went back to full width because the first candidate always tied.
+- **A metric measured from the wrong origin is worse than no metric.** Scoring a
+  separator's distance from the BLADE's left edge is meaningless when a slanted
+  edge starts every line at a different x.
+- **Scan, don't binary-search, a non-monotonic objective.** Tail count runs 2 at
+  690px and 8 at 735px. There is no midpoint to compare against.
+- **`elementFromPoint` never returns an element with `pointer-events: none`** —
+  so it cannot be used to verify a tooltip is visible. A screenshot settled it,
+  as it has every other time in this document.

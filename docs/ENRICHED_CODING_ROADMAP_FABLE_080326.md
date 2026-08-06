@@ -5,6 +5,8 @@
 
 **The 080326 edition (August 3) adds §17 — THE KIN-DISTANCE BAKE SHIPPED, closing §15 and the §19.4 debt behind it. The deck's SAME-LINE test no longer proxies kinship with anything: `regenerate-data.js` stamps a per-CC `kin_distance` (edges through the nearest shared ancestor, ONE marriage allowed to bridge the two blood lines at a cost of 2), and `isVerticalMove` reads it. Uncles, aunts and parents-in-law ride vertical wherever the tidy tree seated them; second cousins, the in-laws of distant collaterals, and true strangers stay lateral. Also records the probe that was asserting the WRONG THING (a father-in-law logged as a cross-branch-peer control), and §17.4 — redirects.json wired as 301s after 673 entries of accumulated dead URLs.**
 
+**The 080626 edition (August 6) adds §28 — THE CC BLADE SHIPPED (`7c191ed4..e3db7c65`, two commits on main). Records what landed, why a three-way commit split was abandoned (the blade and the typography pass interleave inside `FeaturedCard.svelte`, so splitting by hunk would have produced a broken intermediate), the constant card height it buys and what that retires, and — at Sam's request — §28.3, THE ORDER THINGS WENT WRONG and what each cost, including the pattern worth recognising early: the first wrong move (type pinned to the ceiling) made the blade deep, and every subsequent "fix" was downstream of it, each adding a new artefact. Sam's mid-turn intervention — *"i hope you are not 'fixing' things from your first attempt, its a complete re-write"* — was correct, and reverting to the last approved state should have happened two turns earlier. Also §28.5: the open items, headed by `probe-demote-settle`'s stale baseline (RED before this arc began) and ~30 probe scripts carrying the same latent union-box click. Design rationale: design doc §27.**
+
 **The 072426 edition (July 24) adds §15 — DECK VERTICAL MISFIRE (uncle/nephew rides horizontal). A confirmed bug surfaced during a content session: John Pierpont H00388 → uncle-guardian James Pierpont II H00116 transitions HORIZONTAL when it should be vertical. Diagnosed: the CC data is correct (`gen_delta = −1`); the flight engine's `sameLine` test proxies "same line" by seat distance (`|Δseats| ≤ 180`), and these genuine uncle/nephew sit far apart, so it falls through to lateral. NOT hacked mid-content-session. The proper fix is the long-planned §19.4 LCA/kin-distance bake (per-CC shared-common-ancestor depth, used instead of seat proximity). Deferred, scoped, and specced below. Design rationale: design doc §22.2b.**
 
 **This 071226 edition records the July 11 session: the (unplanned) CARD-TRANSITION MAINTENANCE PHASE is CLOSED and pushed — spouse carousel, demotion baseball-card model, velocity-ceiling physics, six ghosts dispositioned, Playwright probe arsenal standing. Statuses updated throughout; §7 added (state of play + what Phase 3a inherits). Repo-side session record: docs/CODING_HANDOFF.md.**
@@ -2553,3 +2555,103 @@ than letting the sequence look blocked-by-nobody.
 - Long-standing and unrelated: `probe-passage`, `probe-reciprocity`,
   `probe-arrival`, `probe-carousel-regression` (§18.8), and
   `probe-demote-settle`'s gitignored baseline (§11.5).
+
+---
+
+## 28. AUGUST 5–6 — THE CROSS-CONNECTIONS BLADE SHIPPED (design §27)
+
+### 28.1 Shipped and pushed
+
+`7c191ed4..e3db7c65`, two commits on `main`:
+
+- **`71cada9c`** — `probe-deck-lock` and `probe-deck-physics` repaired. They
+  clicked the CENTRE of a CC link's bounding box; a wrapped link has two client
+  rects and that centre falls in the gap between them, on the paragraph. Larger
+  CC type made links wrap, which exposed it. **The app was never broken.** ~30
+  other scripts share the pattern and were left alone.
+- **`e3db7c65`** — the blade itself, 13 files, +1277/−169. New:
+  `src/lib/components/CrossConnectionsBlade.svelte`,
+  `src/lib/actions/fitBlade.ts`.
+
+A three-way split (blade / typography / probes) was proposed and abandoned:
+`FeaturedCard.svelte` and `layout.css` each carry both blade and typography
+changes interleaved, and splitting by hunk would have produced a broken
+intermediate (footer removed before the blade exists).
+
+**The doctrine is in DESIGN §27**, including the geometry constants, the clamp
+reasoning, and §27.9's record of what was built and reverted. This section is
+the sequencing log only.
+
+### 28.2 Every card is now a constant height
+
+The CC footer was the only thing that ever varied card height. With the CCs out
+of the card, `CARD_TOP_H` (575) is exact for every person — which retires the
+variance that caused the row-leaver "receding edge" problem of §26, and makes
+`DeckRiffle`'s phantom sizing exact rather than approximately right (it now
+imports the constant instead of carrying its own literal). `.featured-slot`
+still glides its height, but it is now smoothing the BLADE appearing and
+disappearing between people rather than the card growing.
+
+### 28.3 The order things went wrong, and what each cost
+
+Recorded because Sam asked for it explicitly, and because each of these was a
+*plausible* wrong turn — the kind worth recognising early rather than
+re-deriving.
+
+| # | wrong turn | how it was caught | cost |
+|---|---|---|---|
+| 1 | Blade mounted by the PAGE as the card's neighbour | Sam saw it detach on a vertical CC | full re-architecture (design §27.1) |
+| 2 | Two-column layout, type pinned to the ceiling | Sam: _"borderline offensive"_ | **deleted, not patched** (§27.9) |
+| 3 | Hand-rolled 5px overshoot, ~4× the house ratio | Sam: _"flicking something off their finger"_ | replaced with `settleBackFor`'s 0.011 |
+| 4 | Draw timed to the start of the flight | Sam: _"it doesn't happen in the UX at all"_ | re-anchored to on-screen travel |
+| 5 | Tail-scoring width search on pre-`<wbr/>` data | its own measurements showed no gain | removed, later restored in reduced form |
+| 6 | `toFixed(2)` on the fitted size | Alice Gwynne gained a row for no size | floor, don't round |
+
+**The pattern in #2 is the one to watch.** The first mistake (type at the
+ceiling) made the blade deep; every subsequent "fix" — capping the slant, adding
+a column inset, bounding the inset — was downstream of it, and each one added a
+new artefact. Sam's intervention mid-turn was correct: _"i hope you are not
+'fixing' things from your first attempt, its a complete re-write."_ Reverting to
+the last approved state and rebuilding from the actual request was the move, and
+it should have happened two turns earlier.
+
+**The corollary for measurement:** #5's conclusion ("width alone cannot fix
+tails") was reported to Sam as settled, and it was measured against a layout that
+could not break between connections at all. When a fix changes the constraint,
+re-run the analysis that assumed the old one — do not carry the conclusion
+forward.
+
+### 28.4 What Sam approved, in his words
+
+- Eli Whitney II — _"ideal, the text size is great, look how it fills the blade
+  and aligns with the left edge slant… this entry needs no more work"_
+- Pierpont Morgan Hamilton — _"fixed… his is ideal too"_
+- Jeremiah Wadsworth (7 rows, the deepest) — _"the overall look is great and I
+  approve his CC blade"_, after the bulge fix
+- Daniel Wadsworth — approved once the floor moved 10.2 → 10.8
+
+### 28.5 Open, in priority order
+
+- **`probe-demote-settle` is RED and was red before this arc began.** Its
+  baseline records a 580px card; `CARD_TOP_H` has been 575 since the August 4
+  reduction. It also reports a changed CC exit angle and slide distance, which
+  the deck derives from viewport geometry and which a taller page moves. Needs a
+  re-record or a stated exemption — not a fix.
+- **Tails on the densest entries.** Wadsworth 3, James Pierpont 2, Leete 1,
+  Morgan 1 — each already at the minimum achievable for its line count (swept
+  420–900px). Only ONE CONNECTION PER LINE removes them, which is a different
+  layout. Design §27.5.
+- **The two-column layout for long lists** remains unbuilt and remains the right
+  idea for the ~20% of people with 3+ connections. Read §27.9 first; the
+  constraint is that it must make the blade SHALLOWER.
+- **The blade's width is computed client-side**, with a second pass on
+  `document.fonts.ready`. On a slow cold load the blade may be seen resizing
+  once as the real face swaps in. `shrinkToFit` has the same behaviour on the
+  card's name.
+- **~30 probe scripts still click the union-box centre of a `data-cc` link**
+  (§28.1). Latent; they will go red the next time type or width changes enough
+  to make a link wrap.
+- Carried forward from §27.4: the sibling demote's velocity exemption, the
+  near-dead corner retraction, and **CLAUDE.md still points at `docs/DESIGN.md`
+  and `docs/CODING_HANDOFF.md`, neither of which exists** — the ENRICHED pair
+  absorbed both roles. A future session will burn time on this.
