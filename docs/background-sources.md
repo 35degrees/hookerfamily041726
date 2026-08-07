@@ -177,3 +177,23 @@ losing its fibre, prefer a different sheet.
 deliberately OUTSIDE `static/`, so a 13MB purchase is never publicly served.
 Re-encode from there if a quality judgement changes; iStock also allows free
 re-download of anything already bought.
+
+### What the encoding actually costs, measured at DISPLAY size
+
+Raw sigma at native resolution understates retention, because the browser
+resamples for `background-size: cover` anyway. Compared at the size the browser
+paints them, master against shipped:
+
+| | master σ | shipped σ | retained | mean pixel diff |
+|---|---|---|---|---|
+| desktop @2x (2200) | 8.13 | 7.16 | **88%** | 2.6 / 255 |
+| desktop @1x (1400) | 6.95 | 6.19 | **89%** | 2.3 / 255 |
+| phone @3x (1100) | 7.26 | 4.59 | **63%** | 4.3 / 255 |
+
+Mean luminance is preserved to within a third of one level (242.45 → 242.16).
+
+**Desktop is effectively lossless to the eye** — 88% of the fibre at a 1% mean
+difference, and more texture than the preview that was approved. **The phone
+file is where the real trade was made**, deliberately: a third the physical
+pixel size and the worst connections. Revisit that one first if a sheet ever
+looks flat on a phone; `1100 @ q88` costs ~90KB and recovers most of it.
