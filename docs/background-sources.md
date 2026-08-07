@@ -121,3 +121,59 @@ be moved.
   what gets bought.
 - **Licence:** confirm it covers use as a website background. "Editorial use
   only" does not.
+
+---
+
+## THE RECIPE — adding another sheet
+
+Settled August 7. Adding a second (or third) photographed ground is **one array
+entry plus four files**, because `Skin.image` is a BASE path and `Field` derives
+the widths by convention.
+
+1. Buy it; keep the licensed master in `_assets/textures/` (never served — that
+   folder is not under `static/`).
+2. Generate four WebP widths from the master into `static/textures/`, named
+   `<base>-800.webp`, `-1100`, `-1400`, `-2200`. Quality **0.80** for the two
+   small, **0.82** for the two large.
+3. Add one entry to `GROUNDS` in `src/lib/state/ground.svelte.ts` with
+   `kind: 'sheet'`, a `ground` colour equal to the sheet's own MEAN tone, and
+   `image` set to the base path with no suffix and no extension.
+
+That is all. No CSS, no component change.
+
+### Why those four widths
+
+| file | serves | size | grain σ |
+|---|---|---|---|
+| `-800` | phone @1x | 39 KB | 2.90 |
+| `-1100` | phone @2x/@3x | 66 KB | 2.20 |
+| `-1400` | desktop @1x, tablet | 110 KB | 2.43 |
+| `-2200` | desktop @2x | 368 KB | 3.54 |
+
+`image-set()` picks by DPR; a `max-width: 768px` media query picks by viewport.
+Only ONE file is ever downloaded.
+
+### The measurements that set them
+
+Taken on a throttled 3G profile (780 kbps, 100 ms RTT):
+
+- **First paint is never blocked.** FCP is ~2.0s on 3G with or without the
+  sheet, because `background-color` carries the sheet's mean tone — the ground is
+  the right COLOUR immediately and the fibre arrives later. There is no white
+  flash and no broken-image gap, on any connection.
+- **The cost was bandwidth, not lag.** Before this, a 390px phone downloaded the
+  2200px file — 369KB it could display a fifth of — arriving 19.4s after first
+  paint and competing the whole time with the PORTRAITS, which are content. The
+  ground is decoration and must yield to them.
+- After: phone 66KB arriving 5.4s, desktop @1x 110KB arriving 7.3s.
+
+**The rule this encodes: a decorative layer never outweighs the content it sits
+behind.** If a future sheet cannot be got under ~110KB at desktop @1x without
+losing its fibre, prefer a different sheet.
+
+### Master files
+
+`_assets/textures/` holds the licensed originals at full resolution. It is
+deliberately OUTSIDE `static/`, so a 13MB purchase is never publicly served.
+Re-encode from there if a quality judgement changes; iStock also allows free
+re-download of anything already bought.

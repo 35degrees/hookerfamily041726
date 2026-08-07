@@ -19,6 +19,8 @@
 	// PARCHMENT is the one skin with NO motes at all — the grain is a procedural texture on the ground
 	// itself, not scattered particles, so the mote layers below are skipped entirely for it.
 	const isParchment = $derived(active.kind === 'parchment');
+	// A photographed sheet. Like parchment it carries no motes — its character is in the pixels.
+	const isSheet = $derived(active.kind === 'sheet');
 	function cycleGround() {
 		groundState.idx = (groundState.idx + 1) % GROUNDS.length;
 	}
@@ -207,9 +209,16 @@
 		class:ledger={isLedger}
 		class:paper={isPaper}
 		class:parchment={isParchment}
+		class:sheet={isSheet}
+		style:--sheet-sm={active.image
+			? `image-set(url("${active.image}-800.webp") 1x, url("${active.image}-1100.webp") 2x)`
+			: undefined}
+		style:--sheet-lg={active.image
+			? `image-set(url("${active.image}-1400.webp") 1x, url("${active.image}-2200.webp") 2x)`
+			: undefined}
 		aria-hidden="true"
 	>
-		{#if !isParchment}
+		{#if !isParchment && !isSheet}
 			{#each MOTE_LAYERS as _meta, i (i)}
 				<div
 					class="layer"
@@ -303,6 +312,38 @@
 			radial-gradient(52% 46% at 30% 88%, rgba(146, 112, 66, 0.19), transparent 72%),
 			var(--ground, #e0cfa9);
 	}
+	/* MANUSCRIPT — a real photographed sheet (static/textures/paper-manuscript.webp, 2200×1467, 368KB).
+	   Sized `cover` on the fixed full-viewport field, so it never tiles and never shows a seam. The
+	   colour underneath it is the sheet's own mean, so anything the image has not painted yet — the
+	   first frame, a failed request — is the right tone rather than white.
+
+	   ENCODING, because the numbers decide it rather than taste: the 6240px original carries grain
+	   sigma 5.49. Downscaling and compression both eat that, and the grain IS the purchase. Measured,
+	   2200@q82 keeps sigma 3.54 where 2880@q82 keeps 3.66 — 97% of the fibre for 70% of the bytes —
+	   and the preview Sam approved was itself only 1938px at sigma 2.1–4.3, so this ships MORE texture
+	   than the thing that was said yes to. Re-encode from _assets/textures/ if that judgement changes. */
+	.field.sheet {
+		background-color: var(--ground, #f7f1e6);
+		background-image: var(--sheet-lg);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+	/* A PHONE MUST NOT DOWNLOAD A DESKTOP SHEET. Measured on a throttled 3G profile: the 2200px file is
+	   369KB and lands ~19s after first paint on a 390px-wide phone, which can display a fifth of it.
+	   First paint is never blocked — background-color carries the sheet's own mean tone, so the page is
+	   correct immediately and the fibre arrives late — but those 369KB are competing for bandwidth with
+	   the PORTRAITS, which are content. The ground is decoration and must yield to them.
+	     phone   39KB @1x   65KB @2x
+	     desktop 110KB @1x  368KB @2x
+	   image-set() picks by DPR, the media query picks by viewport; between them a 1x desktop drops from
+	   369KB to 110KB and a phone to 65KB. */
+	@media (max-width: 768px) {
+		.field.sheet {
+			background-image: var(--sheet-sm);
+		}
+	}
+
 	/* PARCHMENT — a warm cream sheet with fine speckle, and nothing else. No mottle, no vignette, no
 	   foxing: the reference is a clean paper stock, not an aged document, and every extra layer read as
 	   dirt on it. It is also the LIGHTEST ground in the set by a distance — Ledger and Aged Paper are
