@@ -16,6 +16,9 @@
 	const showField = $derived(active.kind !== 'light');
 	const isLedger = $derived(active.kind === 'ledger'); // rules only on the ledger
 	const isPaper = $derived(active.kind === 'paper'); // aged paper: sepia + rich foxing, no rules
+	// PARCHMENT is the one skin with NO motes at all — the grain is a procedural texture on the ground
+	// itself, not scattered particles, so the mote layers below are skipped entirely for it.
+	const isParchment = $derived(active.kind === 'parchment');
 	function cycleGround() {
 		groundState.idx = (groundState.idx + 1) % GROUNDS.length;
 	}
@@ -66,19 +69,46 @@
 	type Rule = { year: number; alpha: number; gap: boolean };
 	const decadeSpecs: Rule[] = (() => {
 		const out: Rule[] = [];
-		for (let d = -RULE_SPAN; d <= RULE_SPAN; d += 10) out.push({ year: d, alpha: 0.85 + ruleSeed() * 0.4, gap: ruleSeed() < 0.25 });
+		for (let d = -RULE_SPAN; d <= RULE_SPAN; d += 10)
+			out.push({ year: d, alpha: 0.85 + ruleSeed() * 0.4, gap: ruleSeed() < 0.25 });
 		return out;
 	})();
 	// screen-y of each decade line, docking the focus's exact year at DOCK_Y
-	const decades = $derived(decadeSpecs.map((r) => ({ ...r, screenY: DOCK_Y + (Math.round(anchor.y / 10) * 10 + r.year - anchor.y) * PX_PER_YEAR })));
+	const decades = $derived(
+		decadeSpecs.map((r) => ({
+			...r,
+			screenY: DOCK_Y + (Math.round(anchor.y / 10) * 10 + r.year - anchor.y) * PX_PER_YEAR
+		}))
+	);
 
 	// ── RED VERTICALS relative to the anchor seat (±0.3px seeded skew for the hand-traced hint) ──
 	const vSeed = mulberry32(0x11ed);
-	const vSpecs = (() => { const o: { seat: number; alpha: number; skew: number }[] = []; for (let s = -24; s <= 24; s += V_SEAT_STEP) o.push({ seat: s, alpha: 0.5 + vSeed() * 0.5, skew: (vSeed() - 0.5) * 0.6 }); return o; })();
-	const verticals = $derived(vSpecs.map((v) => ({ ...v, screenX: DOCK_X + (Math.round(anchor.x) + v.seat - anchor.x) * PX_PER_SEAT })));
+	const vSpecs = (() => {
+		const o: { seat: number; alpha: number; skew: number }[] = [];
+		for (let s = -24; s <= 24; s += V_SEAT_STEP)
+			o.push({ seat: s, alpha: 0.5 + vSeed() * 0.5, skew: (vSeed() - 0.5) * 0.6 });
+		return o;
+	})();
+	const verticals = $derived(
+		vSpecs.map((v) => ({
+			...v,
+			screenX: DOCK_X + (Math.round(anchor.x) + v.seat - anchor.x) * PX_PER_SEAT
+		}))
+	);
 
 	// ── MOTES (fixed seeded positions; FLIP-drift on nav, settle back — no accumulation, revisit-clean) ──
-	type Mote = { x: number; y: number; size: number; op: number; glow: number; twLo: number; twDur: number; twDelay: number; edge: number; radius: string };
+	type Mote = {
+		x: number;
+		y: number;
+		size: number;
+		op: number;
+		glow: number;
+		twLo: number;
+		twDur: number;
+		twDelay: number;
+		edge: number;
+		radius: string;
+	};
 	const DARK_SKIN = [
 		{ count: 45, sizeMin: 2, sizeMax: 3, op: 0.35, glowMul: 1.3, twMin: 6, twMax: 11, twLo: 0.75 },
 		{ count: 40, sizeMin: 4, sizeMax: 6, op: 0.6, glowMul: 1.7, twMin: 7, twMax: 13, twLo: 0.62 },
@@ -102,7 +132,18 @@
 			const size = l.sizeMin + r() * (l.sizeMax - l.sizeMin);
 			const op = Math.min(1, l.op * (0.85 + r() * 0.3));
 			const shape = r();
-			return { x: r() * 100, y: r() * 100, size, op, glow: size * l.glowMul, twLo: op * l.twLo, twDur: l.twMin + r() * (l.twMax - l.twMin), twDelay: r() * 8, edge: 215 - r() * 55, radius: shape < 0.34 ? '50%' : shape < 0.67 ? '46% 54% 52% 48%' : '54% 46% 48% 52%' };
+			return {
+				x: r() * 100,
+				y: r() * 100,
+				size,
+				op,
+				glow: size * l.glowMul,
+				twLo: op * l.twLo,
+				twDur: l.twMin + r() * (l.twMax - l.twMin),
+				twDelay: r() * 8,
+				edge: 215 - r() * 55,
+				radius: shape < 0.34 ? '50%' : shape < 0.67 ? '46% 54% 52% 48%' : '54% 46% 48% 52%'
+			};
 		});
 	}
 	const skinLayers = $derived(isPaper ? FOXING_PAPER : isLedger ? FOXING_SKIN : DARK_SKIN);
@@ -121,16 +162,23 @@
 		untrack(() => {
 			if (a.x === prev.x && a.y === prev.y) return;
 			const m: CameraMove | null = getCameraMove();
-			const wdx = prev.x - a.x, wdy = prev.y - a.y; // world delta old→new
+			const wdx = prev.x - a.x,
+				wdy = prev.y - a.y; // world delta old→new
 			prev = { x: a.x, y: a.y };
 			if (prefersReducedMotion.current) return; // no drift — jump straight to the settled positions
 			// jump to the OLD screen mapping (no transition) …
 			dur = 0;
-			flip = flip.map((_, i) => ({ x: wdx * PX_PER_SEAT * depthAt(i), y: wdy * PX_PER_YEAR * depthAt(i) }));
+			flip = flip.map((_, i) => ({
+				x: wdx * PX_PER_SEAT * depthAt(i),
+				y: wdy * PX_PER_YEAR * depthAt(i)
+			}));
 			// … then animate home on the flight clock (settle back-out for relative promotions).
 			requestAnimationFrame(() => {
 				dur = m?.duration ?? 360;
-				easeName = m && m.kind === 'relative' ? 'cubic-bezier(0.34, 1.32, 0.64, 1)' : 'cubic-bezier(0.33, 1, 0.68, 1)';
+				easeName =
+					m && m.kind === 'relative'
+						? 'cubic-bezier(0.34, 1.32, 0.64, 1)'
+						: 'cubic-bezier(0.33, 1, 0.68, 1)';
 				flip = flip.map(() => ({ x: 0, y: 0 }));
 			});
 		});
@@ -153,41 +201,74 @@
 </script>
 
 {#if showField}
-	<div class="field" class:dark={active.kind === 'dark'} class:ledger={isLedger} class:paper={isPaper} aria-hidden="true">
-		{#each MOTE_LAYERS as _meta, i (i)}
-			<div class="layer" style:transform={`translate3d(${flip[i].x}px, ${flip[i].y}px, 0)`} style:transition={`transform ${dur}ms ${easeCss()}`}>
-				{#each motes[i] as m, j (j)}
-					<span
-						class="mote"
-						style:left={`${m.x}%`}
-						style:top={`${m.y}%`}
-						style:width={`${m.size}px`}
-						style:height={`${m.size}px`}
-						style:border-radius={m.radius}
-						style:--op={m.op}
-						style:--glow={`${m.glow}px`}
-						style:--tw-lo={m.twLo}
-						style:--tw-dur={`${m.twDur}s`}
-						style:--tw-delay={`${m.twDelay}s`}
-						style:--edge={m.edge}
-					></span>
-				{/each}
-			</div>
-		{/each}
+	<div
+		class="field"
+		class:dark={active.kind === 'dark'}
+		class:ledger={isLedger}
+		class:paper={isPaper}
+		class:parchment={isParchment}
+		aria-hidden="true"
+	>
+		{#if !isParchment}
+			{#each MOTE_LAYERS as _meta, i (i)}
+				<div
+					class="layer"
+					style:transform={`translate3d(${flip[i].x}px, ${flip[i].y}px, 0)`}
+					style:transition={`transform ${dur}ms ${easeCss()}`}
+				>
+					{#each motes[i] as m, j (j)}
+						<span
+							class="mote"
+							style:left={`${m.x}%`}
+							style:top={`${m.y}%`}
+							style:width={`${m.size}px`}
+							style:height={`${m.size}px`}
+							style:border-radius={m.radius}
+							style:--op={m.op}
+							style:--glow={`${m.glow}px`}
+							style:--tw-lo={m.twLo}
+							style:--tw-dur={`${m.twDur}s`}
+							style:--tw-delay={`${m.twDelay}s`}
+							style:--edge={m.edge}
+						></span>
+					{/each}
+				</div>
+			{/each}
+		{/if}
 		{#if isLedger}
-			<div class="layer rules" style:transform={`translate3d(${flip[3].x}px, ${flip[3].y}px, 0)`} style:transition={`transform ${dur}ms ${easeCss()}`}>
+			<div
+				class="layer rules"
+				style:transform={`translate3d(${flip[3].x}px, ${flip[3].y}px, 0)`}
+				style:transition={`transform ${dur}ms ${easeCss()}`}
+			>
 				{#each decades as r (r.year)}
-					<div class="rule-h" class:gap={r.gap} style:top={`${r.screenY}px`} style:opacity={r.alpha}></div>
+					<div
+						class="rule-h"
+						class:gap={r.gap}
+						style:top={`${r.screenY}px`}
+						style:opacity={r.alpha}
+					></div>
 				{/each}
 				{#each verticals as v (v.seat)}
-					<div class="rule-v" style:left={`${v.screenX}px`} style:opacity={v.alpha} style:transform={`rotate(${v.skew}deg)`}></div>
+					<div
+						class="rule-v"
+						style:left={`${v.screenX}px`}
+						style:opacity={v.alpha}
+						style:transform={`rotate(${v.skew}deg)`}
+					></div>
 				{/each}
 			</div>
 		{/if}
 	</div>
 {/if}
 
-<button class="ground-toggle" type="button" title="Toggle field skin" aria-label={`Field skin: ${active.name} — click to change`} onclick={cycleGround}>
+<button
+	class="ground-toggle"
+	type="button"
+	title="Toggle field skin"
+	aria-label={`Field skin: ${active.name} — click to change`}
+	onclick={cycleGround}
+>
 	<span class="swatch" style:background={active.swatch}></span>
 	{active.name}
 </button>
@@ -222,6 +303,41 @@
 			radial-gradient(52% 46% at 30% 88%, rgba(146, 112, 66, 0.19), transparent 72%),
 			var(--ground, #e0cfa9);
 	}
+	/* PARCHMENT — a warm cream sheet with fine speckle, and nothing else. No mottle, no vignette, no
+	   foxing: the reference is a clean paper stock, not an aged document, and every extra layer read as
+	   dirt on it. It is also the LIGHTEST ground in the set by a distance — Ledger and Aged Paper are
+	   15–25% darker, which is why neither had ever beaten plain Light.
+
+	   THE GRAIN IS PROCEDURAL, not an image: an feTurbulence tile costs no network request, cannot tile
+	   visibly, stays sharp at any zoom or DPR, and adds no binary to a repo whose history is already
+	   heavy with them. It is the grain this app already uses — Field's motes and foxing come from a
+	   seeded mulberry32 for the same reasons.
+
+	   THE FILTER CHAIN, in order, because each step is load-bearing:
+	     1. feTurbulence          fractalNoise, stitchTiles so the 220px tile has no seam.
+	     2. feComponentTransfer   forces ALPHA opaque. Turbulence produces noisy alpha as well as noisy
+	                              colour; without this every later step reads PREMULTIPLIED colour, the
+	                              mean lands wherever the alpha noise puts it, and the base colour drifts
+	                              (measured: #f6f4e6 at lum 243 instead of #ebe6c9 at 229).
+	     3. feColorMatrix         saturate 0 — monochrome grain, no colour speckle.
+	     4. feColorMatrix         maps the noise into base ± GRAIN_K. The base is baked in here rather
+	                              than sitting underneath as a background-color, so NO blend mode is
+	                              involved. `overlay` was tried first and cannot reach this amplitude —
+	                              it compresses variation near a light base and caps out around σ 2.3
+	                              while pushing luminance the wrong way.
+	     color-interpolation-filters="sRGB" keeps the maths in the space the colour was sampled in.
+
+	   TWO DIALS, both measured against the reference rather than chosen:
+	     baseFrequency 0.8  grain SIZE (higher = finer)
+	     k 0.33             grain AMOUNT. sigma is linear in k (2.29 at 0.10, 6.84 at 0.30, 9.09 at
+	                        0.40), and the reference measured 7.52. */
+	.field.parchment {
+		background-color: var(--ground, #ebe6c9);
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch' result='t'/%3E%3CfeComponentTransfer in='t' result='o'%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix in='o' type='saturate' values='0' result='s'/%3E%3CfeColorMatrix in='s' type='matrix' values='0.33 0 0 0 0.7565 0.33 0 0 0 0.7369 0.33 0 0 0 0.6231 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+		background-repeat: repeat;
+		background-size: 220px 220px;
+	}
+
 	.layer {
 		position: absolute;
 		inset: -100%;
@@ -235,7 +351,12 @@
 		position: absolute;
 	}
 	.field.dark .mote {
-		background: radial-gradient(circle, rgba(255, 253, 247, 0.98), rgba(255, 246, var(--edge), 0.7) 55%, transparent 72%);
+		background: radial-gradient(
+			circle,
+			rgba(255, 253, 247, 0.98),
+			rgba(255, 246, var(--edge), 0.7) 55%,
+			transparent 72%
+		);
 		box-shadow: 0 0 var(--glow) calc(var(--glow) / 3) rgba(255, 246, 224, 0.4);
 		opacity: var(--op);
 		animation: twinkle var(--tw-dur) ease-in-out var(--tw-delay) infinite;
@@ -252,12 +373,22 @@
 	.field.ledger .mote,
 	.field.paper .mote {
 		/* rust foxing — warm reddish-brown, soft-edged; the larger paper blotches read as diffuse stains. */
-		background: radial-gradient(circle, rgba(150, 92, 58, 0.9), rgba(126, 78, 48, 0.5) 52%, transparent 76%);
+		background: radial-gradient(
+			circle,
+			rgba(150, 92, 58, 0.9),
+			rgba(126, 78, 48, 0.5) 52%,
+			transparent 76%
+		);
 		opacity: var(--op);
 	}
 	/* the aged-paper large blotches are extra-diffuse (foxing bleeds into the fibre) */
 	.field.paper .mote {
-		background: radial-gradient(circle, rgba(146, 88, 54, 0.82), rgba(120, 74, 46, 0.42) 48%, transparent 78%);
+		background: radial-gradient(
+			circle,
+			rgba(146, 88, 54, 0.82),
+			rgba(120, 74, 46, 0.42) 48%,
+			transparent 78%
+		);
 	}
 	/* PRESENCE + INK: decade rules thicker/warmer; a subtle dashed break on ~1-in-4 (ink gap). */
 	.rule-h {
@@ -268,7 +399,11 @@
 		background: rgba(96, 74, 52, 0.9);
 	}
 	.rule-h.gap {
-		background: repeating-linear-gradient(to right, rgba(96, 74, 52, 0.9) 0 60px, transparent 60px 74px);
+		background: repeating-linear-gradient(
+			to right,
+			rgba(96, 74, 52, 0.9) 0 60px,
+			transparent 60px 74px
+		);
 	}
 	.rule-v {
 		position: absolute;
