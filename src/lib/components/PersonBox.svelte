@@ -142,7 +142,7 @@
 		{href}
 		data-tx={isSibling ? person.t?.x : undefined}
 		data-ty={isSibling ? person.t?.y : undefined}
-		class="person-box flex overflow-hidden rounded-lg bg-white shadow-sm transition-shadow hover:shadow-md {boxSize} {dimmed
+		class="person-box flex overflow-hidden rounded-lg bg-white transition-shadow {boxSize} {dimmed
 			? 'opacity-65'
 			: ''}"
 		data-relation={relation}
@@ -190,7 +190,7 @@
 	</a>
 {:else}
 	<div
-		class="person-box flex overflow-hidden rounded-lg bg-white shadow-sm {boxSize} {dimmed
+		class="person-box flex overflow-hidden rounded-lg bg-white {boxSize} {dimmed
 			? 'opacity-65'
 			: ''}"
 		data-relation={relation}

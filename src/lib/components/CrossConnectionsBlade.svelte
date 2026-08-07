@@ -385,18 +385,23 @@
 	   The clip-path doubles as the hit area (clipping applies to hit-testing as well as paint), so the
 	   wedge to the left of the slant falls through to the label's hover. */
 	.cc-blade {
-		background: #fff;
+		/* Sam's --light-greyish-blue. The blade used to be pure #fff, the same sheet as the card above
+		   it; this separates the two without reading as a colour. */
+		background: var(--color-bladepaper);
 		/* width is written by fitBlade; BLADE_RIGHT_INSET is its MAXIMUM, not a fixed inset */
 		/* THE CARD'S SHADOW FALLING ONTO THE BLADE. The wrap's filter renders card and blade as one
 		   silhouette, so it draws no shadow BETWEEN them — but there is a real edge there: the card's
 		   bottom lip sits above the blade and must cast on it. Inset, so it is clipped to the carved
-		   silhouette, and at ~35% of the card's outer shadow: the blade is only a sheet's thickness
-		   below the card, where the page is much further, and shadow falls off with separation. */
+		   silhouette, and at a FRACTION of the card's outer shadow (--blade-inset-ratio, 0.60 since Aug 7,
+		   up from 0.35): the blade is only a sheet's thickness below the card, where the page is much
+		   further, and shadow falls off with separation. */
 		/* Offset down by the tang so the band lands on the CARD'S bottom edge — the shadow's source —
 		   rather than on the top of the box, which is up inside the card and never seen. */
 		box-shadow:
-			inset 0 calc(var(--tang) + 4px) 12px rgba(0, 0, 0, 0.035),
-			inset 0 calc(var(--tang) + 1px) 3px rgba(0, 0, 0, 0.028);
+			inset 0 calc(var(--tang) + 4px) 12px
+				hsl(var(--shadow-ink) / calc(var(--shadow-a1) * var(--blade-inset-ratio))),
+			inset 0 calc(var(--tang) + 1px) 3px
+				hsl(var(--shadow-ink) / calc(var(--shadow-a2) * var(--blade-inset-ratio)));
 	}
 
 	.cc-body {

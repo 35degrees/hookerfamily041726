@@ -351,8 +351,8 @@
 	style="
         min-height: {CARD_TOP_H}px;
         filter:
-            drop-shadow(0 4px 12px rgba(0, 0, 0, 0.10))
-            drop-shadow(0 1px 3px rgba(0, 0, 0, 0.08));
+            drop-shadow(0 4px 12px hsl(var(--shadow-ink) / var(--shadow-a1)))
+            drop-shadow(0 1px 3px hsl(var(--shadow-ink) / var(--shadow-a2)));
     "
 >
 	<!-- The CARVED CARD: clip-path creates the notch silhouette.

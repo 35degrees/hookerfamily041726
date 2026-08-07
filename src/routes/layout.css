@@ -29,6 +29,14 @@
 	/* The CC blade's clickable names. Greyer and quieter than inkblue — the blade sits below the card
 	   in the hierarchy, so its links should not shout as loudly as the card's own type. */
 	--color-darkgreyblue: hsl(224, 30%, 27%);
+	/* THE BLADE'S PAPER (Aug 7, Sam's "--light-greyish-blue"). The blade was pure #fff, identical to the
+	   card above it; a hair of blue separates the two sheets without reading as a colour. */
+	--color-bladepaper: hsl(223, 64%, 98%);
+	/* THE SHADOW TINTS (Aug 7). Shadows were neutral black; these warm them. rose400 is what --shadow-ink
+	   currently carries; the others are kept as the alternatives already tried. */
+	--color-rose300: hsl(14, 25%, 72%);
+	--color-rose400: hsl(7, 20%, 60%);
+	--color-rose500: hsl(12, 20%, 44%);
 }
 /* Reserve the vertical scrollbar's gutter always, so pages that grow past one viewport (or do
    so mid-flight) don't shift the centered card sideways — the "arc-wobble" on child-click. */
@@ -42,6 +50,71 @@ html {
 	     --ground: #10241b;   DEEP PINE (forest-nymph)  — gold motes still pop; a future Talcott GREEN
 	                          role-glow may vanish on pine (flag for Phase 2, Sam's eye decides). */
 	--ground: #0f1626;
+
+	/* ── THE SHADOW SYSTEM (Aug 7) ────────────────────────────────────────────────────────────────
+	   Every card-family shadow in the app derives from these four values, so a palette experiment is
+	   edited HERE and nowhere else. Before this the geometry was written twice (an inline filter on
+	   FeaturedCard, a Tailwind `shadow-sm` on the chips) in two different colour spaces, so the two
+	   could not be reasoned about together at all.
+
+	   --shadow-ink is HSL CHANNELS, not a colour, because each layer needs its own alpha:
+	   `hsl(var(--shadow-ink) / 0.3)`. A finished colour cannot be re-alpha'd. */
+	--shadow-ink: 7 20% 60%; /* rose400 — swap this line to re-tint every shadow at once */
+	/* ALPHA IS NOT TRANSFERABLE BETWEEN TINTS, which is the one thing to know before dialling these.
+	   How dark a shadow reads depends on the DISTANCE from the ink to the ground it falls on, so the
+	   same alpha means something different for every colour. Measured as the luminance drop in the 6px
+	   band under a chip, ground ~247:
+	       black    @ 0.10  (the pre-Aug-7 shadow) ...... Δ 4.9
+	       rose300  @ 0.10  (l 72%, lum 179) ............ Δ 4.8   ← a 3.2x bigger shadow, no darker
+	       rose300  @ 0.38 .............................. Δ16.6
+	       rose500  @ 0.90  (l 44%, lum 106) ............ Δ77.6   ← ~16x the original; tried and pulled back
+	       rose500  @ 0.18 .............................. Δ17.0
+	       rose500  @ 0.38 .............................. Δ34.3
+	       rose500  @ 0.50 .............................. Δ44.8   — "too much"
+	       rose400  @ 0.38  (l 60%, lum 145) ............ Δ25.0   ← SET HERE
+	   Two things this records. First, rose300 at black's alpha was the trap: the 3.2x size increase was
+	   cancelled exactly by the lighter ink, so the shadow got re-tinted and not enlarged. Second, the ink's
+	   LIGHTNESS drives the weight far harder than the alpha does — at a fixed 0.38 the three roses run
+	   Δ16.6 / Δ25.0 / Δ34.3 purely on l 72% / 60% / 44%. So a tint swap is never weight-neutral: read the
+	   Δ column, never the alpha, when comparing two of them. */
+	--shadow-a1: 0.38; /* the broad, soft layer */
+	--shadow-a2: 0.3; /* the tight contact layer that seats the object on the ground (0.79 of a1) */
+	/* HOW MUCH OF THE CARD'S SHADOW LANDS ON THE BLADE. The blade sits a sheet's thickness below the
+	   card, where the ground is much further, and shadow falls off with separation — so this is a
+	   FRACTION of the outer alphas rather than its own number, and it tracks any re-tint automatically.
+	   Raised from 0.35 to 0.60 on Aug 7 (Sam: "increase the amount of drop shadow that falls on the CC
+	   blade from the bottom edge of the Featured Card"). Measured at the band's peak (CSS y~15 on the
+	   blade, against clear sheet at ~248): 9.2 before the Aug-7 pass, 16.0 once the ratio went to 0.60 at
+	   the old overall weight, and 30.5 with the rose400 / 0.38 pair set above (39.7 on rose500 at the same
+	   alpha; 49.0 at the 0.50 that got rejected). Note it runs AHEAD of the chip's own Δ — the band is small
+	   and concentrated where the chip shadow is broad and blurred, so identical alpha lands harder here.
+	   If the blade ever goes heavy on its own, drop this ratio rather than a1, which the chips share.
+	   NB the blade's first ~14px (the tang) are hidden behind the card, so a profile taken from the
+	   blade's bounding box reads the CARD for those rows — sample from y~15 down. */
+	--blade-inset-ratio: 0.6;
+
+	/* CHIPS AT 80% OF THE CARD (Sam). The card's geometry is 0 4px 12px / 0 1px 3px, so 80% is
+	   0 3.2px 9.6px / 0 0.8px 2.4px. Worth knowing what that actually changes: the chips were on
+	   Tailwind's `shadow-sm` (0 1px 3px), so this is a 3.2x blur, not the ~50% increase it was
+	   estimated at. Held as a token so the ratio is one edit, not four numbers in two files. */
+	--chip-shadow:
+		0 3.2px 9.6px hsl(var(--shadow-ink) / var(--shadow-a1)),
+		0 0.8px 2.4px hsl(var(--shadow-ink) / var(--shadow-a2));
+	/* Hover keeps the pre-existing "chip lifts slightly" behaviour, now proportional to the new base
+	   rather than Tailwind's unrelated shadow-md. */
+	--chip-shadow-hover:
+		0 5px 14px hsl(var(--shadow-ink) / calc(var(--shadow-a1) * 1.25)),
+		0 1.2px 3.5px hsl(var(--shadow-ink) / var(--shadow-a2));
+}
+
+/* The chip shadow lives GLOBALLY rather than in PersonBox, because the flight CLONES `.person-box`
+   into travelling ghosts (flight.ts) that are attached outside the component — a Svelte-scoped rule
+   would leave every ghost shadowless mid-flight. */
+.person-box {
+	box-shadow: var(--chip-shadow);
+}
+a.person-box:hover {
+	box-shadow: var(--chip-shadow-hover);
 }
 body {
 	font-family: var(--font-inter);
