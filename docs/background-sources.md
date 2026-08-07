@@ -21,6 +21,9 @@ _Started August 6, 2026. Nothing here is bought or committed yet._
 **iStock** — better value than Shutterstock for this ($7–12 per image, or 10
 images for $70/month; verify current terms before buying):
 
+- **CHOSEN (Aug 6): "abstract paper background retro manuscript texture aged
+  paper"** —
+  <https://www.istockphoto.com/photo/abstract-paper-background-retro-manuscript-texture-aged-paper-gm1474576470-504360579>
 - <https://www.istockphoto.com/photo/old-paper-texture-gm1043539714-279326821>
 - <https://www.istockphoto.com/search/more-like-this/1498067485?assettype=image>
 
@@ -35,9 +38,14 @@ period sheet rather than a stock photo of one:
 
 - Unsplash, Pexels (commercial use, no attribution)
 - Texture Labs, Lost & Taken (purpose-built free texture libraries)
-- Library of Congress, Internet Archive, Rijksmuseum (public-domain scans of
-  actual period documents, frequently 6000px+)
+- Internet Archive — book **endpapers and flyleaves**, often full-page blank at
+  high resolution. This is the realistic archival route.
 - Scanning a real document Sam owns
+- **Library of Congress: tried, and it does not work for this.** It catalogues
+  DOCUMENTS, not textures, so there is no path to blank paper — you would be
+  finding a manuscript and cropping a clean margin, which yields a small,
+  unevenly-lit fragment. Suggested here, then withdrawn: not worth the hunt when
+  a measured sheet costs $7–12.
 
 ## Measurements
 
@@ -52,8 +60,10 @@ which is the *structure* a procedural texture cannot fake).
 | Shutterstock B (cool) | 229 (centre) | 5 | 13.4 | 52 |
 | **iStock — clean (Dmitr1ch)** | **245** | **17** | 2.4 | 159\* |
 | **iStock — stained (paladin13)** | **246** | **18** | 3.1 | 176\* |
+| **iStock — retro manuscript (Dmitr1ch) — CHOSEN** | **242–247** | **13–19** | 2.1–4.3 | **19** |
 
-\* includes the dark iStock watermark bar, so the true drift is lower.
+\* includes the dark iStock watermark bar, so the true drift is lower. The
+chosen sheet's 19 has the band excluded and is directly comparable.
 
 **What the numbers say:**
 
@@ -67,6 +77,22 @@ which is the *structure* a procedural texture cannot fake).
   blade into a panel (design §27.9).
 - Fine grain runs the other way: the real sheets are FINER (σ 2–3) than the
   procedural one (σ 7.5). Their character is in the large structure, not speckle.
+
+## Why the retro-manuscript sheet won
+
+Lightness and warmth were the stated brief and it meets them — ~+15 luminance
+over the procedural ground, half the warmth. But the number that decided it was
+**broad drift of 19**, against 52–70 for the Shutterstock pair.
+
+It is a nearly EVEN sheet: real fibre and organic variation, almost no vignette,
+edges sitting only ~5 luminance below centre. That matters because a vignette
+was going to cost three things at once — it could not tile, it could not
+parallax without dragging dark edges into view, and the sibling panel docks on
+the right edge, exactly where a vignetted sheet is darkest. At this drift those
+constraints mostly dissolve, and **the field's parallax may survive after all.**
+
+Verify once it is in: whether it tiles cleanly, and whether parallax still looks
+right at the extremes of travel.
 
 ## Recommendation on the stained sheet
 
