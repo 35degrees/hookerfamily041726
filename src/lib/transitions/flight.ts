@@ -98,6 +98,10 @@ let flightKind: 'spouse' | 'relative' | 'cc' | 'sibling' = 'relative';
 
 export function captureFlightKind(kind: 'spouse' | 'relative' | 'cc' | 'sibling'): void {
 	flightKind = kind;
+	// EVERY navigation passes through here, so this is the one place a per-flight override is guaranteed to
+	// be cleared. A shuffle re-arms it immediately afterwards (setCarouselTempo); a real CC does not, which
+	// is precisely what keeps the standard CC at its standard speed after any number of shuffles.
+	carouselTempo = 1;
 	if (kind !== 'cc') clearLateralMemory(); // a chip/sibling/relative nav ends the lateral back-and-forth
 }
 // Read the current nav's kind. Stable through the whole flight — clearFlightCaptures (1 rAF after
@@ -209,6 +213,33 @@ const DECK_HERO_V_MULT = 1.1; // v4.2.1: the ENTERING card is 10% quicker than t
 // this much faster end-to-end. It does NOT touch any easing curve, the heft, the angles, or the overshoot
 // distance (those are shape/space, not tempo) — it just compresses the timeline. 0.9 = 10% quicker overall.
 const DECK_TEMPO = 0.9;
+// CAROUSEL TEMPO (Aug 7) — Sam: "can we speed up notable transition by 10% but maintain CC standard
+// transition speed as is?" So this is a SHUFFLE-ONLY multiplier on the dial above, not a new clock.
+//
+// Why it multiplies DECK_TEMPO rather than the hero duration: the deck is an ARMY (design §18.3) — car 1's
+// exit, the empty-stage beat, the convoy stagger and the hero's entry all read one time-scale, and that is
+// what makes them read as a single operation. Speeding the hero alone would leave the beat at full length,
+// so the card would arrive into a gap that no longer matched it. Scaling the shared dial keeps every
+// proportion identical and simply plays the whole thing 10% quicker.
+//
+// It inherits DECK_TEMPO's contract exactly: TIME only. Curves, heft, tilt, the brake shape and the settle
+// overshoot DISTANCE are shape/space, not tempo, and none of them move.
+const CAROUSEL_TEMPO = 0.9;
+/**
+ * 1 for every ordinary flight; CAROUSEL_TEMPO for a shuffle. Reset by captureFlightKind — which is the
+ * single funnel EVERY navigation passes through (navigate.ts and shuffle.svelte.ts are the only callers) —
+ * so a shuffle can never leak its tempo into the CC that follows it. That reset is the whole reason the
+ * "maintain CC standard transition speed" half of the ask holds.
+ */
+let carouselTempo = 1;
+/** The deck's time-scale for the flight currently launching. Every duration below reads THIS, not DECK_TEMPO. */
+function deckTempo(): number {
+	return DECK_TEMPO * carouselTempo;
+}
+/** Marks the launching flight as a carousel draw. Paired with setCarouselLateral at shuffle's call site. */
+export function setCarouselTempo(): void {
+	carouselTempo = CAROUSEL_TEMPO;
+}
 // TRAVEL TEMPO (v4.2.6): shortens the two cards' TRANSIT time only — NOT the beat (spacing held) and NOT the
 // easing shape (velocity curve held): same distances, same curves, same gap, cards just cross a bit faster,
 // so the total drops ~5%. Applied to car 1's exit + the hero's entry, never to the phantom beat.
@@ -334,6 +365,25 @@ export function resolveLateralDir(m: CameraMove | null, source: string, target: 
 	else currentLateralDir = { x: 1, y: 0 }; // fresh → exit LEFT
 	lastLateral = { source, target, dir: currentLateralDir };
 }
+/**
+ * SHUFFLE'S FIXED DIRECTION — a deliberate divergence from resolveLateralDir, not an oversight.
+ *
+ * The ping-pong memory above exists so a CC and its reciprocal read as retracing: A→B exits left, B→A
+ * flips and exits right. That is right for cross-connections and WRONG for a carousel, which advances
+ * one way forever. Inheriting it would mean the 1-in-1059 reciprocal shuffle silently reversed, and
+ * that every chip nav (which calls clearLateralMemory) entangled the carousel's direction with ordinary
+ * browsing for no benefit.
+ *
+ * So shuffle sets the direction outright and clears the memory, taking itself out of the back-and-forth
+ * entirely. {x:1} is the same value resolveLateralDir uses for a fresh move — the demoted card exits
+ * LEFT and the incoming notable enters from the RIGHT (deckDirFor points at the offscreen START; the
+ * card translates −dir into the slot).
+ */
+export function setCarouselLateral(): void {
+	currentLateralDir = { x: 1, y: 0 };
+	lastLateral = null;
+}
+
 export function clearLateralMemory(): void {
 	lastLateral = null; // any non-CC nav (chip/sibling/relative) ends the back-and-forth
 }
@@ -414,12 +464,12 @@ export function deckScheduleFor(m: CameraMove | null): DeckSchedule {
 			: null
 	}));
 	// CONVOY (ghosts on): the hero rides the pack's TAIL — inside the last stagger slot ((N−1)·base − a hair)
-	// so it overlaps the final ghosts as they exit while it brakes. (× DECK_TEMPO like everything else.)
-	const convoyHeroDelayMs = Math.max(0, (N - 1) * DECK_STAGGER_BASE - 15) * DECK_TEMPO;
+	// so it overlaps the final ghosts as they exit while it brakes. (× the deck tempo like everything else.)
+	const convoyHeroDelayMs = Math.max(0, (N - 1) * DECK_STAGGER_BASE - 15) * deckTempo();
 	// PHANTOM BEAT (ghosts off): the empty stage between car 1's full exit and the hero's arrival — the length
 	// of the invisible train, scaled by relation. Direct = a short train; collateral/orbit = a long one.
 	const phantomBeatMs =
-		(direct ? DECK_BEAT_DIRECT + norm * 30 : DECK_BEAT_COLL + norm * 87) * DECK_TEMPO;
+		(direct ? DECK_BEAT_DIRECT + norm * 30 : DECK_BEAT_COLL + norm * 87) * deckTempo();
 	return { N, staggerBaseMs: DECK_STAGGER_BASE, jitter, convoyHeroDelayMs, phantomBeatMs };
 }
 
@@ -697,7 +747,7 @@ export function growFrom(node: Element) {
 			? deckExit({ x: -ccDir.x, y: -ccDir.y }, dest.left, dest.top, dest.width, dest.height)
 			: { x: 0, y: 0 };
 	const car1ExitMs =
-		(Math.hypot(car1Exit.x, car1Exit.y) / DECK_GHOST_V) * DECK_TEMPO * DECK_TRAVEL_TEMPO;
+		(Math.hypot(car1Exit.x, car1Exit.y) / DECK_GHOST_V) * deckTempo() * DECK_TRAVEL_TEMPO;
 	const sx = cc ? 1 : origin.width / dest.width;
 	const sy = cc ? 1 : origin.height / dest.height;
 	const distance = Math.hypot(dx, dy);
@@ -737,10 +787,11 @@ export function growFrom(node: Element) {
 	} else if (cc) {
 		// DECK v4.2.1: the ENTERING card runs 10% quicker than the exit (DECK_HERO_V_MULT) but still decelerates
 		// through the brake tail into the slot — quick in, slowing to land. Viewport-honest (distance off the
-		// live slot→edge). × DECK_TEMPO for the global 10% speed-up (curve/heft/overshoot all unchanged).
+		// live slot→edge). × deckTempo() for the global 10% speed-up, ×CAROUSEL_TEMPO again on a shuffle
+		// (curve/heft/overshoot all unchanged in both cases).
 		duration = sched
 			? (distance / (DECK_GHOST_V * DECK_HERO_V_MULT) + DECK_BRAKE_MS) *
-				DECK_TEMPO *
+				deckTempo() *
 				DECK_TRAVEL_TEMPO
 			: ccDurationMs();
 	} else if (flightKind === 'spouse') {
@@ -939,7 +990,7 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		const exit = deckExit({ x: -dir.x, y: -dir.y }, card.left, card.top, card.width, card.height);
 		const ex = exit.x,
 			ey = exit.y;
-		const car1Ms = (Math.hypot(ex, ey) / DECK_GHOST_V) * DECK_TEMPO * DECK_TRAVEL_TEMPO; // rest → fully offscreen (× tempo, × travel-tempo)
+		const car1Ms = (Math.hypot(ex, ey) / DECK_GHOST_V) * deckTempo() * DECK_TRAVEL_TEMPO; // rest → fully offscreen (× tempo, × travel-tempo)
 		const sched = deckScheduleFor(arcM);
 		const j0 = sched.jitter[0]; // seeded per flight (protected variation)
 		const horiz = Math.abs(dir.x) >= Math.abs(dir.y); // lateral exit → banks; vertical → leans

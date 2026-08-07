@@ -1206,6 +1206,31 @@ function main() {
 			talcottDescendants
 		});
 
+		// 5b-ii) notables.json — the SHUFFLE pool. One row per eligible notable so the client can pick a
+		// random one without touching people.json (30 MB, never loaded) or search-index.json (3.2 MB,
+		// and it carries no notable flag). Eligibility is computed HERE, at build time, so the client
+		// ships a list it can trust rather than a filter it has to re-derive:
+		//   is_notable === true   AND   is_searchable === true
+		// `visible` already excludes the hidden (the Talcott severance), so nothing hidden can surface.
+		// Strict === true throughout, so a null or a missing block never counts as eligible.
+		//
+		// `t` (the table seat) rides along because the camera move wants an honest `to` — the shuffle
+		// flight is forced lateral and does not READ the seat for direction, but the substrate anchors
+		// on real coordinates and a null destination would be a lie told to it.
+		const notables = visible
+			.filter(
+				(p) =>
+					p.notable &&
+					p.notable.is_notable === true &&
+					(p.classification || {}).is_searchable === true
+			)
+			.map((p) => {
+				const c = compact(p, slugMap);
+				return { slug: c.slug, t: c.t || null };
+			})
+			.filter((r) => r.slug);
+		W(join(CONFIG.dataDir, 'notables.json'), notables);
+
 		// 5c) table-index.json — one lean row per person for the map/timeline/camera consumers, so
 		// they never load the 22 MB people.json to place a seat. Carries the three blood/egg flags +
 		// the spouse-of flags (visibility filter, no second source) + parent pointers + x/y/e.

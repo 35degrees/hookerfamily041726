@@ -3,6 +3,7 @@
 	import PersonBox from '$lib/components/PersonBox.svelte';
 	import FeaturedCard from '$lib/components/FeaturedCard.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import ShuffleNotables from '$lib/components/ShuffleNotables.svelte';
 	import DeckRiffle from '$lib/components/DeckRiffle.svelte';
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
@@ -602,6 +603,11 @@
 
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
 <Field />
+<!-- SHUFFLE NOTABLES (roadmap §13, design §22.8) — the deck dealt at random. Mounted beside Field so the
+     two pieces of fixed chrome live together, and gated on `familyLanded`, the SAME landing signal the
+     card and connector use, so the button can never disagree with the flight lock about whether a flight
+     is in progress. -->
+<ShuffleNotables settled={familyLanded} />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
 <div class="page-container" use:warmPersonLinks>

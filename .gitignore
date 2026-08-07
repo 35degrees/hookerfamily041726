@@ -17,6 +17,7 @@ static/data/stats.json
 static/data/redirects.json
 static/data/cemeteries.json
 static/data/institutions.json
+static/data/notables.json
 # the 14,792 per-person page payloads — pure build output
 static/data/person/
 
