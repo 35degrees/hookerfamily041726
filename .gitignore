@@ -90,4 +90,12 @@ _exports/
 /*.gif
 /*.webp
 /*.heic
+
+# --- saved research pages dropped in the repo root ---
+# Saved FamilySearch/Ancestry pages used as sources while enriching. Never source of
+# truth -- whatever they contributed lives in canonical.json, and the page itself is
+# re-fetchable. Root-anchored so src/app.html is untouched. Added 080726 after the
+# same `git add -A` failure as above put a 236KB FamilySearch page into history
+# alongside the Falkner children batch (068b3466).
+/*.html
 /Screenshot*
