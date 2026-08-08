@@ -7,7 +7,9 @@
 	import DeckRiffle from '$lib/components/DeckRiffle.svelte';
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
+	import { cubicOut } from 'svelte/easing';
 	import { prefersReducedMotion } from 'svelte/motion';
+	import type { PersonCompact } from '$lib/types/neighborhood';
 	import { cardinalWord, cardinalWordLower, possessive } from '$lib/utils/dates';
 	import { page } from '$app/state';
 	import { featured } from '$lib/state/featured.svelte';
@@ -135,6 +137,7 @@
 	}
 	$effect(() => {
 		f.person.id; // hazard event: the roster changed
+		untrack(() => closeTier()); // never fly with the tier open — see closeTier
 		untrack(armSweep);
 	});
 
@@ -580,6 +583,191 @@
 	// connector hangs on the empty stage through the phantom beat (v4.1 CC bug). Same guard as the trigger.
 	const familyLanded = $derived(featuredLanded && f.person.id === landedPersonId);
 
+	// ── HOVER-REVEAL: THE GRANDPARENT TIER (Aug 7) ────────────────────────────────────────────────
+	// Hold a parent chip for 1.5s and THAT PARENT'S parents open above it. No promotion, no navigation:
+	// the featured card stays exactly what it was and simply sits one tier lower while the row is open.
+	//
+	// WHY THIS IS NOT morphIn/flyOut. Those are the row transitions, and they read the NAVIGATION's
+	// captures — pivotId, rectSnapshot, getFlightKind, the clicked chip's rect. There is no click here and
+	// no flight, so calling them would either no-op or read a stale nav. What IS reused is everything that
+	// actually defines the motion: one tier of travel, the row curve, and the row clock.
+	//
+	// AND THE TIER IS NOT A NUMBER. The opening block's own rendered height is the distance everything
+	// below it moves — so "the same gap as between the parents and the card" is true by construction, and
+	// stays true if the row density ever changes. Nothing to keep in sync.
+	const HOVER_INTENT_MS = 900; // walked 1500 -> 1200 -> 1100 -> 900 (Sam)
+	// A BEAT BEFORE IT GOES. Leaving the keep-alive region used to close the tier on the very next
+	// pointermove, which is faster than a person can change their mind — Sam: "give users a beat to
+	// re-consider or view the overall structure". Re-entering inside the grace cancels it outright, so a
+	// pointer that clips a corner on its way to a grandparent never costs anything.
+	const DISMISS_GRACE_MS = 300; // 400 -> 300 (Sam)
+	// ONE CLOCK, shared with the CSS below via --tier-ms. Not rowClockMs(): that derives from the CLICKED
+	// chip's rect and there is no click here, so borrowing it means borrowing a stale navigation. 420 is
+	// the row fallback — the same number the army uses when it has nothing to derive from.
+	const TIER_MS = 420;
+
+	/** A CSS cubic-bezier as a Svelte easing. Newton on x, then read y — so a curve can be authored in the
+	 *  same notation the stylesheet uses instead of being approximated by whichever named easing is
+	 *  closest. Ten lines, and it keeps the timing vocabulary of this file and the CSS identical. */
+	function cubicBezier(x1: number, y1: number, x2: number, y2: number) {
+		const A = (a: number, b: number) => 1 - 3 * b + 3 * a;
+		const B = (a: number, b: number) => 3 * b - 6 * a;
+		const C = (a: number) => 3 * a;
+		const calc = (t: number, a: number, b: number) => ((A(a, b) * t + B(a, b)) * t + C(a)) * t;
+		const slope = (t: number, a: number, b: number) =>
+			3 * A(a, b) * t * t + 2 * B(a, b) * t + C(a);
+		return (t: number) => {
+			if (t <= 0) return 0;
+			if (t >= 1) return 1;
+			let g = t;
+			for (let i = 0; i < 6; i++) {
+				const d = slope(g, x1, x2);
+				if (d === 0) break;
+				g -= (calc(g, x1, x2) - t) / d;
+			}
+			return calc(g, y1, y2);
+		};
+	}
+	const SHAKE_MS = 520; // three refusals each way, and out — long enough to read, short enough to ignore
+	// THE PUSH CURVE — WEIGHT, NOT BOUNCE.
+	//
+	// Overshoot was tried and rejected outright: "the overshoot is horrible, it's like a jerking motion
+	// both up and down" (Sam). The reason is scale, not taste — a back-curve reverses direction twice, and
+	// over a ~145px drop those reversals occupy enough of the travel to read as a flinch. The house uses
+	// the same curve happily on ~900px flights, where the same carry is a rounding error. DO NOT REACH FOR
+	// settleBackFor HERE; the distance is too short to hide it.
+	//
+	// What gives weight instead is asymmetry. cubicOut starts at maximum speed and only decelerates, which
+	// is why it read as "exact and linear" — nothing ever gathers. This curve eases IN a little first (the
+	// stage takes a moment to get going, as a heavy thing does), runs quickest through the middle, and
+	// spends a long tail settling. Monotonic throughout: it never travels backwards, so there is nothing
+	// to jerk.
+	const TIER_CURVE = cubicBezier(0.32, 0, 0.22, 1);
+	let hoverTimer: ReturnType<typeof setTimeout> | null = null;
+	let revealedParentId = $state<string | null>(null);
+	let shakeParentId = $state<string | null>(null);
+	let shakeTimer: ReturnType<typeof setTimeout> | null = null;
+	let gpOffsetX = $state(0);
+
+	/** A parent's OWN parents. Matched by id, never by position: the roster drops a parent it has already
+	 *  placed elsewhere, so index 0 is not reliably the father. */
+	function grandparentsOf(parentId: string): PersonCompact[] {
+		const par = f.neighborhood?.parents ?? {};
+		const gp = f.neighborhood?.grandparents ?? { paternal: {}, maternal: {} };
+		const side =
+			par.father?.id === parentId ? gp.paternal : par.mother?.id === parentId ? gp.maternal : null;
+		if (!side) return [];
+		return [side.father, side.mother].filter(Boolean) as PersonCompact[];
+	}
+	const revealedGrandparents = $derived(
+		revealedParentId ? grandparentsOf(revealedParentId) : ([] as PersonCompact[])
+	);
+
+	function clearHoverTimer() {
+		if (hoverTimer) clearTimeout(hoverTimer);
+		hoverTimer = null;
+	}
+	/** Close the tier and forget any pending intent. Called on leave, and on every navigation — a
+	 *  lingering open tier during a flight would leave the army marching against a stale layout. */
+	function closeTier() {
+		clearHoverTimer();
+		cancelDismiss();
+		revealedParentId = null;
+	}
+	function onParentEnter(e: PointerEvent, id: string) {
+		clearHoverTimer();
+		if (revealedParentId === id) return;
+		// The element is grabbed HERE, not inside the timer. `e.currentTarget` is only valid during
+		// dispatch — read 1.5s later it is null, which silently left the offset at 0 and centred the tier
+		// on the stage instead of on the chip. The bug was invisible on a father chip, whose seat happens
+		// to sit near the stage centre anyway.
+		const chip = e.currentTarget as HTMLElement | null;
+		hoverTimer = setTimeout(() => {
+			if (grandparentsOf(id).length) {
+				// Centre the new row on the CHIP, not on the stage: this tier belongs to one parent, and a
+				// row centred on the container would claim to be both parents' at once. Measured at reveal
+				// rather than stored, so a mid-hover reflow cannot leave it pointing at a stale seat.
+				const stage = document.querySelector('.page-container');
+				if (chip && stage) {
+					const c = chip.getBoundingClientRect();
+					const s = stage.getBoundingClientRect();
+					gpOffsetX = Math.round(c.left + c.width / 2 - (s.left + s.width / 2));
+				}
+				revealedParentId = id;
+			} else {
+				// NO PARENTS TO SHOW — the chip shakes its head. An answer, rather than a hover that does
+				// nothing and leaves the user holding still waiting for it (Sam).
+				if (shakeTimer) clearTimeout(shakeTimer);
+				shakeParentId = id;
+				shakeTimer = setTimeout(() => (shakeParentId = null), SHAKE_MS);
+			}
+		}, HOVER_INTENT_MS);
+	}
+	/** Cancel a PENDING reveal when the pointer leaves before the intent fires. Never closes an OPEN tier —
+	 *  that is the keep-alive region's job below, because by the time a tier is open the pointer is no
+	 *  longer over this chip and a leave here means nothing. */
+	function onParentLeave() {
+		clearHoverTimer();
+	}
+
+	/** THE KEEP-ALIVE REGION — what actually dismisses the tier.
+	 *
+	 *  The first version closed on leaving the parent CHIP, with an exit through its top meaning "heading
+	 *  for the grandparents, keep it". Both halves were wrong for the same reason: opening the tier drops
+	 *  the stage 145px under a motionless pointer, so the cursor ends up sitting INSIDE the grandparent row
+	 *  without the user moving at all. That fired a spurious top-exit, and then nothing could dismiss the
+	 *  tier short of steering back into the parent chip and out again — which nobody would guess (Sam:
+	 *  "they just stick around… the grandparent chips need to disappear the second we get a signal the
+	 *  user has lost interest").
+	 *
+	 *  So the rule is inverted. Instead of asking which edge the pointer left by, ask whether it is still
+	 *  somewhere the tier is ABOUT: the grandparent block, or the parent chip that opened it. Anywhere
+	 *  else is a signal of lost interest, and the tier closes immediately. Moving away is the dismissal —
+	 *  no gesture to learn, and no way to get stuck. */
+	const KEEP_ALIVE_PAD = 24; // slack so a hand shaking on the boundary does not flicker it shut
+	let dismissTimer: ReturnType<typeof setTimeout> | null = null;
+	function cancelDismiss() {
+		if (dismissTimer) clearTimeout(dismissTimer);
+		dismissTimer = null;
+	}
+	function onStagePointerMove(e: PointerEvent) {
+		if (!revealedParentId) return;
+		const inside = (el: Element | null) => {
+			if (!el) return false;
+			const r = el.getBoundingClientRect();
+			return (
+				e.clientX >= r.left - KEEP_ALIVE_PAD &&
+				e.clientX <= r.right + KEEP_ALIVE_PAD &&
+				e.clientY >= r.top - KEEP_ALIVE_PAD &&
+				e.clientY <= r.bottom + KEEP_ALIVE_PAD
+			);
+		};
+		const tier = document.querySelector('.grandparent-tier');
+		const chip = document.querySelector(`[data-flight-id="${revealedParentId}"]`);
+		if (inside(tier) || inside(chip)) {
+			cancelDismiss(); // back in the region — whatever was pending is forgiven
+			return;
+		}
+		if (!dismissTimer) dismissTimer = setTimeout(() => closeTier(), DISMISS_GRACE_MS);
+	}
+
+	/** First name of the hovered parent, for the tier's connector label ("John's parents"). */
+	function parentFirstName(id: string | null): string {
+		if (!id) return '';
+		const p = roster.parents.find((x) => x.id === id);
+		return p?.fn ?? p?.n?.split(' ')[0] ?? '';
+	}
+
+	/** The opening push. The block's own height is the tier, so this reads it rather than being told. */
+	function tierPush(node: Element) {
+		const h = (node as HTMLElement).offsetHeight || rowTravel();
+		return {
+			duration: TIER_MS,
+			easing: TIER_CURVE,
+			css: (t: number, u: number) => `margin-top: ${-u * h}px; opacity: ${t};`
+		};
+	}
+
 	// WHICH SEAT A DEMOTING CARD IS SHRINKING INTO, so its chip-face can wear the destination's own face
 	// rather than a generic one. It was hard-coded relation="parent", which stayed invisible until
 	// died-young shading arrived: the "(died young)" suffix renders ONLY for a child (a sibling puts it on
@@ -629,18 +817,56 @@
 <ShuffleNotables settled={familyLanded} />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
-<div class="page-container" use:warmPersonLinks>
-	<div class="parents-slot" class:cc-hidden={ccRoster.hidden}>
+<!-- The keep-alive test listens on the WINDOW, not on the stage. On .page-container it simply stopped
+     firing once the pointer left the container's box — so moving the mouse right off the stage, the
+     clearest "not interested" there is, was the one gesture that could never dismiss the tier. -->
+<svelte:window onpointermove={onStagePointerMove} />
+
+<div class="page-container" style="--tier-ms: {TIER_MS}ms" use:warmPersonLinks>
+	<!-- THE GRANDPARENT TIER (hover-reveal). In FLOW, deliberately: everything below is pushed down by
+	     this block's own height, which is what makes the stage move as one without a single row being
+	     told to move. Centred on the hovered CHIP via translateX — this tier belongs to one parent, and
+	     a row centred on the stage would claim to be both parents' at once. -->
+	{#if revealedGrandparents.length}
+		<div class="grandparent-tier" style="transform: translateX({gpOffsetX}px)" transition:tierPush>
+			<div class="parents-slot">
+				{#each revealedGrandparents as gp (gp.id)}
+					<div class="flight" animate:flip={{ duration: flipMs }}>
+						<PersonBox person={gp} relation="parent" dimmed={gp.dy_young} />
+					</div>
+				{/each}
+			</div>
+			<div class="connector connector-parents landed">
+				<div class="connector-line"></div>
+				<span class="connector-label">{possessive(parentFirstName(revealedParentId))} parents</span>
+				<div class="connector-line"></div>
+			</div>
+		</div>
+	{/if}
+
+	<div
+		class="parents-slot"
+		class:cc-hidden={ccRoster.hidden}
+		class:tier-above={!!revealedParentId}
+	>
 		{#each roster.parents as parent (parent.id)}
 			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors;
 			     on leave, out:flyOut pins this box position:fixed at its click-captured rect, which
 			     OVERRIDES flip's (post-insertion, wrong) fix() pin so leavers don't teleport. -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<!-- The pointer handlers sit on the positioning wrapper, not on an interactive element, and
+			     that is correct here: the chip's <a> is already focusable and already navigates, and the
+			     hover-reveal is a pointer-only enhancement ON TOP of it. Giving this div a role would
+			     announce a grouping that does not exist. Keyboard users lose nothing they had. -->
 			<div
 				class="flight"
+				class:shake-no={shakeParentId === parent.id}
 				data-flight-dir="up"
 				data-flight-id={parent.id}
 				data-tx={parent.t?.x}
 				data-ty={parent.t?.y}
+				onpointerenter={(e) => onParentEnter(e, parent.id)}
+				onpointerleave={onParentLeave}
 				in:morphIn={{ id: parent.id }}
 				out:flyOut={{ key: parent.id }}
 				animate:flip={{ duration: flipMs }}
@@ -835,6 +1061,7 @@
 			class:connector-no-label={isEasterEgg}
 			class:landed={familyLanded}
 			class:cc-hidden={ccRoster.hidden}
+			class:tier-open={!!revealedParentId}
 		>
 			{#if !isEasterEgg}
 				<div class="connector-line"></div>
@@ -846,7 +1073,7 @@
 		</div>
 	{/if}
 
-	<div class="children-slot" class:cc-hidden={ccRoster.hidden}>
+	<div class="children-slot" class:cc-hidden={ccRoster.hidden} class:tier-open={!!revealedParentId}>
 		{#each roster.children as child (child.id)}
 			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors
 			     (children shared across a spouse swap); out:flyOut pins a LEAVER position:fixed at
@@ -1047,6 +1274,88 @@
 	.connector.cc-hidden {
 		opacity: 0 !important;
 		transition: none !important;
+	}
+
+	/* THE GRANDPARENT TIER. `.parents-slot` inside it is reused verbatim — same row geometry, same gap,
+	   same z:0 confinement — so the tier is literally another parents row rather than a lookalike. */
+	.grandparent-tier {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		/* The chips fade with the block; nothing here overrides the row's own stacking. */
+		will-change: margin-top, opacity;
+	}
+
+	/* CHILDREN RETREAT while the tier is open — the same gesture they already make when a parent is
+	   promoted: down one tier and gone, on the row clock and the row curve. Alpha and travel only; the
+	   row is not re-laid-out, so nothing below it moves and nothing has to move back. */
+	.children-slot {
+		transition:
+			opacity 420ms cubic-bezier(0.33, 1, 0.68, 1),
+			transform 420ms cubic-bezier(0.33, 1, 0.68, 1);
+	}
+	.children-slot.tier-open {
+		opacity: 0;
+		transform: translateY(60px);
+		pointer-events: none;
+	}
+	/* The children's CONNECTOR goes with them. It was left behind — a line and a label hanging under the
+	   card pointing at children that are no longer there (Sam). Same clock and curve as the row.
+	   THREE classes deep on purpose: `.connector.landed` sets opacity 0.75 AND a 150ms transition, and it
+	   is declared later in this stylesheet, so a two-class rule here loses on source order and the
+	   connector merely sat at 0.75 (measured). This has to out-specify it, and restate the timing, or the
+	   line leaves on the landing clock instead of the row's. */
+	.connector.connector-children.tier-open {
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 420ms cubic-bezier(0.33, 1, 0.68, 1);
+	}
+
+	/* THE DEAD LEAD ABOVE THE PARENT CHIPS. .parents-slot reserves min-height:100px and bottom-aligns its
+	   75px chips, so 25px of empty space sits ABOVE them. At the top of the page that is invisible; put a
+	   grandparent tier above it and it becomes a visible gap under that tier's connector — while every
+	   other connector meets its row at 0 (measured: 25 vs 0).
+	   Collapsing it also makes the push exactly ONE TIER. With the lead in place the stage moved 170px
+	   against a true pitch of 145 (75px chip + 70px connector); the tier block keeps its own 100px slot,
+	   whose lead is harmlessly at the top of the page, so 170 − 25 = 145. */
+	.parents-slot.tier-above {
+		min-height: 0;
+	}
+	/* AND IT MUST ANIMATE, on the tier's own clock and curve. Snapping it produced the hiccup Sam saw:
+	   measured, the card jumped 25px UP for five frames and only then descended 170. The collapse and the
+	   push are two halves of one movement — the tier grows 170 while the slot gives back 25 — and run
+	   together they sum to a monotonic 145. Run apart, they read as a flinch. */
+	.parents-slot {
+		transition: min-height var(--tier-ms, 420ms) cubic-bezier(0.32, 0, 0.22, 1);
+	}
+
+	/* THE HEAD-SHAKE — "no parents to show". Deliberately UNEVEN: three refusals each way at falling
+	   amplitude with a slight asymmetry, because a fixed ±Npx alternation reads as a machine buzzing
+	   rather than a head shaking (Sam: "make it more human with ranges of movement"). It decays, which is
+	   what a real refusal does. */
+	.shake-no {
+		animation: shake-no 520ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+	}
+	@keyframes shake-no {
+		0% { transform: translateX(0); }
+		12% { transform: translateX(-7px) rotate(-0.6deg); }
+		26% { transform: translateX(6px) rotate(0.5deg); }
+		40% { transform: translateX(-5px) rotate(-0.4deg); }
+		54% { transform: translateX(3.5px) rotate(0.25deg); }
+		70% { transform: translateX(-2px) rotate(-0.15deg); }
+		86% { transform: translateX(1px); }
+		100% { transform: translateX(0); }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.shake-no {
+			animation: none;
+		}
+		.children-slot {
+			transition: opacity 420ms ease-out;
+		}
+		.children-slot.tier-open {
+			transform: none;
+		}
 	}
 
 	.parents-slot {
