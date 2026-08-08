@@ -3461,6 +3461,25 @@ that change. Do not try to make the layout settle before the measurement (see §
 ARITHMETICALLY — `flight.ts pendingCollapse()` — and let the layout change in one frame. Then no object
 composites anything, because there is no second curve to composite against.
 
+### 30.1b The same cause, three symptoms — with the numbers
+
+Every one of these was reported separately, by eye, over four exchanges, and each was measured against the
+`--control` reading before it was believed. They are one defect.
+
+| symptom | measured | what the delta was actually saying |
+|---|---|---|
+| **The promoted grandparent doesn't travel** — "it just morphs right there … there is a gap." | Hero **born at y205 — 100px BELOW the chip it came from at y105** — and covering **45px** where an ordinary promotion covers 145. The floor teleported −145px on the swap frame. | `dest` was measured while the tier still occupied layout, so the FLIP aimed at a seat one pitch too low. The card was not travelling; the stage was rising to meet it. |
+| **The spouse chip parks in mid-card** and "jumps" into the notch. | Ghost lands at 421ms; the card's own corner arrives at 538ms — **119ms parked in open space**. | Two faults at once: her clock was the dead constant 454ms (see roadmap §32.1), and her seat's rect was baked before the collapse lifted it, so she flew to the card's TIER-OPEN corner. |
+| **Everything sags and lifts right at the end.** | The arriving row chips dip **8px at 305ms**; hero, leavers, floor and notch all provably direct. | The error term itself, on objects whose true travel is zero. |
+
+**The grandparent promotion reads as a real journey now for one reason:** `dy` finally describes the
+journey. `origin.top − dest.top + pendingCollapse()` is the honest delta, so the card is born on its own
+chip at y105 and descends the full 145px on a single curve, exactly as a parent promotion does — same
+distance, same clock, same settle. Nothing about the motion was styled or tuned to achieve that; the
+measurement was corrected and the existing physics did the rest. That is the shape of every real fix in
+this section, and the reason `settleTrim` (which DID tune something) was deleted the moment the delta
+became honest.
+
 ### 30.2 The shipped shape
 
 - **The collapse is INSTANTANEOUS.** One frame, on the navigation, never animated.

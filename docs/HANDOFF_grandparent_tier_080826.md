@@ -21,6 +21,20 @@ full part in a navigation, and three different gestures now run through it.
 
 **Sam's verdict, August 8:** *"super smooth, all my concerns are put to rest."*
 
+**Provenance:**
+
+| commit | what |
+|---|---|
+| `f8f79d3c` | the tier: hover intent, the push, the shake, region-based dismissal |
+| `2fa6e69a` | the tier leaves without flying (no duplicate card) + `scripts/probe-tier.mjs` |
+| `e23c2ca0` | the tier takes part in a navigation: the march, the implied seat, the generation crossing, the traveller's clock, and the stage that stops moving (design §30) |
+
+**The OPEN behaviour, verified and unchanged by any of the above** — it is worth restating because every
+navigation fix in this file left it alone deliberately: opens at 900ms · weighted monotonic push (0 frames
+above baseline, 0 backward steps) · tier pitch exactly 145px on both gaps · children retreat and return ·
+dismissal by region with a 300ms grace · head-shake on a childless parent · one visible copy of a clicked
+grandparent throughout.
+
 ---
 
 ## 2. THE ONE RULE THAT EXPLAINS THIS WHOLE SUBSYSTEM
@@ -43,6 +57,36 @@ Three consequences that are easy to undo by accident:
   is still in the DOM while its chips outro.
 
 ---
+
+## 2b. ARCHITECTURE FACTS A FRESH SESSION NEEDS
+
+Still true, and none of them derivable from the code in less than an hour:
+
+- **The page is normal document flow** (`.page-container`, flex column): parents-slot → connector →
+  featured-slot → connector → children. Inserting a tier block at the top pushes everything below it down
+  automatically. The push is layout, not a per-row transform.
+- **The tier is not a number.** The opening block's own rendered height IS the distance everything moves,
+  so "the same gap as parents→card" is true by construction and stays true if row density ever changes.
+- **`.parents-slot` reserves `min-height: 100px` and bottom-aligns 75px chips**, leaving 25px of dead
+  space above them — invisible at the top of the page, a visible gap the moment a tier sits above it.
+  Collapsing it is also what makes the push exactly one tier (170 − 25 = 145).
+- **Every flight captures its geometry at CLICK time** in `navigate.ts`: origin rect, kind, clicked id,
+  pivot, pan direction, all rects — plus, now, tier span and whether the tier occupies layout. Pan
+  direction comes from the anchor's `data-relation`.
+- **`transition:` is bidirectional and evaluated ONCE, at intro.** A flag read inside it can never see a
+  value set later. Split into `in:`/`out:` when the outro must decide something at removal time. (And an
+  `out:` on a child of a conditional block needs `|global` to run at all — see §2.)
+
+Two facts from the previous edition are now SUPERSEDED rather than deleted, because a fresh session will
+otherwise re-derive them from the code and be misled:
+
+- *"The army marches `panDir === 'down' ? -rowTravel() : rowTravel()` in flyOut and morphIn"* — still the
+  shape, but the two now read DIFFERENT quantities: `flyOut` uses `rowTravel()` (a pinned leaver is stated
+  in viewport coordinates) and `morphIn` uses `marchTravel()` (an in-flow arriver is stated in layout
+  coordinates, where the collapse already carries it one pitch). Identical numbers with the tier shut.
+- *"The demote resolves its seat via `querySelector([data-flight-id=pivot])`, and if that box does not
+  exist the tick returns early and the card FREEZES"* — the freeze is fixed; a promotion out of the tier
+  falls through to the IMPLIED grandchild seat instead.
 
 ## 3. THE INSTRUMENT — READ THIS BEFORE MEASURING ANYTHING
 
@@ -168,11 +212,23 @@ reproduction had to be reverted. Two of them measured WORSE than what they repla
 
 ---
 
+## 5b. A STANDING CAUTION — THE SETTLE WOBBLE IS NOT A BUG
+
+The card's top runs roughly `247 → 252 → 253 → 252 → 250`: a few px past the seat and back, one reversal.
+**An ordinary parent promotion with no tier shows the same shape.** That is the house `easeOutBack` settle
+behaving exactly as designed, and tuning it would change every promotion in the app. It is recorded here
+because it looks like a defect every single time somebody meets it, and because this session proved the
+rule twice over: a shape that looks tier-specific is usually the house behaving normally — confirm against
+`--control` before touching anything. The 2–3px reported in §4 IS this, and it is correct.
+
 ## 6. DEAD ENDS — DO NOT RETRY
 
 - **Closing the tier on `pointerdown`.** Removes the row between pointerdown and click, moving the very
   chip being clicked. Both click paths broke. *A flag armed on `onclickcapture` is fine ONLY while it
   changes no geometry* — see §2.
+- **Setting an "instant close" flag inside the navigation effect.** Too late: Svelte has already created
+  the outro, so the duration it reads is the animated one. Measured — the chip still flew to y=−14. Arm it
+  on the click, in the capture phase, subject to the geometry rule in §2.
 - **Reading a flag inside a bidirectional `transition:`.** Structurally impossible; it is evaluated once,
   at intro. Split into `in:`/`out:` when the outro must decide something at removal time.
 - **`easeOutBack` on the tier push.** Sam: *"horrible … like a jerking motion both up and down."* A back

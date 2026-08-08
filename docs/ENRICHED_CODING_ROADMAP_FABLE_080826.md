@@ -2895,6 +2895,11 @@ first-class participant. The order matters, because each step's measurement is w
 
 ### 32.1 What shipped, in order
 
+0. **The hero learned to start on its own chip.** Before anything else: a promoted grandparent was born
+   at y205 — a hundred pixels BELOW the chip it came from — and covered 45px where an ordinary promotion
+   covers 145, because `growFrom` measured its destination while the tier still occupied layout. This is
+   the same defect §30 is about, met at its friendliest; it is listed first because every later
+   measurement was taken against a card that now starts where the user last saw it.
 1. **The two-tier march.** `captureTierSpan` / `marchTravel()`, read from `data-tier-span="2"` on the tier
    block via `anchor.closest()`. Reset in `captureFlightKind`.
 2. **The implied seat.** A grandparent promotion leaves the old focus a GRANDCHILD, which is not drawn, so
