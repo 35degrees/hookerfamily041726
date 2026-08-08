@@ -579,6 +579,25 @@
 	// featuredLanded (true during the stale-frame window at flight start). Without the id match, the old
 	// connector hangs on the empty stage through the phantom beat (v4.1 CC bug). Same guard as the trigger.
 	const familyLanded = $derived(featuredLanded && f.person.id === landedPersonId);
+
+	// WHICH SEAT A DEMOTING CARD IS SHRINKING INTO, so its chip-face can wear the destination's own face
+	// rather than a generic one. It was hard-coded relation="parent", which stayed invisible until
+	// died-young shading arrived: the "(died young)" suffix renders ONLY for a child (a sibling puts it on
+	// its own line), so a demoting child travelled reading "1628–1629" and gained "(died young)" the
+	// instant the real chip took over (Sam).
+	//
+	// Inferred from the PERSON, not from the destination, and that is deliberate. The obvious version —
+	// "does the card we are leaving count the incoming person among its parents" — cannot work here: the
+	// demoting card is OUTROING, and Svelte stops updating a subtree that is being removed, so it still
+	// reads the old person as current and always answered 'parent'. Measured: 20 frames, all wrong.
+	//
+	// Died-young is a sound proxy instead. Someone who died at 15 or younger has no children, so a
+	// died-young card can only ever be descending into a CHILD seat; nothing else can demote into one
+	// carrying that suffix. And for anyone who did not die young the prop changes nothing visible — it
+	// gates only this suffix and the spouse union row, neither of which they render here.
+	function demoteSeatRelation(card: typeof f): 'parent' | 'child' {
+		return card?.neighborhood?.focus?.dy_young ? 'child' : 'parent';
+	}
 	const childrenTotal = $derived(roster.children.length);
 	const childrenDiedYoung = $derived(roster.children.filter((c) => c.dy_young).length);
 	const isEasterEgg = $derived(f.person.classification?.is_easter_egg ?? false);
@@ -791,9 +810,16 @@
 				<!-- Chip-face for the "flip early, land as a chip" relative demotion: a real PersonBox of
 				     THIS person (identical to the parent/child box it becomes), pre-scaled to fill the card
 				     and cross-faded in at the start of a demote, then shrunk with the card to land exactly
-				     on the box. Inert (opacity 0) on resting/incoming/spouse cards. -->
+				     on the box. Inert (opacity 0) on resting/incoming/spouse cards.
+				     `relation` is DERIVED rather than fixed — "identical to the box it becomes" has to hold
+				     for the box's CONTENT too, and a child chip carries a "(died young)" suffix a parent
+				     chip does not. See demoteSeatRelation. -->
 				<div class="demote-chipface" inert>
-					<PersonBox person={cur.neighborhood.focus} relation="parent" />
+					<PersonBox
+						person={cur.neighborhood.focus}
+						relation={demoteSeatRelation(cur)}
+						dimmed={cur.neighborhood.focus.dy_young}
+					/>
 				</div>
 			</div>
 		{/each}

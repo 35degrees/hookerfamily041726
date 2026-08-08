@@ -50,8 +50,9 @@
 	// rather than to a lighter blue: alpha keeps them the same hue as the name they sit under, so a chip
 	// reads as one object at two strengths, not as two colours.
 	//
-	// Alpha, not a second token, also composes correctly with the died-young dimming — a died-young
-	// chip is already opacity-65, so its years land at 0.65 x 0.7 without a third value to maintain.
+	// Alpha, not a second token, also survived the died-young rework: the chip is no longer dimmed as a
+	// whole (that let the parchment show THROUGH it — see .died-young in layout.css), so the years now
+	// carry only their own 0.7 on top of the grey ink that rule supplies.
 	const CHIP_TEXT = 'text-inkblue';
 	const CHIP_YEARS = 'text-inkblue opacity-70';
 	let boxSize = $derived(
@@ -142,9 +143,8 @@
 		{href}
 		data-tx={isSibling ? person.t?.x : undefined}
 		data-ty={isSibling ? person.t?.y : undefined}
-		class="person-box flex overflow-hidden rounded-lg bg-white transition-shadow {boxSize} {dimmed
-			? 'opacity-65'
-			: ''}"
+		class="person-box flex overflow-hidden rounded-lg bg-white transition-shadow {boxSize}"
+		class:died-young={dimmed}
 		class:hooker-line={person.hd}
 		class:spouse-line={person.sp}
 		class:ee-line={person.ee}
@@ -193,9 +193,8 @@
 	</a>
 {:else}
 	<div
-		class="person-box flex overflow-hidden rounded-lg bg-white {boxSize} {dimmed
-			? 'opacity-65'
-			: ''}"
+		class="person-box flex overflow-hidden rounded-lg bg-white {boxSize}"
+		class:died-young={dimmed}
 		class:hooker-line={person.hd}
 		class:spouse-line={person.sp}
 		class:ee-line={person.ee}

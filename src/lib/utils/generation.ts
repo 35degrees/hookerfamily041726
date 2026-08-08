@@ -374,7 +374,12 @@ function getRelationshipWord(gender: string | null): string {
  * 'Parent-in-law'. Guessing here is how nine women came to be labelled Father-in-law.
  */
 function genderOf(person: Person): string | null {
-	for (const raw of [person.gender, person.bio?.gender, person.name?.gender]) {
+	// bio.gender FIRST. The two disagree on 92 records — every one of them top-level 'male' against
+	// bio 'female', and every name in the set is unambiguously female (Theresa, Sarah, Maria, Dorothy…),
+	// so the TOP-LEVEL field is the stale one. Reading it first is what made Alice Hathaway Lee Roosevelt
+	// render "First Husband of Husband of Ninth Generation Hooker" (Sam). Top-level stays as the fallback
+	// because plenty of records carry gender ONLY there — Theodore Roosevelt among them.
+	for (const raw of [person.bio?.gender, person.gender, person.name?.gender]) {
 		const g = (raw ?? '').toString().trim().toLowerCase();
 		if (g === 'male' || g === 'm') return 'male';
 		if (g === 'female' || g === 'f') return 'female';

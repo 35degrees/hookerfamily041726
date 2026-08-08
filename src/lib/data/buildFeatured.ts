@@ -83,10 +83,11 @@ function enrich<T extends PersonCompact>(compact: T, byId: Record<string, Person
 	};
 }
 
-// died-young = age at death ≤ 15. ONE source of truth, consumed three ways: the child-box dimming
-// (PersonBox dimmed={dy_young}), the "(N died young)" connector count (childrenDiedYoung below), and
-// the roster-time sort partition that drops died-young children to the END of the children row
-// (buildRoster). Raised from ≤12 → ≤15 deliberately: 13–15-at-death now count as died-young tree-wide.
+// died-young = age at death ≤ 15. ONE source of truth, consumed FOUR ways: the child-box dimming
+// (PersonBox dimmed={dy_young}), the "(N died young)" connector count (childrenDiedYoung below), the
+// roster-time sort partition that drops died-young children to the END of the children row
+// (buildRoster), and the demote chip-face, which needs it on the FOCUS so a demoting card carries the
+// right ink from its first frame rather than acquiring it on landing. Raised from ≤12 → ≤15 deliberately: 13–15-at-death now count as died-young tree-wide.
 function diedYoung(person: Person | undefined): boolean {
 	if (!person) return false;
 	const birth = person.birth?.year;
@@ -114,7 +115,11 @@ export function buildFeatured(payload: PersonPayload): FeaturedData {
 
 	const enrichedNeighborhood: Neighborhood = {
 		...neighborhood,
-		focus: enrich(neighborhood.focus, byId),
+		// dy_young on the FOCUS too, not just on children. The demote chip-face (+page.svelte) renders a
+		// PersonBox of the focus as the card shrinks into its seat, and without this it had no way to know
+		// the person died young — so the traveller wore ink-blue for the whole flight and only turned grey
+		// on landing (Sam). `person` IS the focus's full record, so no byId lookup is needed.
+		focus: { ...enrich(neighborhood.focus, byId), dy_young: diedYoung(person) },
 		spouses: neighborhood.spouses.map((s) => {
 			const enrichedChildren = dedupeById(s.children).map((c) => {
 				const enriched = enrich(c, byId);

@@ -198,6 +198,10 @@ html {
 	   The worst pair is ~2.8 either way. So take the lightness the eye wants; there is no separation left
 	   to buy by keeping it dark. If the set ever does need pulling apart, move a TINT, not this. */
 	--card-base: #fcfcfc;
+	/* DIED YOUNG — see the .died-young rule below. Medium neutral grey so it cannot be mistaken for the
+	   ink-blue at low strength, plus a light touch of transparency on the text block only. */
+	--died-young-ink: hsl(0, 0%, 45%);
+	--died-young-text-opacity: 0.85;
 	/* WHAT GETS MARKED, and it is the inverse of the first attempt: the BLOODLINE is now the plain paper
 	   and only the people who came into the family from outside carry a tint. That reads better because
 	   descendants are the overwhelming majority — marking them tinted almost every card on the page,
@@ -258,10 +262,22 @@ html {
 	--card-fill: var(--card-bg);
 	background: var(--card-bg);
 }
-/* SPOUSE FIRST, HOOKER SECOND, and the order is load-bearing: both selectors are (0,2,0), so source
-   order is what decides a person who is BOTH a descendant and married to one — cousin marriages are not
-   rare in this family. Blood should win over marriage, so the hooker rule comes last. The same ordering
-   governs --line-edge below, for the same reason. */
+/* ORDER IS THE PRECEDENCE RULE. All three selectors are (0,2,0), so the LAST matching declaration wins.
+   Reading downward, weakest claim first:
+     ee-line      an orbit figure with no tie of their own
+     spouse-line  MARRIED INTO the line — beats easter egg, because someone who is both is primarily an
+                  in-law: Ainsworth Blunt married a 7th-generation descendant and Theodore Roosevelt a
+                  9th, and both were reading as plain eggs (Sam). An egg who never married in — Lincoln,
+                  Mary Todd, the Garbrands — has no spouse class, so it still shows blue.
+     hooker-line  BLOOD, and it beats marriage for someone who is both. Cousin marriages are common here.
+   The class is `ee` ALONE, never `ee && sp`: that narrower reading was tried on the word "inlaws", cut
+   the set from 557 to 88, and dropped obvious eggs like Richard and Anne Ferrar Garbrand. The flag alone
+   is the category; this rule does not second-guess the data. Reordering these blocks silently
+   reclassifies people. The same ordering governs --line-edge. */
+.featured-card.ee-line,
+.person-box.ee-line {
+	--card-bg: var(--ee-bg);
+}
 .featured-card.spouse-line,
 .person-box.spouse-line {
 	--card-bg: var(--spouse-bg);
@@ -272,19 +288,7 @@ html {
 	--card-bg: var(--hd-bg);
 	--line-edge: var(--hd-edge);
 }
-/* EASTER EGG LAST, so it wins over mint for someone who is both. Ordering is the whole mechanism — all
-   three selectors are (0,2,0).
-   THE CLASS IS `ee` ALONE — every one of the 557 easter eggs in canonical, not a subset. A pass that
-   required `ee && sp` (easter egg AND married into the line) was tried on the word "inlaws" and cut the
-   set to 88, which dropped obvious eggs like Richard and Anne Ferrar Garbrand (X00003/X00004). Sam:
-   "there are not only 88 easter eggs so lets do the reverse." The flag alone is the category.
-   Nothing here filters by line, so an easter egg who never married in — Elder William Goodwin (X02135)
-   married Susanna Garbrand Hooker, THOMAS'S OWN WIFE, so his spouse is not a descendant — is shaded too.
-   Sam is correcting those in the data one by one; this rule deliberately does not second-guess the flag. */
-.featured-card.ee-line,
-.person-box.ee-line {
-	--card-bg: var(--ee-bg);
-}
+/* (easter egg is declared ABOVE spouse — see the ordering note there) */
 
 /* THE DESCENT LINE ("Founder of the American Hooker Line", "Daughter of Thomas Hooker") in gold, and
    ONLY on a bloodline card. Non-descendants get descent lines too — an in-law's reads "Wife of Hooker
@@ -325,6 +329,31 @@ html {
 }
 a.person-box:hover {
 	box-shadow: var(--chip-shadow-hover);
+}
+
+/* ── DIED YOUNG (Aug 7) ────────────────────────────────────────────────────────────────────────────
+   These chips used to carry `opacity-65` on the WHOLE element. That worked while the ground behind
+   them was flat, and stopped working the moment the field became a photographed sheet: a translucent
+   chip lets the parchment's grain show straight THROUGH it, so the card reads as damaged rather than
+   as quiet (Sam: "it no longer is ok to just reduce opacity on their child chips and sibling chips
+   because now the background texture shows through").
+
+   So nothing about the chip's BODY changes now — same background, same shadow, same photo at full
+   strength. Only the type is treated, and it is treated in two ways at once (Sam: "instead of blue ink
+   lets do medium grey ink with the text opacity reduced instead"):
+     - a medium NEUTRAL grey replaces the ink-blue, which is what actually says "this life was short"
+       rather than merely "this chip is faint";
+     - a mild opacity on the text block alone. Because it sits on the chip's own opaque background, it
+       blends toward the CARD, never toward the parchment — which is the whole point.
+
+   Global rather than scoped, for the usual reason: the flight clones `.person-box` into ghosts that
+   live outside the component. */
+.person-box.died-young .text-area,
+.person-box.died-young .text-area * {
+	color: var(--died-young-ink);
+}
+.person-box.died-young .text-area {
+	opacity: var(--died-young-text-opacity);
 }
 body {
 	font-family: var(--font-inter);

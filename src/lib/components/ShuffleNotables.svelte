@@ -8,11 +8,12 @@
 	 * flight, so it spent longer looking broken than the transition took to run. Sam: "the button fades and
 	 * comes back which looks weak… the cursor changing from arrow to hand tells the tale."
 	 *
-	 * So the shell — background, border, blur — holds its exact resting values while the cards fly, and the
-	 * refusal is carried by exactly two things, both of which cost no fade:
-	 *   - the ink dropping to 70% (Sam: "that's literally the only thing that indicates you can't click
-	 *     it other than the natural cursor icon change").
-	 *   - the cursor reverting from hand to arrow, via `cursor: default`.
+	 * So the WHOLE control — background, border, blur AND the gold ink — holds its exact resting values
+	 * while the cards fly. The refusal is carried by ONE thing, which costs no fade: the cursor reverting
+	 * from hand to arrow, via `cursor: default`. An intermediate version also dimmed the ink to 70%; that
+	 * is gone (Sam, Aug 7: "never fade the text it is always the same appearance"), and nothing is lost by
+	 * it — the deck already swallows a mid-flight navigation, so the dimming only ever announced a refusal
+	 * the user had no reason to attempt.
 	 *
 	 * `cursor: default` and NOT `pointer-events: none`, which is what the previous version used. Both stop
 	 * the hand cursor, but pointer-events also destroys `:hover` — so the button would drop to its resting
@@ -78,8 +79,8 @@
 	   a button, not you just taking my literal instructions"). One object at a height:
 
 	       rest    on the surface           0px,   no shadow
-	       hover   lifted under the finger −1px,   0 1.5px 3px
-	       press   pushed in              +0.5px, shadow squeezed to a sliver
+	       hover   lifted under the finger  −1.32px, 0 1.98px 3.96px
+	       press   gives back 60% of it   −0.53px, 0 0.79px 1.58px (never below rest)
 	       release back up to HOVER       because the finger has not left yet
 	       leave   back down to REST
 
@@ -94,6 +95,14 @@
 		   glyph to 0.72 on the theory that a solid fill out-weighs 12px text; side by side it just read
 		   as two golds. */
 		--gold: #e8c66d;
+
+		/* THE TWO HEIGHTS, as tokens rather than literals, because `.busy` needs to collapse one onto the
+		   other (see below) and duplicating them in a second rule is how they drift apart. --press is
+		   always the SMALLER give-back: 60% of the lift returned, so it settles at 40% of --lift. */
+		--lift: -1.32px;
+		--lift-shadow: 0 1.98px 3.96px rgba(20, 28, 46, 0.28);
+		--press: -0.53px;
+		--press-shadow: 0 0.79px 1.58px rgba(20, 28, 46, 0.25);
 
 		position: fixed;
 		right: 16px;
@@ -127,38 +136,52 @@
 			color 180ms ease-out;
 	}
 	/* HOVER — the button rises to meet the finger. Colour untouched.
-	   Halved from −2px on Aug 7 (Sam: "tone down the rise on hover… more subtle movement"). The SHADOW is
-	   halved with it, not left where it was: a 3px shadow under a 1px lift describes a height the button
-	   is not at, and the eye reads the shadow before it reads the gap. Offset tracks travel. */
+	   Walked −2px → −1px ("tone down the rise… more subtle movement") → −1.2px (+20%) → −1.32px (+10%,
+	   Sam). The SHADOW
+	   tracks travel at every step rather than being left where it was: a 3px shadow under a 1px lift
+	   describes a height the button is not at, and the eye reads the shadow before it reads the gap. */
 	.shuffle-notables:hover {
-		transform: translateY(-1px);
-		box-shadow: 0 1.5px 3px rgba(20, 28, 46, 0.28);
+		transform: translateY(var(--lift));
+		box-shadow: var(--lift-shadow);
 	}
-	/* PRESS — driven below its own resting line, shadow squeezed to a sliver: pushed INTO the surface,
-	   not merely un-lifted. Going down is fast and has NO overshoot (80ms, ease-out) — a press must answer
-	   the finger instantly, and a button that bounces on the way down feels like rubber. The bounce
-	   belongs on the way back up, which is why the base rule keeps the back curve and this one overrides
-	   it for the downstroke only. */
+	/* PRESS — the click gives back a FRACTION of the height the hover gained, never more (Sam: "down 60%
+	   of height on button click"). Hover rises 1.32px, the press returns 60% of that (0.79px), so it
+	   settles at −0.53px — 40% of the way up, BETWEEN hovered and resting heights
+	   and never crosses below the surface. It used to drive to +0.5px, BELOW rest — a 1.5px round trip
+	   against a 1px lift, so the press read heavier than the hover that preceded it. The shadow is
+	   interpolated to the same halfway point. The pair moves together: if the hover changes, halve it
+	   again here rather than nudging this value on its own.
+	   Going down is fast and has NO overshoot (80ms, ease-out) — a press must answer the finger instantly,
+	   and a button that bounces on the way down feels like rubber. The bounce belongs on the way back up,
+	   which is why the base rule keeps the back curve and this one overrides it for the downstroke only. */
 	.shuffle-notables:active {
-		transform: translateY(0.5px);
-		box-shadow: 0 0 0.5px rgba(20, 28, 46, 0.22);
+		transform: translateY(var(--press));
+		box-shadow: var(--press-shadow);
 		transition:
 			transform 80ms ease-out,
 			box-shadow 80ms ease-out;
 	}
-	/* THE BUSY STATE — the cards are in flight. It changes ONE thing: the ink drops to 70%. No fade on the
-	   shell, no change of height — the button keeps behaving like a button, rising and falling under the
-	   pointer exactly as it does at any other time.
+	/* THE BUSY STATE — the cards are in flight, and NOTHING about the button changes appearance (Sam,
+	   Aug 7: "never fade the text it is always the same appearance"). No fade on the shell, no change of
+	   height, and — since this pass — no step on the ink either. The button goes on behaving like a
+	   button, rising and falling under the pointer exactly as at any other time.
 	   `cursor: default` — NOT `pointer-events: none`. Both stop the hand cursor, but pointer-events also
 	   destroys :hover, which would drop the button to rest the instant the click landed and strand it
 	   there for the whole flight — the precise opposite of "when the person releases the mouse the button
 	   goes back up to its hover state". The click itself is refused in `go`, so nothing is let through. */
 	.shuffle-notables.busy {
 		cursor: default;
-		color: color-mix(in srgb, var(--gold) 70%, transparent);
+		/* NO DOWNSTROKE WHILE THE CLICK IS REFUSED (Sam: "it doesn't respond to clicks while click events
+		   are none so stop any down click transitions until its allowed to click again"). Pressing a
+		   button that will not act, and watching it dip anyway, promises something that does not happen.
+		   Done by pointing --press AT --lift rather than by writing a second :active rule: the existing
+		   rule already reads the token, so during a flight it resolves to the hovered height and the
+		   press moves nothing at all. One place to change, and the two can never fall out of step. */
+		--press: var(--lift);
+		--press-shadow: var(--lift-shadow);
 	}
-	/* A lift is decoration, and a 2px hop is exactly what reads as jitter to someone who asked for less
-	   motion. The ink still steps back — that one carries information. */
+	/* A lift is decoration, and a 1px hop is exactly what reads as jitter to someone who asked for less
+	   motion. Nothing else is lost by dropping it — the ink no longer moves either. */
 	@media (prefers-reduced-motion: reduce) {
 		.shuffle-notables,
 		.shuffle-notables:hover,
