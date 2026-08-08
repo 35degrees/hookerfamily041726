@@ -102,6 +102,12 @@ const INSTRUMENT = () => {
 await page.goto(`${BASE}/person/${START}`, { waitUntil: 'networkidle' });
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(1500);
+// The grandchildren list lives in the page payload, not the DOM, so the probe fetches it the same way
+// the app does rather than guessing which chip has children.
+await page.evaluate(async (slug) => {
+	const r = await fetch(`/data/person/${slug}.json`);
+	window.__payloadGrandchildren = r.ok ? (await r.json()).neighborhood?.grandchildren ?? [] : [];
+}, START);
 await page.addInitScript(INSTRUMENT);
 await page.evaluate(INSTRUMENT);
 
@@ -119,6 +125,230 @@ const rectOf = (sel, re) =>
 		const b = a.getBoundingClientRect();
 		return { cx: b.x + b.width / 2, cy: b.y + b.height / 2, name: a.textContent.trim().split('\n')[0] };
 	}, [sel, re]);
+
+// ── CASE 8: THE GRANDCHILD TIER (--child) ─────────────────────────────────────────────────────────
+// The descendant mirror. It asserts the four things the gesture promises and then asserts that all four
+// are UNDONE on dismissal, because "it comes back" is half the feature and the half nobody tests.
+if (process.argv.includes('--child')) {
+	const kid = await page.evaluate(() => {
+		const gc = window.__payloadGrandchildren || [];
+		const counts = {};
+		for (const g of gc) counts[g.via_parent_id] = (counts[g.via_parent_id] || 0) + 1;
+		// Prefer a child that is NOT on the top row — the rise from row 2 is the part of the gesture that
+		// can actually be wrong, and a subject already on row 1 asserts nothing about it.
+		const rowOf = (id) => {
+			const el = document.querySelector(`.page-container > .children-slot > [data-flight-id="${id}"]`);
+			return el ? Math.round(el.getBoundingClientRect().top) : 0;
+		};
+		const top = Math.min(...[...document.querySelectorAll('.page-container > .children-slot > .flight')]
+			.map((e) => Math.round(e.getBoundingClientRect().top)));
+		const ranked = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+		const best = ranked.find(([id]) => rowOf(id) > top) ?? ranked[0];
+		if (!best) return null;
+		const el = document.querySelector(`.page-container > .children-slot > [data-flight-id="${best[0]}"]`);
+		if (!el) return null;
+		const r = el.getBoundingClientRect();
+		return { id: best[0], expected: best[1], cx: r.x + r.width / 2, cy: r.y + r.height / 2, y: Math.round(r.top),
+			x: Math.round(r.left),
+			name: el.textContent.trim().split('\n')[0] };
+	});
+	if (!kid) { console.log('no child on this page has children of its own'); await browser.close(); process.exit(1); }
+	const before = await page.evaluate(() => ({
+		chips: document.querySelectorAll('.page-container > .children-slot > .flight').length,
+		rows: new Set([...document.querySelectorAll('.page-container > .children-slot > .flight')].map((e) => Math.round(e.getBoundingClientRect().top))).size,
+		topRow: Math.min(...[...document.querySelectorAll('.page-container > .children-slot > .flight')].map((e) => Math.round(e.getBoundingClientRect().top))),
+		connector: window.__eff(document.querySelector('.connector-children'))
+	}));
+	console.log(
+		`\nTHE GRANDCHILD TIER — hovering "${kid.name}" (${before.chips} children on ${before.rows} row(s), ` +
+			`this one at y${kid.y}${kid.y > before.topRow ? ' — ROW 2, the rise is under test' : ' — already row 1'})`
+	);
+	// NOTHING OF A GENERATION IS EVER PAINTED ABOVE THE ROW IT DESCENDS FROM. Sampled through the OPEN and
+	// again through the DISMISS, because the old margin-top slide broke it in both directions — level with
+	// the children row on the way in, and above it on the way out.
+	const overlapDuring = async (label) => {
+		const worst = await page.evaluate(
+			(id) =>
+				new Promise((res) => {
+					let w = -1e9;
+					const t0 = performance.now();
+					const tick = () => {
+						// Against EVERY VISIBLE child chip, not just the hovered one. On dismissal the slot
+						// expands and row 2 reoccupies the band the grandchildren are standing in, so the
+						// hovered chip alone cannot answer the army-row question — which is precisely the
+						// overlap Sam saw ("the grandchildren fading out overlap the incoming child chips").
+						const kids = [...document.querySelectorAll('.page-container > .children-slot > .flight')]
+							.filter((e) => window.__eff(e) > 0.02)
+							.map((e) => e.getBoundingClientRect())
+							.filter((r) => r.width > 2 && r.height > 2);
+						const gcs = [...document.querySelectorAll('.grandchild-tier .flight')];
+						if (kids.length && gcs.length) {
+							const bottom = Math.max(...kids.map((r) => r.bottom));
+							for (const g of gcs) {
+								const r = g.getBoundingClientRect();
+								if (r.width > 2 && r.height > 2 && window.__eff(g) > 0.02) w = Math.max(w, bottom - r.top);
+							}
+						}
+						if (performance.now() - t0 < 900) requestAnimationFrame(tick);
+						else res(w);
+					};
+					requestAnimationFrame(tick);
+				}),
+			kid.id
+		);
+		console.log(
+			`  ${label}: deepest a grandchild reached into the children rows = ${worst <= -1e8 ? 'n/a' : Math.round(worst) + 'px'} ` +
+				(worst <= 2 ? '✓ always below' : '✗ crossed into the children row')
+		);
+	};
+
+	await page.mouse.move(kid.cx, kid.cy);
+	await page.waitForTimeout(950); // just past the 900ms intent — catch the unfold itself
+	const openWatch = overlapDuring('ON OPEN  ');
+	await page.waitForTimeout(600);
+	await openWatch;
+	const open = await page.evaluate((id) => {
+		const tier = document.querySelector('.grandchild-tier');
+		const chip = document.querySelector(`.page-container > .children-slot > [data-flight-id="${id}"]`);
+		return {
+			gc: tier ? tier.querySelectorAll('.flight').length : 0,
+			label: tier?.querySelector('.connector-label')?.textContent ?? null,
+			siblingsVisible: [...document.querySelectorAll('.page-container > .children-slot > .flight')]
+				.filter((e) => e.dataset.flightId !== id && window.__eff(e) > 0.05).length,
+			hoveredX: chip ? Math.round(chip.getBoundingClientRect().left) : null,
+			hoveredY: chip ? Math.round(chip.getBoundingClientRect().top) : null,
+			connector: window.__eff(document.querySelector('.connector-children')),
+			tierBelow: tier && chip ? tier.getBoundingClientRect().top >= chip.getBoundingClientRect().bottom - 2 : false
+		};
+	}, kid.id);
+	const ok = (b) => (b ? '✓' : '✗');
+	console.log(`  grandchildren revealed: ${open.gc}/${kid.expected} ${ok(open.gc === kid.expected)}   label "${open.label}"`);
+	console.log(`  siblings faded out:     ${before.chips - 1} → ${open.siblingsVisible} visible ${ok(open.siblingsVisible === 0)}`);
+	console.log(`  hovered chip HELD its column: x${kid.x} → x${open.hoveredX} ${ok(open.hoveredX === kid.x)}`);
+	console.log(`  hovered chip on row 1:  y${kid.y} → y${open.hoveredY} (top row is y${before.topRow}) ${ok(open.hoveredY === before.topRow)}`);
+	console.log(`  upward connector hidden: α${before.connector} → α${open.connector} ${ok(open.connector < 0.05)}`);
+	console.log(`  tier sits BELOW the chip: ${ok(open.tierBelow)}`);
+	// THE LINE MUST LAND ON SOMEBODY. The connector hangs off ONE chip while the grandchildren sit in a
+	// centred row, so an off-centre chip left the line pointing at bare ground (Sam's Elizabeth Guest
+	// screenshot: her only child was centred half a stage away). Asserted as "is the line's x inside a
+	// grandchild chip", which is the thing the eye actually checks.
+	const line = await page.evaluate(() => {
+		const l = document.querySelector('.grandchild-tier .connector-line');
+		const gcs = [...document.querySelectorAll('.grandchild-tier .flight')];
+		if (!l || !gcs.length) return null;
+		const lr = l.getBoundingClientRect();
+		const lx = lr.left + lr.width / 2;
+		// CENTRED on a chip, not merely touching one. An edge-hit is technically connected and reads as a
+		// mistake — the line ran down the outer border of a chip in Sam's screenshot.
+		const hit = gcs.find((g) => {
+			const r = g.getBoundingClientRect();
+			return Math.abs(lx - (r.left + r.width / 2)) <= 8;
+		});
+		const nearest = Math.min(
+			...gcs.map((g) => {
+				const r = g.getBoundingClientRect();
+				return Math.abs(lx - (r.left + r.width / 2));
+			})
+		);
+		return { lx: Math.round(lx), hit: !!hit, gap: Math.round(nearest),
+			name: hit ? hit.textContent.trim().split('\n')[0] : null };
+	});
+	if (line)
+		console.log(
+			`  the line lands CENTRED on a grandchild: ${line.hit ? `"${line.name}"` : `NO — ${line.gap}px off the nearest centre`} ${ok(line.hit)}`
+		);
+	// AND IT ALL COMES BACK. Half the gesture, and the half a one-shot assertion never covers.
+	const dismissWatch = overlapDuring('ON DISMISS');
+	await page.mouse.move(20, 60);
+	await dismissWatch;
+	await page.waitForTimeout(700);
+	const back = await page.evaluate((id) => ({
+		tier: !!document.querySelector('.grandchild-tier'),
+		chips: document.querySelectorAll('.page-container > .children-slot > .flight').length,
+		hoveredY: Math.round(document.querySelector(`.page-container > .children-slot > [data-flight-id="${id}"]`)?.getBoundingClientRect().top ?? -1),
+		connector: window.__eff(document.querySelector('.connector-children'))
+	}), kid.id);
+	console.log(
+		`  ON DISMISS — tier gone ${ok(!back.tier)}  chips ${back.chips}/${before.chips} ${ok(back.chips === before.chips)}  ` +
+			`chip back to y${back.hoveredY} ${ok(back.hoveredY === kid.y)}  connector α${back.connector} ${ok(back.connector > 0.05)}`
+	);
+	// ── CASE 9: PROMOTING A GRANDCHILD (--gcpromote) ─────────────────────────────────────────────────
+	// The descendant mirror of a grandparent promotion, and it asserts one thing the ancestor version
+	// cannot: THE FLOOR MUST NOT MOVE AT ALL. This tier lives below the card, so unlike the grandparent
+	// tier there is no collapse, no pendingCollapse correction, and nothing above the card has any reason
+	// to shift by a pixel. If the floor moves here, someone has generalised pendingCollapse to "any tier".
+	if (process.argv.includes('--gcpromote')) {
+		await page.mouse.move(kid.cx, kid.cy);
+		await page.waitForTimeout(1400);
+		const gcInfo = await page.evaluate(() => {
+			const el = document.querySelector('.grandchild-tier a.person-box');
+			if (!el) return null;
+			const r = el.getBoundingClientRect();
+			const box = el.closest('[data-flight-id]');
+			return { cx: r.x + r.width / 2, cy: r.y + r.height / 2, x: Math.round(r.left), y: Math.round(r.top),
+				id: box?.getAttribute('data-flight-id'), name: el.textContent.trim().split('\n')[0] };
+		});
+		if (!gcInfo) { console.log('tier did not re-open'); await browser.close(); process.exit(1); }
+		const oldHero = await page.evaluate(() => document.querySelector('h1')?.textContent?.trim() ?? '');
+		await page.evaluate(([gcid, kidid]) => {
+			window.__oldCard = document.querySelector('.featured-flight');
+			window.__s = [];
+			const t0 = performance.now();
+			const samp = (el, t) => {
+				if (!el) return null;
+				const r = el.getBoundingClientRect();
+				return { t, x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width),
+					h: Math.round(r.height), real: r.width > 2 && r.height > 2, op: window.__eff(el) };
+			};
+			const tick = () => {
+				const now = Math.round(performance.now() - t0);
+				window.__s.push({
+					t: now,
+					hero: samp([...document.querySelectorAll('.featured-flight')].find((e) => e !== window.__oldCard), now),
+					old: samp(window.__oldCard, now),
+					slot: samp(document.querySelector('.featured-slot'), now),
+					climber: samp(document.querySelector(`.parents-slot [data-flight-id="${kidid}"]`), now),
+					// real geometry AND effective opacity — the same definition the main case uses. Counting
+					// raw matches reports the chip-face and any detached node as live copies (it read 3).
+					copies: window.__nodes(gcid).filter((n) => n.real && n.op > 0.05).length
+				});
+				if (performance.now() - t0 < 2000) requestAnimationFrame(tick);
+			};
+			requestAnimationFrame(tick);
+		}, [gcInfo.name.split(' ')[0], kid.id]);
+		await page.mouse.click(gcInfo.cx, gcInfo.cy);
+		await page.waitForTimeout(2400);
+		const sm = await page.evaluate(() => window.__s);
+		const landed = await page.evaluate(() => document.querySelector('h1')?.textContent?.trim() ?? '');
+		const tr = (pick) => sm.map(pick).filter((p) => p && p.real);
+		const hero = tr((x) => x.hero), floor = tr((x) => x.slot), climber = tr((x) => x.climber), old = tr((x) => x.old);
+		console.log(`\nPROMOTING GRANDCHILD "${gcInfo.name}" from y${gcInfo.y} → landed on ${landed.slice(0, 30)}`);
+		if (hero.length) console.log(
+			`  hero first painted (${hero[0].x},${hero[0].y}) ${hero[0].w}x${hero[0].h} — chip was at (${gcInfo.x},${gcInfo.y}) ` +
+			`${Math.abs(hero[0].x - gcInfo.x) <= 3 && Math.abs(hero[0].y - gcInfo.y) <= 3 ? '✓ born on its chip' : '✗ born elsewhere'}`);
+		const steps = floor.filter((p, i) => i && Math.abs(p.y - floor[i - 1].y) > 1).length;
+		console.log(`  THE FLOOR: ${floor[0]?.y} → ${floor[floor.length - 1]?.y}, ${steps} step(s) ` +
+			`${steps === 0 ? '✓ nothing above the card moved, as this tier promises' : '✗ the stage moved'}`);
+		if (climber.length) console.log(
+			`  the hovered child climbed to the parents row: (${climber[0].x},${climber[0].y}) → ` +
+			`(${climber[climber.length - 1].x},${climber[climber.length - 1].y}) over ${climber[0].t}→${climber[climber.length - 1].t}ms, ` +
+			`α ${climber[climber.length - 1].op} ✓`);
+		else console.log('  ✗ the hovered child never appeared in the parents row');
+		if (old.length) {
+			const z = old[old.length - 1];
+			console.log(`  the old hero "${oldHero.slice(0, 22)}" demoted: h ${old[0].h} → ${z.h}, y ${old[0].y} → ${z.y}, α ${z.op} ` +
+				`${z.h < old[0].h * 0.3 ? '✓ shrank into its implied grandparent seat' : '✗ FROZE'}`);
+		}
+		console.log(`  worst simultaneous copies of the promoted person: ${Math.max(...sm.map((x) => x.copies))}`);
+		console.log(`page errors: ${errors.length ? errors.join(' | ') : 'none'}`);
+		await browser.close();
+		process.exit(0);
+	}
+
+	console.log(`page errors: ${errors.length ? errors.join(' | ') : 'none'}`);
+	await browser.close();
+	process.exit(0);
+}
 
 const par = await rectOf('.parents-slot a.person-box', parentMatch);
 if (!par) { console.log(`no parent chip matching /${parentMatch}/`); await browser.close(); process.exit(1); }
@@ -209,6 +439,12 @@ const leaverKey = leaverName.split(' ')[0];
 // rowTravel reads the snapshotted .flight boxes, i.e. the chips, and so must this.
 // The hovered parent's own flight id — resolved by NAME once, here, so every later query can key on the
 // id instead of re-matching text that collides ("Rev. Aaron Burr" inside "Aaron Burr Jr.").
+// The pivot — the person we are LEAVING, who becomes a chip on the new page. Its id is what the
+// post-landing flash check keys on.
+const pivotId = await page.evaluate(() =>
+	document.querySelector('.demote-chipface [data-flight-id]')?.getAttribute('data-flight-id') ??
+	(document.querySelector('h1')?.textContent?.trim().match(/([A-Z]{1,2}\d{4,5})\s*$/)?.[1] ?? '')
+);
 const hoveredId = await page.evaluate((m) => {
 	const el = [...document.querySelectorAll('.parents-slot [data-flight-id]')].find(
 		(x) => new RegExp(m, 'i').test(x.textContent || '') && !x.closest('.grandparent-tier')
@@ -564,6 +800,28 @@ for (const s2 of samples)
 		byId.get(n.id).push({ t: s2.t, y: n.y });
 	}
 for (const [id, pts] of byId) dip(`${id}`, pts);
+
+// ── CASE 10: THE PIVOT DOES NOT FLASH AFTER IT LANDS ──────────────────────────────────────────────
+// The demoted card becomes a chip in the new page's rows, and the atomic swap exposes that chip as a
+// STEP — it is already at full opacity when it appears, because the card was sitting on it. Anything that
+// dips it afterwards is a second gesture applied to a settled object, which is the most conspicuous kind
+// of wrong: Sam caught it instantly. Measured on EFFECTIVE opacity, so an ancestor's fade counts.
+{
+	const pivotTrack = [];
+	for (const s2 of samples)
+		for (const n of s2.all || [])
+			if (n.id === pivotId && n.real) pivotTrack.push({ t: s2.t, op: n.op });
+	const firstUp = pivotTrack.findIndex((p) => p.op > 0.9);
+	if (firstUp >= 0) {
+		const after = pivotTrack.slice(firstUp);
+		const dip = after.reduce((m, p) => (p.op < m.op ? p : m), after[0]);
+		console.log(
+			`\nTHE PIVOT AFTER LANDING: visible from ${after[0].t}ms; lowest effective opacity thereafter ` +
+				`α${dip.op} at ${dip.t}ms ` +
+				(dip.op > 0.9 ? '✓ never flashes' : '✗ FLASHES after it has settled')
+		);
+	}
+}
 
 // THE END-LIFT, which is what a dip in unison actually is. Every in-flow object is painted at
 // layout(t) + transform(t). The row transforms all end together on the army's clock; if the STAGE is

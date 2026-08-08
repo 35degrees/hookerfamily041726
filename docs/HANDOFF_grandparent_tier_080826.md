@@ -7,6 +7,17 @@ file is the working state and what to do next.
 
 ---
 
+## 0. THERE ARE NOW TWO TIERS
+
+This file is written about the ANCESTOR tier (hover a parent → grandparents open above). A DESCENDANT tier
+now exists too — hover a child → grandchildren open below, click one → it promotes — and it shares this
+file's instrument, its traps and most of its dead ends. Its own doctrine is design §31, its record is
+roadmap §33.
+
+The one thing to carry across before touching either: **an ancestor tier moves the stage and a descendant
+tier does not.** `pendingCollapse()` keys on `.grandparent-tier` deliberately, and generalising it to "any
+tier" hands every grandchild promotion a 145px correction for a collapse that never comes.
+
 ## 1. WHAT IT IS
 
 Hold a parent chip for 900ms and THAT parent's parents open in a tier above it. A parent with no parents

@@ -145,6 +145,10 @@
 			tierClosingForNav = true;
 			tierCollapsed = true;
 			closeTier();
+			// A lingering open tier during a flight would leave the army marching against a stale layout —
+			// the same reason the ancestor tier closes here. This one needs no collapse flag: it sits below
+			// the card, so its removal moves nothing any flight has measured.
+			closeChildTier(false);
 		});
 		untrack(armSweep);
 	});
@@ -756,6 +760,7 @@
 	 *  untouched, so the click still lands where it was aimed. */
 	function armTierNavClose() {
 		if (revealedParentId) tierClosingForNav = true;
+		if (focusedChildId) childClosingForNav = true;
 	}
 	function onParentEnter(e: PointerEvent, id: string) {
 		clearHoverTimer();
@@ -845,6 +850,32 @@
 		if (!dismissTimer) dismissTimer = setTimeout(() => closeTier(), DISMISS_GRACE_MS);
 	}
 
+	/** The grandchild tier's keep-alive region — the same rule as the parents tier's, and it earns its
+	 *  place the same way: ask whether the pointer is still somewhere the tier is ABOUT (the grandchild
+	 *  block, or the child chip that opened it) rather than which edge it left by. Same 300ms grace, so a
+	 *  pointer that clips a corner on its way down to a grandchild never costs anything. */
+	function onChildTierPointerMove(e: PointerEvent) {
+		if (!focusedChildId) return;
+		const inside = (el: Element | null) => {
+			if (!el) return false;
+			const r = el.getBoundingClientRect();
+			return (
+				e.clientX >= r.left - KEEP_ALIVE_PAD &&
+				e.clientX <= r.right + KEEP_ALIVE_PAD &&
+				e.clientY >= r.top - KEEP_ALIVE_PAD &&
+				e.clientY <= r.bottom + KEEP_ALIVE_PAD
+			);
+		};
+		const tier = document.querySelector('.grandchild-tier');
+		const chip = document.querySelector(`.children-slot > [data-flight-id="${focusedChildId}"]`);
+		if (inside(tier) || inside(chip)) {
+			cancelChildDismiss();
+			return;
+		}
+		if (!childDismissTimer)
+			childDismissTimer = setTimeout(() => closeChildTier(), DISMISS_GRACE_MS);
+	}
+
 	/** First name of the hovered parent, for the tier's connector label ("John's parents"). */
 	function parentFirstName(id: string | null): string {
 		if (!id) return '';
@@ -879,6 +910,328 @@
 			// pulled the whole stage 32px too high on the way out.
 			css: (t: number, u: number) =>
 				`margin-top: ${-TIER_LIFT + u * (TIER_LIFT - h)}px; opacity: ${nav ? 1 : t};`
+		};
+	}
+
+	// ── HOVER-REVEAL: THE GRANDCHILD TIER (Aug 8) ─────────────────────────────────────────────────────
+	// The mirror of the grandparent tier, pointed DOWN — and the asymmetry is the point. An ancestor tier
+	// opens ABOVE the parents row, so it pushes the whole stage down and every flight afterwards has to
+	// know about the collapse (design §30, flight.ts pendingCollapse). A descendant tier opens INSIDE the
+	// children section, below everything, so nothing above the card moves at all: no push, no collapse, no
+	// FLIP measured against a layout that is about to change. `pendingCollapse()` keys on `.grandparent-tier`
+	// specifically and must STAY that way — generalising it to "any tier" would hand every grandchild
+	// promotion a phantom 145px correction for a collapse that never happens.
+	//
+	// THE HOVERED CHIP KEEPS ITS COLUMN. The first build removed its siblings from FLOW, which let the row
+	// re-centre the survivor for free — and that was the wrong gesture: it slid the chip sideways out from
+	// under the pointer that was hovering it. Sam: "it can just keep its position, but shift up if it's on
+	// the second row." Leaving the siblings in flow at opacity 0 means NOTHING reflows, so x is preserved
+	// by doing nothing at all, and the only movement is a translateY of one row pitch when the chip is not
+	// already on the top row. The slot's height is collapsed to that one row so the tier below still hangs
+	// directly off the chip rather than under an empty second row.
+	//
+	// It is also strictly less machinery: no chips leave, so there are no outros, no pins, and no captured
+	// rects to pin against.
+	// The SAME hold as the parents tier. Walked 1800 → 1200 → HOVER_INTENT_MS (Sam): a tier is a tier, and
+	// two different holds for the same gesture is a rule the hand has to learn twice.
+	const CHILD_INTENT_MS = HOVER_INTENT_MS;
+	let childHoverTimer: ReturnType<typeof setTimeout> | null = null;
+	let focusedChildId = $state<string | null>(null);
+	// Armed on CLICKCAPTURE, and safe there for the one reason §6 permits — it changes no geometry, it only
+	// decides how this tier LEAVES. (The ancestor tier's collapse flag had to be split out of its
+	// clickcapture flag for exactly the geometry reason; nothing here touches layout, so one flag serves.)
+	let childClosingForNav = $state(false);
+	let shakeChildId = $state<string | null>(null);
+	let childShakeTimer: ReturnType<typeof setTimeout> | null = null;
+	// How far the hovered chip rises, in px — 0 when it is already on the top row. Measured at reveal from
+	// the row it is standing in, never computed from an index: the row a chip lands on is a wrap decision
+	// made by the layout at the current viewport width, and index arithmetic would be a second, disagreeing
+	// answer to a question the DOM has already answered.
+	let childRiseY = $state(0);
+	// Where the tier's connector hangs, as an offset from the stage centre. The GRANDCHILDREN sit in a
+	// normal centred row like any children row, but the line and its label belong to ONE chip, so they hang
+	// off that chip wherever it happens to be — Sam: "it's ok that the vertical line and Ten Children text
+	// comes off the chip on the far right." Measured at reveal from the chip itself, never from an index.
+	let childConnectorX = $state(0);
+	// The chips' opacity/transform transitions may exist ONLY while this gesture is running or unwinding.
+	// Left on `.flight` unconditionally they applied to every navigation as well, and collided with the
+	// demote's atomic swap: `revealPending` exposes the landed chip as a STEP (fade 0) and a 200ms CSS
+	// transition turned that step into a fade that raced its own WAAPI reveal — the demoted card FLASHED
+	// once after it had already settled in its child seat. Sam: "that should not happen, especially there
+	// in his final position." A settling window keeps the fade-back on dismissal without ever being live
+	// during a flight.
+	// The children slot's height, driven explicitly in px. A CSS transition CANNOT run from `auto`, so the
+	// class-only version snapped the slot up by the rows it was dropping — instantly — while the hovered
+	// chip rose over the tier's clock. The tier hangs off the slot's bottom, so it arrived 87px early and
+	// its first chips were painted 17px INTO the children row (measured). Two explicit values on one clock
+	// keep the slot's bottom and the chip's bottom together for every frame.
+	let childSlotH = $state<number | null>(null);
+	let childSlotRaf = 0;
+	// Held for GC_EXIT_MS after the tier is dismissed: the chip stays risen, the siblings stay hidden and
+	// the slot stays collapsed until the grandchildren have finished fading. Everything that reads the
+	// focused layout reads `activeChildId`, so the hold is invisible to the rest of the file.
+	let heldChildId = $state<string | null>(null);
+	let childHoldTimer: ReturnType<typeof setTimeout> | null = null;
+	let childSettling = $state(false);
+	let childSettleTimer: ReturnType<typeof setTimeout> | null = null;
+
+	/** The rects of just the FIRST row of a wrapped chip set — the row the connector has to reach. */
+	function firstRowRects(els: Element[], top: number): DOMRect[] {
+		return els
+			.map((e) => e.getBoundingClientRect())
+			.filter((r) => Math.abs(r.top - top) < 2)
+			.sort((a, b) => a.left - b.left);
+	}
+
+	/** One child's own children, by id — the grandchildren payload is a flat array tagged `via_parent_id`. */
+	function childrenOf(childId: string): PersonCompact[] {
+		return (f.neighborhood?.grandchildren ?? []).filter((g) => g.via_parent_id === childId);
+	}
+	const revealedGrandchildren = $derived(
+		focusedChildId ? childrenOf(focusedChildId) : ([] as PersonCompact[])
+	);
+	/** The child whose layout is in force — the one being hovered, or the one still being let go of. */
+	const activeChildId = $derived(focusedChildId ?? heldChildId);
+	// How far the grandchild ROW is shifted so its nearest end sits under the hovered chip. The row is
+	// centred like any children row, and the connector hangs off ONE chip — so when that chip is out at the
+	// edge, a centred row leaves the line pointing at nothing (measured on Elizabeth Guest: her line hung
+	// over bare ground while her only child sat centred, half the stage away). Nothing to do when the chip
+	// is already within the row's span; otherwise the row slides just far enough for its first or last chip
+	// to sit under the line, and no further.
+	let gcRowX = $state(0);
+	/** The grandchild row's own connector label, counted off the revealed set exactly as childrenLabel is. */
+	const grandchildLabel = $derived.by(() => {
+		const n = revealedGrandchildren.length;
+		if (!n) return null;
+		const dy = revealedGrandchildren.filter((g) => g.dy_young).length;
+		let base = `${cardinalWord(n)} ${n === 1 ? 'child' : 'children'}`;
+		if (dy > 0) base += ` (${cardinalWordLower(dy)} died young)`;
+		return base;
+	});
+
+	function clearChildHoverTimer() {
+		if (childHoverTimer) clearTimeout(childHoverTimer);
+		childHoverTimer = null;
+	}
+	/** Close the tier and forget any pending intent — on leave, and on every navigation. */
+	function closeChildTier(settle = true) {
+		clearChildHoverTimer();
+		cancelChildDismiss();
+		if (childSettleTimer) clearTimeout(childSettleTimer);
+		// `settle` false on a NAVIGATION: the chips are leaving the page, the army owns their motion, and a
+		// CSS transition alive on them during a flight is exactly what caused the post-landing flash.
+		cancelAnimationFrame(childSlotRaf);
+		if (childHoldTimer) clearTimeout(childHoldTimer);
+		const wasOpen = !!focusedChildId;
+		if (settle && wasOpen) {
+			// HOLD: the tier unmounts now (its chips fade where they stand), but the focused layout stays in
+			// force until they are gone. Only then does the slot give its height back, the chip drop and the
+			// siblings return — so no generation is ever visible in another's row.
+			heldChildId = focusedChildId;
+			focusedChildId = null;
+			childHoldTimer = setTimeout(() => {
+				heldChildId = null;
+				childSettling = true;
+				const slot = document.querySelector<HTMLElement>('.page-container > .children-slot');
+				childSlotH = slot ? Math.round(slot.scrollHeight) : null;
+				childSettleTimer = setTimeout(() => {
+					childSettling = false;
+					childSlotH = null;
+				}, CHILD_FADE_BACK_MS);
+			}, GC_EXIT_MS);
+			return;
+		}
+		heldChildId = null;
+		childSettling = false;
+		childSlotH = null;
+		focusedChildId = null;
+	}
+	// The siblings step aside FIRST, and the grandchildren only start once they are gone. Overlapped, the
+	// two read as one muddle and — measured — a grandchild reached 8px into a row of children that were
+	// still visible, which is the army-row rule broken by a hundredth of a second rather than by geometry.
+	// Sequenced, each gesture is legible on its own. Sam: "we'll quickly fade those out to hidden."
+	// The siblings step aside over CHILD_FADE_OUT_MS, and the grandchildren start just BEFORE they are
+	// finished — a short deliberate overlap, so the two reads as one exchange rather than two events with a
+	// pause between them. Sam: "I want to feel some kind of flip moment of connection between outgoing
+	// child chips and incoming grandchildren." Kept to a few frames: any more and a generation is visibly
+	// standing in another's row, which is the rule this sequencing exists to protect.
+	const CHILD_STEP_ASIDE_MS = 160;
+	// LEAVING IS SUBTLE. Once the pointer is off the chip the user's attention has already moved on, so the
+	// exit does not need — and must not have — a journey of its own. A quick fade with 10px of drift reads
+	// as "gone" without asking to be watched; the full army march down the page was a turbo move nobody was
+	// looking at, and on a page with several children rows it swept straight through them.
+	const GC_EXIT_MS = 180;
+	const GC_EXIT_DRIFT = 10;
+	// And NOTHING COMES BACK UNTIL THEY ARE GONE. Sam: "don't bring the child chips back until grandchildren
+	// chips are not visible to prevent any overlap." The hovered chip's drop, the slot's re-expansion and
+	// the siblings' fade-in all wait out the exit — so the two generations are never on screen together,
+	// which is the same army-row rule the arrival already obeys, applied to the way out.
+	// Long enough to cover BOTH halves of the return: the siblings' fade-in and the hovered chip's drop back
+	// to its own row, which rides the tier's 420ms clock. Cut short, the transform snaps at the very end.
+	const CHILD_FADE_BACK_MS = 470; // long enough to cover the fade-back and the chip's drop to its own row
+	function onChildEnter(e: PointerEvent, id: string) {
+		clearChildHoverTimer();
+		if (focusedChildId === id) return;
+		childHoverTimer = setTimeout(() => {
+			if (childrenOf(id).length) {
+				// How far this chip has to rise: its own row's top minus the FIRST row's top. Both read from
+				// the DOM in the same frame, so a wrap at any viewport width answers correctly.
+				const chips = [
+					...document.querySelectorAll<HTMLElement>('.page-container > .children-slot > .flight')
+				];
+				const tops = chips.map((el) => el.getBoundingClientRect().top);
+				const mine = chips.find((el) => el.dataset.flightId === id)?.getBoundingClientRect().top;
+				childRiseY = mine != null && tops.length ? Math.round(mine - Math.min(...tops)) : 0;
+				const chip = chips.find((el) => el.dataset.flightId === id);
+				const stage = document.querySelector('.page-container');
+				if (chip && stage) {
+					const c = chip.getBoundingClientRect();
+					const st = stage.getBoundingClientRect();
+					childConnectorX = Math.round(c.left + c.width / 2 - (st.left + st.width / 2));
+				}
+				childClosingForNav = false; // a fresh reveal dismisses the hover's way again
+				// Pin the slot at the height it currently HAS, then collapse it to one row on the next frame,
+				// so the transition has two real values to run between.
+				const slot = document.querySelector<HTMLElement>('.page-container > .children-slot');
+				const rowH = chips[0]?.getBoundingClientRect().height ?? 75;
+				if (slot) {
+					childSlotH = Math.round(slot.getBoundingClientRect().height);
+					cancelAnimationFrame(childSlotRaf);
+					childSlotRaf = requestAnimationFrame(() => (childSlotH = Math.round(rowH)));
+				}
+				if (childHoldTimer) clearTimeout(childHoldTimer);
+				heldChildId = null;
+				gcRowX = 0;
+				focusedChildId = id;
+				// Measured a frame later, once the row exists. x-only, so it is safe to read while the chip
+				// is still rising and the slot still collapsing — neither of those moves anything sideways.
+				requestAnimationFrame(() => {
+					const row = document.querySelector('.grandchild-tier .children-slot');
+					// Aligned to the LINE, not to the chip. Both should be the chip's centre in principle, but
+					// the connector is centred within the tier BLOCK while the row is centred on the stage, and
+					// those two centres are not required to agree — measured, they differed by 6px and the line
+					// missed its chip by exactly that. Reading the thing that has to connect removes the
+					// assumption instead of correcting for it.
+					const lineEl = document.querySelector('.grandchild-tier .connector-line');
+					const gcs = row ? [...row.querySelectorAll('.flight')] : [];
+					if (!row || !lineEl || !gcs.length) return;
+					const lineRect = lineEl.getBoundingClientRect();
+					const cx = lineRect.left + lineRect.width / 2;
+					const top = Math.min(...gcs.map((e) => e.getBoundingClientRect().top));
+					const firstRow = firstRowRects(gcs, top);
+					// SOMEBODY MUST BE UNDER THE LINE. Covered already → do not move the row at all; the
+					// default centring is right whenever it happens to work. Otherwise slide it by the
+					// SMALLEST amount that puts the nearest chip under the line. Both failures this must
+					// answer are the same defect: the line off the end of a short row (Sam's Elizabeth Guest
+					// screenshot) and the line in the 12px GAP between two chips of a long one — measured 6px
+					// of bare ground on a row that comfortably spanned the chip.
+					// CENTRE the nearest chip on the line, not merely bring it under one. Shifting by the
+					// smallest amount that made contact put the line on a chip's outer EDGE — technically
+					// connected, visibly wrong (Sam's Samuel Hinckley screenshot). Centring is also naturally
+					// a no-op when a chip is already sitting under the line, so there is no separate case for
+					// "already fine": the shift just comes out at ~0.
+					let best = Infinity;
+					for (const r of firstRow) {
+						const d = cx - (r.left + r.width / 2);
+						if (Math.abs(d) < Math.abs(best)) best = d;
+					}
+					if (!Number.isFinite(best)) return;
+					// CLAMPED to the stage. A full-width row has no slack, and centring a chip on a line near
+					// the edge would push the far end of the row off screen; better an off-centre connection
+					// than chips nobody can see. When the row is wider than the stage there is no legal shift
+					// at all, and it stays where the layout put it.
+					const stageR = document.querySelector('.page-container')?.getBoundingClientRect();
+					const rowLeft = Math.min(...firstRow.map((r) => r.left));
+					const rowRight = Math.max(...firstRow.map((r) => r.right));
+					const PAD = 8;
+					let shift = best;
+					if (stageR) {
+						const lo = stageR.left + PAD - rowLeft;
+						const hi = stageR.right - PAD - rowRight;
+						shift = lo > hi ? 0 : Math.max(lo, Math.min(hi, best));
+					}
+					gcRowX = Math.round(shift);
+				});
+			} else {
+				// NO CHILDREN TO SHOW — the chip shakes its head, exactly as a childless parent does. An
+				// answer beats a hover that does nothing and leaves the user holding still waiting for it.
+				if (childShakeTimer) clearTimeout(childShakeTimer);
+				shakeChildId = id;
+				childShakeTimer = setTimeout(() => (shakeChildId = null), SHAKE_MS);
+			}
+		}, CHILD_INTENT_MS);
+	}
+	/** Cancel a PENDING reveal when the pointer leaves before the intent fires. Never closes an OPEN tier —
+	 *  that is the keep-alive region's job, for the same reason it is on the parent side. */
+	function onChildLeave() {
+		clearChildHoverTimer();
+	}
+	let childDismissTimer: ReturnType<typeof setTimeout> | null = null;
+	function cancelChildDismiss() {
+		if (childDismissTimer) clearTimeout(childDismissTimer);
+		childDismissTimer = null;
+	}
+
+	/** A grandchild chip ARRIVING — the house entrance for a children row, reused rather than reinvented.
+	 *
+	 *  `revealPending` already says what an arriving child row does: fade in while settling DOWN from above,
+	 *  on the row clock and the row curve, because the card sits above the children and that is where they
+	 *  come from. The ONE thing that cannot be copied verbatim is the distance: that entrance travels a full
+	 *  tier, and a full tier above these chips is the children row itself. So the travel is the gap that
+	 *  actually exists here — the chip's own top to the block's top, i.e. the connector's height — which
+	 *  starts them level with the bottom edge of the child they belong to and never a pixel above it.
+	 *
+	 *  (The first build clipped a growing box instead, which Sam rejected on sight and correctly: "I don't
+	 *  do the scroll banner reveal style, the chips are representing individuals." A card is an object that
+	 *  moves, not content that is uncovered.)
+	 */
+	function gcArrive(node: Element) {
+		const tier = (node as HTMLElement).closest('.grandchild-tier');
+		const gap = tier
+			? Math.max(0, Math.round(node.getBoundingClientRect().top - tier.getBoundingClientRect().top))
+			: 0;
+		return {
+			delay: CHILD_STEP_ASIDE_MS, // the siblings clear the rows before anyone descends into them
+			duration: TIER_MS,
+			easing: TIER_CURVE,
+			css: (t: number, u: number) => `opacity: ${t}; transform: translateY(${-u * gap}px);`
+		};
+	}
+
+	/** A grandchild chip LEAVING. Two gestures again, and neither of them is a fold.
+	 *
+	 *  HOVER DISMISSAL: army style, exactly as Sam specified it at the outset — "the grandchildren chips
+	 *  fade out and down." Pinned at the rect it was standing in so the block can give its height back
+	 *  WITHOUT dragging it, and marching DOWN, away from the children row that is fading back in above it.
+	 *  The clip version folded them upward instead, straight through the returning siblings.
+	 *
+	 *  NAVIGATION: straight to flyOut, which owns the pin, the march and the alpha.
+	 */
+	function gcExit(node: Element, params: { key: string }) {
+		if (childClosingForNav) return flyOut(node, params);
+		const r = node.getBoundingClientRect();
+		const pin = `position: fixed; left: ${r.left}px; top: ${r.top}px; width: ${r.width}px; height: ${r.height}px; margin: 0; `;
+		return {
+			duration: GC_EXIT_MS,
+			easing: cubicOut,
+			css: (t: number, u: number) =>
+				`${pin}z-index: -1; opacity: ${t}; transform: translateY(${u * GC_EXIT_DRIFT}px);`
+		};
+	}
+
+	/** The tier connector arrives LAST, and separately. Attached to the top of the descending row it read
+	 *  as the thing pulling the chips down; held back until they have landed, it reads as what it is — a
+	 *  line drawn between a chip and the children it has just been shown to have. Delayed by the unfold's
+	 *  own clock rather than a number of its own, so it can never drift out of step with it. */
+	function connectorFade(_node: Element, _p: unknown, opts?: { direction?: string }) {
+		return {
+			// The delay is an ARRIVAL rule — the line is held back until the chips have landed, which is now
+			// their own delay plus their clock. On the way out it must not be held back at all, or it hangs
+			// under a row that has already gone.
+			delay: opts?.direction === 'out' ? 0 : CHILD_STEP_ASIDE_MS + TIER_MS,
+			duration: opts?.direction === 'out' ? 140 : 220,
+			easing: cubicOut,
+			css: (t: number) => `opacity: ${t * 0.75};`
 		};
 	}
 
@@ -966,7 +1319,7 @@
      Svelte had already created the outro, so the duration it read was the animated one (measured — the
      chip still flew to y=−14). Arming it here changes no geometry, so the click still lands where the
      user aimed; it only decides how the row LEAVES. -->
-<svelte:window onpointermove={onStagePointerMove} onclickcapture={armTierNavClose} />
+<svelte:window onpointermove={(ev) => { onStagePointerMove(ev); onChildTierPointerMove(ev); }} onclickcapture={armTierNavClose} />
 
 <div
 	class="page-container"
@@ -1247,7 +1600,7 @@
 			class:connector-no-label={isEasterEgg}
 			class:landed={familyLanded}
 			class:cc-hidden={ccRoster.hidden}
-			class:tier-open={!!revealedParentId}
+			class:tier-open={!!revealedParentId || !!activeChildId}
 		>
 			{#if !isEasterEgg}
 				<div class="connector-line"></div>
@@ -1259,17 +1612,34 @@
 		</div>
 	{/if}
 
-	<div class="children-slot" class:cc-hidden={ccRoster.hidden} class:tier-open={!!revealedParentId}>
+	<div
+		class="children-slot"
+		class:cc-hidden={ccRoster.hidden}
+		class:tier-open={!!revealedParentId}
+		class:child-focus={!!activeChildId}
+		class:child-settling={childSettling}
+		style={childSlotH != null ? `height: ${childSlotH}px` : ''}
+	>
 		{#each roster.children as child (child.id)}
 			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors
 			     (children shared across a spouse swap); out:flyOut pins a LEAVER position:fixed at
 			     its click-captured rect, overriding flip's fix() (see parents). -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<!-- The pointer handlers sit on the positioning wrapper for the same reason they do on a parent
+			     chip: the chip's <a> is already focusable and already navigates, and the hover-reveal is a
+			     pointer-only enhancement on top of it. -->
 			<div
 				class="flight"
+				class:shake-no={shakeChildId === child.id}
+				class:child-focused={activeChildId === child.id}
+				class:child-dimmed={!!activeChildId && activeChildId !== child.id}
+				style={activeChildId === child.id && childRiseY ? `--child-rise: ${childRiseY}px` : ''}
 				data-flight-dir="down"
 				data-flight-id={child.id}
 				data-tx={child.t?.x}
 				data-ty={child.t?.y}
+				onpointerenter={(e) => onChildEnter(e, child.id)}
+				onpointerleave={onChildLeave}
 				in:markPending
 				out:flyOut={{ key: child.id }}
 				animate:flip={{ duration: flipMs }}
@@ -1278,6 +1648,44 @@
 			</div>
 		{/each}
 	</div>
+
+	<!-- THE GRANDCHILD TIER (hover-reveal). Below everything, so opening it moves NOTHING above the card —
+	     the whole reason this tier is simpler than its ancestor twin. Its connector sits ABOVE its row
+	     (mirroring the parents tier, whose connector sits below its own), so the line reads downward from
+	     the hovered chip into the children it is about to show. -->
+	{#if revealedGrandchildren.length}
+		<!-- The BLOCK carries no transition of its own any more. It sits below everything, so its arrival
+		     moves nothing, and every visible thing in it — the chips, the connector — has its own gesture.
+		     A block-level animation here was what made the row read as a banner unrolling. -->
+		<div class="grandchild-tier" data-tier-span="2">
+			<div
+				class="connector connector-children"
+				style="transform: translateX({childConnectorX}px)"
+				in:connectorFade
+				out:connectorFade
+			>
+				<div class="connector-line"></div>
+				<span class="connector-label">{grandchildLabel}</span>
+				<div class="connector-line"></div>
+			</div>
+			<div class="children-slot" style="transform: translateX({gcRowX}px)">
+				{#each revealedGrandchildren as gc (gc.id)}
+					<div
+						class="flight"
+						data-flight-dir="down"
+						data-flight-id={gc.id}
+						data-tx={gc.t?.x}
+						data-ty={gc.t?.y}
+						animate:flip={{ duration: flipMs }}
+						in:gcArrive|global
+						out:gcExit|global={{ key: gc.id }}
+					>
+						<PersonBox person={gc} relation="child" dimmed={gc.dy_young} />
+					</div>
+				{/each}
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -1462,6 +1870,73 @@
 		transition: none !important;
 	}
 
+	/* THE CHILD-FOCUS STATE. Every chip stays IN FLOW — that is the whole trick, and the reason there is
+	   no pinning, no rect capture and no outro anywhere in this gesture. Nothing reflows, so every chip
+	   keeps the column it was already in, including the one being hovered. */
+	/* SCOPED TO THE GESTURE, and that scoping is load-bearing. On `.flight` unconditionally these applied
+	   during navigations too, where `revealPending` exposes a landed chip as a STEP — the transition turned
+	   that step into a fade racing its own WAAPI reveal, and the demoted card flashed once after it had
+	   already settled. `.child-settling` keeps the fade-back on dismissal without the rule ever being live
+	   while a flight is in progress. */
+	/* Split so the two directions can have their own weight. Going OUT the chips have somewhere to be and
+	   should not dawdle; coming BACK they were snapping on so abruptly they read as a flash rather than a
+	   return (Sam), so the fade-in is the slower of the two. Both keep the tier's own clock and curve for
+	   the transform, because the chip's rise and drop belong to the tier's movement, not to this fade. */
+	.children-slot.child-focus > .flight {
+		transition:
+			opacity 220ms cubic-bezier(0.33, 1, 0.68, 1),
+			transform var(--tier-ms, 420ms) cubic-bezier(0.32, 0, 0.22, 1);
+	}
+	.children-slot.child-settling > .flight {
+		transition:
+			opacity 300ms cubic-bezier(0.33, 1, 0.68, 1),
+			transform var(--tier-ms, 420ms) cubic-bezier(0.32, 0, 0.22, 1);
+	}
+	/* The siblings step aside quickly — Sam: "we'll quickly fade those out to hidden." They keep their
+	   space, which is exactly what holds the hovered chip's x still. */
+	.children-slot > .flight.child-dimmed {
+		opacity: 0;
+		pointer-events: none;
+	}
+	/* And the hovered chip rises the one row pitch it was measured at, on the tier's own curve and clock so
+	   the rise and the block opening below it read as one movement. Already on the top row → --child-rise
+	   is unset, the translate is 0, and it does not move at all. */
+	.children-slot > .flight.child-focused {
+		transform: translateY(calc(-1 * var(--child-rise, 0px)));
+		z-index: 1;
+	}
+	/* The rows below collapse so the tier hangs directly off the chip rather than under an empty second
+	   row. The hidden siblings overflow the box, which costs nothing — they are transparent and inert. */
+	/* The rows below collapse so the tier hangs directly off the chip rather than under an empty second
+	   row. The HEIGHT ITSELF is driven in px from the script (see childSlotH) because a transition cannot
+	   run from `auto`; this rule only supplies the clock and the curve, which are the tier's own so the
+	   collapse, the chip's rise and the unfold are one movement. The hidden siblings overflow the box,
+	   which costs nothing — they are transparent and inert. */
+	.children-slot.child-focus,
+	.children-slot.child-settling {
+		overflow: visible;
+		transition: height var(--tier-ms, 420ms) cubic-bezier(0.32, 0, 0.22, 1);
+	}
+
+	/* The tier's own connector rests at the house 0.75 once its delayed intro has run. It deliberately does
+	   NOT use `.landed`, whose 150ms transition would race the intro's delay. */
+	.grandchild-tier > .connector {
+		opacity: 0.75;
+	}
+
+	/* THE GRANDCHILD TIER. `.children-slot` inside it is reused verbatim — same wrap, same gap, same chip
+	   geometry — so it reads as another children row rather than a lookalike, exactly as the grandparent
+	   tier reuses `.parents-slot`. No translateX offset is needed here (and none is wanted): with the
+	   hovered chip's siblings out of flow it is already centred, so the block lines up under it by itself.
+	   No `position: relative` either, for the reason the ancestor tier needs one — nothing in here is ever
+	   pinned position:fixed against the viewport, because this tier's chips never leave on a navigation
+	   with a stale layout to escape. */
+	.grandchild-tier {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		will-change: margin-top, opacity;
+	}
 	/* THE GRANDPARENT TIER. `.parents-slot` inside it is reused verbatim — same row geometry, same gap,
 	   same z:0 confinement — so the tier is literally another parents row rather than a lookalike. */
 	.grandparent-tier {

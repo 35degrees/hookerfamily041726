@@ -1232,9 +1232,18 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// built around), and treating that as "no seat exists" would send every ordinary promotion off into a
 	// phantom instead of letting it find its real box a frame later. A span > 1 is the structural
 	// statement that the old focus has dropped out of the drawn generations entirely.
+	//
+	// BOTH DIRECTIONS. Promote a grandparent and the old focus becomes a GRANDCHILD; promote a grandchild
+	// and it becomes a GRANDPARENT. Neither is drawn at this zoom, so the seat is implied either way and
+	// only its sign differs — below the card panning down, above it panning up.
 	const impliedSeat =
-		relative && panDir === 'down' && tierSpan > 1
-			? { left: card.left, top: card.top + marchTravel(), width: FACE_W, height: FACE_H }
+		relative && tierSpan > 1 && (panDir === 'down' || panDir === 'up')
+			? {
+					left: card.left,
+					top: card.top + (panDir === 'down' ? marchTravel() : -marchTravel()),
+					width: FACE_W,
+					height: FACE_H
+				}
 			: null;
 	// Demotion duration: derived from the HERO's flight — the SAME distance-scaled curve the promotion
 	// uses for this kind, then ×DEMOTE_LEAD so the demote finishes ~15% sooner and clears the stage

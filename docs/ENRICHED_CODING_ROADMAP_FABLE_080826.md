@@ -2968,3 +2968,38 @@ first-class participant. The order matters, because each step's measurement is w
 - **The unreproduced flash** — see the grandparent handoff §5, which carries the framework for it.
 - The tier's connector and the parents connector can both read "<name>'s parents" and collide when a
   father and son share a first name (Aaron Burr Jr. → Rev. Aaron Burr). Pre-existing, cosmetic.
+
+---
+
+## 33. AUGUST 8 — THE DESCENDANT TIER (design §31)
+
+Hover a child chip → its children open below it; click a grandchild → it promotes to hero. Built and
+approved the same day as the ancestor tier's final pass, and it went in far faster because most of it was
+already there: `tierSpan` is direction-agnostic, the child riding up to the parents row was free (`morphIn`
+already carries anyone with a click-time snapshot rect who lands in `.parents-slot`, and the "motion is
+owned by their morphIn" rule stops the duplicate), and the only genuinely new line in `flight.ts` is that
+the IMPLIED SEAT now takes a sign — promote a grandparent and the old focus becomes a grandchild, promote
+a grandchild and it becomes a grandparent; neither is drawn, so the seat is implied either way and only
+the direction differs.
+
+**What was rejected, and what it cost:** the first build clipped a growing box ("scroll banner reveal" —
+rejected on sight), removed the siblings from flow (slid the chip out from under its own pointer), and
+marched the grandchildren off the bottom of the page on dismissal (swept through the rows below). All
+three were replaced with existing house gestures rather than new ones. **Sam's instruction is the lesson:**
+*"I want to re-use existing transitions and I'm sure there's something already in here that is the answer,
+I'm not looking for experimentation with new transition styles."* Every replacement was smaller than what
+it replaced.
+
+**The regression this introduced, and how it was caught:** a `transition: opacity` on
+`.children-slot > .flight` — shared with every navigation — turned the demote's atomic swap into a race
+and made the demoted card FLASH after it had already settled in its child seat. Sam spotted it in the
+Rawson line and correctly said it was probably from the child-chip work. Before believing the fix, the bug
+was restored on purpose to prove the new assertion could see it (α0 at 315ms with the bug, α1 without).
+**Do that.** Three separate green readings this session came from checks that could not fail.
+
+**Probe cases added:** `--child` (reveal, rise, column-hold, connector, and the full reverse),
+`--gcpromote` (the promotion, including the 0-step floor assertion that guards §31.1), plus the
+post-landing flash check that now runs on every gesture.
+
+**Still open:** unchanged from §32.4 — `rowClockMs()` never derives, and the unreproduced flash in the
+grandparent handoff §5. Neither was touched by this work.

@@ -3525,3 +3525,88 @@ seat that is already at rest, and the split between "notch seats hold still, row
 being true the moment a tier could lift the whole slot mid-flight. Every traveller now re-queries its seat
 per frame, which is `shrinkTo`'s own moving-destination rule stated for a portalled ghost. Where the seat
 IS static the tracker reproduces the baked path exactly — same solver, same inputs, same curve.
+
+---
+
+## 31. THE DESCENDANT TIER — HOVER-REVEALED GRANDCHILDREN (AS BUILT, August 8)
+
+The mirror of §29's ancestor tier, pointed down: hold a child chip for `HOVER_INTENT_MS` and that child's
+own children open beneath it. Same hold, same grace, same region-based dismissal. What is NOT the same is
+the thing that matters.
+
+### 31.1 A descendant tier moves nothing above the card — and must never inherit the ancestor's correction
+
+The grandparent tier opens ABOVE the parents row, so it pushes the whole stage down and every flight
+afterwards has to know about the collapse (§30, `pendingCollapse`). A descendant tier opens INSIDE the
+children section, below everything: no push, no collapse, no FLIP measured against a layout that is about
+to change. Promoting a grandchild therefore measures **0 steps** of floor movement, and that is asserted
+in `probe-tier.mjs --gcpromote` precisely so it stays true.
+
+**`pendingCollapse()` keys on `.grandparent-tier` specifically. Do not generalise it to "any tier."** It
+reads like a tidy-up waiting to happen, and the moment it happens every grandchild promotion is handed a
+145px correction for a collapse that never comes — §5.3.1 of the handoff, arriving by a new road.
+
+### 31.2 The gestures are the house's, scaled — not new ones
+
+The first build clipped a growing box to reveal the row. Sam rejected it on sight and was right: *"I don't
+do the scroll banner reveal style, the chips are representing individuals."* A card is an object that
+moves, not content that is uncovered. What shipped is the existing vocabulary:
+
+- **Arriving** — `revealPending`'s directional entrance, which is already what a children row does: fade in
+  while settling DOWN from above. The one thing that cannot be copied verbatim is the DISTANCE: that
+  entrance travels a full tier, and a full tier above these chips is the children row itself. The travel is
+  therefore the gap that exists — the chip's top to the block's top — which starts them level with the
+  bottom edge of the child they belong to and never above it.
+- **Leaving** — a quick fade with 10px of drift. Not the army march: once the pointer is off the chip the
+  user's attention has moved on, and a full march swept through the rows below on a tall page.
+
+### 31.3 The hovered chip keeps its column
+
+The first build removed the siblings from FLOW, which let the row re-centre the survivor for free — and
+slid the chip sideways out from under the pointer hovering it. Leaving them in flow at opacity 0 means
+NOTHING reflows: x is preserved by doing nothing, and the only movement is one row pitch of `translateY`
+when the chip is not already on the top row. The rise is measured off the DOM, never computed from an
+index — which row a chip wraps onto is a layout decision, and index arithmetic is a second answer that
+disagrees at other viewport widths.
+
+The slot's height collapses to one row so the tier hangs off the chip rather than under an empty second
+row, and that height is driven between two explicit px values **because a CSS transition cannot run from
+`auto`** — the class-only version snapped the slot up 87px instantly while the chip rose over 420ms, and
+the tier's first chips were painted 17px into the children row.
+
+### 31.4 Generations are never on screen in each other's rows — in EITHER direction
+
+Asserted per frame, against every VISIBLE child chip rather than the hovered one alone (on dismissal the
+slot re-expands and row 2 reoccupies the band the grandchildren stand in — testing the hovered chip cannot
+see it). Three things enforce it, and each was found by that assertion failing:
+
+1. The arrival's travel is the gap, not a tier (above).
+2. The siblings step aside FIRST, with a deliberate ~60ms overlap so the exchange reads as one gesture —
+   Sam wanted *"some kind of flip moment of connection"* — and no more, because more is a generation
+   standing in another's row.
+3. On dismissal the focused layout is **HELD** until the grandchildren have finished fading. The chip stays
+   risen, the siblings stay hidden, the slot stays collapsed. Only then does anything come back.
+
+### 31.5 The connector belongs to ONE chip, so a grandchild is CENTRED under it
+
+The grandchildren sit in a normal centred row; the line hangs off the hovered chip wherever it is. Those
+two facts conflict whenever the chip is off-centre, and the row slides just far enough to resolve it —
+**centring** the nearest chip on the line, clamped so a full-width row is never pushed off the stage.
+
+Three attempts, each failing in a way worth keeping:
+
+| aimed at | result |
+|---|---|
+| the CHIP's centre | 6px off. The connector is centred within the tier BLOCK while the row is centred on the STAGE, and those centres are not required to agree. Aim at the LINE and the assumption disappears. |
+| the minimum shift that brings a chip UNDER the line | Landed on a chip's outer EDGE — technically connected, visibly wrong. |
+| the minimum shift that makes CONTACT | Missed by 6px on a wide row, because the line was in the 12px GAP between two chips. Same defect as the far-edge case, so one rule must cover both. |
+
+### 31.6 A CSS transition on a shared element will collide with a navigation
+
+The chips' fade needs `transition: opacity` on `.children-slot > .flight` — the same elements every
+navigation animates. Left unscoped it turned the demote's atomic swap into a race: `revealPending` exposes
+the landed chip as a STEP (fade 0) precisely because the card was sitting on it, and a 200ms transition
+made that step a fade competing with its own WAAPI reveal. **The demoted card flashed once after it had
+already settled in its child seat** — measured α0 at 315ms, and confirmed by restoring the bug on purpose
+before believing the fix. The transitions are now scoped to a focus/settling window and can never be live
+during a flight. Any future hover state on a `.flight` element inherits this hazard.
