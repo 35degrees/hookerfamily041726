@@ -3644,3 +3644,75 @@ made that step a fade competing with its own WAAPI reveal. **The demoted card fl
 already settled in its child seat** — measured α0 at 315ms, and confirmed by restoring the bug on purpose
 before believing the fix. The transitions are now scoped to a focus/settling window and can never be live
 during a flight. Any future hover state on a `.flight` element inherits this hazard.
+
+---
+
+## 32. A SECOND DESCENT — THE PYNCHON LINE AND ITS PRISM (AS BUILT, August 8)
+
+The project has always had one line: Thomas Hooker's. This adds a second — Hon. William Pynchon down to
+Thomas Ruggles Pynchon Jr. and his son Jackson — and the interesting part is not the rainbow, it is what
+shape the membership takes.
+
+### 32.1 A LIST, not a boolean — because the titles are ordered
+
+The obvious design is `classification.is_pynchon_ancestor: true` on the ~20 people. Two things are worth
+recording about why it is not that:
+
+- **The "18,000 false entries" objection is unfounded.** Absent means false; a flag is only ever written
+  where it is true. That is not a reason to avoid one.
+- **A boolean still cannot express the titles.** They are ORDERED — "Twelfth Generation Descendant of
+  William Pynchon" — and a true/false cannot say which generation. A second hand-kept
+  `pynchon_generation` would answer it and then rot: insert a corrected generation mid-line and every
+  number below it is silently wrong, with nothing to catch it.
+
+**An ordered line derived from the parent graph answers both at once.** `scripts/derive-pynchon-line.mjs`
+walks the edges already in canonical and writes `src/lib/data/pynchonLine.ts`. Membership, generation and
+therefore every title fall out of one source; insert a generation and everything below renumbers itself;
+and because it is derived rather than listed it cannot drift from the genealogy it describes. Re-run it
+after any canonical change that touches the line.
+
+It lives in the FRONTEND, not canonical: a background and a title are display concerns, and the
+genealogical facts they are computed from (the parent edges) are already in canonical. No schema change,
+no regenerate, no per-person edits, one file to delete if the feature is ever dropped.
+
+### 32.2 Two sets, and they are not the same people
+
+- **RAINBOW** — the direct line to Thomas plus the mother at each step. 21 people.
+- **TITLE** — the line, plus an explicit `TITLE_ONLY` list of people named individually.
+
+The distinction is Sam's: *"all of the pynchon tree can get these titles but only rainbows in direct line
+to thomas."* Note the trap that phrase hides — walking ALL descendants of the founder returns **955
+people**, the entire American Pynchon tree. "The Pynchon tree" meant the line being curated, not every
+descendant. The generation is still derived for anyone added to `TITLE_ONLY`; only membership is a
+decision.
+
+The rule that settles the spouses is **ancestors of THOMAS, plus Jackson** — which is why Ann Andrew is in
+(she is an ancestor) and Melanie Jackson is out (Jackson's mother, but not Thomas's ancestor). Stated that
+way it decides cases nobody has looked at yet.
+
+### 32.3 The titles are the Hooker line's own words
+
+`generation.ts`'s `buildDescendantLabel` was already line-agnostic — it takes the founder's name and
+derives "Founder of the American <Line> Line", then Son → Grandson → Great-Grandson → Fifth Generation
+Descendant. So the Pynchon line does not get a second convention that could drift from the first; it gets
+the same function. The only shim is a scale offset (our walk counts the founder as 0; that function counts
+a son as 2, per the off-by-one its own comment records), and it is commented where it happens.
+
+The Pynchon label renders purple→magenta through `background-clip: text`, so a card carrying two descents
+separates them without being read. Hooker stays house ink blue.
+
+### 32.4 The prism, and what a chip is not
+
+A photographed spectrum, not CSS. Five CSS attempts preceded it and the failures are recorded in §31.6 and
+in the component; the short version is that a repeating gradient is banding by construction, a linear MASK
+has a straight edge by definition, and blurring an already-smooth gradient only spreads the pigment until
+the card renders white.
+
+**A chip is not a small card.** `cover` at 220×75 crops the source to a horizontal slice of one hue — a
+stripe, the one thing this effect must never be. Chips get their own frame (`200% auto`, off-centre) and
+their own veil. The veil ended up NEAR the card's (0.48 vs 0.45) rather than well above it, which was the
+correction: the crop already mutes the band at chip scale, so protecting the type a second time just
+washed it out.
+
+The fade is a **white veil layer, never `opacity`** — a veil tints the image without touching anything the
+element draws, and has no edge to give away. It is the only dial in both components.

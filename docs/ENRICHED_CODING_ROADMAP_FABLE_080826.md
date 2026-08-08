@@ -3003,3 +3003,40 @@ post-landing flash check that now runs on every gesture.
 
 **Still open:** unchanged from §32.4 — `rowClockMs()` never derives, and the unreproduced flash in the
 grandparent handoff §5. Neither was touched by this work.
+
+---
+
+## 34. AUGUST 8 — THE PYNCHON LINE (design §32)
+
+Shipped: `scripts/derive-pynchon-line.mjs` → `src/lib/data/pynchonLine.ts` (21 rainbow, 23 rows total),
+the prism on hero cards and chips, the descendancy titles via `generation.ts`'s own label builder, the
+purple→magenta label colour, and `scripts/capture-page.mjs` (a deliberately dumb still screenshot — the
+probes measure motion, this exists for questions about colour and layout at rest).
+
+**Asset:** Peter Steiner via Unsplash, free licence. 900×600 q60 = **15KB**, local rather than Cloudinary
+because a CSS background is fetched only where its rule matches. Full reasoning, measurements at three
+sizes, and the rejected Unsplash+ candidate are in `docs/background-sources.md`.
+
+### 34.1 The process failure worth carrying forward
+
+Four consecutive "fixes" to the prism did not render, because each new rule was inserted ABOVE the
+original block and the original — later in source order, same specificity — kept winning. Sam said "you
+didn't change anything again" four times and was right every time, while screenshots were being read for
+differences that were noise.
+
+**The lesson is not about CSS.** When a user reports no change after an edit, verify the edit is the one
+taking effect before interpreting the render. `grep` for a second rule with the same selector. The same
+session had three green probe readings from checks that could not fail (a selector matching a nested
+`.children-slot`, a copy count that ignored effective opacity, an overlap test that only looked at the
+hovered chip) — the shape is identical: a measurement that cannot see the thing it claims to prove.
+
+### 34.2 STILL OPEN
+
+- **William Pynchon's `notable_blurb`** is `"Hon., Hooker descendant"` — a data-entry error in a freeform
+  field, and the subtitle he renders. It is a **Stream A** edit (canonical is frozen in UX work), so it
+  goes through `batch.py`, not a hand edit. It is the reason his card does not yet read "Founder of the
+  American Pynchon Line" — the title IS derived and correct, the stale blurb sits above it.
+- **Ann Andrew's title** — "Wife of William Pynchon and Founder of …". She is a spouse, so she has no
+  derived generation and needs a named case rather than falling out of the walk.
+- Unchanged from §32.4: `rowClockMs()` never derives, and the unreproduced flash in the grandparent
+  handoff §5.
