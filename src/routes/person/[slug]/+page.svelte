@@ -850,30 +850,62 @@
 		if (!dismissTimer) dismissTimer = setTimeout(() => closeTier(), DISMISS_GRACE_MS);
 	}
 
-	/** The grandchild tier's keep-alive region — the same rule as the parents tier's, and it earns its
-	 *  place the same way: ask whether the pointer is still somewhere the tier is ABOUT (the grandchild
-	 *  block, or the child chip that opened it) rather than which edge it left by. Same 300ms grace, so a
-	 *  pointer that clips a corner on its way down to a grandchild never costs anything. */
+	/** THE GRANDCHILD TIER'S KEEP-ALIVE REGION.
+	 *
+	 *  Two things were wrong with the first version, and they had opposite causes.
+	 *
+	 *  IT TESTED THE WRONG BOX. `.grandchild-tier` is the block's LAYOUT rect, and the row inside it is
+	 *  translated by gcRowX so a grandchild sits under the hovered chip — a transform on a child does not
+	 *  move the parent's rect. So for a chip near the centre (shift ≈ 0) the box happened to be right, and
+	 *  for one out at the edge the real chips were outside the box being tested: moving onto a grandchild
+	 *  read as leaving. Sam had it exactly — Nancy worked, Edith did not. It now tests the PAINTED parts
+	 *  (the chips and the connector), whose rects carry every ancestor transform.
+	 *
+	 *  AND IT TREATED ALL EXITS ALIKE. Leaving a chip through its BOTTOM is the one exit that means "I am
+	 *  going to look at those" — it is the direction the tier is in. Every other edge means the opposite,
+	 *  and a 300ms grace on those made a row the user had already dismissed hang around. So: the bottom
+	 *  opens a CORRIDOR down to the row and there is no timer at all in it; any other edge closes at once.
+	 *  (The ancestor tier keeps its grace deliberately — its row sits ABOVE the chip that opened it, with
+	 *  the whole stage between, so there is no single edge that means intent.)
+	 */
+	const CHILD_KEEP_PAD = 20;
 	function onChildTierPointerMove(e: PointerEvent) {
-		if (!focusedChildId) return;
-		const inside = (el: Element | null) => {
-			if (!el) return false;
-			const r = el.getBoundingClientRect();
-			return (
-				e.clientX >= r.left - KEEP_ALIVE_PAD &&
-				e.clientX <= r.right + KEEP_ALIVE_PAD &&
-				e.clientY >= r.top - KEEP_ALIVE_PAD &&
-				e.clientY <= r.bottom + KEEP_ALIVE_PAD
-			);
-		};
-		const tier = document.querySelector('.grandchild-tier');
-		const chip = document.querySelector(`.children-slot > [data-flight-id="${focusedChildId}"]`);
-		if (inside(tier) || inside(chip)) {
-			cancelChildDismiss();
-			return;
+		const id = focusedChildId;
+		if (!id) return;
+		const x = e.clientX;
+		const y = e.clientY;
+		const hit = (r: DOMRect | undefined, pad: number) =>
+			!!r && x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad;
+
+		const chipR = document
+			.querySelector(`.page-container > .children-slot > [data-flight-id="${id}"]`)
+			?.getBoundingClientRect();
+		// Barely any pad on the chip itself: a generous one here is what let a corner exit read as still
+		// hovering (Sam, leaving Nancy through the top-left and finding the row still up).
+		if (hit(chipR, 2)) return;
+
+		const parts = [
+			...document.querySelectorAll('.grandchild-tier .flight, .grandchild-tier .connector')
+		].map((el) => el.getBoundingClientRect());
+		if (parts.some((r) => hit(r, CHILD_KEEP_PAD))) return;
+
+		// THE CORRIDOR — the band between the chip's bottom edge and the bottom of the row, spanning both
+		// the chip's own column and wherever the row actually sits. It has to span both because the row
+		// slides to put a grandchild under the line, so a pointer heading for a chip at the far end of a
+		// wide row would otherwise leave the corridor before it arrived.
+		if (chipR && parts.length) {
+			const left = Math.min(chipR.left, ...parts.map((r) => r.left));
+			const right = Math.max(chipR.right, ...parts.map((r) => r.right));
+			const bottom = Math.max(...parts.map((r) => r.bottom));
+			if (
+				y >= chipR.bottom - 2 &&
+				y <= bottom + CHILD_KEEP_PAD &&
+				x >= left - CHILD_KEEP_PAD &&
+				x <= right + CHILD_KEEP_PAD
+			)
+				return;
 		}
-		if (!childDismissTimer)
-			childDismissTimer = setTimeout(() => closeChildTier(), DISMISS_GRACE_MS);
+		closeChildTier(); // left by any edge that is not the bottom — no grace, no timer
 	}
 
 	/** First name of the hovered parent, for the tier's connector label ("John's parents"). */

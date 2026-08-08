@@ -3601,6 +3601,28 @@ Three attempts, each failing in a way worth keeping:
 | the minimum shift that brings a chip UNDER the line | Landed on a chip's outer EDGE — technically connected, visibly wrong. |
 | the minimum shift that makes CONTACT | Missed by 6px on a wide row, because the line was in the 12px GAP between two chips. Same defect as the far-edge case, so one rule must cover both. |
 
+### 31.5b The keep-alive region must test PAINTED parts, and one edge means intent
+
+Two bugs at once, with opposite causes, and both reported as "it closes when I move onto a grandchild."
+
+**It tested the wrong box.** `.grandchild-tier` is the block's LAYOUT rect; the row inside it is translated
+by gcRowX so a grandchild sits under the hovered chip, and a transform on a CHILD does not move the
+parent's rect. So the region was correct for a chip near the centre (shift ≈ 0) and wrong for one out at
+the edge — the real chips were outside the box being tested. Sam isolated it without the code: Nancy, near
+centre, worked; Edith, out on the right, did not. Test the painted parts (the chips and the connector),
+whose rects carry every ancestor transform.
+
+**And it treated every exit alike.** Leaving a chip through its BOTTOM is the one exit that means "I am
+going to look at those" — it is the direction the tier is in. Every other edge means the opposite, and a
+300ms grace on those left a row the user had already dismissed hanging around, while a generous 24px pad
+made a corner exit read as still hovering. So the bottom opens a CORRIDOR down to the row with no timer in
+it at all, the chip itself gets almost no pad, and any other edge closes at once.
+
+The corridor spans the chip's column UNION the row's, because the row slides to put a grandchild under the
+line and a pointer heading for a chip at the far end of a wide row would otherwise leave the corridor
+before it arrived. **The ancestor tier keeps its grace deliberately** — its row sits above the chip that
+opened it with the whole stage between, so no single edge means intent there.
+
 ### 31.6 A CSS transition on a shared element will collide with a navigation
 
 The chips' fade needs `transition: opacity` on `.children-slot > .flight` — the same elements every

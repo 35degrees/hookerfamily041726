@@ -130,7 +130,7 @@ const rectOf = (sel, re) =>
 // The descendant mirror. It asserts the four things the gesture promises and then asserts that all four
 // are UNDONE on dismissal, because "it comes back" is half the feature and the half nobody tests.
 if (process.argv.includes('--child')) {
-	const kid = await page.evaluate(() => {
+	const kid = await page.evaluate((match) => {
 		const gc = window.__payloadGrandchildren || [];
 		const counts = {};
 		for (const g of gc) counts[g.via_parent_id] = (counts[g.via_parent_id] || 0) + 1;
@@ -143,7 +143,16 @@ if (process.argv.includes('--child')) {
 		const top = Math.min(...[...document.querySelectorAll('.page-container > .children-slot > .flight')]
 			.map((e) => Math.round(e.getBoundingClientRect().top)));
 		const ranked = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-		const best = ranked.find(([id]) => rowOf(id) > top) ?? ranked[0];
+		// A NAMED subject wins over the heuristic. The default (most grandchildren, prefer row 2) picks a
+		// good general case, but a reported bug is usually about ONE person — pass their name as the second
+		// argument and the probe tests them instead of whoever it would have chosen.
+		const named = match
+			? ranked.find(([id]) => {
+					const el = document.querySelector(`.page-container > .children-slot > [data-flight-id="${id}"]`);
+					return el && new RegExp(match, 'i').test(el.textContent || '');
+				})
+			: null;
+		const best = named ?? ranked.find(([id]) => rowOf(id) > top) ?? ranked[0];
 		if (!best) return null;
 		const el = document.querySelector(`.page-container > .children-slot > [data-flight-id="${best[0]}"]`);
 		if (!el) return null;
@@ -151,7 +160,7 @@ if (process.argv.includes('--child')) {
 		return { id: best[0], expected: best[1], cx: r.x + r.width / 2, cy: r.y + r.height / 2, y: Math.round(r.top),
 			x: Math.round(r.left),
 			name: el.textContent.trim().split('\n')[0] };
-	});
+	}, PARENT);
 	if (!kid) { console.log('no child on this page has children of its own'); await browser.close(); process.exit(1); }
 	const before = await page.evaluate(() => ({
 		chips: document.querySelectorAll('.page-container > .children-slot > .flight').length,
@@ -272,6 +281,34 @@ if (process.argv.includes('--child')) {
 		`  ON DISMISS — tier gone ${ok(!back.tier)}  chips ${back.chips}/${before.chips} ${ok(back.chips === before.chips)}  ` +
 			`chip back to y${back.hoveredY} ${ok(back.hoveredY === kid.y)}  connector α${back.connector} ${ok(back.connector > 0.05)}`
 	);
+	// ── CASE 8b: THE TWO EXITS ───────────────────────────────────────────────────────────────────────
+	// Leaving the chip through its BOTTOM means "I am going for those" and must keep the row; leaving by
+	// any other edge means the opposite and must close it at once. Tested on an OFF-CENTRE chip on purpose:
+	// the row slides to sit under it, and the old region tested the tier's untranslated layout box, so
+	// moving onto a grandchild registered as leaving. That is the bug this case exists to keep fixed.
+	await page.mouse.move(kid.cx, kid.cy);
+	await page.waitForTimeout(1150);
+	const gcPoint = await page.evaluate(() => {
+		const g = document.querySelector('.grandchild-tier .flight');
+		if (!g) return null;
+		const r = g.getBoundingClientRect();
+		return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+	});
+	if (gcPoint) {
+		// Straight down and onto a grandchild, in one quick move — the gesture Sam described.
+		await page.mouse.move(gcPoint.x, gcPoint.y);
+		await page.waitForTimeout(280);
+		const stayed = await page.evaluate(() => !!document.querySelector('.grandchild-tier'));
+		console.log(`  EXIT VIA BOTTOM onto a grandchild: tier ${stayed ? 'stayed ✓' : 'CLOSED ✗'}`);
+		// Back onto the chip, then out through its left edge.
+		await page.mouse.move(kid.cx, kid.cy);
+		await page.waitForTimeout(220);
+		await page.mouse.move(kid.x - 60, kid.cy);
+		await page.waitForTimeout(220);
+		const closed = await page.evaluate(() => !document.querySelector('.grandchild-tier'));
+		console.log(`  EXIT VIA LEFT EDGE:                tier ${closed ? 'closed at once ✓' : 'STILL OPEN ✗'}`);
+	}
+
 	// ── CASE 9: PROMOTING A GRANDCHILD (--gcpromote) ─────────────────────────────────────────────────
 	// The descendant mirror of a grandparent promotion, and it asserts one thing the ancestor version
 	// cannot: THE FLOOR MUST NOT MOVE AT ALL. This tier lives below the card, so unlike the grandparent
