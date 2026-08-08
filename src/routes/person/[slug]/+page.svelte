@@ -137,7 +137,12 @@
 	}
 	$effect(() => {
 		f.person.id; // hazard event: the roster changed
-		untrack(() => closeTier()); // never fly with the tier open — see closeTier
+		// Safe HERE, unlike on pointerdown: the click has already been dispatched and its rects captured,
+		// so removing the row cannot move the thing being clicked (that attempt broke both click paths).
+		untrack(() => {
+			tierInstant = true;
+			closeTier();
+		});
 		untrack(armSweep);
 	});
 
@@ -648,6 +653,13 @@
 	let shakeParentId = $state<string | null>(null);
 	let shakeTimer: ReturnType<typeof setTimeout> | null = null;
 	let gpOffsetX = $state(0);
+	// A NAVIGATION REMOVES THE TIER WITH NO ANIMATION. Its close animates margin-top back to −h, i.e.
+	// UPWARD — right for a hover dismissal, badly wrong on a navigation, where the army is marching DOWN.
+	// Measured (probe-tier): the clicked grandparent chip travelled y=105 → y=−14, out of the top of the
+	// window, WHILE the card grew from that same chip — two copies of one person going opposite ways.
+	// Sam: "the whole idea is that a user can follow a person around by the chips … the illusion is
+	// trashed to have multiple of the same card going different directions."
+	let tierInstant = $state(false);
 
 	/** A parent's OWN parents. Matched by id, never by position: the roster drops a parent it has already
 	 *  placed elsewhere, so index 0 is not reliably the father. */
@@ -674,8 +686,14 @@
 		cancelDismiss();
 		revealedParentId = null;
 	}
+	/** A click anywhere while the tier is open means a navigation is about to remove it — so it must
+	 *  leave with no animation. Geometry is untouched, so the click still lands where it was aimed. */
+	function armInstantTierClose() {
+		if (revealedParentId) tierInstant = true;
+	}
 	function onParentEnter(e: PointerEvent, id: string) {
 		clearHoverTimer();
+		tierInstant = false; // a fresh hover animates again
 		if (revealedParentId === id) return;
 		// The element is grabbed HERE, not inside the timer. `e.currentTarget` is only valid during
 		// dispatch — read 1.5s later it is null, which silently left the offset at 0 and centred the tier
@@ -762,7 +780,7 @@
 	function tierPush(node: Element) {
 		const h = (node as HTMLElement).offsetHeight || rowTravel();
 		return {
-			duration: TIER_MS,
+			duration: tierInstant ? 0 : TIER_MS,
 			easing: TIER_CURVE,
 			css: (t: number, u: number) => `margin-top: ${-u * h}px; opacity: ${t};`
 		};
@@ -820,15 +838,25 @@
 <!-- The keep-alive test listens on the WINDOW, not on the stage. On .page-container it simply stopped
      firing once the pointer left the container's box — so moving the mouse right off the stage, the
      clearest "not interested" there is, was the one gesture that could never dismiss the tier. -->
-<svelte:window onpointermove={onStagePointerMove} />
+<!-- The flag is armed on the CLICK, in the capture phase — before warmPersonLinks handles it and long
+     before the navigation effect queues the tier's removal. Setting it inside that effect was too late:
+     Svelte had already created the outro, so the duration it read was the animated one (measured — the
+     chip still flew to y=−14). Arming it here changes no geometry, so the click still lands where the
+     user aimed; it only decides how the row LEAVES. -->
+<svelte:window onpointermove={onStagePointerMove} onclickcapture={armInstantTierClose} />
 
-<div class="page-container" style="--tier-ms: {TIER_MS}ms" use:warmPersonLinks>
+<div
+	class="page-container"
+	class:tier-instant={tierInstant}
+	style="--tier-ms: {TIER_MS}ms"
+	use:warmPersonLinks
+>
 	<!-- THE GRANDPARENT TIER (hover-reveal). In FLOW, deliberately: everything below is pushed down by
 	     this block's own height, which is what makes the stage move as one without a single row being
 	     told to move. Centred on the hovered CHIP via translateX — this tier belongs to one parent, and
 	     a row centred on the stage would claim to be both parents' at once. -->
 	{#if revealedGrandparents.length}
-		<div class="grandparent-tier" style="transform: translateX({gpOffsetX}px)" transition:tierPush>
+		<div class="grandparent-tier" style="transform: translateX({gpOffsetX}px)" in:tierPush out:tierPush>
 			<div class="parents-slot">
 				{#each revealedGrandparents as gp (gp.id)}
 					<div class="flight" animate:flip={{ duration: flipMs }}>
@@ -1327,6 +1355,9 @@
 	   together they sum to a monotonic 145. Run apart, they read as a flinch. */
 	.parents-slot {
 		transition: min-height var(--tier-ms, 420ms) cubic-bezier(0.32, 0, 0.22, 1);
+	}
+	.page-container.tier-instant .parents-slot {
+		transition: none;
 	}
 
 	/* THE HEAD-SHAKE — "no parents to show". Deliberately UNEVEN: three refusals each way at falling
