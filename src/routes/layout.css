@@ -109,9 +109,219 @@ html {
 
 /* The chip shadow lives GLOBALLY rather than in PersonBox, because the flight CLONES `.person-box`
    into travelling ghosts (flight.ts) that are attached outside the component — a Svelte-scoped rule
-   would leave every ghost shadowless mid-flight. */
+   would leave every ghost shadowless mid-flight. The same is true of the line shading below. */
 .person-box {
 	box-shadow: var(--chip-shadow);
+}
+
+/* ── LINE SHADING (Aug 7, experimental) ────────────────────────────────────────────────────────────
+   Thomas Hooker's descendants carry a banana-cream ground; everyone else stays white. This is the
+   first of the line-status shades — spouse, easter egg, orbit and Hartford-founder are still to come,
+   and each will want its own token here.
+
+   Both surfaces read a flag that ALREADY EXISTS in their payloads, so nothing was added to the
+   pipeline: chips take `hd` off the compact row (regenerate-data.js), the featured card takes
+   `classification.is_thomas_descendant` off the full person. Note `hd` is the HOOKER flag —
+   `td` next to it is TALCOTT, which is a different line and must not be shaded with this.
+
+   THE LADDER, and the floor under it. Sam's sheet (fff49c_color_shades.jpg, repo root) row 1, lightest
+   first — the experiment axis, so stepping it is one edit. The numbers are CIELAB DeltaE against a WHITE
+   in-law chip and against the manuscript ground, measured off the rendered page:
+
+       swatch     vs white    vs ground
+       #fffdf2       5.7         3.0   <- tried first, and WRONG for a reason worth keeping
+       #fffcea       9.3         4.6
+       #fefbe2      12.9         7.7   <- the minimum that works
+       #fefada      16.5        11.1   <- SET HERE
+       #fefad2      20.5        15.1
+       #fef9c9      24.6        19.1        ... row continues to #fff5a9 at 38.8 / 33.2
+
+   THE FLOOR IS 6.5, and it is not a matter of taste. The manuscript ground is rgb(249 244 234) — itself
+   a warm off-white — so a plain WHITE chip already separates from it by DeltaE 6.5. The cream is also
+   warm, which means shading moves a card TOWARD the ground's hue, not away from it. At #fffdf2 the
+   separation was 3.0: a shaded descendant read as LESS distinct from the parchment than an unshaded
+   in-law did. Any line shade must therefore clear 6.5 or it makes the card it marks harder to see.
+   Sam: "its so close to parchment, it works better against the parchment solid background you created
+   but not this paper image background" — the flat parchment was cooler and hid the problem.
+
+   This floor applies to EVERY line shade still to come, not just this one, and it moves if the ground
+   image ever changes. Re-measure against the new sheet rather than assuming these numbers hold. */
+:root {
+	/* COOL, NOT CREAM — the pivot, and why it had to happen (Sam, Aug 7: "lets go cooler instead of
+	   lighter"). Four warm creams were tried and each failed the same way, for a reason that is a
+	   property of the GROUND rather than of any swatch:
+
+	       the manuscript ground is Lab L* 96.3, a* -0.0, b* +5.4
+
+	   b* is the blue-yellow axis, and the ground sits WARM on it. Every cream is also warm, so every
+	   cream moves TOWARD the ground; the only way to separate is to travel a long way, which is why
+	   #fefada had to reach DeltaE 16.5 from white to clear the ground at all, and why #fffdf2 (3.0),
+	   #fffef5 (3.4) and hsl(30 38% 92%) (3.3) all sank into the parchment. A cool tint moves AWAY along
+	   the same axis and clears the floor at a QUARTER of the departure from white:
+
+	       #fefada  warm cream    vs white 16.5    vs ground 11.1
+	       this     cool          vs white  4.3    vs ground  7.2
+
+	   Same legibility against an in-law's white card, a quarter as loud. Chosen as the SUBTLEST tint
+	   satisfying all three constraints at once, searched rather than guessed:
+	       >= 6.5 vs the ground  (the floor — see below)
+	       >= 4.0 vs a white in-law card  (or the line does not read)
+	       >= 5.0 vs the CC blade's own pale blue, hsl(223 64% 98%), so the two signals stay distinct.
+	   That last one is why this leans GREEN rather than blue: the blue side of the search collides with
+	   the blade (#f2f5f8 scored a mere 1.8 against it). */
+	/* ── TWO WAYS TO CARRY LINE STATUS, and both are kept ─────────────────────────────────────────
+	   FILL tints the whole card. EDGE draws a rule down its left side. EDGE is what is switched on.
+
+	   Why the fills were abandoned (Sam: "I'm not excited about any of this"): six creams, a mint and a
+	   blue all hit the same wall, and it belongs to the GROUND rather than to any swatch. A large tinted
+	   area on a warm textured photo either shouts or vanishes, with very little room between — warm
+	   creams sank into the parchment (DeltaE 3.0-3.4), and the cool pair that finally cleared it had to
+	   be loud enough that halving it broke three of four guard rails at once (the two tints ended 3.1
+	   apart, blood and married-in nearly indistinguishable).
+	   An edge separates by CONTRAST AT A BOUNDARY instead of by area. It occupies almost no surface, so
+	   it can be saturated and warm without competing with the parchment, and N statuses become N legible
+	   rules rather than N near-identical washes.
+
+	   TO GO BACK TO FILLS: set --hd-bg to var(--hd-tint) and --spouse-bg to var(--spouse-tint). The tints
+	   below are the lightened pair exactly as last seen, kept so nothing has to be re-derived. */
+	/* EVERY CARD'S PAPER (Sam, Aug 7: "make all cards #fffafa"). One value, read by the featured card and
+	   every chip alike, so the base sheet is a single edit. Line status currently adds NOTHING on top —
+	   both status fills point straight back here, which is what makes all cards identical. */
+	/* NO STATUS AT ALL — a true neutral grey (a* 0.0, b* 0.0), so it reads as unclassified rather than as
+	   a faded version of a tint. Everyone whose card carries no line class lands here; Elder William
+	   Goodwin (X02135) is the case that prompted it, once his easter-egg flag came off.
+	   Lightened twice (Sam: "way too dark", then "still too dark"): #efefef -> #f7f7f7 -> here. Past a
+	   point this stops costing anything, which is worth knowing before anyone tunes it again — the grey is
+	   BOXED IN between two neighbours that pull opposite ways, so lightening trades one for the other:
+	       #f7f7f7  vs hooker 3.4  vs mint 4.6  vs blue 2.8
+	       #fcfcfc  vs hooker 2.7  vs mint 4.4  vs blue 3.4   <- here
+	   The worst pair is ~2.8 either way. So take the lightness the eye wants; there is no separation left
+	   to buy by keeping it dark. If the set ever does need pulling apart, move a TINT, not this. */
+	--card-base: #fcfcfc;
+	/* WHAT GETS MARKED, and it is the inverse of the first attempt: the BLOODLINE is now the plain paper
+	   and only the people who came into the family from outside carry a tint. That reads better because
+	   descendants are the overwhelming majority — marking them tinted almost every card on the page,
+	   which is no signal at all.
+	       spouse      mint         married into the line
+	       easter egg  light blue   wins over mint where a person is both, which is the usual case
+	       descendant  --card-base  no tint; blood is simply the paper
+	   These are the ORIGINAL mint and blue (Sam), not the 50%-lightened pair — those are kept below as
+	   --hd-tint / --spouse-tint in case the lighter reading is wanted again. */
+	--hd-tint: #f2fafc;
+	--spouse-tint: #f6fefb;
+	--hd-bg: #fffdf8; /* HOOKER DESCENDANT — rgb(255 253 248), a warm near-white */
+	/* Mint and blue at 40% LESS INTENSITY than the originals — each mixed 40% toward white, which weakens
+	   the tint without darkening it (Sam: "they are still too bold and bright colors. not darker"):
+	       #edfdf7 -> #f4fefa -> #f6fefb      #e6f4f9 -> #f0f8fb -> #f2f9fc
+	   (the second arrow is a further 15% toward white, Aug 7)
+	   Two readings of "reduce brightness" were built and rejected first, recorded so neither is retried:
+	     HSB brightness x0.6  -> #8e9894 / #8a9295, mid grey-greens; a different design language entirely.
+	     40% further FROM white -> #e6fcf4 / #dcf0f7, deeper pastels; still read as too bold. */
+	/* A BOLDEN THAT WAS WOUND ALMOST ALL THE WAY BACK, and the reason is worth keeping: taking 8 points
+	   of HSL lightness off these (98% -> 90%) multiplied their CHROMA by 3.5-5x — mint's max-min channel
+	   spread went 8 -> 41. At L* 98 a tint is compressed hard against white, so lightness and saturation
+	   stop being independent and a small lightness move releases a great deal of colour. Sam: "way too
+	   much change… get it back to where it was by 90%", so only a tenth of that step survives:
+	       #f6fefb -> #d1faeb -> #f2fef9 -> #f3fefa      #f2f9fc -> #d1eaf4 -> #eff7fb -> #f1f8fb
+	   i.e. -0.8 points of lightness rather than -8. Move this in FRACTIONS of a point down here. */
+	--spouse-bg: #f3fefa;
+	--ee-bg: #f1f8fb;
+
+	/* THE SPINE. Saturated on purpose — a 4px rule has almost no area, so it needs chroma to read at all,
+	   which is the exact opposite of the constraint a fill lives under. Gold for the bloodline (the
+	   Notable People button already establishes gold as this app's accent), a muted teal for married-in:
+	   different in HUE as well as lightness, so they stay apart for colour-blind viewers too. */
+	/* REVERTED, NOT REMOVED (Sam: "don't delete that but definitely lets revert"). --edge-w is the whole
+	   switch: at 0 the rule occupies nothing and paints nothing, and the machinery below stays intact.
+	   Set it back to 4px to bring the spine straight back — 3px reads quieter, 6px starts to look like a
+	   tab. The colours are left exactly as they were tuned. */
+	--hd-edge: hsl(43, 68%, 48%);
+	--spouse-edge: hsl(172, 42%, 44%);
+	--edge-w: 0px;
+}
+/* --card-bg IS THE CARD'S SURFACE, and every fill inside a card must read it rather than hard-coding
+   white. The burial pin in RightColumn paints two masking layers behind its text — the intent, in its
+   own comment, was always "a solid card-bg fill", but it was WRITTEN as bg-white because the card had
+   only ever been white. The moment the card went cream those masks appeared as a white rectangle in the
+   bottom-right corner (Sam spotted it). Routing them through this token means the next line shade —
+   spouse, easter egg, orbit, Hartford founder — cannot reintroduce that bug. */
+.featured-card,
+.person-box {
+	--card-bg: var(--card-base);
+	/* --card-fill is what an OPAQUE fill inside the card must use. It is the same as --card-bg whenever
+	   the card is opaque, and only diverges when --card-bg is TRANSLUCENT: a mask painting a 50% colour
+	   on top of a 50% card composites to ~75%, so the masked patch reads LIGHTER than its surroundings
+	   (measured during the reverted translucency experiment: card body rgb(238 229 217) against a burial
+	   patch of rgb(244 236 221)). While every card stays opaque this simply tracks --card-bg and costs
+	   nothing; it exists so a future translucent skin has somewhere correct to put an opaque stand-in
+	   instead of reintroducing hard-coded white. */
+	--card-fill: var(--card-bg);
+	background: var(--card-bg);
+}
+/* SPOUSE FIRST, HOOKER SECOND, and the order is load-bearing: both selectors are (0,2,0), so source
+   order is what decides a person who is BOTH a descendant and married to one — cousin marriages are not
+   rare in this family. Blood should win over marriage, so the hooker rule comes last. The same ordering
+   governs --line-edge below, for the same reason. */
+.featured-card.spouse-line,
+.person-box.spouse-line {
+	--card-bg: var(--spouse-bg);
+	--line-edge: var(--spouse-edge);
+}
+.featured-card.hooker-line,
+.person-box.hooker-line {
+	--card-bg: var(--hd-bg);
+	--line-edge: var(--hd-edge);
+}
+/* EASTER EGG LAST, so it wins over mint for someone who is both. Ordering is the whole mechanism — all
+   three selectors are (0,2,0).
+   THE CLASS IS `ee` ALONE — every one of the 557 easter eggs in canonical, not a subset. A pass that
+   required `ee && sp` (easter egg AND married into the line) was tried on the word "inlaws" and cut the
+   set to 88, which dropped obvious eggs like Richard and Anne Ferrar Garbrand (X00003/X00004). Sam:
+   "there are not only 88 easter eggs so lets do the reverse." The flag alone is the category.
+   Nothing here filters by line, so an easter egg who never married in — Elder William Goodwin (X02135)
+   married Susanna Garbrand Hooker, THOMAS'S OWN WIFE, so his spouse is not a descendant — is shaded too.
+   Sam is correcting those in the data one by one; this rule deliberately does not second-guess the flag. */
+.featured-card.ee-line,
+.person-box.ee-line {
+	--card-bg: var(--ee-bg);
+}
+
+/* THE DESCENT LINE ("Founder of the American Hooker Line", "Daughter of Thomas Hooker") in gold, and
+   ONLY on a bloodline card. Non-descendants get descent lines too — an in-law's reads "Wife of Hooker
+   Descendant" — and those keep the ordinary ink, so the gold means specifically "this person IS the
+   line". Scoped under .hooker-line, which is exactly that claim.
+   All three of the label's render branches (merged cousin-marriage, dual-descent, ordinary) carry the
+   .descent-line hook, so the colour cannot apply to two of the three and silently miss the rare one. */
+.featured-card.hooker-line .descent-line {
+	color: #827400;
+}
+
+/* THE SPINE ITSELF. Drawn as a pseudo-element rather than a border, for two reasons:
+     - a border-left would take part in LAYOUT and shove every chip's portrait 4px right;
+     - a chip's left edge IS its portrait, and an inset box-shadow paints beneath child content, so it
+       would be hidden by the photo. An absolutely-positioned ::after paints above non-positioned
+       children, so the rule lands ON the portrait's edge and reads like the spine of a book.
+   Clipped by the parent's own rounding/clip-path, so it follows the card's carved silhouette for free.
+   Only elements carrying a line class get one — the guard is `--line-edge` being set at all. */
+.featured-card,
+.person-box {
+	position: relative;
+}
+.featured-card.hooker-line::after,
+.featured-card.spouse-line::after,
+.person-box.hooker-line::after,
+.person-box.spouse-line::after,
+.featured-card.ee-line::after,
+.person-box.ee-line::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: var(--edge-w);
+	background: var(--line-edge);
+	z-index: 1;
+	pointer-events: none;
 }
 a.person-box:hover {
 	box-shadow: var(--chip-shadow-hover);

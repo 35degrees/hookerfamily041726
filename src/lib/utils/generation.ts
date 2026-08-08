@@ -40,7 +40,12 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 		return ['Founder of the American Hooker Line'];
 	}
 	if (person.id === 'I00001') {
-		return ['Founder of the American Hooker Line'];
+		// Susanna Garbrand Hooker. She used to return the IDENTICAL string to H00001 above, which read as
+		// though the card had simply copied her husband's label. Both halves are true and the order is the
+		// point: she enters the story as his wife, and she is equally a founder of the line. The ' & ' is
+		// also load-bearing — FeaturedCard routes a label containing it through the shrink-to-fit branch,
+		// so this stays on one line instead of wrapping the header to four.
+		return ['Wife of Thomas Hooker & Founder of the American Hooker Line'];
 	}
 	if (person.id === 'T00011') {
 		// The Talcott progenitor (gen 0). Was hardcoded as T00010, which no longer exists (merged
@@ -253,21 +258,78 @@ function computeSpouseLabel(person: Person, byId: Record<string, Person>): strin
 		const spouse = byId[marriage.spouse_id];
 		if (!spouse) continue;
 
-		const descendantShort = getDescendantOrdinalShort(spouse);
+		// The spouse is usually blood, and that is the whole label. When they are NOT, they may still
+		// anchor the person to the line through a marriage of their OWN — which is how the step-figures
+		// get a title (see getSpouseChainShort). Blood first; the chain only as a fallback.
+		const descendantShort =
+			getDescendantOrdinalShort(spouse) ?? getSpouseChainShort(spouse, byId, person.id);
 		if (!descendantShort) continue;
 
 		const spouseMarriageOfThis = findMarriageNumber(spouse, person.id);
 		const spouseTotalMarriages = (spouse.marriages || []).length;
 		const relationshipWord = getRelationshipWord(genderOf(person));
 
+		// ordinalWord, not ordinalShort: "Second Husband of", never "2nd Husband of" (Sam, Aug 7).
+		// ordinalShort is left in place — nothing else calls it today, but it is the digit form and
+		// deleting it would take the choice away from whoever wants it back.
 		const prefix =
 			spouseTotalMarriages > 1 && spouseMarriageOfThis
-				? `${ordinalShort(spouseMarriageOfThis)} ${relationshipWord} of`
+				? `${ordinalWord(spouseMarriageOfThis)} ${relationshipWord} of`
 				: `${relationshipWord} of`;
 
 		return `${prefix} ${descendantShort}`;
 	}
 	return null;
+}
+
+/**
+ * ONE HOP FURTHER OUT — the phrase for someone who is not blood themselves, but who married blood.
+ * Returns "Wife of Thomas Hooker", "Husband of Daughter of Thomas Hooker", and so on.
+ *
+ * This is what lets a step-figure derive a title instead of showing none:
+ *   Elder William Goodwin  -> married Susanna Garbrand Hooker (her 2nd marriage), who was Thomas
+ *                             Hooker's wife            => "Second Husband of Wife of Thomas Hooker"
+ *   Margaret Borodale      -> married Rev. Thomas Shepard (his 3rd marriage), who had married
+ *                             Joanna Hooker Shepard    => "Third Wife of Husband of Daughter of
+ *                             Thomas Hooker"
+ * Both were previously blank: neither is a descendant, and neither is married to one.
+ *
+ * THREE THINGS KEEP THIS FROM RUNNING AWAY:
+ *  - It is exactly ONE hop. It calls the blood-only lookup, never itself, so a chain of remarriages
+ *    cannot compound into "Wife of Husband of Wife of ...".
+ *  - `excludeId` drops the marriage we arrived through, so a two-person couple cannot describe each
+ *    other in a circle.
+ *  - The INNER phrase carries no marriage ordinal. "Third Wife of Husband of Daughter of Thomas
+ *    Hooker" is already long; "Third Wife of Second Husband of Daughter of..." is unreadable, and the
+ *    ordinal that matters is the one attaching THIS person.
+ */
+function getSpouseChainShort(
+	person: Person,
+	byId: Record<string, Person>,
+	excludeId?: string
+): string | null {
+	for (const marriage of person.marriages || []) {
+		if (!marriage.spouse_id || marriage.spouse_id === excludeId) continue;
+		const spouse = byId[marriage.spouse_id];
+		if (!spouse) continue;
+		const anchor = getDescendantAnchor(spouse);
+		if (!anchor) continue;
+		const word = getRelationshipWord(genderOf(person));
+		if (!word) continue;
+		return `${word} of ${anchor}`;
+	}
+	return null;
+}
+
+/**
+ * The blood phrase to hang a chain off. Identical to getDescendantOrdinalShort except at the very
+ * top of the tree: Thomas is generation 1, where that function emits "First Generation Hooker" —
+ * true, but nobody says "Wife of First Generation Hooker". At the founder we want his NAME.
+ */
+function getDescendantAnchor(person: Person): string | null {
+	const cls = person.classification;
+	if (cls.is_thomas_descendant && cls.generation_from_thomas === 1) return 'Thomas Hooker';
+	return getDescendantOrdinalShort(person);
 }
 
 function computeInLawLabel(person: Person, byId: Record<string, Person>): string | null {

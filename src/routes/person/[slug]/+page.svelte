@@ -782,6 +782,7 @@
 					spouses={cur.neighborhood.spouses}
 					generationLabels={cur.generationLabels}
 					burialCemetery={cur.burialCemetery}
+					marriedIn={cur.neighborhood.focus?.sp === true}
 					crossConnections={cur.crossConnections}
 					institutionsById={cur.institutionsById}
 					onbladeheight={(h) => onBladeHeight(cur.person.id, h)}

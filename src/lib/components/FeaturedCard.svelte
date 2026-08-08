@@ -31,6 +31,10 @@
 		spouses: SpouseEntry[];
 		generationLabels?: string[];
 		burialCemetery?: Cemetery | null;
+		/** MARRIED INTO the Hooker line — the compact's derived `sp`. Passed in rather than read off
+		 *  person.classification because is_thomas_spouse there is only ~22% populated; see
+		 *  marriedIntoLine in regenerate-data.js. */
+		marriedIn?: boolean;
 		crossConnections?: Array<{
 			type: string;
 			related_id: string;
@@ -58,6 +62,7 @@
 		spouses,
 		generationLabels = [],
 		burialCemetery = null,
+		marriedIn = false,
 		crossConnections = [],
 		institutionsById = {},
 		onbladeheight,
@@ -359,6 +364,9 @@
 	     No fixed height here — it grows naturally to fit card-top (CARD_TOP_H) + footer (auto). -->
 	<article
 		class="featured-card relative w-full bg-white"
+		class:hooker-line={person.classification?.is_thomas_descendant}
+		class:spouse-line={marriedIn}
+		class:ee-line={person.classification?.is_easter_egg}
 		style="clip-path: {clipPath}; --flat-shape: {flatShape};"
 	>
 		<!-- Fixed-height TOP region: header + content area, always exactly CARD_TOP_H tall.
@@ -411,7 +419,7 @@
 								<!-- Merged cousin-marriage line: full-size, shrink-to-fit so a long
 								     "…Hooker Descendant & Wife of Hooker Descendant" stays one line. -->
 								<div
-									class="min-w-0 text-sm leading-tight font-medium text-inkblue"
+									class="descent-line min-w-0 text-sm leading-tight font-medium text-inkblue"
 									use:shrinkToFit={{ max: 14, min: 10, key: label }}
 								>
 									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
@@ -419,10 +427,10 @@
 							{:else if generationLabels.length >= 2}
 								<!-- Dual-descent (Hooker + Talcott) line: ~5% smaller, STATIC.
 								     Rare; this guards the 4-line header height. -->
-								<div class="text-[13px] leading-tight font-medium text-inkblue">{label}</div>
+								<div class="descent-line text-[13px] leading-tight font-medium text-inkblue">{label}</div>
 							{:else}
 								<!-- Ordinary single descent / spouse-only / in-law line: default size. -->
-								<div class="text-sm leading-tight font-medium text-inkblue">{label}</div>
+								<div class="descent-line text-sm leading-tight font-medium text-inkblue">{label}</div>
 							{/if}
 						{/each}
 					{/if}

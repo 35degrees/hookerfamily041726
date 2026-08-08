@@ -145,6 +145,9 @@
 		class="person-box flex overflow-hidden rounded-lg bg-white transition-shadow {boxSize} {dimmed
 			? 'opacity-65'
 			: ''}"
+		class:hooker-line={person.hd}
+		class:spouse-line={person.sp}
+		class:ee-line={person.ee}
 		data-relation={relation}
 	>
 		<div class="photo aspect-square shrink-0 bg-stone-100 {photoW}">
@@ -193,6 +196,9 @@
 		class="person-box flex overflow-hidden rounded-lg bg-white {boxSize} {dimmed
 			? 'opacity-65'
 			: ''}"
+		class:hooker-line={person.hd}
+		class:spouse-line={person.sp}
+		class:ee-line={person.ee}
 		data-relation={relation}
 	>
 		<div class="photo h-full shrink-0 bg-stone-100 {photoW}">

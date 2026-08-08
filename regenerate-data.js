@@ -47,6 +47,16 @@ let tableCoords = new Map();
 // link to a page that was never written. It is the ONE place the emit path does not self-degrade.
 let hiddenIds = new Set();
 
+// Ids that MARRIED INTO the Hooker line — set in main(), module-level for the same reason as hiddenIds
+// (compact() needs it and has no access to byId).
+//
+// DERIVED, not read off canonical. `classification.is_thomas_spouse` exists but is only ~22% covered:
+// 1,700 records carry it true while the key is absent on 11,830, and both of JP Morgan's wives are in
+// that gap — shading from it directly would tint a scattered minority of spouses and look like a bug.
+// The honest definition is structural and complete: NOT a Thomas descendant, and married to someone who
+// IS. That is exactly the "married in" category, and it needs no data edit to be right.
+let marriedIntoLine = new Set();
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // ---------------------------------------------------------------------------
@@ -294,6 +304,13 @@ function compact(p, slugMap) {
 		hd: Boolean(c.is_thomas_descendant),
 		td: Boolean(c.is_talcott_descendant),
 		ee: Boolean(c.is_easter_egg),
+		// sp — MARRIED INTO the Hooker line. Added Aug 7 for line-status shading, where it has to be an
+		// intrinsic property of the PERSON rather than the relation a chip happens to occupy: shading off
+		// data-relation="spouse" would tint the two spouse chips and then show a WHITE card the moment you
+		// clicked one, because a card holds no relation to itself. It also leaves a married-in parent
+		// (Junius Morgan, on his son's page) reading as blood when he is the clearest married-in case
+		// on that page. See marriedIntoLine for why this is derived rather than read off classification.
+		sp: marriedIntoLine.has(p.id),
 		g: c.generation_from_thomas ?? null,
 		// p (photo) + sn (short name) baked in so a chip renders WITHOUT its full record in context — enrich()
 		// prefers these (`compact.p ?? …`, `compact.sn ?? …`), so it no-ops when they're present. This is what
@@ -521,6 +538,14 @@ function contextIds(p, byId) {
 	};
 	for (const m of p.marriages || []) {
 		add(m.spouse_id);
+		// A SPOUSE'S OTHER SPOUSES. One extra hop, and the only reason for it is the generation label:
+		// computeGenerationLabels derives a step-figure's title through the person they married — Elder
+		// William Goodwin is "Second Husband of Wife of Thomas Hooker" only because Susanna's FIRST
+		// husband was Thomas. That anchor is two hops from Goodwin, so without this his context held just
+		// himself and Susanna, the lookup missed, and his card showed no title at all.
+		// Cheap: it fires only for people whose spouse remarried, and adds at most a record or two.
+		const sp = m.spouse_id && byId[m.spouse_id];
+		if (sp) for (const sm of sp.marriages || []) add(sm.spouse_id);
 		for (const cid of m.children_ids || []) {
 			add(cid);
 			const child = byId[cid];
@@ -1077,7 +1102,22 @@ function main() {
 	hiddenIds = new Set(people.filter((p) => (p.classification || {}).hidden).map((p) => p.id));
 	const visible = people.filter((p) => !hiddenIds.has(p.id));
 	const byId = Object.fromEntries(visible.map((p) => [p.id, p]));
+	marriedIntoLine = new Set(
+		visible
+			.filter((p) => {
+				if ((p.classification || {}).is_thomas_descendant === true) return false; // blood wins
+				return (p.marriages || []).some(
+					(m) =>
+						m &&
+						m.spouse_id &&
+						byId[m.spouse_id] &&
+						(byId[m.spouse_id].classification || {}).is_thomas_descendant === true
+				);
+			})
+			.map((p) => p.id)
+	);
 	log(`  ${people.length} people (${visible.length} visible, ${hiddenIds.size} hidden)`);
+	log(`  ${marriedIntoLine.size} married into the Hooker line (derived; see marriedIntoLine)`);
 
 	// Table coordinates (Phase 3a Block 1) — derived at emit time, one seat per person. Set the
 	// module-level map so compact() emits `t` on every payload; the aggregates (table-index +

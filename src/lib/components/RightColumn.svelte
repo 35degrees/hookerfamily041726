@@ -404,7 +404,7 @@
 		>
 			<!-- Fade backdrop (interim mask, pending the content sweep): when a column overflows, the
 			     scroll group rests at the top and real rows sit under this always-on pin, colliding with
-			     the burial text. These two purely-visual layers mask that: a solid card-bg fill behind the
+			     the burial text. These two purely-visual layers mask that: a solid --card-fill behind the
 			     text, and an ~18px gradient strip just above it so the last row dissolves into the card
 			     rather than being hard-cut. Confined to the column width via left-[48px] (offsetting the
 			     section's -48px overhang) so it NEVER paints over the narrative column. These paint above
@@ -412,11 +412,11 @@
 			     backdrops are positioned, so an in-flow text sibling would otherwise be painted over).
 			     aria-hidden + pointer-events-none: no click interception, no reader noise. No geometry/reserve change. -->
 			<div
-				class="pointer-events-none absolute top-[-18px] right-0 left-[48px] h-[18px] bg-gradient-to-b from-transparent to-white"
+				class="pointer-events-none absolute top-[-18px] right-0 left-[48px] h-[18px] bg-gradient-to-b from-transparent to-[var(--card-fill,#fff)]"
 				aria-hidden="true"
 			></div>
 			<div
-				class="pointer-events-none absolute inset-y-0 right-0 left-[48px] bg-white"
+				class="pointer-events-none absolute inset-y-0 right-0 left-[48px] bg-[var(--card-fill,#fff)]"
 				aria-hidden="true"
 			></div>
 			<div

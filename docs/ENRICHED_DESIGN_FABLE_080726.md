@@ -17,6 +17,8 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The 080426 edition (August 4) adds §26 — THE SIBLING PANEL AS A PERSISTENT COLUMN (as built; SUPERSEDES §21.1 wherever they differ). §21 described the panel as a transient drop-down; this is the panel as a FIXTURE that travels with the card, and almost every finding in it is the same shape: what changed is not the pixels but the panel's LIFETIME. It records the in-place mutation model, the durable rule that a seat in a MOVING container is a resting position rather than a live rect (third instance of the §18.9 family), the SHAPE-EARLY-THEN-SLIDE finding (direction is read from what changes LAST), the way-station rule for a different-tier landing (§18.4's second instance), the RECIPROCAL-GATE rule earned on Alice Lee Roosevelt and 57 other one-way doors, open-by-default, the fixed anchor, the chevron/alpha-hover header, the leaver's-alpha doctrine extending §17 — and §26.12, the NEGATIVE SPACE: four things built and reverted (including one documented-invariant violation) plus two measurement failures that produced confident false greens.**
 
+**The 080726 edition (August 7) adds §29 — THE COLOUR SYSTEM (as built): shadows, line-status shading, and the ground that governs them. Everything in it was measured against ONE background, the photographed manuscript parchment, and every number is a property of the PAIR (colour, ground) rather than of the colour — a second sheet moves all of them, so re-measure rather than porting hexes. Leads with the measurement that explains the whole session (the ground is Lab L* 96.3 / a* -0.0 / b* +5.4, i.e. WARM, so every cream moves toward it, and a plain white card already separates by DeltaE 6.5 — the floor below which shading makes a card LESS visible than leaving it alone). Records all ten values Sam rejected with his verdicts and their measurements, the two pivots that worked (cool rather than cream; mark the outsiders rather than the line), why translucency is not an option for a card (it shows its own drop-shadow through itself, and inner masks double-composite), the near-white compression trap, why alpha is not transferable between tints, source order as the precedence rule, and §29.10 — the SPINE, an edge treatment built and left dormant at `--edge-w: 0px` because an edge separates by contrast at a boundary rather than by area.**
+
 **The 080626 edition (August 6) adds §27 — THE CROSS-CONNECTIONS BLADE (as built). The cross-connections leave the featured card's FOOTER and become a carved blade that lives INSIDE the card and is drawn out of it — which makes every card exactly `CARD_TOP_H` tall, the footer having been the only thing that ever varied it. Records the ONE idea that fixed everything else (it is a tool inside the case, not a neighbour: nested, it inherits every transform for free, measured at 0.00px drift, and needs neither an opacity gate nor a shadow of its own), the carved edge's geometry and THE BULGE at 7+ rows (a corner rounded along a slant that had been flattened to vertical, plus the depth cap that should have been deleted with the layout it was built for), the SHEATH and its tang, the CLAMP reasoning end to end (10.8–11.5, why the floor is the dial that matters, and the retired "two 70-character CCs" spec that set the original 10px), type and width as SEARCHES on the real DOM rather than chosen values, the three break rules (bound names, bound years, and the `<wbr/>` after each separator that was the largest single win), and §27.9 — BUILT AND REVERTED, headed by the two-column layout that was deleted rather than patched, with the full downstream chain of every "fix" that followed the first wrong move. §27.10 collects seven measurement failures, each of which produced a confident wrong answer.**
 
 **The same 080626 edition also adds §28 — THE FEATURED CARD'S FIXED GEOMETRY AND TYPE (as built), the card-surface work that ran alongside the blade and is easy to mistake for cosmetics. Two of its constants are now structural (`CARD_TOP_H` is exact for every person and `CORNER_R` is exported, because the blade is carved with the card's own radius — `DeckRiffle` imports rather than duplicating). It records the REVERSED header rule (a fixed header row buys a constant lower-content start and pays with a variable gap; the old auto-sizing rule swung the content start 23px between a blurb card and a no-blurb one), the durable face-swap rule (apparent size is CAP HEIGHT, not px — Outfit at 26 reads as exactly the size Inter read at 24), one ink at different strengths with ALPHA rather than a second colour token (so it composes with the died-young dimming), age-at-death's honesty rule including when it returns null rather than a number it cannot stand behind, and §28.6 — what was tried and returned from, Carlito included.**
@@ -24,7 +26,7 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_080626.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_080726.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
@@ -3236,3 +3238,182 @@ appearance of the same family — §27.3 records travel being expressed as a
 percentage because a pixel measurement read a scaled rect, and §27.4 records the
 type search reading a 17px box against a final 132px. A layout value must be a
 fact about the PERSON, never about the route taken to them.
+
+---
+
+## 29. THE COLOUR SYSTEM — SHADOWS, LINE-STATUS SHADING, AND THE GROUND THAT GOVERNS THEM (AS BUILT, August 7)
+
+**Everything in this section was measured against ONE background: the photographed manuscript
+parchment (`paper-manuscript-*.webp`, design §—/`docs/background-sources.md`).** No second sheet
+existed yet. Sam intends to buy another once he has lived with this one, and **every number below is a
+property of the pair (colour, ground) rather than of the colour** — a new sheet moves all of them.
+Re-measure; do not port the hexes.
+
+### 29.1 The one measurement that explains the whole session
+
+```
+manuscript ground = rgb(249, 244, 234)  =  Lab  L* 96.3   a* -0.0   b* +5.4
+```
+
+`b*` is the blue–yellow axis and the ground sits **warm** on it. Two consequences drove every
+decision that follows:
+
+1. **Every cream moves TOWARD the ground.** A cream is warm by definition, so tinting a card cream
+   reduces its distance from the parchment. This is why six of them failed.
+2. **A plain WHITE card already separates from the ground by ΔE 6.5.** That is the floor. Any status
+   colour below 6.5 makes the card it marks *less* visible than leaving it alone — a perverse result,
+   and the single most useful number to keep.
+
+### 29.2 The colours Sam rejected, in order, and why
+
+| # | value | Sam's verdict | measured |
+|---|---|---|---|
+| 1 | `#fffdf2` banana cream, lightest of his sheet | "so close to parchment… works better against the parchment solid background you created but not this paper image background" | ΔE **3.0** vs ground — under the floor |
+| 2 | `#fefada` (4 rungs down the same row) | rejected alongside the burial bug | 11.1 — cleared the floor but read loud |
+| 3 | `hsl(30, 38%, 92%)` | "not working either" | 3.3 — failed the *opposite* way: darker than the ground, same hue |
+| 4 | `#fffcea` @ 50% **opacity** | "something went very wrong" | see §29.5 — translucency broke two things |
+| 5 | `#fffef5` (= `#fffcea` at 50% intensity) | — | 3.4, i.e. back on rejection #1 |
+| 6 | cool pair `hsl(195 62% 94%)` / `hsl(160 78% 96%)` | "too rich and dark" | cleared everything, but loud |
+| 7 | `#8e9894` / `#8a9295` (HSB brightness ×0.6) | never shown — built, looked at, discarded | mid grey-greens; a different design language |
+| 8 | `#e6fcf4` / `#dcf0f7` (40% deeper) | "still too bold and bright" | — |
+| 9 | `#d1faeb` / `#d1eaf4` (8 pts bolder) | "way too much change… back by 90%" | see §29.6 |
+| 10 | grey `#efefef`, then `#f7f7f7` | "way too dark", then "still too dark" | landed at `#fcfcfc` |
+
+**The through-line:** attempts 1, 3 and 5 all died at ΔE ~3 against the ground. That is not three
+unlucky swatches; it is the same wall three times, and §29.1 is the reason.
+
+### 29.3 What actually worked — and the two pivots that got there
+
+**PIVOT ONE — cool, not cream.** A cool tint moves *away* along `b*` and clears the floor at a quarter
+of the departure from white:
+
+```
+#fefada  warm cream    vs white 16.5    vs ground 11.1
+cool tint              vs white  4.3    vs ground  7.2     same legibility, a quarter as loud
+```
+
+Sam: *"lets go cooler instead of lighter."* Search, don't guess — the winning tint was found by
+sweeping HSL space against **three** simultaneous constraints (≥6.5 vs ground, ≥4.0 vs a white card,
+≥5.0 vs the CC blade's own pale blue). That third one is why the palette leans **green-side**: the blue
+side collides with the blade (`#f2f5f8` scored **1.8** against it — two different signals reading as
+one surface).
+
+**PIVOT TWO — mark the outsiders, not the line.** The first build tinted Hooker descendants. They are
+the overwhelming majority, so nearly every card on the page went coloured — no signal at all. Inverting
+it (bloodline ≈ the paper; spouses and easter eggs tinted) is what finally read.
+
+### 29.4 The shipped palette
+
+```
+Hooker descendant   #fffdf8   warm near-white   + descent line #827400 (see 29.8)
+spouse / married-in #f3fefa   mint
+easter egg          #f1f8fb   light blue
+no status           #fcfcfc   true neutral grey (a* 0.0, b* 0.0)
+shadow ink          rose400 hsl(7 20% 60%) @ 0.38 / 0.30
+CC blade paper      hsl(223 64% 98%)
+```
+
+Note the endpoint: `#fffdf8` sits **ΔE 3.0 from `#fffdf2`**, the very first swatch Sam tried and
+rejected — the same instinct, 3 points less yellow, which is exactly the amount that was drowning it.
+
+### 29.5 Translucency is not an option for a card (built, reverted)
+
+`#fffcea` at 50% **opacity** was tried. Two things broke, both structural rather than tunable:
+
+1. **A translucent card shows its OWN drop-shadow through itself.** `filter: drop-shadow()` builds the
+   shadow from the element's alpha silhouette and composites it behind; at 50% alpha you see half of it
+   through the card. The body rendered **13 points darker** than plain compositing predicts — so the
+   colour on screen was never the colour specified.
+2. **Any opaque mask inside the card double-composites.** The burial pin paints a fill behind its text;
+   against a 50% card the two layers reach ~75% and the patch reads lighter (measured: card body
+   `rgb(238 229 217)` vs burial patch `rgb(244 236 221)`).
+
+If translucency is ever wanted, the tint must go on a layer ABOVE an opaque base, or the shadow must
+come off the wrap. `--card-fill` exists for exactly this and currently just tracks `--card-bg`.
+
+### 29.6 The near-white compression trap — the best tip in this section
+
+Down at L\* 98 a tint is squeezed against white and has almost no chroma. Lightness and saturation stop
+being independent, so **a small lightness move releases a great deal of colour**:
+
+```
+              before         chroma      after          chroma    ×
+mint    (246, 254, 251)         8    (209, 250, 235)      41    5.1
+blue    (242, 249, 252)        10    (209, 234, 244)      35    3.5
+```
+
+Eight points of HSL lightness multiplied the colour by 3.5–5×. Sam: *"way too much change… get it back
+by 90%"* — the value he actually wanted was **0.8 of a point**. **Up here, move these in fractions of a
+point.**
+
+### 29.7 Alpha is not transferable between tints
+
+The same trap in the shadow system. How dark a shadow reads depends on the DISTANCE from ink to ground,
+so an alpha means something different for every colour. Measured as luminance drop in the 6px band
+under a chip, ground ~247:
+
+```
+black    @ 0.10  (the pre-Aug-7 shadow) ...... Δ 4.9
+rose300  @ 0.10  (l 72%) ..................... Δ 4.8   <- a 3.2x BIGGER shadow, not one shade darker
+rose300  @ 0.38 .............................. Δ16.6
+rose400  @ 0.38  (l 60%) ..................... Δ25.0   <- shipped
+rose500  @ 0.38  (l 44%) ..................... Δ34.3
+rose500  @ 0.50 .............................. Δ44.8   ("too much")
+rose500  @ 0.90 .............................. Δ77.6
+```
+
+Row 2 is the trap in one line: at black's own alpha, a rose shadow **3.2× larger** is not one shade
+darker — the size increase is cancelled exactly by the lighter ink. **Read the Δ column, never the
+alpha, when comparing two tints.**
+
+### 29.8 The descent line in gold, scoped to the bloodline
+
+"Founder of the American Hooker Line" / "Eighth Generation Descendant of Thomas Hooker" render in
+`#827400`, scoped under `.hooker-line`. Non-descendants get descent lines too — an in-law's reads "Wife
+of Hooker Descendant" — and those keep the ordinary ink, so the gold means specifically **this person
+IS the line**. Walked `#bba600` → `#594f00` → `#827400`.
+
+All three of the label's render branches (merged cousin-marriage, dual-descent, ordinary) carry the
+`.descent-line` hook, so the colour cannot apply to two of three and silently miss the rare one.
+
+### 29.9 Source order IS the precedence rule
+
+All the status selectors are (0,2,0), so the cascade decides by declaration order. Current order and
+why:
+
+```
+spouse-line     mint     declared first
+hooker-line     cream    blood beats marriage for someone who is both (cousin marriages are common here)
+ee-line         blue     declared last: an easter egg is usually ALSO a spouse, so if mint won,
+                         the category would be invisible
+```
+
+This is load-bearing. Reordering silently reclassifies people.
+
+### 29.10 The alternative that is built and dormant — the SPINE
+
+Before the fills were settled, a 4px rule down the card's left edge was built (gold = bloodline, teal =
+married-in). It solves the problem the fills fight: **an edge separates by contrast at a boundary
+rather than by area**, so it can be saturated and warm without competing with the parchment, and N
+statuses become N legible rules instead of N near-identical washes.
+
+Sam: *"don't delete that but definitely lets revert."* It is intact, switched off by **`--edge-w: 0px`**
+— set it to `4px` and it returns exactly as it was. Notes worth keeping if it comes back:
+
+- It must be a **pseudo-element**, not a border (a border joins layout and shoves every chip's portrait
+  4px right) and not an inset box-shadow (which paints *beneath* child content — a chip's left edge IS
+  its portrait, so the photo would hide it).
+- It inherits the card's `clip-path`/rounding for free, so it follows the carved notch.
+
+### 29.11 The palette is crowded — where it will pinch first
+
+All four card colours now live inside ~5 ΔE. Tightest pairs: grey-vs-hooker **2.7**, grey-vs-blue
+**3.4**. The grey is **boxed in** — lightening moves it away from the blue and toward the cream — so
+past `#f7f7f7` there is no separation to buy by keeping it dark:
+
+```
+#f7f7f7   vs hooker 3.4   vs mint 4.6   vs blue 2.8
+#fcfcfc   vs hooker 2.7   vs mint 4.4   vs blue 3.4
+```
+
+Take the lightness the eye wants. **If the set ever needs pulling apart, move a TINT, not the grey.**

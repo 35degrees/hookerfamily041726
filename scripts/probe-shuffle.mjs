@@ -134,9 +134,13 @@ const clickTimed = async (sel) => {
 // connection each round — and a CC's duration legitimately varies with its relation, because the phantom
 // beat scales by it (DECK_BEAT_DIRECT 87 vs DECK_BEAT_COLL 170). Different CCs are simply not comparable.
 // So: shuffle → land on S → time S's first CC. Then load S cold and time the very same CC.
+// Bounded RETRY rather than a fixed count: a shuffle lands on a random notable, and plenty of them have
+// no cross-connections at all, so a fixed 4 rounds can collect ZERO pairs and report "did not really
+// run" — a false red that costs a re-run to diagnose. Keep drawing until 3 pairs are in hand, with a
+// hard ceiling so a pathological run still terminates.
 const ccAfterShuffle = [];
 const ccClean = [];
-for (let i = 0; i < 4; i++) {
+for (let i = 0; i < 12 && ccAfterShuffle.length < 3; i++) {
 	await page.goto(`${BASE}${START}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(900);
 	await clickTimed('.shuffle-notables');

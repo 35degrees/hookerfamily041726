@@ -1,9 +1,11 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: August 6, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_080626.md (the what/why for every item below).**
+**Date: August 7, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Companion: ENRICHED_DESIGN_FABLE_080726.md (the what/why for every item below).**
 **The 080326 edition (August 3) adds §18 — THE BOARD MOVES AS ONE. The card-transition layer reopened after a long pause and closed again the same day, on three findings that were all the same finding: distance and time were being decided SEPARATELY in each place instead of once for the whole stage. `growFrom` clocked a promotion off the card's top-left corner while its far corner covered 3.5× the ground; the leaving rows drifted a flat 28px in the camera-pan direction while the arriving rows swept 150px from elsewhere, so they crossed through each other; and the non-promoted parent dissolved in the parents row to reappear in the notch a beat later. Now: honest max-corner velocity, a measured 145px tier pitch every row shares, one direction (the pan) and one clock (the demotion's) for every row at once, and a hand-off that travels in front of the card and lands wearing the destination's own face. Also records the STACKING-CONTEXT TRAP (a z-index that measured as applied and did nothing), two latent bugs the work exposed (`chipExit` holding a seat in the flex flow; `.flat` nearly overloaded as two signals), and the false-red/false-green lessons from both.**
 
 **The 080326 edition (August 3) adds §17 — THE KIN-DISTANCE BAKE SHIPPED, closing §15 and the §19.4 debt behind it. The deck's SAME-LINE test no longer proxies kinship with anything: `regenerate-data.js` stamps a per-CC `kin_distance` (edges through the nearest shared ancestor, ONE marriage allowed to bridge the two blood lines at a cost of 2), and `isVerticalMove` reads it. Uncles, aunts and parents-in-law ride vertical wherever the tidy tree seated them; second cousins, the in-laws of distant collaterals, and true strangers stay lateral. Also records the probe that was asserting the WRONG THING (a father-in-law logged as a cross-branch-peer control), and §17.4 — redirects.json wired as 301s after 673 entries of accumulated dead URLs.**
+
+**The 080726 edition (August 7) adds §31 — SHUFFLE NOTABLES, THE SHADOW SYSTEM, AND LINE-STATUS SHADING. Shuffle shipped and pushed (`d085c7a4`) as a stripped-down CC that adds NO flight code — it performs the deck's own capture sequence and diverges on four deliberate points, one of which (a 10% quicker clock) scales `DECK_TEMPO`, the army's ONE shared time dial, rather than the hero alone. The button was rebuilt twice before it became an object at a height rather than a set of styled states. The shadow system replaced two independent definitions in two colour spaces with four values in one `:root` block. Then a long colour exploration: TEN rejected values, three of which independently measured DeltaE ~3.0 against the ground — one wall hit three times, and a property of the warm parchment rather than of the swatches. Records the near-white compression trap (8 points of lightness multiplied chroma by 3.5-5x), the pipeline gotcha that `--ids` regeneration leaves neighbours serving stale chips, the derived `sp` flag built because the canonical one is 22% populated, and step-figure titles derived rather than hardcoded — whose real blocker turned out to be the payload carrying one hop less graph than the label needed. Design rationale: design doc §29.**
 
 **The 080626 edition (August 6) adds §28 — THE CC BLADE SHIPPED (`7c191ed4..e3db7c65`, two commits on main). Records what landed, why a three-way commit split was abandoned (the blade and the typography pass interleave inside `FeaturedCard.svelte`, so splitting by hunk would have produced a broken intermediate), the constant card height it buys and what that retires, and — at Sam's request — §28.3, THE ORDER THINGS WENT WRONG and what each cost, including the pattern worth recognising early: the first wrong move (type pinned to the ceiling) made the blade deep, and every subsequent "fix" was downstream of it, each adding a new artefact. Sam's mid-turn intervention — *"i hope you are not 'fixing' things from your first attempt, its a complete re-write"* — was correct, and reverting to the last approved state should have happened two turns earlier. Also §28.5: the open items, headed by `probe-demote-settle`'s stale baseline (RED before this arc began) and ~30 probe scripts carrying the same latent union-box click. Design rationale: design doc §27.**
 
@@ -2742,3 +2744,140 @@ Recorded so they are not cited from the transcript:
 
 Both had the same shape: a conclusion drawn from a case that did not exercise
 the thing being judged.
+
+---
+
+## 31. AUGUST 7 — SHUFFLE NOTABLES, THE SHADOW SYSTEM, AND LINE-STATUS SHADING (design §29)
+
+Three things shipped and one long colour exploration ran end to end. **The whole colour pass was judged
+against the manuscript parchment ONLY** — no second background exists yet; Sam plans to buy one after
+living with this sheet. Every measurement in design §29 belongs to that pairing.
+
+### 31.1 SHUFFLE NOTABLES — shipped and pushed (commit `d085c7a4`)
+
+Roadmap §13 / design §22.8 called for "same mechanism, random notable target — build once, inherit
+twice", and that is how it was built: **no flight code**. `shuffleToNotable` performs the same capture
+sequence a CC click performs, and the existing deck flies it. Four deliberate divergences: forced
+lateral, fixed direction (not the ping-pong), a 20-deep exclusion ring applied as a filter, and 10%
+quicker end-to-end.
+
+The tempo scales `DECK_TEMPO` — the deck's ONE shared time dial — rather than the hero's duration,
+because the deck is an army: car 1's exit, the beat, the stagger and the hero all read one time-scale.
+Speeding the hero alone would leave the beat at full length. Reset lives in `captureFlightKind`, the
+single funnel every navigation passes through, which is what keeps ordinary CCs at standard speed.
+Measured end-to-end: shuffle 763 → 695ms; CC 763 → 757ms (noise).
+
+**Two false greens had to be cleared out of the probe first, both instructive:**
+- It measured direction off `querySelector('.featured-flight')`, which during a flight returns the
+  **arriving** card, and reported its travel as the departure's.
+- Then, tracking the right element, **a detached node's `getBoundingClientRect()` is all zeros**, so
+  after unmount the reading became `0 − startLeft` — 14 samples of exactly `-250`, the start position,
+  passing as a measurement.
+- The leak test compared a post-shuffle CC against a *different* CC and reported 17.2% that did not
+  exist (CC duration varies by relation: the beat is 87ms direct vs 170ms collateral). Now times the
+  SAME CC on the SAME page, reduced by median per-pair ratio.
+
+### 31.2 The button, rebuilt twice
+
+First as a styled control (`disabled` + `opacity: 0.4`) — Sam: *"the button fades and comes back which
+looks weak."* Then as **one object at a height**: rest 0, hover −1px, press +0.5px, release → hover,
+leave → rest. The last two need no rules; they are what the cascade does once hover and press are
+described as heights. The first rebuild broke exactly that by pinning the pressed geometry into the
+busy state, stranding the button down for the whole flight.
+
+`cursor: default`, **not** `pointer-events: none` — both stop the hand cursor, but pointer-events also
+destroys `:hover`, so the button dropped to rest the instant the click landed. Sam: *"i thought you'd
+make the leap that i want it to be like a physical button."* Shipped `6321d5cc` / `abf30d5b`.
+
+### 31.3 The shadow system — one dial replacing two (commit `01133e13`)
+
+Geometry used to be written twice — an inline `filter` on FeaturedCard and a Tailwind `shadow-sm` on
+the chips — in two colour spaces, so card and chips could not be reasoned about together, let alone
+retinted together. Now four values in one `:root` block: `--shadow-ink` (HSL **channels**, so each
+layer keeps its own alpha), `--shadow-a1/a2`, `--blade-inset-ratio`. A palette experiment is one line.
+
+The chip rule is **global**, not in PersonBox: the flight clones `.person-box` into travelling ghosts
+attached outside the component, and a scoped rule would leave every ghost shadowless mid-flight.
+
+Sam's estimate that chips were "~50% less" than the card was off — they were on `shadow-sm` (0 1px 3px)
+against the card's 0 4px 12px, so 80% of the card is a **3.2× blur**.
+
+### 31.4 The colour exploration — ten rejections (design §29.2)
+
+Recorded in full in the design doc. The engineering lesson: **three separate rejections all measured
+ΔE ~3.0 against the ground.** That is one wall hit three times, and it is a property of the parchment
+(warm, `b* +5.4`), not of the swatches. Measuring the ground first would have saved most of the pass.
+
+### 31.5 Defects found and fixed during the pass
+
+- **The burial white rectangle (Sam spotted).** RightColumn masks the scroll overflow behind the burial
+  pin with two fills whose own comment said "a solid card-bg fill" — but they were **written as
+  `bg-white`**, because the card had only ever been white. The instant the card went cream they showed
+  as a white rectangle. Fixed at the unit: `--card-bg` is now the card's surface and inner fills read
+  it, so no future line shade can reintroduce it. Those two were the only hard-coded whites of that
+  kind in the card.
+- **Easter-egg shading applied to 557 people when Sam wanted 88, then back to 557.** Reading "easter_egg
+  inlaws" literally, the class became `ee && sp` — which dropped obvious eggs (Richard and Anne Ferrar
+  Garbrand). Sam: *"there are not only 88 easter eggs so lets do the reverse."* The rule is now the flag
+  alone and deliberately does not second-guess the data; Sam corrects individuals in canonical instead.
+
+### 31.6 Data work (Stream A, run through `batch.py`)
+
+| id | change | why |
+|---|---|---|
+| `X02135` Elder William Goodwin | `is_easter_egg` → **false** | Sam: he is a step-figure, not an orbit egg |
+| `X00001` Thomas Hooker I | `is_easter_egg` → **true** | |
+| `X00002` Susannah Hooker | `is_easter_egg` → **true** | |
+
+All batches CLEAN: no silent loss, no new errors/warnings, standing debt unchanged at 984 / 4,162.
+
+**GOTCHA WORTH ADDING TO `pipeline-gotchas.md`:** `batch.py --ids` runs `regenerate --only <id>`, which
+rebuilds that person's own page — but **a person's compact is embedded in every neighbour's payload**.
+After flipping Goodwin's flag his own page was correct while Susanna's still served `ee: true` for him.
+`--only` is fine for anything that renders solely on the person's own card (blurbs, NBs, dates); **any
+change to a compact-visible flag — `hd`, `td`, `ee`, `sp`, name, photo — needs a FULL regenerate.**
+
+### 31.7 `sp` — a derived flag, because the canonical one is 22% covered
+
+Line shading needed "married into the line" as an intrinsic property of the PERSON, not the relation a
+chip happens to occupy — shading off `data-relation="spouse"` would tint the two spouse chips and then
+show a WHITE card the moment you clicked one, and would leave a married-in parent reading as blood.
+
+`classification.is_thomas_spouse` exists but is **1,700 true with the key absent on 11,830**, and both
+of JP Morgan's wives are in the gap. So `regenerate-data.js` now DERIVES it (`marriedIntoLine`): not a
+Thomas descendant, and married to someone who is. **5,543 people**, 3.3× the canonical flag, no data
+edit required.
+
+### 31.8 Step-figure titles by derivation (design §29 / `generation.ts`)
+
+Sam: *"can you make that work by derivation and not hardcoding?"*
+
+```
+Elder William Goodwin   "Second Husband of Wife of Thomas Hooker"
+Margaret Borodale       "Third Wife of Husband of Daughter of Thomas Hooker"
+Amelia Sturges          "First Wife of Eighth Generation Hooker"     (was "1st")
+```
+
+Three parts: `ordinalShort` → `ordinalWord` in the spouse label (words, not digits — `ordinalShort` is
+KEPT, unused, as the digit form); a **one-hop** `getSpouseChainShort` (calls the blood-only lookup and
+never itself, `excludeId` prevents a couple describing each other in a circle, and the inner phrase
+carries no ordinal); and a founder anchor, because Thomas is generation 1 where the normal lookup emits
+"First Generation Hooker" — nobody says "Wife of First Generation Hooker".
+
+**The real blocker was the payload, not the logic.** Goodwin's page context held two records — himself
+and Susanna. Thomas Hooker was never in it, so the lookup missed and his card showed no title at all.
+`contextIds` now also ships **a spouse's other spouses** — one extra hop, firing only where a spouse
+remarried. Any future chained relationship will need the same check.
+
+Also: `I00001` Susanna returned the *identical* string to `H00001`, so her card read as though it had
+copied her husband's label. Now "Wife of Thomas Hooker & Founder of the American Hooker Line" — the
+`' & '` is load-bearing, routing it through FeaturedCard's shrink-to-fit branch.
+
+### 31.9 Open
+
+- **Second background.** Everything is tuned to one sheet. When the next parchment arrives, re-measure
+  the ground's Lab first — the 6.5 floor and every ΔE move with it.
+- **The spine** (design §29.10) is built and dormant at `--edge-w: 0px`.
+- **Hover-to-reveal grandparents/grandchildren** — still unbuilt, still wants a written spec first.
+- `hartford_founder` is still not in the chip compact, if it is ever to become a shade.
+- ~30 probe scripts share the latent union-box click pattern.

@@ -10,6 +10,8 @@ export interface PersonCompact {
 	hd: boolean;
 	td: boolean;
 	ee: boolean;
+	/** married INTO the Hooker line (is_thomas_spouse) — drives line-status shading */
+	sp?: boolean;
 	g: number | null;
 	p?: string | null;
 	/** per-person CSS object-position override for a badly-cropping portrait; absent = object-top. */
