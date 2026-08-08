@@ -1345,7 +1345,18 @@
 	const childrenDiedYoung = $derived(roster.children.filter((c) => c.dy_young).length);
 	const isEasterEgg = $derived(f.person.classification?.is_easter_egg ?? false);
 
-	const focalFirstName = $derived(f.person.bio?.first_name ?? f.person.name?.first_name ?? null);
+	// THREE sources, because two of them are routinely absent. Jackson Pynchon (HD6314) carries neither
+	// `bio.first_name` nor `name.first_name` nor a compact `fn`, so the connector fell back to a bare
+	// "Parents" while every other card says "<name>'s parents" — a silent downgrade nobody would think to
+	// look for. The DISPLAY NAME's first token is the last resort: it is what the card itself is already
+	// showing, so a label derived from it can never disagree with the heading above it.
+	const focalFirstName = $derived(
+		f.person.bio?.first_name ??
+			f.person.name?.first_name ??
+			f.neighborhood.focus?.fn ??
+			f.neighborhood.focus?.n?.trim().split(/\s+/)[0] ??
+			null
+	);
 	const parentsLabel = $derived(
 		focalFirstName ? `${possessive(focalFirstName)} parents` : 'Parents'
 	);

@@ -197,3 +197,39 @@ difference, and more texture than the preview that was approved. **The phone
 file is where the real trade was made**, deliberately: a third the physical
 pixel size and the worst connections. Revisit that one first if a sheet ever
 looks flat on a phone; `1100 @ q88` costs ~90KB and recovers most of it.
+
+---
+
+## THE PYNCHON PRISM (card background, August 8)
+
+Not a ground — a background for ONE line's cards (see design §31 / `src/lib/data/pynchonLine.ts`). Kept
+here because it is a licensed photographic asset and this is where those are recorded.
+
+| | |
+|---|---|
+| **Master** | `_assets/textures/peter-steiner-1973-hmFb-uu0xog-unsplash.jpg` (4000×6000, 808KB) |
+| **Photographer** | Peter Steiner |
+| **Source / licence** | Unsplash, free licence (not Unsplash+). No watermark, no attribution required, attribution given anyway — the photographer's name is carried in the filename so it cannot be separated from the file. |
+| **Derivative** | `static/textures/prism-card.jpg` — 900×600, q60, **15KB** |
+
+**Why JPEG rather than the pipeline's four `.webp` widths.** There is no webp encoder on this machine —
+`cwebp` is absent, `sips` will not write the format, and `sharp` is not installed. One JPEG was produced
+instead. Regenerate as webp derivatives if an encoder is ever available; nothing depends on the filename
+beyond one CSS rule in each of FeaturedCard and PersonBox.
+
+**Why 900×600 and not larger.** A smooth gradient has no high-frequency detail, so it is the one kind of
+image that upscales invisibly — the browser draws it at 925×575 on the card and ~220×75 on a chip, and
+upscaling *smooths* a gradient rather than degrading it. Measured at several sizes: 1800px/q72 = 89KB,
+900px/q60 = 15KB, 400px/q60 = 8.5KB. 900 was chosen over 400 because JPEG banding is the one real risk on
+a gradient this smooth and 7KB is not worth courting it.
+
+**Why it is not on Cloudinary.** A CSS `background-image` is fetched only when its rule matches an element
+in the render tree, so this downloads on Pynchon-line pages and nowhere else. At 15KB the transfer is
+about one packet; a third-party host would add a DNS lookup and TLS handshake costing more than the file.
+Cloudinary earns its keep on ~15,000 person photos needing per-size derivatives — none of that applies to
+one fixed decorative asset.
+
+**A REJECTED CANDIDATE, recorded so it is not tried again.** `premium_photo-1701462777886-a72962ce254f`
+(Unsplash+) was the first choice and carries the Unsplash+ watermark, which is the licensing mechanism for
+their paid tier. It is not in the repo and `.gitignore` now excludes root `.avif` alongside the other
+pasted-image patterns. If that image is wanted, licence it.

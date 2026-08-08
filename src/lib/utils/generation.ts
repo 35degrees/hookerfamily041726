@@ -170,7 +170,7 @@ function computeSpouseCompact(person: Person, byId: Record<string, Person>): str
  *   gen 3 female → "Granddaughter of Thomas Hooker"
  *   gen 5+ → "Fifth Generation Descendant of Thomas Hooker"
  */
-function buildDescendantLabel(generation: number, gender: string | null, founder: string): string {
+export function buildDescendantLabel(generation: number, gender: string | null, founder: string): string {
 	// Ancestors of a line founder sit at generation ≤ 0 (e.g. the Talcott founder's father at −1).
 	// Key on the negative generation, line-agnostic, so ordinal math never emits "−1th Generation".
 	if (generation <= 0) {

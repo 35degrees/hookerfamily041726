@@ -13,6 +13,8 @@
 </script>
 
 <script lang="ts">
+	import { isPynchonKin, pynchonGeneration } from '$lib/data/pynchonLine';
+	import { buildDescendantLabel } from '$lib/utils/generation';
 	import type { Person } from '$lib/types/person';
 	import type { SpouseEntry, PersonCompact } from '$lib/types/neighborhood';
 	import type { Cemetery } from '$lib/types/cemetery';
@@ -57,6 +59,11 @@
 		settled?: boolean;
 	};
 
+	// THE PYNCHON LINE carries a spectrum on its cards — hero and chip alike. NOT
+	// `classification.is_easter_egg`, which is a genealogical fact about orbit figures and drives the
+	// ee-line shading above; this marks descent in a line that is not the Hooker one. Membership is
+	// DERIVED from the parent graph (see scripts/derive-pynchon-line.mjs), never hand-listed, so it cannot
+	// drift away from the genealogy it describes.
 	let {
 		person,
 		spouses,
@@ -241,7 +248,29 @@
 	// NOTE (Aug 4): dormant while `SHOW_TALCOTT_DESCENT = false` in generation.ts — with the Talcott line
 	// off, computeGenerationLabels can only ever return 0 or 1 entries, so this never fires today. Kept
 	// because the flag is a switch, not a deletion; see HEADER_H for what happens if it flips back on.
-	let headerIsCrowded = $derived(generationLabels.length >= 2 && !!blurb);
+	// THE PYNCHON TITLE, appended after whatever the Hooker graph produced — so a person in both lines
+	// (only Jackson today) reads Hooker first and Pynchon beneath it.
+	//
+	// Worded by generation.ts's OWN buildDescendantLabel rather than a second convention written here.
+	// That function is already line-agnostic — it takes the founder's name and derives "Founder of the
+	// American <Line> Line", then Son → Grandson → Great-Grandson → Fifth Generation Descendant — which is
+	// exactly the progression Sam asked this line to match, because it IS the Hooker line's progression.
+	//
+	// The one shim is the scale. Our derivation counts the founder as 0 and his son as 1; generation.ts
+	// counts a son as 2 (its own note records the off-by-one it was shifted to fix) and reserves ≤ 0 for
+	// founders. So: the founder maps to 0, everyone below to g + 1.
+	const pynchonLabel = $derived.by(() => {
+		const g = pynchonGeneration(person.id);
+		if (g === null) return null;
+		return buildDescendantLabel(g === 0 ? 0 : g + 1, person.gender ?? null, 'William Pynchon');
+	});
+	const allLabels = $derived(pynchonLabel ? [...generationLabels, pynchonLabel] : generationLabels);
+	// Which of the rendered labels is the Pynchon one — the last, when there is one. Used only to colour
+	// it: the Pynchon line reads purple-into-magenta, so the two descents are told apart at a glance
+	// rather than by reading both lines.
+	const pynchonLabelIndex = $derived(pynchonLabel ? allLabels.length - 1 : -1);
+
+	let headerIsCrowded = $derived(allLabels.length >= 2 && !!blurb);
 
 	// ── THE LOWER CONTENT STARTS AT THE SAME Y ON EVERY CARD ────────────────────────────────────────
 	// The header row used to AUTO-SIZE (`minmax(72px, auto)`), which held a constant ~12px breathing gap
@@ -367,6 +396,7 @@
 		class:hooker-line={person.classification?.is_thomas_descendant}
 		class:spouse-line={marriedIn}
 		class:ee-line={person.classification?.is_easter_egg}
+		class:prism={isPynchonKin(person.id)}
 		style="clip-path: {clipPath}; --flat-shape: {flatShape};"
 	>
 		<!-- Fixed-height TOP region: header + content area, always exactly CARD_TOP_H tall.
@@ -413,24 +443,25 @@
 							></span
 						>
 					</h1>
-					{#if generationLabels.length > 0}
-						{#each generationLabels as label, i (i)}
+					{#if allLabels.length > 0}
+						{#each allLabels as label, i (i)}
+							<!-- svelte-ignore element_invalid_self_closing_tag -->
 							{#if label.includes(' & ')}
 								<!-- Merged cousin-marriage line: full-size, shrink-to-fit so a long
 								     "…Hooker Descendant & Wife of Hooker Descendant" stays one line. -->
 								<div
-									class="descent-line min-w-0 text-sm leading-tight font-medium text-inkblue"
+									class="descent-line min-w-0 text-sm leading-tight font-medium {i === pynchonLabelIndex ? 'pynchon-descent' : 'text-inkblue'}"
 									use:shrinkToFit={{ max: 14, min: 10, key: label }}
 								>
 									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
 								</div>
-							{:else if generationLabels.length >= 2}
+							{:else if allLabels.length >= 2}
 								<!-- Dual-descent (Hooker + Talcott) line: ~5% smaller, STATIC.
 								     Rare; this guards the 4-line header height. -->
-								<div class="descent-line text-[13px] leading-tight font-medium text-inkblue">{label}</div>
+								<div class="descent-line text-[13px] leading-tight font-medium {i === pynchonLabelIndex ? 'pynchon-descent' : 'text-inkblue'}">{label}</div>
 							{:else}
 								<!-- Ordinary single descent / spouse-only / in-law line: default size. -->
-								<div class="descent-line text-sm leading-tight font-medium text-inkblue">{label}</div>
+								<div class="descent-line text-sm leading-tight font-medium {i === pynchonLabelIndex ? 'pynchon-descent' : 'text-inkblue'}">{label}</div>
 							{/if}
 						{/each}
 					{/if}
@@ -593,6 +624,50 @@
 {/if}
 
 <style>
+	/* The Pynchon descent line reads PURPLE INTO MAGENTA, so a card carrying two descents tells them apart
+	   without being read — the Hooker line stays the house ink blue. A gradient rather than a flat colour
+	   because the line it names is a spectrum; `background-clip: text` paints it through the glyphs.
+	   Both hues are dark enough to hold their own as small bold type on white (the magenta end is the
+	   lighter of the two, so it is placed at the END of the phrase where the eye has already committed). */
+	.descent-line.pynchon-descent {
+		background-image: linear-gradient(100deg, #7c3aed 0%, #a21caf 45%, #c026d3 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	/* ── THE PRISM — one card's easter egg ─────────────────────────────────────────────────────────────
+	   A photographed spectrum (Peter Steiner, Unsplash free licence — see docs/background-sources.md),
+	   rotated to landscape because the card is 925×575 and cropping the portrait master throws the band
+	   away. It is a BACKGROUND ON THE CARD ITSELF, and both halves of that matter:
+
+	   NO EXTRA DOM. The first build used two absolutely positioned layers, which paint in the positioned
+	   layer — i.e. ABOVE the card's in-flow content — so the effect ran across the photo and the text
+	   instead of behind them. A background cannot do that.
+
+	   THE FADE IS A WHITE VEIL, not `opacity`. A veil is a background layer of its own, so it tints the
+	   image without touching anything the card draws, and it has no edge to give away. `--prism-fade` is
+	   the ONLY dial: higher = paler. Nothing else here needs adjusting to change the strength.
+
+	   (Five CSS attempts preceded this and every one was rejected as "stripes". Two of them genuinely were
+	   — a repeating-linear-gradient is banding by construction and a linear-gradient MASK has a straight
+	   edge by definition — but the last three never rendered at all: each new rule was inserted ABOVE the
+	   original block, which then won on source order. If this ever looks unchanged after an edit, check
+	   for a second `.featured-card.prism` rule further down before changing anything else.) */
+	.featured-card.prism {
+		--prism-fade: 0.45;
+		background-image:
+			linear-gradient(
+				rgba(255, 255, 255, var(--prism-fade)),
+				rgba(255, 255, 255, var(--prism-fade))
+			),
+			url('/textures/prism-card.jpg');
+		background-size: cover, cover;
+		background-position: center, center;
+		background-repeat: no-repeat, no-repeat;
+	}
+
+
 	/* See the markup comment: no layout height, pinned to the card's bottom edge, behind the card. */
 	.cc-blade-mount {
 		position: absolute;

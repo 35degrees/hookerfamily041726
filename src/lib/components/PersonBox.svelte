@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isPynchonKin } from '$lib/data/pynchonLine';
 	import type { PersonCompact } from '$lib/types/neighborhood';
 	import { shrinkToFit } from '$lib/actions/shrinkToFit';
 	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
@@ -148,6 +149,7 @@
 		class:hooker-line={person.hd}
 		class:spouse-line={person.sp}
 		class:ee-line={person.ee}
+		class:prism={isPynchonKin(person.id)}
 		data-relation={relation}
 	>
 		<div class="photo aspect-square shrink-0 bg-stone-100 {photoW}">
@@ -198,6 +200,7 @@
 		class:hooker-line={person.hd}
 		class:spouse-line={person.sp}
 		class:ee-line={person.ee}
+		class:prism={isPynchonKin(person.id)}
 		data-relation={relation}
 	>
 		<div class="photo h-full shrink-0 bg-stone-100 {photoW}">
@@ -242,3 +245,38 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	/* THE PYNCHON LINE's spectrum, on a chip. Same image and the same single dial as the featured card
+	   (FeaturedCard's .prism), but NEITHER VALUE CARRIES OVER, because a chip is 220×75 against a card's
+	   925×575 — a quarter the width and a thirteenth the area.
+
+	   `cover` would scale the 900×600 source to 220 wide and then crop away 60% of its height, leaving a
+	   thin horizontal slice of whatever hue happened to sit at the middle — a stripe, which is the one
+	   thing this effect must never be. `200% auto` pulls the frame in so the chip shows a small but
+	   legibly DIAGONAL piece of the band, and the off-centre position puts it across the chip's face
+	   rather than its edge.
+
+	   THE VEIL IS THE DIAL, and it lands close to the card's rather than well above it. The first pass
+	   reasoned that a chip's 10–12px type needs more protection than the card's and set 0.62 — which was
+	   over-thought: at chip scale the band is already cropped to a fraction of its width, so it arrives
+	   diffuse before any veil is applied, and 0.62 on top left it washed out (Sam: "a little too diffuse
+	   and light"). 0.48 restores the colour without crowding the type, because the crop was doing most of
+	   the muting all along. */
+	.person-box.prism {
+		--prism-fade: 0.48;
+		background-image:
+			linear-gradient(
+				rgba(255, 255, 255, var(--prism-fade)),
+				rgba(255, 255, 255, var(--prism-fade))
+			),
+			url('/textures/prism-card.jpg');
+		background-size:
+			cover,
+			200% auto;
+		background-position:
+			center,
+			30% 40%;
+		background-repeat: no-repeat, no-repeat;
+	}
+</style>
