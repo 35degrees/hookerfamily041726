@@ -1,6 +1,6 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: August 7, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_080726.md (the what/why for every item below).**
+**Date: August 8, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Companion: ENRICHED_DESIGN_FABLE_080826.md (the what/why for every item below).**
 **The 080326 edition (August 3) adds §18 — THE BOARD MOVES AS ONE. The card-transition layer reopened after a long pause and closed again the same day, on three findings that were all the same finding: distance and time were being decided SEPARATELY in each place instead of once for the whole stage. `growFrom` clocked a promotion off the card's top-left corner while its far corner covered 3.5× the ground; the leaving rows drifted a flat 28px in the camera-pan direction while the arriving rows swept 150px from elsewhere, so they crossed through each other; and the non-promoted parent dissolved in the parents row to reappear in the notch a beat later. Now: honest max-corner velocity, a measured 145px tier pitch every row shares, one direction (the pan) and one clock (the demotion's) for every row at once, and a hand-off that travels in front of the card and lands wearing the destination's own face. Also records the STACKING-CONTEXT TRAP (a z-index that measured as applied and did nothing), two latent bugs the work exposed (`chipExit` holding a seat in the flex flow; `.flat` nearly overloaded as two signals), and the false-red/false-green lessons from both.**
 
 **The 080326 edition (August 3) adds §17 — THE KIN-DISTANCE BAKE SHIPPED, closing §15 and the §19.4 debt behind it. The deck's SAME-LINE test no longer proxies kinship with anything: `regenerate-data.js` stamps a per-CC `kin_distance` (edges through the nearest shared ancestor, ONE marriage allowed to bridge the two blood lines at a cost of 2), and `isVerticalMove` reads it. Uncles, aunts and parents-in-law ride vertical wherever the tidy tree seated them; second cousins, the in-laws of distant collaterals, and true strangers stay lateral. Also records the probe that was asserting the WRONG THING (a father-in-law logged as a cross-branch-peer control), and §17.4 — redirects.json wired as 301s after 673 entries of accumulated dead URLs.**
@@ -24,6 +24,8 @@
 **The 071726 edition (July 17) adds §11 — PHASE 7 SHIPPED END TO END (sibling trigger, panel, cascade, carousel, close, flight, retraction), the GHOST SAGA (three z-order bugs from one unstated fact, one of them pre-existing), the SIX FALSE-GREENS and what they have in common, and the probe suite added. Design rationale: design doc §21.**
 
 **The 072326 edition (July 23) adds §13 — THE DECK SHIPPED. The July-22 §12 sequence's item 1 is DONE: the CC transition is built, probe-guarded, and committed (commit 0c652f6c, Stream B). It shipped as the DECK PUSH — two solid weighted cards + an empty gap, not the visible riffle (the convoy read as "adjacent" and shrank the tree; ghosts parked behind DECK_GHOSTS=false). Records the gen_delta direction model, the fixed ping-pong memory, the weight-physics dials, the flight-lock/connector-cut/belt, the seven-probe guard, and the resequence (Shuffle Notables now unblocked). Design rationale: design doc §22 (as built). Also adds §14 — PHOTO-LOADING RESTORED: a hover-preload experiment had degraded foundational chip loading; fixed by making the NEIGHBORHOOD the load unit (batch preload, on-screen chips tiered first, one shared Cloudinary derivative per person, media demoted to on-demand). The Cloudinary warm-up script is queued. Design rationale: design doc §24.**
+
+**AUGUST 8 (§32): the GRANDPARENT TIER now takes full part in a navigation — the two-tier march, the implied grandchild seat, the first generation-crossing chip journey in the project, the traveller's clock, and the stage that stopped moving while anything is flying (design §30). Its handoff is `docs/HANDOFF_grandparent_tier_080826.md` and carries the working state, one UNREPRODUCED intermittent flash with a step-by-step framework for whoever meets it next, six dead ends, and one deferred decision (`rowClockMs()` never derives — it returns its 420ms fallback on every flight, and fixing it changes the default flow, so it is Sam's call).**
 
 **IN FLIGHT (August 8): the GRANDPARENT TIER has its own handoff — `docs/HANDOFF_grandparent_tier_080826.md`. Read it before touching the tier, the flight, or anything that measures either. It carries the working state, three named open bugs with their measurements, a structural roadmap (not patches), and a DEAD ENDS list of six things already tried and reverted. It also documents `scripts/probe-tier.mjs`, the instrument that exists because a whole session was lost to measurements that were confidently wrong — during a flight one person occupies three or four DOM nodes at once, and every naive selector returns something plausible and false.**
 
@@ -2883,3 +2885,81 @@ copied her husband's label. Now "Wife of Thomas Hooker & Founder of the American
 - **Hover-to-reveal grandparents/grandchildren** — still unbuilt, still wants a written spec first.
 - `hartford_founder` is still not in the chip compact, if it is ever to become a shade.
 - ~30 probe scripts share the latent union-box click pattern.
+
+---
+
+## 32. AUGUST 8 — THE GRANDPARENT TIER TAKES PART IN THE FLIGHT (design §30)
+
+The tier shipped on August 7 able to OPEN and unable to take part in a navigation. This session made it a
+first-class participant. The order matters, because each step's measurement is what exposed the next.
+
+### 32.1 What shipped, in order
+
+1. **The two-tier march.** `captureTierSpan` / `marchTravel()`, read from `data-tier-span="2"` on the tier
+   block via `anchor.closest()`. Reset in `captureFlightKind`.
+2. **The implied seat.** A grandparent promotion leaves the old focus a GRANDCHILD, which is not drawn, so
+   the demote had no box, returned early every frame and FROZE at full size. It now marches into a chip
+   footprint one march below the card, wearing the row's own alpha band — `rowTravel`'s own comment
+   already described this seat ("destination, not escape"); it just had never been built.
+3. **`rowTravel()` measures the ADJACENT ancestor row**, not the topmost. `min` → `max`. With one ancestor
+   row on stage the readings are identical, which is why it was right for months; open the tier and a
+   `min` calls tier→slot the pitch and every consumer of "one tier" silently doubles.
+4. **The tier's chips became real flight boxes** — `data-flight-id`, `data-flight-dir="up"` — so they can
+   be pinned, hidden, handed off and clocked like every other chip. `out:tierChipExit|global` routes them:
+   `flyOut` on a navigation, `{duration: 0}` on a hover dismissal (which must stay a retraction, not a
+   flight). **`|global` is load-bearing and its absence is invisible in source** — a Svelte outro is LOCAL
+   by default and does not run when an ANCESTOR block is destroyed, so without it the function was never
+   called at all. It measured as two visible copies of the clicked grandparent.
+5. **THE GENERATION CROSSING** — the first chip journey in the project that spans a generation gap. The
+   hovered parent becomes the new focus's CHILD: parents row, under the growing card, into the children
+   row. Before it he dissolved in one row while a second copy of him faded in two rows below.
+   `scheduleHandoff` now accepts a `.children-slot` seat as well as a `.spouse-notch` one, the destination
+   is HELD (`rowHandoffIds`) so it cannot fade in under a traveller still crossing to it, and the ghost
+   rides at z 0 (body-level, below `.page-container`) so it passes UNDER the card as Sam asked.
+6. **The traveller's clock.** She rode `max(HANDOFF_MS, rowClockMs()) × TEMPO`, which measured as **the
+   constant 454ms on every flight ever made**, against a hero that varies (475 ordinary, 586 out of the
+   tier). She reached the notch 119ms early and parked in open space. She now rides the hero's own
+   schedule × `HANDOFF_LEAD`, resolved in `scheduleHandoff`'s already-deferred frame because at `flyOut`
+   config time `getHeroSchedule()` still describes the PREVIOUS navigation.
+7. **The stage stopped moving during flights** — design §30, the session's real finding.
+
+### 32.2 What went wrong, in the order it went wrong
+
+- Half of step 1 had to be **corrected the next turn**: leavers are pinned in VIEWPORT coordinates and
+  arrivers in LAYOUT coordinates, so the same single tier of on-screen descent is two pitches written one
+  way and one pitch written the other. Applying `marchTravel()` to both made the pinned rows out-run the
+  in-flow ones by a whole tier.
+- The dip hunt cost four passes and three reverts (§30.3). Two of them were reverted on measurement alone
+  — the instant-collapse-in-`$effect.pre` attempt and the shorter-settle-distance attempt both looked
+  correct and measured worse.
+- **A subject that cannot show the defect is worse than no subject.** `aaron-burr-jr-1756`'s grandfather
+  has no parents in the tree, so a grandparent promotion there has NO arriving row chips — the exact
+  objects that dip. Three passes were spent proving the hero was clean while the real subject was not on
+  screen at all. Sam broke it open by testing a grandMOTHER, who has them: *"it can't be starting position
+  on screen."* Pick the subject from what the code says will move, not from what is convenient.
+
+### 32.3 The instrument
+
+`scripts/probe-tier.mjs` grew from one case to seven, and three of them exist because a measurement lied:
+
+- `--control` (ordinary parent promotion), `--tierparent` (tier open, PARENT clicked — the gesture the
+  duplicate and the dip came from), `--film` (a CDP screencast filmstrip; `page.screenshot()` was tried
+  first and produced frames whose LABELS WERE WRONG, which is worse than no filmstrip).
+- Per-frame dip check on every flight box by id; the end-lift check; the traveller-vs-card check; the
+  floor's step count.
+- Two selector traps caught in the probe itself: a pitch measured off `.parents-slot` reports 170 with no
+  tier and 145 with one (the slot's dead lead is collapsed by `.tier-above`), and a departing card keyed
+  on a NAME matched both cards on "Rev. Aaron Burr" inside "Aaron Burr Jr." and reported the ARRIVING card
+  as a frozen demote. Subjects are pinned as node references now.
+
+### 32.4 Still open
+
+- **`rowClockMs()` never derives.** It is memoised at page load, when there is no click and the rect
+  snapshot is empty, and never re-derived for the navigation that follows — so it returns its 420ms
+  fallback on every flight and the whole army marches on a constant. The demote's stated "finish-first"
+  relationship with the hero is therefore a coincidence rather than the derived relationship the code
+  describes. Fixing it changes the default flow on EVERY navigation, so it is deliberately left alone and
+  logged (`[rowclock]`, DEV only) rather than quietly corrected. **Sam's call, not a maintenance task.**
+- **The unreproduced flash** — see the grandparent handoff §5, which carries the framework for it.
+- The tier's connector and the parents connector can both read "<name>'s parents" and collide when a
+  father and son share a first name (Aaron Burr Jr. → Rev. Aaron Burr). Pre-existing, cosmetic.

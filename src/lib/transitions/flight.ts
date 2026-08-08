@@ -102,6 +102,12 @@ export function captureFlightKind(kind: 'spouse' | 'relative' | 'cc' | 'sibling'
 	// be cleared. A shuffle re-arms it immediately afterwards (setCarouselTempo); a real CC does not, which
 	// is precisely what keeps the standard CC at its standard speed after any number of shuffles.
 	carouselTempo = 1;
+	// Same reasoning for the tier span (see captureTierSpan): every navigation is ONE tier unless the click
+	// says otherwise, and navigate.ts re-arms it a line later for the ones that aren't. Cleared HERE rather
+	// than in clearFlightCaptures because it shares flightKind's longer life — the army's march is read by
+	// late handlers (revealPending at introend) that run well after the one-rAF capture sweep.
+	tierSpan = 1;
+	tierOpen = false;
 	if (kind !== 'cc') clearLateralMemory(); // a chip/sibling/relative nav ends the lateral back-and-forth
 }
 // Read the current nav's kind. Stable through the whole flight — clearFlightCaptures (1 rAF after
@@ -516,6 +522,72 @@ export function handoffSpouseId(spouseIds: readonly string[]): string | null {
 	if (panDir !== 'down') return null;
 	return spouseIds.find((id) => id !== clickedId && rectSnapshot.get(id)?.dir === 'up') ?? null;
 }
+/**
+ * WHO is crossing a GENERATION GAP from the parents row to the CHILDREN row — the same question one tier
+ * further down. Promote a grandparent and the parent you hovered to open the tier becomes the new focus's
+ * child: he was standing in the parents row at click time (dir 'up') and has a seat in the children row on
+ * the new page. Nobody else can be in that position. On an ordinary parent promotion this is empty — the
+ * old focus lands in the children row but it is the PIVOT, which owns its own demote and carries no
+ * data-flight-id to be snapshotted, and the new focus's other children were in the sibling panel, not in a
+ * row. So the answer is [] for every navigation that does not come out of the tier.
+ *
+ * Answered from the click-time snapshot, synchronously, so the incoming seat can be HELD from the very
+ * first frame — a seat revealed early would fade in under a traveller still crossing to it, which is the
+ * doubled-copy this whole mechanism exists to prevent.
+ */
+export function rowHandoffIds(childIds: readonly string[]): string[] {
+	if (panDir !== 'down') return [];
+	return childIds.filter((id) => id !== clickedId && rectSnapshot.get(id)?.dir === 'up');
+}
+
+// HOW MANY TIERS THIS NAVIGATION CROSSES. One for every ordinary chip nav: a parent or a child is one
+// generation away, so the army steps exactly one row's seat to the next. TWO when the clicked chip lives
+// in the hover-revealed GRANDPARENT tier — that person is two generations up, and a one-pitch march has
+// the rows covering half the ground the camera actually panned.
+//
+// Read off the DOM at click time (navigate.ts: `anchor.closest('[data-tier-span]')`), never inferred here.
+// The block that OWNS a chip already states which tier it is — it is the same fact the layout used to
+// place it — so asking the graph again would be a second answer that can disagree with the first.
+let tierSpan = 1;
+export function captureTierSpan(n: number): void {
+	tierSpan = Number.isFinite(n) && n >= 1 ? Math.round(n) : 1;
+}
+export function getTierSpan(): number {
+	return tierSpan;
+}
+
+// WAS THE TIER OPEN WHEN THIS NAVIGATION STARTED. Separate from tierSpan, which says how many tiers the
+// CLICK crossed: the tier closes on ANY navigation made while it is open, so a parent or a child click
+// gets the collapse too while crossing only one tier. Captured from the DOM at click time — the tier
+// either is on screen or it is not, and that is not derivable from the clicked chip.
+let tierOpen = false;
+export function captureTierOpen(open: boolean): void {
+	tierOpen = open;
+}
+/**
+ * THE LAYOUT SHIFT THIS NAVIGATION IS ABOUT TO APPLY TO EVERY DESTINATION, in px.
+ *
+ * Transitions here are FLIPs: they measure a destination NOW and animate to it. That is exact while the
+ * layout holds still, and it overstates the journey by exactly one tier pitch when the grandparent tier
+ * is closing, because every seat measured before the collapse is one pitch lower than where it will
+ * actually come to rest. The TRANSFORM is unaffected — a FLIP lands on its element's real layout
+ * position whatever that turns out to be — but anything DERIVED from the measured delta inherits the
+ * error, and the settle amplitude is the one you can see.
+ *
+ * Measured: the promoted grandparent's dy read −290 against a true on-screen descent of 145, so
+ * settleBackFor sized the overshoot for double the travel and the card carried 4px past its seat where
+ * an ordinary promotion carries 2. Every other object was finishing its own arrival at that instant, so
+ * the whole stage appeared to sag and lift together right at the end. Sam: "a very small inverted arc…
+ * all elements pulling up right at the final moment", and his own read of the cause was exact — "the
+ * chips meet them slightly below their finished place."
+ *
+ * One pitch, by construction: the tier block is one row plus its connector, and the `.parents-slot` lead
+ * gives back the difference (170 − 25 = 145). That identity is the tier's whole geometry, so this reads
+ * the pitch rather than restating the number.
+ */
+function pendingCollapse(): number {
+	return tierOpen ? rowTravel() : 0;
+}
 
 // The PIVOT — the box the demoted card shrinks INTO (the focus we're leaving, which becomes a
 // relative of the new focus). Captured at click as the OLD featured id. Every OTHER incoming box
@@ -738,7 +810,12 @@ export function growFrom(node: Element) {
 	const ccEntry =
 		cc && !arc ? deckExit(ccDir, dest.left, dest.top, dest.width, dest.height) : { x: 0, y: 0 };
 	const dx = cc ? ccEntry.x : origin.left - dest.left;
-	const dy = cc ? ccEntry.y : origin.top - dest.top;
+	// + pendingCollapse(): `dest` is measured NOW, and the tier's collapse is applied one flush later, so
+	// this seat is about to rise one tier pitch. Correcting the delta arithmetically — rather than trying to
+	// make the layout settle before the measurement — is what lets the collapse be INSTANTANEOUS again, and
+	// an instantaneous collapse is the only version of it that cannot fight anybody's clock. Zero when no
+	// tier is closing, so every ordinary flight is untouched.
+	const dy = cc ? ccEntry.y : origin.top - dest.top + pendingCollapse();
 	// PHANTOM BEAT (push): the hero waits until car 1 is FULLY offscreen, then the empty-stage beat. Car 1
 	// exits along −ccDir from THIS same slot rect (it was the outgoing featured card here), so its exit time
 	// is computable right here without cross-talk. Strict EXIT → BEAT → ENTRY; no co-occupancy, ever.
@@ -824,6 +901,9 @@ export function growFrom(node: Element) {
 	// camera screenVector (validated by probe-camera). Same ~5–6px excursion for both.
 	const settleActive = getCameraMove()?.kind === flightKind;
 	// The DECK arrival (cc) overshoots 10% harder than chip/spouse promotions — a heavier card settling.
+	// No trim any more, and that is the tell that the delta is finally honest: dx/dy now describe the
+	// journey the object actually makes, so the house amplitude is right by default. The trim that used to
+	// sit here only ever compensated for a dy that was one tier pitch too long.
 	const settleS = settleActive ? settleBackFor(distance, cc ? DECK_SETTLE_BOOST : 1) : 0;
 	if (import.meta.env.DEV && settleActive) {
 		const g = (4 * settleS ** 3) / (27 * (1 + settleS) ** 2);
@@ -1132,6 +1212,30 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	const OUT_HI = 2.4; // outgoing face: opaque ≥2.4×, gone ≤2.0×
 	const REVEAL_LO = 1.7;
 	const REVEAL_HI = 2.1; // chip-face: invisible ≥2.1×, opaque ≤1.7×
+	// THE IMPLIED SEAT — the demote that has nowhere to land.
+	//
+	// A demote resolves its destination by querying the PIVOT's box: the seat the person we are leaving
+	// takes on the new page. Promote a GRANDPARENT and that box does not exist — the old focus is now a
+	// GRANDCHILD, and grandchildren are not drawn at this zoom. The tick then returned early on every
+	// frame (`if (!box) return`), so the card FROZE at full size in the middle of the stage until Svelte
+	// removed it: no shrink, no travel, no departure at all.
+	//
+	// The answer is the one rowTravel's own comment already states for a row leaving downward — it "is
+	// moving into the GRANDCHILDREN seat below … they fade out before they arrive, so the seat is implied
+	// and never asserted. Destination, not escape." So the card marches with the army instead of docking:
+	// the army's step (marchTravel — two pitches out of the tier, which is exactly where a grandchildren
+	// row would sit), into a natural chip footprint, wearing the army's own alpha band so it is gone well
+	// before it arrives anywhere. Nothing is asserted that the page cannot show.
+	//
+	// Gated on the tier span rather than on "the query came back empty", deliberately. An empty query is
+	// also what a NOT-YET-MOUNTED box looks like on the first frames (the mount-order fact this tick was
+	// built around), and treating that as "no seat exists" would send every ordinary promotion off into a
+	// phantom instead of letting it find its real box a frame later. A span > 1 is the structural
+	// statement that the old focus has dropped out of the drawn generations entirely.
+	const impliedSeat =
+		relative && panDir === 'down' && tierSpan > 1
+			? { left: card.left, top: card.top + marchTravel(), width: FACE_W, height: FACE_H }
+			: null;
 	// Demotion duration: derived from the HERO's flight — the SAME distance-scaled curve the promotion
 	// uses for this kind, then ×DEMOTE_LEAD so the demote finishes ~15% sooner and clears the stage
 	// before the hero lands. Distance = the clicked box (hero origin, snapshotted at click) → the featured
@@ -1229,18 +1333,16 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// front, and no single z can be both under the hero (2) and over the panel (2). So the panel
 			// moved instead — `.sibling-zone` is z-index 0 now — and this stays where every other demote is.
 			el.style.zIndex = sibling && !sibPlan ? '-1' : '1';
-			// SOLID object: opacity 1 the whole way to its seat, no terminal fade — the user tracks one
-			// continuous card shrinking into its chip. (Spouse was formerly hidden ["covered by emptiness"]
-			// to retire Artifact A's edge-peek; Layer 2 makes it a visible second baseball card instead, so
-			// you can follow the card→chip AND the chip→card as discrete objects trading places. The seat
-			// chip reveals on the demote's LANDING via the onOutgoingEnd atomic swap, like the relative box.)
-			el.style.opacity = '1';
 			// Sibling → the fixed corner rect (no data-flight-id box exists); spouse/relative → the live seat,
 			// re-queried each frame (the moving-destination fix). Sibling's rect is constant, so it just holds.
+			// Last of all the IMPLIED seat (see above), which only exists when the old focus has fallen out of
+			// the drawn generations — so a real box, if there is one, always wins.
 			const box =
 				siblingSeat ??
-				document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect();
+				document.querySelector(`[data-flight-id="${params.id}"]`)?.getBoundingClientRect() ??
+				impliedSeat;
 			if (!box || !box.width) return;
+			const implied = box === impliedSeat;
 			const dx = box.left - card.left;
 			const dy = box.top - card.top;
 			const sx = box.width / card.width;
@@ -1269,9 +1371,14 @@ export function shrinkTo(node: Element, params: { id: string }) {
 					: parentSeat
 						? DEMOTE_SETTLE_PARENT_FACTOR
 						: DEMOTE_SETTLE_CHILD_FACTOR;
-				demoteSettleS = demoteSettleActive
-					? demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(box.width, box.height), factor)
-					: 0;
+				// No settle into an IMPLIED seat. The overshoot-and-return is a LANDING gesture — the weight of
+				// an object arriving on a real box — and this card never arrives on one; it is a leaver, and
+				// leavers march on the row's plain curve. (It would also be spent past ROW_GONE, i.e. entirely
+				// invisible, which is the tell that it is the wrong gesture rather than merely a wasted one.)
+				demoteSettleS =
+					demoteSettleActive && !implied
+						? demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(box.width, box.height), factor)
+						: 0;
 			}
 			// SEAT HOLD — §19 only. A demote is REMOVED by Svelte the instant its own clock runs out, so the
 			// frame at u=1 is computed and never painted: measured, the last frame the card actually appeared
@@ -1293,11 +1400,30 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// so it DECELERATES into its final size rather than stopping dead — the object arrives at its
 			// shape, it does not snap to it. Position keeps `uu`, so the landing rect is unchanged and the
 			// settle still carries the whole path.
+			// SOLID object: opacity 1 the whole way to its seat, no terminal fade — the user tracks one
+			// continuous card shrinking into its chip. (Spouse was formerly hidden ["covered by emptiness"]
+			// to retire Artifact A's edge-peek; Layer 2 makes it a visible second baseball card instead, so
+			// you can follow the card→chip AND the chip→card as discrete objects trading places. The seat
+			// chip reveals on the demote's LANDING via the onOutgoingEnd atomic swap, like the relative box.)
+			//
+			// THE ONE EXCEPTION is the implied seat, where there is no chip to be exposed underneath: this
+			// card is a row leaver and wears the row's own alpha (ROW_SOLID → ROW_GONE, fractions of DISTANCE
+			// covered, exactly as flyOut applies them), so it is solid while it reads as a card being shoved
+			// and gone before it reaches a seat the page never asserts. Same band as every chip beside it, so
+			// the card and its rows disappear together rather than the card outliving its own army.
+			el.style.opacity = implied ? String(clamp01((ROW_GONE - uu) / (ROW_GONE - ROW_SOLID))) : '1';
 			const uShape = sibPlan ? cubicOut(Math.min(1, uTravel / SHAPE_AT)) : uu;
 			const Sx = 1 - uShape * (1 - sx);
 			const Sy = 1 - uShape * (1 - sy);
 			el.style.transformOrigin = 'top left';
-			el.style.transform = `translate(${uu * dx}px, ${uu * dy}px) scale(${Sx}, ${Sy})`;
+			// + pendingCollapse() as a CONSTANT, not a decaying one. Every other object here is a FLIP whose
+			// delta was corrected above; the demoting card is the one that is neither pinned nor FLIP'd — it
+			// is still in flow, so the collapse re-seats it one pitch higher under its own feet. Its `card`
+			// rect was measured before that, so this whole animation is expressed in the pre-collapse frame
+			// and a constant offset restores that frame for the entire journey. It still lands exactly on the
+			// seat: the seat is re-queried live, in the post-collapse frame, and the two cancel.
+			el.style.transform =
+				`translate(${uu * dx}px, ${uu * dy + pendingCollapse()}px) scale(${Sx}, ${Sy})`;
 			// GEOMETRY-KEYED CROSSFADE (replaces the time-based CSS fades AND any gated reveal): both the
 			// card's own face and the chip-face key their opacity to the shell's natural scale uNat, in
 			// OVERLAPPING bands — so something is always visible (no empty-shell blink) and the chip-face is
@@ -1439,9 +1565,34 @@ export function morphIn(node: Element, params: { id: string }) {
 	const dest = node.getBoundingClientRect();
 	const old = rectSnapshot.get(params.id);
 	if (old && dest.width && dest.height) {
+		// A PERSON'S MOTION IS OWNED BY THEIR morphIn. This box is about to carry them from their captured
+		// rect to this seat as one object; any OTHER copy of them still on stage is a second render of one
+		// person on one path. chipExit already states this rule for a departing spouse who also arrives as a
+		// parent ("Hiding here kills it: the person's motion is owned by their morphIn") — it just had no
+		// way to reach a ROW leaver, because until the grandparent tier there was never a row leaver who
+		// also arrived in a row.
+		//
+		// That is exactly the duplicate Sam caught: click the PARENT while the tier is open and the
+		// grandparent above it becomes a parent of the new focus. He morphs correctly into the new parents
+		// row — and his tier chip ALSO ran the row march, so a second copy of him slid straight down and
+		// faded out under the growing card. Hidden here, the march still happens to an invisible node and
+		// the only thing on screen is the object doing the real journey.
+		//
+		// `visibility`, not `opacity`: flyOut sets opacity from a compiled css ANIMATION, and an animation
+		// beats an inline style in the cascade, so an inline opacity here would simply be ignored. It is the
+		// same instrument scheduleHandoff uses to step the real leaver aside for its ghost.
+		for (const other of document.querySelectorAll<HTMLElement>(`[data-flight-id="${params.id}"]`))
+			if (other !== node) other.style.visibility = 'hidden';
 		// MORPH from the person's old on-screen box (e.g. the father's spouse-chip) — a discrete card.
 		const dx = old.left - dest.left;
-		const dy = old.top - dest.top;
+		// + pendingCollapse(), for growFrom's reason: this seat rises one tier pitch a flush from now. THIS is
+		// the arrival Sam was watching — the grandparent chips coming down into the parents row. They ran
+		// morphIn's fixed 360ms clock while the stage collapsed on the hero's ~500ms, so the moment their own
+		// transform finished the still-moving stage carried them back up: measured, an 8px dip at 305ms,
+		// while the hero, the leavers, the floor and the notch seat were all provably direct. It is also why
+		// the gesture looked clean on a grandfather with no parents of his own — nothing arrived here to do
+		// it — and dipped on a grandmother who has them.
+		const dy = old.top - dest.top + pendingCollapse();
 		const sx = old.width / dest.width;
 		const sy = old.height / dest.height;
 		// DEMOTE SETTLE (the demoted spouse): the reciprocal-of-promotion overshoot on its OWN captured vector
@@ -1468,9 +1619,9 @@ export function morphIn(node: Element, params: { id: string }) {
 		};
 	}
 	// No on-screen origin → arrive from the ARMY's trailing edge (see rowTravel): the pan direction
-	// decides, so this row steps in with every other row instead of always rising from below. One tier
-	// pitch, on the shared row clock.
-	const D = panDir === 'down' ? -rowTravel() : rowTravel();
+	// decides, so this row steps in with every other row instead of always rising from below. The march's
+	// own step (one tier, or two out of the grandparent tier), on the shared row clock.
+	const D = panDir === 'down' ? -marchTravel() : marchTravel();
 	return {
 		duration: rowClockMs(),
 		easing: cubicOut,
@@ -1557,12 +1708,30 @@ export function rowTravel(): number {
 	if (rowPitch !== null) return rowPitch;
 	const slot = document.querySelector('.featured-slot')?.getBoundingClientRect();
 	let top: number | null = null;
+	// THE ADJACENT row, not the topmost one — "a row's seat to the NEXT" is a statement about neighbours.
+	// With one ancestor row on stage the two readings are the same number, which is why this was written as
+	// a min and stayed correct for months. Open the grandparent tier and there are TWO rows marked dir="up":
+	// a min then measures tier→slot (290) and calls it the pitch, so every consumer of one tier silently
+	// doubles. The lowest ancestor row is the one that actually abuts the card, so it is the one that
+	// defines the gap.
 	for (const r of rectSnapshot.values())
-		if (r.dir === 'up') top = top === null ? r.top : Math.min(top, r.top);
+		if (r.dir === 'up') top = top === null ? r.top : Math.max(top, r.top);
 	const derived = slot && top !== null ? Math.round(slot.top - top) : 0;
 	// Sanity band: a plausible tier is a chip plus a connector, never a stray reading off a mid-flight rect.
 	rowPitch = derived >= 90 && derived <= 260 ? derived : ROW_TRAVEL_FALLBACK;
 	return rowPitch;
+}
+/**
+ * THE ARMY'S STEP for this navigation: the measured tier pitch × the number of tiers the click crossed.
+ *
+ * rowTravel() stays what it has always been — the distance from one row's seat to the next, a LAYOUT fact.
+ * This is the distance the SCENE pans, which is that fact times how far the camera moved, and the two were
+ * only ever the same number because every navigation until the grandparent tier crossed exactly one
+ * generation. Every consumer that means "one step of the march" reads this; anything that means "the pitch
+ * between two adjacent rows" (the tier push's own fallback height) keeps reading rowTravel.
+ */
+export function marchTravel(): number {
+	return rowTravel() * tierSpan;
 }
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
 // THE ARMY. Direction is the CAMERA PAN, never the row's own zone — every row moves the same way at the
@@ -1584,6 +1753,11 @@ export function rowClockMs(): number {
 		heroOrigin && slot && slot.width
 			? relativeGrowMs(maxCornerTravel(heroOrigin, slot)) * DEMOTE_LEAD
 			: ROW_MS_FALLBACK;
+	if (import.meta.env.DEV)
+		console.log(
+			'[rowclock]',
+			JSON.stringify({ ms: Math.round(rowClock), clickedId, hasOrigin: !!heroOrigin, snap: rectSnapshot.size, slotW: Math.round(slot?.width ?? 0) })
+		);
 	return rowClock;
 }
 const ROW_SOLID = 0.34; // fully opaque this far along — a card being shoved is a solid object for as
@@ -1615,7 +1789,17 @@ const HANDOFF_MS = 420; // the hand-off owns its box for longer than a row push 
 // The traveller's OWN tempo, on top of the shared row clock: she was reaching her seat before the card
 // had finished settling around her, and two arrivals landing out of step read as a wobble even when each
 // is correct on its own. 1.08 puts her landing just inside the card's.
+//
+// SUPERSEDED by HANDOFF_LEAD (see flyOut). The intent was always "land just inside the card's landing";
+// 1.08 expressed it as a multiple of the ROW clock, which is the wrong quantity — the row clock describes
+// rows stepping one pitch, and she is not stepping a pitch, she is crossing a diagonal into a corner of
+// the card itself. Against the hero's own duration the same intent is a lead, not a tempo. Kept only
+// because the constant is referenced in the design notes; nothing reads it.
 const HANDOFF_TEMPO = 1.08;
+// How far inside the CARD's own landing the traveller comes to rest. She must never be the last thing
+// moving (that reads as a correction applied after the card settled) and never be parked and waiting
+// (that reads as the card jumping to her). Just under 1 is the whole rule.
+const HANDOFF_LEAD = 0.96;
 // Band over which a DIFFERENT-TIER traveller crossfades from her old face to the destination's, in
 // fractions of DISTANCE COVERED — not of the clock. The distinction is the whole fix: the travel
 // decelerates hard, so 55% of the CLOCK is already 98% of the DISTANCE, and a band that looked
@@ -1761,6 +1945,45 @@ function crossfadeToSeatFace(
 }
 
 /**
+ * A traveller whose DESTINATION MOVES. Baked WAAPI keyframes resolve their endpoint once, which is right
+ * for the notch (a seat in the card's own corner, laid out in the slot and therefore at its resting rect
+ * from frame one) and wrong for the children row: that row sits under `.featured-slot`, whose reserved
+ * height is transitioning from the OUTGOING card's geometry to the incoming one's. Measured on
+ * Aaron Burr Jr. → Daniel Burr the child seat travels 297px UP during the flight — the outgoing card's
+ * cross-connections blade collapsing, plus the tier — so a traveller aimed at the rect it had one frame in
+ * finished 297px below it, in open space.
+ *
+ * This is shrinkTo's rule, stated for a portalled ghost instead of a card: re-query the seat EVERY frame
+ * and let the object track it to wherever it actually comes to rest. Same house curve (easeOutBack through
+ * the same solver), driven by rAF because WAAPI cannot re-evaluate an endpoint mid-animation.
+ */
+function trackSeat(ghost: HTMLElement, seat: HTMLElement, snap: PinRect, ms: number): void {
+	// Same solver, same inputs as the baked path it replaces (distance to the seat, the SEAT's own
+	// footprint) so the curve is identical and only the endpoint is live.
+	const d0 = seat.getBoundingClientRect();
+	const settleS = demoteSettleBackFor(
+		Math.hypot(d0.left - snap.left, d0.top - snap.top),
+		Math.hypot(d0.width, d0.height)
+	);
+	const t0 = performance.now();
+	const step = () => {
+		if (!ghost.isConnected) return; // retired by the observer below — stop driving a detached node
+		const p = Math.min(1, (performance.now() - t0) / ms);
+		const e = settleS ? easeOutBack(p, settleS) : cubicOut(p);
+		const r = seat.getBoundingClientRect();
+		// A seat that is momentarily unlaid-out reports nothing usable; hold the last frame rather than
+		// snapping to a zero rect (trap 2 — a zero rect is not a position).
+		if (r.width && r.height) {
+			ghost.style.transform =
+				`translate(${e * (r.left - snap.left)}px, ${e * (r.top - snap.top)}px) ` +
+				`scale(${1 + e * (r.width / snap.width - 1)}, ${1 + e * (r.height / snap.height - 1)})`;
+		}
+		if (p < 1) requestAnimationFrame(step);
+	};
+	requestAnimationFrame(step);
+}
+
+/**
  * The hand-off: a leaver that is not leaving the scene at all — the OTHER parent on a parent promotion,
  * who becomes the new focus's spouse — travels the diagonal to her notch seat instead of dissolving in
  * the parents row and rematerialising in the notch a beat later. Two events for one person broke the
@@ -1777,13 +2000,40 @@ function crossfadeToSeatFace(
 function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: number): void {
 	if (typeof requestAnimationFrame === 'undefined') return;
 	requestAnimationFrame(() => {
+		if (import.meta.env.DEV)
+			console.log(
+				'[handoff]',
+				JSON.stringify({ key, ms: Math.round(ms), hero: Math.round(getHeroSchedule().duration), row: Math.round(rowClockMs()) })
+			);
 		if (!node.isConnected) return;
-		const seat = [...document.querySelectorAll(`[data-flight-id="${key}"]`)].find(
-			(el) => el !== node && el.closest('.spouse-notch')
-		) as HTMLElement | undefined;
+		// WHERE THIS PERSON IS GOING, if anywhere. Two destinations qualify, and they are different journeys:
+		//
+		//   NOTCH — the other parent becoming the new focus's spouse. She crosses INTO the card's own corner
+		//           and is meant to be followed the whole way, so she rides in FRONT of it.
+		//   ROW   — the hovered parent becoming the new focus's CHILD. This is the first crossing in the
+		//           project that spans a GENERATION GAP: parents row, under the growing card, into the
+		//           children row. Without it he simply dissolved in one row while a second copy of him faded
+		//           in two rows below — "dies here, rematerialises there", the exact thing the hand-off
+		//           exists to abolish, and the reason Sam could not follow him as an object.
+		//
+		// A destination in the PARENTS row is still excluded, and for the original reason: a person landing
+		// there already morphs from this same captured rect via in:morphIn, so flying a leaver there too
+		// would put two copies of one person on one path.
+		const seats = [...document.querySelectorAll(`[data-flight-id="${key}"]`)].filter((el) => el !== node);
+		const seat = (seats.find((el) => el.closest('.spouse-notch')) ??
+			seats.find((el) => el.closest('.children-slot'))) as HTMLElement | undefined;
 		if (!seat) return;
+		const toNotch = !!seat.closest('.spouse-notch');
 		const dst = seat.getBoundingClientRect();
 		if (!dst.width || !dst.height || !snap.width || !snap.height) return;
+		// THE CLOCK, resolved HERE rather than by the caller. flyOut is configured before the featured block
+		// is built, so getHeroSchedule() described the previous navigation at that point; by this deferred
+		// frame growFrom has run and it describes THIS one. Measured, the caller's value was the constant
+		// 454ms on every flight ever made — rowClockMs() returns its fallback every time (see its note) — so
+		// against a 586ms hero out of the tier she reached her seat 119ms early and sat in open space beside
+		// a card that had not arrived. HANDOFF_LEAD lands her just inside the card instead, whatever the
+		// card's own clock happens to be.
+		const travelMs = Math.max(HANDOFF_MS, (getHeroSchedule().duration || ms) * HANDOFF_LEAD);
 		// NO FADE (Sam, Aug 3). The traveller is opaque from the first frame to the last. Fading her out as
 		// she arrived left a GAP — she was gone by ~490ms and the real chip only fades in at ~660ms with the
 		// rest of the notch — so she dissolved on the seat and then blinked back into it. That is precisely
@@ -1808,13 +2058,21 @@ function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: numb
 			offset: t
 		}));
 		const timing: KeyframeAnimationOptions = {
-			duration: ms,
+			duration: travelMs,
 			// LINEAR here on purpose: the curve is already baked into the sampled offsets above. An easing
 			// on top would compose with it and bend the settle into something the solver never described.
 			easing: 'linear',
 			fill: 'forwards',
 			composite: 'replace'
 		};
+		// UNDER OR IN FRONT, by destination. The notch traveller rides in FRONT (z 50) — she is crossing into
+		// the card's own corner and is meant to be followed the whole way. The ROW traveller goes UNDER: he
+		// is crossing from the parents row to the children row, and the card is growing across the middle of
+		// that path. z-index 0 on a body-level fixed element puts him below `.page-container` (position
+		// relative, z-index 1) and therefore below the card and the rows, while still above the fixed Field
+		// (also z 0, but earlier in the document). Sam asked for exactly this: "it would go under the
+		// transitioning FeaturedCard but it is noticeable enough that it keeps the illusion."
+		//
 		// IN FRONT OF THE CARD (Sam, Aug 3). Every other leaver is parked at z-index −1 so it can never paint
 		// over an incoming chip; the hand-off is the exception, because she is not leaving — she is crossing
 		// the stage to her own seat, and you are meant to follow her the whole way.
@@ -1843,7 +2101,8 @@ function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: numb
 			ghost.setAttribute('aria-hidden', 'true');
 			ghost.style.cssText =
 				`position: fixed; left: ${snap.left}px; top: ${snap.top}px; width: ${snap.width}px; ` +
-				`height: ${snap.height}px; margin: 0; z-index: 50; pointer-events: none; transform-origin: top left;`;
+				`height: ${snap.height}px; margin: 0; z-index: ${toNotch ? 50 : 0}; ` +
+				`pointer-events: none; transform-origin: top left;`;
 			document.body.appendChild(ghost);
 			node.style.visibility = 'hidden'; // the real leaver steps aside; the ghost carries the motion
 			// A 3+-spouse card's notch seat is a SMALLER TIER (160×65 with its own type scale, PersonBox
@@ -1851,13 +2110,31 @@ function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: numb
 			// with her photo and text compressed, then snapped open at the swap. Same tier → the two are
 			// already the same object and only the union row has to grow. Different tier → she crosses
 			// over to the destination's own face mid-journey, so she lands as the thing she is replacing.
-			if (Math.abs(sx - sy) > 0.02)
-				crossfadeToSeatFace(ghost, seat, snap, dst, ms, sx, sy, settleS);
-			else {
-				growUnionRow(ghost, seat, ms);
-				morphPhotoWidth(ghost, seat, ms);
+			if (toNotch) {
+				// A 3+-spouse card's notch seat is a SMALLER TIER, so the face may have to cross over on the
+				// way (see crossfadeToSeatFace). A children-row seat is the SAME tier as a parents-row chip —
+				// 220×75, same type scale, same object — so the row crosser needs none of this apparatus.
+				if (Math.abs(sx - sy) > 0.02)
+					crossfadeToSeatFace(ghost, seat, snap, dst, travelMs, sx, sy, settleS);
+				else {
+					growUnionRow(ghost, seat, travelMs);
+					morphPhotoWidth(ghost, seat, travelMs);
+				}
 			}
-			const anim = ghost.animate(frames, timing);
+			// EVERY traveller tracks its seat. This was split — baked keyframes for the notch (whose seat is
+			// laid out in the slot and therefore at its resting rect from frame one) and per-frame tracking
+			// only for the children row — and the split was a statement about the notch that stops being true
+			// the moment a grandparent tier is open: the tier's collapse lifts `.featured-slot` 145px DURING
+			// the flight, carrying the notch seat with it, so a rect measured one frame in describes the
+			// card's tier-open position and she flew to a corner the card was about to vacate. Sam: "it flies
+			// as if it was moving to where the FeaturedCard is when the grandparent chips are displayed."
+			//
+			// So the rule is simply "a traveller tracks its seat", with no case analysis about which seats
+			// hold still — the same rule shrinkTo already follows for the demoting card, and for the same
+			// reason. Where the seat IS static the tracker reproduces the baked path exactly (identical
+			// solver, identical inputs, identical curve), so an ordinary promotion cannot tell the difference.
+			// The inner face layers keep their keyframes: they animate SIZE and opacity, which do not move.
+			trackSeat(ghost, seat, snap, travelMs);
 			// THE RETIREMENT. The ghost is NOT dropped when its travel ends — that is what produced the blink.
 			// It holds its seat, opaque, and is removed only once the REAL chip has finished revealing beneath
 			// it (the notch reveal runs at landing, well after the travel). At that moment the chip underneath
@@ -1869,7 +2146,9 @@ function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: numb
 				clearTimeout(cap);
 				ghost.remove();
 			};
-			anim.finished.catch(retire);
+			// (The old `anim.finished.catch(retire)` belt went with the baked shell animation. Retirement was
+			// never really its job — the observer below is what retires a traveller, on the reveal of the
+			// chip underneath — and the hard cap still guarantees nothing outlives its own flight.)
 			// Observed, not polled. The old watcher ran getComputedStyle on the seat EVERY FRAME until the
 			// reveal — a forced style recalc per frame, mid-flight, to answer a question the DOM can simply
 			// announce. `data-pending` is removed at the instant revealPending accepts the chip, and the
@@ -1943,6 +2222,19 @@ export function flyOut(node: Element, params: { key: string }) {
 		// eventually fade out … we need to keep the army rows in place." A row that keeps marching and
 		// passes under the card holds the formation; where its members are re-filed afterwards is the
 		// panel's business, not the row's.
+		// rowTravel, NOT marchTravel — and this is the one place in the march that difference matters.
+		//
+		// A leaver is PINNED (position: fixed at its click-time rect, see the pin above), so it is stated in
+		// VIEWPORT coordinates and nothing in the layout can move it. An ARRIVER is in flow and stated in
+		// LAYOUT coordinates, where the tier's own collapse is already carrying it up one pitch. So the same
+		// single tier of on-screen descent — the descent the hero itself makes, which is what holds the
+		// formation — is TWO pitches when written in layout space (marchTravel, see morphIn) and ONE when
+		// written in viewport space (here). The collapse is exactly the difference between the two.
+		//
+		// Measured: with the collapse instant, the floor teleported −145px under the flight and the hero
+		// covered 45px instead of 145; with the collapse on the flight's clock and this at marchTravel, the
+		// pinned rows out-ran the in-flow ones by a whole tier. With the tier shut, tierSpan is 1 and the two
+		// readings are the same number, so no ordinary navigation can tell them apart.
 		const pitch = rowTravel();
 		const push = panDir === 'down' ? pitch : -pitch;
 		// A parent leaving on a PARENT promotion is the hand-off case (the other parent becomes the new
@@ -1950,7 +2242,27 @@ export function flyOut(node: Element, params: { key: string }) {
 		// coupled push either way: on that navigation the arriving parents morph in from their own captured
 		// rects (in:morphIn), not on the row's 300ms slide, so there is no displacement to stay in contact
 		// with. Every other leaver is a row push and MUST hold ROW_MS exactly.
+		// THE TRAVELLER RIDES THE HERO'S CLOCK, not the row's. Her destination is a seat in the CARD'S OWN
+		// top-right corner, so the only statement that can be true of her is "she arrives when the card
+		// does" — and the row clock cannot say that. Measured, it never even tried: rowClockMs() returns its
+		// 420ms FALLBACK on every navigation (see its note), so `max(HANDOFF_MS, rowClockMs()) * TEMPO` was
+		// the constant 454 for every flight ever made, while the hero's own duration varies with distance —
+		// 475 on an ordinary parent promotion, 586 out of the grandparent tier. At 454 against 586 she
+		// reached the notch seat 119ms before the card's right edge got there and PARKED in open space, a
+		// chip floating beside a card that was still growing; what reads as her "jumping into place" is the
+		// card arriving underneath her. Sam: "a random chip in the middle of the Featured Card."
+		//
+		// HANDOFF_LEAD keeps the old TEMPO's intent — land just INSIDE the card's landing, never after it —
+		// but states it against the thing she is landing on. It is deliberately close to a no-op on an
+		// ordinary promotion (475 × 0.96 = 456 against the 454 that was there before), so the case Sam has
+		// already approved on pixels is left where it was, and only the flights whose hero is slower than
+		// the dead constant change at all.
 		const handoffCase = zoneDir === 'up' && panDir === 'down';
+		// The value passed here is only a FALLBACK. The traveller's real clock is the hero's, and the hero's
+		// schedule does not exist yet at this point: this block is built before the featured block, so
+		// growFrom has not run and getHeroSchedule() still describes the PREVIOUS navigation. It is resolved
+		// inside scheduleHandoff's deferred frame instead — the same one-frame deferral that already exists
+		// there because the destination seat does not exist yet either.
 		const ms = handoffCase ? Math.max(HANDOFF_MS, rowClockMs()) * HANDOFF_TEMPO : rowClockMs();
 		scheduleHandoff(node as HTMLElement, params.key, snap, ms);
 		return {

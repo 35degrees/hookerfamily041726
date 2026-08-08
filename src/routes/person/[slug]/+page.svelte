@@ -27,7 +27,9 @@
 		getPanDir,
 		rowClockMs,
 		handoffSpouseId,
+		rowHandoffIds,
 		rowTravel,
+		marchTravel,
 		retractBladeIn
 	} from '$lib/transitions/flight';
 	import { getSiblingNavPlan } from '$lib/state/siblingNav';
@@ -140,7 +142,8 @@
 		// Safe HERE, unlike on pointerdown: the click has already been dispatched and its rects captured,
 		// so removing the row cannot move the thing being clicked (that attempt broke both click paths).
 		untrack(() => {
-			tierInstant = true;
+			tierClosingForNav = true;
+			tierCollapsed = true;
 			closeTier();
 		});
 		untrack(armSweep);
@@ -280,11 +283,11 @@
 				const fromY =
 					pan === 'lateral'
 						? el.dataset.flightDir === 'down'
-							? -rowTravel()
-							: rowTravel()
+							? -marchTravel()
+							: marchTravel()
 						: pan === 'down'
-							? -rowTravel()
-							: rowTravel();
+							? -marchTravel()
+							: marchTravel();
 				el.animate(
 					[
 						{ opacity: 0, transform: `translateY(${fromY}px)` },
@@ -307,6 +310,10 @@
 	// WHO is crossing from the parents row to the notch this navigation, captured at flight START because
 	// the click-time captures handoffSpouseId reads are cleared a frame later. Consumed at landing.
 	let handoffChipId: string | null = null;
+	// WHO is crossing a GENERATION into the children row this navigation (flight.ts rowHandoffIds). Empty
+	// on every navigation that does not come out of the grandparent tier. Same lifecycle as handoffChipId:
+	// captured at flight start from the click-time snapshot, consumed at landing.
+	let crossingIds: string[] = [];
 	// The pivot the current demotion owns — set at outrostart, consumed at outroend. The introend
 	// safety-net excludes it for relative+motion so it can't pre-empt the atomic swap with a fade.
 	let demotingPivotId: string | null = null;
@@ -331,6 +338,11 @@
 		// — a promoted child, a sibling, a CC from offscreen — keeps the flat card all the way in.
 		openSiblingsOnLand = getPanDir() === 'up'; // a child promotion — see the declaration
 		handoffChipId = handoffSpouseId(roster.spouses.map((s) => s.spouse.id));
+		// WHO IS CROSSING A GENERATION into the children row (see flight.ts rowHandoffIds) — the hovered
+		// parent on a grandparent promotion, and nobody else on any other navigation. Captured at flight
+		// START because it reads the click-time snapshot, which is cleared a frame later; consumed twice
+		// below — to HOLD his seat through the flight, and to reveal it at landing.
+		crossingIds = rowHandoffIds(roster.children.map((c) => c.id));
 		if (handoffChipId) {
 			const watch = () => {
 				if (!node.isConnected || !node.classList.contains('flat')) return;
@@ -370,7 +382,15 @@
 		// `undefined !== pivot` on that chip — true — and revealed the demoted person's chip at FLIGHT
 		// START, fading it up beside a card that was still carrying him across the screen. The one chip
 		// §19.4 says must stay held was the one chip this gate could not see.
-		revealPending((el) => !isSeatFor(el, pivot ?? '') && el.dataset.flightDir !== 'lateral');
+		// The generation-crossers are held for exactly the reason the PIVOT and the spouse chips are: a
+		// traveller is on his way to that seat, and revealing it now would fade a second copy of him in
+		// underneath the one still moving. Released at landing, as a STEP (see onIncomingLand).
+		revealPending(
+			(el) =>
+				!isSeatFor(el, pivot ?? '') &&
+				el.dataset.flightDir !== 'lateral' &&
+				!crossingIds.includes(el.dataset.flightId ?? '')
+		);
 	}
 	// Spouse-chip reveal fade — quicker than the default box fade (180ms) so the chips settle into the
 	// notch with less lag AFTER the hero lands. NOT an earlier start (that would be a mid-flight rise,
@@ -405,6 +425,16 @@
 		}
 		revealPending((el) => el.dataset.flightDir === 'lateral', CHIP_REVEAL_MS);
 		handoffChipId = null;
+		// The generation-crosser's seat, revealed as a STEP for the same reason the notch traveller's is:
+		// his ghost is sitting on that seat, opaque and on top of it, so a fade underneath is a fade nobody
+		// can see — and the ghost retires the instant `data-pending` goes away, which is this line. Faded
+		// instead, he would be retired 120ms into a settled stage, the dangling tail that made the sequence
+		// feel loose before.
+		if (crossingIds.length) {
+			const ids = crossingIds;
+			revealPending((el) => ids.includes(el.dataset.flightId ?? ''), 0);
+			crossingIds = [];
+		}
 		// The siblings arrive WITH the spouse chip, on the panel's own per-chip cascade (§21.1: each chip
 		// drops from where its predecessor sits, 38ms apart, with a 2.5px micro-overshoot). Reusing that
 		// reveal rather than animating anything new is the whole point — the children that faded out below
@@ -610,6 +640,18 @@
 	// chip's rect and there is no click here, so borrowing it means borrowing a stale navigation. 420 is
 	// the row fallback — the same number the army uses when it has nothing to derive from.
 	const TIER_MS = 420;
+	// HOW FAR THE TIER PULLS ITSELF UP INTO THE PAGE'S TOP PADDING, in px.
+	//
+	// The tier opens in flow and pushes the stage down by its own height, and the COLLAPSE of that push is
+	// what makes a navigation composite two curves (see the note on tierClosingForNav): the error is
+	// push × (e − c), so it is a straight linear function of how far the stage has to travel back. Sam,
+	// reading it off the screen rather than off the code: "maybe the parent chip position is just too low
+	// when grandparent chips are visible and it can adjust that placement upfront."
+	//
+	// He is right, and it is a real lever rather than a workaround: every pixel the tier borrows from the
+	// 80px of headroom already above the parents row is a pixel the stage does not have to give back. It
+	// costs nothing at rest, because the default (tier-shut) layout never sees this at all.
+	const TIER_LIFT = 0;
 
 	/** A CSS cubic-bezier as a Svelte easing. Newton on x, then read y — so a curve can be authored in the
 	 *  same notation the stylesheet uses instead of being approximated by whichever named easing is
@@ -653,13 +695,36 @@
 	let shakeParentId = $state<string | null>(null);
 	let shakeTimer: ReturnType<typeof setTimeout> | null = null;
 	let gpOffsetX = $state(0);
-	// A NAVIGATION REMOVES THE TIER WITH NO ANIMATION. Its close animates margin-top back to −h, i.e.
-	// UPWARD — right for a hover dismissal, badly wrong on a navigation, where the army is marching DOWN.
-	// Measured (probe-tier): the clicked grandparent chip travelled y=105 → y=−14, out of the top of the
-	// window, WHILE the card grew from that same chip — two copies of one person going opposite ways.
-	// Sam: "the whole idea is that a user can follow a person around by the chips … the illusion is
-	// trashed to have multiple of the same card going different directions."
-	let tierInstant = $state(false);
+	// A NAVIGATION CLOSES THE TIER ON THE FLIGHT'S CLOCK; a hover dismissal closes it on its own.
+	//
+	// This flag was `tierInstant` and the close really was instant, because the first attempt at animating
+	// it dragged the chips with the block: the clicked grandparent travelled y=105 → y=−14, out of the top
+	// of the window, WHILE the card grew from that same chip — two copies of one person going opposite
+	// ways (Sam: "the illusion is trashed to have multiple of the same card going different directions").
+	// Killing the animation stopped that, and cost the promotion its journey. MEASURED, with the close
+	// instant: the floor (.featured-slot top) teleported −145px on the swap frame, and the hero was born at
+	// y=205 — a hundred pixels BELOW the chip it came from — and covered 45px where an ordinary parent
+	// promotion covers 145. The card was not travelling; the stage was rising to meet it. Sam: "i don't
+	// think the grandfather chip does transition down and expand into the featured card, there is a gap."
+	//
+	// The fix is not to choose between the two, it is to separate what the collapse is allowed to move.
+	// The chips now leave through flyOut like every other chip on the stage — pinned out of flow at their
+	// click-time rects, so the block cannot carry them anywhere — and the block's collapse is left doing
+	// the one job it should ever have done: moving the STAGE, on the army's own clock, so the floor
+	// descends under the hero instead of jumping out from under it.
+	let tierClosingForNav = $state(false);
+	// THE LAYOUT COLLAPSE, kept strictly separate from the flag above — and the separation is the whole
+	// lesson of handoff §6. `tierClosingForNav` is armed on CLICKCAPTURE, which is safe for exactly one
+	// reason: it changes no geometry. The moment it also drove a `display: none` it became the dead end
+	// that section already names — the row leaving between capture and handling, out from under the chip
+	// being clicked. Measured, instantly: warmPersonLinks read the grandparent's origin rect off a
+	// display:none element and the card flew from a 63×39 box at (17,175).
+	//
+	// So the collapse is armed HERE instead, in the navigation effect, one flush after the click has been
+	// fully handled and every rect it needed has been captured. Same frame the old code removed the tier
+	// in; nothing about the click can see it.
+	let tierCollapsed = $state(false);
+
 
 	/** A parent's OWN parents. Matched by id, never by position: the roster drops a parent it has already
 	 *  placed elsewhere, so index 0 is not reliably the father. */
@@ -686,14 +751,21 @@
 		cancelDismiss();
 		revealedParentId = null;
 	}
-	/** A click anywhere while the tier is open means a navigation is about to remove it — so it must
-	 *  leave with no animation. Geometry is untouched, so the click still lands where it was aimed. */
-	function armInstantTierClose() {
-		if (revealedParentId) tierInstant = true;
+	/** A click anywhere while the tier is open means a navigation is about to remove it — so it must leave
+	 *  the NAVIGATION's way (on the flight's clock, chips pinned) rather than the hover's. Geometry is
+	 *  untouched, so the click still lands where it was aimed. */
+	function armTierNavClose() {
+		if (revealedParentId) tierClosingForNav = true;
 	}
 	function onParentEnter(e: PointerEvent, id: string) {
 		clearHoverTimer();
-		tierInstant = false; // a fresh hover animates again
+		// NOT reset here any more. pointerenter is not a safe place to un-collapse anything: the navigation's
+		// own collapse brings a NEW parents row up under a pointer that has not moved, so a chip slides
+		// beneath the cursor and fires this handler on its own — the same trap the keep-alive region was
+		// rebuilt around. Clearing `tierCollapsed` from here would restore `display` to a tier block that is
+		// still mounted (its chips outroing), putting 145px back into the column mid-flight and taking it
+		// out again a moment later. Both flags are cleared at the REVEAL instead, where the old block is
+		// provably gone and a fresh one is about to be built.
 		if (revealedParentId === id) return;
 		// The element is grabbed HERE, not inside the timer. `e.currentTarget` is only valid during
 		// dispatch — read 1.5s later it is null, which silently left the offset at 0 and centred the tier
@@ -711,6 +783,10 @@
 					const s = stage.getBoundingClientRect();
 					gpOffsetX = Math.round(c.left + c.width / 2 - (s.left + s.width / 2));
 				}
+				// Cleared HERE rather than on pointerenter (see onParentEnter): by the time a reveal fires, any
+				// previous tier is long gone, so restoring layout and the hover-dismissal routing is safe.
+				tierClosingForNav = false;
+				tierCollapsed = false;
 				revealedParentId = id;
 			} else {
 				// NO PARENTS TO SHOW — the chip shakes its head. An answer, rather than a hover that does
@@ -776,14 +852,60 @@
 		return p?.fn ?? p?.n?.split(' ')[0] ?? '';
 	}
 
-	/** The opening push. The block's own height is the tier, so this reads it rather than being told. */
+	/** The opening push, and the closing collapse. The block's own height is the tier, so this reads it
+	 *  rather than being told — "the same gap as parents→card" is then true by construction.
+	 *
+	 *  ON A NAVIGATION it runs the ARMY's clock and the army's curve instead of its own 420/TIER_CURVE, and
+	 *  that is the whole of step 2: the stage then moves ONCE, on one clock, and nothing in the flight is
+	 *  measuring itself against a floor that is moving on a different schedule. It also stays OPAQUE —
+	 *  the block's fade would composite onto the pinned chips inside it, overriding the row alpha they
+	 *  share with every other leaver on stage. Nothing visible is left in the block to fade anyway: the
+	 *  chips are pinned out of flow and the connector is hard-cut by .nav-close (stylesheet), the same
+	 *  frame-one cut `.connector.cc-hidden` already makes on every other navigation. */
 	function tierPush(node: Element) {
 		const h = (node as HTMLElement).offsetHeight || rowTravel();
+		const nav = tierClosingForNav;
 		return {
-			duration: tierInstant ? 0 : TIER_MS,
+			// INSTANT on a navigation. Every FLIP now knows the collapse is coming (flight.ts
+			// pendingCollapse), so the stage can drop it in one frame and no object composites its own curve
+			// against the stage's. Animating it was the mistake: with four different clocks on stage —
+			// morphIn's 360, the row entrance's 420, the hero's ~500 — some object always finished first and
+			// got carried the rest of the way by a stage still in motion.
+			duration: nav ? 0 : TIER_MS,
 			easing: TIER_CURVE,
-			css: (t: number, u: number) => `margin-top: ${-u * h}px; opacity: ${t};`
+			// margin-top interpolates between the two states rather than scaling one of them: OPEN (u=0) the
+			// block contributes h − TIER_LIFT to the column, CLOSED (u=1) it contributes nothing at all
+			// (margin-top = −h). Scaling −u·h instead would have left the lift applied at full close and
+			// pulled the whole stage 32px too high on the way out.
+			css: (t: number, u: number) =>
+				`margin-top: ${-TIER_LIFT + u * (TIER_LIFT - h)}px; opacity: ${nav ? 1 : t};`
 		};
+	}
+
+	/** A tier chip's outro — two different events remove this row, and they are not the same gesture.
+	 *
+	 *  HOVER DISMISSAL: the row retracts as one object, chips included. Duration 0 and no css of its own,
+	 *  so the chip simply rides the block's collapse — the behaviour verified in 2fa6e69a ("the tier leaves
+	 *  without flying"), and the reason a bare `out:flyOut` here would be wrong: with no navigation there is
+	 *  no pan direction and no rect snapshot, so flyOut would fall through to its generic 28px drift and the
+	 *  chip would fly on a dismissal that is not supposed to be a flight.
+	 *
+	 *  NAVIGATION: the chip IS a row leaver, so it hands straight to flyOut and gets exactly what every
+	 *  other chip on the stage gets — pinned at its click-time rect (so the collapsing block cannot drag it
+	 *  upward, which is what made the animated close unusable the first time), the army's march and alpha,
+	 *  the hand-off to the spouse notch if it is the other grandparent, and held invisible for the flight if
+	 *  it is the chip that was clicked, because that chip is becoming the card.
+	 *
+	 *  `|global` IS LOAD-BEARING, and its absence is invisible in the source. A Svelte outro is LOCAL by
+	 *  default: it plays when the element's own block is destroyed, and NOT when an ancestor block is. This
+	 *  chip lives inside the tier's `{#if}`, and closing the tier destroys that `{#if}` — an ancestor — so
+	 *  without the modifier this function is never called at all. Measured: two visible copies of the
+	 *  clicked grandparent, the chip riding the collapse up out of the window while the card grew out of
+	 *  its seat, which is the exact illusion break that made the animated close unusable the first time
+	 *  (handoff §6). It read as "the outro is wrong" and was really "the outro never ran". */
+	function tierChipExit(node: Element, params: { key: string }) {
+		if (!tierClosingForNav) return { duration: 0 };
+		return flyOut(node, params);
 	}
 
 	// WHICH SEAT A DEMOTING CARD IS SHRINKING INTO, so its chip-face can wear the destination's own face
@@ -824,6 +946,7 @@
 		}
 		return base;
 	});
+
 </script>
 
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
@@ -843,23 +966,58 @@
      Svelte had already created the outro, so the duration it read was the animated one (measured — the
      chip still flew to y=−14). Arming it here changes no geometry, so the click still lands where the
      user aimed; it only decides how the row LEAVES. -->
-<svelte:window onpointermove={onStagePointerMove} onclickcapture={armInstantTierClose} />
+<svelte:window onpointermove={onStagePointerMove} onclickcapture={armTierNavClose} />
 
 <div
 	class="page-container"
-	class:tier-instant={tierInstant}
-	style="--tier-ms: {TIER_MS}ms"
+	class:tier-nav-close={tierClosingForNav}
+	class:tier-collapsed={tierCollapsed}
+	style="--tier-ms: {TIER_MS}ms; --tier-lift: {TIER_LIFT}px"
 	use:warmPersonLinks
 >
 	<!-- THE GRANDPARENT TIER (hover-reveal). In FLOW, deliberately: everything below is pushed down by
 	     this block's own height, which is what makes the stage move as one without a single row being
 	     told to move. Centred on the hovered CHIP via translateX — this tier belongs to one parent, and
 	     a row centred on the stage would claim to be both parents' at once. -->
+	<!-- data-tier-span="2" is the tier telling the flight how far a click from inside it travels: two
+	     generations, so the army marches two pitches (flight.ts marchTravel). Stated on the BLOCK rather
+	     than on each chip, because it is a fact about the row, and read at click time by navigate.ts via
+	     closest() — the same ancestor walk that already resolves a chip's flight box. -->
 	{#if revealedGrandparents.length}
-		<div class="grandparent-tier" style="transform: translateX({gpOffsetX}px)" in:tierPush out:tierPush>
+		<!-- `left`, NOT `transform: translateX`. The two centre this row identically and neither disturbs
+		     layout, but a transform makes the element the CONTAINING BLOCK for its position:fixed
+		     descendants — and on a navigation every chip in here is pinned position:fixed at a VIEWPORT
+		     rect by flyOut. Under a transform those coordinates would be re-based against this block and
+		     every tier leaver would pin to the wrong place. position:relative creates no such containing
+		     block. (will-change: margin-top/opacity is safe for the same reason — neither property is one
+		     that creates one.) -->
+		<div
+			class="grandparent-tier"
+			class:nav-close={tierClosingForNav}
+			data-tier-span="2"
+			style="left: {gpOffsetX}px"
+			in:tierPush
+			out:tierPush
+		>
 			<div class="parents-slot">
 				{#each revealedGrandparents as gp (gp.id)}
-					<div class="flight" animate:flip={{ duration: flipMs }}>
+					<!-- A REAL FLIGHT BOX, exactly like a resident parent chip. This is what lets the tier take
+					     part in a navigation instead of merely vanishing from one: data-flight-id makes the
+					     clicked chip resolvable (so it is held invisible while the card grows out of its seat,
+					     and so the row + demote clocks derive from its true rect instead of falling back to
+					     constants), and the click-time rect snapshot is what pins this chip out of flow and
+					     what carries the other grandparent across to the spouse notch.
+					     data-flight-dir="up" states the obvious — this is an ancestor row — which is also why
+					     rowTravel had to start measuring the ADJACENT ancestor row rather than the topmost. -->
+					<div
+						class="flight"
+						data-flight-dir="up"
+						data-flight-id={gp.id}
+						data-tx={gp.t?.x}
+						data-ty={gp.t?.y}
+						animate:flip={{ duration: flipMs }}
+						out:tierChipExit|global={{ key: gp.id }}
+					>
 						<PersonBox person={gp} relation="parent" dimmed={gp.dy_young} />
 					</div>
 				{/each}
@@ -1310,8 +1468,22 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		/* The resting half of TIER_LIFT (the transition carries the other half — see tierPush). */
+		margin-top: calc(-1 * var(--tier-lift, 0px));
+		/* position:relative carries the per-chip centring offset (see the markup for why it is not a
+		   transform: a transform would re-base the viewport pins of every chip leaving this row). */
+		position: relative;
 		/* The chips fade with the block; nothing here overrides the row's own stacking. */
 		will-change: margin-top, opacity;
+	}
+	/* THE CONNECTOR IS HARD-CUT ON A NAVIGATION — the same frame-one cut `.connector.cc-hidden` makes on
+	   every other row's label, and for the same reason: a line reading "Aaron's parents" has nothing to
+	   say about a page whose family is already being replaced, and on a navigation this block stays
+	   OPAQUE (so its fade cannot composite onto the pinned chips inside it), which would otherwise leave
+	   the label riding the collapse all the way up the screen. */
+	.grandparent-tier.nav-close .connector {
+		opacity: 0;
+		transition: none;
 	}
 
 	/* CHILDREN RETREAT while the tier is open — the same gesture they already make when a parent is
@@ -1346,8 +1518,25 @@
 	   Collapsing it also makes the push exactly ONE TIER. With the lead in place the stage moved 170px
 	   against a true pitch of 145 (75px chip + 70px connector); the tier block keeps its own 100px slot,
 	   whose lead is harmlessly at the top of the page, so 170 − 25 = 145. */
+	/* THE TIER'S OWN DEAD LEAD, reclaimed. `.parents-slot` reserves min-height 100 for 75px chips, and the
+	   note on .tier-above below explains why that 25px is invisible at the top of the page — but "invisible"
+	   was only ever true of the GAP. It is not true of the PUSH: those 25px are 25px the stage is shoved
+	   down and has to give back, and giving them back is where the dip comes from. Flooring this row at the
+	   height it actually occupies drops the whole push by 25px and puts the grandparent chips 25px closer
+	   to the top of the screen, which is the same move for the same reason. */
+	.grandparent-tier .parents-slot {
+		min-height: 75px;
+	}
 	.parents-slot.tier-above {
-		min-height: 0;
+		/* 75px — the chip's own height — NOT 0, though the two look identical while the row is at rest:
+		   with the chips in flow the row is 75 tall either way, and the lead still gives back its 25 (100
+		   − 75), so the push is still exactly one tier. The difference shows up the instant the row's chips
+		   leave FLOW. On a navigation flyOut pins every leaver position:fixed, so a row floored at 0 has no
+		   content left and collapses to nothing — measured, the floor dropped 75px in a single frame at the
+		   swap while the tier block itself sat perfectly still, which is the tell that the step was coming
+		   from under it. Flooring the row at the height it actually occupies means its chips can leave
+		   without taking the stage with them. (It cannot clamp a taller chip: min-height is a floor.) */
+		min-height: 75px;
 	}
 	/* AND IT MUST ANIMATE, on the tier's own clock and curve. Snapping it produced the hiccup Sam saw:
 	   measured, the card jumped 25px UP for five frames and only then descended 170. The collapse and the
@@ -1356,8 +1545,22 @@
 	.parents-slot {
 		transition: min-height var(--tier-ms, 420ms) cubic-bezier(0.32, 0, 0.22, 1);
 	}
-	.page-container.tier-instant .parents-slot {
+	/* ON A NAVIGATION the lead gives its 25px back in the same frame the collapse happens, with no
+	   transition — the two are halves of one instantaneous layout change, and animating either of them is
+	   what put the stage in motion underneath the flight. */
+	.page-container.tier-collapsed .parents-slot {
 		transition: none;
+	}
+	/* AND THE BLOCK ITSELF LEAVES LAYOUT IN THAT SAME FRAME. A `duration: 0` outro is NOT enough: Svelte
+	   keeps a block mounted until every outro INSIDE it has finished, and the tier's chips now carry real
+	   outros of their own (tierChipExit → flyOut, ~500ms). So the block sat at its full 145px for the whole
+	   flight and then vanished in one frame at the end — measured, the floor held at 370 and dropped 145px
+	   at 614ms, which is the same stage-in-motion defect wearing a different hat.
+	   Nothing visible is lost: during a navigation every chip in here is either the clicked one (held
+	   invisible by flyOut), a person arriving elsewhere (hidden by their own morphIn), or a traveller whose
+	   motion is carried by a body-level ghost that this rule cannot reach. */
+	.page-container.tier-collapsed .grandparent-tier {
+		display: none;
 	}
 
 	/* THE HEAD-SHAKE — "no parents to show". Deliberately UNEVEN: three refusals each way at falling

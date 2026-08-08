@@ -1,6 +1,6 @@
 # HOOKER FAMILY DESCENDANTS — ENRICHED DESIGN (FABLE PASS)
 
-**Date: August 6, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
+**Date: August 8, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
 **Prepared by the architect stream for Samuel Talcott Hooker's review. Nothing here is a decision until Sam says so.**
 **The 070926 edition added §13 (viewport-lock / scrollbar doctrine) and §14 (Zoom 1 card-grid refinements). This 071226 edition adds §17 (motion physics doctrine — learned the hard way in the July 11 card-transition maintenance phase) and threads the one-physics/velocity-ceiling lessons into §3. The card-transition layer is now CLOSED, probe-guarded, and pushed; see docs/CODING_HANDOFF.md in the repo for the session record and ghost taxonomy.**
 
@@ -17,6 +17,8 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The 080426 edition (August 4) adds §26 — THE SIBLING PANEL AS A PERSISTENT COLUMN (as built; SUPERSEDES §21.1 wherever they differ). §21 described the panel as a transient drop-down; this is the panel as a FIXTURE that travels with the card, and almost every finding in it is the same shape: what changed is not the pixels but the panel's LIFETIME. It records the in-place mutation model, the durable rule that a seat in a MOVING container is a resting position rather than a live rect (third instance of the §18.9 family), the SHAPE-EARLY-THEN-SLIDE finding (direction is read from what changes LAST), the way-station rule for a different-tier landing (§18.4's second instance), the RECIPROCAL-GATE rule earned on Alice Lee Roosevelt and 57 other one-way doors, open-by-default, the fixed anchor, the chevron/alpha-hover header, the leaver's-alpha doctrine extending §17 — and §26.12, the NEGATIVE SPACE: four things built and reverted (including one documented-invariant violation) plus two measurement failures that produced confident false greens.**
 
+**The 080826 edition (August 8) adds §30 — THE STAGE MUST NOT MOVE WHILE ANYTHING IS FLYING: the one arithmetic fact the grandparent tier taught, that an in-flow element is painted at layout(t) + transform(t) and two different curves compose into the ideal path PLUS an error of ΔL·(e−c). It records why that error hides on an object with real travel and IS the entire motion on one with none, the shipped answer (an instantaneous collapse plus an arithmetic correction to every FLIP, rather than trying to settle the layout before measuring), the three consequences that are easy to undo by accident, the six attempts that were built and reverted with the measurement that killed each — including two that looked correct and measured WORSE — and the two rules added alongside it: a person's motion is owned by their morphIn, and a traveller tracks its seat.**
+
 **The 080726 edition (August 7) adds §29 — THE COLOUR SYSTEM (as built): shadows, line-status shading, and the ground that governs them. Everything in it was measured against ONE background, the photographed manuscript parchment, and every number is a property of the PAIR (colour, ground) rather than of the colour — a second sheet moves all of them, so re-measure rather than porting hexes. Leads with the measurement that explains the whole session (the ground is Lab L* 96.3 / a* -0.0 / b* +5.4, i.e. WARM, so every cream moves toward it, and a plain white card already separates by DeltaE 6.5 — the floor below which shading makes a card LESS visible than leaving it alone). Records all ten values Sam rejected with his verdicts and their measurements, the two pivots that worked (cool rather than cream; mark the outsiders rather than the line), why translucency is not an option for a card (it shows its own drop-shadow through itself, and inner masks double-composite), the near-white compression trap, why alpha is not transferable between tints, source order as the precedence rule, and §29.10 — the SPINE, an edge treatment built and left dormant at `--edge-w: 0px` because an edge separates by contrast at a boundary rather than by area.**
 
 **The 080626 edition (August 6) adds §27 — THE CROSS-CONNECTIONS BLADE (as built). The cross-connections leave the featured card's FOOTER and become a carved blade that lives INSIDE the card and is drawn out of it — which makes every card exactly `CARD_TOP_H` tall, the footer having been the only thing that ever varied it. Records the ONE idea that fixed everything else (it is a tool inside the case, not a neighbour: nested, it inherits every transform for free, measured at 0.00px drift, and needs neither an opacity gate nor a shadow of its own), the carved edge's geometry and THE BULGE at 7+ rows (a corner rounded along a slant that had been flattened to vertical, plus the depth cap that should have been deleted with the layout it was built for), the SHEATH and its tang, the CLAMP reasoning end to end (10.8–11.5, why the floor is the dial that matters, and the retired "two 70-character CCs" spec that set the original 10px), type and width as SEARCHES on the real DOM rather than chosen values, the three break rules (bound names, bound years, and the `<wbr/>` after each separator that was the largest single win), and §27.9 — BUILT AND REVERTED, headed by the two-column layout that was deleted rather than patched, with the full downstream chain of every "fix" that followed the first wrong move. §27.10 collects seven measurement failures, each of which produced a confident wrong answer.**
@@ -26,7 +28,7 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_080726.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_080826.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
@@ -3417,3 +3419,90 @@ past `#f7f7f7` there is no separation to buy by keeping it dark:
 ```
 
 Take the lightness the eye wants. **If the set ever needs pulling apart, move a TINT, not the grey.**
+
+---
+
+## 30. THE STAGE MUST NOT MOVE WHILE ANYTHING IS FLYING (AS BUILT, August 8)
+
+The grandparent tier is the first thing in this project that changes the LAYOUT during a flight, and it
+took a whole session to learn that that is the only fact about it that matters. Everything that went
+wrong — a hero born a hundred pixels below its own chip, a spouse chip parked in mid-card, a stage that
+sagged and lifted right before settling — is one cause wearing different clothes.
+
+### 30.1 The arithmetic, which is the whole section
+
+An element that is IN FLOW during a transition is painted at
+
+    layout(t) + transform(t)
+
+Both halves are usually right on their own. The transform is a FLIP: it measures a destination and
+animates to it, and it lands on its element's real layout position whatever that turns out to be. The
+layout is a CSS transition or a block collapsing. Each is monotonic. But if they ride DIFFERENT CURVES,
+the sum is not the path either of them describes.
+
+Write the collapse as ΔL and let `c` be its curve, `e` the element's own. The composite works out to
+
+    ideal path  +  ΔL · (e − c)
+
+That error term is the entire subject. It is zero only when `e ≡ c`, and on a real stage there are four
+curves at once — `growFrom`'s easeOutBack on the hero's ~500ms, `morphIn`'s fixed 360ms, the row
+entrance's 420ms, `flyOut`'s pinned leavers on their own. No choice of `c` cancels them all.
+
+**Why it hides.** The error is a fixed number of pixels regardless of how far the object travels. Give an
+object 145px of real vertical travel and an 8px error is a slightly uneven descent nobody can see. Give it
+ZERO real travel — which is exactly a parent chip promoted while the tier is open, chip at y250 and card
+seat landing at y250 — and that error IS the entire vertical motion: the object sags and recovers, and
+does it in unison with everything else in flow, because they all share the same ΔL. Sam saw it as "a very
+small inverted arc … all elements pulling up right at the final moment", and read the cause correctly off
+the screen before the instrument found it: *"the chips meet them slightly below their finished place."*
+
+**The corollary that actually ships.** A FLIP measured BEFORE a pending layout change is wrong by exactly
+that change. Do not try to make the layout settle before the measurement (see §30.3). Correct the delta
+ARITHMETICALLY — `flight.ts pendingCollapse()` — and let the layout change in one frame. Then no object
+composites anything, because there is no second curve to composite against.
+
+### 30.2 The shipped shape
+
+- **The collapse is INSTANTANEOUS.** One frame, on the navigation, never animated.
+- **Every FLIP is told about it.** `growFrom` and `morphIn` add `pendingCollapse()` to `dy`. The demoting
+  card — the one object that is neither pinned nor FLIP'd, because it is still in flow — carries it as a
+  CONSTANT offset, since its own rect was measured in the pre-collapse frame; its seat is re-queried live
+  in the post-collapse frame and the two cancel.
+- **The block must leave LAYOUT immediately, which a `duration: 0` outro does not do.** Svelte keeps a
+  block mounted until every outro INSIDE it finishes, and the tier's chips carry real ones (~500ms). The
+  block therefore held its full 145px for the whole flight and vanished in one frame at the end — the
+  same defect wearing a different hat. It is removed from layout by a class instead.
+- **That class may NOT be armed on `clickcapture`.** §6's dead end is precise about why arming a flag
+  there is safe — *it changes no geometry*. The moment the same flag drove a `display: none`, the row left
+  between capture and handling and `warmPersonLinks` read the clicked chip's origin off a hidden element:
+  the card flew from a 63×39 box at (17,175). It is armed in the navigation effect, one flush later.
+- **`captureTierOpen` asks whether the tier OCCUPIES LAYOUT, not whether it exists.** A collapsed block is
+  still in the DOM for as long as its chips outro, so a presence test answers "yes" to a navigation made
+  in that window and hands it a 145px correction for a collapse that is not coming.
+
+### 30.3 What was built and reverted, and why each looked right
+
+| attempt | verdict |
+|---|---|
+| Animate the collapse on the ARMY's clock | The army is four clocks, not one. Fixes nobody. |
+| Animate it on the HERO's clock | Fixes the hero exactly and nothing else; the arriving row chips then dipped 8px at 305ms. |
+| Trim the SETTLE amplitude (`settleTrim`) | Treats a symptom. Right for the hero — 4px carry back to 2px — and irrelevant to any object whose dip is not a settle. Deleted once `dy` became honest, which is the tell that it was a correction for a wrong measurement rather than a design value. |
+| Feed the settle solver the SHORTER (true) distance | **Backwards, and it measures as backwards: 254 → 256.** The solver targets a carry in PX and returns it as a FRACTION of the distance it is given; the fraction is then applied to the unchanged transform delta. |
+| Collapse in `$effect.pre` so the layout is settled before measurement | The right instinct, the wrong lever. Forcing it into the same flush makes `growFrom` measure during the reflow — the exact hazard `captureFlightOrigin`'s note exists for — and it read garbage. Also two hydration deaths: `$effect.pre` runs during SETUP, so anything it touches that is declared BELOW it is in its temporal dead zone. That does not warn; it kills the client while SSR still returns 200. |
+| Move the tier closer to the top of the screen (reduce the push) | A real lever but not the cause: the error is ΔL·(e−c), so halving ΔL halves it and never removes it. Sam's own test settled it — the dip survived the move. |
+
+### 30.4 Two rules this session added that are not about layout
+
+**A person's motion is owned by their `morphIn`.** `chipExit` already said this for a departing spouse who
+also arrives as a parent; it simply had no way to reach a ROW leaver, because until the tier there was
+never a row leaver who also arrived in a row. Click a parent with the tier open and the grandparent above
+it becomes a parent of the new focus: he morphs in correctly AND his tier chip ran the row march, so a
+second copy of him slid down and faded out under the card. `morphIn` now hides every other copy of the
+person it is carrying. It must be `visibility`, not `opacity` — `flyOut` sets opacity from a compiled CSS
+animation, and an animation beats an inline style in the cascade.
+
+**A traveller tracks its seat.** Baked WAAPI keyframes resolve an endpoint once. That is right only for a
+seat that is already at rest, and the split between "notch seats hold still, row seats don't" stopped
+being true the moment a tier could lift the whole slot mid-flight. Every traveller now re-queries its seat
+per frame, which is `shrinkTo`'s own moving-destination rule stated for a portalled ghost. Where the seat
+IS static the tracker reproduces the baked path exactly — same solver, same inputs, same curve.

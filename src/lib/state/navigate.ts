@@ -24,6 +24,8 @@ import { planSiblingNav, clearSiblingNavPlan } from './siblingNav';
 import {
 	captureFlightOrigin,
 	captureFlightKind,
+	captureTierSpan,
+	captureTierOpen,
 	getFlightKind,
 	captureClicked,
 	capturePanDir,
@@ -114,6 +116,25 @@ export function warmPersonLinks(node: HTMLElement) {
 		captureFlightKind(
 			ccNav ? 'cc' : isSibling ? 'sibling' : relation === 'spouse' ? 'spouse' : 'relative'
 		);
+		// HOW MANY TIERS THIS CLICK CROSSES. A chip in the hover-revealed grandparent row is two
+		// generations up, so the whole scene pans two pitches, not one. The tier states the fact on its own
+		// block (data-tier-span="2") and this reads it off the ancestor chain — the DOM already knows which
+		// tier a chip is in, so nothing is re-derived from the graph and nothing can disagree. Absent → 1,
+		// which is every ordinary parent/child/spouse/sibling/CC click. MUST run after captureFlightKind,
+		// which resets the span for the new navigation.
+		captureTierSpan(Number(anchor.closest('[data-tier-span]')?.getAttribute('data-tier-span')) || 1);
+		// AND WHETHER THE TIER IS ON SCREEN AT ALL, which is a different question: it closes on ANY
+		// navigation made while it is open, so a parent or child click gets the same 145px layout shift
+		// while crossing only one tier. Every FLIP measured this frame is therefore one pitch off where it
+		// will actually rest, and anything derived from that delta has to know (see pendingCollapse).
+		// OCCUPIES LAYOUT, not merely EXISTS — and the difference is a whole tier of displacement. After a
+		// tier navigation the block stays mounted at `display: none` for as long as its chips take to outro
+		// (~500ms, and Svelte will not remove a block until every outro inside it finishes). A presence test
+		// therefore answers "yes" to a navigation made in that window, and every FLIP on that flight gets a
+		// 145px correction for a collapse that is not coming — the whole stage displaced one tier and
+		// snapped back. Height is the honest question: a collapsed block occupies nothing.
+		const tierEl = document.querySelector('.grandparent-tier');
+		captureTierOpen(!!tierEl && tierEl.getBoundingClientRect().height > 1);
 		// BUG 1: remember which box was clicked so flyOut keeps it invisible — it's becoming the
 		// featured card via the morph, and a second visible copy is the ghost. (No imperative hide
 		// here: the clicked chip stays VISIBLE through the fetch, then the growFrom card — which
