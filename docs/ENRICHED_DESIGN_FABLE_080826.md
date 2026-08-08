@@ -3620,8 +3620,20 @@ it at all, the chip itself gets almost no pad, and any other edge closes at once
 
 The corridor spans the chip's column UNION the row's, because the row slides to put a grandchild under the
 line and a pointer heading for a chip at the far end of a wide row would otherwise leave the corridor
-before it arrived. **The ancestor tier keeps its grace deliberately** — its row sits above the chip that
-opened it with the whole stage between, so no single edge means intent there.
+before it arrived.
+
+**BOTH TIERS NOW CARRY THIS RULE, with the sign flipped** — the ancestor row sits ABOVE its chip, so there
+the TOP edge is the one that means intent and bottom/left/right close at once. Sam asked for the same
+guardrails on both, and they are the same rule: a region test on every move, a corridor on the one side the
+row is on, immediate close everywhere else.
+
+The reason an edge rule is safe NOW when it was reverted before (handoff §6) is that the old one watched
+for the CROSSING EVENT. Opening the ancestor tier drops the stage 145px under a motionless pointer, so the
+cursor lands inside the grandparent row without the user moving — that fired a spurious top-exit, and
+nothing could then dismiss the tier. Asking "is the pointer still somewhere this tier is about" on every
+move has no such failure mode: a stage that moves under a still pointer simply answers the question again,
+correctly. The 300ms grace is retired with it — the motion it protected is the one heading for the row, and
+that motion now has a corridor instead of a timer.
 
 ### 31.6 A CSS transition on a shared element will collide with a navigation
 

@@ -431,6 +431,42 @@ if (CONTROL) {
 		`dismissal: tier ${gone ? 'closed ✓' : 'STILL OPEN ✗'}, ` +
 			`chips drifted ${drift}px laterally ${drift <= 2 ? '✓ (rode the block, did not fly)' : '✗ they flew'}`
 	);
+	// ── CASE 3b: THE ANCESTOR TIER'S TWO EXITS ───────────────────────────────────────────────────────
+	// The mirror of case 8b with the sign flipped: this row sits ABOVE its chip, so the TOP edge is the one
+	// that means intent and the other three must close at once.
+	await page.mouse.move(par.cx, par.cy);
+	await page.waitForTimeout(1150);
+	const gpPoint = await page.evaluate(() => {
+		const g = document.querySelector('.grandparent-tier .flight');
+		if (!g) return null;
+		const r = g.getBoundingClientRect();
+		return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+	});
+	if (gpPoint) {
+		await page.mouse.move(gpPoint.x, gpPoint.y); // straight up onto a grandparent
+		await page.waitForTimeout(280);
+		const stayed = await page.evaluate(() => !!document.querySelector('.grandparent-tier'));
+		console.log(`  EXIT VIA TOP onto a grandparent: tier ${stayed ? 'stayed ✓' : 'CLOSED ✗'}`);
+		// RE-MEASURED with the tier open. Opening it drops the parent chip a whole tier, so coordinates
+		// taken before the hover point ABOVE the chip's new position — i.e. straight into the corridor —
+		// and the test reported the row "still open" when the row was behaving correctly.
+		const live = await page.evaluate((m) => {
+			const el = [...document.querySelectorAll('.page-container > .parents-slot > .flight')].find((x) =>
+				new RegExp(m, 'i').test(x.textContent || '')
+			);
+			const r = el?.getBoundingClientRect();
+			return r ? { cx: r.x + r.width / 2, cy: r.y + r.height / 2, bottom: r.bottom } : null;
+		}, parentMatch);
+		await page.mouse.move(live.cx, live.cy);
+		await page.waitForTimeout(220);
+		await page.mouse.move(live.cx, live.bottom + 60); // out through the bottom edge
+		// Past the block's own 420ms outro. `closeTier()` fires immediately, but the block stays MOUNTED
+		// while it retracts, so a short wait reports "still open" for a row that is already leaving.
+		await page.waitForTimeout(650);
+		const closed = await page.evaluate(() => !document.querySelector('.grandparent-tier'));
+		console.log(`  EXIT VIA BOTTOM EDGE:            tier ${closed ? 'closed at once ✓' : 'STILL OPEN ✗'}`);
+	}
+
 	// Re-open for the promotion measurements below.
 	await page.mouse.move(par.cx, par.cy);
 	await page.waitForTimeout(1400);

@@ -639,6 +639,13 @@
 	// pointermove, which is faster than a person can change their mind — Sam: "give users a beat to
 	// re-consider or view the overall structure". Re-entering inside the grace cancels it outright, so a
 	// pointer that clips a corner on its way to a grandparent never costs anything.
+	// SUPERSEDED for the ancestor tier, and worth stating rather than deleting. The beat existed because
+	// the tier closed on the very next pointermove after leaving the chip, "which is faster than a person
+	// can change their mind" — and the motion it was protecting is the one heading UP toward the
+	// grandparents. That motion now has a corridor of its own (see onStagePointerMove), so the beat's job is
+	// done structurally instead of by a timer, and the three edges that mean "not interested" close at once.
+	// Still read by the descendant tier's pending-reveal cancel. If a beat is ever wanted back, it belongs
+	// on leaving the ROW, not on leaving the chip.
 	const DISMISS_GRACE_MS = 300; // 400 -> 300 (Sam)
 	// ONE CLOCK, shared with the CSS below via --tier-ms. Not rowClockMs(): that derives from the CLICKED
 	// chip's rect and there is no click here, so borrowing it means borrowing a stale navigation. 420 is
@@ -811,18 +818,24 @@
 
 	/** THE KEEP-ALIVE REGION — what actually dismisses the tier.
 	 *
-	 *  The first version closed on leaving the parent CHIP, with an exit through its top meaning "heading
-	 *  for the grandparents, keep it". Both halves were wrong for the same reason: opening the tier drops
-	 *  the stage 145px under a motionless pointer, so the cursor ends up sitting INSIDE the grandparent row
-	 *  without the user moving at all. That fired a spurious top-exit, and then nothing could dismiss the
-	 *  tier short of steering back into the parent chip and out again — which nobody would guess (Sam:
-	 *  "they just stick around… the grandparent chips need to disappear the second we get a signal the
-	 *  user has lost interest").
+	 *  The rule is a REGION, not an edge-crossing, and that distinction is the whole reason this works. The
+	 *  first version watched for the pointer LEAVING the chip and treated an exit through the top as
+	 *  "heading for the grandparents". It could not work: opening the tier drops the stage 145px under a
+	 *  motionless pointer, so the cursor ends up inside the grandparent row without the user moving at all,
+	 *  which fired a spurious top-exit and then nothing could dismiss the tier short of steering back into
+	 *  the parent chip and out again. Asking instead, on every move, "is the pointer still somewhere this
+	 *  tier is ABOUT" has no such failure mode — a stage that moves under a still pointer just answers the
+	 *  question again, correctly.
 	 *
-	 *  So the rule is inverted. Instead of asking which edge the pointer left by, ask whether it is still
-	 *  somewhere the tier is ABOUT: the grandparent block, or the parent chip that opened it. Anywhere
-	 *  else is a signal of lost interest, and the tier closes immediately. Moving away is the dismissal —
-	 *  no gesture to learn, and no way to get stuck. */
+	 *  Within that region, the geometry does carry intent, and it is the mirror of the descendant tier's
+	 *  (§31.5b): this row sits ABOVE its chip, so the TOP edge is the one that means "I am going to look at
+	 *  those" and opens a corridor up to the row; bottom, left and right mean the opposite and close at
+	 *  once. Sam asked for the same guardrails on both tiers, and they are the same rule with the sign
+	 *  flipped.
+	 *
+	 *  The PAINTED parts are tested, not the block: `.grandparent-tier` carries a translateX to centre it on
+	 *  the hovered chip, and testing a container whose contents can be transformed out from under it is the
+	 *  bug that made the descendant tier close as you moved onto a grandchild. */
 	const KEEP_ALIVE_PAD = 24; // slack so a hand shaking on the boundary does not flicker it shut
 	let dismissTimer: ReturnType<typeof setTimeout> | null = null;
 	function cancelDismiss() {
@@ -831,23 +844,40 @@
 	}
 	function onStagePointerMove(e: PointerEvent) {
 		if (!revealedParentId) return;
-		const inside = (el: Element | null) => {
-			if (!el) return false;
-			const r = el.getBoundingClientRect();
-			return (
-				e.clientX >= r.left - KEEP_ALIVE_PAD &&
-				e.clientX <= r.right + KEEP_ALIVE_PAD &&
-				e.clientY >= r.top - KEEP_ALIVE_PAD &&
-				e.clientY <= r.bottom + KEEP_ALIVE_PAD
-			);
-		};
-		const tier = document.querySelector('.grandparent-tier');
-		const chip = document.querySelector(`[data-flight-id="${revealedParentId}"]`);
-		if (inside(tier) || inside(chip)) {
-			cancelDismiss(); // back in the region — whatever was pending is forgiven
-			return;
+		const x = e.clientX;
+		const y = e.clientY;
+		const hit = (r: DOMRect | undefined, pad: number) =>
+			!!r && x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad;
+
+		// The RESIDENT parents row's chip — scoped, because the tier reuses `.parents-slot` and a bare
+		// attribute query would also match a chip inside the tier itself. Barely any pad: a generous one
+		// here is what lets a corner exit read as still hovering.
+		const chipR = document
+			.querySelector(`.page-container > .parents-slot > [data-flight-id="${revealedParentId}"]`)
+			?.getBoundingClientRect();
+		if (hit(chipR, 2)) return;
+
+		const parts = [
+			...document.querySelectorAll('.grandparent-tier .flight, .grandparent-tier .connector')
+		].map((el) => el.getBoundingClientRect());
+		if (parts.some((r) => hit(r, KEEP_ALIVE_PAD))) return;
+
+		// THE CORRIDOR — the band between the top of the row and the top edge of the chip, spanning both
+		// the chip's column and wherever the row actually sits (it is centred on the chip, so the two
+		// overlap, but a wide row reaches well past it on both sides).
+		if (chipR && parts.length) {
+			const left = Math.min(chipR.left, ...parts.map((r) => r.left));
+			const right = Math.max(chipR.right, ...parts.map((r) => r.right));
+			const top = Math.min(...parts.map((r) => r.top));
+			if (
+				y <= chipR.top + 2 &&
+				y >= top - KEEP_ALIVE_PAD &&
+				x >= left - KEEP_ALIVE_PAD &&
+				x <= right + KEEP_ALIVE_PAD
+			)
+				return;
 		}
-		if (!dismissTimer) dismissTimer = setTimeout(() => closeTier(), DISMISS_GRACE_MS);
+		closeTier(); // left by any edge that is not the top — no grace, no timer
 	}
 
 	/** THE GRANDCHILD TIER'S KEEP-ALIVE REGION.
