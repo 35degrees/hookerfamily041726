@@ -26,10 +26,28 @@
  * wrapper (its available width changes with the spouse-chip notch, and will at runtime
  * once the Task 2 carousel pages chips).
  */
-export type ShrinkParams = { max: number; min: number; key?: unknown };
+export type ShrinkParams = {
+	max: number;
+	min: number;
+	key?: unknown;
+	/**
+	 * NEVER RELEASE TO WRAP — at the floor, ellipsis instead.
+	 *
+	 * The default last resort (wrap onto a second line) is right for the FeaturedCard's name and descent
+	 * line, where the header has room and a two-line name is better than a clipped one. It is wrong for a
+	 * CHIP: a chip is a fixed box, a second line pushes the dates out through `overflow: hidden`, and the
+	 * result is a name that fits at the cost of the years disappearing.
+	 *
+	 * Sam, Aug 9, on raising the child chips' type: "needs clamp because i don't want names like
+	 * Fernandine Széchényi de Sárvár-Felsövidék von und zu Eltz to wrap on two lines inside the chip."
+	 * With this set, a name that cannot fit even at the floor is truncated with an ellipsis — the chip
+	 * keeps its shape and the full name is still one click away on the card.
+	 */
+	ellipsis?: boolean;
+};
 
 export function shrinkToFit(node: HTMLElement, params: ShrinkParams) {
-	let { max, min } = params;
+	let { max, min, ellipsis } = params;
 	// The inline text holder we measure against the wrapper. Fall back to the wrapper
 	// itself if no [data-fit] child is present (still correct when ancestors are min-w-0).
 	const target = (node.querySelector('[data-fit]') as HTMLElement | null) ?? node;
@@ -48,8 +66,24 @@ export function shrinkToFit(node: HTMLElement, params: ShrinkParams) {
 		}
 		const available = node.clientWidth;
 		const needed = target.scrollWidth;
-		// At the floor and still overflowing → release to wrap as the last resort.
-		target.style.whiteSpace = needed > available ? 'normal' : 'nowrap';
+		// At the floor and still overflowing. Two different right answers — see `ellipsis` above.
+		if (ellipsis) {
+			// Stay on one line and CUT, with a visible marker. `text-overflow` only acts on a block
+			// container's own inline content, so it has to live on the element that HOLDS the text —
+			// putting it on the wrapper while the text sat in an inline-block span truncated correctly
+			// but drew no ellipsis, and a name cut mid-word with no marker reads as a bug rather than a
+			// decision.
+			//
+			// Safe to measure through: `scrollWidth` reports the full content width regardless of
+			// `overflow: hidden`, so the sizing loop above still sees what the text really needs.
+			target.style.whiteSpace = 'nowrap';
+			target.style.display = 'block';
+			target.style.overflow = 'hidden';
+			target.style.textOverflow = 'ellipsis';
+			target.style.maxWidth = '100%';
+		} else {
+			target.style.whiteSpace = needed > available ? 'normal' : 'nowrap';
+		}
 		lastWidth = available;
 		if (import.meta.env.DEV) {
 			console.debug(

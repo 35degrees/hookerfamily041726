@@ -3,6 +3,7 @@
 	import PersonBox from '$lib/components/PersonBox.svelte';
 	import FeaturedCard from '$lib/components/FeaturedCard.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import TimelineRail from '$lib/components/TimelineRail.svelte';
 	import ShuffleNotables from '$lib/components/ShuffleNotables.svelte';
 	import DeckRiffle from '$lib/components/DeckRiffle.svelte';
 	import { untrack, tick } from 'svelte';
@@ -34,6 +35,7 @@
 	} from '$lib/transitions/flight';
 	import { getSiblingNavPlan } from '$lib/state/siblingNav';
 	import { anchorOffsetFor, showsSiblingPanel } from '$lib/state/siblingLayout';
+	import { chipColumns } from '$lib/state/childRows';
 	import { ccRoster } from '$lib/state/ccRoster.svelte';
 	import { stage, applyStageVars, clearStageVars } from '$lib/state/stage.svelte';
 	import { unlockFlight } from '$lib/state/flightLock';
@@ -1434,6 +1436,10 @@
 		return card?.neighborhood?.focus?.dy_young ? 'child' : 'parent';
 	}
 	const childrenTotal = $derived(roster.children.length);
+	// WHERE THE CHILDREN ROW BREAKS — Sam's rules, Aug 9. See $lib/state/childRows.ts for the two rules
+	// (four per row maximum, never strand a single child) and for every count worked through.
+	const childCols = $derived(chipColumns(childrenTotal));
+	const gcCols = $derived(chipColumns(revealedGrandchildren.length));
 	const childrenDiedYoung = $derived(roster.children.filter((c) => c.dy_young).length);
 	const isEasterEgg = $derived(f.person.classification?.is_easter_egg ?? false);
 
@@ -1469,6 +1475,10 @@
 
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
 <Field />
+<!-- THE LEFT TIMELINE (design §3.6). Fixed chrome at the window's edge, mounted HERE beside Field and
+     ShuffleNotables rather than inside .page-container: it is a ruler and must keep its size while the
+     stage scales, and a fixed element inside a transformed ancestor re-bases to that ancestor. -->
+<TimelineRail />
 <!-- SHUFFLE NOTABLES (roadmap §13, design §22.8) — the deck dealt at random. Mounted beside Field so the
      two pieces of fixed chrome live together, and gated on `familyLanded`, the SAME landing signal the
      card and connector use, so the button can never disagree with the flight lock about whether a flight
@@ -1787,7 +1797,7 @@
 		class:child-settling={childSettling}
 		style={childSlotH != null ? `height: ${childSlotH}px` : ''}
 	>
-		{#each roster.children as child (child.id)}
+		{#each roster.children as child, ci (child.id)}
 			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors
 			     (children shared across a spouse swap); out:flyOut pins a LEAVER position:fixed at
 			     its click-captured rect, overriding flip's fix() (see parents). -->
@@ -1800,7 +1810,10 @@
 				class:shake-no={shakeChildId === child.id}
 				class:child-focused={activeChildId === child.id}
 				class:child-dimmed={!!activeChildId && activeChildId !== child.id}
-				style={activeChildId === child.id && childRiseY ? `--child-rise: ${childRiseY}px` : ''}
+				style="grid-column: {childCols[ci] ?? 'auto'} / span 2; {activeChildId === child.id &&
+				childRiseY
+					? `--child-rise: ${childRiseY}px`
+					: ''}"
 				data-flight-dir="down"
 				data-flight-id={child.id}
 				data-tx={child.t?.x}
@@ -1836,9 +1849,10 @@
 				<div class="connector-line"></div>
 			</div>
 			<div class="children-slot" style="transform: translateX({gcRowX}px)">
-				{#each revealedGrandchildren as gc (gc.id)}
+				{#each revealedGrandchildren as gc, gi (gc.id)}
 					<div
 						class="flight"
+						style="grid-column: {gcCols[gi] ?? 'auto'} / span 2"
 						data-flight-dir="down"
 						data-flight-id={gc.id}
 						data-tx={gc.t?.x}
@@ -1871,6 +1885,12 @@
 		   roomy geometry rather than collapsing to zero. */
 		padding-top: calc(80px * var(--stage-u, 1));
 		padding-bottom: calc(80px * var(--stage-u, 1));
+		/* THE TIMELINE GETS NO ROOM HERE, and that is a rule rather than an oversight. Sam, Aug 8, on a
+		   build that had reserved the rail's width and pushed the card 48px right: "there is to be no
+		   movement or re-sizing of the core UX elements and army rows to accommodate the timeline...
+		   the core boxes and rows are front and center and we'll adjust the timeline to work around
+		   that." The stage is the project; the rail is an instrument laid beside it. The rail overlaps
+		   where it must and sits BEHIND the stage when it does. */
 		padding-left: calc(32px * var(--stage-u, 1));
 		padding-right: calc(32px * var(--stage-u, 1));
 		/* The (later) spouse-carousel overhang + carets sit past the card's right edge; at narrow
@@ -1934,8 +1954,14 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 220px; /* natural non-compact PersonBox (parent/child box) size */
-		height: 75px;
+		/* HUGS ITS CHIP rather than restating its size. This was `220px / 75px` with the comment
+		   "natural non-compact PersonBox (parent/child box) size" — true when there was one such size.
+		   There are now four (parent 220x75, child 198x67.5, compact notch seat 160x65, sibling 119x54),
+		   each multiplied by the frame unit, and the wrapper only ever needs to be exactly its child.
+		   flight.ts measures this box to counter-scale the face, so letting it fit-content means the
+		   measurement is right for every tier at every rung without a constant to keep in step. */
+		width: max-content;
+		height: max-content;
 		transform-origin: top left;
 		/* transform is set per-frame by shrinkTo's tick (counter-scaled to render undistorted); at rest
 		   the face is opacity 0 so its untransformed box is never seen. */
@@ -2294,12 +2320,25 @@
 		letter-spacing: 0.05em;
 	}
 
+	/* A GRID OF EIGHT HALF-CHIP TRACKS — the row plan in $lib/state/childRows.ts decides the counts and
+	   every chip is PLACED (`grid-column: n / span 2`), so a row's size is chosen rather than discovered
+	   by wrapping. That is what ends the behaviour Sam described: this was a 72rem flex-wrap, wide enough
+	   for five 198px chips, so five sat in one row until the window narrowed enough to bump one down —
+	   and then bumped it back up as the frame unit shrank the chips faster than the container did.
+
+	   A track is (198 − 12) / 2 = 93, so a chip spanning two tracks plus the gap between them lands
+	   exactly on 198. Both numbers ride --stage-u, like the chips they measure.
+
+	   THIS IS THE SECOND `.children-slot` BLOCK IN THIS STYLESHEET and it is the one that applies —
+	   the other is ~160 lines above with the same specificity, so source order decides and this wins.
+	   The grid was written into that one first and rendered nothing, which is design §34.1's lesson
+	   arriving on schedule: "verify the edit is the one taking effect before interpreting the render."
+	   If a third block ever appears, put the geometry here or delete the duplicate outright. */
 	.children-slot {
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: repeat(8, calc(93px * var(--stage-u, 1)));
 		justify-content: center;
-		gap: 12px;
-		max-width: 72rem;
+		gap: calc(12px * var(--stage-u, 1));
 		margin-top: 0;
 		/* Same as .parents-slot: confine to a z:0 context so the row sits under the lifted slot (z:1). */
 		position: relative;

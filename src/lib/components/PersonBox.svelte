@@ -72,12 +72,26 @@
 	// strings it can find whole in the source. A `box(119, 54)` helper reads better and emits nothing —
 	// the scanner never sees `w-[calc(119px*var(--stage-u,1))]`, so the chip would render with no width
 	// at all. Every arbitrary value in this file has to survive a grep for its own text.
+	// A CHILD IS ITS OWN SIZE TIER — 90% of a parent chip (Sam, Aug 8: "make the child chips 10% smaller
+	// overall, they don't need to be as large as parent chips"). 220x75 -> 198x67.5, and the type takes
+	// the same 0.9 so the chip shrinks as ONE OBJECT rather than as a box with full-size text in it.
+	//
+	// THE ASPECT RATIO IS PRESERVED ON PURPOSE: 220/75 = 2.933 and 198/67.5 = 2.933. flight.ts decides
+	// whether a landing is same-tier by comparing the x and y scale factors (`Math.abs(sx - sy) > 0.02`);
+	// a uniform 0.9 keeps that difference at zero, so a card demoting into a child seat still takes the
+	// cheap same-tier path instead of the crossfade-to-destination-face machinery that a genuinely
+	// different-SHAPED seat needs. Picking, say, 200x68 would have quietly changed which flight runs.
+	//
+	// Grandchildren render `relation="child"` too, so the descendant tier inherits this for free.
+	let isChildTier = $derived(relation === 'child' && !compact && !isSibling);
 	let boxSize = $derived(
 		isSibling
 			? 'w-[calc(119px*var(--stage-u,1))] h-[calc(54px*var(--stage-u,1))]'
 			: compact
 				? 'w-[calc(160px*var(--stage-u,1))] h-[calc(65px*var(--stage-u,1))]'
-				: 'w-[calc(220px*var(--stage-u,1))] h-[calc(75px*var(--stage-u,1))]'
+				: isChildTier
+					? 'w-[calc(198px*var(--stage-u,1))] h-[calc(67.5px*var(--stage-u,1))]'
+					: 'w-[calc(220px*var(--stage-u,1))] h-[calc(75px*var(--stage-u,1))]'
 	);
 	let photoW = $derived(compact && !isSibling ? 'w-[30%]' : 'w-[25%]');
 	// df (display font) — the person's own typeface, allow-listed. CHIP MODE ONLY, and only on the
@@ -105,19 +119,37 @@
 	// behind: anything flight.ts may clone must carry its geometry in a CLASS, because cssText is a
 	// replacement and not a merge.
 	// Literals for the same reason as boxSize above — a helper emits nothing Tailwind can see.
+	// THE CHILD TIER'S TWO FACTORS ARE NOT THE SAME NUMBER, and that is deliberate:
+	//
+	//     BOX   0.9    "make the child chips 10% smaller overall" (Sam, Aug 8)
+	//     TYPE  0.945  that same 0.9, then +5% back for readability (Sam, Aug 9)
+	//
+	// The second ask was first taken as +10%, which put the names at the parent tier's full 13px and Sam
+	// called it "too big" on sight — so the type sits a whisker under a parent chip's rather than level
+	// with it: 13→12.3, 12→11.3, 15→14.2. The chip is still visibly the smaller object, but its names
+	// read at nearly full strength, which was the whole point of the increase.
+	//
+	// Type slightly outrunning its box is exactly the pressure that broke the spouse chips (design
+	// §33.2), so this tier carries a no-wrap clamp — see the shrinkToFit call below.
 	let nameText = $derived(
 		chipFontClass
 			? compact || isSibling
 				? 'text-[calc(12.5px*var(--chip-k,1))]'
-				: 'text-[calc(15px*var(--chip-k,1))]'
+				: isChildTier
+					? 'text-[calc(14.2px*var(--chip-k,1))]'
+					: 'text-[calc(15px*var(--chip-k,1))]'
 			: compact || isSibling
 				? 'text-[calc(11px*var(--chip-k,1))]'
-				: 'text-[calc(13px*var(--chip-k,1))]'
+				: isChildTier
+					? 'text-[calc(12.3px*var(--chip-k,1))]'
+					: 'text-[calc(13px*var(--chip-k,1))]'
 	);
 	let dateText = $derived(
 		compact || isSibling
 			? 'text-[calc(10px*var(--chip-k,1))]'
-			: 'text-[calc(12px*var(--chip-k,1))]'
+			: isChildTier
+				? 'text-[calc(11.3px*var(--chip-k,1))]'
+				: 'text-[calc(12px*var(--chip-k,1))]'
 	);
 	// Sibling chips carry a THIRD line ("died young") below by–dy when dy_young — so the text stack is tighter
 	// (less vertical padding, no inter-line gap) and that line is smaller than the years. Name + years keep
@@ -206,9 +238,18 @@
 			class="min-w-0 font-medium {CHIP_TEXT} {chipFontClass} {nameText}"
 			data-chip-name
 			use:shrinkToFit={{
-				max: (chipFontClass ? (compact ? 12.5 : 15) : compact ? 11 : 13) * stage.u,
-				min: (chipFontClass ? (compact ? 9.5 : 11) : compact ? 8.5 : 10) * stage.u,
-				key: `${displayName}|${stage.u}|${compact}`
+				max:
+					(chipFontClass ? (compact ? 12.5 : 15) : compact ? 11 : 13) *
+					stage.u *
+					(isChildTier ? 0.945 : 1),
+				// A LOWER FLOOR ON A CHILD CHIP, because it has the parent tier's TYPE in a 0.9 BOX and so
+				// runs out of width sooner. 8.5 is where "Fernandine von und zu Eltz" — 26 characters in a
+				// ~128px column — still fits on one line; above it she would hit the floor and be cut.
+				min: (chipFontClass ? (compact ? 9.5 : 11) : compact ? 8.5 : isChildTier ? 8.5 : 10) * stage.u,
+				// NEVER WRAP. A second line inside a fixed-height chip pushes the dates out through
+				// `overflow: hidden` — the name would fit and the years would vanish. See ShrinkParams.
+				ellipsis: true,
+				key: `${displayName}|${stage.u}|${compact}|${isChildTier}`
 			}}
 		>
 			<span data-fit class="inline-block whitespace-nowrap">{displayName}</span>

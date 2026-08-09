@@ -16,7 +16,11 @@ const START = 'michael-hooker-1935';
 mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch();
-const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2 });
+// HEIGHT 1400, NOT 1000. This clips to the children-row box at rest, and on a rich card that row now
+// sits below a 1000px viewport — the stage's vertical overflow (design §13, still unfixed pending the
+// content budget) put the crop target off-screen and the capture died with "clipped area is outside
+// the resulting image". Nothing to do with what it measures; it just needs room to see its subject.
+const ctx = await browser.newContext({ viewport: { width: 1440, height: 1400 }, deviceScaleFactor: 2 });
 const page = await ctx.newPage();
 
 async function clickParent() {

@@ -242,7 +242,9 @@ const STAGE_PAD_BASE = 64;
 /**
  * THE LEFT TIMELINE'S RAIL, RESERVED BEFORE IT EXISTS. Design §3.6 makes the rail persistent "in every
  * layout tier — Sam's explicit requirement includes phone", and §12 gives Tier C's rail ~32px. 48 is
- * that plus the gap it needs off the stage.
+ * RAISED 48 -> 96 on Aug 8 when the rail was actually built: three overlapping lifespan lanes plus a
+ * year gutter do not fit in 48, and the anchor portraits and era marks still to come share the column.
+ * Keep in step with RAIL_W in TimelineRail.svelte — that component owns the number, this reserves it.
  *
  * Budgeted NOW, while the rail is still unbuilt, because the alternative is discovering on the day it
  * lands that every rung's u was tuned 48px too generous and the whole ladder has to be re-cut. It costs
@@ -250,7 +252,15 @@ const STAGE_PAD_BASE = 64;
  * same breath as the sibling column when he said the first breakpoint came too early, so the width it
  * will want is already part of how these thresholds are being judged.
  */
-const TIMELINE_RAIL_BASE = 48;
+const TIMELINE_RAIL_BASE = 0;
+// ZERO, DELIBERATELY, and kept as a named constant rather than deleted so the decision is greppable.
+// This reserved 48px and then 96px while the rail was being built, which pushed the card right and made
+// the stage smaller to fit an instrument. Sam's rule (Aug 8) is the opposite: "the timeline is
+// absolutely displayed... this is not something we are moving over to make room for. The core boxes and
+// rows are front and center and we'll adjust the timeline to work around that." So the stage is sized
+// as though the rail were not there, the rail paints BEHIND it, and the only concession available is
+// nudging the CHILDREN ROW inward — the one row wide enough to run out over the rail — which is a
+// change to that row and not to the stage's width.
 
 /**
  * THE WIDTH CLAMP — the mechanism behind "never a horizontal scrollbar".
@@ -274,12 +284,16 @@ function widthClamp(rungU: number, vw: number, siblingColumn: boolean): number {
 	// If full size should hold at narrower widths than this allows, the lever is to stop centring the
 	// card in the VIEWPORT and centre it in the viewport minus its chrome — that buys back ~150px and
 	// costs a slightly off-centre card. That is a design call, not an arithmetic one.
-	const naturalW =
-		CARD_W_BASE +
-		(siblingColumn ? 2 * SIBLING_COL_BASE : 0) +
-		STAGE_PAD_BASE +
-		TIMELINE_RAIL_BASE;
-	return Math.min(rungU, vw / naturalW);
+	// The rail contributes nothing here — see TIMELINE_RAIL_BASE. It is subtracted rather than divided
+	// so that if it is ever given room again, it is modelled correctly: it is chrome pinned to the
+	// window edge that does NOT scale with u, and dividing by it would model 96px as 96u.
+	const scalingW =
+		CARD_W_BASE + (siblingColumn ? 2 * SIBLING_COL_BASE : 0) + STAGE_PAD_BASE;
+	// TWO PIXELS OF SLACK, because every element in that sum rounds INDEPENDENTLY — the card, each chip,
+	// each gap — so the exact fit the arithmetic predicts can land a pixel over once the browser has
+	// rounded them all. Measured: 1100px came out 1px wide without it. A pixel of unused width is
+	// invisible; a horizontal scrollbar is the one thing that is not allowed.
+	return Math.min(rungU, Math.max(0.2, (vw - TIMELINE_RAIL_BASE - 2) / scalingW));
 }
 
 /**

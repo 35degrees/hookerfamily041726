@@ -1196,8 +1196,17 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// time-based CSS crossfade entirely (no clock-based face logic remains).
 	const cardTop = el.querySelector('.card-top') as HTMLElement | null;
 	const footer = el.querySelector('.footer') as HTMLElement | null;
-	const FACE_W = Math.round(220 * su());
-	const FACE_H = Math.round(75 * su());
+	// MEASURED, NOT ASSERTED, and this is the third time that distinction has paid in this file. The
+	// chip-face is a PersonBox rendered as whatever seat the card is landing in — `demoteSeatRelation`
+	// picks the relation — and PersonBox now has FOUR size tiers: parent 220x75, child 198x67.5 (10%
+	// smaller, Aug 8), the compact notch seat 160x65, and sibling 119x54, each multiplied by the frame
+	// unit. A literal here was right for exactly one of them.
+	//
+	// offsetWidth/offsetHeight report the face's LAYOUT box, which is untouched by the per-frame
+	// counter-scale transform applied below — so this reads the natural size no matter when it is
+	// called. Falls back to the parent tier if the face is absent, which is the size it always was.
+	const FACE_W = face?.offsetWidth || Math.round(220 * su());
+	const FACE_H = face?.offsetHeight || Math.round(75 * su());
 	// THE SEAT FACE — §19, and the same wall §18.4 hit with a 3+-spouse notch. The chip-face above is a
 	// PersonBox rendered `relation="parent"`: 220×75, full short name, parent type scale. A sibling seat is
 	// 119×54, FIRST NAME ONLY, and its own smaller type scale — a different aspect ratio (2.20 vs 2.93) and
@@ -1206,8 +1215,11 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// 13.5px in one frame. The answer is §18.4's: carry the DESTINATION's face as a second layer, counter-
 	// scaled every frame to stay uniform and reach exactly 1.0 at the seat, and crossfade to it on the way
 	// in. Mirroring the name (onOutgoingStart) got the WORD right; this gets the object right.
-	const SEAT_FACE_W = 119;
-	const SEAT_FACE_H = 54;
+	// Measured off the real seat at clone time for the same reason FACE_W is — and because these two
+	// were left as bare literals when every chip started scaling with the frame unit, so at u = 0.8 the
+	// seat face was counter-scaled against a 119px seat that was actually 95px wide.
+	let SEAT_FACE_W = Math.round(119 * su());
+	let SEAT_FACE_H = Math.round(54 * su());
 	// The seat face takes over the CHIP-FACE's OWN BAND (REVEAL_LO/REVEAL_HI) rather than running after it,
 	// and on a §19 mutation the parent-style chip-face is then never shown at all. Two reasons, both Sam's:
 	// the intermediate face is a WAY-STATION — the card's own face becoming a parent chip becoming a sibling
@@ -1510,6 +1522,10 @@ export function shrinkTo(node: Element, params: { id: string }) {
 				const src = document.querySelector(`[data-sib-seat-id="${sibPlan.pivotId}"] .person-box`);
 				if (src) {
 					seatFaceTried = true;
+					// Take the seat's own natural size before cloning — the clone is about to be given an
+					// explicit width/height, so this is the last moment the truth is available.
+					SEAT_FACE_W = (src as HTMLElement).offsetWidth || SEAT_FACE_W;
+					SEAT_FACE_H = (src as HTMLElement).offsetHeight || SEAT_FACE_H;
 					seatFace = src.cloneNode(true) as HTMLElement;
 					seatFace.style.cssText =
 						`position: absolute; left: 0; top: 0; width: ${SEAT_FACE_W}px; height: ${SEAT_FACE_H}px; ` +
