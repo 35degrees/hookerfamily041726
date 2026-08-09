@@ -3716,3 +3716,193 @@ washed it out.
 
 The fade is a **white veil layer, never `opacity`** — a veil tints the image without touching anything the
 element draws, and has no edge to give away. It is the only dial in both components.
+
+---
+
+## 33. THE STAGE'S THREE REGISTERS — SCREEN-SIZE ADJUSTMENT (AS BUILT, August 8)
+
+_(Phase 2.75's foundation. Supersedes §13.3's proposed mechanism — the world model there is right and
+the mechanism is wrong; see 33.1. Read with §12 (layout tiers) and §13 (viewport lock).)_
+
+**If you are here to change how the app behaves at a screen size, everything you need is
+`src/lib/state/stage.svelte.ts` and this section. One module reads the window; nothing else may.**
+
+### 33.1 A LENGTH, NOT A TRANSFORM — the finding the whole phase rests on
+
+§13.3 proposed `transform: scale(...)` on the stage group, calling it "semantically free in the world
+model: a smaller window = the camera sits slightly higher above the table." **The world model is right
+and the mechanism is wrong**, and it is wrong in a way that would have cost a week to discover from the
+inside. `scripts/spike-scale.mjs` put `scale(0.8)` on `.page-container` and measured three things:
+
+| what | asked for | got |
+|---|---|---|
+| in-stage `position: fixed` pin at a captured viewport rect | (139, 1027) | (253, 822) |
+| `translate(100px)` applied in-stage | 100px | **80 visual px** |
+| body-portalled handoff ghost | correct position | correct position, content at 1:1 |
+
+A transformed ancestor becomes the containing block for its `fixed` descendants, so every `out:flyOut`
+leaver lands wrong — the code already knew this, in the `.grandparent-tier` comment that chose `left`
+over `translateX` for exactly this reason. And the second row is the fatal one: **a transform re-bases
+the coordinate space `flight.ts` lives in.** Every delta it derives from a measured rect and applies as
+a translate is wrong by 1/s. That is not a handful of call sites; it is 2,465 lines of constants tuned
+by eye over a month.
+
+**A real length has none of this.** If the card is genuinely 832px wide rather than visually 832px
+wide, every rect the motion engine measures is true, every delta it computes is true, every translate
+it applies is true. Only the ~10 constants that *assert* a size from memory go stale, and those are
+named values at module scope.
+
+The hybrid forces the same conclusion independently: type can only step separately from the frame if
+the frame is a real length. Under a transform you would counter-scale every text node by 1/s — fragile,
+and visibly soft at non-integer scales.
+
+### 33.2 THREE REGISTERS, and the rule for deciding which a number belongs to
+
+Two dials were designed; a third was forced by the chips within hours. This is the taxonomy to reach
+for when adding anything new:
+
+| register | var | scales with | what belongs to it |
+|---|---|---|---|
+| **frame** | `--stage-u` | continuous, ≤ 1 | card width/height, chip boxes, photo boxes, padding, gaps, the notch, the blade, header padding |
+| **reading type** | `--type-k` | discrete, **≥ u** | narrative bodies, NB headers, RightColumn rows, the bio blurb, descent lines |
+| **label type** | `--chip-k` | **= u** | every chip's name, dates and union line |
+
+**`k ≥ u` is the hybrid, and its bill comes due as content.** Text that does not shrink as fast as its
+frame means a card at compact density holds *proportionally more* text than the same card at 1440. A
+fixed frame with growing relative content overflows itself — which is why the content budget
+(`childCap` / `nbCap`) is not an optimisation but a structural requirement of this choice.
+
+**A chip is not running text.** The third register exists because holding a chip's type up on `k` while
+its box shrinks on `u` grows the text relative to its container at every step down. A chip is a label
+on a 47px object — *recognised*, not read. Reading text steps; labels scale. At u = 1 all three are
+identical and nothing moves.
+
+**The same split applies to any height that is a stack of type.** `HEADER_H` was scaling wholly on `u`
+while its contents scaled on `k`; §28.1's documented ~2px overrun (2.4% of 82) grew to 13px of 57 —
+**23%** — turning a deliberate hairline into a clipped blurb. Split into `28px padding × u + 54px text
+× k` (which sums to exactly 82, so nothing moves at full size) it holds 2–4% at every rung. The blade's
+`ROW_H` took the same treatment for the same reason.
+
+### 33.3 WHAT MUST NOT SCALE — and this is the part most likely to be got wrong later
+
+- **Angles.** The CC blade's `SLANT_TAN` is a ratio of two lengths, so it is already correct at every
+  size. Multiplying it would *rotate* the blade's edge as the window narrowed. Scale the lengths, leave
+  the angle, and the silhouette stays similar to itself.
+- **Radii, hairlines, border widths.** `CORNER_R` stays 8px at every size. 8px reads as "gently rounded"
+  on a 925px card and on a 660px one alike; 6.6px reads as very slightly less rounded and nobody can
+  tell you which card they are looking at. Keeping it fixed also keeps the blade's mitre against the
+  card arithmetically exact — two independently-rounded numbers is how a seam opens at one size and not
+  another.
+- **Velocity ceilings** (`flight.ts`, px/ms). A ceiling is a claim about *apparent speed*. A smaller
+  stage already covers proportionally less distance in the same time, so scaling the ceiling too would
+  slow the motion twice.
+
+### 33.4 THE LADDER IS DECLARED, THE WIDTH IS CLAMPED
+
+`u` is looked up in a table, **not** solved by measuring the stage and dividing — with a real-length
+unit the stage's height is itself a function of `u`, so a measure-and-apply loop would oscillate and
+relayout on every frame of a window drag. A declared ladder is deterministic and is *checked* rather
+than trusted (`scripts/probe-fit.mjs`).
+
+The one thing not left to the ladder's correctness is **width**, because Sam's rule there is absolute:
+*"there's never a horizonal scrollbar allowed."* A rung tuned slightly generous for some viewport
+nobody tested would break an inviolable rule, so a clamp caps `u` at what actually fits. **The ladder
+states the intent; the clamp enforces the law.** Width is safe to solve this way where height is not —
+the stage's width at u = 1 is a known constant, so there is no feedback loop.
+
+**The clamp counts the sibling column TWICE.** The card is centred and the column hangs off its right,
+so the column consumes width from the right margin only and the centring demands the same back on the
+left. Budgeting it once read green on the card while the column hung 6px off an iPad mini's edge.
+
+> **The lever if full size should hold at narrower widths than it does.** That doubling is the single
+> biggest constraint on the top rung. Centring the card in *the viewport minus its chrome* rather than
+> in the viewport buys back ~150px, at the cost of a slightly off-centre card. It is a design call, not
+> an arithmetic one, and it has not been made.
+
+### 33.5 THE VERTICAL RULE, as corrected
+
+§13's "no scrollbars anywhere in zoom 1" was too strong. The live rule (Sam, Aug 8):
+
+- **Horizontal — never**, under any circumstances, in any state.
+- **Vertical — never, EXCEPT while the grandchild tier is open.** Hovering a child chip for 1.2s reveals
+  that child's own children, and a twelve-child family puts three rows on the stage. That is a
+  deliberate, transient, user-summoned overflow and it is allowed to scroll.
+
+So **the fit target is the RESTING stage**, and `overflow: clip` can never simply be armed as §13.2
+wrote it — clipping the resting stage is right; clipping an open grandchild tier would amputate the row
+that earned the exception. Whatever arms it must be state-aware.
+
+### 33.6 A COMMENT IS NOT A MECHANISM — three times in one session
+
+§28.1 coined the phrase about `CARD_TOP_H`. Phase 2.75 was the first time the numbers actually moved,
+and it found three more places where a comment stood in for a mechanism. **Every one of them rendered
+correctly at u = 1 and broke the moment the card resized:**
+
+| site | the comment | what happened |
+|---|---|---|
+| `DeckRiffle` | `const CARD_W = 925; // matches FeaturedCard's w-[925px]` | phantoms dealt at 925 into a 758px world |
+| CC blade | `width: 925px; /* the card's width */` | blade overhung the card's bottom-right corner |
+| spouse carousel | `CHIP_W = 160; // must match FeaturedCard CHIP_W_COMPACT` | strip stepped 168px while its chips were 156px wide; the 496px mask was wider than the 484px it clipped |
+
+All three now derive from the owner and go through the same dial. **The rule: if a constant's comment
+says it matches another file, that is a bug waiting for the day the other file changes.**
+
+### 33.7 SMALLER DOCTRINES EARNED HERE (durable)
+
+- **Tailwind arbitrary values must be literal strings in source.** A `box(w, h)` helper that builds
+  `w-[calc(${w}px*var(--stage-u,1))]` reads better and emits *no CSS at all* — the scanner never sees
+  the class name, so the element renders with no width. Every arbitrary value must survive a grep for
+  its own text. `svelte-check` cannot catch this; only rendering can.
+- **Anything `flight.ts` may clone must carry geometry in a CLASS, not an inline style.** It assigns
+  `style.cssText` — a *replacement*, not a merge — at four sites. `growUnionRow` clones the dates row
+  and wipes its inline style; with the size in a class that costs nothing, with it inline the clone
+  inherits 16px. This shipped and Sam saw the union year land oversized and snap down.
+- **Clamp anything whose length is GENERATED rather than authored.** The descent line
+  ("Eighth Generation Descendant of Thomas Hooker", 46 characters) was the one unclamped line in a
+  header where everything else already fits itself. No fixed size can be right for every generation.
+- **Per-side mask overshoot, derived from the shadow's actual reach.** A blur of B extends ~B/2 past the
+  shadow's rect, and the rect is the box offset down by the y-offset — so `0 3.2px 9.6px` reaches 4.8px
+  sideways, 1.6px above, 8px below. A single uniform value is simultaneously too small on three sides
+  and load-bearing on the fourth.
+
+### 33.8 THE THRESHOLDS, for when this is revisited
+
+Everything below is **one table in `stage.svelte.ts`**; changing behaviour at a size means editing that
+table, not hunting through components.
+
+| rung | ≥ width × height | tier | u | k | children cap | NB cap | sibling column |
+|---|---|---|---|---|---|---|---|
+| desktop | 1240 × 800 | A | 1.00 | 1.00 | — | — | yes |
+| tablet landscape | 1100 × 720 | A | 0.92 | 0.96 | 8 | 5 | yes |
+| small landscape | 900 × 640 | A | 0.82 | 0.90 | 6 | 4 | **no** |
+| tablet portrait | 720 × 900 | B | 0.70 | 0.87 | 6 | 3 | no |
+| phone | — | C | 0.62 | 0.82 | 4 | 2 | no |
+
+Independent of the ladder, keyed on **viewport width** because each answers to measure rather than to a
+rung (the clamp means a rung does not predict width — at 1100px the rung is `normal` but u lands at
+0.82):
+
+- **NB cap** — `≤ 700px → 2`, `≤ 800px → 3`, else the rung's own cap. Takes the `min` of the two.
+- **Spouse-chip union fold** — `≤ 850px`. Below it "m. 1621" moves onto the end of "1586–1647"; above
+  it the chip keeps three lines, which reads better. Scoped rather than universal because
+  `growUnionRow` reads the separate `[data-chip-union]` row off the destination chip to grow it on the
+  traveller mid-flight (§18.4) — below the threshold the flight skips a gesture that no longer has an
+  element, which is honest degradation on a 47px chip.
+
+**Guidance for moving these.** `k` is where legibility is bought and should not chase `u` down — at
+k = 0.85 the narrative body sets at 11px, which is the floor for running text in this project. `u` may
+go lower. Both flanks of the carousel mask are `CHIP_GAP - 1` and must stay below `CHIP_GAP`, or the
+neighbouring chip is revealed. Tier C's `u` is nominal and the width clamp beats it: at a 393px phone
+the clamp lands on ~0.40, i.e. a 367px card setting 5px body text — **that number is not a tuning
+failure, it is the proof that a phone cannot be reached by scaling a 925px card**, which is why Tier C
+recomposes (§12, Phase 9.5) instead.
+
+### 33.9 BUILT AND REVERTED — so neither is re-attempted
+
+- **`transform: scale()` on the stage.** Spiked, measured, rejected — 33.1. `scripts/spike-scale.mjs` is
+  kept until 2.75 closes so the numbers are re-runnable rather than remembered.
+- **Chip geometry and type as inline styles.** Correct-looking reasoning (a travelling ghost should
+  carry its size literally), wrong in practice — `cssText` wipes it. Classes, always.
+- **A `box(w, h)` / `ct(px)` class-builder helper.** Emits nothing Tailwind can see. Literals, always.
+- **The union fold at `u < 0.88`.** Fired above 1150px, which is far too eager — the fold is a
+  concession and should be spent as late as possible. Re-keyed to a viewport width of 850.

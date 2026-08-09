@@ -2548,6 +2548,12 @@ arrived on top of it. The live sequence is therefore still §12's, minus item 1:
 Neither 1 nor 2 is codeable solo today, which is worth stating plainly rather
 than letting the sequence look blocked-by-nobody.
 
+> **UPDATE, Aug 8 (§35).** Item 2 is substantially done — the tier plan is BUILT, not merely designed
+> (design §33). The rail's own width is already **reserved in the width clamp** (48px at u = 1), so the
+> ladder will not need re-cutting the day the rail lands. Item 1 (the parchment ground) is unchanged and
+> still a procurement task. The timeline is therefore no longer gated on the tier work — it competes with
+> the content budget for vertical room, and §33.8's thresholds are the numbers it has to live inside.
+
 ### 27.4 Still open, unchanged by this arc
 
 - **`probe-demote-velocity` does not cover the sibling case.** It is green
@@ -3040,3 +3046,132 @@ hovered chip) — the shape is identical: a measurement that cannot see the thin
   derived generation and needs a named case rather than falling out of the walk.
 - Unchanged from §32.4: `rowClockMs()` never derives, and the unreproduced flash in the grandparent
   handoff §5.
+
+---
+
+## 35. AUGUST 8 — PHASE 2.75: THE STAGE LEARNS ITS OWN SIZE (design §33)
+
+Shipped and committed (`421358af`, 14 files, +1300/−122). **Phase 2.75's foundation, not its
+completion** — the frame scales; the vertical content budget does not exist yet.
+
+`src/lib/state/stage.svelte.ts` (new) is the only module that reads the window. It publishes
+`--stage-u` (geometry), `--type-k` (reading type) and `--chip-k` (label type) on `<html>` — on the
+document root rather than the stage, because `flight.ts` portals cloned chips to `<body>` and a
+variable scoped to `.page-container` would not resolve for them.
+
+`scripts/probe-fit.mjs` (new) is the instrument, and it was written RED before anything was built.
+
+### 35.1 Why the ordering was mobile-before-timeline
+
+Sam's instinct matched §27.3's recorded rule, and the session found a mechanical reason for it rather
+than an assertion: the left timeline is fixed chrome that must sit **outside** `.page-container`,
+because that is where a stage transform would have landed and a transformed ancestor becomes the
+containing block for `position: fixed` descendants. Build the rail first and you either re-parent it
+later or discover it scaling with the stage. (The transform was then rejected anyway — §33.1 — but the
+ordering argument stands: the rail's DOM position depends on decisions the tier work makes.)
+
+### 35.2 What the measurements found before a line was written
+
+`scripts/measure-tiers.mjs` (new) at seven viewports, then `probe-fit`:
+
+- **No tier infrastructure existed at all** — one width media query in the entire app (Field's phone
+  sheet swap).
+- **Below ~1140px the card's left edge went NEGATIVE** and `overflow-x: clip` amputated it silently —
+  98px off *each* side at iPad mini portrait, 273px at an iPhone. Every iPad size was already broken,
+  landscape included; the sibling column was clipped at 1194 (7px), 1133 (38px) and 1024 (92px).
+- **§13 was already violated on desktop** — a rich card ran 456–475px past a 900px viewport.
+- probe-fit opened at **12/12 red**.
+
+### 35.3 What shipped, in order
+
+1. The store, the declared ladder, and the width clamp that enforces "never a horizontal scrollbar".
+2. `--stage-u` / `--type-k` published; `html[data-exhibit]` scoping so `/table` keeps its scrollbars.
+3. Card geometry (`CARD_W`, `CARD_TOP_H`, `HEADER_H`, notch/chip-zone) on `u`; `CORNER_R` deliberately
+   left fixed.
+4. `DeckRiffle`, the CC blade and the spouse carousel re-derived from their owners (§33.6).
+5. Type: 30 `text-[Npx]` literals swept onto `calc(...*var(--type-k,1))`, then the 5 *named* classes
+   (`text-sm`, `text-lg`) the first sweep missed.
+6. The third register (`--chip-k`) after the chips forced it.
+7. `HEADER_H` split into padding-on-`u` + text-on-`k`.
+8. Chip-name clamps for every chip, not just siblings.
+9. Per-side carousel mask overshoot.
+
+**Not shipped, deliberately: `overflow: clip`.** The line is written and commented out in `layout.css`
+with the measured reason beside it. §13.3 is right that clipping without a fit policy is amputation —
+arming it today would hide 475px of Pierpont's stage and report success. Uncommenting it is the whole
+of the change once probe-fit is green, and the probe is what earns it.
+
+### 35.4 The order things went wrong, and what each cost
+
+Every one of these rendered correctly at u = 1 and broke only once the card resized — which is exactly
+why they got through, and why the probe's slug list matters more than its assertions.
+
+1. **`transform: scale()` — caught before building, by spiking.** Would have re-based `flight.ts`'s
+   coordinate space. The one place this session spent time and got it back tenfold.
+2. **The CC blade overhung the card**, found by Sam on a screenshot. probe-fit was green because it
+   only measured the *card*.
+3. **The width clamp budgeted the sibling column once** instead of twice. Green on the card while the
+   column hung 6px off an iPad mini — same blind spot, one layer out.
+4. **Chip type as an inline style** wiped by `growUnionRow`'s `cssText`. Sam saw the union year land
+   oversized and snap down. The fix is a class; the lesson is §33.7.
+5. **A `box(w, h)` helper that emitted no CSS.** Tailwind never saw the class name. Caught by
+   measuring the rendered chip — `svelte-check` passes cleanly on it.
+6. **The union fold at `u < 0.88`**, firing above 1150px. Sam: *"way too soon… you can safely do it at
+   850px and smaller, it looks better on three lines."* Re-keyed to a width.
+7. **The carousel never tested at all** — every probe slug had ≤3 spouses, so the compact tier, the
+   mask, the strip and the carets went unmeasured through two passes.
+8. **The mask's uniform 6px overshoot**, cutting the leading chip's left border and the shadow's
+   bottom. Fixed per-side from the shadow's measured reach.
+
+**The pattern, stated once:** every failure was *something whose size is set by type scaling on `u`, or
+something bounded by a box scaling on `k`* — or a constant whose comment claimed it tracked another
+file. Both are now doctrine (§33.2, §33.6).
+
+### 35.5 The probe, and the two times it could not see what it claimed
+
+`probe-fit` now runs **20 cases** — 4 viewports × 5 cards. Twice it had to be widened after a bug got
+past it, and both times for the same reason: **a card that does not render the feature cannot catch
+the feature breaking.**
+
+- `daniel-wadsworth-1771` (10 connections) added so a blade is actually on stage.
+- `gloria-vanderbilt-1924` (4 spouses) added so the carousel exists at all.
+- The **horizontal** assertion measures the union of card + sibling column, not the card (`.page-container`
+  carries `overflow-x: clip`, so `document.scrollWidth` is a check that cannot fail — the §34.1 lesson).
+- The **chip-clip** assertion compares the last text row's bottom against the box's. `scrollHeight` does
+  *not* report overflow on a centred flex column — it read 65/65 on a visibly clipped chip.
+- It measures the **resting** stage and refuses to run if the grandchild tier is open (§33.5), and parks
+  the pointer at (4,4) so a stray hover cannot open one.
+
+**Status: RED at 12/20 — every failure vertical.** Zero horizontal, zero blade overhang, zero clipped
+chip. That is the honest state and the red is load-bearing: it is what gates arming the clip.
+
+### 35.6 Verification
+
+`probe-ghosts`, `probe-sibling-seat`, `probe-cards` green. `svelte-check` clean but for the two
+pre-existing `@fontsource` errors. Desktop at 1440×900 is pixel-identical — every multiplier is ×1 at
+u = 1, which is the property that makes the whole phase safe to land.
+
+Two reds that are **not** this work, both established by measurement rather than assumed:
+
+- **`probe-flight` is flaky at ~4 green : 1 red.** Stashed the changes and ran five times each way —
+  identical rate. Pre-existing; wants its own debt entry.
+- **`probe-carousel-regression` is RED on names only** — rects byte-identical (x 679/847/1015, right
+  839/1007/1175); it wants "Rodman Hooker" and gets "Lent Hooker". Stale expectations predating the
+  `nk`/`cf` chip-name fields, already listed in §27.4.
+
+### 35.7 STILL OPEN
+
+- **The vertical content budget — the whole of the remaining 12 red cases.** `childCap` is declared in
+  the ladder and unwired; the children row still renders uncapped, and the blade and connector rhythm
+  are not on `u`. Blocked on one decision: §13.3's **"+K more" chip — navigates, or expands?** §13.3
+  recommends expand-downward is not allowed under the lock; recommendation is that it navigates.
+- **Arming `overflow: clip`** — one commented line, earned when probe-fit is green, and it must be
+  state-aware for the grandchild-tier exception (§33.5).
+- **The unscaled Tailwind spacing tail.** Header and content padding are done; there are more.
+- **Centring the card in the viewport minus its chrome** — the ~150px lever on the top rung (§33.4).
+  Not a bug; an unmade design call.
+- **`scripts/probe-out/` is not gitignored**, and now holds generated PNGs. A future `git add -A` will
+  sweep them in.
+- **Six screenshots are sitting in `src/lib/state/`** (untracked) and `docs/HANDOFF_grandparent_tier_080826.md`
+  is deleted-but-unstaged from before this session. Neither was touched.
+- `scripts/spike-scale.mjs` is a throwaway kept until 2.75 closes, so §33.1's numbers stay re-runnable.
