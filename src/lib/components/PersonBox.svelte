@@ -3,6 +3,7 @@
 	import type { PersonCompact } from '$lib/types/neighborhood';
 	import { shrinkToFit } from '$lib/actions/shrinkToFit';
 	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
+	import { stage, mergeChipUnion } from '$lib/state/stage.svelte';
 
 	type Props = {
 		person: PersonCompact;
@@ -56,8 +57,27 @@
 	// carry only their own 0.7 on top of the grey ink that rule supplies.
 	const CHIP_TEXT = 'text-inkblue';
 	const CHIP_YEARS = 'text-inkblue opacity-70';
+	// ── PHASE 2.75 — THE CHIP'S FRAME, AS AN INLINE STYLE RATHER THAN A CLASS ───────────────────────
+	// The three size tiers are unchanged as BASES (sibling 119×54, compact notch seat 160×65, normal
+	// 220×75); they are now multiplied by the frame unit.
+	//
+	// A CLASS, NOT AN INLINE STYLE — the same rule the type below is written under, and for the same
+	// reason: flight.ts assigns `style.cssText` (a replacement, not a merge) to four different cloned
+	// elements, so anything it may clone must carry its geometry somewhere cssText cannot reach.
+	// `--stage-u` is published on <html>, so a ghost portalled to <body> still resolves it.
+	//
+	// The three size tiers are unchanged as BASES — sibling 119x54, compact notch seat 160x65, normal
+	// 220x75 — and the calc keeps each of those numbers readable where it is used.
+	// WRITTEN OUT AS LITERALS, not built by a helper, because Tailwind generates CSS only for class
+	// strings it can find whole in the source. A `box(119, 54)` helper reads better and emits nothing —
+	// the scanner never sees `w-[calc(119px*var(--stage-u,1))]`, so the chip would render with no width
+	// at all. Every arbitrary value in this file has to survive a grep for its own text.
 	let boxSize = $derived(
-		isSibling ? 'h-[54px] w-[119px]' : compact ? 'h-[65px] w-[160px]' : 'h-[75px] w-[220px]'
+		isSibling
+			? 'w-[calc(119px*var(--stage-u,1))] h-[calc(54px*var(--stage-u,1))]'
+			: compact
+				? 'w-[calc(160px*var(--stage-u,1))] h-[calc(65px*var(--stage-u,1))]'
+				: 'w-[calc(220px*var(--stage-u,1))] h-[calc(75px*var(--stage-u,1))]'
 	);
 	let photoW = $derived(compact && !isSibling ? 'w-[30%]' : 'w-[25%]');
 	// df (display font) — the person's own typeface, allow-listed. CHIP MODE ONLY, and only on the
@@ -67,21 +87,49 @@
 	let chipFontClass = $derived(CHIP_FONTS[(person.df ?? '').toLowerCase()] ?? '');
 	// A slab serif sets optically smaller than Inter, so the override carries a +15% step of its
 	// own (13→15, 11→12.5) rather than moving the chip size for everyone.
+	// PHASE 2.75 — the chip's TYPE steps on k while its BOX scales on u, which is the hybrid at chip
+	// scale. The bases are exactly the values that were here as plain Tailwind classes (text-xs is 12px);
+	// only the multiplier is new, and it rides in the arbitrary value so the design constant stays
+	// readable at the call site.
+	//
+	// A CLASS, NOT AN INLINE STYLE, AND THIS ONE IS PAID FOR IN BLOOD. The first version emitted
+	// `style="font-size:12px"`, on the reasoning that a travelling ghost should carry its type size
+	// literally. flight.ts's `growUnionRow` builds the "m. 1621" row by CLONING `[data-chip-dates]` and
+	// then doing `row.style.cssText = 'opacity:0;height:0;overflow:hidden'` — which WIPES the inline
+	// style. With the size in a class that wipe cost nothing; with the size inline the cloned row lost
+	// it, inherited 16px, and Sam saw the union year land oversized and snap down as the real chip
+	// replaced the ghost. Three other places in flight.ts assign `cssText` the same way.
+	//
+	// The clone-safety worry that motivated inline is already answered elsewhere: `--type-k` is
+	// published on <html>, so a ghost portalled to <body> still resolves it. The rule this leaves
+	// behind: anything flight.ts may clone must carry its geometry in a CLASS, because cssText is a
+	// replacement and not a merge.
+	// Literals for the same reason as boxSize above — a helper emits nothing Tailwind can see.
 	let nameText = $derived(
 		chipFontClass
 			? compact || isSibling
-				? 'text-[12.5px]'
-				: 'text-[15px]'
+				? 'text-[calc(12.5px*var(--chip-k,1))]'
+				: 'text-[calc(15px*var(--chip-k,1))]'
 			: compact || isSibling
-				? 'text-[11px]'
-				: 'text-[13px]'
+				? 'text-[calc(11px*var(--chip-k,1))]'
+				: 'text-[calc(13px*var(--chip-k,1))]'
 	);
-	let dateText = $derived(compact || isSibling ? 'text-[10px]' : 'text-xs');
+	let dateText = $derived(
+		compact || isSibling
+			? 'text-[calc(10px*var(--chip-k,1))]'
+			: 'text-[calc(12px*var(--chip-k,1))]'
+	);
 	// Sibling chips carry a THIRD line ("died young") below by–dy when dy_young — so the text stack is tighter
 	// (less vertical padding, no inter-line gap) and that line is smaller than the years. Name + years keep
 	// their sizes. Child chips are UNCHANGED — they render died-young INLINE (1876–1879 (died young)).
-	let textAreaPad = $derived(isSibling ? 'min-w-0 gap-0 px-2.5 py-1' : 'gap-0.5 px-2.5 py-2');
-	let diedYoungText = 'text-[9px]';
+	// min-w-0 ON BOTH BRANCHES NOW. It used to be sibling-only because only sibling names were clamped;
+	// shrinkToFit's measurement contract needs the wrapper's ancestors constrained, or node.clientWidth
+	// reports the TEXT width and nothing ever shrinks (the Michael HD3384 blowup, documented in the
+	// action). Extending the clamp to every chip means extending this too.
+	let textAreaPad = $derived(
+		isSibling ? 'min-w-0 gap-0 px-2.5 py-1' : 'min-w-0 gap-0.5 px-2.5 py-2'
+	);
+	let diedYoungText = 'text-[calc(9px*var(--chip-k,1))]';
 
 	// SIBLING chips are first-name-only ("from the POV of the card, he knows them as Lent"): use the curated
 	// chip first name (cf, e.g. "Lent") when set, else the real first name (fn). EVERYONE ELSE gets the full
@@ -110,6 +158,13 @@
 	// display is gated. died-young signals go with it: a living person can't have one, and rendering
 	// the branch at all would leak that we know their dates.
 	let hasDates = $derived(!person.pv && (person.by != null || person.dy != null));
+	// THE UNION FOLDS INTO THE DATES LINE on a narrow stage — Sam's fix for the clipped "m. 1621".
+	// See mergeChipUnion in stage.svelte.ts for the measurements, and for why it is scoped to small
+	// stages rather than applied everywhere (desktop is signed off, and flight.ts's growUnionRow reads
+	// the separate [data-chip-union] row off the destination chip).
+	// Only when there IS a dates line to fold into: a spouse with no known years still needs the union
+	// on its own row, or the marriage year would vanish altogether.
+	let foldUnion = $derived(relation === 'spouse' && !!unionLine && hasDates && mergeChipUnion());
 	let showDiedYoung = $derived(!person.pv && dimmed);
 </script>
 
@@ -122,19 +177,41 @@
 {#snippet nameEl()}
 	{#if isSibling}
 		<div
-			class="min-w-0 font-medium {CHIP_TEXT} {nameText} {chipFontClass}"
+			class="min-w-0 font-medium {CHIP_TEXT} {chipFontClass} {nameText}"
 			data-chip-name
 			use:shrinkToFit={{
-				max: chipFontClass ? 12.5 : 11,
-				min: chipFontClass ? 9 : 8,
-				key: displayName
+				max: (chipFontClass ? 12.5 : 11) * stage.u,
+				min: (chipFontClass ? 9 : 8) * stage.u,
+				key: `${displayName}|${stage.u}`
 			}}
 		>
 			<span data-fit class="inline-block whitespace-nowrap">{displayName}</span>
 		</div>
 	{:else}
-		<div class="font-medium {CHIP_TEXT} {nameText} {chipFontClass}" data-chip-name>
-			{displayName}
+		<!-- CLAMPED TOO, as of Phase 2.75. Sibling chips have clamped their names since Phase 7; every
+		     other chip rendered its name plain and simply wrapped.
+		
+		     That was already wrong at full size and nobody had hit it: on a 4+-spouse card the notch
+		     seats are the COMPACT tier (160x65), and "Leopold Stokowski" needs ~97px of an ~92px text
+		     column at 11px — so it wrapped to two lines, made a four-row stack of name/name/dates/union,
+		     and the chip's `overflow: hidden` ate the marriage year. Measured identical at 1440, 1300 and
+		     1000, i.e. it is not a small-screen bug; Gloria Vanderbilt's card has looked like that all
+		     along and Sam happened to catch it while resizing.
+		
+		     The clamp is the machinery the sibling branch above already uses, so this is extending the
+		     existing pattern rather than adding a second one. Both ends of the range ride --chip-k's
+		     dial (see nameText) so a narrow stage shrinks the ceiling and the floor together, and `key`
+		     carries u so a resize re-measures. -->
+		<div
+			class="min-w-0 font-medium {CHIP_TEXT} {chipFontClass} {nameText}"
+			data-chip-name
+			use:shrinkToFit={{
+				max: (chipFontClass ? (compact ? 12.5 : 15) : compact ? 11 : 13) * stage.u,
+				min: (chipFontClass ? (compact ? 9.5 : 11) : compact ? 8.5 : 10) * stage.u,
+				key: `${displayName}|${stage.u}|${compact}`
+			}}
+		>
+			<span data-fit class="inline-block whitespace-nowrap">{displayName}</span>
 		</div>
 	{/if}
 {/snippet}
@@ -175,13 +252,13 @@
 				     10px line to a 13px box. -->
 				<div class="{CHIP_YEARS} {dateText}" data-chip-dates>
 					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && showDiedYoung}
-						{' '}(died young){/if}
+						{' '}(died young){/if}{#if foldUnion}&#8195;{unionLine}{/if}
 				</div>
 			{/if}
 			{#if isSibling && showDiedYoung}
 				<div class="leading-none {CHIP_YEARS} {diedYoungText}">died young</div>
 			{/if}
-			{#if relation === 'spouse' && unionLine}
+			{#if relation === 'spouse' && unionLine && !foldUnion}
 				<!-- data-chip-union is the same kind of hook as data-chip-name: a stable handle the flight
 				     reads off the DESTINATION chip. A parent chip has two lines and the spouse chip it
 				     becomes has three, so without this the union row simply appeared the instant the
@@ -226,13 +303,13 @@
 				     10px line to a 13px box. -->
 				<div class="{CHIP_YEARS} {dateText}" data-chip-dates>
 					{person.by ?? ''}–{person.dy ?? ''}{#if relation === 'child' && showDiedYoung}
-						{' '}(died young){/if}
+						{' '}(died young){/if}{#if foldUnion}&#8195;{unionLine}{/if}
 				</div>
 			{/if}
 			{#if isSibling && showDiedYoung}
 				<div class="leading-none {CHIP_YEARS} {diedYoungText}">died young</div>
 			{/if}
-			{#if relation === 'spouse' && unionLine}
+			{#if relation === 'spouse' && unionLine && !foldUnion}
 				<!-- data-chip-union is the same kind of hook as data-chip-name: a stable handle the flight
 				     reads off the DESTINATION chip. A parent chip has two lines and the spouse chip it
 				     becomes has three, so without this the union row simply appeared the instant the

@@ -21,7 +21,8 @@
   frame (rapid CC-hopping accumulates zero animation debt). Reduced-motion: renders nothing.
 -->
 <script lang="ts">
-	import { CARD_TOP_H } from './FeaturedCard.svelte';
+	import { CARD_TOP_H, CARD_W as CARD_W_BASE } from './FeaturedCard.svelte';
+	import { stage } from '$lib/state/stage.svelte';
 	import { onMount } from 'svelte';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { subscribeCameraMove, type CameraMove } from '$lib/state/camera';
@@ -41,10 +42,16 @@
 	let layer: HTMLDivElement; // the fixed container the ghosts are spawned into
 	let live: Animation[] = []; // in-flight ghost animations, so a re-publish cancels them
 
-	const CARD_W = 925; // matches FeaturedCard's w-[925px]
-	// IMPORTED, not restated: the phantom cards must match the real card's top height, and a literal
-	// here drifted the moment that height changed. FeaturedCard owns the geometry.
-	const CARD_MIN_H = CARD_TOP_H;
+	// IMPORTED AND SCALED, not restated. The phantoms must match the real card at the size it is
+	// CURRENTLY being drawn — a riffle at the small-landscape rung deals 758px cards, not 925px ones.
+	//
+	// The width used to be a local `const CARD_W = 925` with the comment "matches FeaturedCard's
+	// w-[925px]" beside it, which is the exact failure design §28.1 records about the height: "a comment
+	// is not a mechanism, and the two would have diverged the first time the number moved." Phase 2.75
+	// is that first time — the number now moves on every resize — so both dimensions come from the
+	// owner and go through the same dial.
+	const CARD_W = $derived(Math.round(CARD_W_BASE * stage.u));
+	const CARD_MIN_H = $derived(Math.round(CARD_TOP_H * stage.u));
 
 	function clearLive() {
 		for (const a of live) {

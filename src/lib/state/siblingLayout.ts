@@ -13,6 +13,7 @@
  * used to declare inline, and its rendered geometry is byte-identical.
  */
 import type { Neighborhood, PersonCompact } from '$lib/types/neighborhood';
+import { stage } from './stage.svelte';
 
 export type SiblingTiers = {
 	full: PersonCompact[];
@@ -62,6 +63,17 @@ export const HEADER_MARGIN_BOTTOM = GAP - HEADER_GAP_BELOW; // 12.8px — matche
  * are Stream A gaps where the reciprocal sibling edge was never emitted at all (siblings_count = 0).
  */
 export function showsSiblingPanel(nb: Neighborhood | null | undefined): boolean {
+	// THE THIRD CLAUSE (Phase 2.75) — and it is a LAYOUT question asked in a data function on purpose.
+	// Sam, Aug 8: the sibling menu "can be the first to vanish when the screen gets narrower", and the
+	// measurements agree it has to be — the column is already clipped at every iPad landscape size today
+	// (7px at 1194, 38px at 1133, 92px at 1024).
+	//
+	// It goes HERE rather than at the page's mount site for the reason the doc-comment above already
+	// gives about the second clause: planSiblingNav asks this same function of the INCOMING person to
+	// decide whether there is a seat to fly into. Gating only the render would let a flight be planned
+	// into a seat that the current viewport does not have, which is §26.7's one-way door reappearing
+	// through a different door. One rule, one home, both callers.
+	if (!stage.siblingColumn) return false;
 	const f = nb?.focus;
 	if (!nb || !f) return false;
 	if (nb.siblings_count > 0 && (f.hd || f.td) && !f.ee) return true;

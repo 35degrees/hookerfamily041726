@@ -1,5 +1,5 @@
 <script module lang="ts">
-	import { CORNER_R } from './FeaturedCard.svelte';
+	import { CORNER_R, CARD_W } from './FeaturedCard.svelte';
 
 	// ── THE BLADE'S GEOMETRY ────────────────────────────────────────────────────────────────────────
 	// Taken off Sam's drawing (7AFB3D6D), which is ~1:1 with the card's 925px width.
@@ -91,6 +91,7 @@
 </script>
 
 <script lang="ts">
+	import { stage } from '$lib/state/stage.svelte';
 	import { fitBlade } from '$lib/actions/fitBlade';
 
 	type CC = {
@@ -137,8 +138,30 @@
 	// line went back to starting at x=0). Explicit height + overflow:hidden contains and clips it
 	// instead, and the text's own height is a clean input because the cutout no longer depends on it.
 	const BODY_PAD_Y = 22; // padding: 10px top + 12px bottom
+
+	// ── PHASE 2.75 — THE BLADE IS PART OF THE CARD AND MUST SHRINK WITH IT ──────────────────────────
+	// Every constant above is a BASE stated at u = 1, taken off Sam's drawing at the card's 925px width.
+	// The blade kept those literals when the card started scaling, so it overhung the card's bottom-right
+	// corner by 925 x (1 - u) — which is what Sam saw: "CROSS CONNECTIONS ... sticks out on the right of
+	// the bottom of Featured Card as it shrinks."
+	//
+	// SLANT_TAN IS THE ONE THING THAT MUST NOT SCALE. It is an ANGLE — a ratio of two lengths — so it is
+	// dimensionless and already correct at every size. Multiplying it would ROTATE the blade's edge as
+	// the window narrowed, which is the one thing about this shape nobody would forgive. Scale the
+	// LENGTHS, leave the ANGLE, and the silhouette stays similar to itself at every rung.
+	//
+	// CORNER_R is likewise left alone, for the reason given where it is declared: the blade mitres
+	// against the card's own radius, and two independently-rounded numbers is how a seam opens at one
+	// size and not another.
+	const bu = $derived(stage.u);
+	const bk = $derived(stage.k);
+	/** The tang, scaled. The card seats the blade with this same number — see FeaturedCard. */
+	const tang = $derived(Math.round(BLADE_TANG * bu));
+	const bodyPadY = $derived(Math.round(BODY_PAD_Y * bu));
+	const slantX0 = $derived(BLADE_LEFT_TOP * bu - tang * SLANT_TAN);
+
 	// The tang is part of the box but never part of what the page sees (see onheight below).
-	let bladeH = $derived(textH > 0 ? textH + BODY_PAD_Y + BLADE_TANG : 0);
+	let bladeH = $derived(textH > 0 ? textH + bodyPadY + tang : 0);
 	// REPORTED FROM THE DATA, NOT THE DOM. bladeH is a bind:clientHeight on an element inside the
 	// {#if}, so when a person has NO cross-connections that element unmounts and bladeH simply KEEPS
 	// its last value — nothing writes 0. The page then reserves a phantom blade's worth of space and
@@ -162,7 +185,7 @@
 	// which sit at or above the card's bottom edge and are never seen — the card paints over them.
 	let clip = $derived.by(() => {
 		const r = CORNER_R;
-		const L = SLANT_X0; // the slant's x at the TOP OF THE TANG, not at the card's edge
+		const L = slantX0; // the slant's x at the TOP OF THE TANG, not at the card's edge
 		const B = L + slantRun; // where the slant meets the bottom edge
 		// Step r back UP THE SLANT from the bottom-left vertex, so the corner leaves along the same line
 		// it arrived on and the edge reads as one unbroken lean.
@@ -197,11 +220,12 @@
 	// the width search in fitBlade. At 600 the float was 639px wide and no blade could shrink below
 	// ~660px however little text it held (Sam noticed it on a one-connection entry). It only got that
 	// large when the slant's depth cap was removed; the cap had been bounding this by accident.
-	const SHAPE_RUN = 300;
+	const SHAPE_RUN_BASE = 300;
+	const SHAPE_RUN = $derived(Math.round(SHAPE_RUN_BASE * bu));
 	// The float starts below the body's top padding, so its polygon must begin at the slant's x THERE,
 	// not at the blade's top. It used to start at BLADE_LEFT_TOP, which put the cutout ~8px left of the
 	// real edge and quietly ate most of the shape-margin — part of why the text read as touching.
-	const SHAPE_X0 = Math.round(SLANT_X0 + (BODY_PAD_TOP + BLADE_TANG) * SLANT_TAN);
+	const SHAPE_X0 = $derived(Math.round(slantX0 + (BODY_PAD_TOP * bu + tang) * SLANT_TAN));
 	// The float must be WIDER than the shape ever gets, because shape-outside is clipped to the float's
 	// margin box. At `width: 100%` inside a two-column grid the box was ~340px while the polygon reached
 	// 631px, so everything past the clip counted as blocked and the left column collapsed to a sliver
@@ -209,23 +233,28 @@
 	// in both layouts.
 
 	// Mirrors the clip: one straight lean, all the way down.
-	const SHAPE_CAP_X = Math.round(SHAPE_X0 + SHAPE_RUN * SLANT_TAN);
+	const SHAPE_CAP_X = $derived(Math.round(SHAPE_X0 + SHAPE_RUN * SLANT_TAN));
 	// The float must be WIDER than the shape ever gets — shape-outside is clipped to the float's margin
 	// box, and at `width: 100%` inside a narrow container everything past the clip counts as blocked.
-	const SHAPE_W = SHAPE_CAP_X + 8;
-	const shape = `polygon(0 0, ${SHAPE_X0}px 0, ${SHAPE_CAP_X}px ${SHAPE_RUN}px, 0 ${SHAPE_RUN}px)`;
+	const SHAPE_W = $derived(SHAPE_CAP_X + Math.round(8 * bu));
+	const shape = $derived(
+		`polygon(0 0, ${SHAPE_X0}px 0, ${SHAPE_CAP_X}px ${SHAPE_RUN}px, 0 ${SHAPE_RUN}px)`
+	);
 
 	// EACH ROW gets its own right edge, LABEL_GAP left of the slant AT THAT ROW'S OWN HEIGHT. Aligning
 	// both rows to one edge can't hold a constant gap against a leaning edge — measured, "Cross" sat
 	// 10px off it and "Connections" 21px. Stepping them makes the label lean with the blade, which is
 	// the same rule the blade's own text follows as it descends.
-	const LABEL_TOP = BLADE_TANG + 12; // 12px clear of the CARD's bottom edge, which is BLADE_TANG down
-	const ROW_H = 12.5; // 10px at line-height 1.25
-	const ROW_GAP = 1;
+	const LABEL_TOP = $derived(tang + Math.round(12 * bu)); // clear of the CARD's bottom edge
+	// ROW_H follows the TYPE STEP, not the frame unit — it is "10px at line-height 1.25", a length
+	// derived from a font size, and the label's type steps on k like all other type. Scaling it on u
+	// would drift the rows out of register with the glyphs sitting in them.
+	const ROW_H = $derived(12.5 * bk);
+	const ROW_GAP = $derived(1 * bu);
 	const rowRight = (i: number) =>
-		SLANT_X0 + (LABEL_TOP + i * (ROW_H + ROW_GAP) + ROW_H / 2) * SLANT_TAN - LABEL_GAP;
-	const labelRight = Math.round(rowRight(1)); // the wider, lower row defines the block's right edge
-	const row0Inset = Math.round(rowRight(1) - rowRight(0)); // "Cross" pulls back by the slant's run
+		slantX0 + (LABEL_TOP + i * (ROW_H + ROW_GAP) + ROW_H / 2) * SLANT_TAN - LABEL_GAP * bu;
+	const labelRight = $derived(Math.round(rowRight(1))); // the wider, lower row sets the block's edge
+	const row0Inset = $derived(Math.round(rowRight(1) - rowRight(0))); // "Cross" pulls back by the run
 </script>
 
 {#snippet entry(cc: CC)}{#if cc.slug}<a
@@ -243,7 +272,7 @@
 
 {#if crossConnections.length > 0}
 	<!-- One row spanning the card's width: the label sits left and outside, the blade to its right. -->
-	<div class="cc-blade-row" style="--tang: {BLADE_TANG}px;">
+	<div class="cc-blade-row" style="--tang: {tang}px;">
 		<!-- The label moved out of the card with the CCs, and its HOVER TOOLTIP came with it — it is the
 		     only place the site ever explains what a cross connection is, so it survives the redesign
 		     verbatim. Two fixed rows always, per the drawing, so it never reflows with content. -->
@@ -278,10 +307,12 @@
 			class="cc-blade"
 			style:clip-path={clip}
 			use:fitBlade={{
-				minFont: CC_FONT_MIN,
-				maxFont: CC_FONT_MAX,
-				maxWidth: 925 - BLADE_RIGHT_INSET,
-				key: crossConnections.map((c) => c.link_text + c.display_label).join('|')
+				minFont: CC_FONT_MIN * bk,
+				maxFont: CC_FONT_MAX * bk,
+				maxWidth: Math.round((CARD_W - BLADE_RIGHT_INSET) * bu),
+				// `key` carries the dials so a resize RE-FITS. fitBlade caches on this string; without
+				// them a narrowed window kept the width and font size solved for the wide card.
+				key: `${crossConnections.map((c) => c.link_text + c.display_label).join('|')}|${bu}|${bk}`
 			}}
 		>
 			<div class="cc-body" style="height: {bladeH}px;">
@@ -316,7 +347,9 @@
 		/* --cc-link: hsl(252, 100%, 67%); */
 
 		position: relative;
-		width: 925px; /* the card's width — the blade is measured from the card's edges */
+		/* THE CARD'S WIDTH, and it must TRACK it. A literal 925 here is what made the blade overhang the
+		   shrinking card's bottom-right corner. */
+		width: calc(925px * var(--stage-u, 1));
 	}
 
 	.cc-label-layer {
@@ -406,7 +439,8 @@
 
 	.cc-body {
 		/* the tang rides on top of the text's own 10px gap, so the text does not move */
-		padding: calc(var(--tang) + 10px) 14px 12px 0;
+		padding: calc(var(--tang) + 10px * var(--stage-u, 1)) calc(14px * var(--stage-u, 1))
+			calc(12px * var(--stage-u, 1)) 0;
 		overflow: hidden; /* contains + clips the over-tall shaping float — see BODY_PAD_Y above */
 	}
 
@@ -415,7 +449,7 @@
 		float: left;
 		/* width is set inline from SHAPE_W — see there for why it is not 100% */
 		/* height is set inline from SHAPE_RUN — the polygon's bottom and the float's must agree */
-		shape-margin: 12px; /* the text must not touch the slanted edge — it was ~5px off it, and the
+		shape-margin: calc(12px * var(--stage-u, 1)); /* the text must not touch the slanted edge — it was ~5px off it, and the
 		                       tightest point (a glyph's lower-left against a leaning edge) read as contact */
 	}
 

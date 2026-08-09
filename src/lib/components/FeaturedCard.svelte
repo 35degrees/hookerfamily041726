@@ -9,7 +9,22 @@
 	// Corner radius for the rounded card silhouette. Matches the spouse chip's rounded-lg (8px) so the
 	// chip docks visually. Exported for the SAME reason CARD_TOP_H is: the CC blade is carved with the
 	// card's own radius, and a second literal would silently diverge the first time this moved.
+	//
+	// PHASE 2.75 — AND IT DELIBERATELY DOES NOT SCALE. A radius is DETAIL, not geometry: 8px reads as
+	// "gently rounded" on a 925px card and on a 660px one alike, where 6.6px reads as very slightly less
+	// rounded and nobody can tell you which card they are looking at. Leaving it fixed also keeps the
+	// blade's carve arithmetically exact — the blade imports this same constant and mitres against it,
+	// and two independently-rounded numbers is how a seam appears at one size and not another. Radii,
+	// hairlines and border widths are the class of constant that should stay put while the frame moves.
 	export const CORNER_R = 8;
+
+	/** The card's WIDTH at u = 1. Sibling of CARD_TOP_H; both are now read through the scaled helpers. */
+	export const CARD_W = 925;
+
+	/** The header ROW's height at u = 1 (design §28.1's third constant, previously a local). */
+	export const HEADER_H_BASE = 82;
+	/** The crowded 4-line dual-descent variant. */
+	export const HEADER_H_CROWDED = 96;
 </script>
 
 <script lang="ts">
@@ -26,7 +41,24 @@
 	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
 	import CrossConnectionsBlade, { BLADE_TANG } from './CrossConnectionsBlade.svelte';
 	import { unsheathBlade } from '$lib/transitions/flight';
+	import { stage } from '$lib/state/stage.svelte';
 	import { untrack, tick } from 'svelte';
+
+	// ── PHASE 2.75 — THE TWO DIALS, READ ONCE ───────────────────────────────────────────────────────
+	// u scales the FRAME, k scales the TYPE, and the gap between them is the whole hybrid: at the small
+	// landscape rung the frame is at 0.82 while the type is at 0.90, so a 13px narrative body sets at
+	// 11.7px rather than the 10.7px a uniform squeeze would have given it. That is bought with SPACE,
+	// which is why nbCap exists — see the content budget in stage.svelte.ts.
+	const u = $derived(stage.u);
+	const k = $derived(stage.k);
+	/** Round a base type size through the type step. Type is rounded to a tenth, not an integer: a
+	 *  half-pixel of font-size is a real, visible difference in weight where a half-pixel of box is not. */
+	const t = (px: number) => Math.round(px * k * 10) / 10;
+	/** The card's live frame, scaled. Integers — these feed a clip-path and a flight's measured rects. */
+	const cardW = $derived(Math.round(CARD_W * u));
+	const cardTopH = $derived(Math.round(CARD_TOP_H * u));
+	/** Must match CrossConnectionsBlade's own `tang` exactly — same base, same store, same rounding. */
+	const bladeTang = $derived(Math.round(BLADE_TANG * u));
 
 	type Props = {
 		person: Person;
@@ -296,17 +328,41 @@
 	// row carries its own 24px of padding-top, so the nearest actual pixel is ~25px below the blurb. The
 	// blurb is CLAMPED to one line for the same reason (see below) — the arithmetic only holds while the
 	// third row stays one line.
-	const HEADER_H = 82;
+	// PHASE 2.75: every number in this section is a BASE, stated at u = 1, and read through `su()` below.
+	// The comment above (82 = 72 + 10, three rows of ink measuring 83px) describes the base, and stays
+	// true of it — the whole point of scaling a frame uniformly is that its internal arithmetic survives.
+	// A HEADER IS A STACK OF TYPE SITTING IN PADDING, so it cannot scale on a single dial. Its two parts
+	// answer to different ones, and splitting them is what keeps the header's fit CONSTANT rather than
+	// degrading as the stage narrows:
+	//
+	//     28px of padding (16 top + 12 bottom)  -> u, because padding is geometry
+	//     54px of text stack (name + descent + blurb) -> k, because it is type
+	//
+	// 28 + 54 = 82 = HEADER_H_BASE exactly, so nothing moves at u = k = 1.
+	//
+	// Scaling the whole 82 on u was wrong in a way the numbers make plain. §28.1 records that a
+	// three-row header overruns by ~2px at full size and calls it "deliberate and invisible" — 2 of 82,
+	// or 2.4%. Under a single u dial that same card overran by 13 of 57 at the small-landscape rung, i.e.
+	// 23%, because the text was shrinking on k (0.87) while the box holding it shrank on u (0.70). The
+	// deliberate hairline became a visibly clipped blurb. Split, the overrun stays ~1-2px at every rung,
+	// which is the invariant §28.1 actually asserts.
+	const HEADER_PAD = 28;
+	const HEADER_TEXT = HEADER_H_BASE - HEADER_PAD;
+	const HEADER_H = $derived(Math.round(HEADER_PAD * u + HEADER_TEXT * k));
 
 	// === Carved card geometry ===
-	const CHIP_W_NORMAL = 220;
-	const CHIP_W_COMPACT = 160;
-	const CHIP_GAP = 8;
+	// THESE FEED A clip-path, so they are ROUNDED TO INTEGERS after scaling rather than left as floats.
+	// The notch's silhouette and the spouse chips that dock into it are cut from two different sources —
+	// this shape() string and PersonBox's own box — and a half-pixel disagreement between them shows up
+	// as a hairline of card visible along the chip's edge at some sizes and not others.
+	const CHIP_W_NORMAL = $derived(Math.round(220 * u));
+	const CHIP_W_COMPACT = $derived(Math.round(160 * u));
+	const CHIP_GAP = $derived(Math.round(8 * u));
 
 	const ZONE_PADDING = 0;
-	const CHIP_INSET = 18;
-	const CHIP_ZONE_HEIGHT_NORMAL = 90;
-	const CHIP_ZONE_HEIGHT_COMPACT = 78;
+	const CHIP_INSET = $derived(Math.round(18 * u));
+	const CHIP_ZONE_HEIGHT_NORMAL = $derived(Math.round(90 * u));
+	const CHIP_ZONE_HEIGHT_COMPACT = $derived(Math.round(78 * u));
 
 	// One chip per UNIQUE spouse person: a repeated spouse id can't collide the
 	// keyed each, and a stable id key lets the chip↔card morph fire on navigation.
@@ -381,9 +437,10 @@
 <!-- Wrapper provides positioning context for chips as siblings of carved card.
      min-height keeps the card at CARD_TOP_H when there's no footer to extend it. -->
 <div
-	class="featured-card-wrap relative w-[925px]"
+	class="featured-card-wrap relative"
 	style="
-        min-height: {CARD_TOP_H}px;
+        width: {cardW}px;
+        min-height: {cardTopH}px;
         filter:
             drop-shadow(0 4px 12px hsl(var(--shadow-ink) / var(--shadow-a1)))
             drop-shadow(0 1px 3px hsl(var(--shadow-ink) / var(--shadow-a2)));
@@ -407,11 +464,13 @@
 		     variable gap underneath. The dial lives in HEADER_H; there are no other height inputs here. -->
 		<div
 			class="card-top grid"
-			style="height: {CARD_TOP_H}px; grid-template-rows: {HEADER_H}px minmax(0, 1fr);"
+			style="height: {cardTopH}px; grid-template-rows: {HEADER_H}px minmax(0, 1fr);"
 		>
 			<div
-				class="header min-w-0 px-6 pt-4 pb-3"
-				style="padding-right: {notchChipCount > 0 ? chipZoneWidth + 16 : 24}px;"
+				class="header min-w-0 px-[calc(24px*var(--stage-u,1))] pt-[calc(16px*var(--stage-u,1))] pb-[calc(12px*var(--stage-u,1))]"
+				style="padding-right: {Math.round(
+					notchChipCount > 0 ? chipZoneWidth + 16 * u : 24 * u
+				)}px;"
 			>
 				<div class="name-block min-w-0" class:tight-stack={headerIsCrowded}>
 					<!-- min-w-0 + [data-fit] inline span: shrinkToFit measures the wrapper's real
@@ -431,14 +490,14 @@
 							? 'font-medium'
 							: NAME_WEIGHT_CLASS} {nameFontClass || NAME_FACE}"
 						use:shrinkToFit={{
-							max: nameFontClass ? 28 : NAME_SIZE,
-							min: nameFontClass ? 20 : NAME_MIN,
-							key: displayName
+							max: t(nameFontClass ? 28 : NAME_SIZE),
+							min: t(nameFontClass ? 20 : NAME_MIN),
+							key: `${displayName}|${u}|${k}`
 						}}
 					>
 						<span data-fit class="inline-block whitespace-nowrap"
 							>{displayName}<span
-								class="ml-2 align-middle font-mono text-sm font-normal text-stone-400"
+								class="ml-2 align-middle font-mono text-[calc(14px*var(--type-k,1))] font-normal text-stone-400"
 								>{person.id}</span
 							></span
 						>
@@ -450,18 +509,51 @@
 								<!-- Merged cousin-marriage line: full-size, shrink-to-fit so a long
 								     "…Hooker Descendant & Wife of Hooker Descendant" stays one line. -->
 								<div
-									class="descent-line min-w-0 text-sm leading-tight font-medium {i === pynchonLabelIndex ? 'pynchon-descent' : 'text-inkblue'}"
-									use:shrinkToFit={{ max: 14, min: 10, key: label }}
+									class="descent-line min-w-0 leading-tight font-medium {i === pynchonLabelIndex ? 'pynchon-descent' : 'text-inkblue'}"
+									use:shrinkToFit={{ max: t(14), min: t(10), key: `${label}|${u}|${k}` }}
 								>
 									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
 								</div>
 							{:else if allLabels.length >= 2}
-								<!-- Dual-descent (Hooker + Talcott) line: ~5% smaller, STATIC.
-								     Rare; this guards the 4-line header height. -->
-								<div class="descent-line text-[13px] leading-tight font-medium {i === pynchonLabelIndex ? 'pynchon-descent' : 'text-inkblue'}">{label}</div>
+								<!-- Dual-descent (Hooker + Talcott) line: ~5% smaller than the ordinary line. Rare;
+								     this guards the 4-line header height. CLAMPED as of Phase 2.75 for the reason
+								     given on the ordinary branch below; the ceiling preserves the 5% relationship
+								     and the floor sits proportionally under the ordinary one. -->
+								<div
+									class="descent-line min-w-0 leading-tight font-medium {i === pynchonLabelIndex
+										? 'pynchon-descent'
+										: 'text-inkblue'}"
+									use:shrinkToFit={{ max: t(13), min: t(9.5), key: `${label}|${u}|${k}` }}
+								>
+									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
+								</div>
 							{:else}
-								<!-- Ordinary single descent / spouse-only / in-law line: default size. -->
-								<div class="descent-line text-sm leading-tight font-medium {i === pynchonLabelIndex ? 'pynchon-descent' : 'text-inkblue'}">{label}</div>
+								<!-- Ordinary single descent / spouse-only / in-law line.
+								
+								     CLAMPED, ON SAM'S CALL (Aug 8): "the best thing to do is to put a clamp on the
+								     font size for that title with a min and max just like the name above it." It was
+								     STATIC text-sm, which is why "Eighth Generation Descendant of Thomas Hooker"
+								     wrapped at 890px and put "Hooker" on a second line that the fixed HEADER_H then
+								     hid under the content row. It was the ONE unclamped line in a header where every
+								     other element already fits itself.
+								
+								     A DESCENT LINE IS THE WORST CASE FOR A FIXED SIZE, which is why this is the line
+								     that broke rather than bad luck: its length is GENERATED, not authored. "Eighth
+								     Generation Descendant of Thomas Hooker" is 46 characters and later generations
+								     run longer, so no single size is right for every card — which is the definition
+								     of a job for a clamp. The name above it has been clamped since long before this
+								     for exactly the same reason.
+								
+								     Same range and same machinery as the merged '&' branch above, so all three
+								     descent branches now behave identically and only their ceilings differ. -->
+								<div
+									class="descent-line min-w-0 leading-tight font-medium {i === pynchonLabelIndex
+										? 'pynchon-descent'
+										: 'text-inkblue'}"
+									use:shrinkToFit={{ max: t(14), min: t(10), key: `${label}|${u}|${k}` }}
+								>
+									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
+								</div>
 							{/if}
 						{/each}
 					{/if}
@@ -476,7 +568,7 @@
 						     -mb-2 only in the crowded fixed-height variant (earns back a couple px for the
 						     4th line); on auto-height common cards it would just eat the breathing gap. -->
 						<div
-							class="mt-0 font-source text-sm leading-tight text-blue-900 opacity-60"
+							class="mt-0 font-source text-[calc(14px*var(--type-k,1))] leading-tight text-blue-900 opacity-60"
 							class:-mb-2={headerIsCrowded}
 						>
 							{blurb}
@@ -487,7 +579,9 @@
 
 			<!-- Content row: minmax(0, 1fr) + overflow-hidden allows NB body expansion
 			     without growing the row. Any overflow is clipped, keeping card height stable. -->
-			<div class="content grid grid-cols-[23%_1fr_21%] overflow-hidden py-6 pr-3 pl-6">
+			<div
+				class="content grid grid-cols-[23%_1fr_21%] overflow-hidden py-[calc(24px*var(--stage-u,1))] pr-[calc(12px*var(--stage-u,1))] pl-[calc(24px*var(--stage-u,1))]"
+			>
 				<!-- space-y: photo->vitals is the original 16 less 5% then a further 20% (15.2 -> 12.16);
 					     .vitals block spacing is the original 10 less 5% (9.5). -->
 				<div class="portrait-column space-y-[10.94px]">
@@ -517,25 +611,25 @@
 							age: { years: number; approx: boolean } | null = null
 						)}
 							<div>
-								<div class="text-[10px] font-semibold tracking-wider text-stone-500 uppercase">
+								<div class="text-[calc(10px*var(--type-k,1))] font-semibold tracking-wider text-stone-500 uppercase">
 									{label}
 								</div>
 								<!-- The age rides the date line at a lighter weight so the DATE stays primary and the
 								     derived figure reads as an annotation on it, not a second fact. -->
-								<div class="font-opensans text-[12.45px] leading-snug font-normal text-inkblue">
+								<div class="font-opensans text-[calc(12.45px*var(--type-k,1))] leading-snug font-normal text-inkblue">
 									{date}{#if age}<span class="ml-1.5 font-normal opacity-70"
 											>({age.approx ? '~' : ''}Age {age.years})</span
 										>{/if}
 								</div>
 								{#if loc || mapUrl}
 									<div
-										class="mt-[0.5px] font-opensans text-[12.08px] leading-snug font-light text-slate-600"
+										class="mt-[0.5px] font-opensans text-[calc(12.08px*var(--type-k,1))] leading-snug font-light text-slate-600"
 									>
 										{loc ?? ''}{#if mapUrl}<a
 												href={mapUrl}
 												target="_blank"
 												rel="noopener noreferrer"
-												class="ml-1.5 align-baseline font-opensans text-[9px] font-normal tracking-wider text-blue-700 uppercase hover:underline"
+												class="ml-1.5 align-baseline font-opensans text-[calc(9px*var(--type-k,1))] font-normal tracking-wider text-blue-700 uppercase hover:underline"
 												>Map</a
 											>{/if}
 									</div>
@@ -597,10 +691,13 @@
 	     z-index:-1 puts it behind the card, which is what makes "sheathed" mean genuinely hidden INSIDE
 	     the case rather than faded out. The wrap's drop-shadow now outlines card and blade as ONE
 	     silhouette, so there is no shadow seam between them — they are one object. -->
+	<!-- THE TANG, SCALED — and it must resolve to the same number the blade uses, or a gap opens along
+	     the seam between them. The blade computes `Math.round(BLADE_TANG * u)` from the same store, so
+	     both round identically at every rung. -->
 	<div
 		class="cc-blade-mount"
 		class:stowed
-		style="top: calc(100% - {BLADE_TANG}px);"
+		style="top: calc(100% - {bladeTang}px);"
 		bind:this={bladeMount}
 	>
 		<CrossConnectionsBlade {crossConnections} onheight={onbladeheight} />

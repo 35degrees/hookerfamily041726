@@ -12,6 +12,7 @@
  */
 import { cubicOut, cubicIn } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
+import { su } from '$lib/state/stage.svelte';
 import { getCameraMove, type CameraMove } from '../state/camera';
 import { isArcMove, arcDurationMsFor, ARC_DESC, ARC_RISE } from './arc-math';
 import { arcClock } from '../state/arc.svelte';
@@ -747,6 +748,9 @@ const DEMOTE_LEAD = 0.85;
 // Amplitude is proportional to the DESTINATION FOOTPRINT (a small chip seat carries less than a big parent
 // box) with a perception FLOOR so it never vanishes at chip scale, dialled by DEMOTE_SETTLE_RATIO.
 const DEMOTE_SETTLE_RATIO = 0.45; // amplitude dial — tune by feel on the rendered cards
+// PHASE 2.75 note: these two are px amplitudes at CHIP SCALE, so they travel with the chip. They are
+// read through su() at their use sites rather than baked here, because a module-scope constant would
+// capture the unit at import time and never move again.
 const DEMOTE_SETTLE_FLOOR_PX = 2.2; // perception floor — below this the settle reads as nothing at chip scale
 const DEMOTE_SETTLE_CAP_PX = 9; // ceiling — a demote overshoot larger than this is a lunge (raised from 6.5 to
 // give the child dial headroom; parent 2.2 and spouse 3.66 sit far below it, so they're unaffected).
@@ -768,9 +772,16 @@ const DEMOTE_SETTLE_SIBLING_FACTOR = 1;
 // factor trims the amplitude per-direction (1 = full; parent-seat landings pass DEMOTE_SETTLE_PARENT_FACTOR).
 function demoteSettleBackFor(distance: number, footprint: number, factor = 1): number {
 	if (distance < 1) return 0;
+	// PHASE 2.75 — the FLOOR and CAP travel with the frame, the RATIO does not. `footprint` is a measured
+	// diagonal, so the ratio term already shrinks with the stage on its own; the two px bounds are the
+	// only asserted numbers here, and both are perception thresholds AT CHIP SCALE ("below this the
+	// settle reads as nothing", "above this it is a lunge"). A chip that is 18% smaller has an 18%
+	// smaller nothing and an 18% smaller lunge, so both bounds move with u and the settle keeps the
+	// weight Sam signed off on rather than growing relatively heavier as the stage shrinks.
+	const uu = su();
 	const targetPx = Math.min(
-		DEMOTE_SETTLE_CAP_PX,
-		Math.max(DEMOTE_SETTLE_FLOOR_PX, DEMOTE_SETTLE_RATIO * footprint * 0.035 * factor)
+		DEMOTE_SETTLE_CAP_PX * uu,
+		Math.max(DEMOTE_SETTLE_FLOOR_PX * uu, DEMOTE_SETTLE_RATIO * footprint * 0.035 * factor)
 	);
 	return solveBackS(Math.min(0.14, targetPx / distance));
 }
@@ -1149,8 +1160,12 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// and is SEAT_HOLD short of the clock ending — measuring it against the duration instead put the chip
 	// at rest 84ms early, well past what was asked.
 	const SIBLING_FINISH_LEAD_MS = 50;
-	const SIB_SEAT_W = 160; // compact spouse-chip size = the notch seat the retraction sizes down to
-	const SIB_SEAT_H = 65;
+	// PHASE 2.75 — SCALED, because these ASSERT a size rather than MEASURE one. Everything else in this
+	// file reads the world with getBoundingClientRect and stays correct at any frame unit for free; these
+	// few constants were written when a compact chip was always 160x65, and only they go stale. (The
+	// velocity CEILINGS below are deliberately NOT scaled — see the note there.)
+	const SIB_SEAT_W = Math.round(160 * su()); // compact spouse-chip size = the notch seat the retraction sizes down to
+	const SIB_SEAT_H = Math.round(65 * su());
 	// The endpoint sits at the CARD-EDGE RESUME (just below the notch cutout), not the top-right corner. The
 	// retraction rides at z:-1, so the incoming card occludes it wherever that card is OPAQUE — but the card
 	// is CLIPPED at its notch cutout (top-right), and while flying it's .flat (solid) so it covers the corner,
@@ -1159,7 +1174,10 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// OPAQUE body, which occludes it at every phase — flat AND resting-with-cutout. This is the same anchor
 	// line the sibling column + caret align to, so it reads as consistent, not a concession. (A notch is why
 	// "behind the card" is not a reliable hiding place — see the ghost taxonomy.)
-	const SIB_SEAT_TOP_INSET = 100; // > max chip-zone height (90) so the endpoint clears the cutout in every regime
+	// Scaled with the notch it has to clear: the "> max chip-zone height (90)" relationship is what makes
+	// this number right, and the chip zone is itself now u-scaled in FeaturedCard. A fixed 100 against a
+	// 74px zone would sit needlessly deep; a fixed 100 is also wrong the moment u goes the other way.
+	const SIB_SEAT_TOP_INSET = Math.round(100 * su()); // > max chip-zone height so the endpoint clears the cutout
 	const siblingSeat = sibling
 		? (sibPlan?.seat ?? {
 				left: card.left + card.width - SIB_SEAT_W,
@@ -1178,8 +1196,8 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// time-based CSS crossfade entirely (no clock-based face logic remains).
 	const cardTop = el.querySelector('.card-top') as HTMLElement | null;
 	const footer = el.querySelector('.footer') as HTMLElement | null;
-	const FACE_W = 220;
-	const FACE_H = 75;
+	const FACE_W = Math.round(220 * su());
+	const FACE_H = Math.round(75 * su());
 	// THE SEAT FACE — §19, and the same wall §18.4 hit with a 3+-spouse notch. The chip-face above is a
 	// PersonBox rendered `relation="parent"`: 220×75, full short name, parent type scale. A sibling seat is
 	// 119×54, FIRST NAME ONLY, and its own smaller type scale — a different aspect ratio (2.20 vs 2.93) and

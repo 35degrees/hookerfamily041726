@@ -191,7 +191,7 @@
 		{#if showPlay}
 			<span class="absolute inset-0 grid place-items-center">
 				<span
-					class="grid h-[18px] w-[18px] place-items-center rounded-full bg-black/70 pl-px text-[10px] leading-none text-white"
+					class="grid h-[18px] w-[18px] place-items-center rounded-full bg-black/70 pl-px text-[calc(10px*var(--type-k,1))] leading-none text-white"
 					>▶</span
 				>
 			</span>
@@ -199,12 +199,12 @@
 	</div>
 	<div class="min-w-0 flex-1 space-y-0.5">
 		<div
-			class="line-clamp-2 text-[13px] leading-snug font-medium text-slate-800 group-hover:text-slate-600"
+			class="line-clamp-2 text-[calc(13px*var(--type-k,1))] leading-snug font-medium text-slate-800 group-hover:text-slate-600"
 		>
 			{row.name ?? '—'}
 		</div>
 		{#if row.subtitle}
-			<div class="truncate text-[11px] leading-snug text-slate-500" title={row.subtitle}>
+			<div class="truncate text-[calc(11px*var(--type-k,1))] leading-snug text-slate-500" title={row.subtitle}>
 				{row.subtitle}
 			</div>
 		{/if}
@@ -235,12 +235,12 @@
      Same whole-row-link treatment; secondary line = row.subtitle (the document blurb), one line. -->
 {#snippet textBody(row: MediaRow)}
 	<div
-		class="line-clamp-2 text-[13px] leading-snug font-medium text-slate-800 group-hover:text-slate-600"
+		class="line-clamp-2 text-[calc(13px*var(--type-k,1))] leading-snug font-medium text-slate-800 group-hover:text-slate-600"
 	>
 		{row.name ?? '—'}
 	</div>
 	{#if row.subtitle}
-		<div class="truncate text-[11px] leading-snug text-slate-500" title={row.subtitle}>
+		<div class="truncate text-[calc(11px*var(--type-k,1))] leading-snug text-slate-500" title={row.subtitle}>
 			{row.subtitle}
 		</div>
 	{/if}
@@ -279,19 +279,19 @@
 		<!-- 1. EDUCATION (education[], capped at EDU_LIMIT) -->
 		{#if eduEntries.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Education
 				</div>
 				{#each eduEntries as e, i (i)}
 					<div class="space-y-0.5">
 						<div
-							class="line-clamp-2 text-[13px] leading-tight font-medium text-slate-800"
+							class="line-clamp-2 text-[calc(13px*var(--type-k,1))] leading-tight font-medium text-slate-800"
 							title={eduName(e)}
 						>
-							{eduName(e)}{#if e.dates}<span class="ml-1 text-[11.5px] font-normal text-slate-400">{e.dates}</span>{/if}
+							{eduName(e)}{#if e.dates}<span class="ml-1 text-[calc(11.5px*var(--type-k,1))] font-normal text-slate-400">{e.dates}</span>{/if}
 						</div>
 						{#if e.notes}
-							<div class="line-clamp-2 text-[11px] leading-snug text-slate-500" title={e.notes}>
+							<div class="line-clamp-2 text-[calc(11px*var(--type-k,1))] leading-snug text-slate-500" title={e.notes}>
 								{e.notes}
 							</div>
 						{/if}
@@ -303,16 +303,16 @@
 		<!-- 2. CAREER (career[]) — notes hidden, carried in title tooltip -->
 		{#if careerEntries.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Career
 				</div>
 				{#each careerEntries as c, i (i)}
 					<div class="space-y-0.5">
 						<div
-							class="line-clamp-2 text-[13px] leading-tight font-medium text-slate-800"
+							class="line-clamp-2 text-[calc(13px*var(--type-k,1))] leading-tight font-medium text-slate-800"
 							title={c.notes ?? careerLine(c)}
 						>
-							{careerLine(c)}{#if careerDates(c)}<span class="ml-1 text-[11.5px] font-normal text-slate-400">{careerDates(c)}</span>{/if}
+							{careerLine(c)}{#if careerDates(c)}<span class="ml-1 text-[calc(11.5px*var(--type-k,1))] font-normal text-slate-400">{careerDates(c)}</span>{/if}
 						</div>
 					</div>
 				{/each}
@@ -322,7 +322,7 @@
 		<!-- 3. LANDMARKS (landmarksResolved[]) -->
 		{#if landmarks.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Landmarks
 				</div>
 				{#each landmarks as row, i (i)}
@@ -334,7 +334,7 @@
 		<!-- 4. ART (artworksResolved[]) -->
 		{#if artworks.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Art
 				</div>
 				{#each artworks as row, i (i)}
@@ -346,7 +346,7 @@
 		<!-- 5. DOCUMENTS (documentsResolved[]) — text rows, no thumbnail -->
 		{#if documents.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Documents
 				</div>
 				{#each documents as row, i (i)}
@@ -358,7 +358,7 @@
 		<!-- 6. STATUES (statuesResolved[]) -->
 		{#if statues.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Statues
 				</div>
 				{#each statues as row, i (i)}
@@ -372,7 +372,7 @@
 		     the subtitle line later — it needs the YouTube Data API, not in the URL (data-chat task). -->
 		{#if videos.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Video
 				</div>
 				{#each videos as row, i (i)}
@@ -420,12 +420,12 @@
 				aria-hidden="true"
 			></div>
 			<div
-				class="relative z-10 text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none"
+				class="relative z-10 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none"
 			>
 				Burial
 			</div>
 			<div
-				class="relative z-10 mt-0.5 line-clamp-2 font-opensans text-[10.9px] leading-snug font-medium text-slate-800"
+				class="relative z-10 mt-0.5 line-clamp-2 font-opensans text-[calc(10.9px*var(--type-k,1))] leading-snug font-medium text-slate-800"
 				title={burialCemetery.name}
 			>
 				{burialCemetery.name}
@@ -433,12 +433,12 @@
 			<!-- Location + MAP on ONE right-flush line: "City, ST · MAP". Omitted entirely when there's
 			     no location text and no resolvable map destination (name-only degrade). -->
 			{#if burialLocation || burialMapUrl}
-				<div class="relative z-10 mt-px font-opensans text-[11px] leading-snug font-light text-slate-500">
+				<div class="relative z-10 mt-px font-opensans text-[calc(11px*var(--type-k,1))] leading-snug font-light text-slate-500">
 					{#if burialLocation}<span>{burialLocation}</span>{/if}{#if burialMapUrl}<a
 							href={burialMapUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="pointer-events-auto inline align-baseline font-opensans text-[9px] font-normal tracking-wider text-blue-700 uppercase hover:text-blue-900 hover:underline {burialLocation
+							class="pointer-events-auto inline align-baseline font-opensans text-[calc(9px*var(--type-k,1))] font-normal tracking-wider text-blue-700 uppercase hover:text-blue-900 hover:underline {burialLocation
 								? 'ml-1.5'
 								: ''}"
 							>Map</a

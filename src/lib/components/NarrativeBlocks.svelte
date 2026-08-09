@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import type { NarrativeBlock } from '$lib/types/person';
+	import { stage } from '$lib/state/stage.svelte';
 
 	type Props = {
 		blocks: NarrativeBlock[];
@@ -18,9 +19,13 @@
 	// The typeface lands on the HEADER only — bodies stay in the card's reading face. A slab serif
 	// sets optically smaller than Inter at the same px, so the override carries its own +20% step
 	// (15px → 18px) rather than changing the default header size for all 18,000 cards.
-	let headerClass = $derived(fontClass ? `${fontClass} text-[18px]` : 'text-[15px]');
+	let headerClass = $derived(fontClass ? `${fontClass} text-[calc(18px*var(--type-k,1))]` : 'text-[calc(15px*var(--type-k,1))]');
 
-	const MAX_DISPLAYED = 6;
+	// PHASE 2.75 — THE CONTENT BUDGET. 6 is the roomy-rung maximum and is unchanged; a smaller stage
+	// takes fewer, because the hybrid means the type does NOT shrink as fast as the card does and the
+	// block list would otherwise run past the card's bottom edge. See stage.svelte.ts's `nbCap`, and the
+	// note there on why this is the cost of stepping type separately from the frame.
+	const MAX_DISPLAYED = $derived(stage.nbCap ?? 6);
 
 	let sortedBlocks = $derived(
 		[...blocks]
@@ -68,21 +73,21 @@
 				>
 					{#if block.category}
 						<div
-							class="text-[10px] font-bold tracking-wider text-blue-900/50 uppercase select-none"
+							class="text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none"
 						>
 							{block.category}
 						</div>
 					{/if}
 					<h3 class="font-semibold text-blue-900 transition-colors select-none {headerClass}">
 						{block.header}<span
-							class="ml-2 inline-flex align-baseline text-lg leading-none text-slate-500"
+							class="ml-2 inline-flex align-baseline text-[calc(18px*var(--type-k,1))] leading-none text-slate-500"
 							aria-hidden="true">{openKey === key ? '−' : '+'}</span
 						>
 					</h3>
 				</button>
 				{#if openKey === key}
 					<div class="pt-1 pr-8 pb-1.5" transition:slide={{ duration: 220, axis: 'y' }}>
-						<p class="text-[13.5px] leading-relaxed text-stone-700 select-none">
+						<p class="text-[calc(13.5px*var(--type-k,1))] leading-relaxed text-stone-700 select-none">
 							{block.body}
 						</p>
 					</div>

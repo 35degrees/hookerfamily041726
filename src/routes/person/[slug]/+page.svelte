@@ -35,6 +35,7 @@
 	import { getSiblingNavPlan } from '$lib/state/siblingNav';
 	import { anchorOffsetFor, showsSiblingPanel } from '$lib/state/siblingLayout';
 	import { ccRoster } from '$lib/state/ccRoster.svelte';
+	import { stage, applyStageVars, clearStageVars } from '$lib/state/stage.svelte';
 	import { unlockFlight } from '$lib/state/flightLock';
 	import { preloadNeighborhood } from '$lib/photo';
 	import SiblingPanel from '$lib/components/SiblingPanel.svelte';
@@ -55,6 +56,32 @@
 	// panel, or promoted next nav). Client-only (effects don't run in SSR). See $lib/photo.ts.
 	$effect(() => {
 		preloadNeighborhood(f.neighborhood);
+	});
+
+	// ── PHASE 2.75: THE STAGE'S TWO DIALS ───────────────────────────────────────────────────────────
+	// The frame unit and the type step, published as CSS custom properties so a window resize repaints
+	// geometry without re-rendering a single component. Everything downstream reads `--stage-u` /
+	// `--type-k`; NOTHING reads the window (see $lib/state/stage.svelte.ts for why that is one module's
+	// job, and for why this is a real LENGTH rather than a transform).
+	//
+	// ON <html>, NOT ON THE STAGE, and that is load-bearing rather than tidy. flight.ts PORTALS a cloned
+	// chip to <body> for the handoff ghost, precisely so the traveller escapes `.parents-slot`'s stacking
+	// context. A clone parented to <body> is outside `.page-container`, so a variable scoped there would
+	// not resolve for it — the ghost would inherit the fallback and fly at full size through a scaled
+	// stage. The document root is the one element every ghost is guaranteed to descend from.
+	$effect(() => {
+		applyStageVars(document.documentElement, stage.u, stage.k);
+		return () => clearStageVars(document.documentElement);
+	});
+
+	// THE EXHIBIT FLAG. Marks the document while a person page is mounted, so the shell rules in
+	// layout.css (§13's viewport lock) apply HERE and not to /table or /institution, which are ordinary
+	// scrolling documents. An attribute with an $effect cleanup rather than a `:global(html)` rule in
+	// this component's stylesheet: Svelte hoists component CSS into one build-time sheet that is never
+	// unmounted, so a :global(html) lock here would silently apply to every route in the app.
+	$effect(() => {
+		document.documentElement.dataset.exhibit = '';
+		return () => delete document.documentElement.dataset.exhibit;
 	});
 
 	// Dev guard: f is one atomic FeaturedData, so neighborhood and person must
@@ -549,13 +576,76 @@
 	// ALL chips live in one row-strip inside a clip-path mask; paging is a single PURE-PITCH
 	// transform on the strip (chips hold their docked rects at every offset). L3: no pivot-aware
 	// offset (reset to 0), no landed-gated caret mount — those are L4/L5.
-	const CHIP_W = 160; // must match FeaturedCard CHIP_W_COMPACT
-	const CHIP_GAP = 8; // must match FeaturedCard CHIP_GAP
+	// ── PHASE 2.75 — THE CAROUSEL'S GEOMETRY SCALES WITH THE CHIPS IT WINDOWS ───────────────────────
+	// These were plain constants carrying the comments "must match FeaturedCard CHIP_W_COMPACT" and
+	// "must match FeaturedCard CHIP_GAP". Both of those numbers started scaling with the stage and these
+	// did not, so on a 4+-spouse card the strip stepped 168px per page while its chips were 156px wide,
+	// the 496px mask was wider than the 484px of chips it was meant to clip, and the fourth chip and the
+	// right caret both spilled past the card's right edge — at 1300px, which is nowhere near small.
+	//
+	// A COMMENT IS NOT A MECHANISM (design §28.1's phrase, third time it has been the answer today:
+	// DeckRiffle's phantom width, the blade's 925, and now this). The values are DERIVED from the same
+	// bases FeaturedCard uses and multiplied by the same dial, so the two cannot drift again.
+	//
+	// ROUNDED to integers before they are summed, and the order matters: the chips are laid out by
+	// PersonBox, which rounds each box independently. Rounding the sum instead would leave the mask up
+	// to a pixel adrift from the chips it clips, which is exactly the kind of hairline that shows as a
+	// sliver of the next chip at some widths and not others.
+	const CHIP_W = $derived(Math.round(160 * stage.u)); // matches FeaturedCard's CHIP_W_COMPACT
+	const CHIP_GAP = $derived(Math.round(8 * stage.u)); // matches FeaturedCard's CHIP_GAP
 	const WINDOW = 3;
-	const STRIP_STEP = CHIP_W + CHIP_GAP; // 168px per page
-	const NOTCH_W = WINDOW * CHIP_W + (WINDOW - 1) * CHIP_GAP; // 496px visible window
-	const CARET_W = 22;
-	const SHADOW_PAD = 6; // mask top/bottom overshoot so chip drop shadows render
+	const STRIP_STEP = $derived(CHIP_W + CHIP_GAP); // one page of pitch
+	const NOTCH_W = $derived(WINDOW * CHIP_W + (WINDOW - 1) * CHIP_GAP); // the visible window
+	const CARET_W = $derived(Math.round(22 * stage.u));
+
+	// ── THE MASK'S OVERSHOOT, PER SIDE ──────────────────────────────────────────────────────────────
+	// This was ONE uniform 6px on all four sides, and each side wants something different, so a single
+	// number was simultaneously too small on three of them and load-bearing on the fourth. Sam, seeing
+	// Michael Gay Hooker's four-spouse notch: "overlapping and intruding dropshadows... the left border
+	// of the first spouse chip is getting cut off... an invisible block over the bottom left corner drop
+	// shadow... on the far right the drop shadow on the right border gets cut off in front of the arrow."
+	// Three separate symptoms, one cause.
+	//
+	// WHAT THE SHADOW ACTUALLY REACHES, since these should be measured rather than chosen. --chip-shadow
+	// is `0 3.2px 9.6px` plus a tight `0 0.8px 2.4px`; a blur of B extends about B/2 past the shadow's
+	// own rect, and the rect is the box offset DOWN by 3.2:
+	//     sideways  4.8px      above  4.8 - 3.2 = 1.6px      below  3.2 + 4.8 = 8px
+	// and --chip-shadow-hover (`0 5px 14px`) reaches 7px sideways and 12px below. A uniform 6 therefore
+	// clipped the resting shadow along the bottom (needs 8) and the hover shadow on both flanks.
+	//
+	// TOP AND BOTTOM ARE FREE. Nothing lives above or below the strip inside the mask, so extending the
+	// clip there can only reveal the chips' own shadows. They are set to cover the HOVER reach.
+	//
+	// THE RIGHT IS THE ONLY CONSTRAINED SIDE, and it is why the uniform value existed. The mask's right
+	// edge is what "hides the next chip (nothing protrudes past the trailing docked chip — the right
+	// caret is the sole 'more' cue)". The next chip's left edge sits exactly CHIP_GAP past the trailing
+	// one, so ANY overshoot >= CHIP_GAP reveals it. Expressed as `CHIP_GAP - 1` rather than a literal so
+	// it stays exactly one pixel short of that reveal at every rung, whatever the rounding does — a
+	// literal 7 against a gap that rounds to 7 at some u would leak the next chip.
+	// This does mean the hover shadow is still trimmed on the trailing chip's right flank. That is a real
+	// conflict between two requirements and not an oversight: 7px of shadow or a sliver of the next chip,
+	// and the design already chose which cue wins.
+	//
+	// THE LEFT WAS 0, WHICH IS WHY THE FIRST CHIP LOOKED CUT. At rest the leading chip's left edge sat
+	// exactly ON the clip boundary, so its shadow had nowhere to go and its rounded corner was shaved by
+	// antialiasing — Sam saw a chip with no left border at all.
+	//
+	// The left turns out to be governed by the SAME arithmetic as the right, which is why both flanks now
+	// share one value. At any offset above zero the chip parked just outside the window sits one pitch
+	// left, so its RIGHT edge is at -CHIP_GAP — exactly mirroring the next chip's left edge at +CHIP_GAP
+	// on the other side. So `CHIP_GAP - 1` is the widest overshoot either flank can take while staying a
+	// pixel short of revealing its neighbour, and being symmetric is a property of the strip's geometry
+	// rather than a tidiness choice.
+	//
+	// At u = 1 that is 7px, which covers the resting shadow's 4.8 with room and meets the hover shadow's
+	// 7 exactly. The left edge also clips chips sliding under the header while paging, so a departing
+	// chip now shows a 7px sliver for a few frames of the 420ms page — the neighbour it might reveal is
+	// still 1px further out, and a resting state is looked at continuously where a mid-motion sliver is
+	// not looked at at all.
+	const MASK_PAD_T = $derived(Math.round(6 * stage.u));
+	const MASK_PAD_B = $derived(Math.round(12 * stage.u));
+	/** Both flanks: one pixel short of the neighbouring chip, which sits exactly CHIP_GAP away. */
+	const MASK_PAD_X = $derived(Math.max(0, CHIP_GAP - 1));
 
 	let spouseOffset = $state(0);
 	const spouseCount = $derived(roster.spouses.length);
@@ -567,10 +657,12 @@
 	const stripX = $derived(-(spouseOffset * STRIP_STEP)); // pure pitch — chips snap to the grid
 	// Static mask: left clips chips sliding under the header; right hides the next chip (nothing
 	// protrudes past the trailing docked chip — the right caret is the sole "more" cue).
-	const maskClip = `inset(-${SHADOW_PAD}px -${SHADOW_PAD}px -${SHADOW_PAD}px 0px)`;
+	const maskClip = $derived(
+		`inset(-${MASK_PAD_T}px -${MASK_PAD_X}px -${MASK_PAD_B}px -${MASK_PAD_X}px)`
+	);
 	// Carets ride the card edge at the notch seam, EQUIDISTANT from the chips they flank.
-	const rightCaretRight = -(CHIP_GAP + CARET_W); // inner edge CHIP_GAP past the trailing chip
-	const leftCaretRight = NOTCH_W + CHIP_GAP; // inner edge CHIP_GAP before the first chip
+	const rightCaretRight = $derived(-(CHIP_GAP + CARET_W)); // inner edge CHIP_GAP past the trailing chip
+	const leftCaretRight = $derived(NOTCH_W + CHIP_GAP); // inner edge CHIP_GAP before the first chip
 
 	// Initial offset on every new focus. PIVOT-AWARE (L5): if the person we're leaving (the pivot)
 	// becomes a spouse of the incoming focus at strip index i ≥ WINDOW, open the window whose TRAILING
@@ -1398,6 +1490,8 @@
 	class="page-container"
 	class:tier-nav-close={tierClosingForNav}
 	class:tier-collapsed={tierCollapsed}
+	data-density={stage.density}
+	data-tier={stage.tier}
 	style="--tier-ms: {TIER_MS}ms; --tier-lift: {TIER_LIFT}px"
 	use:warmPersonLinks
 >
@@ -1770,10 +1864,15 @@
 		/* Above the fixed midnight Field (z:0) so the cards float on the night, never behind the motes. */
 		position: relative;
 		z-index: 1;
-		padding-top: 80px;
-		padding-bottom: 80px;
-		padding-left: 32px;
-		padding-right: 32px;
+		/* PHASE 2.75 — THE FIRST CONSUMER OF THE FRAME UNIT, and the pattern every other geometry token
+		   follows: the DESIGN CONSTANT stays legible at the call site and `--stage-u` multiplies it. A
+		   pre-multiplied length would hide the 80 and the 32, and both of those numbers are decisions.
+		   --stage-u defaults to 1 so SSR, /table, and any consumer mounted before the effect runs get the
+		   roomy geometry rather than collapsing to zero. */
+		padding-top: calc(80px * var(--stage-u, 1));
+		padding-bottom: calc(80px * var(--stage-u, 1));
+		padding-left: calc(32px * var(--stage-u, 1));
+		padding-right: calc(32px * var(--stage-u, 1));
 		/* The (later) spouse-carousel overhang + carets sit past the card's right edge; at narrow
 		   viewports they'd extend the document and raise a horizontal scrollbar. Clip horizontally
 		   at the stage so they never can (vertical scroll is unaffected by overflow-x). */
@@ -1884,7 +1983,7 @@
 	   ~420ms easeOutBack (~5px overshoot-settle) so a page reads as travel-and-stop. */
 	.spouse-strip {
 		display: flex;
-		gap: 8px; /* = CHIP_GAP */
+		gap: calc(8px * var(--stage-u, 1)); /* = CHIP_GAP, same dial */
 		width: max-content;
 		/* NO will-change/transform-creating property here: it would establish a containing block for
 		   the position:fixed flyOut chips, so their viewport-coord pins would resolve relative to the

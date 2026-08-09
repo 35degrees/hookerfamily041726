@@ -43,6 +43,41 @@
 html {
 	scrollbar-gutter: stable;
 }
+
+/* ── THE VIEWPORT LOCK (design §13, Phase 2.75) ─────────────────────────────────────────────────────
+   "This is an exhibit, not a document. The stage owns the whole viewport; there are no scrollbars
+   anywhere in zoom 1."
+
+   Scoped to `html[data-exhibit]`, which the person page sets and clears with an $effect. /table and
+   /institution are ordinary scrolling documents and must keep their scrollbars.
+
+   THE CLIP IS NOT ARMED YET, AND THAT IS THE POINT. §13.3 states the condition plainly: "Clip without a
+   fit policy = amputation — an 11-child family would just be silently cut," so "the lock therefore ships
+   WITH a stage-fit policy." Today it does not fit. Measured Aug 8 by scripts/probe-fit.mjs:
+
+       Aaron Burr      @ 1440x900   stage 1356px   (+456)
+       Pierpont Edwards@ 1440x900   stage 1375px   (+475)
+       Thomas Hooker   @ 1440x900   stage  905px   (+5)
+       Pierpont Edwards@ 1133x744   stage 1375px   (+631)
+
+   Arming `overflow: clip` in that state would not fix the scroll; it would hide 475px of Pierpont's
+   stage and report success. The clip line below therefore stays commented until probe-fit is GREEN — at
+   which point uncommenting it is the whole of the change, and the probe is what earns it.
+
+   What IS armed is the honest part: `100dvh` (correct across an iPad's URL-bar resize, where `vh` lies)
+   and `overscroll-behavior: none` (kills the rubber-band and pull-to-refresh). Neither can hide
+   anything, so neither has to wait. */
+html[data-exhibit],
+html[data-exhibit] body {
+	height: 100%;
+	overscroll-behavior: none;
+}
+html[data-exhibit] body {
+	min-height: 100dvh;
+	/* overflow: clip;  <- ARM THIS WHEN probe-fit IS GREEN. `clip`, never `hidden`: hidden still creates
+	   a scroll container, so focus events and scrollIntoView can silently scroll it and produce
+	   "mysteriously cropped layout" with no visible scrollbar. See §13.2. */
+}
 :root {
 	/* Phase 3b — the ground behind the stage (Field, person-page only; NOT on body, so other routes keep
 	   their light ground until Phase 2's palette pass). GROUND A/B — flip this one line on localhost:
