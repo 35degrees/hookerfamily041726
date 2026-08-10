@@ -61,7 +61,9 @@ CC_LABEL_MAX = 70
 # NB structural limits (schema v21 §5 / v22 §D.6)
 NB_HEADER_MAX_WORDS = 8
 NB_BODY_MAX_SENTENCES = 3
-NB_MAX_PER_PERSON = 6            # v22 §D.6 says "max out at 5" for majors; 6 is the hard ceiling the UI supports
+NB_MAX_PER_PERSON = 7            # v24 (Sam, 10 Aug 2026): raised 6 -> 7; FeaturedCard now fits a seventh
+                                 # row, but ONLY with short headers — a card of seven long headers still
+                                 # overruns the bottom border. Null beats weak: four with meat beats seven.
 BIO_BLURB_MAX_WORDS = 8
 NOTABLE_BLURB_MAX_WORDS = 8
 

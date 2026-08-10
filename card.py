@@ -63,7 +63,7 @@ def show(key, idx, raw=False):
     print(f"  PHOTO   {'yes' if bio.get('photo_url') else '— none —'}"
           f"    dates private (living): {'YES — no years render' if n['focus'].get('pv') else 'no'}")
 
-    print(f"\n  NARRATIVE BLOCKS ({len(nb)}/6)")
+    print(f"\n  NARRATIVE BLOCKS ({len(nb)}/7)")
     if not nb:
         print("    — none —")
     for b in nb:
