@@ -14,6 +14,29 @@ import type { FeaturedData } from '$lib/state/featured.svelte';
 import type { Person } from '$lib/types/person';
 import type { PersonCompact } from '$lib/types/neighborhood';
 
+/**
+ * THE ORDER A ROW OF DESCENDANTS IS READ IN. Four groups in sequence (a stable sort keeps input order
+ * within an undated group):
+ *
+ *   dated-alive (birth ascending) → undated-alive → dated-died-young (birth ascending) → undated-died-young
+ *
+ * `by` (birth year) and `dy_young` ride on the compacts — regenerate-data.js sets `by`, buildFeatured
+ * sets `dy_young`. A missing birth year sorts LAST within its alive/young group.
+ *
+ * EXPORTED because the GRANDCHILD row needs the identical order and did not have it. It was emitted in
+ * children_ids order and only partitioned died-young to the end, so a tier could open with the eldest
+ * grandchild last and the youngest in the middle (Sam, Aug 10). Two rows of descendants sorted by two
+ * different rules is the kind of difference nobody can see the reason for, so there is one rule.
+ */
+export const rosterOrder = (a: PersonCompact, b: PersonCompact): number => {
+	const groupRank = (c: PersonCompact) => (c.dy_young ? 2 : 0) + (c.by == null ? 1 : 0);
+	const ra = groupRank(a);
+	const rb = groupRank(b);
+	if (ra !== rb) return ra - rb;
+	if (a.by == null || b.by == null) return 0; // same group, both undated → keep stable order
+	return a.by - b.by; // birth year ascending
+};
+
 export type SpouseChip = { spouse: PersonCompact; year: number | null; rel: string | null };
 
 export type Roster = {
@@ -56,18 +79,7 @@ export function buildRoster(f: FeaturedData, _zoom: number): Roster {
 			if (take(c.id)) children.push(c);
 		}
 	}
-	// Global order, four groups in sequence (stable sort keeps input order within an undated group):
-	//   dated-alive (birth ascending) → undated-alive → dated-died-young (birth ascending) → undated-
-	//   died-young. `by` (birth year) and `dy_young` ride on the compacts (regenerate-data.js sets `by`;
-	//   buildFeatured sets `dy_young`). A missing birth year sorts LAST within its alive/young group.
-	const groupRank = (c: PersonCompact) => (c.dy_young ? 2 : 0) + (c.by == null ? 1 : 0);
-	children.sort((a, b) => {
-		const ra = groupRank(a);
-		const rb = groupRank(b);
-		if (ra !== rb) return ra - rb;
-		if (a.by == null || b.by == null) return 0; // same group, both undated → keep stable order
-		return a.by - b.by; // birth year ascending
-	});
+	children.sort(rosterOrder);
 
 	return { featured: f.person, parents, spouses, children };
 }

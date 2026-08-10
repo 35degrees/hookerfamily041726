@@ -161,6 +161,8 @@
 		ty: number | null;
 		/** Birth year where known, else the year the bar is drawn from. Direction only — see barLink. */
 		yr: number;
+		/** Died at 15 or under — the bar is a stub and cannot carry a name. See barFor. */
+		young: boolean;
 	};
 
 	// ── HOW LONG A LIFE WAS, WHEN WE DO NOT KNOW ────────────────────────────────────────────────────
@@ -416,6 +418,12 @@
 			style: styleFor(p),
 			mask,
 			labelH,
+			// THE APP-WIDE RULE, not a second one: `death − birth <= 15`, the same arithmetic buildFeatured
+			// uses for the child-chip dimming, the "(N died young)" connector count and the roster sort.
+			// It is deliberately NOT `ageAtDeath` — that would disagree at the boundary with everything
+			// else on the page, and a child dimmed on the card but named on the rail is worse than either
+			// answer alone.
+			young: known.by != null && known.dy != null && known.dy - known.by <= 15,
 			slug: p.slug ?? null,
 			tx: p.t?.x ?? null,
 			ty: p.t?.y ?? null,
@@ -762,34 +770,41 @@
 	// the same event at the same instant.
 	onMount(() => {
 		const un = subscribeCameraMove((m) => {
-			// A portrait click overrides both the clock and the curve; everything else keeps the camera's.
-			const fromAnchor = anchorFlight;
-			anchorFlight = false;
+			// EVERY CC GETS THE SLOW BAR, not just a portrait click. The 1200ms clock was built for the
+			// timeline's own portraits, and the mismatch it fixes turns out to be a property of the CC
+			// FLIGHT rather than of what launched it: a blade CC publishes a ~410ms duration while the card
+			// keeps settling to ~1330ms — the same ~900ms gap — so the bar arrived long before the card
+			// either way. Sam, on a same-line CC: "the vertical bar for Jason screams so fast down the
+			// timeline, it's too fast... can you apply the same bezier vertical bar transition for CCs?"
+			// Portrait clicks publish `kind: 'cc'` too, so this covers them and the old flag is redundant.
+			const isCc = m.kind === 'cc';
 			// Read BEFORE the payload lands and the bars recompute — this is the outgoing position.
 			spawnTop =
 				document.querySelector('.rail .bar')?.getBoundingClientRect().top ?? null;
 			moveMs = prefersReducedMotion.current
 				? 0
-				: fromAnchor
+				: isCc
 					? ANCHOR_BAR_MS
 					: (getCameraMove()?.duration ?? 420);
-			barEase = fromAnchor && !prefersReducedMotion.current ? ANCHOR_BAR_EASE : BAR_EASE;
-			if (!RAIL_OVER_FLIGHT || m.kind !== 'cc') return;
-			// Re-published mid-flight (rapid CC-hopping): restart the window rather than letting the first
-			// timer drop the rail while the second flight is still running.
-			if (liftTimer) clearTimeout(liftTimer);
+			barEase = isCc && !prefersReducedMotion.current ? ANCHOR_BAR_EASE : BAR_EASE;
+			if (!RAIL_OVER_FLIGHT || !isCc) return;
 			overFlight = true;
-			liftTimer = setTimeout(
-				() => {
-					overFlight = false;
-					liftTimer = null;
-				},
-				// +400, not +120. The camera's `duration` is the CARD's clock, and the stage is still visibly
-				// settling after it expires — measured at 1440, the hero was still travelling at 780ms on a
-				// move whose duration was 420. Dropping the rail at 540 would have ended the experiment
-				// halfway through the thing it exists to show.
-				(m.duration ?? 420) + 400
-			);
+			// THE LIFT ENDS WHEN THE FLIGHT ENDS — the flight lock releases at landing, and the subscriber
+			// above drops `overFlight` then. This timer is only a backstop for a flight that never locks
+			// (reduced motion takes that path) or never lands.
+			//
+			// IT USED TO BE `duration + 400`, a guess, and the guess was wrong for the one case that
+			// mattered. A RECIPROCAL CC ping-pongs the lateral direction, so the outgoing card leaves right
+			// and the incoming one enters from the LEFT — straight across the rail — and that flight runs
+			// far longer than the camera's nominal duration. Measured on Burr → Tapping Reeve → Burr: the
+			// card reached left −1013, sixty-two frames sat inside the rail's column, and the lift had
+			// already expired for twenty-six of them. Sam saw exactly that: the card passes UNDER the rail
+			// on the way out and OVER it on the way back.
+			if (liftTimer) clearTimeout(liftTimer);
+			liftTimer = setTimeout(() => {
+				overFlight = false;
+				liftTimer = null;
+			}, 3000);
 		});
 		return () => {
 			un();
@@ -1178,9 +1193,6 @@
 	const ANCHOR_BAR_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
 	const BAR_EASE = 'cubic-bezier(0.33, 1, 0.68, 1)';
 	let barEase = $state(BAR_EASE);
-	/** Set here, consumed and cleared by the camera subscription — order-independent either way. */
-	let anchorFlight = false;
-
 	/**
 	 * WHERE A NEWLY-ADDED LANE COMES FROM — the outgoing composition's top bar, captured off the DOM at
 	 * publish time, while the old bars are still standing.
@@ -1255,7 +1267,13 @@
 	 * the portrait grows on its own. Nothing has to detect that the mouse is there — it already is.
 	 */
 	let flightLocked = $state(false);
-	onMount(() => subscribeFlightLock((v) => (flightLocked = v)));
+	onMount(() =>
+		subscribeFlightLock((v) => {
+			flightLocked = v;
+			// AND THE RAIL COMES BACK DOWN HERE, not on a timer — see the lift below.
+			if (!v) overFlight = false;
+		})
+	);
 
 	function onAnchorClick(e: MouseEvent, a: (typeof ANCHORS)[number]) {
 		// A FLIGHT IS ALREADY RUNNING — swallow this entirely. Sam: "I noticed I can just click different
@@ -1280,7 +1298,6 @@
 		}
 		const el = e.currentTarget as HTMLElement;
 		hoverSuppressed = a.slug;
-		anchorFlight = true;
 		void ccFlyTo(el, { slug: a.slug, t: a.t });
 	}
 
@@ -1373,14 +1390,22 @@
 				if (hoverSuppressed === a.slug) hoverSuppressed = null;
 			}}
 		>
-			<img src={a.src} alt="" draggable="false" />
-			<!-- Three lines, in Sam's order: who, what, when. No `title` attribute alongside it — the
-			     browser's own tooltip would appear a second later on top of this one. -->
-			<span class="anchor-tip">
-				<span class="tip-name">{a.name}</span>
-				<span class="tip-blurb">{a.headshotBlurb}</span>
-				<span class="tip-years">{a.lifespan}</span>
+			<!-- EVERYTHING VISIBLE LIVES IN HERE, and the button itself never moves. See .anchor-vis for
+			     why. Same box (inset 0), same transform, same origin the button used to carry, so the
+			     tooltip's containing block and its counter-scale are unchanged. -->
+			<span class="anchor-vis">
+				<img src={a.src} alt="" draggable="false" />
+				<!-- Three lines, in Sam's order: who, what, when. No `title` attribute alongside it — the
+				     browser's own tooltip would appear a second later on top of this one. -->
+				<span class="anchor-tip">
+					<span class="tip-name">{a.name}</span>
+					<span class="tip-blurb">{a.headshotBlurb}</span>
+					<span class="tip-years">{a.lifespan}</span>
+				</span>
 			</span>
+			<!-- THE EXPANDED HIT AREA — invisible, and live only while the portrait is actually expanded.
+			     See .anchor-hit. -->
+			<span class="anchor-hit" aria-hidden="true"></span>
 		</button>
 	{/each}
 
@@ -1410,7 +1435,18 @@
 			onclickcapture={(e) => onBarClick(e, b)}
 			aria-label={b.years ? `${b.name}, ${b.years}` : b.name}
 		>
-			<span class="bar-label" style={b.labelH != null ? `height: ${b.labelH}px` : ''}>{b.name}</span>
+			<!-- A DIED-YOUNG BAR CARRIES NO NAME. Andrew Yates Hooker lived 1844–1845, so his bar is the
+			     6px floor, and a vertical name in it is a smear rather than a word — Sam: "it tries to fit
+			     'Andrew' in there... I think maybe we just don't show the name if they died young, the user
+			     can see the name in the Featured Card." The tooltip still carries name, years and age, so
+			     nothing is lost, it is just asked for rather than crammed in.
+			     What replaces it is a horizontal note to the RIGHT, which answers the question the stub
+			     raises ("why is this bar a dot?") instead of leaving the reader to check the card. -->
+			{#if b.young}
+				<span class="bar-dy">died young</span>
+			{:else}
+				<span class="bar-label" style={b.labelH != null ? `height: ${b.labelH}px` : ''}>{b.name}</span>
+			{/if}
 			<!-- The bar's own tooltip: who and when, in the bar's OWN colours rather than the portraits'
 			     dark slab. A lane already says what someone IS by its hue, so a tooltip that threw that
 			     away and came back black would discard information the rail had already given. -->
@@ -1838,6 +1874,34 @@
 		font-variant-numeric: tabular-nums;
 		opacity: 0.75;
 	}
+	/* The died-young note. Horizontal — the bar's own label is `vertical-rl`, but nothing on the bar
+	   imposes that on its children, so this reads flat without undoing anything. Sits to the right and
+	   centred on the stub, in a faded grey: it is a caption on the bar, not a second name, and it must not
+	   compete with the bloodline gold beside it.
+	   `pointer-events: none` so it cannot eat the hover that opens the tooltip — the note answers the
+	   obvious question, the tooltip answers the rest. */
+	.bar-dy {
+		position: absolute;
+		left: calc(100% + 5px);
+		top: 50%;
+		transform: translateY(-50%);
+		white-space: nowrap;
+		font-size: 9px;
+		font-weight: 500;
+		letter-spacing: 0.02em;
+		color: rgba(78, 72, 64, 0.55);
+		pointer-events: none;
+		z-index: 1;
+		transition: opacity 95ms ease-out;
+	}
+	/* THE TOOLTIP SUPERSEDES THE NOTE. Both open to the right of the bar, so hovering a stub printed
+	   "died young" straight through the tooltip's paper — and the tooltip already says everything the
+	   note does and more (the name, the years, the age). It stands down rather than fighting for the
+	   space, on the same 95ms the tooltip arrives on. */
+	.bar:hover .bar-dy {
+		opacity: 0;
+	}
+
 	/* THE FILL AND THE EDGE LIVE ON A PSEUDO-ELEMENT so the MASK can dissolve them without touching the
 	   name. Sam: "the middle of the vertical bar can be more solid in order for the name to show up
 	   clearly" — masking the whole element would fade the type along with the paper, and an uncertain
@@ -1923,19 +1987,46 @@
 
 	/* THE ANCHOR. A circle, and the only thing on the rail that takes a pointer — the rail itself is
 	   `pointer-events: none` so it never steals a click meant for the stage, so this has to opt back in. */
+	/**
+	 * THE BUTTON IS THE HIT AREA AND NOTHING ELSE. It never scales, never moves, and carries no paint.
+	 *
+	 * IT USED TO BE BOTH, and that is a feedback loop: the element that DECIDES hover was the element
+	 * that MOVES on hover. Anderson Cooper is the one anchor where it showed, because he sits against
+	 * both the left and bottom edges, so anchorOrigin gives him `left bottom` — and with that origin the
+	 * scaled circle's left and bottom edges stay exactly where the resting ones were. A cursor on either
+	 * of those edges therefore lands on the boundary of the grown element: it scales up, the boundary
+	 * arrives under the cursor, hover drops, it shrinks, hover returns. Sam: "I can hover on his edge and
+	 * he'll flicker rapidly big and small... I cannot replicate this on any other headshot." Every
+	 * other portrait grows about its centre, which walks its edges AWAY from the cursor and hides the
+	 * bug rather than avoiding it.
+	 *
+	 * The paint moved to .anchor-vis, which is `pointer-events: none`, so no amount of scaling can change
+	 * what is hoverable. This button's own circle is live at all times and never moves.
+	 *
+	 * THAT ALONE WAS NOT ENOUGH, and the first version shipped without the other half. With only the
+	 * resting circle live, the EXPANDED photo was not hoverable: move onto the 63px portrait you just
+	 * summoned and hover ended, because the pointer had left the 19px target underneath it. Sam: "it's as
+	 * if the expanded headshot only stays expanded if my cursor is over the original tiny size... it's a
+	 * tiny area otherwise you lose the expanded headshot, makes it difficult to use." A cure worse than
+	 * the disease, and it affected every portrait rather than just the one in the corner.
+	 *
+	 * So the hoverable region is a UNION of two circles — this one, always, plus `.anchor-hit` (the
+	 * expanded circle), live only while already hovered. The union can therefore only ever GROW on hover,
+	 * never shrink under the pointer, which is the exact property the feedback loop needed and did not
+	 * have. Why a union and not simply the big circle: with a corner transform-origin the expanded circle
+	 * does NOT contain the resting one — measured, the resting circle's left edge sits 2.01 radii from
+	 * the expanded centre against a radius of 1.65 — so swapping one for the other would have re-created
+	 * Anderson's flicker at exactly the edge it started at.
+	 */
 	.anchor {
 		position: absolute;
 		z-index: 1; /* under the bars (z 2+) at rest */
-		transform-origin: var(--anchor-origin, center);
 		padding: 0;
-		border: 1.5px solid var(--color-rail-ink, #ab7a42);
+		border: 0;
+		background: none;
+		/* Kept so hit-testing follows the CIRCLE, as it did when the border lived here — the corners of a
+		   square box would reach into a neighbour a year away. */
 		border-radius: 50%;
-		/* NO `overflow: hidden` HERE, and that is deliberate. It was the obvious way to clip a square
-		   photo into a circle — and it also clipped the TOOLTIP, which is a child: the label had a real
-		   119x55 box and was simply cut away, visible in the DOM and invisible on screen. The image
-		   rounds itself instead (see .anchor img), so the button can let its label escape. */
-		background: var(--color-cream, #f7f1e6);
-		box-shadow: 0 1px 3px rgba(40, 30, 20, 0.3);
 		cursor: pointer;
 		pointer-events: auto;
 		/* THE DEPTH DROP IS HELD UNTIL THE SHRINK IS OVER. `z-index` cannot tween, so it used to snap from
@@ -1946,10 +2037,51 @@
 		   `0s linear 160ms` is a delayed step rather than a tween: full height for the entire descent,
 		   then one jump at the end when it is small enough for the bars to pass in front again. Same
 		   device the bar tooltip uses for `visibility`, for the same reason. */
+		transition: z-index 0s linear 160ms;
+	}
+	/* THE PAINT. Same box as the button (inset 0) and the same transform-origin it used to carry, so the
+	   tooltip inside — whose containing block this now is — keeps its position and its counter-scale
+	   exactly. `pointer-events: none` is the whole point: this is what grows, so this must not be what
+	   the browser asks about.
+	   NO `overflow: hidden` HERE, and that is deliberate. It was the obvious way to clip a square photo
+	   into a circle — and it also clipped the TOOLTIP, which is a child: the label had a real 119x55 box
+	   and was simply cut away, visible in the DOM and invisible on screen. The image rounds itself
+	   instead (see .anchor img). */
+	.anchor-vis {
+		position: absolute;
+		inset: 0;
+		border: 1.5px solid var(--color-rail-ink, #ab7a42);
+		border-radius: 50%;
+		background: var(--color-cream, #f7f1e6);
+		box-shadow: 0 1px 3px rgba(40, 30, 20, 0.3);
+		transform-origin: var(--anchor-origin, center);
+		pointer-events: none;
 		transition:
 			transform 160ms cubic-bezier(0.33, 1, 0.68, 1),
-			box-shadow 160ms cubic-bezier(0.33, 1, 0.68, 1),
-			z-index 0s linear 160ms;
+			border-width 160ms cubic-bezier(0.33, 1, 0.68, 1),
+			box-shadow 160ms cubic-bezier(0.33, 1, 0.68, 1);
+	}
+	/* THE EXPANDED HIT AREA. Same box, same origin, same scale as .anchor-vis, so it hit-tests as exactly
+	   the circle the user can see — but it carries no paint and is INERT until the portrait is expanded.
+	   A DESCENDANT's hover satisfies `.anchor:hover`, which is what lets a pointer out on the big photo
+	   hold the button's hover open. It also makes the expanded photo CLICKABLE, which the resting-circle-
+	   only version quietly was not.
+	   No transition on the transform: it is invisible, so it should be at full size the instant hover
+	   begins rather than chasing the visual outward and leaving a gap the pointer can fall through. */
+	.anchor-hit {
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		transform: scale(var(--anchor-scale, 3.3));
+		transform-origin: var(--anchor-origin, center);
+		pointer-events: none;
+	}
+	.anchor:hover .anchor-hit {
+		pointer-events: auto;
+	}
+	/* Suppressed with everything else — a portrait that is not expanded must not hold a 63px hit area. */
+	.anchor.no-hover:hover .anchor-hit {
+		pointer-events: none;
 	}
 	.anchor img {
 		width: 100%;
@@ -1971,34 +2103,33 @@
 	   and his tooltip (Sam saw exactly this). The tooltip is a child of this element and inherits the
 	   stacking context, so lifting the button lifts the label with it.
 	   At REST the portrait stays at z 1 and the bars still pass in front — that part is unchanged. */
-	.anchor:hover,
-	.anchor:focus-visible {
+	.anchor:hover .anchor-vis,
+	.anchor:focus-visible .anchor-vis {
 		transform: scale(var(--anchor-scale, 3.3));
 		border-width: 1.35px;
-		z-index: 20;
 		box-shadow: 0 2px 7px rgba(40, 30, 20, 0.38);
+	}
+	.anchor:hover,
+	.anchor:focus-visible {
+		z-index: 20;
 		/* Rising is immediate — the lift has to lead the growth, or the portrait expands underneath the
 		   bars it is trying to clear. Only the DROP is delayed. */
-		transition:
-			transform 160ms cubic-bezier(0.33, 1, 0.68, 1),
-			box-shadow 160ms cubic-bezier(0.33, 1, 0.68, 1),
-			z-index 0s;
+		transition: z-index 0s;
 	}
 	/* JUST CLICKED — see onAnchorClick. Two classes plus the pseudo outrank the rule above, so the
 	   portrait sits back down under a pointer that never moved. Keyboard focus is deliberately NOT
 	   suppressed: a focus ring with no label is a worse outcome than a label that outstays a click, and
 	   a keyboard user has no "move the mouse away" to perform. */
-	.anchor.no-hover:hover {
+	.anchor.no-hover:hover .anchor-vis {
 		transform: none;
 		border-width: 1.5px;
-		z-index: 1;
 		box-shadow: 0 1px 3px rgba(40, 30, 20, 0.3);
+	}
+	.anchor.no-hover:hover {
+		z-index: 1;
 		/* Restated, not inherited: this rule outranks .anchor:hover, which would otherwise hand it the
 		   IMMEDIATE z-index above and drop the portrait behind the bars for the whole click-shrink. */
-		transition:
-			transform 160ms cubic-bezier(0.33, 1, 0.68, 1),
-			box-shadow 160ms cubic-bezier(0.33, 1, 0.68, 1),
-			z-index 0s linear 160ms;
+		transition: z-index 0s linear 160ms;
 	}
 	.anchor.no-hover:hover .anchor-tip {
 		display: none;

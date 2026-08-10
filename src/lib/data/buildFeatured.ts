@@ -13,6 +13,7 @@ import type { Neighborhood, PersonCompact } from '$lib/types/neighborhood';
 import type { Institution } from '$lib/types/institution';
 import type { Cemetery } from '$lib/types/cemetery';
 import { computeGenerationLabels } from '$lib/utils/generation';
+import { rosterOrder } from './roster';
 import type { CrossConnection, FeaturedData } from '$lib/state/featured.svelte';
 
 /** Raw payload as written by regenerate-data.js (static/data/person/<slug>.json). */
@@ -165,16 +166,20 @@ export function buildFeatured(payload: PersonPayload): FeaturedData {
 		// PersonBox already does the rest — `dimmed` drives both the grey ink and the "(died young)"
 		// suffix, and the tier already passes `dimmed={gc.dy_young}`. The flag was the only thing absent.
 		//
-		// The partition is applied ACROSS the whole set rather than per via_parent group, and that is
-		// still correct for the tier: it renders one parent's grandchildren at a time by filtering on
-		// `via_parent_id`, and filtering preserves relative order — so each group comes out alive-then-
-		// young exactly as if it had been sorted alone.
+		// The sort is applied ACROSS the whole set rather than per via_parent group, and that is still
+		// correct for the tier: it renders one parent's grandchildren at a time by filtering on
+		// `via_parent_id`, and filtering preserves relative order — so each group comes out in exactly the
+		// order it would have had if sorted alone.
 		grandchildren: (() => {
 			const enriched = neighborhood.grandchildren.map((gc) => ({
 				...enrich(gc, byId),
 				dy_young: diedYoung(byId[gc.id])
 			}));
-			return [...enriched.filter((g) => !g.dy_young), ...enriched.filter((g) => g.dy_young)];
+			// SORTED, not merely partitioned. The old version pushed died-young to the end and left the
+			// rest in children_ids order — which is canonical order, not birth order, so a tier could open
+			// with the eldest grandchild last and the youngest in the middle. `rosterOrder` is the CHILDREN
+			// row's own comparator, imported rather than restated, so the two generations cannot drift.
+			return enriched.sort(rosterOrder);
 		})()
 	};
 

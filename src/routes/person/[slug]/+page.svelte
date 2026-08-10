@@ -913,7 +913,10 @@
 	 *  The PAINTED parts are tested, not the block: `.grandparent-tier` carries a translateX to centre it on
 	 *  the hovered chip, and testing a container whose contents can be transformed out from under it is the
 	 *  bug that made the descendant tier close as you moved onto a grandchild. */
-	const KEEP_ALIVE_PAD = 24; // slack so a hand shaking on the boundary does not flicker it shut
+	// Slack so a hand shaking on the boundary does not flicker it shut. 24 → 12 (Sam: the buffer "can be
+	// smaller than you have it"). It was sized when a hover opened the tier and the pointer had to be
+	// forgiven for drifting; a click needs far less forgiveness.
+	const KEEP_ALIVE_PAD = 12;
 	let dismissTimer: ReturnType<typeof setTimeout> | null = null;
 	function cancelDismiss() {
 		if (dismissTimer) clearTimeout(dismissTimer);
@@ -961,9 +964,16 @@
 			)
 			?.getBoundingClientRect();
 
-		const parts = [
-			...document.querySelectorAll('.grandparent-tier .flight, .grandparent-tier .connector')
-		].map((el) => el.getBoundingClientRect());
+		// THE CHIPS ONLY — the connector is deliberately NOT in here, and leaving it in is what defeated
+		// the midpoint floor below. The connector is the stem plus its label, and it spans the WHOLE gap
+		// from the row down to the parent chip (measured: 155 → 225, with the chip's top at 225). So it
+		// made `rowBottom` equal to the chip's top, put the midpoint exactly on the chip's top edge, and
+		// kept the tier alive all the way down the middle of the gap — which is the behaviour Sam was
+		// reporting. Nothing is lost by dropping it: the connector lies inside the corridor, so hovering it
+		// above the midpoint still counts as inside, and below the midpoint it should not.
+		const parts = [...document.querySelectorAll('.grandparent-tier .flight')].map((el) =>
+			el.getBoundingClientRect()
+		);
 
 		let inside = hit(trigR, 8) || parts.some((r) => hit(r, KEEP_ALIVE_PAD));
 
@@ -972,10 +982,21 @@
 			const right = Math.max(chipR.right, ...parts.map((r) => r.right));
 			const top = Math.min(...parts.map((r) => r.top));
 			const inColumn = x >= left - KEEP_ALIVE_PAD && x <= right + KEEP_ALIVE_PAD;
-			// THE CORRIDOR — the band between the top of the row and the top edge of the chip, spanning both
-			// the chip's column and wherever the row actually sits (it is centred on the chip, so the two
-			// overlap, but a wide row reaches well past it on both sides).
-			if (inColumn && y <= chipR.top + 2 && y >= top - KEEP_ALIVE_PAD) inside = true;
+			// THE CORRIDOR — the band between the row and the chip, spanning both the chip's column and
+			// wherever the row actually sits (it is centred on the chip, so the two overlap, but a wide row
+			// reaches well past it on both sides).
+			//
+			// ITS FLOOR IS THE MIDPOINT, not the chip's top edge. Reaching to the chip meant the whole gap
+			// counted as "still heading for the row", so leaving downward cost the user the entire descent
+			// before anything happened — Sam: "I had to get my cursor all the way down to the top of the
+			// parent chips line to have the grandparent chips exit... if the mouse gets halfway between
+			// grandparent chips and parent chips that needs to be fully considered an exit."
+			// Halfway is the natural line: above it the pointer is still nearer what it came from, below it
+			// nearer what it is going to. (The trigger lives below this floor and does not need the
+			// corridor — it carries its own hit test above.)
+			const rowBottom = Math.max(...parts.map((r) => r.bottom));
+			const floor = (rowBottom + chipR.top) / 2;
+			if (inColumn && y <= floor && y >= top - KEEP_ALIVE_PAD) inside = true;
 			// AND THE ROOF. Above the row is not an exit, because there is nothing up there to exit TO —
 			// Sam: "when a user exits the grandparent chips out the top of them, leave the grandparent chips
 			// visible, there's nowhere to go above it." The only upward exit that means anything is leaving
