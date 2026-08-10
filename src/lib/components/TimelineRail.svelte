@@ -1125,6 +1125,90 @@
 	/** 8px off the window edge — 4px, then another 4 on Sam's word. Close enough to read as pinned, far
 	    enough not to look clipped. anchorOrigin reads this too, so a portrait near the edge still picks
 	    the corner it grows from off the distance it actually has. */
+	/**
+	 * EACH PORTRAIT'S BORDER IS SAMPLED FROM THE PORTRAIT (Sam, Aug 10) — "instead of a consistent medium
+	 * brown border for everyone, sample from the image itself and solidify that sampled colour, and maybe
+	 * use a 5% darker shade of the sample for that specific border colour."
+	 *
+	 * SAMPLED AT RUNTIME RATHER THAN BAKED INTO ANCHORS, and that is the choice worth defending. Baking
+	 * sixteen hex values would be cheaper and needs no canvas — but the portraits get REPLACED (Cornelius
+	 * Vanderbilt's was swapped mid-session), and a baked colour silently keeps describing the old picture.
+	 * Sampling means the border is always a fact about the image that is actually on screen.
+	 *
+	 * THE SAMPLE IS A SECOND Image, not the one being displayed. Reading pixels needs `crossOrigin`, and
+	 * setting that on the displayed <img> would make the portrait FAIL TO LOAD outright anywhere the host
+	 * does not answer with the CORS header — trading a generic border for no face at all. A separate
+	 * loader can fail silently and cost nothing: the anchor simply keeps the default ink. All sixteen
+	 * currently succeed (measured), and the fallback is the ink they used to share.
+	 */
+	let anchorInk = $state<Record<string, string>>({});
+
+	/** L × 0.95 in HSL — a darker SHADE, hue and saturation untouched. Doing it in RGB would drag the
+	 *  saturation with it, which is the mistake this component has already made once on the ground. */
+	function shade5(r: number, g: number, b: number): string {
+		const [rr, gg, bb] = [r / 255, g / 255, b / 255];
+		const mx = Math.max(rr, gg, bb);
+		const mn = Math.min(rr, gg, bb);
+		let h = 0;
+		let sat = 0;
+		let l = (mx + mn) / 2;
+		if (mx !== mn) {
+			const d = mx - mn;
+			sat = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+			h = mx === rr ? (gg - bb) / d + (gg < bb ? 6 : 0) : mx === gg ? (bb - rr) / d + 2 : (rr - gg) / d + 4;
+			h /= 6;
+		}
+		l = Math.max(0, l * 0.95);
+		const q = l < 0.5 ? l * (1 + sat) : l + sat - l * sat;
+		const pp = 2 * l - q;
+		const cv = (t: number) => {
+			if (t < 0) t += 1;
+			if (t > 1) t -= 1;
+			if (t < 1 / 6) return pp + (q - pp) * 6 * t;
+			if (t < 1 / 2) return q;
+			if (t < 2 / 3) return pp + (q - pp) * (2 / 3 - t) * 6;
+			return pp;
+		};
+		const out = [cv(h + 1 / 3), cv(h), cv(h - 1 / 3)].map((v) => Math.round(v * 255));
+		return `rgb(${out[0]}, ${out[1]}, ${out[2]})`;
+	}
+
+	/** Average every OPAQUE pixel of a 32x32 downscale. Transparent pixels are skipped because these are
+	 *  cut-out PNGs — counting them would drag every border toward whatever the canvas cleared to. */
+	function sampleInk(slug: string, src: string) {
+		const im = new Image();
+		im.crossOrigin = 'anonymous';
+		im.onload = () => {
+			try {
+				const c = document.createElement('canvas');
+				c.width = 32;
+				c.height = 32;
+				const x = c.getContext('2d');
+				if (!x) return;
+				x.drawImage(im, 0, 0, 32, 32);
+				const d = x.getImageData(0, 0, 32, 32).data;
+				let n = 0;
+				let R = 0;
+				let G = 0;
+				let B = 0;
+				for (let i = 0; i < d.length; i += 4) {
+					if (d[i + 3] < 128) continue;
+					R += d[i];
+					G += d[i + 1];
+					B += d[i + 2];
+					n++;
+				}
+				if (n) anchorInk = { ...anchorInk, [slug]: shade5(R / n, G / n, B / n) };
+			} catch {
+				/* tainted canvas — the anchor keeps the shared default ink, and the face still renders */
+			}
+		};
+		im.src = src;
+	}
+	onMount(() => {
+		for (const a of ANCHORS) sampleInk(a.slug, a.src);
+	});
+
 	const ANCHOR_INSET = 8;
 	/** Hover growth: +200%, then 10% more on Sam's word — three and a third times the resting size. */
 	const ANCHOR_HOVER_SCALE = 3.3;
@@ -1382,7 +1466,8 @@
 			class:tip-below={tipBelow(a.from)}
 			style="top: {yFor(a.from)}px; left: {ANCHOR_INSET}px; width: {anchorD(a.years)}px;
 			       height: {anchorD(a.years)}px; --anchor-origin: {anchorOrigin(a.from, a.years)};
-			       --anchor-scale: {ANCHOR_HOVER_SCALE};"
+			       --anchor-scale: {ANCHOR_HOVER_SCALE};
+			       {anchorInk[a.slug] ? `--anchor-ink: ${anchorInk[a.slug]};` : ''}"
 			aria-label="Go to {a.name}"
 			class:no-hover={hoverSuppressed === a.slug || flightLocked}
 			onclick={(e) => onAnchorClick(e, a)}
@@ -2050,7 +2135,9 @@
 	.anchor-vis {
 		position: absolute;
 		inset: 0;
-		border: 1.5px solid var(--color-rail-ink, #ab7a42);
+		/* The ink is the portrait's own average, 5% darker — see sampleInk. It falls back to the shared
+		   rail ink for the frame before the sample lands, and permanently if the sample cannot be taken. */
+		border: 1.5px solid var(--anchor-ink, var(--color-rail-ink, #ab7a42));
 		border-radius: 50%;
 		background: var(--color-cream, #f7f1e6);
 		box-shadow: 0 1px 3px rgba(40, 30, 20, 0.3);
