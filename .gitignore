@@ -93,6 +93,20 @@ _exports/
 /*.heic
 /*.avif
 
+# --- screenshots dropped ANYWHERE, not just the root ---
+# The root-anchored rules above were added 080126 and again 080726, each time after a `git add -A`
+# swept working screenshots into history. They only ever covered the repo root — and on 080926 Sam's
+# screenshots landed in src/lib/state/, src/lib/utils/ and static/ instead, because that is wherever
+# the editor happened to be. None reached history (they were caught while untracked), but the
+# static/ one is the reason this rule is not optional: anything committed under static/ is SERVED,
+# so a working screenshot there becomes a public asset on the next deploy.
+# Deliberately narrow — matches the macOS screenshot naming only, so a real asset named e.g.
+# prism-card.jpg or a texture under _assets/ is untouched.
+**/Screenshot*.png
+**/Screenshot*.jpg
+**/Screenshot*.jpeg
+**/Screen Shot*.png
+
 # --- saved research pages dropped in the repo root ---
 # Saved FamilySearch/Ancestry pages used as sources while enriching. Never source of
 # truth -- whatever they contributed lives in canonical.json, and the page itself is
