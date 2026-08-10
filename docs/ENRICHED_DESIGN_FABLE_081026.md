@@ -3534,6 +3534,10 @@ IS static the tracker reproduces the baked path exactly — same solver, same in
 
 ## 31. THE DESCENDANT TIER — HOVER-REVEALED GRANDCHILDREN (AS BUILT, August 8)
 
+_(§31.5b gained an August 10 note: the two tiers no longer share a trigger. The DESCENDANT tier is still
+hover-revealed and everything here describes it accurately; the ANCESTOR tier is now opened by a click
+and its dismissal rules diverged with it. See the block quote in 31.5b.)_
+
 The mirror of §29's ancestor tier, pointed down: hold a child chip for `HOVER_INTENT_MS` and that child's
 own children open beneath it. Same hold, same grace, same region-based dismissal. What is NOT the same is
 the thing that matters.
@@ -3630,6 +3634,41 @@ before it arrived.
 the TOP edge is the one that means intent and bottom/left/right close at once. Sam asked for the same
 guardrails on both, and they are the same rule: a region test on every move, a corridor on the one side the
 row is on, immediate close everywhere else.
+
+> **THE TWO TIERS DIVERGED ON August 10, and everything above still describes the DESCENDANT tier
+> exactly. The ANCESTOR tier changed in five ways, all downstream of one decision — it is no longer
+> opened by a hover.**
+>
+> **It opens on a click.** A small "Show parents" sits above each parent chip's right edge at 55%
+> opacity, present only where there is something to show. Sam's argument was a ratio: "hovering on the
+> parent chips is going to reveal the grandparent chips 9x more unintentionally than intentionally —
+> users are going to naturally leave their mouse on the parent chips after clicking them." A gesture the
+> user makes for another reason cannot also be a command.
+>
+> **The no-parents SHAKE is gone with it.** It existed to answer a hover that would otherwise do nothing,
+> and had to perform that answer AFTER the user had already committed. A chip carrying no trigger says
+> the same thing earlier and more quietly. (The descendant tier keeps its shake — `SHAKE_MS` and
+> `HOVER_INTENT_MS` are both still live for it.)
+>
+> **The parent chip is no longer a keep-alive region.** It was one only because hovering it is what
+> opened the tier, and a chip cannot dismiss a row it is still summoning. Dropping back onto it now
+> dismisses, which is what Sam asked for; its top edge survives only as the corridor's reference.
+>
+> **The corridor's floor is the MIDPOINT** between the row's chips and the parent chip, not the chip's
+> top edge. Reaching to the chip meant leaving downward cost the user the whole descent. The reason this
+> did not work on the first attempt is worth keeping: the `.connector` spans the ENTIRE gap (measured
+> 155 → 225 with the chip's top at 225), and it was being counted as part of the row — so `rowBottom`
+> equalled the chip's top and the midpoint was arithmetically identical to the old floor. The connector
+> is out of the parts list; it lies inside the corridor anyway.
+>
+> **The side exits get a 200ms grace** (0 → 400 → 200) and the pad is **12px, not 24** — both because a
+> click needs far less forgiveness than a hover did.
+>
+> One addition with no descendant equivalent: **leaving the WINDOW through the top closes the ancestor
+> tier.** Above the row is otherwise not an exit at all — there is nowhere up there to go — so the roof
+> keeps it alive for any pointer merely high on the page. Detected with `mouseout` on the window plus
+> `relatedTarget === null`; `mouseleave` on `<svelte:body>` was tried first and silently never fired,
+> proven not to be the event (a synthetic one reached a hand-added body listener on the same page).
 
 The reason an edge rule is safe NOW when it was reverted before (handoff §6) is that the old one watched
 for the CROSSING EVENT. Opening the ancestor tier drops the stage 145px under a motionless pointer, so the
@@ -4276,6 +4315,29 @@ Three placement facts that will otherwise be re-derived from scratch:
 | a flight is running | rapid clicking reset transitions; and per Sam it must expand *by itself* the instant the flight lands, which is free — the class comes off and a pointer that never moved is still hovering |
 | — | keyboard focus is **deliberately not** suppressed: a focus ring with no label is worse than a label that outstays a click, and a keyboard user has no "move the mouse away" to perform |
 
+**THE THING THAT DECIDES HOVER MUST NEVER BE THE THING THAT MOVES** (added Aug 10, and the single most
+re-breakable rule in this section). The button used to be both: it hit-tested AND carried the scale. That
+is a feedback loop, and it surfaced on exactly one portrait — Anderson Cooper, who sits against the left
+and bottom edges, so `anchorOrigin` gives him `left bottom`, and with that origin the scaled circle's
+left and bottom edges land where the resting ones were. A cursor on either edge sits on the boundary of
+the grown element: it scales up, the boundary arrives under the cursor, hover drops, it shrinks, hover
+returns. Every other portrait grows about its CENTRE, which walks its edges away from the cursor and
+hides the bug rather than avoiding it.
+
+The paint therefore lives in `.anchor-vis` (`pointer-events: none`) and the button only hit-tests.
+
+**AND THE HOVERABLE REGION IS A UNION, which is the half that is easy to miss.** The first fix left only
+the resting circle live, and that made every expanded photo unhoverable and unclickable — move onto the
+63px portrait you just summoned and hover ended, because the pointer had left the 19px target underneath
+it. The region is now this button's circle (always) UNION `.anchor-hit`, an invisible twin of the
+expanded circle that is live only while already hovered. So it can only ever GROW on hover and never
+shrink under the pointer, which is the property the loop needed and did not have.
+
+Why a union rather than simply swapping in the big circle: **with a corner transform-origin the expanded
+circle does not contain the resting one.** Measured on Anderson — his resting circle's left edge sits
+2.01 radii from the expanded centre against a radius of 1.65, so it falls outside. Swapping one region
+for the other puts the flicker back at exactly the edge it started at.
+
 **The depth drop is delayed 160ms** (`z-index 0s linear 160ms`). `z-index` cannot tween, so it snapped
 20 → 1 on the first frame of un-hover while the transform still had 160ms to run, and the portrait spent
 its whole shrink underneath the bars. Rising stays immediate — the lift must lead the growth.
@@ -4383,25 +4445,46 @@ Alice is **null → lateral**, the one thing ruled out; and Alice and her husban
 | a bar gliding to new years | `--move-ms`, read from the camera store — the CARD's clock, so rail and stage arrive together (§30) |
 | a bar arriving or leaving | 95ms fade. "Nothing drawing attention" — context arriving, not an event |
 | a bar tooltip | the same 95ms, shared via `--tip-ms` |
-| a portrait-click flight | **1200ms**, ease-in-out, its own clock — see below |
+| **any CC flight** | **1200ms**, ease-in-out, its own clock — see below |
 
-**A portrait click is the one flight where the bar and the card disagree about duration.** Measured on
-the longest travel: both wait on the same `focusPerson`, so they *start* together — the whole gap was
-duration. The bar finished at 655ms against the card's 1500ms. At 1200ms it lands ~1400 against ~1400.
-**That is the ceiling** if the bar is still to arrive first. The easing changes with it, and has to:
-easeOutCubic spends ~70% of the distance in the first third, which stretched to a second reads as
+**A CC FLIGHT IS THE ONE PLACE THE BAR AND THE CARD DISAGREE ABOUT DURATION.** Both wait on the same
+`focusPerson`, so they *start* together — the whole gap is duration. Measured on the longest portrait
+travel, the bar finished at 655ms against the card's 1500ms. The easing changes with the clock and has
+to: easeOutCubic spends ~70% of the distance in the first third, which stretched to a second reads as
 screaming away and then crawling.
+
+_(Corrected Aug 10, later the same day. This was first written as "a portrait-click flight", because the
+1200ms was built for the timeline's own portraits. It is a property of the CC FLIGHT, not of what
+launched it — a blade CC publishes a ~410ms duration while the card keeps settling past 1300ms, the same
+~900ms gap, so Sam saw the same screaming bar on an ordinary same-line CC. Portrait clicks publish
+`kind: 'cc'` too, so ONE condition covers both and the flag that used to distinguish them is gone.)_
+
+**1200 does not lead every CC, and that is a known open trade.** Card settle time varies far more than
+the bar's does: measured, Thomas Hooker → Jason Newton settles at 925ms while the bar lands at 1239ms
+(the bar is ~300ms LATE), where the Burr reciprocal settles at 1646ms against the bar's 915ms (a
+comfortable lead). A single constant cannot lead both. Scaling the bar off the camera's own duration is
+the fix if the lateness ever matters; Sam has seen it and left it at 1200.
 
 **A newly-added lane travels in from where the outgoing bar stood** (`barArrive`, a transform — `top`
 already carries the CSS transition the reused lanes ride, and two clocks on one property is how a bar
 fights itself). Before this, a new lane was mounted at its destination and merely faded, so three of the
 Commodore's four bars appeared before Alice had finished travelling.
 
-**`RAIL_OVER_FLIGHT`** lifts the rail to z 3 for the duration of a CC flight so the deck riffles behind
-it. It is transient because no static number can satisfy all three orderings: the flying hero must be
-above `.page-container`, so "rail above hero" would also mean "rail above the resting stage". While
-lifted it does cover any resting stage that overlaps it — nothing at 1440, but the sibling column at
-iPad-mini landscape.
+**`RAIL_OVER_FLIGHT`** lifts the rail to z 3 while a CC flight runs, so the deck riffles behind it. It is
+transient because no static number can satisfy all three orderings: the flying hero must be above
+`.page-container`, so "rail above hero" would also mean "rail above the resting stage". While lifted it
+does cover any resting stage that overlaps it — nothing at 1440, but the sibling column at iPad-mini
+landscape.
+
+**THE LIFT ENDS WHEN THE FLIGHT LOCK RELEASES, not on a timer** (corrected Aug 10; it was
+`duration + 400`, and that number was a guess). The guess held for outward hops and failed on the one
+case that mattered: a RECIPROCAL CC ping-pongs the lateral direction, so the outgoing card leaves right
+and the incoming one enters from the LEFT, straight across the rail — and that flight outlives the
+camera's nominal duration. Measured on Burr → Tapping Reeve → Burr, the card reached left −1013, sixty-two
+frames sat inside the rail's column, and the lift had already expired for twenty-six of them: the card
+passed UNDER the rail on the way out and OVER it on the way back. The lock already knows when a flight
+has landed, so the rail asks it; the timer survives only as a backstop for a flight that never locks
+(reduced motion) or never lands.
 
 ### 36.10 The guardrails, and the things that get re-broken
 

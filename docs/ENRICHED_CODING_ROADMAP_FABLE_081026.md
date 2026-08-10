@@ -3322,8 +3322,8 @@ twice if the reasoning is not written down**, hence §36.
 
 - **Year labels sit behind portraits.** With five founding-era portraits in a row, `1750` and `1800` are
   covered. Sam has seen it; no ruling. One `z-index` if he wants labels on top.
-- **Teddy/Taft overlap is 2.00 years**, past the one-year rule, because the short-screen boost grew both
-  circles. Every other pair is ≤1.01. Fix is one year on Taft's `from`.
+- ~~**Teddy/Taft overlap is 2.00 years**~~ — CLOSED Aug 10. Taft moved to 1910; every pair on the rail is
+  now ≤1.01 years.
 - **Ingersoll stands 24 years off his best window** (§36.5) — forced by arithmetic, but reversible if
   Jay or Whitney is allowed to move instead.
 - **`pv` privacy** (§35.8) — still unruled.
@@ -3333,3 +3333,10 @@ twice if the reasoning is not written down**, hence §36.
   name, not a chip name. A Stream A edit (trim `first_name` or set `chip_first_name`), not a rail change.
 - **Tree navigation shows `--move-ms: 0`**, so those bars snap rather than glide. Pre-existing, untouched,
   and Sam has said tree navigation feels right — noted only so it is not mistaken for a regression.
+- **The bar's 1200ms does not lead every CC.** Card settle time varies far more than the bar's: Hooker →
+  Newton settles at 925ms with the bar landing at 1239 (late), the Burr reciprocal at 1646 against 915
+  (early). One constant cannot lead both; scaling the bar off the camera's duration is the fix if it ever
+  matters. Sam has seen it and left it at 1200.
+- **The grandparent tier's design write-up.** §31.5b now carries the divergence note, but the ancestor
+  tier has no section of its own describing the click trigger as doctrine — it is documented inline in
+  the code and in that block quote. Worth a proper section if the row changes again.
