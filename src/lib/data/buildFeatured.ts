@@ -23,6 +23,8 @@ export type PersonPayload = {
 	burialCemetery: Cemetery | null;
 	institutionsById: Record<string, Institution>;
 	crossConnections: CrossConnection[];
+	/** Easter eggs only — their route back to the Hooker line. See regenerate-data.js lineAnchorsFor. */
+	lineAnchors?: PersonCompact[];
 };
 
 const TITLE_ABBREVIATIONS: Record<string, string> = {
@@ -153,7 +155,27 @@ export function buildFeatured(payload: PersonPayload): FeaturedData {
 					: undefined
 			}
 		},
-		grandchildren: neighborhood.grandchildren.map((gc) => enrich(gc, byId))
+		// GRANDCHILDREN GET THE SAME TREATMENT AS CHILDREN, and until now they got neither half of it.
+		// They were enriched but never asked `diedYoung`, so `dy_young` stayed undefined all the way to
+		// the chip — which meant the descendant tier rendered a child who died at birth in full ink-blue,
+		// in birth order, indistinguishable from their siblings who lived. Sam found it on Rev. Thomas
+		// Shepard: his son John (1643-1643) sorts to the end of the CHILDREN row in grey with "(died
+		// young)", and appeared in the middle of the GRANDCHILDREN row as though nothing had happened.
+		//
+		// PersonBox already does the rest — `dimmed` drives both the grey ink and the "(died young)"
+		// suffix, and the tier already passes `dimmed={gc.dy_young}`. The flag was the only thing absent.
+		//
+		// The partition is applied ACROSS the whole set rather than per via_parent group, and that is
+		// still correct for the tier: it renders one parent's grandchildren at a time by filtering on
+		// `via_parent_id`, and filtering preserves relative order — so each group comes out alive-then-
+		// young exactly as if it had been sorted alone.
+		grandchildren: (() => {
+			const enriched = neighborhood.grandchildren.map((gc) => ({
+				...enrich(gc, byId),
+				dy_young: diedYoung(byId[gc.id])
+			}));
+			return [...enriched.filter((g) => !g.dy_young), ...enriched.filter((g) => g.dy_young)];
+		})()
 	};
 
 	const allChildren = neighborhood.spouses.flatMap((s) => s.children);
@@ -169,7 +191,9 @@ export function buildFeatured(payload: PersonPayload): FeaturedData {
 		childrenTotal,
 		childrenDiedYoung,
 		crossConnections,
-		institutionsById
+		institutionsById,
+		// Passed straight through, untouched. Absent on everyone who is not an easter egg.
+		lineAnchors: payload.lineAnchors
 	};
 }
 

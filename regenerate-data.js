@@ -828,6 +828,112 @@ function resolveVideos(p, byId) {
 	});
 }
 
+// ---------------------------------------------------------------------------
+// LINE ANCHORS — the easter egg's route back to the Hooker line (design §3.6 / the left timeline)
+// ---------------------------------------------------------------------------
+// PURELY ADDITIVE. Emits ONE new key, `lineAnchors`, and only on easter-egg payloads (554 of 18,621);
+// every other file is byte-identical to before. Nothing existing is read for a different purpose,
+// overwritten, or restructured, and canonical.json is untouched — this pre-walks relationships that
+// are already there, which is the whole of it.
+//
+// WHY IT IS BAKED AT ALL. The timeline shows an egg beside the people who connect them to the line:
+// Richard Garbrand appears with Susanna (his daughter, who married in) AND Thomas Hooker (the man she
+// married). Richard's payload carries Susanna — but not Susanna's husband, because a payload is one
+// neighbourhood deep. Measured across all 554 eggs: 16% can already see an `hd` person, 57% can see
+// the bridge but not the anchor, 27% (Stowe and her like) have no bridge at all.
+//
+// Fetching that one extra hop in the client was the obvious alternative and is the wrong one: the
+// third bar would resolve after the first two and animate on its own clock, which design §30 names as
+// THE failure mode of this layer. Baking it means every bar in a set is known in the same frame.
+// Same reasoning, and the same shape, as the kin-distance LCA bake (roadmap §17) and the derived `sp`
+// flag (§31.7) — both build-time answers to graph questions a single payload cannot hold.
+//
+// WHAT THE WALK IS. A breadth-first search from the egg over three edge kinds — child, parent, spouse
+// — stopping at the nearest Thomas descendant. BFS rather than a hand-rolled descent because the
+// routes genuinely differ in shape: Thomas Hooker I reaches the line through a CHILD, Richard through
+// a child-then-marriage, the Commodore Vanderbilt through child-child-marriage, and Louisa Kissam
+// through her husband first. One search covers all of them and cannot be wrong about a case nobody
+// thought of.
+//
+// THE ONE ADJUSTMENT, and it is Sam's rule rather than the graph's: if the first step is a SPOUSE,
+// that spouse is dropped. A married pair occupies ONE position on the rail and the featured one takes
+// it — "if I click his wife Anne Ferrar, she replaces Richard's blue bar so there are still only
+// three". Without this, Louisa Kissam would push her own husband onto a fourth lane instead of
+// standing where he stands.
+const LINE_ANCHOR_MAX_HOPS = 6; // beyond this the connection is not a story anyone is reading
+function lineAnchorsFor(p, byId, slugMap) {
+	const start = p.id;
+	const prev = new Map([[start, null]]);
+	const depth = new Map([[start, 0]]);
+	const queue = [start];
+	let hit = null;
+	for (let qi = 0; qi < queue.length && hit == null; qi++) {
+		const id = queue[qi];
+		const d = depth.get(id);
+		if (d >= LINE_ANCHOR_MAX_HOPS) continue;
+		const cur = byId[id];
+		if (!cur) continue;
+		// SPOUSES FIRST, and the order is the difference between a right and a wrong answer. Richard
+		// Garbrand's daughter Susanna married Rev. Thomas Hooker AND bore him Joanna — so from Susanna,
+		// her husband and her daughter are both `hd` and both one hop away. Enumerating children first
+		// returned Joanna, and Richard's rail read "Joanna, Susanna, Richard" when the story is plainly
+		// "Thomas, Susanna, Richard". `sp` means MARRIED INTO THE LINE; the person they married is the
+		// anchor, and their children are a generation past the point being made.
+		const next = [...spouseIds(id, byId), ...childrenOf(cur), cur.parents?.father_id, cur.parents?.mother_id];
+		for (const nid of next) {
+			if (!nid || prev.has(nid) || !byId[nid]) continue;
+			prev.set(nid, id);
+			depth.set(nid, d + 1);
+			if (byId[nid].classification?.is_thomas_descendant) {
+				hit = nid;
+				break;
+			}
+			queue.push(nid);
+		}
+	}
+	if (hit == null) return null;
+
+	// Unwind to an ordered path [focus, ..., hookerPerson], then present it line-first.
+	const path = [];
+	for (let cur = hit; cur != null; cur = prev.get(cur)) path.push(cur);
+	path.reverse(); // now [focus, ..., hooker]
+	const chain = path.slice(1); // drop the focus; the rail already draws them
+
+	// SAM'S SPOUSE RULE, AND THE CONDITION THAT MAKES IT SAFE.
+	//
+	// A married pair occupies one position, and the featured one takes it — click Anne Ferrar and she
+	// stands where Richard stood. That is why a leading spouse is dropped. But dropping one blindly
+	// severs chains where the spouse IS the connection, and Alice Hathaway Lee is the case that proved
+	// it: her walk is Alice → Theodore → Edith, because Theodore's SECOND wife is the Hooker descendant.
+	// Dropping Theodore left [Edith] — two of the same man's wives standing side by side on the rail
+	// with the husband who links them missing entirely (Sam: "weird to have two wives together").
+	//
+	// The test that separates the two: does the focus have an edge of their OWN to the next link?
+	//   Louisa Kissam → [William Henry, Cornelius II, ...]  Cornelius II is HER son too. Safe to drop.
+	//   Anne Ferrar   → [Richard, Susanna, ...]             Susanna is HER daughter too. Safe to drop.
+	//   Alice Lee     → [Theodore, Edith]                   Edith is nothing to Alice. Keep Theodore.
+	//
+	// So the rule is not "drop a leading spouse" but "collapse a pair only when the chain still holds
+	// without them" — which is what standing in someone's place actually requires.
+	const linksOwnedByFocus = new Set([
+		...childrenOf(byId[start] || {}),
+		byId[start]?.parents?.father_id,
+		byId[start]?.parents?.mother_id,
+		...spouseIds(start, byId)
+	]);
+	if (
+		chain.length > 1 &&
+		spouseIds(start, byId).includes(chain[0]) &&
+		linksOwnedByFocus.has(chain[1])
+	) {
+		chain.shift();
+	}
+
+	// Reversed so the Hooker person is FIRST: the rail lays lanes out from the line outward, and a
+	// consumer should not have to know the walk's direction to read the array.
+	return chain.reverse().map((id) => compact(byId[id], slugMap));
+}
+
 // Builds the self-contained payload that /person/[slug] fetches.
 // `clientById` are the stripped client records (research_notes etc. removed).
 // `reg` bundles the registry lookups: { landmarkById, artworkById, documentById,
@@ -1050,6 +1156,10 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 			return out;
 		});
 
+	// Only eggs are walked — everyone else's route to the line is either "they are on it" or their own
+	// spouse, both of which the neighbourhood already carries.
+	const lineAnchors = p.classification?.is_easter_egg ? lineAnchorsFor(p, byId, slugMap) : null;
+
 	// Resolved media arrays live ON the focus person record (person.landmarksResolved,
 	// etc.) so the component reads them through its existing `person` prop. Spread a
 	// fresh object (don't mutate the shared clientById — context entries stay lean).
@@ -1066,7 +1176,11 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 		context,
 		burialCemetery,
 		institutionsById,
-		crossConnections
+		crossConnections,
+		// ADDITIVE AND SPARSE: present only on easter eggs that actually reach the line, absent on
+		// everyone else — so `lineAnchors` costs nothing on 18,000 payloads and no existing consumer
+		// sees a new key. Computed ONCE above; the BFS is cheap but this runs 18,621 times.
+		...(lineAnchors ? { lineAnchors } : {})
 	};
 }
 

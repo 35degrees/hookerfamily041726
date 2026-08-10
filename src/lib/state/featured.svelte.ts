@@ -13,7 +13,7 @@
  * Everything reads through the getters / `current`.
  */
 import type { Person } from '$lib/types/person';
-import type { Neighborhood } from '$lib/types/neighborhood';
+import type { Neighborhood, PersonCompact } from '$lib/types/neighborhood';
 import type { Cemetery } from '$lib/types/cemetery';
 import type { Institution } from '$lib/types/institution';
 
@@ -35,6 +35,10 @@ export type FeaturedData = {
 	childrenDiedYoung: number;
 	crossConnections: CrossConnection[];
 	institutionsById: Record<string, Institution>;
+	/** Easter eggs only: the ordered chain from the Hooker line out to this person, line FIRST.
+	 *  Baked by regenerate-data.js (lineAnchorsFor) because it needs a graph walk a single
+	 *  neighbourhood payload cannot answer. Absent on everyone else. */
+	lineAnchors?: PersonCompact[];
 };
 
 class FeaturedManager {
