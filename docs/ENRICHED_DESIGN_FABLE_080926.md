@@ -17,6 +17,8 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The 080426 edition (August 4) adds §26 — THE SIBLING PANEL AS A PERSISTENT COLUMN (as built; SUPERSEDES §21.1 wherever they differ). §21 described the panel as a transient drop-down; this is the panel as a FIXTURE that travels with the card, and almost every finding in it is the same shape: what changed is not the pixels but the panel's LIFETIME. It records the in-place mutation model, the durable rule that a seat in a MOVING container is a resting position rather than a live rect (third instance of the §18.9 family), the SHAPE-EARLY-THEN-SLIDE finding (direction is read from what changes LAST), the way-station rule for a different-tier landing (§18.4's second instance), the RECIPROCAL-GATE rule earned on Alice Lee Roosevelt and 57 other one-way doors, open-by-default, the fixed anchor, the chevron/alpha-hover header, the leaver's-alpha doctrine extending §17 — and §26.12, the NEGATIVE SPACE: four things built and reverted (including one documented-invariant violation) plus two measurement failures that produced confident false greens.**
 
+**The 080926 edition (August 9) adds §34 — HOW A ROW OF CHILDREN BREAKS (new doctrine; there was no prior convention): the two rules that generate every count (four per row maximum, never strand a single child), why six is 4,2 and not 3,3 (the taper is what makes the row read as birth order rather than a block), why it had to become a GRID of eight half-chip tracks (Svelte forbids a sibling break element next to `animate:`, and eight tracks is what lets a ragged row centre on integers), and the child chip's own size tier at 90% box / 0.945 type with the aspect ratio preserved EXACTLY because flight.ts's same-tier test reads it. And §35 — THE LEFT TIMELINE AS BUILT, which supersedes §3.6 on three points: the rail is NOT the Field's axis (10.5 px/year anchored vs ~1.9 px/year absolute), uncertainty is per-END and dissolves rather than hatching (the hatch is removed and tombstoned — it marked a birth-year proxy and contradicted the dissolve), and the estimated lifespan is MEASURED FROM THIS TREE (14,323 people with both dates) with the recent end deliberately not trusted because a cohort that has not finished dying reports only those who died early. Also records the line-anchor bake — an egg's route home is one hop deeper than a payload holds, so it is baked rather than fetched, and the two findings that will be re-broken by anyone tidying the walk (spouses expand first; a pair collapses only when the chain holds without them).**
+
 **The 080826 edition (August 8) adds §30 — THE STAGE MUST NOT MOVE WHILE ANYTHING IS FLYING: the one arithmetic fact the grandparent tier taught, that an in-flow element is painted at layout(t) + transform(t) and two different curves compose into the ideal path PLUS an error of ΔL·(e−c). It records why that error hides on an object with real travel and IS the entire motion on one with none, the shipped answer (an instantaneous collapse plus an arithmetic correction to every FLIP, rather than trying to settle the layout before measuring), the three consequences that are easy to undo by accident, the six attempts that were built and reverted with the measurement that killed each — including two that looked correct and measured WORSE — and the two rules added alongside it: a person's motion is owned by their morphIn, and a traveller tracks its seat.**
 
 **The 080726 edition (August 7) adds §29 — THE COLOUR SYSTEM (as built): shadows, line-status shading, and the ground that governs them. Everything in it was measured against ONE background, the photographed manuscript parchment, and every number is a property of the PAIR (colour, ground) rather than of the colour — a second sheet moves all of them, so re-measure rather than porting hexes. Leads with the measurement that explains the whole session (the ground is Lab L* 96.3 / a* -0.0 / b* +5.4, i.e. WARM, so every cream moves toward it, and a plain white card already separates by DeltaE 6.5 — the floor below which shading makes a card LESS visible than leaving it alone). Records all ten values Sam rejected with his verdicts and their measurements, the two pivots that worked (cool rather than cream; mark the outsiders rather than the line), why translucency is not an option for a card (it shows its own drop-shadow through itself, and inner masks double-composite), the near-white compression trap, why alpha is not transferable between tints, source order as the precedence rule, and §29.10 — the SPINE, an edge treatment built and left dormant at `--edge-w: 0px` because an edge separates by contrast at a boundary rather than by area.**
@@ -28,7 +30,7 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_080826.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_080926.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
@@ -3906,3 +3908,227 @@ recomposes (§12, Phase 9.5) instead.
 - **A `box(w, h)` / `ct(px)` class-builder helper.** Emits nothing Tailwind can see. Literals, always.
 - **The union fold at `u < 0.88`.** Fired above 1150px, which is far too eager — the fold is a
   concession and should be spent as late as possible. Re-keyed to a viewport width of 850.
+
+---
+
+## 34. HOW A ROW OF CHILDREN BREAKS (AS BUILT, August 9)
+
+_(New doctrine. There was no prior convention — the children row was a plain `flex-wrap` and its break
+points were an accident of arithmetic. The specification lives in `src/lib/state/childRows.ts`.)_
+
+### 34.1 Two rules generate everything
+
+1. **FOUR PER ROW, NEVER FIVE.** Sam: "let's not do 5 kids on top at all… we are moving totally away
+   from 5 child chips in a row." It also returns the left margin the timeline wants.
+2. **NEVER STRAND A SINGLE CHILD** on a row of their own.
+
+Fill rows of four; if the last row would hold exactly one, pull one down from the row above so the tail
+reads 3+2. That is the whole algorithm, and it reproduces every count Sam specified:
+
+| n | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
+|---|---|---|---|---|---|---|---|---|---|
+| | 4 | 3,2 | 4,2 | 4,3 | 4,4 | 4,3,2 | 4,4,2 | 4,4,3 | 4,4,4 |
+
+It extends unaided: 13 → 4,4,3,2 · 17 → 4,4,4,3,2. **Ten is the one departure** — Sam said "five and
+five" and then banned fives in the same message; 4,4,2 is what the ban implies and keeps ten consistent
+with six. If ten is meant to be a named exception it belongs in that file as one.
+
+### 34.2 Descending, not balanced — the taper is the point
+
+A balanced split is the obvious algorithm and the wrong one. Sam: "there's a way in which off-balance
+is nice… four on top row, two on bottom row by default is attractive, not just going to three on top
+three on bottom as a rectangle is boring." So six is **4,2** and never 3,3. A full top row is also what
+makes the set read as an ordered sequence — birth order, left to right, top to bottom — rather than as
+a block. The 3,2 tail is the single place the taper is deliberately broken, because rule 2 outranks it.
+
+### 34.3 It is a GRID, and that was forced rather than chosen
+
+The natural mechanism is a zero-height `flex-basis: 100%` sibling to end a flex line. **Svelte rejects
+it outright** — "an element that uses the `animate:` directive must be the only child of a keyed
+`{#each}` block" — and the chips need `animate:flip` to glide when the roster changes. So no extra
+elements were available, in or out of the list.
+
+A grid needs none: each chip is *placed*, and placing one at column 1 starts a row.
+
+**EIGHT half-chip tracks, not four**, and that is what makes ragged rows centre. A chip spans 2, so a
+row of `sz` spans `2·sz` with a leading offset of `4 − sz` — always an integer. With four tracks a row
+of three could only sit flush-left or a whole chip off-centre; with eight it lands exactly centred,
+which is what makes the tapers look deliberate instead of ragged.
+
+A track is (198 − 12) / 2 = 93, so two tracks plus the gap between them lands exactly on the 198px
+chip. Both numbers ride `--stage-u`.
+
+**The chips stay DIRECT CHILDREN of `.children-slot`** — 17 selectors across `flight.ts`,
+`probe-tier.mjs` and the page address them as `.children-slot > .flight`, and any wrapper would
+silently unmatch every one.
+
+### 34.4 What this fixed, and the trap on the way
+
+The old 72rem flex-wrap was wide enough for five 198px chips, so five sat in one row until the window
+narrowed enough to bump one down — and then bumped it back up as the frame unit shrank the chips faster
+than the container. Sam: "it's stubborn… eventually Cornelius on the right will wrap to the bottom row
+on his own but size it down more and he jumps back up." Counts are now **placed, not discovered**, and
+hold identically from 1440 down to 744.
+
+**The grid rendered nothing at first.** There are TWO `.children-slot` blocks in that stylesheet, ~160
+lines apart and of equal specificity; the rule went into the earlier one and the later one kept winning.
+That is §34.1's lesson in the roadmap arriving on schedule — *verify the edit is the one taking effect
+before interpreting the render.* The winning block now says so in a comment.
+
+### 34.5 Child chips are their own size tier
+
+90% of a parent chip — **198 × 67.5**, with type at **0.945** (the same 0.9, then 5% back for
+readability). The two factors are different numbers on purpose: a first pass took the type to the
+parent's full 13px and Sam called it too big on sight.
+
+**The aspect ratio is preserved exactly** (220/75 = 198/67.5 = 2.933) and that is load-bearing rather
+than tidy: `flight.ts` decides same-tier vs different-tier by comparing the x and y scale factors, so a
+uniform 0.9 keeps that difference at zero and a demote into a child seat still takes the cheap path.
+It also means the counter-scaled parent face lands pixel-identical to a real child chip. Picking, say,
+200 × 68 would have quietly changed which flight runs.
+
+Every chip name is clamped, and a chip uses `shrinkToFit`'s **`ellipsis`** option rather than its
+default release-to-wrap: a second line inside a fixed-height box pushes the dates out through
+`overflow: hidden`, so the name would fit and the years would vanish.
+
+---
+
+## 35. THE LEFT TIMELINE — AS BUILT (August 9)
+
+_(Implements §3.6, and supersedes it on three points. §3.6 seated anchors at BIRTH year; Sam wants
+their PROMINENT years, which is new data. §3.6 asked for a hatch on estimated years; the dissolving
+end replaces it — see 35.4. §3.6 said "the table's y-axis rendered as an instrument", which reads as
+though the rail and the Field share a mapping. They do not — see 35.1.)_
+
+### 35.1 It is NOT the Field's axis, and conflating them is the trap
+
+Both draw time. They are different mappings of the same quantity:
+
+| | scale | anchored to |
+|---|---|---|
+| **Field** | 10.5 px/year | the featured person — the paper scrolls and their year docks at a fixed spot |
+| **Rail** | ~1.9 px/year | nothing — 440 years compressed into the viewport, absolute |
+
+Field answers *how far did we just travel*; the rail answers *where in 440 years are we*. Nothing in
+either should ever be derived from the other's constant.
+
+### 35.2 Fixed chrome that yields to the stage
+
+The rail is mounted beside `Field` and `ShuffleNotables`, **outside `.page-container`**, and paints at
+`z-index: 0` — behind the stage. It does not scale with `--stage-u`: a ruler at the window's edge is
+the one thing that should keep its size when the stage shrinks.
+
+**THE STAGE GETS NO ROOM FOR IT.** An early build reserved the rail's width and pushed the card 48px
+right; Sam: *"there is to be no movement or re-sizing of the core UX elements and army rows to
+accommodate the timeline… the core boxes and rows are front and center and we'll adjust the timeline to
+work around that."* `TIMELINE_RAIL_BASE` is 0 and kept as a named constant with that rule beside it. The
+only concession available is nudging the CHILDREN row inward — a change to that row, not to the stage.
+
+### 35.3 Bars move on the CARD's clock, and are keyed by LANE
+
+The bars transition on the duration read from the camera store, so the rail and the stage arrive
+together — §30's two-clock desync is the named failure of this layer.
+
+**Keyed on the LANE, never on the person.** Keyed on the person's id, a navigation destroyed the
+rectangle and built a new one at the destination — and a new element has nothing to transition *from*,
+so it never animated once. The lane is the durable identity: "the bloodline bar" persists and the person
+flows through it. Same reasoning as the flight's keyed chip lists.
+
+### 35.4 Uncertainty is per-END, and it replaced the hatch
+
+Each end is answered separately and the guessed one dissolves:
+
+| known | top | bottom |
+|---|---|---|
+| birth + death | hard | hard |
+| birth only | hard | **dissolves** |
+| death only | **dissolves** | hard |
+| neither | **dissolves** | **dissolves** — placed from a relative's year |
+
+The mask carries the border with it, so a guessed end cannot draw a hard line. It sits on a
+**pseudo-element** so the paper dissolves while the NAME stays crisp: an uncertain date is a reason to
+soften a bar and never a reason to make the person harder to read.
+
+**THE HATCH IS REMOVED, and must not return as it was.** It marked `t.e` — a birth-year proxy meaning
+"the table inferred this position". Once ends could dissolve it became a second, differently-derived
+answer to a question the bar already answered, and the two disagreed: `julia-cole` (death known) was
+striped while `mary-bryan` (birth known) was not, despite identical doubt. Worse, on two `pv` brothers
+the stripes were the *only* difference between them, encoding "one of these has a birth year on file" —
+a distinction the viewer cannot read and one the privacy flag exists to stop mattering. If uncertainty
+ever needs a second channel, derive it from the same `by`/`dy` the mask uses, **never from `t.e`**.
+
+### 35.5 The estimated lifespan is measured from this tree
+
+14,323 people carry both dates, so the tree answers its own question — mean years lived by birth
+century and sex:
+
+| | male | female |
+|---|---|---|
+| 1600s | 58.8 | 61.0 |
+| 1700s | 61.4 | 61.2 |
+| 1800s | 59.5 | 62.0 |
+| 1900s | 69.2 | 75.1 |
+
+Sam's suggested 60 was within a year of the tree's own answer for every century before 1850, which is
+where most of these bars sit. A guessed end starts dissolving at 75% of the estimate — his "say it's 60
+years, around 45 years start fading out".
+
+**The one place the data must NOT be trusted** is the recent end. A cohort that has not finished dying
+can only report the lifespans of those who died early; the tree says 49.2 for 1950s births, which is
+survivorship bias and not a fact about anyone. From 1950 the figures are stated modern ones, and the
+comment saying so is there to stop someone "correcting" them back.
+
+### 35.6 Born before the scale — fade INSIDE the window
+
+Seven people are, back to 1550. They used to be clamped to `START_YEAR`, drawing a hard edge at 1586 —
+so the rail claimed Richard Garbrand and Rev. Thomas Hooker shared a birth year.
+
+The range is unchanged (Sam: "the timeline range is fine"). The bar keeps its true position and fades
+out instead. **Two attempts, and the difference is the lesson:** the first let it run past the top and
+dissolve on the way, which still met the browser chrome ~30% opaque and ended in a flat cut ("it looks
+terrible"). The fade is now stated in **viewport** terms and completes inside the window — invisible
+above y=14, solid by y=58. A percentage cannot do this: a fraction of a bar that begins off-screen
+spends its fade where nobody can see it.
+
+### 35.7 LINE ANCHORS — an egg's route home, and why it is baked
+
+An easter egg appears beside the people who connect them to the line: Richard Garbrand with Susanna
+(his daughter, who married in) AND Rev. Thomas Hooker (the man she married). **A payload is one
+neighbourhood deep**, so Richard can see Susanna and never Thomas. Across 554 eggs: 16% already see an
+`hd` person, 57% see the bridge but not the anchor, 27% have no bridge at all.
+
+Fetching that hop in the client would land the third bar on a second clock — §30 again. So it is baked
+in `regenerate-data.js` (`lineAnchorsFor`), the same shape as the kin-distance LCA bake and the derived
+`sp` flag. **Purely additive**: 18,129 payloads keep their six keys, 492 gain one, canonical untouched.
+
+**Lanes are POSITIONS; colour is CLASS.** Tying colour to lane index paints Thomas Hooker I mint when he
+should be blue. Overlap deepens with each step away from the line (7 / 10 / 13 px) so the set reads as a
+stack receding from the bloodline. Four bars is the ceiling, capped at RENDER not in the bake — the data
+stays complete and how much is worth drawing is a display decision. 13 people have a longer route.
+
+Two findings from the walk, both of which will be re-broken by anyone tidying it:
+
+- **SPOUSES ARE EXPANDED FIRST.** Susanna married Rev. Thomas *and* bore him Joanna — both `hd`, both
+  one hop away. Children-first returned the daughter, and Richard's rail read "Joanna, Susanna,
+  Richard". `sp` means MARRIED INTO the line, so the person they married is the anchor.
+- **A PAIR COLLAPSES ONLY WHEN THE CHAIN HOLDS WITHOUT THEM.** A married pair shares one position and
+  the featured one takes it — but firing that on any leading spouse severed 132 of 492 chains. Alice
+  Hathaway Lee proved it: her route runs through Theodore to his SECOND wife, so dropping him left two
+  of one man's wives side by side with the husband who links them missing. The test is whether the focus
+  has an edge of their OWN to the next link.
+
+Harriet Beecher Stowe, expected not to work at all, reaches the line through her sister Isabella.
+
+### 35.8 The privacy question, still open
+
+`pv` (living, non-notable) people now get a fuzzy bar positioned from a RELATIVE's public year — their
+own dates are never read. The geometry is a pure function of other people's public data, so nothing
+flows out of the private field. But 24 of them anchor on a spouse born the same year, so the bar lands
+on their real birth year by coincidence. **Sam has not ruled on this.** Reverting to no-bar is one line.
+
+### 35.9 Still to design
+
+The rail is a scaffold: a coloured rectangle and tick marks. Sam has seen it and said so. The
+derivation and the motion are the parts worth keeping. **Anchors are not built** — and per Sam they sit
+at PROMINENT years, not birth years, which is a new canonical field plus thumbnail crops (Stream A).
+Era marks are a starter set meant to be edited.

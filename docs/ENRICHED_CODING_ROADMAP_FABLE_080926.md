@@ -1,6 +1,6 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 8, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_080826.md (the what/why for every item below).**
+**Companion: ENRICHED_DESIGN_FABLE_080926.md (the what/why for every item below).**
 **The 080326 edition (August 3) adds §18 — THE BOARD MOVES AS ONE. The card-transition layer reopened after a long pause and closed again the same day, on three findings that were all the same finding: distance and time were being decided SEPARATELY in each place instead of once for the whole stage. `growFrom` clocked a promotion off the card's top-left corner while its far corner covered 3.5× the ground; the leaving rows drifted a flat 28px in the camera-pan direction while the arriving rows swept 150px from elsewhere, so they crossed through each other; and the non-promoted parent dissolved in the parents row to reappear in the notch a beat later. Now: honest max-corner velocity, a measured 145px tier pitch every row shares, one direction (the pan) and one clock (the demotion's) for every row at once, and a hand-off that travels in front of the card and lands wearing the destination's own face. Also records the STACKING-CONTEXT TRAP (a z-index that measured as applied and did nothing), two latent bugs the work exposed (`chipExit` holding a seat in the flex flow; `.flat` nearly overloaded as two signals), and the false-red/false-green lessons from both.**
 
 **The 080326 edition (August 3) adds §17 — THE KIN-DISTANCE BAKE SHIPPED, closing §15 and the §19.4 debt behind it. The deck's SAME-LINE test no longer proxies kinship with anything: `regenerate-data.js` stamps a per-CC `kin_distance` (edges through the nearest shared ancestor, ONE marriage allowed to bridge the two blood lines at a cost of 2), and `isVerticalMove` reads it. Uncles, aunts and parents-in-law ride vertical wherever the tidy tree seated them; second cousins, the in-laws of distant collaterals, and true strangers stay lateral. Also records the probe that was asserting the WRONG THING (a father-in-law logged as a cross-branch-peer control), and §17.4 — redirects.json wired as 301s after 673 entries of accumulated dead URLs.**
@@ -24,6 +24,8 @@
 **The 071726 edition (July 17) adds §11 — PHASE 7 SHIPPED END TO END (sibling trigger, panel, cascade, carousel, close, flight, retraction), the GHOST SAGA (three z-order bugs from one unstated fact, one of them pre-existing), the SIX FALSE-GREENS and what they have in common, and the probe suite added. Design rationale: design doc §21.**
 
 **The 072326 edition (July 23) adds §13 — THE DECK SHIPPED. The July-22 §12 sequence's item 1 is DONE: the CC transition is built, probe-guarded, and committed (commit 0c652f6c, Stream B). It shipped as the DECK PUSH — two solid weighted cards + an empty gap, not the visible riffle (the convoy read as "adjacent" and shrank the tree; ghosts parked behind DECK_GHOSTS=false). Records the gen_delta direction model, the fixed ping-pong memory, the weight-physics dials, the flight-lock/connector-cut/belt, the seven-probe guard, and the resequence (Shuffle Notables now unblocked). Design rationale: design doc §22 (as built). Also adds §14 — PHOTO-LOADING RESTORED: a hover-preload experiment had degraded foundational chip loading; fixed by making the NEIGHBORHOOD the load unit (batch preload, on-screen chips tiered first, one shared Cloudinary derivative per person, media demoted to on-demand). The Cloudinary warm-up script is queued. Design rationale: design doc §24.**
+
+**AUGUST 9 (§36): the CHILDREN ROW GETS RULES and the TIMELINE LANDS AS A SCAFFOLD. Records what shipped across two commits, and — more usefully — the eight things that went wrong in the order they went wrong, every one of which was found by Sam on a screenshot rather than by a probe. The worst was moving the STAGE to make room for the rail, which inverts the hierarchy the whole project is built on. Also records the gap worth generalising (grandchildren were enriched but never asked `diedYoung`, so a child who died at birth sat mid-row in full ink-blue — the component was fine, the flag never arrived) and the four instruments that cannot see what they claim to, all baseline-confirmed. Design rationale: design doc §34–35.**
 
 **AUGUST 8 (§32): the GRANDPARENT TIER now takes full part in a navigation — the two-tier march, the implied grandchild seat, the first generation-crossing chip journey in the project, the traveller's clock, and the stage that stopped moving while anything is flying (design §30). It had a companion handoff, `docs/HANDOFF_grandparent_tier_080826.md`, which Sam RETIRED on Aug 8 once this pair had absorbed it — the same fate as `DESIGN.md` and `CODING_HANDOFF.md`, and it is not coming back. **Do not go looking for it.** What it carried lives here: the as-built account in §32 and design §30–31, the unreproduced intermittent flash and the deferred `rowClockMs()` decision (it never derives — it returns its 420ms fallback on every flight, and fixing it changes the default flow, so it is Sam's call) in §32.4, and the dead ends in design §30.3.**
 
@@ -3176,3 +3178,87 @@ Two reds that are **not** this work, both established by measurement rather than
   (`docs/HANDOFF_grandparent_tier_080826.md` was retired by Sam on Aug 8 — deliberately, once this pair
   had absorbed it. Its deletion is committed and its three in-doc references re-pointed.)
 - `scripts/spike-scale.mjs` is a throwaway kept until 2.75 closes, so §33.1's numbers stay re-runnable.
+
+---
+
+## 36. AUGUST 9 — THE CHILDREN ROW GETS RULES, AND THE TIMELINE LANDS (design §34–35)
+
+Two commits: `12a793af` (child rows + the rail as a scaffold) and `f3d52619` (the rail's uncertainty
+model + the line-anchor bake). Design rationale in §34 and §35.
+
+### 36.1 What shipped
+
+- **Child chips are their own tier** — 198×67.5 (90%), type at 0.945. Aspect ratio preserved exactly
+  so `flight.ts`'s same-tier test still passes.
+- **Row breaks are decided, not discovered** — `src/lib/state/childRows.ts`, a grid of eight half-chip
+  tracks. Counts hold identically from 1440 down to 744.
+- **`shrinkToFit` gained `ellipsis`** — chips truncate rather than wrap, because a second line pushes
+  the dates out through `overflow: hidden`.
+- **`TimelineRail.svelte`** — the scale, the lifespan bar on the flight clock, three lanes, per-end
+  uncertainty, era marks.
+- **`lineAnchors`** — the first Stream-B change to touch `regenerate-data.js` since the kin-distance
+  bake. Additive: 492 of 18,621 payloads gain one key.
+- **Grandchildren finally get the died-young treatment** (see 36.3).
+
+### 36.2 The order things went wrong
+
+Every one of these was found by Sam on a screenshot, not by a probe:
+
+1. **The stage was moved to make room for the rail.** The worst error of the session — it inverts the
+   hierarchy. Reverted; `TIMELINE_RAIL_BASE` is 0 with the rule written beside it.
+2. **The rail never animated.** Keyed on the person's id, so every navigation built a new element with
+   nothing to transition from. Lane-keyed now.
+3. **The grid rendered nothing** — written into the losing one of two same-specificity
+   `.children-slot` blocks. §34.1's own lesson, arriving on schedule.
+4. **The union fold fired at 1150px** when Sam wanted 850. Re-keyed from a `u` threshold to a viewport
+   width — `u` is not a proxy for width once the clamp is involved.
+5. **The hatch contradicted the dissolve** (design §35.4). Removed and tombstoned.
+6. **Seven people born before 1586 were clamped to it**, so the rail asserted a shared birth year.
+7. **Then they ran off the top of the browser** and were cut flat by the chrome. Fixed by stating the
+   fade in viewport terms instead of as a fraction of the bar.
+8. **The spouse-collapse rule severed 132 chains** — found via Alice Hathaway Lee.
+
+### 36.3 The gap worth generalising
+
+Grandchildren were enriched but never asked `diedYoung`, twelve lines below the children who were —
+so a child who died at birth sat mid-row in full ink-blue. `PersonBox` needed no change: it already
+drives the grey and the "(died young)" suffix off `dimmed`, and the tier already passed it. **The flag
+simply never arrived.**
+
+That is the same shape as the `pv` gap on the rail: **an enrichment applied to one branch of the
+neighborhood and not another.** `buildFeatured`'s remaining asymmetry is `dedupeById`, which children
+get and grandchildren do not — legitimate today, worth knowing if something odd appears.
+
+### 36.4 Verification, and the four instruments that cannot see
+
+`probe-ghosts`, `probe-sibling-seat`, `probe-cards` green throughout. `probe-flight` at its known 4:1
+flake. `probe-fit` improved to 10/20 — **every remaining failure vertical.**
+
+The session leaned on ad-hoc measurement because the standing suite could not answer these questions,
+and three probes were caught measuring nothing:
+
+- `probe-flight` — flaky 4:1, **baseline-matched** (stashed and ran five each way).
+- `probe-carousel-regression` — RED on names only, rects byte-identical; stale since `nk`/`cf`.
+- `probe-tier` — "tier did not open", baseline-matched.
+- `capture-demote-terminal` — **misses all three capture bands, on baseline too.** Its viewport was
+  also clipping to a target now below the fold (the §13 overflow); that part is fixed.
+
+`probe-fit` gained two slugs and an assertion each time something got past it: `daniel-wadsworth-1771`
+for the blade, `gloria-vanderbilt-1924` for the carousel, and a chip-clip check. **A card that does not
+render the feature cannot catch the feature breaking** — that is the recurring lesson, and it is why the
+slug list matters more than the assertions.
+
+### 36.5 STILL OPEN
+
+- **`pv` people and the rail** (design §35.8) — Sam has not ruled. `molly-powell` is the case to judge.
+- **The vertical content budget** — `childCap` declared and unwired; the whole of probe-fit's 10/20.
+  Blocked on §13.3's "+K more" chip: navigates or expands. Recommendation: navigates.
+- **Arming `overflow: clip`** — one commented line, earned when probe-fit is green, and it must be
+  state-aware for the grandchild-tier exception.
+- **The rail's real design** — it is a scaffold and Sam has said so. Anchors need a Stream A batch
+  (prominent-years, NOT birth year, plus thumbnail crops).
+- **Louisa Kissam renders as "Maria"** — her compact's `fn` is Maria, display name Louisa. Stream A.
+- **Nine stray screenshots** across `src/lib/state/`, `src/lib/utils/`, `static/` and the repo root, and
+  `scripts/probe-out/` is still not gitignored. The `static/` one would be served publicly if committed.
+- Unchanged: the unscaled Tailwind spacing tail, and centring the card in the viewport minus its chrome
+  (design §33.4's ~150px lever).
