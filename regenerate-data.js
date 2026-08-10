@@ -297,9 +297,37 @@ function compact(p, slugMap) {
 		n: bioOf(p).chip_name || bioOf(p).display_name || p.id,
 		by: birthYear(p),
 		dy: deathYear(p),
+		// bm/bd/dm/dd — BIRTH AND DEATH MONTH/DAY, and they exist for exactly one reason: an AGE cannot
+		// be computed from years. Edith Olivia Gwynne was born 30 Nov 1853 and died 9 Jan 1899, so
+		// `dy - by` says 46 and she was 45 — her birthday had not come round. The timeline rail printed
+		// the subtraction and disagreed with the card sitting next to it (Sam: "we aren't just doing math
+		// on years we have to show real age").
+		//
+		// EMITTED AS MONTH/DAY RATHER THAN AS A BAKED AGE so there stays exactly ONE implementation of
+		// the precision rules. `ageAtDeath` in src/lib/utils/dates.ts already knows when a missing day
+		// still determines the answer (the months differ) and when it doesn't (they match) — porting that
+		// into this file would create the second copy that the dy_young comment below already warns about
+		// ("MUST match diedYoung()"). The client reconstructs a DateLocation and calls the real function.
+		//
+		// Absent when there is no month, which is most of the corpus — a year-only date makes the age
+		// approximate, and `ageAtDeath` reaches that conclusion from the missing field itself.
+		...(p.birth?.month != null ? { bm: p.birth.month } : {}),
+		...(p.birth?.day != null ? { bd: p.birth.day } : {}),
+		...(p.death?.month != null ? { dm: p.death.month } : {}),
+		...(p.death?.day != null ? { dd: p.death.day } : {}),
 		// pv — dates are in the payload (sorting needs them) but must not be DISPLAYED.
 		// Absent on everyone else; consumers test `person.pv`.
 		...(datesPrivate(p) ? { pv: true } : {}),
+		// lv — PRESUMED LIVING, on its own, independent of whether the dates are private. `pv` above is
+		// `presumedLiving && !notable`, so a living NOTABLE — Anderson Cooper, Loudon Wainwright III —
+		// has always been indistinguishable in the payload from someone whose death year simply was
+		// never recorded. The timeline rail drew them the same way as a result: a bar ending one
+		// estimated lifespan after birth. Sam: "alive means alive, and keeping the 60 year old timeline
+		// estimate kind of implies they should be dead by now but that's not what I want to convey."
+		//
+		// The notable carve-out is about PRIVACY, so it belongs to pv and only to pv. Whether someone is
+		// alive is a different fact and now travels separately.
+		...(presumedLiving(p) ? { lv: true } : {}),
 		sx: sex(p),
 		hd: Boolean(c.is_thomas_descendant),
 		td: Boolean(c.is_talcott_descendant),

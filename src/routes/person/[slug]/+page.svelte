@@ -1897,6 +1897,20 @@
 		   viewports they'd extend the document and raise a horizontal scrollbar. Clip horizontally
 		   at the stage so they never can (vertical scroll is unaffected by overflow-x). */
 		overflow-x: clip;
+		/* THE STAGE'S EMPTY MARGINS DO NOT CATCH THE POINTER. This box is full-width and full-height
+		   even though it only ever paints a column down the middle, so it was swallowing every click and
+		   hover aimed at the timeline rail beneath it — the rail's first interactive element, an anchor
+		   portrait, could not be hovered at all despite being plainly visible.
+		   `none` here plus `auto` on the children means the stage keeps every one of its own hit targets
+		   and gives up only the dead space around them. Event DELEGATION is unaffected: `warmPersonLinks`
+		   listens on this element and events still bubble to it from children that are themselves
+		   pointer-active — pointer-events governs hit-testing, not propagation. */
+		pointer-events: none;
+	}
+
+	/* Every direct child of the stage takes the pointer back — see the note on .page-container. */
+	.page-container > :global(*) {
+		pointer-events: auto;
 	}
 
 	/* The slot is exactly the card's bounding box (so the absolutely-positioned

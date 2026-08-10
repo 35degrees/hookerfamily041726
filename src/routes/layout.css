@@ -32,6 +32,22 @@
 	/* THE BLADE'S PAPER (Aug 7, Sam's "--light-greyish-blue"). The blade was pure #fff, identical to the
 	   card above it; a hair of blue separates the two sheets without reading as a colour. */
 	--color-bladepaper: hsl(223, 64%, 98%);
+	/* THE TIMELINE'S PAIR (Aug 10). The rail is the one surface in the app that is DARK, so it needs its
+	   own ground and its own ink — everything else in this theme is ink for a pale card.
+	   PINE is the "DEEP PINE (forest-nymph)" already written into the ground A/B note below; it was
+	   offered there as an alternative for the whole field and never taken, and it turns out to be right
+	   for a narrow instrument at the window's edge rather than for 100% of the stage.
+	   CREAM is the manuscript sheet's OWN MEAN TONE — the value Field already uses as the paper's
+	   background-color so a slow image request still paints the right colour. Reusing it means the rail's
+	   type is literally the paper the cards sit on, which is why it belongs to this app rather than being
+	   a cream chosen from a chart. Sam asked for "the cream-primary color, i think is in the tailwind cc
+	   themes"; there was no such token, so this names one. */
+	--color-pine: #10241b;
+	--color-cream: #f7f1e6;
+	/* THE RAIL'S INK. Dark olive from the ground's own hue family — the rail went pale and cream on it
+	   measures 1.23:1, i.e. nothing. Ink and ground are ONE decision here; moving either alone has cost
+	   legibility every time. */
+	--color-rail-ink: #ab7a42;
 	/* THE SHADOW TINTS (Aug 7). Shadows were neutral black; these warm them. rose400 is what --shadow-ink
 	   currently carries; the others are kept as the alternatives already tried. */
 	--color-rose300: hsl(14, 25%, 72%);

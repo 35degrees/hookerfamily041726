@@ -1,6 +1,6 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 8, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_080926.md (the what/why for every item below).**
+**Companion: ENRICHED_DESIGN_FABLE_081026.md (the what/why for every item below).**
 **The 080326 edition (August 3) adds §18 — THE BOARD MOVES AS ONE. The card-transition layer reopened after a long pause and closed again the same day, on three findings that were all the same finding: distance and time were being decided SEPARATELY in each place instead of once for the whole stage. `growFrom` clocked a promotion off the card's top-left corner while its far corner covered 3.5× the ground; the leaving rows drifted a flat 28px in the camera-pan direction while the arriving rows swept 150px from elsewhere, so they crossed through each other; and the non-promoted parent dissolved in the parents row to reappear in the notch a beat later. Now: honest max-corner velocity, a measured 145px tier pitch every row shares, one direction (the pan) and one clock (the demotion's) for every row at once, and a hand-off that travels in front of the card and lands wearing the destination's own face. Also records the STACKING-CONTEXT TRAP (a z-index that measured as applied and did nothing), two latent bugs the work exposed (`chipExit` holding a seat in the flex flow; `.flat` nearly overloaded as two signals), and the false-red/false-green lessons from both.**
 
 **The 080326 edition (August 3) adds §17 — THE KIN-DISTANCE BAKE SHIPPED, closing §15 and the §19.4 debt behind it. The deck's SAME-LINE test no longer proxies kinship with anything: `regenerate-data.js` stamps a per-CC `kin_distance` (edges through the nearest shared ancestor, ONE marriage allowed to bridge the two blood lines at a cost of 2), and `isVerticalMove` reads it. Uncles, aunts and parents-in-law ride vertical wherever the tidy tree seated them; second cousins, the in-laws of distant collaterals, and true strangers stay lateral. Also records the probe that was asserting the WRONG THING (a father-in-law logged as a cross-branch-peer control), and §17.4 — redirects.json wired as 301s after 673 entries of accumulated dead URLs.**
@@ -3262,3 +3262,74 @@ slug list matters more than the assertions.
   `scripts/probe-out/` is still not gitignored. The `static/` one would be served publicly if committed.
 - Unchanged: the unscaled Tailwind spacing tail, and centring the card in the viewport minus its chrome
   (design §33.4's ~150px lever).
+
+---
+
+## 37. AUGUST 10 — THE TIMELINE BECAME AN INSTRUMENT (design §36)
+
+One long session, entirely on the rail. **Design §36 is the durable write-up and is the thing to read
+first** — it is deliberately written for someone arriving cold. This section is the order things
+happened in, what went wrong, and what is still open.
+
+### 37.1 What shipped
+
+| | |
+|---|---|
+| **Ground** | hue 62 → **53** (the "pee stain" was the green cast, not the lightness); span 122 → **134px**; Parchment's grain composited in, at 75% of Parchment's own sigma |
+| **Portraits** | 9 → **16** anchors: Thomas Hooker, James Pierpont, Jonathan Edwards, Tallmadge, Jay, Whitney, Burr, Ingersoll, Emma Willard, Vanderbilt, Terry, Rockefeller, Morgan, Roosevelt, Taft, Cooper |
+| | moved to 8px off the edge; grow up to 1.25× on short screens; hover suppressed after a click and during a flight; depth drop delayed 160ms |
+| **Bars** | real ages (not year subtraction); living people run to today; tooltips that ride the cursor; +3px right; 5% narrower; lane 3 pulled back |
+| **Navigation** | bars and portraits are now links — spouse swap, direct vertical CC, all through the existing delegation |
+| **Motion** | portrait flights get their own 1200ms bar clock; new lanes travel in instead of appearing |
+| **Payload** | `compact()` gains `bm/bd/dm/dd` (real dates) and `lv` (presumed living). Additive; canonical untouched |
+| **Shared** | `flightLock` gained `subscribeFlightLock`; `ageAtDeath` widened to `Pick<DateLocation,'year'|'month'|'day'>`; `captureRects` document-scoped |
+| **Removed** | the era notches (WWI/WWII/Civil War). The **`ERAS` list is kept, unrendered** — it is curated content and the successor will want the same years |
+
+### 37.2 The reversals, in order — this is the useful part
+
+Four things were built, seen, and taken back the same day. None was a misread of the instruction; each
+was Sam seeing the result and changing his mind, which is the system working. **The cost is only paid
+twice if the reasoning is not written down**, hence §36.
+
+1. **The one-bar rule.** Relaxed so bloodline cards would have somewhere to click; reversed on sight —
+   the supporting bars are a *route home*, not a family summary. Bloodline cards are dead ends and that
+   is correct. (§36.6)
+2. **Person-keying the bars.** Asked for (egg → egg "just changes the names, which is awkward"), built,
+   reversed within the hour: *"I take that back… it's much worse this way."* Second rejection of the
+   same idea for a second reason. (§36.10)
+3. **The bar-launched spouse swap.** The flight grew out of the timeline, which Sam liked and rejected:
+   *"the timeline and the Featured Card aren't meant to blend or share features."* Kept for CC bars,
+   where growing from the rail is the intended gesture. (§36.8)
+4. **Lane 3's overlap.** 13 → 3 (push right 10) → **7** (back left 4). Net +6.
+
+### 37.3 The four things that were harder than they looked
+
+- **The grain took four shapes.** Three failed, all for one reason: `.rail` is a stacking context, so
+  `mix-blend-mode` had nothing real to blend against. Full autopsy in §36.3. The lesson that generalises:
+  **a blend mode over a semi-transparent backdrop inside an isolated stacking context composites the
+  source colour straight in** — mask it however you like, it will still haze.
+- **`svelte-check` passed while every person page 500'd.** A comment inside a `transition:` value.
+  Compile the component directly and check SSR after CSS edits; the type-checker does not see it.
+- **Svelte 5 delegates `onclick` to the app root.** A handler meant to intercept a delegated navigation
+  ran *after* it. `onclickcapture` is the fix. This will recur anywhere the rail (or anything else
+  outside `.page-container`) tries to pre-empt `warmPersonLinks`.
+- **A probe that cannot see what it claims to.** `elementFromPoint` skips `pointer-events: none`, so a
+  probe asking "what is painted over the rail" could only ever answer "nothing". It read as a pass.
+  This is the fourth instrument in this project to have that defect; assume it of any new one until
+  it has been made to go red on purpose.
+
+### 37.4 Open, and deliberately not decided
+
+- **Year labels sit behind portraits.** With five founding-era portraits in a row, `1750` and `1800` are
+  covered. Sam has seen it; no ruling. One `z-index` if he wants labels on top.
+- **Teddy/Taft overlap is 2.00 years**, past the one-year rule, because the short-screen boost grew both
+  circles. Every other pair is ≤1.01. Fix is one year on Taft's `from`.
+- **Ingersoll stands 24 years off his best window** (§36.5) — forced by arithmetic, but reversible if
+  Jay or Whitney is allowed to move instead.
+- **`pv` privacy** (§35.8) — still unruled.
+- **Anchors are still hand-written in the component.** §3.6 wants them as data. Nothing depends on the
+  move; it is a Stream A curation task whenever Sam wants it.
+- **Edith renders as "Edith Kermit"** on her bar — that is her `first_name` in canonical, a double given
+  name, not a chip name. A Stream A edit (trim `first_name` or set `chip_first_name`), not a rail change.
+- **Tree navigation shows `--move-ms: 0`**, so those bars snap rather than glide. Pre-existing, untouched,
+  and Sam has said tree navigation feels right — noted only so it is not mistaken for a regression.

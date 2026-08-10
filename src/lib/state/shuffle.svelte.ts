@@ -120,7 +120,26 @@ export async function shuffleToNotable(node: HTMLElement): Promise<void> {
 	const current = featured.current?.person?.slug ?? null;
 	const target = pick(rows, current);
 	if (!target) return;
+	markSeen(current);
+	markSeen(target.slug);
+	await ccFlyTo(node, target);
+}
 
+/**
+ * FLY TO A NAMED PERSON ON THE DECK, from an element that is not a chip.
+ *
+ * Extracted from shuffleToNotable when the timeline rail needed the same thing: an anchor portrait is
+ * off-stage chrome that has to hand the deck a person, which is exactly what the Notable People button
+ * does. Two copies of this capture sequence is how they drift — and there is a lot to get wrong in it,
+ * since the ORDER mirrors the CC branch of warmPersonLinks and every line is load-bearing.
+ *
+ * The caller owns anything specific to WHY it is flying (the shuffle's recently-seen ring, an anchor's
+ * own bookkeeping); this owns only the flight.
+ */
+export async function ccFlyTo(
+	node: HTMLElement,
+	target: { slug: string; t: { x: number; y: number | null } | null }
+): Promise<void> {
 	// Everything below mirrors the CC branch of warmPersonLinks, in the same order, for the same reasons.
 	if (!prefersReducedMotion.current) lockFlight();
 	captureFlightOrigin(node.getBoundingClientRect());
@@ -165,9 +184,6 @@ export async function shuffleToNotable(node: HTMLElement): Promise<void> {
 	setCarouselLateral(); // fixed direction — never the ping-pong. See (2) above.
 	setCarouselTempo(); // 10% quicker end-to-end. See (4) below.
 	publishCameraMove(move);
-
-	markSeen(current);
-	markSeen(target.slug);
 
 	if (!prefersReducedMotion.current) {
 		hideCcRoster();

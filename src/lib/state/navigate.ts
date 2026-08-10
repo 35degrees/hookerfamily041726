@@ -150,7 +150,13 @@ export function warmPersonLinks(node: HTMLElement) {
 		capturePanDir(relation === 'parent' ? 'down' : relation === 'child' ? 'up' : 'lateral');
 		// BUG 3: snapshot every relative box's rect NOW — before focusPerson changes state and the
 		// rows reflow — so each leaver can pin itself out of flow at its true pre-reflow position.
-		captureRects(node.querySelectorAll('[data-flight-id]'));
+		// DOCUMENT-SCOPED, not `node`-scoped, and that is what lets this action be mounted somewhere other
+		// than the stage. The flight boxes live in .page-container wherever the click came from, so a
+		// delegation root that does not contain them (the timeline rail, whose bars are now person links)
+		// would otherwise capture an EMPTY rect list and every leaver would fail to pin at its pre-reflow
+		// position. ccFlyTo has always done exactly this for the same reason; the two paths now agree.
+		// Identical behaviour for stage clicks: .page-container holds every [data-flight-id] there is.
+		captureRects(document.querySelectorAll('[data-flight-id]'));
 
 		// CAMERA STORE (Phase 3a Block 2): publish the move HERE — synchronous with the captures above,
 		// before focusPerson mutates state. from = the departing featured's table coords; to = the

@@ -17,6 +17,8 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The 080426 edition (August 4) adds §26 — THE SIBLING PANEL AS A PERSISTENT COLUMN (as built; SUPERSEDES §21.1 wherever they differ). §21 described the panel as a transient drop-down; this is the panel as a FIXTURE that travels with the card, and almost every finding in it is the same shape: what changed is not the pixels but the panel's LIFETIME. It records the in-place mutation model, the durable rule that a seat in a MOVING container is a resting position rather than a live rect (third instance of the §18.9 family), the SHAPE-EARLY-THEN-SLIDE finding (direction is read from what changes LAST), the way-station rule for a different-tier landing (§18.4's second instance), the RECIPROCAL-GATE rule earned on Alice Lee Roosevelt and 57 other one-way doors, open-by-default, the fixed anchor, the chevron/alpha-hover header, the leaver's-alpha doctrine extending §17 — and §26.12, the NEGATIVE SPACE: four things built and reverted (including one documented-invariant violation) plus two measurement failures that produced confident false greens.**
 
+**The 081026 edition (August 10) adds §36 — THE LEFT TIMELINE AS AN INSTRUMENT, written deliberately for someone arriving cold: where every piece lives, the stacking order and its two traps, the ground's colour/curve/grain (including the three grain attempts that failed and exactly why a blend mode cannot work inside an isolated stacking context), the anchor portraits as built (sixteen of them — this replaces §35.9's "anchors are not built"), who gets a lifespan bar and why a bloodline card is deliberately a dead end, real ages via the card's own `ageAtDeath`, what `lv` means and why it is not `pv`, how a bar navigates without the rail containing any navigation code, the three motion clocks, the guardrails that have already been re-broken once, and how to MEASURE any of it. §35 remains true and is still the derivation; §36 is the instrument it became.**
+
 **The 080926 edition (August 9) adds §34 — HOW A ROW OF CHILDREN BREAKS (new doctrine; there was no prior convention): the two rules that generate every count (four per row maximum, never strand a single child), why six is 4,2 and not 3,3 (the taper is what makes the row read as birth order rather than a block), why it had to become a GRID of eight half-chip tracks (Svelte forbids a sibling break element next to `animate:`, and eight tracks is what lets a ragged row centre on integers), and the child chip's own size tier at 90% box / 0.945 type with the aspect ratio preserved EXACTLY because flight.ts's same-tier test reads it. And §35 — THE LEFT TIMELINE AS BUILT, which supersedes §3.6 on three points: the rail is NOT the Field's axis (10.5 px/year anchored vs ~1.9 px/year absolute), uncertainty is per-END and dissolves rather than hatching (the hatch is removed and tombstoned — it marked a birth-year proxy and contradicted the dissolve), and the estimated lifespan is MEASURED FROM THIS TREE (14,323 people with both dates) with the recent end deliberately not trusted because a cohort that has not finished dying reports only those who died early. Also records the line-anchor bake — an egg's route home is one hop deeper than a payload holds, so it is baked rather than fetched, and the two findings that will be re-broken by anyone tidying the walk (spouses expand first; a pair collapses only when the chain holds without them).**
 
 **The 080826 edition (August 8) adds §30 — THE STAGE MUST NOT MOVE WHILE ANYTHING IS FLYING: the one arithmetic fact the grandparent tier taught, that an in-flow element is painted at layout(t) + transform(t) and two different curves compose into the ideal path PLUS an error of ΔL·(e−c). It records why that error hides on an object with real travel and IS the entire motion on one with none, the shipped answer (an instantaneous collapse plus an arithmetic correction to every FLIP, rather than trying to settle the layout before measuring), the three consequences that are easy to undo by accident, the six attempts that were built and reverted with the measurement that killed each — including two that looked correct and measured WORSE — and the two rules added alongside it: a person's motion is owned by their morphIn, and a traveller tracks its seat.**
@@ -30,7 +32,7 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_080926.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_081026.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
@@ -4132,3 +4134,306 @@ The rail is a scaffold: a coloured rectangle and tick marks. Sam has seen it and
 derivation and the motion are the parts worth keeping. **Anchors are not built** — and per Sam they sit
 at PROMINENT years, not birth years, which is a new canonical field plus thumbnail crops (Stream A).
 Era marks are a starter set meant to be edited.
+
+---
+
+## 36. THE LEFT TIMELINE AS AN INSTRUMENT — the whole thing, for someone arriving cold (AS BUILT, August 10)
+
+_(Extends §35, which remains true. §35 documented the scaffold — derivation, mapping, uncertainty,
+line anchors. This documents the instrument it became: ground, portraits, navigation, motion, and the
+guardrails that were paid for. **§35.9 "Anchors are not built" is the one part of §35 now outdated** —
+sixteen are built and 36.5 replaces that paragraph. Everything else in §35 still stands.)_
+
+### 36.0 The model, in one paragraph
+
+`TimelineRail.svelte` is a **fixed ruler at the window's left edge, 122px wide, 1583→today, absolute**.
+It is not a component of the stage and never moves the stage. It draws four things, in this order:
+a **ground** (a gold gradient with paper grain, fading right), a **scale** (two tiers of tick, years on
+the coarse tier), **anchor portraits** (curated figures, placed at their prominent YEARS, sized in
+years so they resize with the window), and **lifespan bars** (the featured person plus, when the
+featured person is *not* on the Hooker line, whoever connects them to it). The bars and the portraits
+are both **navigation**: clicking either changes the featured card. Everything about it that looks like
+a decision — a colour, an overlap, a duration — has been argued at least once and usually twice, so
+read the constant's comment before changing the constant.
+
+### 36.1 Where things live
+
+| file | what it owns |
+|---|---|
+| `src/lib/components/TimelineRail.svelte` | ~2,050 lines. Everything above. Self-contained. |
+| `regenerate-data.js` → `compact()` | `bm/bd/dm/dd` (real dates for ages), `lv` (presumed living), `cf` (chip first name) |
+| `regenerate-data.js` → `lineAnchorsFor()` | the baked route home for easter eggs (§35.7) |
+| `src/lib/utils/dates.ts` → `ageAtDeath()` | the ONE implementation of age precision, shared with the card |
+| `src/lib/state/flightLock.ts` | `subscribeFlightLock` — added for the rail, see 36.9 |
+| `src/lib/state/navigate.ts` → `warmPersonLinks` | the delegation the rail's links ride, see 36.8 |
+
+### 36.2 The stacking order, which is load-bearing
+
+```
+z 20   a hovered portrait          (must clear a 4-bar chain, which reaches z 5)
+z 15   a hovered bar               (its tooltip is a child and inherits the lift)
+z 2+   bars, at 2 + lane
+z 1    portraits at rest           — bars pass IN FRONT of a resting portrait, by design
+z 0    the ground (::before)
+z 0    .rail itself                — behind the stage, which is .page-container at z 1
+z 3    .rail while a CC flight runs (RAIL_OVER_FLIGHT, transient — see 36.9)
+```
+
+Two of these are traps. **A hovered portrait at z 5 tied with a four-bar chain** and lost the tie to
+DOM order, so the Commodore's own bar painted over his face. **Lane depth must arrive as a CSS custom
+property** (`--bar-z`), not as an inline `z-index`, or no stylesheet `:hover` rule can ever beat it —
+`.bar:hover { z-index: 15 }` silently did nothing for a whole session.
+
+### 36.3 The ground — colour, curve, grain
+
+**Colour** is `hsl(53, 56%, 74%) → hsl(53, 68%, 79%)`, a linear ramp. The hue is the whole story: it
+began at 62, which is yellow-*green*, and Sam's verdict was "a little like a pee stain I can't unsee".
+Blending toward parchment barely moved it (62 → 60) because blending mostly lightens; the fix was to
+move the hue itself to 53, which is Parchment's own 51 plus a little gold. **Raise L, keep S** — an
+earlier attempt lightened by thinning alpha and lost 18–31 points of saturation over warm paper.
+
+**The fade** is `(1 − smoothstep(t^1.5))^2.2` across **134px**, emitted as **36 stops ~3.7px apart**.
+Every stop is a kink and a kink reads as a line, which is why there are 36 of them and why they are
+generated rather than hand-edited. The exponents were chosen by measuring candidates, not by eye: this
+curve holds the left plateau (0.908 at a quarter across) while dropping the tail tenfold at 85%, so the
+right edge is not locatable. The cost is a steeper middle — peak slope 0.0175/px, against the 0.021
+that produced a visible band Sam objected to. **If the middle ever reads as a band, widen the span
+rather than flatten the tail.**
+
+The ground is **134px inside a 122px rail** — the `::before` runs 12px past the right edge, because a
+134px gradient inside a 122px box is cut off at 122, and a cut is exactly the hard line the fade exists
+to avoid.
+
+**The grain is Parchment's, and getting it there took four shapes.** Worth reading before touching it:
+
+1. Grey tile + `mix-blend-mode: overlay` → measured a **−23-level grey haze**. `.rail` is a stacking
+   context, so overlay blends against the rail's *own* gradient and nothing behind it — and that
+   gradient is semi-transparent across most of its width. Blending against a partly-absent backdrop
+   composites the source straight in.
+2. A tighter mask on the same thing → no help. The mask was never the cause.
+3. A cream alpha-speckle → cannot haze, but measured invisible (σ 0.50 → 0.66): cream and gold differ
+   by nine levels of red, so there was nothing to modulate.
+4. **What works:** the gold gradient and the grain are BOTH background layers *of the pseudo-element*,
+   both fully opaque, composited with `background-blend-mode: overlay, normal` — a self-contained
+   operation with a real backdrop — and the fade applied afterwards as a **mask** over the result. This
+   is why the colour stops carry no alpha of their own.
+
+The tile is Parchment's, unchanged in every parameter that matters (220px stitched, `fractalNoise`,
+`baseFrequency 0.8`, `numOctaves 3`). Two numbers differ and they **must move together**: amplitude
+`1.125` with intercept `−0.0625`, because `overlay` is only neutral when the tile averages 0.5
+(1.125 × 0.5 − 0.0625 = 0.5). Change one alone and the rail lightens or darkens instead of just getting
+grainier. Parchment's own amplitude is 0.33 and produces the same grain because Parchment *adds* its
+noise; overlay on a light base has slope 2(1 − base) ≈ 0.22, so 0.33 arrives as a seventh of the grain.
+Parity would be 1.5 (σ 7.8 against Parchment's ~7); 1.125 is that less 25% — right for a 122px strip.
+**Change the ground's lightness much and the amplitude needs recomputing**, since the compression
+depends on the base it lands on.
+
+### 36.4 The scale
+
+`START_YEAR = 1583` (three years ahead of Thomas Hooker so his corner is not on the edge), `PAD_Y = 0`
+(edge to edge — Sam wanted 2026 truly at the bottom of the screen). Two tick tiers only: `.decade`
+every 10 years, `.half` every 50, and **only the coarse tier carries a year**. A third tier at 25 years
+was built and removed: at ~1.9px/year a 25-year mark sits 47px from its neighbours, so a third length
+did not read as a third rank — it read as an irregularity in the decade rhythm. Two tiers keep the
+scale countable: ten stubs between each pair of numbered rules, every time.
+
+Year labels are 11.25px / weight **600**, centuries 11.81px. The century rule must not restate
+`font-weight` — it did, at 500, and being later in source order it quietly undid the 600 on every
+century label.
+
+### 36.5 The anchor portraits — replaces §35.9
+
+Sixteen curated figures, hand-written in the `ANCHORS` array in the component. Still not data; §3.6's
+"curation is DATA, owned by Sam" remains the eventual destination.
+
+Each carries `{slug, name, from, years, src, t, headshotBlurb, lifespan}`. **`from` is the first year of
+the person's peak, and `years` is how many** — so a portrait is a SPAN OF TIME, not a badge: it sits
+where those years sit and resizes with the window. `t` is the table seat, needed so the CC flight has a
+destination. Sam's rule for placement: **eight or nine years on the peak, overlapping neighbours by no
+more than one year.**
+
+Three placement facts that will otherwise be re-derived from scratch:
+
+- **The founding era is arithmetically tight.** Tallmadge holds 1775–1783, and four more 8-year windows
+  at a 7-year minimum pitch need 1784–1811 while all four peaks want to be inside 1784–1807. Twenty-four
+  years cannot hold four windows without two-year overlaps, so exactly one man must stand off his best
+  years. **Ingersoll is the one who moves** (to his 1811–1818 second term) because he is the only one of
+  the four with a genuine second peak rather than a quiet old age.
+- **A portrait's size is compensated on short screens.** `1070 / vh`, capped at 1.25 — continuous, not a
+  step, so portraits do not snap size mid-drag while resizing. It lives *inside* `anchorD` so that
+  `anchorOrigin` measures the same circle that gets drawn; scaled at the call site, a portrait near an
+  edge would choose its growth corner from a size it no longer was. Below ~856px the 14px floor takes
+  over before the boost does.
+- **`transform-origin` is chosen per anchor** from how much room each side actually has, never
+  hard-coded to one corner — at 3.3× a dot 8px off the edge cannot grow about its centre.
+
+**Hover has three suppressions, and each exists for a different reason.** All three are the same
+`.no-hover` class, which outranks `.anchor:hover` on specificity:
+
+| when | why |
+|---|---|
+| just clicked (until `pointerleave`) | CSS `:hover` cannot end while the pointer sits still, so a clicked portrait stayed at 3.3× over the card that had just arrived |
+| a flight is running | rapid clicking reset transitions; and per Sam it must expand *by itself* the instant the flight lands, which is free — the class comes off and a pointer that never moved is still hovering |
+| — | keyboard focus is **deliberately not** suppressed: a focus ring with no label is worse than a label that outstays a click, and a keyboard user has no "move the mouse away" to perform |
+
+**The depth drop is delayed 160ms** (`z-index 0s linear 160ms`). `z-index` cannot tween, so it snapped
+20 → 1 on the first frame of un-hover while the transform still had 160ms to run, and the portrait spent
+its whole shrink underneath the bars. Rising stays immediate — the lift must lead the growth.
+
+### 36.6 The bars — who gets one, and where they sit
+
+**WHO.** This is doctrine and it was reversed once inside a day, so it is stated flatly: the supporting
+bars are **a route home, not a family summary**.
+
+| the featured person | bars |
+|---|---|
+| on the line (`hd`) | **one — themselves, and nobody else** |
+| married in (`sp`) | the bloodline spouse, then them |
+| an easter egg | the baked `lineAnchors` chain, then them — four is the ceiling |
+| an egg with no route (27%) | them, plus their own spouse |
+
+The one-bar rule was relaxed on Aug 10 so a bloodline card would have somewhere to click, and Sam
+reversed it on sight: *"if I click Thomas Hooker's headshot I only want the Thomas vertical bar… I
+don't want to imply the grandfather of a Hooker equates with a pure Hooker."* **A bloodline card is
+therefore a dead end for rail navigation, and that is accepted, not a defect.**
+
+**WHERE.** Width and pitch are separate constants and must stay separate:
+
+```
+LABEL_W  36     the year gutter
+lane 0   x = LABEL_W + 7 = 43
+LANE_W   24.7   what lane positions are measured against — FROZEN
+BAR_W    23.47  what a bar is actually drawn at
+OVERLAP  [0, 7, 5, 7, 15]   how much lane i overlaps lane i−1
+```
+
+`laneX` advances by `LANE_W − OVERLAP[i]`. While width and pitch were one constant, narrowing a bar
+dragged every lane left — the opposite of "narrow the bars but keep the left edges". **Overlap deepens
+with distance from the line** so the set reads as a stack receding from the bloodline, *except* lane 3,
+which is pulled back to 7 because at 13 the deepest bar buried the third bar's name. Lane 3's right
+edge lands at 125.6, past the rail's 122 — legal because `.rail` sets no overflow and the ground now
+runs to 134.
+
+The **name** is `cf ?? fn ?? sn ?? n` plus a derived suffix. The suffix is derived because no compact
+carries one, and **the Jr/Sr/roman-numeral allow-list is not optional**: the raw subtraction returns
+something for 2,607 people and most of it is married surnames. Only 238 people in the corpus have a
+`chip_first_name`, so most bars show the fallback.
+
+### 36.7 Ages, and what "alive" means
+
+**An age is not a year subtraction.** `dy − by` says Edith Gwynne was 46; she was 45, because her
+November birthday had not come round when she died in January. `ageAtDeath()` in `src/lib/utils/dates.ts`
+owns the precision rules and is shared with the card, so the two can never disagree again. The rail
+reaches it because `compact()` now emits `bm/bd/dm/dd`. **Emitted as month/day rather than as a baked
+age deliberately** — porting the precision rules into `regenerate-data.js` would create the second copy
+that file's own `dy_young` comment already warns about.
+
+**`lv` (presumed living) is emitted separately from `pv`**, and the distinction matters: `pv` is
+`presumedLiving && !notable`, so a living *notable* was indistinguishable in the payload from someone
+whose death was never recorded. A living person's bar **runs to today** and dissolves at the bottom.
+Anderson Cooper only ever looked right by accident — born 1967, his estimate overshot the present and
+was clipped back — while anyone born before ~1950 got a bar ending in their own past.
+
+For a living person who has outlived the estimate, **the name stays centred on the estimate**, not on
+the full bar. It costs one number because the label has its own absolutely-positioned box; expressed as
+a **height**, not padding, because the label is `vertical-rl` *and* `rotate(180deg)`, so physical
+padding lands on the opposite visual end from the one you asked for.
+
+### 36.8 Navigation from the rail — the delegation trick
+
+**The rail contains no navigation code.** `warmPersonLinks` is a delegation action: it catches a click,
+walks to the nearest `<a href="/person/…">`, and reads the entire flight off that anchor's data
+attributes. A chip is not special; **an anchor wearing the right attributes is.** So a bar simply *is*
+that anchor and inherits the spouse swap, the directional dive, the flight lock, the roster hide, the
+arc decision and the deck — in their real implementations rather than a second copy that would drift.
+
+| bar | attributes | flight |
+|---|---|---|
+| the focus | no href | nothing — you are already there |
+| a spouse of the focus | `data-relation="spouse"` | the corner swap |
+| anyone else | `data-cc`, `data-relation-class="direct"`, `data-gen-delta` | a flat vertical dive (`isArcMove` requires `collateral`, so `direct` never arcs) |
+
+Three things this cost, all of which will bite again:
+
+- **`captureRects` had to become document-scoped.** It queried the delegation root, and the rail
+  contains no flight boxes, so a rail click captured an empty rect list and every leaver failed to pin.
+  `ccFlyTo` had always done it this way; the two paths now agree.
+- **A spouse bar forwards its click to the real spouse chip** rather than flying itself. The flight
+  grows from wherever it was launched, so a bar-launched swap bloomed out of the timeline. Sam liked the
+  effect and rejected the premise: *"the timeline and the Featured Card aren't meant to blend."* The bar
+  dispatches the chip's click, which gives the genuine article — notch origin, clicked-chip id captured,
+  real demote behind it.
+- **That forward must be `onclickcapture`.** **Svelte 5 delegates `onclick` to the application root**,
+  so an ordinary handler on the bar runs at the very end of the bubble — long after `.rail`'s own
+  `addEventListener` has read the bar's rect and launched. Measured: both flights fired, the rail's
+  first, and the `preventDefault` arrived too late to stop anything.
+
+**Direction comes from birth order**, and `regenerate-data.js` says in so many words that gen_delta is
+"NOT a birth-year gap". That is right *there* — a CC can join any two people in the corpus. It does not
+hold here: every bar is the focus, their spouse, or a link in `lineAnchors`, so the set is a lineage,
+and within a lineage birth order is generation order. The alternative measured worse: `effectiveGen`
+deliberately leaves an egg with no child-in-law ungenerationed, so the Commodore's true delta against
+Alice is **null → lateral**, the one thing ruled out; and Alice and her husband both return generation
+9, a 0 delta, lateral again.
+
+### 36.9 Motion — three clocks and what owns each
+
+| motion | clock |
+|---|---|
+| a bar gliding to new years | `--move-ms`, read from the camera store — the CARD's clock, so rail and stage arrive together (§30) |
+| a bar arriving or leaving | 95ms fade. "Nothing drawing attention" — context arriving, not an event |
+| a bar tooltip | the same 95ms, shared via `--tip-ms` |
+| a portrait-click flight | **1200ms**, ease-in-out, its own clock — see below |
+
+**A portrait click is the one flight where the bar and the card disagree about duration.** Measured on
+the longest travel: both wait on the same `focusPerson`, so they *start* together — the whole gap was
+duration. The bar finished at 655ms against the card's 1500ms. At 1200ms it lands ~1400 against ~1400.
+**That is the ceiling** if the bar is still to arrive first. The easing changes with it, and has to:
+easeOutCubic spends ~70% of the distance in the first third, which stretched to a second reads as
+screaming away and then crawling.
+
+**A newly-added lane travels in from where the outgoing bar stood** (`barArrive`, a transform — `top`
+already carries the CSS transition the reused lanes ride, and two clocks on one property is how a bar
+fights itself). Before this, a new lane was mounted at its destination and merely faded, so three of the
+Commodore's four bars appeared before Alice had finished travelling.
+
+**`RAIL_OVER_FLIGHT`** lifts the rail to z 3 for the duration of a CC flight so the deck riffles behind
+it. It is transient because no static number can satisfy all three orderings: the flying hero must be
+above `.page-container`, so "rail above hero" would also mean "rail above the resting stage". While
+lifted it does cover any resting stage that overlaps it — nothing at 1440, but the sibling column at
+iPad-mini landscape.
+
+### 36.10 The guardrails, and the things that get re-broken
+
+- **Bars are keyed by LANE, and person-keying has now been rejected twice** — first because it blinked,
+  then (with `barArrive` making newcomers travel, so blinking was solved) because it was still worse.
+  Sam took his own request back within the hour: *"I always liked how the Hooker line person vertical
+  bar was always on screen."* The rail is not a list of people, it is a **standing instrument**; a lane
+  is a position that stays occupied, and continuity of the object is what makes the instrument feel
+  fixed while its contents change.
+- **`TIMELINE_RAIL_BASE` is 0 and stays 0.** The stage gets no room for the rail (§35.2).
+- **Nothing on the rail is selectable, and the cursor is `default`** — it is an instrument, not text.
+  Both properties inherit, so one declaration on `.rail` covers everything. Two exceptions: `.anchor`
+  and a linked `.bar` restate `cursor: pointer`. The rule exists because `.bar-label` is `vertical-rl`
+  and the text I-beam **rotates with the writing mode**, producing a sideways caret.
+- **`svelte-check` does not compile the CSS.** A comment placed inside a `transition:` value type-checks
+  clean and fails the real build with "Expected a valid CSS identifier" — every person page 500'd while
+  the checker said 0 errors. **After any CSS edit, run the compiler directly and check SSR**, not just
+  `svelte-check`.
+- **`elementFromPoint` cannot see the rail.** It is `pointer-events: none`, so any probe built on hit
+  testing silently reports nothing and reads as a pass. Measure the rail geometrically.
+
+### 36.11 How to measure it
+
+Everything above was settled by measurement, and the measurements are cheap to redo:
+
+- **Colour and grain:** screenshot with `.tick, .tick-year, .anchor, .rail .bar` hidden, then take the
+  per-column mean and stdev down a vertical strip. A pure horizontal gradient is constant down a
+  column, so **any stdev is the grain** — that is the whole test. Toggle `.rail::before { display:none }`
+  for the differential; the haze in 36.3 was invisible by eye and obvious at −23 levels.
+- **Fade continuity:** scan means left to right in steps and look at the deltas. A hard line is a
+  spike; the current ground's largest 4px delta is +6.5 and sits mid-curve where it belongs.
+- **Flight timing:** sample `requestAnimationFrame` into an array, recording the bar's `top` and the
+  card's rect, then read off first-change and last-change. This is how the 850ms gap was found.
+- **Which element is which mid-flight:** stamp `dataset` on every bar before the click, then read it
+  back after — that is how "new lanes are born at their destination" was proven rather than guessed.

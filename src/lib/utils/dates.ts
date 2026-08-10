@@ -59,12 +59,19 @@ export function formatDate(dl: DateLocation | null | undefined): string {
  *
  * Year-only follows formatDate's own convention: a null month, or the month:1/day:1 placeholder.
  */
+// Takes only the three fields it reads, not a whole DateLocation. A full DateLocation still satisfies
+// this (every existing caller passes one), but the timeline rail works from PersonCompact — which has a
+// year and, since the age fix, a month and day, and no place at all. Requiring city/county/state/country
+// here would have forced that caller to pad four nulls it does not have, to satisfy a type this function
+// never touches.
+type YMD = Pick<DateLocation, 'year' | 'month' | 'day'>;
+
 export function ageAtDeath(
-	birth: DateLocation | null | undefined,
-	death: DateLocation | null | undefined
+	birth: YMD | null | undefined,
+	death: YMD | null | undefined
 ): { years: number; approx: boolean } | null {
 	if (!birth || !death || birth.year == null || death.year == null) return null;
-	const yearOnly = (d: DateLocation) => d.month == null || (d.month === 1 && d.day === 1);
+	const yearOnly = (d: YMD) => d.month == null || (d.month === 1 && d.day === 1);
 
 	let years = death.year - birth.year;
 	let approx = false;
