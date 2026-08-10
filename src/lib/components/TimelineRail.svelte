@@ -1055,7 +1055,10 @@
 			// truer picture — Taft was Roosevelt's Secretary of War before he was his successor.
 			slug: 'william-taft-1857',
 			name: 'William Howard Taft',
-			from: 1909,
+			// 1910, not 1909. Sam moved him +2 originally to accept a slight overlap with Teddy; the
+			// short-viewport portrait boost then grew BOTH circles and pushed it to 2.00 years, past his
+			// own one-year rule. One year later brings it back inside.
+			from: 1910,
 			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786377115/tafthead_pmouha.png',
 			t: { x: 1942.25, y: 1857 },

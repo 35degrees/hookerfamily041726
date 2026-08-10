@@ -795,10 +795,7 @@
 	// spends a long tail settling. Monotonic throughout: it never travels backwards, so there is nothing
 	// to jerk.
 	const TIER_CURVE = cubicBezier(0.32, 0, 0.22, 1);
-	let hoverTimer: ReturnType<typeof setTimeout> | null = null;
 	let revealedParentId = $state<string | null>(null);
-	let shakeParentId = $state<string | null>(null);
-	let shakeTimer: ReturnType<typeof setTimeout> | null = null;
 	let gpOffsetX = $state(0);
 	// A NAVIGATION CLOSES THE TIER ON THE FLIGHT'S CLOCK; a hover dismissal closes it on its own.
 	//
@@ -845,14 +842,9 @@
 		revealedParentId ? grandparentsOf(revealedParentId) : ([] as PersonCompact[])
 	);
 
-	function clearHoverTimer() {
-		if (hoverTimer) clearTimeout(hoverTimer);
-		hoverTimer = null;
-	}
-	/** Close the tier and forget any pending intent. Called on leave, and on every navigation — a
-	 *  lingering open tier during a flight would leave the army marching against a stale layout. */
+	/** Close the tier. Called on dismissal, and on every navigation — a lingering open tier during a
+	 *  flight would leave the army marching against a stale layout. */
 	function closeTier() {
-		clearHoverTimer();
 		cancelDismiss();
 		revealedParentId = null;
 	}
@@ -863,51 +855,42 @@
 		if (revealedParentId) tierClosingForNav = true;
 		if (focusedChildId) childClosingForNav = true;
 	}
-	function onParentEnter(e: PointerEvent, id: string) {
-		clearHoverTimer();
-		// NOT reset here any more. pointerenter is not a safe place to un-collapse anything: the navigation's
-		// own collapse brings a NEW parents row up under a pointer that has not moved, so a chip slides
-		// beneath the cursor and fires this handler on its own — the same trap the keep-alive region was
-		// rebuilt around. Clearing `tierCollapsed` from here would restore `display` to a tier block that is
-		// still mounted (its chips outroing), putting 145px back into the column mid-flight and taking it
-		// out again a moment later. Both flags are cleared at the REVEAL instead, where the old block is
-		// provably gone and a fresh one is about to be built.
-		if (revealedParentId === id) return;
-		// The element is grabbed HERE, not inside the timer. `e.currentTarget` is only valid during
-		// dispatch — read 1.5s later it is null, which silently left the offset at 0 and centred the tier
-		// on the stage instead of on the chip. The bug was invisible on a father chip, whose seat happens
-		// to sit near the stage centre anyway.
-		const chip = e.currentTarget as HTMLElement | null;
-		hoverTimer = setTimeout(() => {
-			if (grandparentsOf(id).length) {
-				// Centre the new row on the CHIP, not on the stage: this tier belongs to one parent, and a
-				// row centred on the container would claim to be both parents' at once. Measured at reveal
-				// rather than stored, so a mid-hover reflow cannot leave it pointing at a stale seat.
-				const stage = document.querySelector('.page-container');
-				if (chip && stage) {
-					const c = chip.getBoundingClientRect();
-					const s = stage.getBoundingClientRect();
-					gpOffsetX = Math.round(c.left + c.width / 2 - (s.left + s.width / 2));
-				}
-				// Cleared HERE rather than on pointerenter (see onParentEnter): by the time a reveal fires, any
-				// previous tier is long gone, so restoring layout and the hover-dismissal routing is safe.
-				tierClosingForNav = false;
-				tierCollapsed = false;
-				revealedParentId = id;
-			} else {
-				// NO PARENTS TO SHOW — the chip shakes its head. An answer, rather than a hover that does
-				// nothing and leaves the user holding still waiting for it (Sam).
-				if (shakeTimer) clearTimeout(shakeTimer);
-				shakeParentId = id;
-				shakeTimer = setTimeout(() => (shakeParentId = null), SHAKE_MS);
-			}
-		}, HOVER_INTENT_MS);
-	}
-	/** Cancel a PENDING reveal when the pointer leaves before the intent fires. Never closes an OPEN tier —
-	 *  that is the keep-alive region's job below, because by the time a tier is open the pointer is no
-	 *  longer over this chip and a leave here means nothing. */
-	function onParentLeave() {
-		clearHoverTimer();
+	/**
+	 * THE GRANDPARENT TIER IS OPENED BY A CLICK, NOT BY A HOVER (Sam, Aug 10).
+	 *
+	 * It used to reveal after 900ms of hovering a parent chip, and Sam's objection was a ratio: "hovering
+	 * on the parent chips is going to reveal the grandparent chips 9x more unintentionally than
+	 * intentionally — users are going to naturally leave their mouse on the parent chips after clicking
+	 * them, and the grandparents appearing is more of a nuisance than a convenience." A gesture the user
+	 * makes for another reason cannot also be a command.
+	 *
+	 * So the whole hover apparatus is gone from THIS ROW: the intent timer, pointerenter/pointerleave, and
+	 * the no-parents SHAKE — which existed only to answer a hover that would otherwise do nothing, and has
+	 * nothing left to answer once nothing happens on hover. A parent with no parents now simply carries no
+	 * trigger, which says the same thing more quietly and says it BEFORE the user acts rather than after.
+	 * (The descendant tier keeps its hover and its shake — Sam changed this row only, which is why
+	 * SHAKE_MS and HOVER_INTENT_MS both stay live.)
+	 *
+	 * WHAT IS DELIBERATELY UNCHANGED is everything about how the tier LEAVES: the keep-alive region below,
+	 * its upward corridor, the no-grace side exits, and the navigation collapse. Sam: "I think the current
+	 * exit mechanisms on grandparent chips are working and can stay the same." Only the door changed.
+	 */
+	function openGrandparentTier(e: MouseEvent, id: string) {
+		// The .flight wrapper, not the button — the tier centres on the CHIP, and the trigger sits off at
+		// its right edge. Centring on the trigger would put the row a half-chip out.
+		const chip = (e.currentTarget as HTMLElement).closest('.flight') as HTMLElement | null;
+		const stage = document.querySelector('.page-container');
+		if (chip && stage) {
+			// Measured at open rather than stored, so a reflow cannot leave it pointing at a stale seat.
+			const c = chip.getBoundingClientRect();
+			const st = stage.getBoundingClientRect();
+			gpOffsetX = Math.round(c.left + c.width / 2 - (st.left + st.width / 2));
+		}
+		// Both cleared HERE, where any previous tier is provably gone and a fresh one is about to be built
+		// — never on enter. See the tierCollapsed comment above for what restoring `display` too early did.
+		tierClosingForNav = false;
+		tierCollapsed = false;
+		revealedParentId = id;
 	}
 
 	/** THE KEEP-ALIVE REGION — what actually dismisses the tier.
@@ -936,6 +919,19 @@
 		if (dismissTimer) clearTimeout(dismissTimer);
 		dismissTimer = null;
 	}
+	/** 200ms (Sam: 0 → 400 → 200). The side exits were "a little too fast and sensitive" with no grace at
+	 *  all; 400 overshot. Long enough that clipping a corner on the way between two grandparent chips does
+	 *  not cost the row, short enough that a row the user has walked away from is gone before they notice
+	 *  it was still there. */
+	const DISMISS_MS = 200;
+	function scheduleDismiss() {
+		if (dismissTimer) return; // already counting — do not restart it on every move outside
+		dismissTimer = setTimeout(() => {
+			dismissTimer = null;
+			revealedParentId = null;
+		}, DISMISS_MS);
+	}
+
 	function onStagePointerMove(e: PointerEvent) {
 		if (!revealedParentId) return;
 		const x = e.clientX;
@@ -944,34 +940,70 @@
 			!!r && x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad;
 
 		// The RESIDENT parents row's chip — scoped, because the tier reuses `.parents-slot` and a bare
-		// attribute query would also match a chip inside the tier itself. Barely any pad: a generous one
-		// here is what lets a corner exit read as still hovering.
+		// attribute query would also match a chip inside the tier itself.
+		//
+		// MEASURED, BUT NO LONGER A KEEP-ALIVE REGION. It used to be one, back when HOVERING it is what
+		// opened the tier — the chip could hardly dismiss a row it was still summoning. Now that the row is
+		// opened by a click, the chip is just the thing underneath, and treating it as part of the tier
+		// meant dropping back onto it kept the row up indefinitely. Sam: "when I exit the grandparent chips
+		// but enter the original parent chip, the grandparent chips stay visible. That shouldn't happen."
+		// Its TOP EDGE is still the corridor's floor, which is the only role it has left here.
 		const chipR = document
 			.querySelector(`.page-container > .parents-slot > [data-flight-id="${revealedParentId}"]`)
 			?.getBoundingClientRect();
-		if (hit(chipR, 2)) return;
+
+		// THE TRIGGER COUNTS AS INSIDE. It sits above the chip's top edge, so without this the very click
+		// that opens the tier leaves the pointer outside every tested region, and the next twitch of the
+		// hand dismisses what the user just asked for. A little pad, because it is a small target.
+		const trigR = document
+			.querySelector(
+				`.page-container > .parents-slot > [data-flight-id="${revealedParentId}"] .see-parents`
+			)
+			?.getBoundingClientRect();
 
 		const parts = [
 			...document.querySelectorAll('.grandparent-tier .flight, .grandparent-tier .connector')
 		].map((el) => el.getBoundingClientRect());
-		if (parts.some((r) => hit(r, KEEP_ALIVE_PAD))) return;
 
-		// THE CORRIDOR — the band between the top of the row and the top edge of the chip, spanning both
-		// the chip's column and wherever the row actually sits (it is centred on the chip, so the two
-		// overlap, but a wide row reaches well past it on both sides).
-		if (chipR && parts.length) {
+		let inside = hit(trigR, 8) || parts.some((r) => hit(r, KEEP_ALIVE_PAD));
+
+		if (!inside && chipR && parts.length) {
 			const left = Math.min(chipR.left, ...parts.map((r) => r.left));
 			const right = Math.max(chipR.right, ...parts.map((r) => r.right));
 			const top = Math.min(...parts.map((r) => r.top));
-			if (
-				y <= chipR.top + 2 &&
-				y >= top - KEEP_ALIVE_PAD &&
-				x >= left - KEEP_ALIVE_PAD &&
-				x <= right + KEEP_ALIVE_PAD
-			)
-				return;
+			const inColumn = x >= left - KEEP_ALIVE_PAD && x <= right + KEEP_ALIVE_PAD;
+			// THE CORRIDOR — the band between the top of the row and the top edge of the chip, spanning both
+			// the chip's column and wherever the row actually sits (it is centred on the chip, so the two
+			// overlap, but a wide row reaches well past it on both sides).
+			if (inColumn && y <= chipR.top + 2 && y >= top - KEEP_ALIVE_PAD) inside = true;
+			// AND THE ROOF. Above the row is not an exit, because there is nothing up there to exit TO —
+			// Sam: "when a user exits the grandparent chips out the top of them, leave the grandparent chips
+			// visible, there's nowhere to go above it." The only upward exit that means anything is leaving
+			// the WINDOW entirely, and that is answered by onDocumentLeave rather than by a coordinate.
+			if (inColumn && y < top) inside = true;
 		}
-		closeTier(); // left by any edge that is not the top — no grace, no timer
+
+		if (inside) {
+			cancelDismiss();
+			return;
+		}
+		scheduleDismiss(); // out the sides or the bottom — on a grace, not instantly
+	}
+
+	/** LEAVING THE WINDOW THROUGH THE TOP closes the tier, and it is the one upward exit that does.
+	 *  The roof above keeps the row alive for any pointer merely high on the page; once the pointer is off
+	 *  the document there is no gesture left to interpret, so the row goes. Sideways and downward exits
+	 *  fall through to the ordinary grace, already scheduled by the last move inside the page.
+	 *
+	 *  IT IS `mouseout` ON THE WINDOW, and the first attempt — `mouseleave` on <svelte:body> — silently
+	 *  never fired. A synthetic mouseleave provably reached a hand-added body listener in the same page,
+	 *  so the event was fine and the binding was not. `mouseout` BUBBLES, so it arrives at the window like
+	 *  any other event, and `relatedTarget === null` is the browser's own statement that the pointer went
+	 *  nowhere — i.e. left the document. That test is what makes this safe: an ordinary mouseout between
+	 *  two elements always carries the element being entered. */
+	function onWindowMouseOut(e: MouseEvent) {
+		if (!revealedParentId) return;
+		if (e.relatedTarget === null && e.clientY <= 0) closeTier();
 	}
 
 	/** THE GRANDCHILD TIER'S KEEP-ALIVE REGION.
@@ -1036,7 +1068,10 @@
 	function parentFirstName(id: string | null): string {
 		if (!id) return '';
 		const p = roster.parents.find((x) => x.id === id);
-		return p?.fn ?? p?.n?.split(' ')[0] ?? '';
+		// chip_first_name first, then the real first name (Sam) — the same order the timeline bars use, so
+		// a person is called one thing everywhere. Feeds BOTH the "See John's parents" trigger and the
+		// tier's own connector label, which is why the two cannot disagree.
+		return p?.cf ?? p?.fn ?? p?.n?.split(' ')[0] ?? '';
 	}
 
 	/** The opening push, and the closing collapse. The block's own height is the tier, so this reads it
@@ -1494,7 +1529,12 @@
      Svelte had already created the outro, so the duration it read was the animated one (measured — the
      chip still flew to y=−14). Arming it here changes no geometry, so the click still lands where the
      user aimed; it only decides how the row LEAVES. -->
-<svelte:window onpointermove={(ev) => { onStagePointerMove(ev); onChildTierPointerMove(ev); }} onclickcapture={armTierNavClose} />
+<svelte:window
+	onpointermove={(ev) => { onStagePointerMove(ev); onChildTierPointerMove(ev); }}
+	onclickcapture={armTierNavClose}
+	onmouseout={onWindowMouseOut}
+/>
+
 
 <div
 	class="page-container"
@@ -1569,25 +1609,35 @@
 			<!-- data-flight-id lets a shrinking card find this box. animate:flip glides survivors;
 			     on leave, out:flyOut pins this box position:fixed at its click-captured rect, which
 			     OVERRIDES flip's (post-insertion, wrong) fix() pin so leavers don't teleport. -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<!-- The pointer handlers sit on the positioning wrapper, not on an interactive element, and
-			     that is correct here: the chip's <a> is already focusable and already navigates, and the
-			     hover-reveal is a pointer-only enhancement ON TOP of it. Giving this div a role would
-			     announce a grouping that does not exist. Keyboard users lose nothing they had. -->
 			<div
 				class="flight"
-				class:shake-no={shakeParentId === parent.id}
 				data-flight-dir="up"
 				data-flight-id={parent.id}
 				data-tx={parent.t?.x}
 				data-ty={parent.t?.y}
-				onpointerenter={(e) => onParentEnter(e, parent.id)}
-				onpointerleave={onParentLeave}
 				in:morphIn={{ id: parent.id }}
 				out:flyOut={{ key: parent.id }}
 				animate:flip={{ duration: flipMs }}
 			>
 				<PersonBox person={parent} relation="parent" />
+				<!-- THE ONLY WAY UP. Rendered only when there is something to show, so its ABSENCE is the
+				     answer for a parent with no parents — the shake used to be that answer, and had to be
+				     performed after the user had already committed to a hover. A real <button>, so it is
+				     focusable and operable from the keyboard, which the pointer-only reveal never was.
+				     THE NAME IS GONE (Sam): "Show parents" for everyone. The label sits ON the chip it acts
+				     on, so naming the person again was restating what the reader is already looking at —
+				     and it made the two labels different lengths, which drew the eye to the longer one. The
+				     tier's own connector still says whose parents these are, which is where that belongs. -->
+				{#if grandparentsOf(parent.id).length}
+					<button
+						type="button"
+						class="see-parents"
+						class:tier-open={!!revealedParentId}
+						onclick={(e) => openGrandparentTier(e, parent.id)}
+					>
+						Show parents
+					</button>
+				{/if}
 			</div>
 		{/each}
 	</div>
@@ -2055,6 +2105,72 @@
 	   inside and otherwise don't affect layout. */
 	.flight {
 		display: flex;
+	}
+	/* SCOPED TO THE PARENTS ROW, not to every .flight. It exists only to be the containing block for the
+	   "see … parents" trigger; a bare `position: relative` on .flight would apply to spouse, child and
+	   sibling wrappers too, and flight.ts measures all of them. With no offsets it changes no rect, and
+	   flyOut's inline `position: fixed` still overrides it on a leaver. */
+	.parents-slot > .flight {
+		position: relative;
+	}
+	/* THE TRIGGER. Above the chip and hard against its right edge (Sam), so it points at the space the row
+	   will come from and stays clear of the chip's own reading. Absolutely positioned, so it occupies no
+	   layout and cannot move the row it sits on.
+	   70% → 100% on hover, and no underline: Sam wanted it "visible to users with their attention in the
+	   parent chip area" without "taking attention from the UX". Opacity is the right channel — it reads as
+	   recessed, where a grey would have read as disabled. */
+	.see-parents {
+		position: absolute;
+		/* 6.5px above and 8px in from the right, walked there over three passes (Sam). At `right: 0` it
+		   hung off the chip's rounded top corner, which reads as misaligned even though it is flush; the
+		   inset is now past the corner radius, so the label starts where the chip's edge is straight. */
+		bottom: calc(100% + 6.5px);
+		right: 8px;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: none;
+		/* SMALL CAPS IN OUTFIT, not 10.5px sentence case. Sam: "font is too big, make it all caps but
+		   smaller font... more compact?" Caps are what let it shrink this far and stay readable — there
+		   are no descenders and no x-height to lose — and Outfit is the most geometric of the families
+		   already loaded, so at 9px it reads as an instrument label rather than as shrunken prose. The
+		   tracking is not decoration: uppercase set tight is what turns small caps into a smear. */
+		font-family: var(--font-outfit, var(--font-inter, sans-serif));
+		font-size: 9px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		line-height: 1;
+		white-space: nowrap;
+		color: rgb(87, 83, 78);
+		/* 55% at rest, 100% hovered (Sam, 70 → 45 → 55). It is an offer, not an instruction — findable by
+		   someone already looking at the parent chips, and quiet enough to ignore. */
+		opacity: 0.55;
+		cursor: pointer;
+		text-decoration: none;
+		transition:
+			opacity 140ms ease-out,
+			visibility 0s;
+	}
+	.see-parents:hover,
+	.see-parents:focus-visible {
+		opacity: 1;
+	}
+	/* A TIER IS OPEN — BOTH labels go, not just the one clicked (Sam). The row on screen is the answer to
+	   the question, so leaving the other chip still offering to open one reads as an unfinished state, and
+	   the two labels sat side by side where the difference is obvious. Bound to `revealedParentId` itself
+	   rather than to a per-chip match, so both come back the moment the row is dismissed.
+	   `visibility`, NOT `display: none`, for two reasons. It keeps the element's BOX, and the keep-alive
+	   region measures that box — a display:none trigger collapses to a rect at the origin, which would
+	   both lose the region and start matching pointer positions near the top-left corner of the window.
+	   And unlike opacity alone it takes the button out of the focus order, so a keyboard user cannot tab
+	   to an invisible control. Delayed one beat so the fade is seen on the way out. */
+	.see-parents.tier-open {
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 140ms ease-out,
+			visibility 0s linear 140ms;
 	}
 
 	/* Inner wrapper for a spouse chip's directional entrance (in:slideChip). Tightly wraps
