@@ -1,0 +1,66 @@
+id	slug	field	words	chars	spouses_on_card	char_cap_on_card	clamps_in_ui	over_8_words	current_blurb	PROPOSED_max8
+X03170	william-elkins-1832	notable.notable_blurb	21	147	1	84	YES	YES	Gilded Age industrialist and art collector; Standard Oil partner and streetcar magnate whose collection helped seed the Philadelphia Museum of Art.	Gilded Age industrialist and art collector
+X03172	george-elkins-sr-1858	notable.notable_blurb	17	126	2	54	YES	YES	Philadelphia businessman and art collector who headed the Barrett Manufacturing Company; son of magnate William Lukens Elkins.	Philadelphia businessman and art collector
+I01685	stella-tyler-1884	notable.notable_blurb	14	89	1	84	YES	YES	Sculptor and arts patron who founded and endowed Temple University's Tyler School of Art.	Sculptor and arts patron
+X03167	thomas-scott-1823	notable.notable_blurb	11	76	1	84	no	YES	Fourth president of the Pennsylvania Railroad and Assistant Secretary of War	Fourth president of the Pennsylvania Railroad and Assistant
+H00036	daniel-hooker-1679	bio.bio_blurb	11	74	1	84	no	YES	Yale's first tutor and first B.A. graduate; later a Wethersfield physician	Yale's first tutor and first B.A. graduate
+HD6146	helen-scott-1904	notable.notable_blurb	11	69	1	84	no	YES	Main Line socialite who inspired Tracy Lord in The Philadelphia Story	Main Line socialite
+I01316	henry-canby-1878	notable.notable_blurb	11	63	1	84	no	YES	Founder of Saturday Review; first editor Book of the Month Club	Founder of Saturday Review
+X00008	mary-browne-1609	bio.bio_blurb	11	60	1	84	no	YES	Wife of New York's first mayor; daughter of Major John Brown	Wife of New York's first mayor
+X01837	anna-payne-1621	bio.bio_blurb	11	60	1	84	no	YES	First wife of Gov. William Leete; mother of his ten children	First wife of Gov. William Leete
+X03375	charles-lawrence-cooper-1845	notable.notable_blurb	11	57	1	84	no	YES	10th Cavalry officer who led men out of the Staked Plains	10th Cavalry officer
+X01987	raymond-seeley-1812	bio.bio_blurb	10	69	2	54	YES	YES	Congregational minister; first pastor of the American Chapel in Paris	Congregational minister
+X03375	charles-lawrence-cooper-1845	bio.bio_blurb	10	66	1	84	no	YES	Buffalo Soldier officer; survivor of the 1877 Staked Plains ordeal	Buffalo Soldier officer
+X00036	sarah-fletcher-1641	bio.bio_blurb	10	59	1	84	no	YES	Second wife of Capt. John Stanley; mother of Abigail Hooker	Second wife of Capt. John Stanley
+X03084	heman-humphrey-1779	notable.notable_blurb	9	70	0	113	no	YES	Second president of Amherst College and pioneering temperance reformer	Second president of Amherst College and pioneering temperance
+X00855	charles-hayes-1906	notable.notable_blurb	9	68	1	84	no	YES	Assistant Commandant of US Marine Corps; Guadalcanal Henderson Field	Assistant Commandant of US Marine Corps
+HD6129	brig-tyler-1831	notable.notable_blurb	9	63	0	113	no	YES	Union artillery general who commanded the Reserve at Gettysburg	Union artillery general
+X00009	edward-rawson-1615	bio.bio_blurb	9	62	1	84	no	YES	Secretary of the Massachusetts Bay Colony for thirty-six years	Secretary of the Massachusetts Bay Colony for thirty-six
+H01628	edward-hooker-1822	bio.bio_blurb	9	59	2	54	YES	YES	Civil War naval commander who compiled the Hooker genealogy	Civil War naval commander
+I01613	john-mccann-1818	bio.bio_blurb	9	57	1	84	no	YES	Irish-born Civil War soldier; first husband of Nancy Burr	Irish-born Civil War soldier
+HD5990	james-henry-hoadley-1832	bio.bio_blurb	9	57	0	113	no	YES	Surveyor and civil engineer; San Francisco and Bisbee, AZ	Surveyor and civil engineer
+X02910	claude-standley-1877	bio.bio_blurb	9	56	1	84	no	YES	Of Choctaw heritage; daughter of Capt. James S. Standley	Of Choctaw heritage
+HD5485	rufus-wainwright-iii-1877	bio.bio_blurb	9	55	1	84	no	YES	Railroad clerk who succeeded his father as county clerk	Railroad clerk
+X00007	thomas-willet-1611	bio.bio_blurb	9	54	2	54	no	YES	First mayor of New York City; Plymouth militia captain	First mayor of New York City
+X01917	george-balch-1828	notable.notable_blurb	9	54	1	84	no	YES	Civil War ordnance officer; wrote an early flag pledge	Civil War ordnance officer
+H00565	velina-hart-1761	bio.bio_blurb	9	53	2	54	no	YES	Southington miller at the mill now under Plant's Pond	Southington miller at the mill now under Plant's
+HD5225	louise-snowden-1864	notable.notable_blurb	9	53	0	113	no	YES	First Dean of Women at the University of Pennsylvania	First Dean of Women at the University of
+HD6027	emily-caroline-noyes-1842	bio.bio_blurb	9	53	1	84	no	YES	"Artist and author of ""Chronicles of a Pioneer School"""	"Artist and author of ""Chronicles of a Pioneer"
+I01253	nathaniel-bradley-1829	notable.notable_blurb	9	51	1	84	no	YES	Co-founder of Bradley & Hubbard Mfg. Co. of Meriden	Co-founder of Bradley & Hubbard Mfg. Co. of
+HD5340	judson-chubbuck-iii-1919	bio.bio_blurb	9	50	0	113	no	YES	Bronze Star soldier of the Pacific and Korean wars	Bronze Star soldier of the Pacific and Korean
+X02912	edward-stevens-1834	bio.bio_blurb	9	48	1	84	no	YES	Mayor of Rome, New York and leading local lawyer	Mayor of Rome, New York and leading local
+H04337	francis-packard-1870	notable.notable_blurb	8	60	2	54	YES	no	president of College of Physicians of Philadelphia (1931-33)	president of College of Physicians of Philadelphia (1931-33)
+I01680	judge-carpenter-1824	notable.notable_blurb	8	58	2	54	YES	no	Connecticut Supreme Court justice for nearly three decades	Connecticut Supreme Court justice for nearly three decades
+X03378	paul-revere-1735	bio.bio_blurb	8	58	2	54	YES	no	Revolutionary patriot and silversmith of the midnight ride	Revolutionary patriot and silversmith of the midnight ride
+HD5054	lewis-rutherfurd-1944	notable.notable_blurb	8	57	2	54	YES	no	Hong Kong venture capitalist; expanded McDonald's to Asia	Hong Kong venture capitalist
+I00137	john-hart-1682	notable.notable_blurb	8	56	3	48	YES	no	Yale's first graduate and East Guilford's first minister	Yale's first graduate and East Guilford's first minister
+I00137	john-hart-1682	bio.bio_blurb	8	50	3	48	YES	no	Yale's first graduate; second tutor of the college	Yale's first graduate
+HD1230	pierpont-hamilton-1898	bio.bio_blurb	8	49	3	48	YES	no	Medal of Honor recipient; Air Force major general	Medal of Honor recipient
+HD1230	pierpont-hamilton-1898	notable.notable_blurb	8	49	3	48	YES	no	Medal of Honor recipient; Air Force major general	Medal of Honor recipient
+HD5952	horatio-nelson-spencer-sr-1798	bio.bio_blurb	7	63	3	48	YES	no	Yale-trained Mississippi lawyer, banker, and railroad president	Yale-trained Mississippi lawyer, banker
+HD3290	valerie-wayne	notable.notable_blurb	7	62	2	54	YES	no	Climate philanthropist; former Rockefeller Brothers Fund chair	Climate philanthropist
+H04620	catherine-hamersley-1891	notable.notable_blurb	7	62	3	48	YES	no	Traveler and philanthropist; Royal Geographical Society Fellow	Traveler and philanthropist
+H00273	selah-hart-1732	notable.notable_blurb	7	61	2	54	YES	no	Revolutionary brigadier general, prisoner of war, slaveholder	Revolutionary brigadier general, prisoner of war, slaveholder
+T01463	james-talcott-1866	notable.notable_blurb	7	58	2	54	YES	no	Financier and philanthropist; National Arts Club president	Financier and philanthropist
+HD5407	john-spencer-butterfield-1833	bio.bio_blurb	7	58	2	54	YES	no	Yellow-pine lumber baron; founder of Norfield, Mississippi	Yellow-pine lumber baron
+I00002	thomas-shepard-1605	notable.notable_blurb	7	56	3	48	YES	no	Harvard co-founder; key figure in Antinomian Controversy	Harvard co-founder
+TD0074	talcott-stanley-1918	bio.bio_blurb	7	56	3	48	YES	no	Wadsworth Atheneum president; New Britain museum trustee	Wadsworth Atheneum president
+X03448	lyman-beecher-1775	bio.bio_blurb	7	54	3	48	YES	no	Revivalist preacher; father of Isabella Beecher Hooker	Revivalist preacher
+HD3130	john-morgan-1930	notable.notable_blurb	7	51	5	48	YES	no	Olympic sailing gold medalist and investment banker	Olympic sailing gold medalist and investment banker
+HD0264	grindall-reynolds-1755	bio.bio_blurb	7	50	3	48	YES	no	Revolutionary lieutenant; one of seven “real sons”	Revolutionary lieutenant
+HD6470	samuel-newton-1792	bio.bio_blurb	7	50	3	48	YES	no	Osage and Cherokee missionary; San Antonio pioneer	Osage and Cherokee missionary
+H00348	james-hooker-1742	bio.bio_blurb	7	49	3	48	YES	no	Windsor merchant; principal of Hooker and Chaffee	Windsor merchant
+X00010	benjamin-fenn-1612	notable.notable_blurb	6	57	2	54	YES	no	Milford founder; Connecticut Assistant Governor 1665-1672	Milford founder
+H00824	julia-marks-1793	bio.bio_blurb	6	56	2	54	YES	no	Co-principal, South Carolina Female Collegiate Institute	Co-principal, South Carolina Female Collegiate Institute
+H00515	bryan-hooker-1764	notable.notable_blurb	6	55	2	54	YES	no	Woolen pioneer; 1818 Constitutional Convention delegate	Woolen pioneer
+X01043	orrin-lee-1760	bio.bio_blurb	6	55	2	54	YES	no	Revolutionary drummer, blacksmith, and state legislator	Revolutionary drummer, blacksmith
+I02144	janet-annenberg-1904	notable.notable_blurb	6	55	3	48	YES	no	Smithsonian gem benefactor and Annenberg philanthropist	Smithsonian gem benefactor and Annenberg philanthropist
+HD1231	laurens-hamilton-1900	bio.bio_blurb	6	51	3	48	YES	no	Cavalry officer; Alexander Hamilton legacy advocate	Cavalry officer
+HD3350	benjamin-adams-ii-1898	bio.bio_blurb	6	50	4	48	YES	no	Hill and Barlow partner; adult-education president	Hill and Barlow partner
+HD7741	alfred-vanderbilt-ii-1912	bio.bio_blurb	6	49	3	48	YES	no	Thoroughbred owner, breeder, and racing executive	Thoroughbred owner, breeder
+HD7741	alfred-vanderbilt-ii-1912	notable.notable_blurb	6	49	3	48	YES	no	Thoroughbred owner, breeder, and racing executive	Thoroughbred owner, breeder
+HD0869	hart-leavitt-1809	notable.notable_blurb	5	54	3	48	YES	no	Underground Railroad merchant-legislator of Charlemont	Underground Railroad merchant-legislator of Charlemont
+HD6116	theodora-roosevelt-1919	bio.bio_blurb	5	54	3	48	YES	no	Roosevelt granddaughter; lesbian pulp-fiction novelist	Roosevelt granddaughter
+HD6116	theodora-roosevelt-1919	notable.notable_blurb	5	54	3	48	YES	no	Roosevelt granddaughter; lesbian pulp-fiction novelist	Roosevelt granddaughter
+HD0868	roger-leavitt-1805	notable.notable_blurb	5	53	4	48	YES	no	Underground Railroad conductor; Massachusetts senator	Underground Railroad conductor
+I02144	janet-annenberg-1904	bio.bio_blurb	5	50	3	48	YES	no	American philanthropist and Smithsonian benefactor	American philanthropist and Smithsonian benefactor
