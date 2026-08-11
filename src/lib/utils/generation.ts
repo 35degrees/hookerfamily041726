@@ -436,3 +436,62 @@ function ordinalShort(n: number): string {
 	if (last === 3) return `${n}rd`;
 	return `${n}th`;
 }
+
+/**
+ * PYNCHON IN-LAW LABEL (Sam, 10 Aug 2026) — the purple second row for the people who married into
+ * the Pynchon line rather than descending from it.
+ *
+ * `computeInLawLabel` above already derives "Father-in-law of Fifth Generation Hooker" by walking
+ * children → child's spouse → that spouse's Hooker descent. This is the same walk against the
+ * Pynchon line, which lives in `pynchonLine.ts` rather than in `classification` because Pynchon
+ * generation is derived from the parent graph at build time, not stored on the person.
+ *
+ * Kept SEPARATE from computeGenerationLabels, and returned on its own, for two reasons: the label
+ * must be coloured (FeaturedCard tints the Pynchon rows purple and leaves the Hooker rows ink), and
+ * a person can legitimately carry BOTH — Rev. Thomas Ruggles Sr. is father-in-law on the Hooker
+ * side and grandfather-in-law on the Pynchon side, which is exactly the pair Sam asked to see.
+ *
+ * Depth: 1 = a child's spouse is on the line (parent-in-law), 2 = a grandchild's spouse
+ * (grandparent-in-law). Nothing deeper is walked — beyond that the phrasing stops being useful.
+ */
+export function computePynchonInLawLabel(
+	person: Person,
+	byId: Record<string, Person>,
+	pynchonGenerationOf: (id: string | null | undefined) => number | null
+): string | null {
+	const g = genderOf(person);
+	const word = (depth: number) => {
+		const base = g === 'female' ? 'Mother-in-law' : g === 'male' ? 'Father-in-law' : 'Parent-in-law';
+		return depth === 1 ? base : `Grand${base.toLowerCase()}`;
+	};
+	const childrenOf = (p: Person | undefined) =>
+		(p?.marriages || []).flatMap((m) => m.children_ids || []);
+
+	// Walk the person's own children first (depth 1), then their children (depth 2). The first hit
+	// wins: a nearer in-law relationship is the truer description of the connection.
+	for (const depth of [1, 2] as const) {
+		let frontier = childrenOf(person);
+		for (let step = 1; step < depth; step++) {
+			frontier = frontier.flatMap((id) => childrenOf(byId[id]));
+		}
+		for (const kidId of frontier) {
+			const kid = byId[kidId];
+			if (!kid) continue;
+			for (const marriage of kid.marriages || []) {
+				if (!marriage.spouse_id) continue;
+				const pg = pynchonGenerationOf(marriage.spouse_id);
+				if (pg == null) continue;
+				// pynchonLine counts the founder as 0; generation.ts's own scale puts a son at 2, so
+				// shift by one exactly as FeaturedCard's direct Pynchon label does.
+				const spouse = byId[marriage.spouse_id];
+				const shifted = pg === 0 ? 0 : pg + 1;
+				const relation = getRelationWord(shifted, genderOf(spouse ?? kid));
+				const of = relation
+					? `${relation} of William Pynchon`
+					: `${ordinalWord(shifted)} Generation Pynchon`;
+				return `${word(depth)} of ${of}`;
+			}
+		}
+	}
+	return null;
+}

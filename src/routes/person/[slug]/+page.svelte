@@ -1813,6 +1813,7 @@
 					person={cur.person}
 					spouses={cur.neighborhood.spouses}
 					generationLabels={cur.generationLabels}
+					pynchonInLawLabel={cur.pynchonInLawLabel}
 					burialCemetery={cur.burialCemetery}
 					marriedIn={cur.neighborhood.focus?.sp === true}
 					crossConnections={cur.crossConnections}

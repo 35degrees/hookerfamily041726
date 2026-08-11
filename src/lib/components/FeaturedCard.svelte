@@ -64,6 +64,7 @@
 		person: Person;
 		spouses: SpouseEntry[];
 		generationLabels?: string[];
+		pynchonInLawLabel?: string | null;
 		burialCemetery?: Cemetery | null;
 		/** MARRIED INTO the Hooker line — the compact's derived `sp`. Passed in rather than read off
 		 *  person.classification because is_thomas_spouse there is only ~22% populated; see
@@ -100,6 +101,7 @@
 		person,
 		spouses,
 		generationLabels = [],
+		pynchonInLawLabel = null,
 		burialCemetery = null,
 		marriedIn = false,
 		crossConnections = [],
@@ -296,11 +298,21 @@
 		if (g === null) return null;
 		return buildDescendantLabel(g === 0 ? 0 : g + 1, person.gender ?? null, 'William Pynchon');
 	});
-	const allLabels = $derived(pynchonLabel ? [...generationLabels, pynchonLabel] : generationLabels);
+	// Both Pynchon rows land after the Hooker ones and both get the line's colour: the DIRECT descent
+	// label (computed above) and the IN-LAW label (computed in buildFeatured, which has the family
+	// graph this component does not). A person can carry either, both, or neither.
+	const pynchonLabels = $derived(
+		[pynchonInLawLabel, pynchonLabel].filter((l): l is string => !!l)
+	);
+	const allLabels = $derived([...generationLabels, ...pynchonLabels]);
 	// Which of the rendered labels is the Pynchon one — the last, when there is one. Used only to colour
 	// it: the Pynchon line reads purple-into-magenta, so the two descents are told apart at a glance
 	// rather than by reading both lines.
-	const pynchonLabelIndex = $derived(pynchonLabel ? allLabels.length - 1 : -1);
+	// WAS a single index (the last row) back when only one Pynchon label could exist. Now a SET, so a
+	// card carrying both the in-law row and the descent row tints both rather than only the lower.
+	const pynchonLabelIdx = $derived(
+		new Set(pynchonLabels.map((_, k) => generationLabels.length + k))
+	);
 
 	let headerIsCrowded = $derived(allLabels.length >= 2 && !!blurb);
 
@@ -509,7 +521,7 @@
 								<!-- Merged cousin-marriage line: full-size, shrink-to-fit so a long
 								     "…Hooker Descendant & Wife of Hooker Descendant" stays one line. -->
 								<div
-									class="descent-line min-w-0 leading-tight font-medium {i === pynchonLabelIndex ? 'pynchon-descent' : 'text-inkblue'}"
+									class="descent-line min-w-0 leading-tight font-medium {pynchonLabelIdx.has(i) ? 'pynchon-descent' : 'text-inkblue'}"
 									use:shrinkToFit={{ max: t(14), min: t(10), key: `${label}|${u}|${k}` }}
 								>
 									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
@@ -520,7 +532,7 @@
 								     given on the ordinary branch below; the ceiling preserves the 5% relationship
 								     and the floor sits proportionally under the ordinary one. -->
 								<div
-									class="descent-line min-w-0 leading-tight font-medium {i === pynchonLabelIndex
+									class="descent-line min-w-0 leading-tight font-medium {pynchonLabelIdx.has(i)
 										? 'pynchon-descent'
 										: 'text-inkblue'}"
 									use:shrinkToFit={{ max: t(13), min: t(9.5), key: `${label}|${u}|${k}` }}
@@ -547,7 +559,7 @@
 								     Same range and same machinery as the merged '&' branch above, so all three
 								     descent branches now behave identically and only their ceilings differ. -->
 								<div
-									class="descent-line min-w-0 leading-tight font-medium {i === pynchonLabelIndex
+									class="descent-line min-w-0 leading-tight font-medium {pynchonLabelIdx.has(i)
 										? 'pynchon-descent'
 										: 'text-inkblue'}"
 									use:shrinkToFit={{ max: t(14), min: t(10), key: `${label}|${u}|${k}` }}

@@ -12,7 +12,8 @@ import type { Person } from '$lib/types/person';
 import type { Neighborhood, PersonCompact } from '$lib/types/neighborhood';
 import type { Institution } from '$lib/types/institution';
 import type { Cemetery } from '$lib/types/cemetery';
-import { computeGenerationLabels } from '$lib/utils/generation';
+import { computeGenerationLabels, computePynchonInLawLabel } from '$lib/utils/generation';
+import { pynchonGeneration } from '$lib/data/pynchonLine';
 import { rosterOrder } from './roster';
 import type { CrossConnection, FeaturedData } from '$lib/state/featured.svelte';
 
@@ -187,11 +188,16 @@ export function buildFeatured(payload: PersonPayload): FeaturedData {
 	const childrenTotal = allChildren.length;
 	const childrenDiedYoung = allChildren.filter((c) => diedYoung(byId[c.id])).length;
 	const generationLabels = computeGenerationLabels(person, byId);
+	// Computed HERE and not in FeaturedCard because it needs the family graph (byId) to walk
+	// children → their spouses; the card only ever sees the focus person. Passed separately from
+	// generationLabels so the card can tint it with the line's purple. See computePynchonInLawLabel.
+	const pynchonInLawLabel = computePynchonInLawLabel(person, byId, pynchonGeneration);
 
 	return {
 		neighborhood: enrichedNeighborhood,
 		person,
 		generationLabels,
+		pynchonInLawLabel,
 		burialCemetery,
 		childrenTotal,
 		childrenDiedYoung,
