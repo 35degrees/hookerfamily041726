@@ -15,7 +15,7 @@ export const PYNCHON_LINE: ReadonlyArray<readonly [string, number | null, boolea
 	['X03297', 1, true], // Major John Pynchon
 	['X01014', 2, false], // Mary Smith Lord Hooker
 	['X03298', 2, true], // Lt. Col. John C. Pynchon
-	['X03300', 3, true], // William Pynchon
+	['X03300', 3, true], // Col. William Pynchon
 	['X03220', 4, true], // Joseph Pynchon
 	['X03221', 5, true], // Dr. Thomas Ruggles Pynchon
 	['X03223', 6, true], // William Henry Ruggles Pynchon
