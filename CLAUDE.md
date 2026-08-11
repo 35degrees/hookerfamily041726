@@ -45,6 +45,7 @@ dates, bio blurbs, tags, cross-connections, institutions, landmarks, the schema,
 **Read before acting:**
 - `docs/WORKFLOW.md` -- the editorial contract (what is *good*, the blurb/NB/CC doctrine, the task-sheet protocol). This is the day-to-day law for content.
 - `docs/pipeline-gotchas.md` -- the mechanical facts that no model can infer and no doc should make you re-derive (what `process_tasks.py` can and can't do, the INST-ID map, the render rules, the enum asymmetries). **Read it before your first batch of the session.**
+- `docs/schema_v24_planning.md` -- **doctrine stated SINCE v23, and it overrides v23 where they differ.** Read §1a (NB headers must be concrete, not riddles -- the scan test) and the NB-ceiling section before writing any NB. This file is not optional: the rules in it are the ones Sam has already had to repeat.
 - `docs/hooker_json_schema_v23.md` -- the structural law. **A reference, not a preload.** Open it when you need the exact rule for a field you're unsure about; do not read it end-to-end every session.
 
 The Woodward entry (X00804) is the NB quality bar -- re-read its blocks before
