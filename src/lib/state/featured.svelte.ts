@@ -30,10 +30,6 @@ export type FeaturedData = {
 	person: Person;
 	neighborhood: Neighborhood;
 	generationLabels: string[];
-	/** The purple in-law row for people who married INTO the Pynchon line rather than descending
-	 *  from it ("Grandfather-in-law of Fifth Generation Pynchon"). Computed in buildFeatured because
-	 *  it needs the family graph; null for everyone off the line, which is nearly everyone. */
-	pynchonInLawLabel?: string | null;
 	burialCemetery: Cemetery | null;
 	childrenTotal: number;
 	childrenDiedYoung: number;
