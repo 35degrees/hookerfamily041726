@@ -28,7 +28,7 @@
 </script>
 
 <script lang="ts">
-	import { isPynchonKin, pynchonGeneration } from '$lib/data/pynchonLine';
+	import { isPynchonKin, pynchonGeneration, pynchonLiteralLabel } from '$lib/data/pynchonLine';
 	import { buildDescendantLabel } from '$lib/utils/generation';
 	import type { Person } from '$lib/types/person';
 	import type { SpouseEntry, PersonCompact } from '$lib/types/neighborhood';
@@ -292,6 +292,11 @@
 	// counts a son as 2 (its own note records the off-by-one it was shifted to fix) and reserves ≤ 0 for
 	// founders. So: the founder maps to 0, everyone below to g + 1.
 	const pynchonLabel = $derived.by(() => {
+		// A hand-written row wins outright. It exists for people the derivation must not reach —
+		// Dr. Thomas Hooker is on the Hooker trunk and has no Pynchon generation at all. Listed by id
+		// in derive-pynchon-line.mjs, never computed: the computed version climbed into the founders.
+		const literal = pynchonLiteralLabel(person.id);
+		if (literal) return literal;
 		const g = pynchonGeneration(person.id);
 		if (g === null) return null;
 		return buildDescendantLabel(g === 0 ? 0 : g + 1, person.gender ?? null, 'William Pynchon');

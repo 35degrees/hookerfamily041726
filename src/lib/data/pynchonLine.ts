@@ -37,8 +37,24 @@ export const PYNCHON_LINE: ReadonlyArray<readonly [string, number | null, boolea
 	['X03851', null, true], // Amy Wyllys Pynchon
 ];
 
+const LITERAL_LABEL: Record<string, string> = {
+	"H00027": "Husband of Granddaughter of William Pynchon",
+	"X01779": "Wife of William Pynchon & Founder of the American Pynchon Line",
+	"X03218": "Father-in-law of Fifth Generation Pynchon",
+	"X01906": "Mother-in-law of Fifth Generation Pynchon",
+	"X01929": "Grandfather-in-law of Fifth Generation Pynchon",
+	"X02854": "Grandmother-in-law of Fifth Generation Pynchon"
+};
+
 const GEN = new Map<string, number | null>(PYNCHON_LINE.map(([id, g]) => [id, g]));
 const RAINBOW = new Set<string>(PYNCHON_LINE.filter(([, , r]) => r).map(([id]) => id));
+
+/** A hand-written purple row for this id, or null. Listed, never derived — see the note in
+ *  scripts/derive-pynchon-line.mjs on why a computed version is forbidden. */
+export function pynchonLiteralLabel(id: string | null | undefined): string | null {
+	if (!id) return null;
+	return LITERAL_LABEL[id] ?? null;
+}
 
 /** Does this person's card carry the line's spectrum? Direct line only. */
 export function isPynchonKin(id: string | null | undefined): boolean {
