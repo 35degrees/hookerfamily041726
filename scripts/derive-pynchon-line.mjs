@@ -79,8 +79,9 @@ const gen = new Map([[FOUNDER, 0]]);
 // curated here, not every descendant. Their generation is still derived; only their membership is a
 // decision. Add ids here as Sam names them.
 const TITLE_ONLY = [
-	'X03226', // Rev. Thomas Ruggles Pynchon — off the direct line, title only
-	'Y00003' // Mary Pynchon Holyoke — William's daughter, title only
+	'X03226' // Rev. Thomas Ruggles Pynchon — off the direct line, title only
+	// Y00003 Mary Pynchon Holyoke was here until 10 Aug 2026, when Sam deleted her outright
+	// along with the Holyokes (Y00002, X01778, Y00005) to finish the Talcott severance.
 ];
 
 // One row per person who needs anything: a generation, a background, or both.

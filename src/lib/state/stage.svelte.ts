@@ -350,9 +350,9 @@ const clampedU = $derived(widthClamp(rung.u, vw, rung.siblingColumn));
 function nbCapForWidth(w: number): number {
 	if (w <= 700) return 2;
 	if (w <= 800) return 3;
-	return 6; // the roomy maximum — NarrativeBlocks' own MAX_DISPLAYED
+	return 7; // the roomy maximum — NarrativeBlocks' own MAX_DISPLAYED
 }
-const effectiveNbCap = $derived(Math.min(rung.nbCap ?? 6, nbCapForWidth(vw)));
+const effectiveNbCap = $derived(Math.min(rung.nbCap ?? 7, nbCapForWidth(vw)));
 
 export const stage = {
 	get vw() {

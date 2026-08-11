@@ -21,11 +21,12 @@
 	// (15px → 18px) rather than changing the default header size for all 18,000 cards.
 	let headerClass = $derived(fontClass ? `${fontClass} text-[calc(18px*var(--type-k,1))]` : 'text-[calc(15px*var(--type-k,1))]');
 
-	// PHASE 2.75 — THE CONTENT BUDGET. 6 is the roomy-rung maximum and is unchanged; a smaller stage
+	// PHASE 2.75 — THE CONTENT BUDGET. 7 is the roomy-rung maximum (raised from 6, Sam, 10 Aug 2026,
+	// alongside validate.py's NB_MAX_PER_PERSON); a smaller stage
 	// takes fewer, because the hybrid means the type does NOT shrink as fast as the card does and the
 	// block list would otherwise run past the card's bottom edge. See stage.svelte.ts's `nbCap`, and the
 	// note there on why this is the cost of stepping type separately from the frame.
-	const MAX_DISPLAYED = $derived(stage.nbCap ?? 6);
+	const MAX_DISPLAYED = $derived(stage.nbCap ?? 7);
 
 	let sortedBlocks = $derived(
 		[...blocks]

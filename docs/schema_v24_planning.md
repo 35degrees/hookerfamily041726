@@ -31,6 +31,52 @@ exactly this reason).
 
 **Null still beats weak, and it beats filling the new slots.**
 
+**The cap lives in three places and they must move together.** `validate.py:NB_MAX_PER_PERSON`
+(the data gate), `card.py`'s display fraction, and the frontend content budget — which is
+itself two numbers: `NarrativeBlocks.svelte:MAX_DISPLAYED` and `stage.svelte.ts`'s
+`nbCapForWidth()` roomy return plus the `rung.nbCap ?? N` fallback. All five were raised to 7
+on 10 Aug 2026. Raising only the validator writes a seventh block that the card silently
+declines to show, which is exactly how this was found.
+
+## 1a. NB HEADERS — concrete, not riddles (10 Aug 2026)
+
+Sam, on the first seven-block card:
+
+> "your NB headers are all a bit obscure, which is technically correct… i want to have user
+> engaging NB header to encourage curiosity and engagement with the person and a motivation to
+> expand to reveal the NB bodies, but i also want the user to be able to just browse the
+> headers at a glance and learn something about the person. so all the NB headers can't be
+> obtuse angles that doesn't really say much without revealing the bodies."
+
+This is a **correction to how v23's hook rule had been applied**, not a repeal of it. v23 §5
+says the header "creates a question" and must not be a summary, and reading that alone produces
+a card of riddles: a scanner who never expands learns nothing about the person.
+
+**The standard: the header carries a fact AND withholds the payoff.** Both, in the same eight
+words. Not a summary that answers, not an angle so oblique it says nothing.
+
+- Some concreteness in most headers; Sam allows that not literally every one needs it.
+- **The scan test:** read only the headers, expanding nothing. Do you now know roughly who this
+  person was and what they did? If the answer is "no, but I'm curious," the card has failed
+  half its job.
+- A header with an undefined "it" or "he" — no name, place, title, number or date anywhere in
+  it — fails outright.
+
+Worked example, William Pynchon (Y00004), before and after. Every "before" is legal under v23
+and every one is a riddle:
+
+| before | after |
+|---|---|
+| Boston's executioner burned his book | Boston's executioner burned his book in 1650 |
+| He chose the spot where ships stopped | He founded Springfield above the last navigable falls |
+| His quarrel with Hartford moved a border | He took Springfield out of Connecticut, 1638 |
+| A stolen petticoat, and orders not to force | A stolen petticoat, and a warrant forbidding force |
+| He apologized, then signed everything to John | He recanted, then sailed for England in 1652 |
+| In England he took the apology back | Back in England he published the argument again |
+
+Note what the "before" column never once says: that he founded Springfield. Seven legal hooks
+that omit the single fact the man is known for. That is the failure this rule exists to catch.
+
 ## 2. THE WOVEN-THEME DOCTRINE — entries reinforce each other (10 Aug 2026)
 
 This is the most important thing in this document and it is not anywhere in v23.
@@ -139,6 +185,51 @@ Coordinates go in `gps: {latitude, longitude}` — decimal degrees, nested. A fl
 `lat`/`lng` never renders. Allocate the id from the live numeric maximum
 (`int(re.sub(r'\D','',id))`, never lexically — CEM ids run past 999 and padding is mixed).
 Wire both directions: `person.burial.cemetery_id` and `cemetery.hooker_connections[]`.
+
+## 7a. THE PRISM CARD HAS NO PANEL BACKGROUNDS (10 Aug 2026)
+
+The burial pin in `RightColumn.svelte` paints two masking layers behind its text — a solid fill
+and an 18px gradient strip — so that an overflowing right column's rows do not collide with the
+always-on pin. Both resolve to `var(--card-fill, #fff)`, and **`--card-fill` is never actually
+set anywhere**, so both are unconditionally solid white. Invisible on an ordinary card; on a
+Pynchon card they paint a white slab across the spectrum. Sam: *"there's no background needed
+around CEM it should just be text on top of original rainbow."*
+
+A flat colour cannot mask a gradient, so there is no fill that fixes this — the layers have to
+go where the rainbow is. They are now suppressed by `{#if !isPynchonKin(person.id)}` rather than
+deleted, because the mask is load-bearing on the other ~19,000 cards. **The accepted cost:** a
+prism card whose right column overflows can show the collision the mask was added to hide.
+
+**General rule this implies:** any new panel, chip or backdrop that assumes a flat card
+background needs a prism check before it ships. The rainbow makes every opaque rectangle
+visible.
+
+## 7b. TALCOTT SEVERANCE — deletion, not hiding (10 Aug 2026)
+
+The 1,264 `classification.hidden: "talcott_2026"` people are a *previous* stage. Sam's current
+direction for Talcott-side records that surface during other work is **outright deletion**:
+*"because we remove Talcott descendants completely, please delete the following cards
+completely, don't even hide them just delete."*
+
+Deleted this batch: Y00003 Mary Pynchon Holyoke, Y00002 Capt. Elizur Holyoke, X01778 (his
+second wife, Stebbins), Y00005 Edward Holyoke. People 19,885 → 19,881.
+
+**The mechanics that must not be skipped** (v23 §0.12 plus the 3 Aug handoff §10.1): scrub every
+inbound reference *before* dropping the records — `marriages[].children_ids`,
+`parents.father_id`/`mother_id`, `marriages[].spouse_id`, reciprocal CCs **in both directions**,
+and the non-`people` containers (cemetery `hooker_connections`, institution rosters, war
+`person_ids`). This batch's dropped Pumpelly CC is the worked example of the both-directions
+trap: removing William's half left Pumpelly's half dangling, and `validate.py --since` caught it
+as a one-directional CC on the next run.
+
+**Salvage first.** Anything on a doomed record that belongs to a surviving person's story goes
+into that person's `research_notes` before the delete. Mary's gravestone verse now lives on
+William's entry. It does **not** become an NB on William — an NB centred on his daughter still
+violates v23 §5(h) subject discipline, and Sam's permission to move material does not repeal it.
+
+**Re-run `scripts/derive-pynchon-line.mjs`** after any deletion on the line, and prune the
+deleted id from `TITLE_ONLY` first — it is a hand-maintained list and the only part of that file
+that cannot heal itself.
 
 ## 8. OPEN QUESTIONS PARKED HERE
 

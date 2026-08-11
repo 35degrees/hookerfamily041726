@@ -3,6 +3,7 @@
 	import type { Institution } from '$lib/types/institution';
 	import type { Cemetery } from '$lib/types/cemetery';
 	import { buildMapUrl, formatLocationShort } from '$lib/utils/dates';
+	import { isPynchonKin } from '$lib/data/pynchonLine';
 
 	type Props = {
 		person: Person;
@@ -410,15 +411,26 @@
 			     section's -48px overhang) so it NEVER paints over the narrative column. These paint above
 			     the scroll-group content; the burial text is lifted back above THEM via relative z-10 (the
 			     backdrops are positioned, so an in-flow text sibling would otherwise be painted over).
-			     aria-hidden + pointer-events-none: no click interception, no reader noise. No geometry/reserve change. -->
-			<div
-				class="pointer-events-none absolute top-[-18px] right-0 left-[48px] h-[18px] bg-gradient-to-b from-transparent to-[var(--card-fill,#fff)]"
-				aria-hidden="true"
-			></div>
-			<div
-				class="pointer-events-none absolute inset-y-0 right-0 left-[48px] bg-[var(--card-fill,#fff)]"
-				aria-hidden="true"
-			></div>
+			     aria-hidden + pointer-events-none: no click interception, no reader noise. No geometry/reserve change.
+
+			     SUPPRESSED ON PRISM CARDS (Sam, 10 Aug 2026). `--card-fill` is never actually set, so both
+			     layers resolve to solid #fff — invisible on a white card, but on a Pynchon-line card they
+			     paint a white slab over the spectrum, which is what Sam saw on the first Pynchon burial.
+			     A flat fill cannot mask a gradient, so there is no colour that fixes this; the layers just
+			     have to go where the rainbow is. Scoped to prism cards rather than removed outright because
+			     the mask is load-bearing everywhere else: without it, an overflowing column's rows sit under
+			     this always-on pin and collide with the burial text. The cost accepted here is that a prism
+			     card with an overflowing right column can show that collision. -->
+			{#if !isPynchonKin(person.id)}
+				<div
+					class="pointer-events-none absolute top-[-18px] right-0 left-[48px] h-[18px] bg-gradient-to-b from-transparent to-[var(--card-fill,#fff)]"
+					aria-hidden="true"
+				></div>
+				<div
+					class="pointer-events-none absolute inset-y-0 right-0 left-[48px] bg-[var(--card-fill,#fff)]"
+					aria-hidden="true"
+				></div>
+			{/if}
 			<div
 				class="relative z-10 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none"
 			>
