@@ -1004,6 +1004,17 @@ function ccLinealGap(cc) {
 	const v = cc && cc.lineal_gap;
 	return Number.isInteger(v) && v !== 0 ? v : null;
 }
+// The MIRROR of lineal_gap: `lateral: true` forces a CC to fly sideways when the graph would send it
+// up or down. It exists for connections that ARE same-tier socially but score a generation offset
+// because the only path between the two people runs through a marriage edge — brothers-in-law being
+// the case Sam named (Bolton Coit Brown and Herbert Nash score gen_delta ±1, kin_distance 4, which
+// isVerticalMove reads as vertical). Emitting gen_delta 0 is what does the work: isVerticalMove
+// early-returns lateral on 0 before it ever consults relation_class or kin_distance.
+// Takes precedence over lineal_gap, which is the opposite assertion — a CC carrying both is a
+// contradiction, and the explicit sideways instruction is the safer one to honour.
+function ccLateral(cc) {
+	return !!(cc && cc.lateral === true);
+}
 function relationClass(sourceId, targetId, byId) {
 	if (!sourceId || !targetId || sourceId === targetId) return 'collateral';
 	if (isAncestorOf(targetId, sourceId, byId) || isAncestorOf(sourceId, targetId, byId))
@@ -1197,11 +1208,15 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 				// Deliberately NOT a raw 'axis: vertical' flag: the deck needs the SIGN to know whether
 				// the convoy climbs or falls, and a bare axis would have to guess. Nothing downstream
 				// changed — the blade already forwards relation_class/gen_delta to the data attributes.
-				relation_class: ccLinealGap(cc) != null ? 'direct' : relationClass(p.id, cc.related_id, byId),
+				relation_class: ccLateral(cc)
+					? 'collateral'
+					: ccLinealGap(cc) != null
+						? 'direct'
+						: relationClass(p.id, cc.related_id, byId),
 				// KINSHIP generation gap (see genDelta) — the deck's direction signal. null → lateral (orbit,
 				// unrelated, OR a same-generation cousin: kin, but not up/down the line); < 0 → target is an
 				// ancestor tier (rides in from TOP); > 0 → a descendant tier (from BOTTOM). Never a birth-year gap.
-				gen_delta: ccLinealGap(cc) ?? genDelta(p.id, cc.related_id, byId)
+				gen_delta: ccLateral(cc) ? 0 : (ccLinealGap(cc) ?? genDelta(p.id, cc.related_id, byId))
 			};
 			// KIN DISTANCE (see kinDistance) — edges to the nearest shared ancestor. The deck's SAME-LINE
 			// test: a close-kin pair with a generation gap rides VERTICAL no matter where the tidy tree
