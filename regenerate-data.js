@@ -758,11 +758,19 @@ function resolveLandmarks(p, byId) {
 		// Location is nested under r.location (schema drift: tolerate a flat entry too).
 		const lc = r.location || r;
 		const loc = formatCityState(lc.city, lc.state, lc.country);
+		// Sam, 10 Aug 2026: the year belongs under the name, beside the place — "Springfield, MA (1637)".
+		// The build year is stored under six different keys across 332 records (dates.built dominates at
+		// 86, built_year at 29, then a long tail), so read the lot and only print a clean 4-digit year;
+		// a string like "c. 1660" or a {status:'destroyed'} dates object falls through to no year.
+		const rawBuilt =
+			r.dates?.built ?? r.dates?.founded ?? r.built_year ?? r.date_built ?? r.founded ?? null;
+		const built = /^\d{4}$/.test(String(rawBuilt)) ? Number(rawBuilt) : null;
+		const locYear = loc && built ? `${loc} (${built})` : (loc ?? (built ? `(${built})` : null));
 		return mediaRow({
 			name: r.primary_name,
 			typeLabel: landmarkTypeLabel(r.type),
 			blurb: null,
-			subtitle: loc,
+			subtitle: locYear,
 			url: r.primary_url ?? r.url ?? null,
 			thumbUrl: r.photo_url ?? r.image_url ?? null,
 			alt: r.photo_notes ?? r.image_caption ?? r.primary_name ?? null,

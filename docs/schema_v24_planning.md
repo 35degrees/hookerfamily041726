@@ -255,6 +255,40 @@ Consequences worth keeping:
 - `statueTypeLabel('statue')` renders as an em-dash in the type slot. Cosmetic, matches every
   existing statue record, not worth a data change.
 
+### 7c-i. Landmark subtitle now carries the build year (10 Aug 2026)
+
+`resolveLandmarks` used to print `City, ST` alone. Sam: *"LMK desc: Springfield, MA (1660), desc
+goes under the LMK name in UX."* The resolver now appends a clean four-digit build year, so rows
+read `Springfield, MA (1660)`.
+
+The year is stored under **six different keys** across the 332 landmark records — `dates.built`
+(86), `built_year` (29), then `date_built`, `founded`, `dates.founded` and a long tail — so the
+resolver reads all of them and prints only a bare four-digit value. `{status: "destroyed"}` or a
+string like `"c. 1660"` falls through to no year, which is the intended behaviour. Prefer
+**`dates.built`** on new records.
+
+Global effect when it shipped: 834 landmark rows across all payloads, 260 gained a year, zero
+malformed.
+
+## 7e. A MISSING first_name/last_name SILENTLY BUTCHERS THE SLUG (10 Aug 2026)
+
+An entry that carries only `bio.display_name`, with no `first_name` or `last_name`, still gets a
+slug — the builder falls back to splitting the display name, and it takes the **title** for the
+given name. Two live examples found this batch:
+
+| entry | display_name | slug it produced | after repair |
+|---|---|---|---|
+| X03298 | `Lt. Col. John C. Pynchon` | `/person/lt-pynchon-1647` | `/person/john-pynchon-1647` |
+| X03299 | `Margaret Hubbard Pynchon` | `/person/margaret-pynchon` | `/person/margaret-hubbard-1647` |
+
+Neither is an error to `validate.py` and neither shows on the card — the URL is the only place it
+surfaces. **When touching any older entry, check that `bio` has real `first_name` / `last_name` /
+`maiden_name` fields rather than a display_name alone,** and remember that repairing them moves
+the URL, so the old slug goes in top-level `former_ids`.
+
+Sam spotted X03299 by eye from the card, which is the reminder that he reads these more closely
+than any validator does.
+
 ## 7d. OLD STYLE / NEW STYLE DATES — not every date conflict is a conflict
 
 John Pynchon's death arrived as "17 January 1702" in one place and 1703 in another. Both are
