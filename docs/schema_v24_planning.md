@@ -298,6 +298,71 @@ source conflict, check whether the date falls in that January-to-March window** 
 is the calendar, not a disagreement. Record the New Style year and note the dual form
 (17 January 1702/3) in `research_notes`.
 
+## 9. `lineal_gap` — the surgical CC axis override (NEW FIELD, 10 Aug 2026)
+
+**The problem Sam posed.** A CC between a grandparent and a grandchild should fly VERTICALLY, but
+when the connecting relative is deliberately not an entry there is no path between the two people
+in the parent graph, so the build's derivations come back empty and the flight runs lateral.
+
+**Why it happens.** `flight.ts:isVerticalMove()` is the single test — both `deckDirFor` (which axis
+the convoy flies) and `resolveLateralDir` (the ping-pong memory) call it, and the code's own note
+says they must agree or a move reads vertical in one and lateral in the other. It needs two facts,
+both graph-derived at build time in `regenerate-data.js`:
+
+```
+gen_delta      null or 0            → lateral, always
+relation_class 'direct'             → vertical
+kin_distance   <= KIN_NEAR (5)      → vertical
+```
+
+With no path, `relationClass()` falls to `'collateral'` and `genDelta()` to `null`. Lateral.
+
+**The field.** A cross_connection may carry an optional **`lineal_gap`**: a signed integer of
+generations, same sign convention as `gen_delta` (`effGen(target) − effGen(source)`, so **negative
+when the target is the ancestor**). Present and non-zero, the emitter turns it into
+`relation_class: 'direct'` and uses it as `gen_delta`. Each direction authors its own sign, exactly
+as `display_label` already differs per direction.
+
+```json
+// on the grandchild's entry — the target is two tiers UP, so the convoy climbs
+{ "related_id": "Y00004", "link_text": "Hon. William Pynchon",
+  "display_label": "was her grandfather, and took Springfield out of Connecticut",
+  "type": "family_connection", "lineal_gap": -2 }
+```
+
+**Why a signed gap and not `axis: "vertical"`.** The deck needs the SIGN to know whether the convoy
+climbs or falls; a bare axis flag would have to guess, and `deckDirFor` reads `< 0 → in from the
+top, > 0 → in from the bottom`. The gap supplies direction and magnitude in one value.
+
+**What it cost.** Three lines in `regenerate-data.js` (a guard function plus two expressions) and
+**nothing else** — no component, no transition code, no type change. The blade already forwards
+`relation_class` / `gen_delta` to the anchor's data attributes, and `navigate.ts` already reads
+them. Opt-in and inert: a CC without the field derives exactly as before, so the blast radius is
+literally the number of CCs that carry it (2 today).
+
+**The guard.** Only a non-zero integer counts. A `0` would assert same-generation, which
+`isVerticalMove` reads as lateral — a silently ignored override is worse than no override — so
+`0`, `null`, `"2"` and `1.5` all fall through to the graph derivation.
+
+**When to use it.** Only when the two people genuinely ARE on one line and the tree cannot show it
+because an intervening person is not built. It is not a styling knob; asserting a lineal gap
+between people who are not lineal kin will make the camera lie.
+
+## 10. THE PURPLE TITLE WITHOUT THE RAINBOW (10 Aug 2026)
+
+Sam: *"we won't add rainbow background, that's exclusively for ancestors of Thomas Pynchon but I'd
+like to add the Granddaughter of William Pynchon to her title in the same purple."*
+
+The two are already separate functions and always were — `pynchonGeneration()` drives the purple
+label, `isPynchonKin()` drives the background — so a person can have either alone. What was missing
+was a way to give a generation to someone the graph walk cannot reach.
+
+`TITLE_OVERRIDE` in `scripts/derive-pynchon-line.mjs` is a small map of asserted generations, in
+that file's own scale (founder 0, his child 1, so a grandchild is 2). It refuses to run if an id is
+not in canonical, or if the graph already derives a generation for it — an override that silently
+shadows a real derivation is a bug waiting to happen. Members get the label and are excluded from
+the rainbow set.
+
 ## 8. OPEN QUESTIONS PARKED HERE
 
 - **Exposition/world's-fair medal tag.** Still unruled from the 3 August handoff.

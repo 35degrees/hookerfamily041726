@@ -78,14 +78,38 @@ const gen = new Map([[FOUNDER, 0]]);
 // whole American Pynchon tree and far more than is meant — "all of the pynchon tree" means the line being
 // curated here, not every descendant. Their generation is still derived; only their membership is a
 // decision. Add ids here as Sam names them.
+// TITLE_OVERRIDE — a generation ASSERTED where the graph cannot derive one, because the connecting
+// relative is deliberately not an entry. Mary Smith Lord Hooker is William's granddaughter through a
+// daughter Sam has chosen not to build, so the descendant walk below never reaches her. She takes the
+// purple label and NOT the rainbow: the spectrum is reserved for ancestors of Thomas Pynchon (Sam,
+// 10 Aug 2026), and she is off that line entirely. Scale is this file's own — founder 0, his child 1 —
+// so a grandchild is 2. Add ids here only when Sam names them.
+const TITLE_OVERRIDE = { X01014: 2 }; // Mary Smith Lord Hooker — granddaughter, no rainbow
+
 const TITLE_ONLY = [
 	'X03226' // Rev. Thomas Ruggles Pynchon — off the direct line, title only
 	// Y00003 Mary Pynchon Holyoke was here until 10 Aug 2026, when Sam deleted her outright
 	// along with the Holyokes (Y00002, X01778, Y00005) to finish the Talcott severance.
 ];
 
+for (const [id, g] of Object.entries(TITLE_OVERRIDE)) {
+	if (!byId.has(id)) {
+		console.error(`TITLE_OVERRIDE names ${id}, which is not in canonical. Nothing written.`);
+		process.exit(1);
+	}
+	if (gen.has(id)) {
+		console.error(`TITLE_OVERRIDE names ${id}, but the graph already derives gen ${gen.get(id)}.`);
+		process.exit(1);
+	}
+	gen.set(id, g);
+}
+
 // One row per person who needs anything: a generation, a background, or both.
-const all = new Set([...rainbow, ...TITLE_ONLY.filter((id) => gen.has(id))]);
+const all = new Set([
+	...rainbow,
+	...TITLE_ONLY.filter((id) => gen.has(id)),
+	...Object.keys(TITLE_OVERRIDE)
+]);
 const rows = [...all]
 	.sort((a, b) => (gen.get(a) ?? 999) - (gen.get(b) ?? 999) || a.localeCompare(b))
 	.map(

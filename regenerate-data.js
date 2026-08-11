@@ -997,6 +997,13 @@ function isAncestorOf(ancId, descId, byId) {
 // flight arrives vertically. 'collateral' = uncle/cousin/in-law/orbit — the flight tilts by Δx. This
 // is the honest laterality signal the tidy-tree x-delta can't give (a granddaughter can sit 800 seats
 // from her grandmother's centroid yet is genealogically straight-down).
+// An authored lineal_gap on a CC, or null. Guarded hard: only a non-zero integer counts, because a 0
+// would assert "same generation" and isVerticalMove reads 0 as lateral — a silently ignored override is
+// worse than none. Anything else (absent, null, "2", 1.5, 0) falls through to the graph derivation.
+function ccLinealGap(cc) {
+	const v = cc && cc.lineal_gap;
+	return Number.isInteger(v) && v !== 0 ? v : null;
+}
 function relationClass(sourceId, targetId, byId) {
 	if (!sourceId || !targetId || sourceId === targetId) return 'collateral';
 	if (isAncestorOf(targetId, sourceId, byId) || isAncestorOf(sourceId, targetId, byId))
@@ -1176,11 +1183,25 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 				t: tableCoords.get(cc.related_id) ?? null,
 				// direct-vs-collateral, walked from the parent graph (see relationClass). Still baked for other
 				// consumers, but the DECK direction now keys off gen_delta below, not this.
-				relation_class: relationClass(p.id, cc.related_id, byId),
+				// LINEAL_GAP — the surgical axis override (Sam, 10 Aug 2026). Both graph derivations
+				// below need a PATH between the two people; when the connecting relative is deliberately
+				// not an entry, there is no path, so relationClass falls to 'collateral' and genDelta to
+				// null, and flight.ts's isVerticalMove sends a genuine grandparent link sideways.
+				//
+				// A CC may therefore author `lineal_gap`: a signed integer of generations, same sign
+				// convention as gen_delta (effGen(target) − effGen(source), so NEGATIVE when the target
+				// is the ancestor). Present and non-zero, it asserts "these two ARE on one line, N tiers
+				// apart" and supplies both facts isVerticalMove wants. Each direction authors its own
+				// sign, exactly as display_label already differs per direction.
+				//
+				// Deliberately NOT a raw 'axis: vertical' flag: the deck needs the SIGN to know whether
+				// the convoy climbs or falls, and a bare axis would have to guess. Nothing downstream
+				// changed — the blade already forwards relation_class/gen_delta to the data attributes.
+				relation_class: ccLinealGap(cc) != null ? 'direct' : relationClass(p.id, cc.related_id, byId),
 				// KINSHIP generation gap (see genDelta) — the deck's direction signal. null → lateral (orbit,
 				// unrelated, OR a same-generation cousin: kin, but not up/down the line); < 0 → target is an
 				// ancestor tier (rides in from TOP); > 0 → a descendant tier (from BOTTOM). Never a birth-year gap.
-				gen_delta: genDelta(p.id, cc.related_id, byId)
+				gen_delta: ccLinealGap(cc) ?? genDelta(p.id, cc.related_id, byId)
 			};
 			// KIN DISTANCE (see kinDistance) — edges to the nearest shared ancestor. The deck's SAME-LINE
 			// test: a close-kin pair with a generation gap rides VERTICAL no matter where the tidy tree
