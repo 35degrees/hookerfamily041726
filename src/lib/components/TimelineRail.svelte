@@ -2075,6 +2075,14 @@
 		display: flex;
 		justify-content: center;
 		writing-mode: vertical-rl;
+		/* SIDEWAYS, NOT `mixed`. The default `mixed` rotates Latin LETTERS 90° but leaves punctuation
+		   UPRIGHT — so in "I’lee" the four letters turned and the apostrophe did not, and an unrotated
+		   U+2019 sitting in a rotated run reads as a horizontal dash: the rail said "I - lee".
+		   `sideways` rotates every glyph together, punctuation included, so the apostrophe lies down
+		   with its letters and reads as an apostrophe again. For a pure-Latin name the output is
+		   identical — `mixed` was already rotating those letters — so this changes nothing on any bar
+		   that has no punctuation in it, which is all but a handful. */
+		text-orientation: sideways;
 		transform: rotate(180deg);
 		padding: 5px 0;
 		overflow: hidden;
