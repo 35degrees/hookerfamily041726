@@ -130,7 +130,7 @@ X01605	Grace Carpenter	true-orphan	no blood/egg flag, no marriage anchor, no CC 
 X01657	Ezra Stiles	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01714	Margery Hoar Flint	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01715	(unknown spouse)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01721	Ruth Hawkins	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
+X01720	Elizabeth Hart	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01722	(unknown spouse)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01736	Elizabeth Stone	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01762	Mary Russell Talcott	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -326,6 +326,7 @@ X01598	Caroline Beckley	no-y-basis	no birth year and no dated relative/partner �
 X01605	Grace Carpenter	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01657	Ezra Stiles	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01715	(unknown spouse)	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
+X01720	Elizabeth Hart	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01831	Isabella G Hedges	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01836	(unknown spouse)	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01854	Captain Thomas Willett	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
