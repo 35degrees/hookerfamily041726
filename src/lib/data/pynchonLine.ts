@@ -12,7 +12,7 @@
 // Both are derived from the parent graph rather than listed, so neither can drift from the genealogy.
 export const PYNCHON_LINE: ReadonlyArray<readonly [string, number | null, boolean]> = [
 	['Y00004', 0, true], // Hon. William Pynchon
-	['X03297', 1, true], // John Pynchon
+	['X03297', 1, true], // Major John Pynchon
 	['X03298', 2, true], // Lt. Col. John C. Pynchon
 	['X03300', 3, true], // William Pynchon
 	['X03220', 4, true], // Joseph Pynchon
@@ -33,6 +33,7 @@ export const PYNCHON_LINE: ReadonlyArray<readonly [string, number | null, boolea
 	['X03231', null, true], // Catherine Frances Bennett Pynchon
 	['X03299', null, true], // Margaret Hubbard Pynchon
 	['X03301', null, true], // Katherine Brewer Pynchon
+	['X03851', null, true], // Amy Wyllys Pynchon
 ];
 
 const GEN = new Map<string, number | null>(PYNCHON_LINE.map(([id, g]) => [id, g]));

@@ -231,6 +231,39 @@ violates v23 §5(h) subject discipline, and Sam's permission to move material do
 deleted id from `TITLE_ONLY` first — it is a hand-maintained list and the only part of that file
 that cannot heal itself.
 
+## 7c. TOP-LEVEL MEDIA — which key each resolver actually reads (10 Aug 2026)
+
+Verified against `regenerate-data.js`, not inferred. The three media types do **not** share a
+shape, and the ART row is a standing exception to the `primary_name` rule in
+`pipeline-gotchas.md`:
+
+| record | title key the card reads | link | image | how a person is attached |
+|---|---|---|---|---|
+| `artworks[]` | **`title`** (NOT `primary_name`) | `primary_url ?? url` | `photo_url ?? image_url` | person-side `artworks[] = {artwork_id, role, artwork_blurb}` |
+| `landmarks[]` | **`primary_name`** | `primary_url ?? url` | `photo_url ?? image_url` | person-side `landmarks[] = {landmark_id, landmark_blurb}` |
+| `statues[]` | **`name ?? description`** | `url` | `photo_url` | **inverted** — no person-side field; the statue carries `subject_id` **and** `person_ids[]`, and `resolveStatues` unions the two |
+
+Consequences worth keeping:
+
+- **The artwork `artwork_blurb` DOES render** (as the row's subtitle), unlike the person-side
+  `landmark_blurb`, which `resolveLandmarks` hard-codes to null. So an artwork gets a per-person
+  line and a landmark does not — write the landmark blurb for the record, the artwork blurb for
+  the card.
+- **A statue reaches a whole family through `person_ids[]`.** `subject_id` is singular and means
+  *who it depicts*; `person_ids[]` is the extra roster. This is how the William Pynchon statue
+  appears on Frances's and John's cards without claiming they are its subject.
+- `statueTypeLabel('statue')` renders as an em-dash in the type slot. Cosmetic, matches every
+  existing statue record, not worth a data change.
+
+## 7d. OLD STYLE / NEW STYLE DATES — not every date conflict is a conflict
+
+John Pynchon's death arrived as "17 January 1702" in one place and 1703 in another. Both are
+correct: under the Old Style calendar the year turned on 25 March, so any date between 1 January
+and 24 March carries two year numbers. **Before flagging a one-year gap in a pre-1752 date as a
+source conflict, check whether the date falls in that January-to-March window** — if it does, it
+is the calendar, not a disagreement. Record the New Style year and note the dual form
+(17 January 1702/3) in `research_notes`.
+
 ## 8. OPEN QUESTIONS PARKED HERE
 
 - **Exposition/world's-fair medal tag.** Still unruled from the 3 August handoff.
