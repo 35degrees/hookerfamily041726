@@ -665,10 +665,25 @@
 		// MARRIED IN — the bloodline spouse is right here in the payload.
 		const spouses = featured.current?.neighborhood?.spouses ?? [];
 		const hookerSpouse = spouses.map((s) => s.spouse).find((s) => s && s.hd) ?? null;
+		// THE BLOODLINE SPOUSE GETS AN ANCHOR TOO, and it is the focus's own year. Without it this
+		// branch silently dropped its first bar for 46 cards: a LIVING bloodline spouse is `pv`, `pv`
+		// is read as no dates at all (see barFor), and barFor then needs a fallback or returns null.
+		// Only the focus was being handed one, so I'lee Bailey Hooker showed alone and Tony's bar
+		// vanished — while the same pair, viewed from his card, drew hers from her death year.
+		//
+		// `fallbackBirthYear()` cannot serve here: it scans the focus's spouses for one that is NOT
+		// `pv`, and in exactly this case the only spouse IS the `pv` person we are trying to place. The
+		// focus's own year is the right anchor anyway — it is the "their spouse was born in 1765" rule
+		// the fallback branch already states, applied in the one direction it was missing.
+		//
+		// Nothing leaks: `pv` still zeroes their real dates, so the bar is positioned from the focus's
+		// year and dissolves at both ends. A bloodline spouse with real dates never reaches the
+		// fallback, so every card that already drew two bars is untouched.
 		if (f.sp && hookerSpouse) {
-			return [barFor(hookerSpouse, 0), barFor(f, 1, fallbackBirthYear())].filter(
-				(b): b is Bar => !!b
-			);
+			return [
+				barFor(hookerSpouse, 0, f.by ?? f.dy ?? null),
+				barFor(f, 1, fallbackBirthYear())
+			].filter((b): b is Bar => !!b);
 		}
 
 		// NO ROUTE TO THE LINE AT ALL — 27% of eggs. Sam, on Harriet Beecher Stowe: "we should just
