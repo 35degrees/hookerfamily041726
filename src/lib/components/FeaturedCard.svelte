@@ -167,6 +167,12 @@
 		});
 	});
 
+	// EMBLEM IMAGES — ids whose portrait slot holds a coat of arms rather than a face. The hover-zoom
+	// lifts a portrait off the page with a drop shadow, which is right for a photograph and wrong for a
+	// flat crest, where it reads as a mistake. Sam, 10 Aug 2026, asked for it off on X01929 and for
+	// nothing else to change — so this is a LIST, not a rule inferred from the image. Add ids on request.
+	const EMBLEM_PHOTO = new Set(['X01929']);
+
 	// ── Main-portrait hover-zoom ──────────────────────────────────────────────
 	// Same mechanism as RightColumn's thumbnail popout (mouse-anchored, portaled to <body> so it escapes
 	// the card clip / overflow, pointer-events-none so the card stays interactive). Anchored ABOVE the
@@ -720,7 +726,9 @@
 		<img
 			src={zoom.src}
 			alt={zoom.alt}
-			class="block h-full w-full rounded-md object-cover shadow-[-18px_22px_48px_-12px_rgba(0,0,0,0.55)] ring-1 ring-black/10"
+			class="block h-full w-full rounded-md object-cover ring-1 ring-black/10 {EMBLEM_PHOTO.has(person.id)
+				? ''
+				: 'shadow-[-18px_22px_48px_-12px_rgba(0,0,0,0.55)]'}"
 		/>
 	</div>
 {/if}
