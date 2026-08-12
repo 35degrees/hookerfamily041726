@@ -1096,15 +1096,17 @@
 			lifespan: '1857–1930'
 		},
 		{
-			// THE FIRST OF TWO THAT CLOSE THE 1919-2012 HOLE. His span is four years and not the eight
-			// every other anchor carries, because four years is the honest answer: he took the Army's
-			// Information Branch in 1941 and was a brigadier general by June 1945, and the bar is
-			// therefore exactly America's war. A 1937 start would have matched the rail's rhythm at the
-			// cost of eight peacetime years he was not prominent in.
+			// THE FIRST OF TWO THAT CLOSE THE 1919-2012 HOLE. Eight years, not the four this first
+			// shipped with. `years` is not only the bar's length — anchorD() feeds it to BOTH the
+			// portrait's width and its height, so a four-year span rendered his face at half the
+			// diameter of every neighbour and Sam read it as a mistake ("so small in timeline"). The
+			// honest span was 1941-1945, exactly America's war; the legible one starts at 1937 and
+			// still ends on the June 1945 brigadier's star. Circle size wins: an anchor nobody can see
+			// is worse than a start year three years early.
 			slug: 'edward-munson-jr-1904',
 			name: 'Gen. Edward Munson Jr.',
-			from: 1941,
-			years: 4,
+			from: 1937,
+			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786567994/Munson_Edward_Lyman_l0ejs3.jpg',
 			t: { x: 2637, y: 1904 },
 			headshotBlurb: 'Armed Forces Radio founder',
