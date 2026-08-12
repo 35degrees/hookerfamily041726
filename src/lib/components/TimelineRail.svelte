@@ -1096,6 +1096,35 @@
 			lifespan: '1857–1930'
 		},
 		{
+			// THE FIRST OF TWO THAT CLOSE THE 1919-2012 HOLE. His span is four years and not the eight
+			// every other anchor carries, because four years is the honest answer: he took the Army's
+			// Information Branch in 1941 and was a brigadier general by June 1945, and the bar is
+			// therefore exactly America's war. A 1937 start would have matched the rail's rhythm at the
+			// cost of eight peacetime years he was not prominent in.
+			slug: 'edward-munson-jr-1904',
+			name: 'Gen. Edward Munson Jr.',
+			from: 1941,
+			years: 4,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786567994/Munson_Edward_Lyman_l0ejs3.jpg',
+			t: { x: 2637, y: 1904 },
+			headshotBlurb: 'Armed Forces Radio founder',
+			lifespan: '1904–1967'
+		},
+		{
+			// 1946 rather than the 1947 that would have given more room: the Nuremberg trial OPENED on 20
+			// November 1945 and ran to the verdicts of October 1946, so 1947 would have sat entirely
+			// AFTER the thing it names. 1946 is the year the case closed. Eight years carries him to
+			// 1954 — Brown v. Board, and his own death.
+			slug: 'robert-jackson-1892',
+			name: 'Robert H. Jackson',
+			from: 1946,
+			years: 8,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786568087/Screenshot_2026-08-12_at_1-resized_nglhjj.png',
+			t: { x: 7623.9, y: 1892 },
+			headshotBlurb: 'Nuremberg prosecutor',
+			lifespan: '1892–1954'
+		},
+		{
 			slug: 'anderson-cooper-1967',
 			name: 'Anderson Cooper',
 			from: 2013,
@@ -1154,7 +1183,8 @@
 	 * setting that on the displayed <img> would make the portrait FAIL TO LOAD outright anywhere the host
 	 * does not answer with the CORS header — trading a generic border for no face at all. A separate
 	 * loader can fail silently and cost nothing: the anchor simply keeps the default ink. All sixteen
-	 * currently succeed (measured), and the fallback is the ink they used to share.
+	 * originally succeeded (measured); Munson and Jackson were added later and have NOT been measured, so
+ * either may quietly fall back to the shared ink. The fallback is the ink they used to share.
 	 */
 	let anchorInk = $state<Record<string, string>>({});
 
