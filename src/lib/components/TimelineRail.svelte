@@ -1127,6 +1127,30 @@
 			lifespan: '1892–1954'
 		},
 		{
+			// VIETNAM, and the only anchor here who is not famous — Sam's call: "he's not particularly
+			// notable but it's moving and his CCs are ripe." He is on the rail for the connections his
+			// card makes (Henrietta Swan Leavitt his great-aunt, the Ambassador his father, two other
+			// Hooker descendants dead in the same war), not for a reputation.
+			//
+			// 1967 is when he shipped out, not when he died: he began his tour on 15 December 1967 and
+			// was killed at Khe Sanh on 21 April 1968, four months in. Eight years carries the bar to
+			// 1975 and the end of the war — the full-size circle every other anchor gets, with a start
+			// year that is still a fact about him.
+			//
+			// THE ONLY PORTRAIT ON THE RAIL NOT SERVED FROM CLOUDINARY. This is his own record's
+			// photo_url, on honorstates.org. If that host hotlink-blocks, this is the anchor that
+			// breaks; the sampled border ink will fall back to the default either way, since a
+			// third-party host is the least likely to answer with the CORS header.
+			slug: 'gridley-strong-1947',
+			name: 'PFC Gridley Strong',
+			from: 1967,
+			years: 8,
+			src: 'https://www.honorstates.org/images/profiles/301000/300548.jpg',
+			t: { x: 4988, y: 1947 },
+			headshotBlurb: 'Killed at Khe Sanh',
+			lifespan: '1947–1968'
+		},
+		{
 			slug: 'anderson-cooper-1967',
 			name: 'Anderson Cooper',
 			from: 2013,
