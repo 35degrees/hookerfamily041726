@@ -31,6 +31,11 @@ export interface DateLocation {
 	county: string | null;
 	state: string | null;
 	country: string | null;
+	/** 'exact' | 'year_only' | 'month_year' | 'approximate' | 'unknown'. Absent on most records —
+	 *  ~15k carry no value at all — so it is read only where it can settle something the shape of the
+	 *  date cannot: a month:1/day:1 that is a REAL New Year's Day rather than the placeholder. Both
+	 *  formatDate and ageAtDeath consult it for exactly that, and nothing else. */
+	date_precision?: string | null;
 }
 
 export type Birth = DateLocation;

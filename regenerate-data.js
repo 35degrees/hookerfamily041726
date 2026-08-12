@@ -311,6 +311,12 @@ function compact(p, slugMap) {
 		//
 		// Absent when there is no month, which is most of the corpus — a year-only date makes the age
 		// approximate, and `ageAtDeath` reaches that conclusion from the missing field itself.
+		// bx/dx — the exactness flag, emitted only when the record claims it. Without it a real
+		// 1 January reads as the month:1/day:1 placeholder and the rail prints a tilde on a birthday
+		// we actually know. Kept as a flag rather than a baked age so ageAtDeath stays the ONE
+		// implementation of the precision rules, per the note above.
+		...(p.birth?.date_precision === 'exact' ? { bx: 1 } : {}),
+		...(p.death?.date_precision === 'exact' ? { dx: 1 } : {}),
 		...(p.birth?.month != null ? { bm: p.birth.month } : {}),
 		...(p.birth?.day != null ? { bd: p.birth.day } : {}),
 		...(p.death?.month != null ? { dm: p.death.month } : {}),

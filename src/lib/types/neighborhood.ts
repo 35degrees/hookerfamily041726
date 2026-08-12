@@ -12,8 +12,13 @@ export interface PersonCompact {
 	/** birth/death month and day — present only when the record has them. Their whole purpose is to let
 	    a consumer call `ageAtDeath` for a REAL age rather than subtracting years; see compact() in
 	    regenerate-data.js for why the age itself is not baked. */
+	/** birth date_precision === 'exact'; only present when it is, and only read to tell a real
+	 *  1 January apart from the month:1/day:1 placeholder. See ageAtDeath. */
+	bx?: 1;
 	bm?: number;
 	bd?: number;
+	/** death date_precision === 'exact'; see bx. */
+	dx?: 1;
 	dm?: number;
 	dd?: number;
 	sx: string;

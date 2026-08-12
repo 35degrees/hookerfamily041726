@@ -21,7 +21,10 @@ const MONTHS = [
 /**
  * Format just the date portion of a DateLocation.
  * Returns empty string if year is null.
- * Treats month:1, day:1 as a year-only placeholder.
+ * Treats month:1, day:1 as a year-only placeholder — UNLESS date_precision says 'exact', which is
+ * the only way a real New Year's Day birth can be told from the placeholder. Without this, Gridley
+ * Strong's 1 January 1947 printed as bare "1947" on a card whose whole point is that we know the
+ * day. Same rule, same reason, as the one in ageAtDeath below; the two must not disagree.
  */
 export function formatDate(dl: DateLocation | null | undefined): string {
 	// Assemble from present parts ONLY — month/day may be null OR absent (undefined). Use `== null`
@@ -31,7 +34,8 @@ export function formatDate(dl: DateLocation | null | undefined): string {
 	const year = String(dl.year);
 
 	// month:1, day:1 is the year-only placeholder convention; a missing month is year-only too.
-	if (dl.month == null || (dl.month === 1 && dl.day === 1)) return year;
+	if (dl.month == null) return year;
+	if (dl.month === 1 && dl.day === 1 && dl.date_precision !== 'exact') return year;
 
 	const monthName = MONTHS[dl.month - 1];
 	if (!monthName) return year; // out-of-range month → year alone, never "undefined"
@@ -57,21 +61,31 @@ export function formatDate(dl: DateLocation | null | undefined): string {
  * or one less, depending on whether the birthday had come round. Reporting the larger of the two is the
  * convention, and the tilde is what keeps it honest.
  *
- * Year-only follows formatDate's own convention: a null month, or the month:1/day:1 placeholder.
+ * Year-only follows formatDate's own convention: a null month, or the month:1/day:1 placeholder —
+ * EXCEPT where the record explicitly says the date is exact. 258 people carry a birth of month:1/
+ * day:1 and for 242 of them that really is the placeholder, but the other 16 were genuinely born on
+ * New Year's Day (Gridley Strong and Robert Tracy, both 1 Jan 1947, among them) and were being
+ * handed a tilde for it. `date_precision: 'exact'` is the only thing that can tell the two apart,
+ * so it wins over the heuristic — and only in the placeholder branch, never over a null month,
+ * where there is no day to be exact about.
  */
 // Takes only the three fields it reads, not a whole DateLocation. A full DateLocation still satisfies
 // this (every existing caller passes one), but the timeline rail works from PersonCompact — which has a
 // year and, since the age fix, a month and day, and no place at all. Requiring city/county/state/country
 // here would have forced that caller to pad four nulls it does not have, to satisfy a type this function
 // never touches.
-type YMD = Pick<DateLocation, 'year' | 'month' | 'day'>;
+type YMD = Pick<DateLocation, 'year' | 'month' | 'day'> & { date_precision?: string | null };
 
 export function ageAtDeath(
 	birth: YMD | null | undefined,
 	death: YMD | null | undefined
 ): { years: number; approx: boolean } | null {
 	if (!birth || !death || birth.year == null || death.year == null) return null;
-	const yearOnly = (d: YMD) => d.month == null || (d.month === 1 && d.day === 1);
+	const yearOnly = (d: YMD) => {
+		if (d.month == null) return true;
+		if (d.month === 1 && d.day === 1) return d.date_precision !== 'exact';
+		return false;
+	};
 
 	let years = death.year - birth.year;
 	let approx = false;

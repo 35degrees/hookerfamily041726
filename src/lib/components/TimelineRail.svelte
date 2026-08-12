@@ -411,8 +411,10 @@
 			age:
 				known.by != null && known.dy != null
 					? ageAtDeath(
-							{ year: known.by, month: p.bm ?? null, day: p.bd ?? null },
-							{ year: known.dy, month: p.dm ?? null, day: p.dd ?? null }
+							{ year: known.by, month: p.bm ?? null, day: p.bd ?? null,
+								date_precision: p.bx ? 'exact' : null },
+							{ year: known.dy, month: p.dm ?? null, day: p.dd ?? null,
+								date_precision: p.dx ? 'exact' : null }
 						)
 					: null,
 			style: styleFor(p),
