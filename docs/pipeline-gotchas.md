@@ -61,7 +61,8 @@ SEEN. Run `python3 card.py <ID>`,** which prints the emitted payload's visible s
 
 | you write | the card actually reads | trap |
 |---|---|---|
-| LM/ART/DOC `name` | **`primary_name`** | a record with only `name` renders a BLANK row (LM058 does today) |
+| LM/DOC `name` | **`primary_name`** | a record with only `name` renders a BLANK row (LM058 does today) |
+| ART `name` / `primary_name` | **`title`** — ART does NOT follow LM (081126) | `resolveArtworks` reads `r.title` for name, alt AND tooltip; a new artwork given only `name`+`primary_name` renders its row as literal `None`. All 230 artworks carry `title` today — keep it that way |
 | LM `city` / `state` | **`location.{city,state}`** nested (flat tolerated) | the subtitle is "City, ST" -- **the street address NEVER renders** |
 | LM `primary_url` / `url` | `primary_url ?? url` | either works |
 | LM `photo_url` / `image_url` | `photo_url ?? image_url` | either works |
