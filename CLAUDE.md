@@ -45,8 +45,9 @@ dates, bio blurbs, tags, cross-connections, institutions, landmarks, the schema,
 **Read before acting:**
 - `docs/WORKFLOW.md` -- the editorial contract (what is *good*, the blurb/NB/CC doctrine, the task-sheet protocol). This is the day-to-day law for content.
 - `docs/pipeline-gotchas.md` -- the mechanical facts that no model can infer and no doc should make you re-derive (what `process_tasks.py` can and can't do, the INST-ID map, the render rules, the enum asymmetries). **Read it before your first batch of the session.**
-- `docs/schema_v24_planning.md` -- **doctrine stated SINCE v23, and it overrides v23 where they differ.** Read §1a (NB headers must be concrete, not riddles -- the scan test) and the NB-ceiling section before writing any NB. This file is not optional: the rules in it are the ones Sam has already had to repeat.
-- `docs/hooker_json_schema_v23.md` -- the structural law. **A reference, not a preload.** Open it when you need the exact rule for a field you're unsure about; do not read it end-to-end every session.
+- `docs/hooker_json_schema_v24.md` -- **THE structural law, and the current one.** v24 is the complete v23 body unaltered plus the v24 delta record appended at the end; where they differ, **v24 wins**. **A reference, not a preload** -- but the delta record (§v24-1 … §v24-9) is short and is where every rule Sam has had to repeat now lives. **Read §v24-1 (the render contract) before your first batch**: writing to the wrong key is how work becomes invisible -- stored, validating clean, and absent from the card. §v24-6 is the editorial law (NB ceiling and the ~250-word overflow point, concrete-not-riddle headers, the rebuild-don't-tack-on rule, no celebrity signposting).
+- `docs/hooker_json_schema_v23.md` -- superseded by v24 and kept for history. Don't read it instead of v24; v24 contains all of it.
+- `docs/schema_v24_planning.md` -- superseded, folded into v24, kept as the original decision text.
 
 The Woodward entry (X00804) is the NB quality bar -- re-read its blocks before
 writing NBs.

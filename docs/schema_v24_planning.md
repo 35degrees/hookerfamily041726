@@ -1,5 +1,12 @@
 # schema v24 — planning doc (open, added to as we go)
 
+> **STATUS: SUPERSEDED, 12 August 2026 — folded into `docs/hooker_json_schema_v24.md`.**
+> Everything below now lives in the v24 delta record: §1/§1a/§2/§3/§5 in **§v24-6** (editorial),
+> §4 in **§v24-6.7**, §6/§7/§7a/§7b in **§v24-7**, §7c/§7c-i/§7e in **§v24-1** and **§v24-4**,
+> §7d in **§v24-6.6**, §9 in **§v24-2.3**, §10 in **§v24-7.1**, §8 in **§v24-9**.
+> **This file is kept, not deleted** — it is the original decision text, and v24 §v24-9 records
+> which of its open questions are now closed. Add new rules to the v24 delta record, not here.
+
 **Status: OPEN.** This is the accumulator for rules Sam has established since v23 that are not
 yet folded into `hooker_json_schema_v23.md`, `WORKFLOW.md`, or `pipeline-gotchas.md`. It exists
 so Sam does not have to re-type the same doctrine to each new session.
