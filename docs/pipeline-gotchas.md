@@ -2,7 +2,7 @@
 
 Read this before your first data batch of the session. Everything here is a
 mechanical property of `process_tasks.py`, `regenerate-data.js`, or the ID/enum
-system -- arbitrary facts about *this* pipeline, not judgment. When one of these
+system -- arbitrary facts about _this_ pipeline, not judgment. When one of these
 would have bitten, it lives here so it can't.
 
 Editorial judgment (blurb doctrine, NB voice, CC substance) is NOT here -- that's
@@ -12,7 +12,7 @@ Editorial judgment (blurb doctrine, NB voice, CC substance) is NOT here -- that'
 
 ## What `process_tasks.py` can and cannot do
 
-- **Append/set-only. It cannot delete a person, marriage, or career row.** The no-delete guard (`diff_guard`) aborts the *entire* batch and writes nothing if any pre-existing person/marriage/career vanishes without an authorized destroy op. There is no authorizing path through the script for these. **A rebuild that genuinely needs a person/marriage/career removed is a by-hand Code edit on a separate commit** -- say so explicitly; don't try to route it through the sheet.
+- **Append/set-only. It cannot delete a person, marriage, or career row.** The no-delete guard (`diff_guard`) aborts the _entire_ batch and writes nothing if any pre-existing person/marriage/career vanishes without an authorized destroy op. There is no authorizing path through the script for these. **A rebuild that genuinely needs a person/marriage/career removed is a by-hand Code edit on a separate commit** -- say so explicitly; don't try to route it through the sheet.
 - **`new_person` mints X-ids only** (`next_x_id`, recomputed live). Every **HD / H / I** id must be allocated by hand by Code. When building a blood descendant or a spouse, allocate the id by hand and send it back before linking.
 - **`field_set` writes strings and cannot extend an array past its end.** Arrays that need a new element (`married_names`, `notable_category`, `sources`) are hand-edits. `sources`, `institution`, and `document` have **no op handler at all** -- hand-edit or flag.
 - **`cc` skips if `related_id` is already present.** To fix an existing CC's label or link_text, don't use `cc` -- use `field_set` on the located index, e.g. `field_set cross_connections[0].display_label=...` / `cross_connections[0].link_text=...`. Locate the index by `related_id` first.
@@ -22,17 +22,17 @@ Editorial judgment (blurb doctrine, NB voice, CC substance) is NOT here -- that'
 
 ## Institution IDs -- the recurring mis-wire
 
-Medical and law schools get wrongly wired to **INST022 (Yale *College*)**. Check
+Medical and law schools get wrongly wired to **INST022 (Yale _College_)**. Check
 every `education` row's `institution_id` against this map:
 
-| Institution | INST id |
-|---|---|
-| Yale College | INST022 |
-| Yale Medical | INST122 |
-| Yale Law | INST155 |
-| Harvard | INST002 |
-| Harvard Law | INST165 |
-| Sheffield Scientific | INST0044  (four digits -- do NOT normalize to three) |
+| Institution          | INST id                                             |
+| -------------------- | --------------------------------------------------- |
+| Yale College         | INST022                                             |
+| Yale Medical         | INST122                                             |
+| Yale Law             | INST155                                             |
+| Harvard              | INST002                                             |
+| Harvard Law          | INST165                                             |
+| Sheffield Scientific | INST0044 (four digits -- do NOT normalize to three) |
 
 An INST entry exists only when 2+ tree people are affiliated; a single-person
 school lives in `education[].school_name`, not a new INST.
@@ -43,7 +43,7 @@ school lives in `education[].school_name`, not a new INST.
 
 - **Career rows render WITHOUT years.** (Corrected 072726 -- the earlier claim that a year-less row is
   invisible was wrong and was propagating from here into `process_tasks.py`'s warning text.) `RightColumn`
-  sorts by `end_year ?? start_year ?? -Infinity` and slices to 3; it never *filters* on years. `careerLine()`
+  sorts by `end_year ?? start_year ?? -Infinity` and slices to 3; it never _filters_ on years. `careerLine()`
   always prints `role, organization`; `careerDates()` returns null when both years are absent, which omits
   only the date suffix. The one real effect: a year-less row sorts last, so it can be pushed out of the top 3
   when a person already has more than three career rows. Verified against live cards, not inferred.
@@ -59,31 +59,34 @@ school lives in `education[].school_name`, not a new INST.
 places. **Don't verify a batch by reading canonical -- that proves the data is STORED, not
 SEEN. Run `python3 card.py <ID>`,** which prints the emitted payload's visible surface.
 
-| you write | the card actually reads | trap |
-|---|---|---|
-| LM/DOC `name` | **`primary_name`** | a record with only `name` renders a BLANK row (LM058 does today) |
-| ART `name` / `primary_name` | **`title`** — ART does NOT follow LM (081126) | `resolveArtworks` reads `r.title` for name, alt AND tooltip; a new artwork given only `name`+`primary_name` renders its row as literal `None`. All 230 artworks carry `title` today — keep it that way |
-| LM `city` / `state` | **`location.{city,state}`** nested (flat tolerated) | the subtitle is "City, ST" -- **the street address NEVER renders** |
-| LM `primary_url` / `url` | `primary_url ?? url` | either works |
-| LM `photo_url` / `image_url` | `photo_url ?? image_url` | either works |
-| person-side `landmark_blurb` | **nothing** -- `resolveLandmarks` hard-codes `blurb: null` | write it for the record, never for the card |
-| `bio_blurb` | `notable_blurb ?? bio_blurb` | on a notable, bio_blurb is invisible |
-| `person.cross_connections` | the payload's **top-level `crossConnections`** (resolved + hidden-filtered) | the raw array is not the render path |
-| CC `display_label` | printed straight after `link_text`, **no dash** (`ccTail()` in FeaturedCard) | must begin lowercase with a VERB so name+label is one sentence; a bare appositive or `who`-clause after a comma is a fragment (55 were rewritten 073026); a capitalised label reads as a run-on |
-| CC `link_text` | the clickable subject | empty = a row with no name and nothing to click; 271 were repaired 072926, 14 remain because `related_id` is null |
+| you write                    | the card actually reads                                                      | trap                                                                                                                                                                                                   |
+| ---------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| LM/DOC `name`                | **`primary_name`**                                                           | a record with only `name` renders a BLANK row (LM058 does today)                                                                                                                                       |
+| ART `name` / `primary_name`  | **`title`** — ART does NOT follow LM (081126)                                | `resolveArtworks` reads `r.title` for name, alt AND tooltip; a new artwork given only `name`+`primary_name` renders its row as literal `None`. All 230 artworks carry `title` today — keep it that way |
+| LM `city` / `state`          | **`location.{city,state}`** nested (flat tolerated)                          | the subtitle is "City, ST" -- **the street address NEVER renders**                                                                                                                                     |
+| LM `primary_url` / `url`     | `primary_url ?? url`                                                         | either works                                                                                                                                                                                           |
+| LM `photo_url` / `image_url` | `photo_url ?? image_url`                                                     | either works                                                                                                                                                                                           |
+| person-side `landmark_blurb` | **nothing** -- `resolveLandmarks` hard-codes `blurb: null`                   | write it for the record, never for the card                                                                                                                                                            |
+| `bio_blurb`                  | `notable_blurb ?? bio_blurb`                                                 | on a notable, bio_blurb is invisible                                                                                                                                                                   |
+| `person.cross_connections`   | the payload's **top-level `crossConnections`** (resolved + hidden-filtered)  | the raw array is not the render path                                                                                                                                                                   |
+| CC `display_label`           | printed straight after `link_text`, **no dash** (`ccTail()` in FeaturedCard) | must begin lowercase with a VERB so name+label is one sentence; a bare appositive or `who`-clause after a comma is a fragment (55 were rewritten 073026); a capitalised label reads as a run-on        |
+| CC `link_text`               | the clickable subject                                                        | empty = a row with no name and nothing to click; 271 were repaired 072926, 14 remain because `related_id` is null                                                                                      |
 
 **The CC target key is `related_id`.** Not `connected_person_id`, not `person_id`, not `target_id`
 -- and this one bites specifically when you are hand-patching canonical instead of going through
 the `cc` op. A CC object is exactly:
 
 ```json
-{"related_id": "HD6418", "link_text": "Submit Newton Camp",
- "display_label": "was her great-aunt, and she alone remembered how Mitty wore her hair",
- "type": "family_orbit"}
+{
+	"related_id": "HD6418",
+	"link_text": "Submit Newton Camp",
+	"display_label": "was her great-aunt, and she alone remembered how Mitty wore her hair",
+	"type": "family_orbit"
+}
 ```
 
 Write the wrong key and the row stores fine, reads as valid JSON, and `validate.py` reports
-`CC related_id=None is a dangling reference` -- which sounds like a *missing person* and sends you
+`CC related_id=None is a dangling reference` -- which sounds like a _missing person_ and sends you
 hunting for a bad id when the id is right there under the wrong name. `type` is ignored at render
 (schema §5); default it and move on.
 | `sources` | **nothing** -- no component reads it | it is the interior source field in practice; the sources UI is unbuilt (roadmap §11) |
@@ -112,7 +115,7 @@ regenerate 8.3s. **The cost was always re-derivation, not compute.** Two flags c
 
 - **`validate.py --since <baseline>`** reports ONLY what this batch introduced. A plain run prints
   `BLOCKED` every time because the standing §C debt is ~1,300 errors by design, so the question that
-  matters -- *did I break anything?* -- had to be grepped out by eye. `--since` answers it and exits
+  matters -- _did I break anything?_ -- had to be grepped out by eye. `--since` answers it and exits
   on the DELTA. (Red-proven: injected an over-long NB header and a dropped NB; both fired, exit 1.)
   The full report is still `validate.py canonical.json`.
 - **`regenerate-data.js --only ID1,ID2`** rebuilds just those page payloads and skips every
@@ -189,7 +192,7 @@ add a 20th-century person whose death is unrecorded: their URL will have no year
 ## Fields that store but have no home on the card
 
 - **`burial` has no date field anywhere in the file.** It is `{cemetery_id, plot_notes}`. A
-  burial *date* from a source goes in `plot_notes` ("Colebrook Cemetery, Whitman; buried
+  burial _date_ from a source goes in `plot_notes` ("Colebrook Cemetery, Whitman; buried
   20 Sep 1957") or `research_notes`. Do not invent a `date_year` key on it.
 - **`bio.photo_notes` exists and is the place to park a superseded `photo_url`.** When Sam sends
   a joint portrait to replace two individual ones, setting `photo_url` alone destroys the old

@@ -197,7 +197,8 @@ hadn't opened.
 - **Unverified link, flagged on both cards:** Charles DeWolf Brownell (X03123) and Henry Howard
   Brownell — Farragut's secretary aboard the USS Hartford — as brothers. Well attested but not
   sourced in this file. The Leavitt CC depends on it.
-- `docs/schema_v24_planning.md` is the accumulator for doctrine stated since v23. Keep adding.
+- New doctrine goes in the **v24 delta record** (`docs/hooker_json_schema_v24.md`, §v24-1 …
+  §v24-9). The old `schema_v24_planning.md` accumulator was folded into it and deleted.
 
 ---
 

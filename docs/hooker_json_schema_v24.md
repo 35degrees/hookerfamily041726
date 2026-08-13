@@ -23,8 +23,8 @@ appended section wins; it is the exact decision text.
 
 **What v24 folds in.** The whole of `schema_v24_planning.md` (the open accumulator started
 10 August 2026 during the Pynchon enrichment), plus the rules established in working sessions
-through 12 August 2026 that were never written down anywhere. The planning file is left in
-place, superseded but not deleted.
+through 12 August 2026 that were never written down anywhere. The planning file has since been
+deleted -- everything it held lives here.
 
 **Reading order for a new contributor:** §0 (operating discipline) -> §2 (IDs) -> §4/§5
 (person template + field rules) -> §6 (tags) -> the v22 blocks §A-§E -> **the v24 delta record,
@@ -3108,8 +3108,8 @@ Notes:
 Version 24.0 — 12 August 2026.
 
 Everything above this line is v21/v22/v23 and is unchanged. Everything below is the current
-law and **beats anything above it**. Sections §v24-6 and §v24-7 fold in the whole of
-`docs/schema_v24_planning.md`, which is superseded but has not been deleted.
+law and **beats anything above it**. Sections §v24-6 and §v24-7 fold in the whole of the former
+`docs/schema_v24_planning.md`, which has been deleted; this record is the only copy.
 
 ---
 

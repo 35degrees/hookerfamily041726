@@ -46,7 +46,6 @@ dates, bio blurbs, tags, cross-connections, institutions, landmarks, the schema,
 - `docs/WORKFLOW.md` -- the editorial contract (what is *good*, the blurb/NB/CC doctrine, the task-sheet protocol). This is the day-to-day law for content.
 - `docs/pipeline-gotchas.md` -- the mechanical facts that no model can infer and no doc should make you re-derive (what `process_tasks.py` can and can't do, the INST-ID map, the render rules, the enum asymmetries). **Read it before your first batch of the session.**
 - `docs/hooker_json_schema_v24.md` -- **THE structural law, and the current one.** v24 is the complete v23 body unaltered plus the v24 delta record appended at the end; where they differ, **v24 wins**. **A reference, not a preload** -- but the delta record (§v24-1 … §v24-9) is short and is where every rule Sam has had to repeat now lives. **Read §v24-1 (the render contract) before your first batch**: writing to the wrong key is how work becomes invisible -- stored, validating clean, and absent from the card. §v24-6 is the editorial law (NB ceiling and the ~250-word overflow point, concrete-not-riddle headers, the rebuild-don't-tack-on rule, no celebrity signposting).
-- `docs/schema_v24_planning.md` -- superseded, folded into v24, kept as the original decision text.
 
 The Woodward entry (X00804) is the NB quality bar -- re-read its blocks before
 writing NBs.
@@ -206,10 +205,9 @@ docs/
   WORKFLOW.md                             <- data editorial contract
   pipeline-gotchas.md                     <- mechanical pipeline facts (read before first batch)
   hooker_json_schema_v24.md               <- THE structural law (read the v24 delta record)
-  schema_v24_planning.md                  <- superseded, folded into v24; kept as decision text
   ENRICHED_DESIGN_FABLE_<date>.md         <- frontend design (what/why) -- TAKE THE NEWEST
   ENRICHED_CODING_ROADMAP_FABLE_<date>.md <- frontend sequencing + session record -- TAKE THE NEWEST
-  HANDOFF_content_072926.md               <- Stream A content session record
+  HANDOFF_content_<date>.md               <- Stream A content session record -- TAKE THE NEWEST
   examples/                               <- frontend pattern references
 static/data/                  <- GENERATED (gitignored); rebuilt by regenerate-data.js
 ```
