@@ -4,7 +4,9 @@
 Sam collaborate to add and revise entries. It sits *on top of* the schema, not instead
 of it.
 
-- **Schema v23** (`hooker_json_schema_v23.md`) = what is structurally **legal**. "Can this be saved?"
+- **Schema v24** (`hooker_json_schema_v24.md`) = what is structurally **legal**. "Can this be saved?"
+  v24 is the whole v23 body plus an appended delta record; where they differ, **v24 wins**.
+  `hooker_json_schema_v23.md` is superseded and kept only for history.
 - **`validate.py`** = the executable enforcement of that schema. The hard gate.
 - **WORKFLOW.md** (this file) = what is **good**, and the process that gets us there. "Should this be shipped?"
 

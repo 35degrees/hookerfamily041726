@@ -201,12 +201,14 @@ CLAUDE.md                     <- this file (auto-read every session)
 canonical.json                <- the genealogy DB (the SOURCE; edited directly, git-protected)
 tasks.tsv / tasks.csv         <- the data task sheet (csv or tsv; auto-detected)
 process_tasks.py              <- two-pass, append/set-only, direct-on-canonical task processor
-validate.py                   <- schema v23 gate + git-HEAD silent-loss diff
+validate.py                   <- schema v24 gate + git-HEAD silent-loss diff
 regenerate-data.js            <- builds static/data/ from canonical.json (takes a filename arg)
 docs/
   WORKFLOW.md                             <- data editorial contract
   pipeline-gotchas.md                     <- mechanical pipeline facts (read before first batch)
-  hooker_json_schema_v23.md               <- structural law (reference, not a preload)
+  hooker_json_schema_v24.md               <- THE structural law (read the v24 delta record)
+  hooker_json_schema_v23.md               <- superseded by v24; kept for history
+  schema_v24_planning.md                  <- superseded, folded into v24; kept as decision text
   ENRICHED_DESIGN_FABLE_<date>.md         <- frontend design (what/why) -- TAKE THE NEWEST
   ENRICHED_CODING_ROADMAP_FABLE_<date>.md <- frontend sequencing + session record -- TAKE THE NEWEST
   HANDOFF_content_072926.md               <- Stream A content session record

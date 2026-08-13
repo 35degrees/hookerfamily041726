@@ -2,7 +2,8 @@
 """
 validate.py  --  Hooker Descendants canonical validator
 =========================================================
-Executable enforcement of schema v23 (§B.2 enums, §C issues register, §D.3 sweep).
+Executable enforcement of schema v24 (§B.2 enums, §C issues register, §D.3 sweep).
+v24 = the v23 body plus the appended v24 delta record; the §-numbers below are unchanged.
 
 This is the STRUCTURAL gate. It answers "can this be saved?" — not "should this
 be shipped?" (that judgment lives in WORKFLOW.md). Run it after every batch,
@@ -30,7 +31,8 @@ import json, re, sys, argparse
 from collections import Counter, defaultdict
 
 # ----------------------------------------------------------------------------
-# CONTROLLED VOCABULARIES  (schema v23 §B.2 — the two NON-interchangeable enums)
+# CONTROLLED VOCABULARIES  (schema v24 §B.2 — the two NON-interchangeable enums;
+#  v24 §v24-5 lists the specific collisions: 'music' is NB-only, 'history' is notable-only)
 # ----------------------------------------------------------------------------
 NB_CATEGORY = {
     'career','military','education','religion','family','character','politics',
@@ -408,7 +410,7 @@ def run_delta(path, baseline_path, quiet_ok):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Validate Hooker canonical against schema v23.")
+    ap = argparse.ArgumentParser(description="Validate Hooker canonical against schema v24.")
     ap.add_argument('path', help='canonical.json to validate')
     ap.add_argument('--baseline', help='prior canonical.json — enables silent-loss diff')
     ap.add_argument('--since', help='prior canonical.json — report ONLY findings THIS batch added')
