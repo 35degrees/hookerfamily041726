@@ -1,8 +1,19 @@
 # Hooker Family Descendants — Design Decisions
 
+> **STALE — DO NOT TREAT AS CURRENT (banner added 12 August 2026).**
+> `CLAUDE.md` states that the base design doc "has NOT existed for some time" and that the
+> **`docs/ENRICHED_DESIGN_FABLE_<date>.md` / `docs/ENRICHED_CODING_ROADMAP_FABLE_<date>.md`
+> pair absorbed both roles.** That is correct about `docs/DESIGN.md`, but *this* file survives
+> at the repo ROOT and is easy to stumble into. It was last touched 1 July 2026 and is wrong in
+> at least two ways that matter: it cites **schema v22**, a file that no longer exists (the
+> current law is `docs/hooker_json_schema_v24.md`), and it puts the tree at **~14,767 people**
+> when canonical holds ~20,190.
+> **Read the ENRICHED pair for design, and v24 for the schema.** Kept for history only; nothing
+> here has been deleted.
+
 Last updated: July 1, 2026 (revision 070126)
 Maintained by: Samuel Talcott Hooker
-Affiliated schema: v22 (`hooker_json_schema_v22.md`)
+Affiliated schema: v22 (`hooker_json_schema_v22.md`) — superseded, see banner above
 
 Running record of architectural and UX decisions made during design sessions. Update as decisions evolve or get more specific.
 
