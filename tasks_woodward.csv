@@ -1,0 +1,13 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD5926,photo_url,https://res.cloudinary.com/dc5clrqtw/image/upload/v1786765990/rufusstan_xwsehv.png,OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa,/person/rufus-stanley-woodward-1859,,
+HD5926,birth_date,1859-08-14,OK birth set 1859-08-14,/person/rufus-stanley-woodward-1859,,
+HD5926,death_date,1927-11-09,OK death set 1927-11-09,/person/rufus-stanley-woodward-1859,,
+HD5926,cemetery,cem_id=CEM778,OK cemetery linked CEM778 'Worcester Rural Cemetery' +gps; burial wired (bidirectional),/person/rufus-stanley-woodward-1859,,
+HD5926,education,institution_id=INST018 type=college dates=1881,OK education record appended,/person/rufus-stanley-woodward-1859,,
+HD5926,tag_add,collegiate_athlete,OK tag 'collegiate_athlete' added,/person/rufus-stanley-woodward-1859,,
+HD5926,field_set,marriages[0].date_year=1894,OK set marriages[0].date_year = 1894,/person/rufus-stanley-woodward-1859,,
+HD5926,nb_approved,"header=""Fifty years of Amherst catchers began with him"" body=""Amherst picked the outstanding player at each position from its previous fifty years of baseball, and five men made the roll at catcher. Woodward, class of 1881, was the earliest of the five."" category=sports",OK nb_approved appended verbatim: 'Fifty years of Amherst catchers began with him',/person/rufus-stanley-woodward-1859,,
+I01581,birth_date,1869-04-07,OK birth set 1869-04-07,/person/stella-hulse-brooks-1869,,
+I01581,death_date,1937-07-02,OK death set 1937-07-02,/person/stella-hulse-brooks-1869,,
+I01581,cemetery,cem_id=CEM778,OK cemetery linked CEM778 'Worcester Rural Cemetery' +gps; burial wired (bidirectional),/person/stella-hulse-brooks-1869,,
+I01581,field_set,marriages[0].date_year=1894,OK set marriages[0].date_year = 1894,/person/stella-hulse-brooks-1869,,
