@@ -1,5 +1,5 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: August 8, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Date: August 14, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_081026.md (the what/why for every item below).**
 **The 080326 edition (August 3) adds §18 — THE BOARD MOVES AS ONE. The card-transition layer reopened after a long pause and closed again the same day, on three findings that were all the same finding: distance and time were being decided SEPARATELY in each place instead of once for the whole stage. `growFrom` clocked a promotion off the card's top-left corner while its far corner covered 3.5× the ground; the leaving rows drifted a flat 28px in the camera-pan direction while the arriving rows swept 150px from elsewhere, so they crossed through each other; and the non-promoted parent dissolved in the parents row to reappear in the notch a beat later. Now: honest max-corner velocity, a measured 145px tier pitch every row shares, one direction (the pan) and one clock (the demotion's) for every row at once, and a hand-off that travels in front of the card and lands wearing the destination's own face. Also records the STACKING-CONTEXT TRAP (a z-index that measured as applied and did nothing), two latent bugs the work exposed (`chipExit` holding a seat in the flex flow; `.flat` nearly overloaded as two signals), and the false-red/false-green lessons from both.**
 
@@ -24,6 +24,8 @@
 **The 071726 edition (July 17) adds §11 — PHASE 7 SHIPPED END TO END (sibling trigger, panel, cascade, carousel, close, flight, retraction), the GHOST SAGA (three z-order bugs from one unstated fact, one of them pre-existing), the SIX FALSE-GREENS and what they have in common, and the probe suite added. Design rationale: design doc §21.**
 
 **The 072326 edition (July 23) adds §13 — THE DECK SHIPPED. The July-22 §12 sequence's item 1 is DONE: the CC transition is built, probe-guarded, and committed (commit 0c652f6c, Stream B). It shipped as the DECK PUSH — two solid weighted cards + an empty gap, not the visible riffle (the convoy read as "adjacent" and shrank the tree; ghosts parked behind DECK_GHOSTS=false). Records the gen_delta direction model, the fixed ping-pong memory, the weight-physics dials, the flight-lock/connector-cut/belt, the seven-probe guard, and the resequence (Shuffle Notables now unblocked). Design rationale: design doc §22 (as built). Also adds §14 — PHOTO-LOADING RESTORED: a hover-preload experiment had degraded foundational chip loading; fixed by making the NEIGHBORHOOD the load unit (batch preload, on-screen chips tiered first, one shared Cloudinary derivative per person, media demoted to on-demand). The Cloudinary warm-up script is queued. Design rationale: design doc §24.**
+
+**AUGUST 14 (§38): SVELTEKIT 3 ASSESSED — a verdict and a trigger, no code. Sam surfaced the `@next` preview (`3.0.0-next.23`). The measured answer: this codebase's migration surface is **five things**, four of them mechanical, because the app has NO SERVER — which deletes most of SK3's breaking list outright. We already meet every version floor but a Svelte patch. The recommendation is YES, and NOT NOW: wait for `3.0.0` stable (the preview relocated its own types three times between next.19 and next.21, and next.20 removed the `#lib` definition next.15 introduced — migrating today means migrating twice), then do it in a dedicated session **before Phase 2.5**. §38 carries the inventory, the one genuinely risky item (`pushState` → shallow `goto`, which is the warm path's seam and now fires navigation hooks it previously did not), the trigger condition, and the order of operations — headed by re-baselining the probe suite BEFORE the framework changes, not after.**
 
 **AUGUST 9 (§36): the CHILDREN ROW GETS RULES and the TIMELINE LANDS AS A SCAFFOLD. Records what shipped across two commits, and — more usefully — the eight things that went wrong in the order they went wrong, every one of which was found by Sam on a screenshot rather than by a probe. The worst was moving the STAGE to make room for the rail, which inverts the hierarchy the whole project is built on. Also records the gap worth generalising (grandchildren were enriched but never asked `diedYoung`, so a child who died at birth sat mid-row in full ink-blue — the component was fine, the flag never arrived) and the four instruments that cannot see what they claim to, all baseline-confirmed. Design rationale: design doc §34–35.**
 
@@ -64,6 +66,7 @@ UX_ROADMAP §1 and DESIGN.md still say raw IDs are pending. First move for Code:
 | 1 | RightColumn close-out (overflow, polish) | Was Phase 1; likely part-done |
 | 1.5 | **Card-grid refinement** (design doc §14) | ~70% DONE 7/11: grid gutters, measure cap, stacked vitals, shrinkToFit name/labels, line-per-lineage generation labels, header heights, RightColumn narrowed. REMAINING: CC display cap 6, RightColumn row budget, Connect buttons (ride with Phase 6) |
 | 2 | Role-color + midnight background **+ stub state design + off-line ambient tint (design doc §15.1)** | Extended |
+| 2.4 | **SvelteKit 3 migration** (§38) | NEW 8/14 — ASSESSED, NOT STARTED. Gated on `3.0.0` stable (preview is at `next.23` and still moving its own type surface). MUST land before 2.5 and long before 10 |
 | 2.5 | **SEO build-out** | NEW — pulled forward from "pre-Vercel" |
 | 2.75 | **Layout-tier foundation + VIEWPORT LOCK** (tier store, stage-fit densities, overflow: clip shell) | Interim scrollbar hygiene SHIPPED 7/11 (scrollbar-gutter: stable + overflow-x clip — arc-wobble dead). Full lock/tiers still pending |
 | 3a | **Table coordinates + camera store** (data + plumbing, no visuals) | NEW — split from substrate |
@@ -3340,3 +3343,149 @@ twice if the reasoning is not written down**, hence §36.
 - **The grandparent tier's design write-up.** §31.5b now carries the divergence note, but the ancestor
   tier has no section of its own describing the click trigger as doctrine — it is documented inline in
   the code and in that block quote. Worth a proper section if the row changes again.
+
+---
+
+## 38. AUGUST 14 — SVELTEKIT 3 ASSESSED (verdict + trigger; nothing migrated)
+
+Sam surfaced the SvelteKit 3 preview — `@next`, at **`3.0.0-next.23`** on Aug 14 (the last two entries
+are housekeeping: prerender-progress newlines, Vite log level). **No code was changed.** This section is
+the measured inventory, the recommendation, and the condition that fires it. It is written to be actioned
+cold, months from now, by whoever opens the migration session.
+
+Sources read: the migration guide at `next.svelte.dev/docs/kit/migrating-to-sveltekit-3` and the
+`version-3` branch CHANGELOG. Both were read against the actual codebase, not summarised from the
+release notes.
+
+### 38.1 The measured surface — five things, and only one of them thinks
+
+Every SvelteKit API this codebase touches was grepped. The complete break list:
+
+| Change | Where it lands here | Cost |
+|---|---|---|
+| `$lib` → `#lib` + a `package.json` `imports` map | **106 import lines across 29 files** | codemod: `npx sv migrate sveltekit-3` |
+| `svelte.config.js` → options on the `sveltekit()` plugin in `vite.config.js` | `svelte.config.js` — the adapter and the runes `compilerOptions` are its entire contents | by hand, ~10 min |
+| root `tsconfig.json` extends `$app/tsconfig`, needs explicit `include`/`exclude` | `tsconfig.json` | ~5 min |
+| `$app/stores` removed → `$app/state` | `src/routes/+layout.svelte:3` — **and it is a dead import**; `page` is never referenced in that file | delete one line |
+| `pushState()` → `goto(url, { shallow: true, state })` | `src/lib/state/navigate.ts:14,69` | **the whole risk — §38.2** |
+
+**The reason the list is this short is that the app has no server.** No `hooks.*`, no `+server.ts`, no
+`.server.ts`, no form actions, no cookies, no `$env`, no service worker, no param matchers, no remote
+functions. That deletes, untouched: the always-on CSRF rework and `csrf.trustedOrigins`, cookie v2 and
+its type renames, the `handleError` unification and `handleValidationError` removal, `fail()` status
+semantics, deprecated `json()`/`text()`, the synchronous `@sveltejs/kit/node` change, `$app/paths`'
+`base`/`assets`/`resolveRoute` removal, every first-party adapter change, and tracing. **Most of the
+scary half of the SvelteKit 3 guide is not addressed to this project.**
+
+Already compliant, verified: `error(404, 'Person not found')` is already the new three-arg signature;
+`redirect(301, …)` is internal, so the new external-redirect whitelist does not apply;
+`data-sveltekit-preload-data="hover"` is untouched (only `off` → `false` changed). Not used anywhere:
+`invalidateAll`, `preloadData`, `noScroll`, `keepFocus`, `resolveRoute`.
+
+**Version floors — we are already there.** SK3 wants Node 22.17 (have **24.5**), TypeScript 6 (have
+**^6.0.2**), Vite 8.0.12 (have **^8.0.7**, a patch away), `@sveltejs/vite-plugin-svelte` 7 (have **^7**),
+Svelte 5.56.4 (have **5.55.4**, a patch away). This is a consequence of the scaffold being recent; it
+means the migration is a migration, not also a stack upgrade.
+
+### 38.2 The one thing that is actually risky — and it is the warm path
+
+`focusPerson()` calls `pushState()` at `navigate.ts:69`. That is not an incidental API call: it is the
+seam. The line sits immediately after `featured.set(data)` and immediately after the §19 sibling-nav plan
+is computed synchronously, precisely so the demote's clock and the panel's scroll target read the same
+settled answer. The comment block around it exists because getting that ordering wrong was a session.
+
+**In SvelteKit 3, shallow routing fires the navigation hooks** (`beforeNavigate` / `afterNavigate`,
+filterable via a `shallow` property on the navigation object). `pushState` fired none. So the conversion
+is not a rename — it introduces hook invocations into the exact frame where flight origins are captured,
+the flight lock is taken, and the arrival class is applied.
+
+This project's documented failure mode is measurements that are confidently wrong (§32, and the four
+instruments in §36.4/§37.3 that could not see what they claimed to). A change that alters *when the
+framework runs code* underneath a system built on capture-time settlement is the kind of thing that goes
+green and is broken. **It gets its own commit and its own probe pass, and it is not delegated to the
+codemod.**
+
+Related and cheap, but check it: `goto()` now rejects for URLs that do not resolve to an app route.
+`focusPerson`'s not-found fallback already uses `window.location.href`, which is the documented correct
+form — so that path is fine as written.
+
+### 38.3 The verdict — yes, and not on `@next`
+
+**Migrate. Do not migrate now.** Three reasons, in the order that decides it:
+
+1. **The preview is still breaking itself.** Between `next.19` and `next.21` the type surface was
+   relocated three times (`defineParams` → `@sveltejs/kit/params`; hooks and env types moved;
+   `RequestEvent`/`Cookies` → `$app/server`), and **`next.20` removed the `#lib` definition that
+   `next.15` introduced** — i.e. the single largest mechanical item in §38.1 has already changed shape
+   once mid-preview. Migrating today buys a second migration. This is the whole argument; the other two
+   are about timing, this one is about not paying twice.
+2. **The cost only rises, and it rises steepest at Phase 10.** Auth + bookmarks (BetterAuth/Neon/Drizzle)
+   is where this app finally grows hooks, cookies, server modules and form actions — which is exactly the
+   deep end of SK3's breaking changes. Migrating a zero-server app is a codemod and three config files;
+   migrating an auth'd one is a project. **The window is now-ish, not later.**
+3. **Phase 2.5 is the real deadline, not Phase 10.** SEO build-out writes the sitemap emit, the richness
+   gate, the prerender-set decision, JSON-LD and the 301 path — and SK3 changes the tools for precisely
+   that work. `$app/manifest` exposes `prerendered` and `routes` at runtime, which *is* the sitemap and
+   the indexable-set introspection; `resolve()` and `asset()` replace `base`/`assets`. Writing 2.5 on
+   SK2 and migrating after means rewriting 2.5.
+
+Hence the table row at **2.4**: after Phase 2, before 2.5.
+
+### 38.4 The trigger, and the order of operations
+
+**Trigger:** `@sveltejs/kit@3` on the `latest` tag (or a late RC with no type relocations in the
+preceding two releases), AND the current UX arc closed on a committed, pushed state.
+
+Then, in this order — the first step is the one that will be tempting to skip:
+
+1. **Re-baseline the probe suite ON SvelteKit 2 first.** You want a trustworthy net *before* the
+   framework moves, not after. Standing holes as of today: `probe-demote-settle`'s gitignored baseline
+   (§11.5, RED since before the Aug 3 arc), `probe-carousel-regression` stale on names (§36.4),
+   `probe-flight`'s 4:1 flake, `capture-demote-terminal` missing all three bands on baseline, and the
+   `elementFromPoint` / `pointer-events: none` defect that has now appeared in four instruments.
+   **Migrating with a rusted net converts a framework regression into an unattributable one.**
+2. Branch. Nothing about this lands on `main` incrementally.
+3. `npx sv migrate sveltekit-3` — takes the `$lib` → `#lib` sweep and whatever else it has learned by
+   then. Read its diff; do not assume the 106 lines are the whole of what it touched.
+4. Hand-fix the four non-codemod items: `vite.config.js` (adapter + runes `compilerOptions` — note the
+   watcher `ignored` for `static/data/**` must survive, it is load-bearing per the comment there),
+   `tsconfig.json`, the dead `$app/stores` import, the Svelte and Vite patch bumps.
+5. **`pushState` → shallow `goto` as its own commit.** Decide explicitly whether the newly-firing
+   navigation hooks are filtered out via `shallow` or deliberately consumed. Then run the arsenal.
+6. `npx svelte-check` — and, per §37.3, **compile a component directly and check SSR too**, because
+   `svelte-check` passed once while every person page 500'd.
+7. Sam's pixel verdict on: a plain chip flight, a deck push, a sibling cascade, a spouse swap, a
+   timeline-bar navigation, and browser back/forward. Back/forward matters most — popstate reconciliation
+   in `+page.svelte` is watching the URL that `pushState` used to write.
+
+### 38.5 What SK3 actually buys this project — and what it does not
+
+Honest accounting, because "stay current" is not a reason on its own:
+
+- **`$app/manifest`** — `prerendered` and `routes` at runtime. Directly useful to Phase 2.5's sitemap and
+  richness gate. The clearest single win.
+- **Sourcemaps in production builds** — this project debugs a motion system, and once it is on Vercel it
+  currently has none. Non-obvious, real.
+- **Form `dirty()` / `touched()`** — Phase 10 only.
+- **Remote functions** (experimental; needs `compilerOptions.experimental.async`) — interesting for
+  Phase 6's connect modals, but they cut against the static-payload architecture (§6.1) and are not a
+  reason to move.
+- **Not relevant:** tracing out of experimental (no server), `adapter-vercel` dropping edge (we are
+  static payloads on a CDN), the CSRF/cookie hardening (nothing to protect yet).
+
+**What it does not buy:** anything for the two actual scalability questions in this doc — the 16k-route
+prerender wall time (§3 risk register, §2.5 item 5) and the payload delivery model (§6). SvelteKit 3 is
+neutral on both. **This is a debt-avoidance decision, not a capability one.** That is still a clear yes;
+it is why it is not urgent.
+
+### 38.6 To re-check when the trigger fires
+
+The inventory above is true as of `next.23` and will drift.
+
+- Re-read the migration guide and re-run the greps. `$lib`/`#lib` has already moved once.
+- Confirm `sv migrate sveltekit-3` still exists and still covers the `#lib` sweep.
+- Confirm the shallow-`goto` signature (`{ shallow, state, persistState, replace, reset }`) survived to
+  stable — `next.13` and `next.15` describe it slightly differently.
+- One free fix available TODAY, independent of any of this: `src/routes/+layout.svelte:3` imports `page`
+  from the deprecated `$app/stores` and never uses it. Deleting it costs nothing and removes the app's
+  only `$app/stores` reference. Recorded, not done — this session changed no code.
