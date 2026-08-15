@@ -1146,11 +1146,29 @@
 			slug: 'gridley-strong-1947',
 			name: 'PFC Gridley Strong',
 			from: 1967,
-			years: 8,
+			years: 9,
 			src: 'https://www.honorstates.org/images/profiles/301000/300548.jpg',
 			t: { x: 4988, y: 1947 },
 			headshotBlurb: 'Killed at Khe Sanh',
 			lifespan: '1947–1968'
+		},
+		{
+			// 1981–1989, the window Sam asked for, and it happens to close cleanly on both ends: he
+			// joined the National Security Council staff in 1981 and was fired from it in November 1986,
+			// testified through the summer of 1987 hearings in uniform, and was tried and convicted in
+			// 1989 (the conviction was vacated the year after). The rail has 6 clear years above him —
+			// Gridley Strong ends 1975 — and 24 below, since Cooper does not begin until 2013. This is
+			// the emptiest stretch of the modern rail, which is why he fits without any arithmetic.
+			slug: 'oliver-north-1943',
+			name: 'Oliver North',
+			from: 1981,
+			// years 9, not 8 — Sam wanted this portrait and Gridley Strong's a year taller than the
+			// eight-year default. 1981–1990 also catches the year the conviction was vacated.
+			years: 9,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786816494/onor_qlcqnh.png',
+			t: { x: 8014.4, y: 1943 },
+			headshotBlurb: 'Iran-Contra figure',
+			lifespan: '1943–'
 		},
 		{
 			slug: 'anderson-cooper-1967',
