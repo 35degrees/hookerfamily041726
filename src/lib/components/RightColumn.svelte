@@ -187,7 +187,13 @@
 		onmouseleave={closePopout}
 	>
 		{#if row.thumbUrl}
-			<img src={row.thumbUrl} alt={row.alt ?? ''} loading="lazy" class="h-[34px] w-[34px] object-cover" />
+			<img
+				src={row.thumbUrl}
+				alt={row.alt ?? ''}
+				loading="lazy"
+				class="h-[34px] w-[34px] object-cover"
+				style={row.thumbPos ? `object-position:${row.thumbPos}` : undefined}
+			/>
 		{/if}
 		{#if showPlay}
 			<span class="absolute inset-0 grid place-items-center">

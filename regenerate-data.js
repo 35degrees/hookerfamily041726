@@ -738,7 +738,11 @@ const mediaRow = (o) => ({
 	url: o.url ?? null,
 	thumbUrl: o.thumbUrl ?? null,
 	alt: o.alt ?? null,
-	tooltip: o.tooltip ?? null
+	tooltip: o.tooltip ?? null,
+	// Per-ROW object-position for the 34px thumb, e.g. 'top' — the media-row twin of
+	// bio.photo_position. Null on every row that has not asked for it, so the default
+	// centre crop is untouched. Set it on the RECORD (or the person-side entry, which wins).
+	thumbPos: o.thumbPos ?? null
 });
 function safeResolve(arr, fn) {
 	try {
@@ -797,7 +801,8 @@ function resolveArtworks(p, byId) {
 			url: r.primary_url ?? r.url ?? null,
 			thumbUrl: r.photo_url ?? r.image_url ?? null,
 			alt: r.title ?? null,
-			tooltip: r.title ?? null
+			tooltip: r.title ?? null,
+			thumbPos: bl.photo_position ?? r.photo_position ?? null
 		});
 	});
 }

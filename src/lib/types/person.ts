@@ -178,6 +178,8 @@ export interface MediaRow {
 	thumbUrl: string | null;
 	alt: string | null;
 	tooltip: string | null;
+	/** Optional CSS object-position for the thumb ('top', 'left bottom'…). Null = centre crop. */
+	thumbPos?: string | null;
 }
 
 export interface Person {
