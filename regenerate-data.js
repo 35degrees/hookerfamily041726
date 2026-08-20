@@ -108,6 +108,17 @@ function slugify(s) {
 		.normalize('NFKD')
 		.replace(/[\u0300-\u036f]/g, '') // strip accents
 		.toLowerCase()
+		// Letters that carry a STROKE or are ligatures survive NFKD intact, so the
+		// [^a-z0-9] sweep below turned them into separator dashes: Skłodowska became
+		// "sk-odowska". Transliterate them by hand before that sweep runs.
+		.replace(/ł/g, 'l')
+		.replace(/đ/g, 'd')
+		.replace(/ø/g, 'o')
+		.replace(/æ/g, 'ae')
+		.replace(/œ/g, 'oe')
+		.replace(/ß/g, 'ss')
+		.replace(/þ/g, 'th')
+		.replace(/ð/g, 'd')
 		.replace(/['’.]/g, '')
 		.replace(/[^a-z0-9]+/g, '-')
 		.replace(/^-+|-+$/g, '');
