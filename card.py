@@ -97,8 +97,17 @@ def show(key, idx, raw=False):
          lambda c: ', '.join([x for x in [c.get('role'), c.get('organization')] if x])
                    + (f"   {c.get('start_year') or ''}–{c.get('end_year') or ''}"
                       if (c.get('start_year') or c.get('end_year')) else '   (no dates)'))
+    # Mirror RightColumn.eduName(): a resolved INST id WINS over the spelled-out
+    # names. Reading institution_name/school_name alone printed an em dash for every
+    # row that carries only an institution_id — a false blank on correct data.
+    _inst = pay.get('institutionsById') or {}
+    def _edu_name(e):
+        r = _inst.get(e.get('institution_id') or '')
+        if r:
+            return r.get('short_name') or r.get('name') or r.get('primary_name') or '—'
+        return e.get('institution_name') or e.get('school_name') or '—'
     rows('EDUCATION', p.get('education') or [],
-         lambda e: f"{e.get('institution_name') or e.get('school_name') or '—'}"
+         lambda e: f"{_edu_name(e)}"
                    f"   {e.get('dates') or '(no dates — degree/graduation_year do NOT render)'}"
                    + (f"  | {e.get('notes')}" if e.get('notes') else '  | (no notes line)'))
 
