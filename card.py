@@ -112,7 +112,10 @@ def show(key, idx, raw=False):
                    + (f"  | {e.get('notes')}" if e.get('notes') else '  | (no notes line)'))
 
     for label, kk in (('LANDMARKS', 'landmarksResolved'), ('ART', 'artworksResolved'),
-                      ('DOCUMENTS', 'documentsResolved'), ('STATUES', 'statuesResolved')):
+                      ('DOCUMENTS', 'documentsResolved'), ('STATUES', 'statuesResolved'),
+                      # VIDEOS render as TEXT rows (no thumb) and take their name from
+                      # `summary`, not `title` — omitting them here hid the whole field class.
+                      ('VIDEOS', 'videosResolved')):
         got = p.get(kk) or []
         if got:
             print(f"\n  {label} ({len(got)})")
