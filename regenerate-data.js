@@ -266,6 +266,7 @@ const TITLE_ABBREVIATIONS = {
 	Lieutenant: 'Lt.',
 	Major: 'Maj.',
 	Governor: 'Gov.',
+	Senator: 'Sen.',
 	Deacon: 'Dea.',
 	Elder: 'Eld.',
 	Honorable: 'Hon.',

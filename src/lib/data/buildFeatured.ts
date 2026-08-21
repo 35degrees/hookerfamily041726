@@ -37,6 +37,7 @@ const TITLE_ABBREVIATIONS: Record<string, string> = {
 	Lieutenant: 'Lt.',
 	Major: 'Maj.',
 	Governor: 'Gov.',
+	Senator: 'Sen.',
 	Deacon: 'Dea.',
 	Elder: 'Eld.',
 	Honorable: 'Hon.',
