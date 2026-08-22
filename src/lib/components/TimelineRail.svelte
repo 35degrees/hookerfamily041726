@@ -1153,6 +1153,25 @@
 			lifespan: '1947–1968'
 		},
 		{
+			// 1957–1966, NOT the seventies, and the arithmetic is why. Gridley Strong runs 1967–1976 and
+			// Oliver North opens at 1981, which leaves five clear years between them — no room for the
+			// eight- or nine-year circle every other anchor gets, and moving Gridley forward only walks
+			// him further into the same ground. The gap above is thirteen years wide (Jackson closes
+			// 1954) and takes a full bar with a clear year at either end.
+			//
+			// The window is also the truer one for him: UNRWA and the Palestine refugee agency to 1958,
+			// the Paris embassy, the Athens embassy from 1962, and the bottom of the bar landing on 1966
+			// — the year after he took UNICEF and accepted its Nobel Peace Prize five months in.
+			slug: 'henry-labouisse-jr-1904',
+			name: 'Henry R. Labouisse',
+			from: 1957,
+			years: 9,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1787410551/henryl_lobsfd.png',
+			t: { x: 8448.5, y: 1904 },
+			headshotBlurb: "UNICEF's Nobel director",
+			lifespan: '1904–1987'
+		},
+		{
 			// 1981–1989, the window Sam asked for, and it happens to close cleanly on both ends: he
 			// joined the National Security Council staff in 1981 and was fired from it in November 1986,
 			// testified through the summer of 1987 hearings in uniform, and was tried and convicted in
