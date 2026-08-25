@@ -3668,3 +3668,39 @@ controls.
 **Open, carried from this item:** the visible order is Joseph at lane 0 and Sarah at lane 1, on the
 array convention above. Sam named Sarah first in the request; if he meant that as the lane order rather
 than as naming the pair, it is a two-element swap in one row and nothing else moves.
+
+### 39.9 THE SNAG HUNT — three found, three closed, and one more instrument caught lying
+
+Sam asked what else could go wrong with the exception. Three things could, all now measured rather than
+reasoned, and all closed at BUILD time so no render path moved.
+
+**1. `--only` left the referrers stale.** Demonstrated by mtime: `--only X03220` rebuilt Joseph and left
+Thomas and Rebecca serving an hour-old copy of him. `--only` now pulls a referrer in whenever one of its
+targets is named — `--only: +2 line-anchor referrer(s): X03218, X01906`. Not generalised to the walk;
+design §35.7 records why.
+
+**2. The render cap silently ate a curated middle.** A five-entry chain renders entries 1, 2 and 5. The
+build now warns; the cap is untouched, because 32 walked chains are longer than three and rely on the
+elision. **Raising it to serve one curated row would move bars on 32 cards nobody asked about** — the
+whole reason this arc has stayed cheap is that no shared mechanism was widened for a special case.
+
+**3. A dateless anchor leaves a HOLE, not a shorter stack.** Lanes are assigned before the nulls are
+filtered, so the survivors keep their original x — measured at 43 and 80 with 61 empty. Warns on
+dateless and on non-searchable targets.
+
+All six checks in `validateLineAnchorOverrides` were **forced red on purpose** with deliberately bad
+rows, then the table restored and confirmed silent. That is the standing rule for a new instrument in
+this project and it earned its keep immediately — see below.
+
+**THE SEVENTH INSTRUMENT THAT COULD NOT SEE WHAT IT CLAIMED, and this one was mine.** The first test of
+the render cap intercepted the payload in the browser and lengthened `lineAnchors` to five. It printed
+three bars and looked like a finding. **It had measured nothing:** a cold navigation loads the payload
+through SSR, so the server read it off disk and the browser-side intercept never fired. Caught only
+because the arithmetic disagreed with the code — `[full[0], full[1], full[last]]` should have produced
+four bars, not three.
+
+Re-run through a WARM navigation (start on Rebecca, click Thomas in the spouse notch, so `fetchFeatured`
+runs in the browser) the intercept fires and the real answer appears. **The rule to carry: on this app a
+route intercept only sees a payload on a WARM path.** Anything testing payload shape from a cold
+`page.goto` is testing the server, whatever it appears to say. Filed beside §36.4's four and §37.3's
+`pointer-events` case.

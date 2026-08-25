@@ -4253,6 +4253,30 @@ bars now say *which* line they are tethered to without a word.
 - **A ROW NAMING A DEAD ID WARNS RATHER THAN DEGRADES.** Falling through to the walk would look like the
   override had been honoured, which is the worst of the three outcomes.
 
+**A WRITTEN-DOWN DEPENDENCY IS ONE THAT CAN BE HONOURED AUTOMATICALLY.** `lineAnchors` embeds a *copy*
+of each anchor, and an anchor is by definition not a neighbour of the person citing them — that is the
+whole reason this is baked. So `--only` on an anchor rebuilds their own payload and leaves every card
+quoting them stale. The walk has always had that exposure (Richard's chain carries Susanna's husband)
+and the standing answer — a full rebuild before commit or deploy — still owns it. The difference is
+that a curated dependency is *declared in source*, so `--only` now pulls a referrer in whenever one of
+its targets is named. **Deliberately not generalised to the walk:** inverting 492 baked chains to find
+every referrer means running the BFS for all of them before knowing what to rebuild, which is the whole
+job, and it would turn a two-file review rebuild into an unpredictable one.
+
+**THE RENDER CAP IS RIGHT FOR A WALKED CHAIN AND WRONG FOR A CURATED ONE — and the fix is a warning,
+not a bigger cap.** The rail draws four bars and elides the middle of anything longer. For a walk that
+is correct: the middle of a six-hop graph route is its least meaningful part. For a curated chain it is
+backwards, because every entry was chosen. Measured: a five-entry chain renders entries 1, 2 and 5, and
+the two dropped leave no trace. **Raising the cap is the wrong repair** — 32 walked chains are longer
+than three and rely on the elision, so serving one curated row would move bars on cards nobody asked
+about. The build warns instead, and the decision stays with the curator.
+
+**AND A LANE IS ASSIGNED BEFORE THE NULLS ARE FILTERED.** `barFor` returns null for an anchor with no
+year of its own (a chain member is offered no fallback — only the focus gets one), so the bar is not
+drawn *and the survivors keep their original lanes*. The stack shows a hole rather than closing up.
+Measured. The build warns on a dateless or non-searchable target for that reason; the walk cannot reach
+those people, but a curator naming anyone can.
+
 ### 35.8 The privacy question, still open
 
 `pv` (living, non-notable) people now get a fuzzy bar positioned from a RELATIVE's public year — their

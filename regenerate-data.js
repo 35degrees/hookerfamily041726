@@ -957,6 +957,53 @@ const LINE_ANCHOR_OVERRIDES = {
 	X01906: ['X03220', 'X03219']
 };
 
+/**
+ * VALIDATE THE OVERRIDE TABLE AT BUILD TIME — a curator writes ids, not pixels, and every way of
+ * getting a row wrong is silent on the rail. Run once from main(); warns and never throws, because a
+ * bad row should not stop a 16k rebuild.
+ *
+ * IT WARNS RATHER THAN FIXING, DELIBERATELY. Each of these has a correct answer that only Sam can give
+ * — drop an anchor, reorder, or choose a different person — and a build script guessing one of them is
+ * how a curation decision gets made by accident.
+ *
+ * THE RENDER CAP IS THE ONE WORTH READING TWICE. The rail draws at most FOUR bars and elides the middle
+ * of anything longer: `full.length > 3 ? [full[0], full[1], full[full.length - 1]] : full`. That is
+ * correct for a WALKED chain, whose middle is its least meaningful part (§35.7) — and wrong for a
+ * curated one, which is meaningful throughout by construction. Measured, not inferred: a five-entry
+ * chain renders entries 1, 2 and 5, and the two dropped ones leave no trace.
+ *
+ * NOT FIXED BY RAISING THE CAP, and that is the point of putting the check here. The cap is shared with
+ * 13 walked chains that rely on the elision; changing it to serve a curated row would move bars on
+ * cards nobody is looking at. A warning costs nothing and stays local to the thing that is unusual.
+ */
+function validateLineAnchorOverrides(byId) {
+	const RAIL_CHAIN_MAX = 3; // the rail's own cap, minus the focus it appends
+	for (const [id, targets] of Object.entries(LINE_ANCHOR_OVERRIDES)) {
+		const warn = (msg) => console.warn(`  [lineAnchors] override ${id}: ${msg}`);
+		if (!byId[id]) warn(`the person this is FOR is not in the visible graph — the row does nothing`);
+		if (targets.includes(id)) warn(`names its own subject, which draws them twice on the rail`);
+		if (new Set(targets).size !== targets.length) warn(`names the same person more than once`);
+		if (targets.length > RAIL_CHAIN_MAX) {
+			warn(
+				`${targets.length} anchors, but the rail draws ${RAIL_CHAIN_MAX} + the focus and ELIDES THE ` +
+					`MIDDLE — ${targets.slice(2, -1).join(', ')} will not appear. See the note above.`
+			);
+		}
+		for (const t of targets) {
+			const q = byId[t];
+			if (!q) continue; // already reported at bake time, with the ids that failed to resolve
+			// A bar needs a year of its own: a chain member is passed NO fallback (the rail only offers
+			// one to the focus), so `barFor` returns null and the bar simply is not drawn. Worse than
+			// absent — lanes are assigned BEFORE the nulls are filtered, so the survivors keep their
+			// original positions and the stack shows a HOLE where this one should have been. Measured.
+			const by = q.birth?.year ?? null;
+			const dy = q.death?.year ?? null;
+			if (by == null && dy == null) warn(`${t} has no birth or death year — its bar cannot draw, and the lane it was assigned stays empty`);
+			if (q.classification?.is_searchable === false) warn(`${t} is not searchable — its bar will render but cannot be clicked`);
+		}
+	}
+}
+
 function lineAnchorsFor(p, byId, slugMap) {
 	const start = p.id;
 	// A CURATED ROUTE WINS OUTRIGHT — no walk, no spouse-collapse, no hop cap. Those rules all exist to
@@ -1372,6 +1419,8 @@ function main() {
 	hiddenIds = new Set(people.filter((p) => (p.classification || {}).hidden).map((p) => p.id));
 	const visible = people.filter((p) => !hiddenIds.has(p.id));
 	const byId = Object.fromEntries(visible.map((p) => [p.id, p]));
+	// Curated routes home are ids typed by hand; every way of getting one wrong is silent on the rail.
+	validateLineAnchorOverrides(byId);
 	marriedIntoLine = new Set(
 		visible
 			.filter((p) => {
@@ -1421,6 +1470,36 @@ function main() {
 					.filter(Boolean)
 			)
 		: null;
+	// ── AN OVERRIDE TARGET DRAGS ITS REFERRERS IN WITH IT ────────────────────────────────────────
+	// `lineAnchors` embeds a COPY of each anchor, and a curated anchor is not a neighbour of the
+	// person citing it — that is the whole reason the override has to be baked (see
+	// LINE_ANCHOR_OVERRIDES). So `--only X03220` rebuilds Joseph's own payload and leaves Thomas and
+	// Rebecca serving the Joseph of an hour ago: right name, stale everything else. Demonstrated by
+	// mtime, not assumed.
+	//
+	// The walk has the same exposure and always has — Richard Garbrand's chain carries Susanna's
+	// HUSBAND, who is not in Richard's payload — and the standing answer is "full rebuild before
+	// commit/deploy", which still stands and still covers it. What is different here is that the
+	// dependency is declared in a constant in THIS file: a Stream A editor touching Sarah or Joseph
+	// has no way to know two other cards quote them. A dependency we wrote down is one we can honour
+	// automatically, so we do.
+	//
+	// Deliberately NOT generalised to the walk. Inverting 492 baked chains to find every referrer
+	// would mean running the BFS for all of them before knowing what to rebuild, which is the whole
+	// job — and it would quietly turn a two-file review rebuild into an unpredictable one. This
+	// covers the case whose dependency is a fact about the source, and leaves the rest to the
+	// full rebuild that already owns it.
+	if (only) {
+		const pulled = [];
+		for (const [referrer, targets] of Object.entries(LINE_ANCHOR_OVERRIDES)) {
+			if (only.has(referrer)) continue;
+			if (targets.some((t) => only.has(t))) {
+				only.add(referrer);
+				pulled.push(referrer);
+			}
+		}
+		if (pulled.length) log(`  --only: +${pulled.length} line-anchor referrer(s): ${pulled.join(', ')}`);
+	}
 	if (only) log(`  --only: ${only.size} people (aggregates + dir wipe skipped)`);
 
 	// 1) compute base slugs, then resolve collisions deterministically by ID
