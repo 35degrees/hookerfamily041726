@@ -512,6 +512,10 @@ a.person-box.orbit-chip:hover {
    whenever anything moves, so the fringe stays open (roadmap §41.4) rather than being paid for here. */
 .featured-card.orbit-card::before {
 	content: '';
+	/* DEFAULT 1 — the rule is painted at all times. The only thing that ever lowers it is the DEMOTE,
+	   which fades `.card-top` out to reveal the chip-face (flight.ts) and would otherwise leave this
+	   sheet standing behind a chip with nothing over it. See the note there. */
+	opacity: var(--ring-live, 1);
 	position: absolute;
 	inset: 0;
 	background: var(--color-inkblue);

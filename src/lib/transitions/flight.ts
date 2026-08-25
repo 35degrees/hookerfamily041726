@@ -2358,6 +2358,19 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			if (cardTop) {
 				cardTop.style.transition = 'none';
 				cardTop.style.opacity = String(outOp);
+				// ── THE ORBIT RULE FADES WITH THE FACE IT BELONGS TO ──────────────────────────────
+				// The navy rule on an orbit card is painted by `.featured-card::before`, which is OUTSIDE
+				// `.card-top` — so this crossfade took the card's face to zero and left the rule standing
+				// behind the chip-face with nothing over it. Sam, with the exact repro: "right about when
+				// the transitioning Abraham parent chip crosses the top border of the featured card… it
+				// reveals bright royal blue behind the chip itself, like some loose-end old background
+				// colour showing through."
+				//
+				// It is a custom property rather than a second `style.opacity` because the sheet is a
+				// pseudo-element and JS cannot address one. Defaults to 1 in the stylesheet, so the rule
+				// is visible at every other moment and only this crossfade dims it — which is what makes
+				// this safe to set unconditionally: on a non-orbit card nothing reads the variable.
+				el.style.setProperty('--ring-live', String(outOp));
 			}
 			if (footer) {
 				footer.style.transition = 'none';
