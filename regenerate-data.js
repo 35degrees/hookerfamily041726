@@ -56,6 +56,14 @@ let hiddenIds = new Set();
 // The honest definition is structural and complete: NOT a Thomas descendant, and married to someone who
 // IS. That is exactly the "married in" category, and it needs no data edit to be right.
 let marriedIntoLine = new Set();
+/**
+ * ORBIT — the people the tree reaches ONLY by cross-connection. Roadmap §40 (THE ASCENSION).
+ *
+ * Derived, never hand-set, and computed ONCE for the whole corpus rather than per person — the same
+ * shape `marriedIntoLine` and `hiddenIds` are, and for the same reason: it is a question about the
+ * GRAPH, not about a person, so asking it 18,621 times would be asking it wrong.
+ */
+let orbitIds = new Set();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -888,6 +896,99 @@ function resolveVideos(p, byId) {
 }
 
 // ---------------------------------------------------------------------------
+// ORBIT — the people the tree reaches ONLY by cross-connection (roadmap §40, THE ASCENSION)
+// ---------------------------------------------------------------------------
+//
+// THE ZONE IS THE COMPONENT, NOT THE PERSON, and that is the whole design rather than an optimisation.
+// Abraham Lincoln, Mary Todd, Robert Todd and Mary Harlan are ONE detached family component: you enter
+// it by a cross-connection, move around inside it with ORDINARY navigation, and leave by the X or by a
+// CC out. Sam: "clicking around within Lincoln's family actually just re-uses the existing navigation
+// — it's like a window into Lincoln's own sub-lineage."
+//
+// It is also why Martha Wayles Jefferson qualifies with ZERO cross-connections of her own. Membership
+// is a property of the component and the spouse chip is the door; a per-person rule would have had to
+// special-case her, and would then have had to special-case every future spouse of every future orbit
+// figure. Sam stated the rule as "by default the spouse of an orbit entry also becomes an orbit entry",
+// and using the component as the unit is that rule rather than an implementation of it.
+//
+// TWO CLAUSES, AND THE SECOND IS NOT OPTIONAL:
+//
+//   1. the component contains NO is_thomas_descendant — it never touches the tree by a family edge;
+//   2. SOMEONE in it is cross-connection-reachable.
+//
+// Clause 2 is Sam's own access rule ("the only way for a user to reach Thomas Jefferson is by a
+// specific CC from a specific person") turned into a membership test, and dropping it costs 60 people:
+// measured, 105 detached components hold 154 people, but 50 of those components have NO cross-
+// connection at all, in or out. Celestia Smith, Anna Cheney, a stray Pynchon pair — unlinked records
+// and Talcott-severance residue, not orbit figures. Without clause 2 each of them gets a ceremonial
+// entrance that nothing in the app can trigger.
+//
+// WHY NOT `is_easter_egg`. Because it does not mean this, and the numbers are not close: 68 people are
+// both, 86 are orbit and UNFLAGGED, and 550 are flagged and NOT orbit. Schema v24 §1888 records how it
+// got that way — `orbit_non_descendant` was resolved as "use is_easter_egg: true instead" — and the
+// flag now means "notable parent of a spouse" 89% of the time. It still drives the blue rail lane and
+// the ee-line card tint for those 550 and is left completely alone; orbit is derived BESIDE it. Fourth
+// member of the derived-flag family, after `sp`, `kin_distance` and the Pynchon RAINBOW set.
+//
+// VERIFIED NOT TO CATCH THE PYNCHON LINE (Y00004, X03219, X03220, X01014 all false) — it reaches the
+// tree through family edges, so the spectrum and the ascension cannot collide.
+function computeOrbit(visible, byId) {
+	// Undirected family adjacency: parent, child and spouse. NOT cross-connections — a CC is precisely
+	// the thing an orbit figure is reached BY, so counting it as an edge would dissolve every component
+	// into the tree and the set would always be empty.
+	const adj = new Map();
+	const link = (a, b) => {
+		if (!a || !b || !byId[a] || !byId[b]) return;
+		if (!adj.has(a)) adj.set(a, new Set());
+		if (!adj.has(b)) adj.set(b, new Set());
+		adj.get(a).add(b);
+		adj.get(b).add(a);
+	};
+	for (const p of visible) {
+		link(p.id, p.parents?.father_id);
+		link(p.id, p.parents?.mother_id);
+		for (const m of p.marriages || []) link(p.id, m?.spouse_id);
+	}
+	// Who is pointed AT by a cross-connection. Needed because clause 2 is satisfied by an edge in EITHER
+	// direction — Martha has no CCs of her own, and a component whose only link is inbound is still
+	// reachable, which is the only thing the clause is asking.
+	const ccTarget = new Set();
+	for (const p of visible) {
+		for (const cc of p.cross_connections || []) {
+			if (cc?.related_id && byId[cc.related_id]) ccTarget.add(cc.related_id);
+		}
+	}
+	const seen = new Set();
+	const out = new Set();
+	let comps = 0;
+	for (const p of visible) {
+		if (seen.has(p.id)) continue;
+		const comp = [];
+		const stack = [p.id];
+		seen.add(p.id);
+		while (stack.length) {
+			const id = stack.pop();
+			comp.push(id);
+			for (const n of adj.get(id) || []) {
+				if (!seen.has(n)) {
+					seen.add(n);
+					stack.push(n);
+				}
+			}
+		}
+		if (comp.some((id) => byId[id].classification?.is_thomas_descendant === true)) continue;
+		const reachable = comp.some(
+			(id) => (byId[id].cross_connections || []).length > 0 || ccTarget.has(id)
+		);
+		if (!reachable) continue;
+		comps++;
+		for (const id of comp) out.add(id);
+	}
+	log(`  orbit: ${out.size} people in ${comps} components (derived; see computeOrbit)`);
+	return out;
+}
+
+// ---------------------------------------------------------------------------
 // LINE ANCHORS — the easter egg's route back to the Hooker line (design §3.6 / the left timeline)
 // ---------------------------------------------------------------------------
 // PURELY ADDITIVE. Emits ONE new key, `lineAnchors`, and only on easter-egg payloads (554 of 18,621);
@@ -1349,6 +1450,14 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 			// the far/orbit majority costs nothing on the wire.
 			const kd = kinDistance(p.id, cc.related_id, byId);
 			if (kd != null) out.kin_distance = kd;
+			// ORBIT (roadmap §40) — is the person on the OTHER end of this link inside a detached
+			// component? The ascension's axis is a DELTA (does orbit-ness change across this navigation),
+			// and the delta is resolved at CLICK time in warmPersonLinks, which reads its whole flight off
+			// the anchor's data attributes. So the target's orbit-ness has to ride the row, exactly as
+			// relation_class, gen_delta and kin_distance already do — the source's is already in hand as
+			// featured.current.person.orbit.
+			// Emitted only when TRUE, like kin_distance, so the non-orbit majority costs nothing.
+			if (orbitIds.has(cc.related_id)) out.orbit = true;
 			if (talcottOnly) out.hidden_by_default = true;
 			return out;
 		});
@@ -1383,7 +1492,11 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 		// ADDITIVE AND SPARSE: present only on easter eggs that actually reach the line, absent on
 		// everyone else — so `lineAnchors` costs nothing on 18,000 payloads and no existing consumer
 		// sees a new key. Computed ONCE above; the BFS is cheap but this runs 18,621 times.
-		...(lineAnchors ? { lineAnchors } : {})
+		...(lineAnchors ? { lineAnchors } : {}),
+		// ORBIT (roadmap §40) — the single predicate the whole ascension reads: the ground darkens on it,
+		// the X appears on it, and the flight axis keys off whether it CHANGED across the navigation.
+		// Sparse: emitted only for the ~94 who are, so 18,000 payloads are byte-identical to before.
+		...(orbitIds.has(p.id) ? { orbit: true } : {})
 	};
 }
 
@@ -1435,6 +1548,7 @@ function main() {
 			})
 			.map((p) => p.id)
 	);
+	orbitIds = computeOrbit(visible, byId);
 	log(`  ${people.length} people (${visible.length} visible, ${hiddenIds.size} hidden)`);
 	log(`  ${marriedIntoLine.size} married into the Hooker line (derived; see marriedIntoLine)`);
 
@@ -1606,12 +1720,23 @@ function main() {
 		// `t` (the table seat) rides along because the camera move wants an honest `to` — the shuffle
 		// flight is forced lateral and does not READ the seat for direction, but the substrate anchors
 		// on real coordinates and a null destination would be a lie told to it.
+		// ORBIT IS EXCLUDED (roadmap §40). Sam: "Thomas Jefferson should never show up in the notable
+		// person shuffle — the only way for a user to reach Thomas Jefferson is by a specific CC from a
+		// specific person." The shuffle is a door into a random notable, and an orbit figure has exactly
+		// one legitimate door. Not a small leak: 50 of the 94 are is_notable.
+		//
+		// `is_searchable` is deliberately UNTOUCHED and must stay so — it gates the app's own future
+		// search menu, not Google, and Sam wants these people indexed AND wants them in that menu with
+		// their own colour coding ("I don't want to hide them from google… I'll have special color coding
+		// so a user can interpret them easily as not being official Hooker line descendants"). The shuffle
+		// is the only door being closed.
 		const notables = visible
 			.filter(
 				(p) =>
 					p.notable &&
 					p.notable.is_notable === true &&
-					(p.classification || {}).is_searchable === true
+					(p.classification || {}).is_searchable === true &&
+					!orbitIds.has(p.id)
 			)
 			.map((p) => {
 				const c = compact(p, slugMap);

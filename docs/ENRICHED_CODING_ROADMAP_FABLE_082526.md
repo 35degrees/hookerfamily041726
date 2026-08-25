@@ -3704,3 +3704,181 @@ runs in the browser) the intercept fires and the real answer appears. **The rule
 route intercept only sees a payload on a WARM path.** Anything testing payload shape from a cold
 `page.goto` is testing the server, whatever it appears to say. Filed beside §36.4's four and §37.3's
 `pointer-events` case.
+
+---
+
+## 40. THE ASCENSION — BUILD SPEC (PROPOSED, August 25; nothing built)
+
+**Status: a target, not a record.** Same standing as §9.4's Zoom 2 spec was — Sam approves before anything
+moves, and this section is rewritten as an AS-BUILT in the design doc once it ships. Design rationale to
+follow in design §38 when it does.
+
+### 40.0 The one idea
+
+**An orbit entry is a person the tree reaches only by cross-connection, and the ASCENSION is the gesture
+of arriving at one.** Sam: *"it's like the user is entering a new special zone, like an ascension… someone
+very prominent who influenced multiple members of the Hooker line… clearly the user feels like they've
+entered a special zone within the UX, and the X is an exit to the holy zone."*
+
+**THE ZONE IS THE COMPONENT, NOT THE PERSON — everything else falls out of this.** Abraham Lincoln, Mary
+Todd, Robert Todd and Mary Harlan are one detached family component; you enter it by CC, move inside it
+with ORDINARY navigation (Lincoln → Robert Todd is a plain child promotion; Jefferson → Martha is a plain
+spouse swap), and leave by the X or by a CC out. Sam: *"clicking around within Lincoln's family actually
+just re-uses the existing navigation — it's like a window into Lincoln's own sub-lineage."* That is why
+Martha Wayles Jefferson needs no cross-connections of her own: **membership is a property of the
+component, and the spouse chip is the door.**
+
+Which gives the whole feature ONE predicate and ONE derived boolean:
+
+| | reads |
+|---|---|
+| ground darkened | `focus.orbit` |
+| X visible | `focus.orbit` |
+| flight axis = `front` | `focus.orbit !== previous.orbit` |
+
+**The axis is a DELTA, not a state.** A move inside the component has no delta, so every existing flight
+path is untouched and Lincoln's sub-lineage costs nothing to support.
+
+### 40.1 The data — derived, never hand-set
+
+Computed in `regenerate-data.js` as a Set built ONCE in `main()`, the same shape `marriedIntoLine` and
+`hiddenIds` already are — not a per-person walk.
+
+    a component of the parent/child/spouse graph over `visible`
+      containing NO is_thomas_descendant
+      AND reachable by at least one cross-connection (in or out, anywhere in the component)
+
+**55 components, 94 people.** Jefferson resolves to a pair; Lincoln to the four Sam named.
+
+- **`is_easter_egg` is NOT the flag and must not be reused.** Measured: 68 people are both, **86 are orbit
+  and unflagged**, **550 are flagged and not orbit**. Schema v24 §1888 records why — `orbit_non_descendant`
+  was resolved as "use `is_easter_egg: true` instead", and the flag now means "notable parent of a spouse"
+  89% of the time. `is_easter_egg` keeps driving the blue lane and the ee-line tint for its 550; orbit is
+  derived beside it. Fourth member of the derived-flag family after `sp`, `kin_distance` and the Pynchon
+  RAINBOW set.
+- **The reachability clause is load-bearing.** Without it the set is 154, because **50 detached components
+  have no CC at all** — unlinked records and Talcott-severance residue. They would get a ceremonial
+  entrance nobody can trigger.
+- **The Pynchon line is NOT captured** (verified: Y00004, X03219, X03220, X01014 all false) — it reaches
+  the tree through family edges. Orbit and the prism do not collide.
+- `is_searchable` is **untouched**. It gates the app's own future search menu, not Google; Sam wants these
+  people indexed and wants them in that menu with their own colour coding. The ONLY door closed is the
+  shuffle.
+
+### 40.2 The plumbing — one field, on a path that already exists
+
+The axis is decided at CLICK time, in `warmPersonLinks`, which reads its whole flight off the anchor's
+data attributes. So:
+
+- **the CC row carries the target's `orbit`**, baked, and surfaces as `data-orbit` on the link — exactly
+  as `gen_delta`, `relation_class` and `kin_distance` already do. No new mechanism.
+- **the current focus's orbit-ness** is already in hand as `featured.current.person.orbit`.
+- the delta is therefore computable in the same frame as every other capture, and rides `CameraMove` as
+  one more field beside `genDelta` / `kinDistance`. `kind` stays `'cc'` — an ascension IS a CC — and
+  `heroSchedule.axis` gains a third value `'front'` beside `'vertical' | 'lateral'`.
+- `deckDirFor` returns `{x:0, y:0}` for a front axis and self-skips the lateral ping-pong memory, the
+  same way a vertical CC already self-skips it.
+
+### 40.3 THE FOUR NUMBERS — and what each is derived from
+
+The house clocks this must match:
+
+    relativeGrowMs(d) = clamp(d / 1.68, 410, 1000)      spouseGrowMs = clamp(d / 1.68, 420, 1000)
+    demote            = maxCorner / 1.85
+    arrival overshoot = clamp(d x 0.011, 4.5, 5.4) px    demote overshoot floor 2.2 / cap 9 (x u)
+    DECK_BEAT_COLL    = 170ms + up to 87, x0.9 tempo  ->  ~153-231ms
+
+**A HEAD-ON MOVE HAS NO PIXEL DISTANCE, AND §18.2 ALREADY SOLVED THAT.** `dx = dy = 0`, so every clock in
+`flight.ts` divides by nothing and `settleBackFor` short-circuits on `distance < 1`. The answer is the
+project's own HONEST MAX-CORNER VELOCITY — the measure `demote` already uses. A scale change moves corners
+through real pixels: the card's half-diagonal is **~545px**, so corner travel is `|Δscale| x 545`, which
+feeds the existing ceiling untouched.
+
+| entry scale → 1 | corner travel | duration at 1.68 |
+|---|---|---|
+| 1.5x | 272px | 410ms *(floor governs)* |
+| 2.0x | 545px | 410ms *(floor governs)* |
+| 2.5x | 816px | 486ms |
+| 3.0x | 1090px | 649ms |
+
+**Entry scale is a LOOK decision, not a timing one, below ~2.3x** — the 410ms floor governs, so how close
+the card comes to the viewer is free until it is large.
+
+1. **ENTRY SCALE** — how close the ascending card starts. Derived from nothing; chosen on pixels. Start at
+   2.0x (free of the clock, and a full doubling reads as arrival rather than as a zoom).
+2. **EXIT SCALE** — how far the outgoing card recedes. Its overshoot is the DEMOTE family (floor 2.2 / cap
+   9), because it is the receding object, not the arriving one.
+3. **THE BEAT** — the empty darkened moment between recede and arrive. **`DECK_BEAT_COLL` is already
+   commented "ms base for collateral/orbit"**, so the deck ALREADY treats this class as the long-beat one
+   at ~153–231ms against a direct relative's ~78–105ms. The held breath is an existing distinction to
+   extend, not one to invent. This is the number that carries the feeling; walk it on pixels.
+4. **THE GROUND FADE'S PHASE.** Sam: *"the darkness fades in on the same schedule, final dark values
+   arrive with it, but it's a fade… I trust your instinct for the dark leading slightly, I won't know until
+   I test it."* So: same clock, same duration, with a small negative phase offset as the dial. Leading
+   reads as ceremony (the room dims, THEN the figure arrives); arriving-together reads as consequence.
+   **One clock either way — §30 names two-clock desync as THE failure mode of this layer, and a background
+   fading on its own duration while the card flies on another is the textbook case.**
+
+### 40.4 Where each piece lives — working within, not glued on
+
+| piece | home | why there |
+|---|---|---|
+| `orbit` derivation | `regenerate-data.js`, a Set in `main()` | whole-corpus graph question; same shape as `marriedIntoLine` |
+| `data-orbit` on CC links | the CC row in the payload + `CrossConnectionsBlade` | the anchor already carries every other flight input |
+| the delta + `CameraMove` field | `navigate.ts` capture block | one frame, with every other capture — capture-time doctrine |
+| the front axis | `growFrom` / the CC departure in `flight.ts` | a third branch beside `cc` and `arc`, not a parallel engine |
+| the veil | its own component beside `Field` / `TimelineRail` | chrome outside `.page-container`, like the rail |
+| the orbiting sprites | `Field.svelte`'s mote layers | 3 seeded depth layers already exist; they gain an ANGULAR term |
+| the rail's dark palette | `TimelineRail` itself, an `.ascended` class | §25.3 — a render switch, never a data edit |
+| the X | its own component beside `ShuffleNotables` | screen chrome, not card chrome |
+| the referrer | a small `ascension.svelte.ts` store | navigation memory, like `lastLateral` |
+
+**THE SPRITES ARE MOSTLY BUILT.** `Field.svelte` generates motes from a seeded `mulberry32` across three
+depth layers (0.2 / 0.35 / 0.5), each mote carrying its own size, opacity, glow and twinkle duration and
+delay. Today each layer takes a parallax TRANSLATE on a rAF loop. The orbit is the same loop with an
+ANGULAR term, and the existing `depth` becomes what varies radius and angular speed — so "different sizes
+at different depths" is the data model that is already there, and the per-mote randomness comes free
+rather than needing a second noise source. **Field also already knows where the card is** (`DOCK_X` /
+`DOCK_Y`, the screen point the focus's seat docks at), so the sprites have a centre to orbit without
+measuring anything.
+
+**THE RAIL RESTYLES ITSELF; IT IS NOT COVERED.** Sam described the outcome — headshots not visible, years
+and horizontal marks in cream, vertical bars recoloured to stand out. The MECHANISM should be the rail
+taking an `.ascended` class and hiding its own portraits, NOT the veil painting over it. Covering it would
+require the veil to sit above the rail and below the year labels at once, which is not a stacking order
+that exists. Same result, and it keeps the rail owning its own presentation.
+
+### 40.5 The risks, named before they are paid for
+
+1. **THE VEIL'S STACKING ORDER IS THE RISKIEST GEOMETRY IN THIS FEATURE.** Four things must order: rail
+   (z 0 at rest), `.page-container` (z 1), the body-level flying hero (z 2), and now the veil. §18.6
+   records THE STACKING-CONTEXT TRAP — a z-index that measured as applied and did nothing — and this is
+   the same shape of problem with one more participant.
+2. **`RAIL_OVER_FLIGHT` DIRECTLY CONFLICTS.** The rail deliberately lifts to **z 3** for the duration of a
+   CC flight — *"a pane of glass at the window's edge that the deck riffles behind"* — which would put it
+   over the arriving orbit card. A front-axis flight must NOT lift the rail: nothing is crossing the
+   window's edge, so the reason for the lift does not apply.
+3. **THE X MUST NOT BE BROWSER-BACK.** Back/forward goes through the popstate reconcile in `+page.svelte`,
+   which calls `loadFeatured(slug)` with no flight captures — it snaps, with no flight at all. The X needs
+   a deliberate reverse-flight to the remembered slug. This also makes it robust to the missing reciprocal
+   found in §40.6.
+4. **A ZERO-DISTANCE FLIGHT SILENTLY SNAPS.** `settleBackFor` returns 0 for `distance < 1` and the grow
+   clocks floor at 410ms — so a naive reuse of the CC path for a head-on move produces a legal, clean-
+   looking, motionless transition. The max-corner derivation in §40.3 is what prevents it.
+5. **DO NOT PUT THE SCALE ON `.page-container`.** `scripts/spike-scale.mjs` measured what that costs
+   (design §33.1): a transformed ancestor becomes the containing block for `position: fixed` descendants,
+   and every `out:flyOut` leaver pins at exactly such a rect. The ascension scales the CARD, which already
+   happens on every promotion, and is safe.
+
+### 40.6 Carried, not blocking
+
+- **13 orbit→orbit cross-connections exist — 6 reciprocal pairs and one orphan.** Sam has ruled them not
+  allowed and asked that none be deleted without his review. Two are not simple deletes: **Roger Sherman
+  ↔ Elizabeth Wooster Baldwin Whitney** is a great-grandfather relationship, so the two are only in
+  different components because the intervening generations are absent from canonical — removing the CC
+  loses the fact, while adding the people dissolves the problem and removes BOTH from the orbit set. And
+  **William Wadsworth → John Talcott has no reciprocal**, which is a defect independent of this feature
+  and means the X cannot rely on reciprocity as its return path.
+- **50 of the 94 are `is_notable`**, so the shuffle leak is not Jefferson alone.
+- Sam, on the questions this spec does not answer: *"leave these unchanged for now — I'll have a better
+  read on what to do after this component and process is built and tested."*
