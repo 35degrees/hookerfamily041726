@@ -4223,6 +4223,36 @@ Two findings from the walk, both of which will be re-broken by anyone tidying it
 
 Harriet Beecher Stowe, expected not to work at all, reaches the line through her sister Isabella.
 
+**THE WALK CAN BE RIGHT AND STILL NOT BE THE STORY — the exception list (August 25).** The BFS answers
+"who is the nearest Thomas descendant, and how do we reach them", and site-wide that is the answer
+wanted. A handful of people are the exception in a way no rule could reach: the graph's nearest answer
+is *correct* and is still not what the couple is remembered for.
+
+Rev. Thomas Ruggles Jr. (X03218) and his wife Rebecca Hart Ruggles (X01906) are the first. Rebecca is a
+Hart, so the walk lands on her parents — Rev. John Hart and Mary Hooker Hart — and it is not wrong. But
+what these two matter for sits one generation the other way: their daughter Sarah married Joseph
+Pynchon, which is how the couple enters the Pynchon line at all. They are already titled
+"Father-in-law / Mother-in-law of Fifth Generation Pynchon" in `pynchonLine.ts`, and the exception
+simply makes the rail draw the route that title names. With §32.5's spectrum in place the two anchor
+bars now say *which* line they are tethered to without a word.
+
+- **A LIST, NEVER A RULE.** The same call `pynchonLiteralLabel` makes: any rule general enough to
+  produce this answer would also reach the cases the walk already gets right. Sam: *"there may be other
+  of these exceptions tree wide, just a few so not worth re-writing good architecture."* Add a row with
+  a sentence saying why; do not generalise it.
+- **IT MUST LIVE IN THE BAKE, and that is forced rather than chosen** — the same fact this whole section
+  rests on. The rail draws `PersonCompact`s it is handed and cannot invent one. Sarah is Thomas's child
+  and *is* in his neighbourhood; Joseph is her husband, one hop further, and is not. An override
+  resolved in the client could not see half of its own answer.
+- **A CURATED ROUTE SKIPS EVERY RULE THE WALK NEEDS** — no hop cap, no spouse-collapse. Those exist to
+  make a *search* produce something readable; a hand-written chain is already the answer, and the
+  spouse-collapse in particular would drop exactly the pair a curator wrote down on purpose.
+- **AN OVERRIDE IS HONOURED REGARDLESS OF `is_easter_egg`.** That flag gates the walk because a walk is
+  only meaningful for someone off the line. A curated route should not depend on a classification set
+  for unrelated reasons — today's two entries happen to be eggs; the next may not be.
+- **A ROW NAMING A DEAD ID WARNS RATHER THAN DEGRADES.** Falling through to the walk would look like the
+  override had been honoured, which is the worst of the three outcomes.
+
 ### 35.8 The privacy question, still open
 
 `pv` (living, non-notable) people now get a fuzzy bar positioned from a RELATIVE's public year — their

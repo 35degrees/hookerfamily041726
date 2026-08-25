@@ -3509,6 +3509,7 @@ with §33.5 amended for the overflow the first one buys.
 | **A second sanctioned overflow** | design §33.5 widened; `layout.css`'s commented `overflow: clip` now records that arming it must test for BOTH tiers |
 | **The Pynchon spectrum on the rail** | `.bar.prism::before` — the whole-image crop, veil 0.48, name in the descent line's `#7c3aed`, edge in `--color-inkblue` at 50% via `color-mix` |
 | **`styleFor` gained an override** | `isPynchonKin` resolves the lane first and replaces only the ink, because the line CROSSES the other three classes |
+| **The first line-anchor exception** | `LINE_ANCHOR_OVERRIDES` in `regenerate-data.js` — a curated route home for ids where the walk is right and is not the story. Two rows (§39.8) |
 
 ### 39.2 The numbers, because both changes were decided by them rather than by taste
 
@@ -3617,3 +3618,53 @@ testing a gesture that no longer exists. That is staleness, not flake, and it be
 - Unchanged and still standing: arming `overflow: clip` (now two-tier), the unscaled spacing tail,
   centring the card in the viewport minus its chrome, `scripts/probe-out/` not gitignored, and the stray
   screenshots in the source tree.
+
+### 39.8 LATER THE SAME DAY — the first line-anchor exception
+
+Sam, on the Ruggles couple: *"currently in the timeline, it works correctly that it shows Rev. John Hart
+as the Hooker line spouse and Mary Hooker Hart as the Hooker that the easter eggs are tethered to. This
+is actually the correct behavior site wide and it's working well. So this is a surgical change and
+exceptions for this specific circumstance… maybe there can be an exception field?"*
+
+**The ask is the interesting part: not "the walk is wrong" but "the walk is right and is not the
+story."** Rev. Thomas Ruggles Jr. (X03218) and Rebecca Hart Ruggles (X01906) reach the line through
+Rebecca's Hart parents, which is genealogically true; what they are remembered for is their daughter
+Sarah's marriage to Joseph Pynchon, which is how the couple enters the Pynchon line and is exactly what
+their existing `pynchonLine.ts` titles already say ("Father-in-law / Mother-in-law of Fifth Generation
+Pynchon"). The exception makes the rail draw the route those titles name.
+
+**What shipped:** `LINE_ANCHOR_OVERRIDES` in `regenerate-data.js`, two rows, both `['X03220','X03219']`
+— line-first, so Joseph stands at lane 0 and Sarah at lane 1, which is the array's existing convention
+and the shape Richard Garbrand's *walked* chain already has (`[Thomas Hooker, Susanna, Richard]`).
+
+| | before | after |
+|---|---|---|
+| X03218 Thomas Ruggles Jr. | Mary Hooker Hart, Rev. John Hart, Rebecca | **Joseph Pynchon, Sarah Ruggles Pynchon** |
+| X01906 Rebecca Hart Ruggles | Mary Hooker Hart, Rev. John Hart | **Joseph Pynchon, Sarah Ruggles Pynchon** |
+
+**Where it had to live, and it was forced rather than chosen.** The rail draws `PersonCompact`s it is
+handed and cannot invent one. Sarah is Thomas's child and so *is* in his neighbourhood payload; Joseph
+is her husband, one hop further out, and a payload is one neighbourhood deep — the same fact that made
+the original walk a bake. An override resolved in the client could not see half of its own answer.
+
+**Three rules the curated path deliberately skips** — hop cap, spouse-collapse, and the `is_easter_egg`
+gate. The first two exist to make a *search* readable and would damage a hand-written chain (the
+spouse-collapse would drop exactly the pair a curator wrote down). The third gates the walk because a
+walk is only meaningful off the line; a curated route should not depend on a flag set for other reasons,
+since the next entry may not be an egg.
+
+**The control that makes the change trustworthy.** The gate now runs an object lookup for every person,
+so "did the walk change for anyone else" is a real question rather than a rhetorical one. Snapshotted
+two non-overridden eggs (`richard-garbrand-1550`, `anderson-cooper-1967`), regenerated them under the
+new code, diffed: **identical**. Also verified no id in canonical collides with an `Object.prototype`
+member, which is the one way a plain-object lookup table could produce a phantom override.
+
+`--only` is the correct regeneration mode here and it is worth saying why, because the standing rule is
+the opposite: payloads embed COPIES of their neighbours, so a change to anything a neighbour *renders*
+needs a full rebuild. `lineAnchors` is emitted at the payload's top level and is never carried inside a
+neighbour's compact, so only the two named payloads can be affected. SSR 200 on both plus three
+controls.
+
+**Open, carried from this item:** the visible order is Joseph at lane 0 and Sarah at lane 1, on the
+array convention above. Sam named Sarah first in the request; if he meant that as the lane order rather
+than as naming the pair, it is a two-element swap in one row and nothing else moves.

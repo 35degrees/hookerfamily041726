@@ -920,8 +920,63 @@ function resolveVideos(p, byId) {
 // three". Without this, Louisa Kissam would push her own husband onto a fourth lane instead of
 // standing where he stands.
 const LINE_ANCHOR_MAX_HOPS = 6; // beyond this the connection is not a story anyone is reading
+
+// ── THE EXCEPTIONS — a route home that is CURATED rather than walked ──────────────────────────────
+//
+// The BFS below answers "who is the nearest Thomas descendant, and how do we reach them", and it is
+// right site-wide (Sam, Aug 25: "this is actually the correct behavior site wide and it's working
+// well"). A handful of people are the exception, and they are exceptions in a way no rule could
+// reach: the graph's nearest answer is CORRECT and is still not the story worth telling.
+//
+// THE CASE THIS WAS BUILT FOR. Rev. Thomas Ruggles Jr. (X03218) and his wife Rebecca Hart Ruggles
+// (X01906) reach the line through HER parents — Rebecca is a Hart, so the walk lands on Rev. John
+// Hart (I00137) and Mary Hooker Hart (H00105), and it is not wrong. But what these two are actually
+// remembered for sits one generation the other way: their daughter Sarah (X03219) married Joseph
+// Pynchon (X03220), which is how this couple enters the Pynchon line at all — they are titled
+// "Father-in-law / Mother-in-law of Fifth Generation Pynchon" in pynchonLine.ts, and that title names
+// the route this table now draws.
+//
+// A LIST, NEVER A RULE, and deliberately so. The same call `pynchonLiteralLabel` makes, for the same
+// reason: any rule general enough to produce this answer would also reach cases where the walk is
+// already right. Sam: "there may be other of these exceptions tree wide, just a few so not worth
+// re-writing good architecture." Add a row with a sentence saying why; do not generalise it.
+//
+// IDS ARE LINE-FIRST — the array's own convention, the same one the walk's `chain.reverse()` produces
+// at the end of this function: the person FURTHEST from the focus stands at lane 0, and each later
+// lane sits further behind it. So the anchor comes first and the bridge second, exactly as Richard
+// Garbrand's walked chain reads [Thomas Hooker, Susanna, Richard].
+//
+// IT MUST BE BAKED, WHICH IS WHY THIS IS HERE AND NOT IN THE RAIL. The rail draws `PersonCompact`s it
+// is handed and cannot invent one. Sarah is Thomas's child and so IS in his neighbourhood payload —
+// but Joseph is her HUSBAND, one hop further out, and a payload is one neighbourhood deep. That is
+// the same reason the walk itself is baked (see the note above); an override resolved in the client
+// could not see half of its own answer.
+const LINE_ANCHOR_OVERRIDES = {
+	// The Ruggles couple route out through their daughter, not through her mother's Hart parents.
+	X03218: ['X03220', 'X03219'], // Joseph Pynchon, then Sarah Ruggles Pynchon
+	X01906: ['X03220', 'X03219']
+};
+
 function lineAnchorsFor(p, byId, slugMap) {
 	const start = p.id;
+	// A CURATED ROUTE WINS OUTRIGHT — no walk, no spouse-collapse, no hop cap. Those rules all exist to
+	// make a SEARCH produce a readable answer; a hand-written chain is already the answer, and running
+	// it back through them could only damage it (the spouse rule in particular would collapse exactly
+	// the pair a curator wrote down on purpose).
+	const curated = LINE_ANCHOR_OVERRIDES[start];
+	if (curated) {
+		const out = curated.filter((id) => byId[id]).map((id) => compact(byId[id], slugMap));
+		// A row naming an id that no longer exists is a silent hole, so it is reported rather than
+		// quietly serving a short chain. Falling through to the walk would be worse: it would look like
+		// the override had been honoured.
+		if (out.length !== curated.length) {
+			console.warn(
+				`  [lineAnchors] override for ${start} names ${curated.length} ids but ${out.length} resolved` +
+					` — missing: ${curated.filter((id) => !byId[id]).join(', ')}`
+			);
+		}
+		return out.length ? out : null;
+	}
 	const prev = new Map([[start, null]]);
 	const depth = new Map([[start, 0]]);
 	const queue = [start];
@@ -1253,7 +1308,13 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 
 	// Only eggs are walked — everyone else's route to the line is either "they are on it" or their own
 	// spouse, both of which the neighbourhood already carries.
-	const lineAnchors = p.classification?.is_easter_egg ? lineAnchorsFor(p, byId, slugMap) : null;
+	// `is_easter_egg` is the ordinary gate — the walk is only meaningful for someone off the line. An
+	// OVERRIDE is honoured regardless, so a curated route never depends on a classification flag that
+	// was set for unrelated reasons. Both of today's entries happen to be eggs; the next one may not be.
+	const lineAnchors =
+		p.classification?.is_easter_egg || LINE_ANCHOR_OVERRIDES[p.id]
+			? lineAnchorsFor(p, byId, slugMap)
+			: null;
 
 	// Resolved media arrays live ON the focus person record (person.landmarksResolved,
 	// etc.) so the component reads them through its existing `person` prop. Spread a
