@@ -39,7 +39,7 @@
 	import { ASCEND_MS } from '$lib/transitions/flight';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { fade } from 'svelte/transition';
-	import { cubicOut } from 'svelte/easing';
+	import { cubicInOut, cubicOut } from 'svelte/easing';
 
 	type Props = { onexit?: () => void };
 	let { onexit }: Props = $props();
@@ -63,7 +63,39 @@
 	const fadeMs = $derived(prefersReducedMotion.current ? 0 : ASCEND_MS);
 	/** The dark leads the card slightly, so the room dims before the figure arrives rather than with it.
 	 *  Set to 0 to have them land together. */
-	const LEAD_MS = 120;
+	// 120 -> 0, AND THE CURVE CHANGES. Sam: "the midnight blue darkness finalizes too soon as we enter
+	// the ascension zone — it should stay a little lighter longer, and the same on the reverse."
+	//
+	// Two things were making it commit early: a negative delay that started it before the cards moved,
+	// and cubicOut, which spends most of its opacity in the first third. An ease-IN-out holds the ground
+	// light while the travelling is happening and lands the dark as the card seats — so the room finishes
+	// changing when the journey does, rather than a third of the way through it.
+	const LEAD_MS = 0;
+	/**
+	 * THE DARK IS HELD THROUGH THE PASS — exit only.
+	 *
+	 * Sam: "it still feels like exiting Lincoln out the foreground slaps you in the face, but now I
+	 * think the timing of dark back to light happens at the same moment as the slap… so maybe have it
+	 * darker for longer, only specifically exiting the ascension zone."
+	 *
+	 * He is identifying something neither of us had credited: the GROUND is part of how hard the card
+	 * reads. The departing card crosses the reader in the first ~250ms, and the room was brightening
+	 * across exactly those frames — so two large changes landed together and reinforced each other. The
+	 * card was never the whole of the slap; half of it was the lights coming up on the same beat.
+	 *
+	 * So the dark holds, unmoved, until the card is gone, and only then gives way. What is left is a
+	 * room lightening around a card that is already settling, which is a different and much quieter
+	 * event. And the easing is cubicOut rather than cubicInOut for the same reason — on an outro that
+	 * keeps opacity near 1 through the first half instead of surrendering it at the midpoint.
+	 *
+	 * ENTERING IS UNTOUCHED. Sam: "entering the ascension zone is better than ever." This is the
+	 * `out:` transition, which by definition only runs on the way out.
+	 */
+	// 240 -> 420. The pass now takes ~330ms rather than ~170 (flight.ts DEPTH_BEHIND_READER), so the hold
+	// has to grow with it or the lights come up on the tail of the card again — which is the whole thing
+	// this constant exists to prevent. Sam: "we know the background color is influencing the harshness,
+	// maybe leave the screen darker for longer."
+	const DARK_HOLD_MS = 420;
 
 </script>
 
@@ -80,8 +112,12 @@
 	<div
 		class="ascend-veil"
 		aria-hidden="true"
-		in:fade={{ duration: Math.max(1, fadeMs - LEAD_MS), delay: 0, easing: cubicOut }}
-		out:fade={{ duration: Math.round(fadeMs * 0.72), easing: cubicOut }}
+		in:fade={{ duration: Math.max(1, fadeMs - LEAD_MS), delay: 0, easing: cubicInOut }}
+		out:fade={{
+			delay: DARK_HOLD_MS,
+			duration: Math.round(fadeMs * 0.9),
+			easing: cubicOut
+		}}
 	></div>
 	<!-- ── THE WAY DOWN ────────────────────────────────────────────────────────────────────────────
 	     NOT A CLOSE BUTTON. Sam: "I don't just want that standard X in a circle." An X means dismiss —

@@ -119,7 +119,11 @@
 	// slot into the same seams. Transitions are NOT wired yet — this milestone is
 	// structure + notch docking only.
 	/** How much longer the roster waits on the ascension EXIT only — see the note at its use site. */
-	const ASCENSION_CHIP_BEAT_MS = 100;
+	// 100 -> 190. The card now carries PAST its seat and settles back (flight.ts ASCEND_CARRY), and Sam's
+	// rule is that only the CARD does that: "we only want to overshoot Burr's card, not all of his
+	// children and parent cards too… which needs to complete a beat or two before the chips expand." So
+	// the roster waits for the settle to be over rather than merely for the card to arrive.
+	const ASCENSION_CHIP_BEAT_MS = 190;
 	const zoom = 1;
 
 	/**

@@ -246,7 +246,21 @@ const ASCEND_PARK = 0.115;
 //
 // SO THE FAR DISTANCE IS SPENT WHERE IT IS VISIBLE — on the tree card receding to depth 7.7, which is
 // seen the whole way, rather than on the departing card, which is not.
-const DEPTH_BEHIND_READER = -0.15; // just past the reader; still moving when culled, never arriving
+// -0.15 -> 0.40, and this is the SAME lever as §38.6 pulled the other way. Sam: "the exit is too harsh,
+// too much at once… the orbit card exit seems even faster still, where the user is not able to track the
+// discrete baseball card."
+//
+// The card is culled at ASCEND_REVEAL (depth 0.70) and every frame past that is invisible, so the only
+// thing the terminus controls is what FRACTION of the clock the visible 0.30 units represent:
+//
+//     terminus -0.15  ->  0.30 of 1.15 units  ->  26% of the clock  ->  172ms  (untrackable)
+//     terminus  0.40  ->  0.30 of 0.60 units  ->  50% of the clock  ->  330ms  (a pass you can follow)
+//
+// Pulling it IN costs nothing anyone can see — the card never reaches either value, because it stops
+// being drawn less than half way. It buys the whole difference in what the eye gets. The card is still
+// moving at constant velocity on its last visible frame either way, which is the property that stops it
+// reading as decelerating into a stop; that was never what the distance was for.
+const DEPTH_BEHIND_READER = 0.25; // never arrived at — the card is culled well before
 const DEPTH_FAR = 1 / 0.115; // Burr's: the back of the room (~8.7 depth units)
 /** DEPTH, not scale. Apparent size goes as 1/distance, so equal depth steps are what a conveyor makes
  *  — equal SCALE steps are not, and mistaking one for the other is what made the exit read as two
@@ -335,6 +349,26 @@ const ASCEND_PLANE = 1.56; // fully covers the viewport — beyond here the card
  * PARTIALLY transparent while it still reads as a card. Above ASCEND_REVEAL it is not translucent, it
  * is absent — which is also why it can never become a window onto the card behind it.
  */
+/**
+ * THE DEPARTING CARD FADES SOONER THAN THE ARRIVING ONE MATERIALISES — two thresholds, not one.
+ *
+ * Sam: "the exit of the featured orbit card out the foreground is too slow, so maybe speed it up a
+ * little but fade it out sooner?" Those are two different dials and both were tied to `revealAt`, which
+ * the ENTRY also uses — and the entry is signed off, so it cannot be the thing that moves.
+ *
+ * Splitting them lets the exit be shortened twice over: the terminus goes back out (faster travel) AND
+ * the card stops being drawn at 1.30 instead of 1.42, so its visible band is 0.23 depth units rather
+ * than 0.30. Together that is ~200ms rather than ~330, without touching a single value the arrival
+ * reads.
+ *
+ * 1.30 is still comfortably inside the IMAX cap — a card that has stopped being drawn at 1.30 can never
+ * be shown at 1.42, so §38.3 holds a fortiori rather than being weakened.
+ */
+const EXIT_GONE = 1.3; // the departing card is fully invisible here
+const EXIT_SOLID = 1.1; // and fully solid below here
+const exitFadeAt = (scale: number) =>
+	Math.max(0, Math.min(1, (EXIT_GONE - scale) / (EXIT_GONE - EXIT_SOLID)));
+
 const revealAt = (scale: number) =>
 	Math.max(0, Math.min(1, (ASCEND_REVEAL - scale) / (ASCEND_REVEAL - ASCEND_SOLID)));
 
@@ -400,6 +434,27 @@ const ASCEND_SOLID = 1.18; // and fully committed by here, with the settle still
  * at t = 1 — so however much it wanders in the middle, the card lands exactly at rest. A settle that can
  * miss its own resting size is a bug wearing a physics costume.
  */
+// ── THE SETTLE, ON THE DEPTH AXIS ───────────────────────────────────────────────────────────────
+// Sam: "overshoot is part of the appeal of this project… it's been perfected on 2D up-and-down and
+// lateral card movement. With ascension entry and exit we have no overshoot, so they just kind of smack
+// into final position. As Burr returns from background to Featured card, he would overshoot forward by
+// a bit toward the user's eye and pull back just a little to settle."
+//
+// §17.2 says the settle is "a TRANSLATE overshoot along the captured travel vector", and on this axis
+// the travel vector IS depth — so the card carries a little PAST its seat toward the reader and comes
+// back, which is the same rule the plane has always used, evaluated on Z.
+//
+// SIZED BY §26.6, NOT INVENTED. "A small overshoot is weight; a large one is theatre", measured across
+// the house at 2.0-5.4px of carry. The card's half-diagonal is ~545px, so a corner carry of ~8px is a
+// depth excursion of 8/545 = 0.0147 — the card peaks at scale 1.015, about 14px wider than its seat.
+// Slightly above the planar carry on purpose: depth is the least legible axis we have, and the same
+// physical excursion reads smaller head-on than it does across.
+//
+// IT IS ZERO AT BOTH ENDS BY CONSTRUCTION, so however it wanders the card lands exactly at rest — a
+// settle that can miss its own resting size is a bug in a physics costume. And it is confined to the
+// TAIL, so it cannot disturb the even approach that fixed the loiter-and-rush.
+const ASCEND_CARRY = 0.0147; // depth units past the seat — see above
+const ASCEND_APPROACH = 0.85; // the card reaches its seat here; the rest is the settle
 const ASCEND_WOBBLE = 0.018; // peak excursion of the secondary bounce, as a fraction of final scale
 const ASCEND_WOBBLE_CYCLES = 2.35; // not a whole number, so the two bounces are visibly unequal
 const ASCEND_WOBBLE_DECAY = 3.1;
@@ -1278,9 +1333,24 @@ export function growFrom(node: Element) {
 				// ("I like Burr exiting to the background having some distance") and it is not the same
 				// motion — going away, the far end is where the card is least legible and slowing down
 				// into it reads correctly.
+				// THE CARRY: a half-sine over the tail only, zero at both ends. Negative in depth means
+				// nearer the reader, i.e. very slightly larger than the seat, then back.
+				// THE APPROACH HAS TO FINISH EARLY, OR THERE IS NO ROOM FOR A SETTLE — and this is what
+				// made the first attempt measure +0px of carry. Depth is interpolated LINEARLY, so the
+				// card is only near its seat in the last breath of the clock: at t = 0.86 it is still at
+				// depth 2.06, i.e. half size. A tail laid over the last 28% therefore did its whole
+				// excursion while the card was far away, where 0.0147 depth units are invisible.
+				//
+				// So the journey is compressed into ASCEND_APPROACH and the remainder is reserved for the
+				// settle. The card reaches its seat at 85% of the flight and spends the last 15% carrying
+				// past it and coming back — which is the house shape (§17.2, §26.6) rather than a curve
+				// bolted onto the end of a journey that had not finished.
+				const a = Math.min(1, t / ASCEND_APPROACH);
+				const su2 = Math.max(0, (t - ASCEND_APPROACH) / (1 - ASCEND_APPROACH));
+				const carry = ascendDir === -1 ? -ASCEND_CARRY * Math.sin(Math.PI * su2) * jitter : 0;
 				const base =
 					ascendDir === -1
-						? scaleAt(DEPTH_FAR + (1 - DEPTH_FAR) * t)
+						? scaleAt(DEPTH_FAR + (1 - DEPTH_FAR) * a + carry)
 						: from + (1 - from) * t;
 						// A decaying wobble that is exactly zero at both ends, so the card cannot miss its rest.
 						const wob =
@@ -1741,7 +1811,7 @@ export function shrinkTo(node: Element, params: { id: string }) {
 					// Ascending, this card is BEHIND the arrival and covered, so it stays solid and simply
 					// recedes. Descending it is the NEAR one and takes the shared reveal curve, so it thins
 					// out as it closes on the reader and is gone before it loses its edges.
-					const op = leaving ? revealAt(sc) : 1;
+					const op = leaving ? exitFadeAt(sc) : 1;
 					return `transform: scale(${sc}); opacity: ${op}; transform-origin: center center; z-index: ${leaving ? 2 : 1};`;
 				}
 			};
@@ -3096,6 +3166,26 @@ const BLADE_DRAW = {
 	// So on a vertical arrival the draw is anchored to the SETTLE (endsAt 1) rather than to a fraction of
 	// the flight, and starts as the card parks.
 	ccVertical: { ms: 420, endsAt: 1, lagMs: 300, earlier: 0.05, carry: 0.011 },
+	// THE SAME DEFECT AS ccVertical ABOVE, WITH A DIFFERENT CAUSE — and it is worth having both written
+	// down, because the symptom is identical and the diagnosis is not. There the draw was hidden behind
+	// a bigger move in its own axis. Here it is hidden behind SCALE: on a depth arrival the card spends
+	// most of the flight far away, so the blade extends fully while the card is ~106px wide (measured,
+	// the draw completed by ~700ms at that size) and by the time the card is legible it has long
+	// finished. Sam: "Burr's big CC blade arrives from the background with the blade fully extended, no
+	// transition seen."
+	//
+	// THE FIX IS A SHORTER DRAW, NOT A LATER ONE — and the first attempt got that exactly backwards. It
+	// lagged the whole draw until after the card had landed, which is not what any other flight in this
+	// file does: `cc` finishes at 0.95 of the duration, i.e. 33ms BEFORE the card seats. Sam: "the blade
+	// needs to be fully expanded right as it lands or a millisecond later — when a lateral CC happens we
+	// don't wait until after it's in final settled position to expand the CC blade."
+	//
+	// So this keeps the house behaviour (finish AT the landing, +20ms) and buys visibility by being
+	// SHORT instead: 320ms rather than 420, so the draw occupies the last half of the flight, where the
+	// depth curve has the card growing from ~245px to full size, instead of the first half where it is
+	// barely on screen. `axis: 'front'` is set by nothing but the Ascension, so this row cannot affect
+	// any other flight.
+	front: { ms: 320, endsAt: 1, lagMs: 20, earlier: 0, carry: 0.011 },
 	// NO CARRY on an arrival from an on-screen chip. The card itself lands with an easeOutBack settle,
 	// and a second overshoot underneath it does not add weight — the two read as one another's echo and
 	// blunt the card's own (Sam). The blade just decelerates into its seat and lets the card do the
@@ -3135,7 +3225,13 @@ export function unsheathBlade(node: HTMLElement): void {
 	const { duration, delay, kind, axis } = getHeroSchedule();
 	if (!duration) return; // no flight (cold load, back/forward) → the blade is simply already out
 	const spec =
-		kind !== 'cc' ? BLADE_DRAW.chip : axis === 'vertical' ? BLADE_DRAW.ccVertical : BLADE_DRAW.cc;
+		kind !== 'cc'
+			? BLADE_DRAW.chip
+			: axis === 'front'
+				? BLADE_DRAW.front
+				: axis === 'vertical'
+					? BLADE_DRAW.ccVertical
+					: BLADE_DRAW.cc;
 	const endAt = delay + duration * spec.endsAt + spec.lagMs - spec.earlier * (delay + duration);
 	const draw = Math.min(spec.ms, endAt);
 	// carry 0 → s 0 → easeOutBack collapses to cubicOut, so there is no overshoot and no second curve.
