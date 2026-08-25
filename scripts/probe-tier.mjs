@@ -33,6 +33,16 @@
 import { chromium } from '@playwright/test';
 
 const BASE = 'http://localhost:5173';
+// THE HOVER-INTENT HOLD, MIRRORED FROM THE APP — `HOVER_INTENT_MS` in the person page. Every wait below
+// that is gated on a tier having opened is written as INTENT_MS + margin rather than as a literal, so
+// moving the dial does not silently turn this probe's assertions into measurements taken too early.
+//
+// It was three literals (950, 1150, 1150) tuned to a 900ms hold, one of them carrying a comment that
+// said "just past the 900ms intent" — which stopped being true the moment the hold moved to 1600 and
+// would have read as "the tier did not open" rather than as "the probe asked too soon". A comment is
+// not a mechanism; this is the mechanism. It cannot be imported from a .svelte file, so it is a mirror
+// and the app's constant carries a note pointing here.
+const INTENT_MS = 1350;
 const argv = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const START = argv[0] || 'john-morgan-1837';
 const PARENT = argv[1] || null;
@@ -212,7 +222,7 @@ if (process.argv.includes('--child')) {
 	};
 
 	await page.mouse.move(kid.cx, kid.cy);
-	await page.waitForTimeout(950); // just past the 900ms intent — catch the unfold itself
+	await page.waitForTimeout(INTENT_MS + 50); // just past the intent — catch the unfold itself
 	const openWatch = overlapDuring('ON OPEN  ');
 	await page.waitForTimeout(600);
 	await openWatch;
@@ -287,7 +297,7 @@ if (process.argv.includes('--child')) {
 	// the row slides to sit under it, and the old region tested the tier's untranslated layout box, so
 	// moving onto a grandchild registered as leaving. That is the bug this case exists to keep fixed.
 	await page.mouse.move(kid.cx, kid.cy);
-	await page.waitForTimeout(1150);
+	await page.waitForTimeout(INTENT_MS + 250);
 	const gcPoint = await page.evaluate(() => {
 		const g = document.querySelector('.grandchild-tier .flight');
 		if (!g) return null;
@@ -435,7 +445,7 @@ if (CONTROL) {
 	// The mirror of case 8b with the sign flipped: this row sits ABOVE its chip, so the TOP edge is the one
 	// that means intent and the other three must close at once.
 	await page.mouse.move(par.cx, par.cy);
-	await page.waitForTimeout(1150);
+	await page.waitForTimeout(INTENT_MS + 250);
 	const gpPoint = await page.evaluate(() => {
 		const g = document.querySelector('.grandparent-tier .flight');
 		if (!g) return null;

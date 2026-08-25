@@ -728,7 +728,26 @@
 	// AND THE TIER IS NOT A NUMBER. The opening block's own rendered height is the distance everything
 	// below it moves — so "the same gap as between the parents and the card" is true by construction, and
 	// stays true if the row density ever changes. Nothing to keep in sync.
-	const HOVER_INTENT_MS = 900; // walked 1500 -> 1200 -> 1100 -> 900 (Sam)
+	// THE HOLD BEFORE A TIER ANSWERS. Walked 1500 -> 1200 -> 1100 -> 900 -> 1600 -> 1350 (Sam, Aug 25).
+	//
+	// THE WALK CHANGED DIRECTION HERE, and that is the part worth keeping. Every step down to 900 was
+	// tuning a reveal you were WAITING for, where any hold is friction. The steps back up are about the
+	// reveals you did NOT ask for: at 900 a pointer crossing the children row on its way somewhere else
+	// trips a tier — or worse a refusal — before the hand has arrived. So the number is not "how long
+	// until it answers", it is "how long before a passing pointer counts as a question", and those two
+	// readings pull in opposite directions.
+	//
+	// 1600 was overshoot, and deliberately kept in the record: Sam went there first, found it "a beat too
+	// long" once he was deliberately waiting, and settled a beat back. 1350 is the balance point between
+	// the two costs, found by passing it rather than by approaching it.
+	//
+	// ONE NUMBER FOR BOTH BRANCHES, deliberately (Sam: "higher single number for both"). `onChildEnter`
+	// waits this long and THEN decides whether to unfold or to shake, so the reveal and the nod are the
+	// same gesture up to the last instant. Splitting them would mean the same hover answers on two
+	// different clocks depending on data the user cannot see.
+	//
+	// `scripts/probe-tier.mjs` mirrors this value as its own INTENT_MS — if this moves, move that.
+	const HOVER_INTENT_MS = 1350;
 	// A BEAT BEFORE IT GOES. Leaving the keep-alive region used to close the tier on the very next
 	// pointermove, which is faster than a person can change their mind — Sam: "give users a beat to
 	// re-consider or view the overall structure". Re-entering inside the grace cancels it outright, so a
