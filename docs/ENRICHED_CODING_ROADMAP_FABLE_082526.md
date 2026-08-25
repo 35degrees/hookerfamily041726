@@ -1,6 +1,6 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: August 14, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_081026.md (the what/why for every item below).**
+**Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Companion: ENRICHED_DESIGN_FABLE_082526.md (the what/why for every item below).**
 **The 080326 edition (August 3) adds §18 — THE BOARD MOVES AS ONE. The card-transition layer reopened after a long pause and closed again the same day, on three findings that were all the same finding: distance and time were being decided SEPARATELY in each place instead of once for the whole stage. `growFrom` clocked a promotion off the card's top-left corner while its far corner covered 3.5× the ground; the leaving rows drifted a flat 28px in the camera-pan direction while the arriving rows swept 150px from elsewhere, so they crossed through each other; and the non-promoted parent dissolved in the parents row to reappear in the notch a beat later. Now: honest max-corner velocity, a measured 145px tier pitch every row shares, one direction (the pan) and one clock (the demotion's) for every row at once, and a hand-off that travels in front of the card and lands wearing the destination's own face. Also records the STACKING-CONTEXT TRAP (a z-index that measured as applied and did nothing), two latent bugs the work exposed (`chipExit` holding a seat in the flex flow; `.flat` nearly overloaded as two signals), and the false-red/false-green lessons from both.**
 
 **The 080326 edition (August 3) adds §17 — THE KIN-DISTANCE BAKE SHIPPED, closing §15 and the §19.4 debt behind it. The deck's SAME-LINE test no longer proxies kinship with anything: `regenerate-data.js` stamps a per-CC `kin_distance` (edges through the nearest shared ancestor, ONE marriage allowed to bridge the two blood lines at a cost of 2), and `isVerticalMove` reads it. Uncles, aunts and parents-in-law ride vertical wherever the tidy tree seated them; second cousins, the in-laws of distant collaterals, and true strangers stay lateral. Also records the probe that was asserting the WRONG THING (a father-in-law logged as a cross-branch-peer control), and §17.4 — redirects.json wired as 301s after 673 entries of accumulated dead URLs.**
@@ -24,6 +24,8 @@
 **The 071726 edition (July 17) adds §11 — PHASE 7 SHIPPED END TO END (sibling trigger, panel, cascade, carousel, close, flight, retraction), the GHOST SAGA (three z-order bugs from one unstated fact, one of them pre-existing), the SIX FALSE-GREENS and what they have in common, and the probe suite added. Design rationale: design doc §21.**
 
 **The 072326 edition (July 23) adds §13 — THE DECK SHIPPED. The July-22 §12 sequence's item 1 is DONE: the CC transition is built, probe-guarded, and committed (commit 0c652f6c, Stream B). It shipped as the DECK PUSH — two solid weighted cards + an empty gap, not the visible riffle (the convoy read as "adjacent" and shrank the tree; ghosts parked behind DECK_GHOSTS=false). Records the gen_delta direction model, the fixed ping-pong memory, the weight-physics dials, the flight-lock/connector-cut/belt, the seven-probe guard, and the resequence (Shuffle Notables now unblocked). Design rationale: design doc §22 (as built). Also adds §14 — PHOTO-LOADING RESTORED: a hover-preload experiment had degraded foundational chip loading; fixed by making the NEIGHBORHOOD the load unit (batch preload, on-screen chips tiered first, one shared Cloudinary derivative per person, media demoted to on-demand). The Cloudinary warm-up script is queued. Design rationale: design doc §24.**
+
+**AUGUST 25 (§39): THE ARMY REACHES THE CHILDREN ROW, AND THE PRISM REACHES THE RAIL. Two unrelated pieces, committed separately. The children row stopped being the ONE row exempt from the grandparent tier's push — it used to fade to `opacity: 0` and translate 60px out of the way, which is a row answering the tier with alpha instead of with mass, and Sam named the doctrine it broke: *"every row moves together as if they are physical, being pushed and forced down as much as moving down independently."* The measurement is what made it free: `opacity` and `transform` remove NO layout, so the row's 227px stayed reserved either way (stage 1353 shut, 1473 open, identical whether the children were painted or not) — the retreat saved not one pixel and only hid what the cost had already bought. It cost two deleted CSS rules; the push is a consequence of layout on the tier's own clock. Design §33.5 took a SECOND sanctioned vertical overflow on Sam's ruling. Then the Pynchon spectrum became the rail's, as the third surface after the card and the chip, on the same `isPynchonKin` set — recording why neither existing crop transferred, why the fill must sit on `::before` to stay maskable, why the ink had to be decided in JS rather than CSS, and the EDGE'S THREE STATES (purple 60% → none → navy 50%), two of which were wrong for different reasons. Also §39.3: the session's process failure, which was mine — I answered "why is this open" with arithmetic instead of with the screen. Design rationale: design §32.5, §33.5, §37.**
 
 **AUGUST 14 (§38): SVELTEKIT 3 ASSESSED — a verdict and a trigger, no code. Sam surfaced the `@next` preview (`3.0.0-next.23`). The measured answer: this codebase's migration surface is **five things**, four of them mechanical, because the app has NO SERVER — which deletes most of SK3's breaking list outright. We already meet every version floor but a Svelte patch. The recommendation is YES, and NOT NOW: wait for `3.0.0` stable (the preview relocated its own types three times between next.19 and next.21, and next.20 removed the `#lib` definition next.15 introduced — migrating today means migrating twice), then do it in a dedicated session **before Phase 2.5**. §38 carries the inventory, the one genuinely risky item (`pushState` → shallow `goto`, which is the warm path's seam and now fires navigation hooks it previously did not), the trigger condition, and the order of operations — headed by re-baselining the probe suite BEFORE the framework changes, not after.**
 
@@ -3489,3 +3491,129 @@ The inventory above is true as of `next.23` and will drift.
 - One free fix available TODAY, independent of any of this: `src/routes/+layout.svelte:3` imports `page`
   from the deprecated `$app/stores` and never uses it. Deleting it costs nothing and removes the app's
   only `$app/stores` reference. Recorded, not done — this session changed no code.
+
+---
+
+## 39. AUGUST 25 — THE CHILDREN JOIN THE ARMY; THE PRISM JOINS THE RAIL
+
+Two unrelated pieces of work, committed separately (`ccc24792`, `96c3798f`) because there is no clean
+intermediate between them. Design rationale in design §37 (the push) and §32.5 (the bar's spectrum),
+with §33.5 amended for the overflow the first one buys.
+
+### 39.1 What shipped
+
+| | |
+|---|---|
+| **The children are pushed, not retreated** | `.children-slot.tier-open`'s `opacity: 0` / `translateY(60px)` / `pointer-events: none` removed. The row is displaced by the grandparent tier's own in-flow height like every other row, stays visible, stays clickable |
+| **The children's connector goes with them** | one condition was serving both tiers; renamed `.child-tier-open` so the grandchild tier keeps its hide and the grandparent tier does not |
+| **A second sanctioned overflow** | design §33.5 widened; `layout.css`'s commented `overflow: clip` now records that arming it must test for BOTH tiers |
+| **The Pynchon spectrum on the rail** | `.bar.prism::before` — the whole-image crop, veil 0.48, name in the descent line's `#7c3aed`, edge in `--color-inkblue` at 50% via `color-mix` |
+| **`styleFor` gained an override** | `isPynchonKin` resolves the lane first and replaces only the ink, because the line CROSSES the other three classes |
+
+### 39.2 The numbers, because both changes were decided by them rather than by taste
+
+- **The retreat was paint-only.** Burr at 1440×900: stage 1353 shut / 1473 open, children row 227px of
+  layout in **both** states. Showing them cost nothing that was not already being paid.
+- **The push is 120px** — the 145px tier pitch less the 25px dead lead `.parents-slot` reclaims — and it
+  glides: `1047 → 1060 → 1103 → 1136 → 1154 → 1161 → 1165 → 1166` sampled at 60ms, monotonic and eased,
+  on the tier's own clock with nothing scheduling it.
+- **The edge resolves to the hero's own ink.** `<h1>` computes `oklch(0.307 0.146 265.522)`; the bar's
+  border computes `oklab(0.307 −0.0114 −0.1456 / 0.5)` — proof the `color-mix` resolved rather than
+  silently falling back.
+
+### 39.3 THE PROCESS FAILURE, AND IT WAS MINE
+
+Asked what the open "vertical content budget" item actually was, I answered with **arithmetic** — a
+decomposition of where 453px of overflow goes, a lever list, a recommendation. Sam's reply is the entry
+worth keeping:
+
+> *"I'll be honest i don't really understand the issue. you are framing solutions for me but guide me
+> through what the actually visual UX issue is. generally everything is looking good in the localhost
+> view."*
+
+He was right twice over. **First**, the symptom was never shown — and when I went and looked, the real
+one was not the number at all: scroll down to click a child, and the browser clamps the scroll mid-flight
+to the *new* card's height, so you land with the new person's parents row above the fold — which is
+exactly where the card you just came from demoted to. The whole demote gesture plays out off-screen.
+That is a sentence and a screenshot; it was buried under a table.
+
+**Second**, "everything looks good" was itself a measurement I had not taken. `window.innerWidth −
+documentElement.clientWidth` is **0** on his machine: macOS overlay scrollbars, so §13.1's original
+symptom — the bar popping in and shoving the layout 15px sideways — *cannot* occur there. Half the
+doctrine I was citing was describing something invisible to the person I was citing it to.
+
+**The rule:** lead with the screen. A doctrine is not a symptom, and a viewer whose platform hides the
+symptom is not a viewer who is wrong.
+
+### 39.4 The fifth instrument that could not see what it claimed
+
+A hit-test written to prove the children were clickable reported them **unclickable in both states** —
+including the one where they demonstrably were. `elementFromPoint` returns null for coordinates outside
+the viewport, and the chip sat below the fold, so the probe was answering a question about the *fold*
+while appearing to answer one about `pointer-events`. Re-run with the row scrolled on screen: `hits:
+true`.
+
+That is the **fifth** instrument in this project with a variant of this defect (§36.4's four, §37.3's
+`pointer-events: none` case). The family is now clear enough to state as a rule: **`elementFromPoint`
+answers "what is painted at this viewport coordinate", and every way of not being at that coordinate —
+off-screen, `pointer-events: none`, behind a clip — comes back as the same null.** Assume any new probe
+using it is lying until it has been made to go red on purpose.
+
+### 39.5 The edge that took three tries — Sam's pixels, working as designed
+
+Not a misread of an instruction; three looks at a screen:
+
+1. **purple at 60%** — the line's own colour. Fenced the bar in, and restated what the fill already said.
+2. **none at all** — Sam: *"lets remove the border totally."* Right about the fencing, wrong about the
+   ground: a spectrum is pale by construction, and it is the one lane whose fill cannot be darkened to
+   compensate, so the bar had nothing holding it off the parchment.
+3. **navy at 50%** — Sam: *"we need a thin outline… for contrast after all."* The house's structural ink
+   rather than a fourth statement about this line.
+
+Recorded in design §32.5 as a table so none of the three is re-picked. The cost of a reversal is only
+paid twice if the reasoning is not written down (§37.2's rule, still holding).
+
+### 39.6 Verification
+
+`svelte-check` clean but the two standing `@fontsource` errors. **SSR checked explicitly on six routes**
+after every CSS edit — §37.3's lesson, where `svelte-check` passed while every person page 500'd.
+`probe-ghosts` GREEN, `probe-sibling-seat` GREEN, `probe-fit` **byte-identical at 10/20** before and
+after (correct: the retreat only ever applied with the tier open, and probe-fit measures the resting
+stage).
+
+`probe-tier` red, **stash-verified as baseline** rather than assumed — and the reason is worth having:
+**it hovers a parent chip, and the tier now opens on a CLICK of the "Show parents" button.** It is
+testing a gesture that no longer exists. That is staleness, not flake, and it belongs at the head of
+§38.4's re-baseline list rather than in it.
+
+### 39.7 STILL OPEN
+
+- **THE DEMOTE LANDS OFF-SCREEN — the item this session actually surfaced, and the one to do next.** A
+  warm navigation inherits whatever scroll offset the user was at, and the browser clamps it to a number
+  derived from the incoming card's height. Burr → Theodosia: `scrollY` 453 → 183 mid-flight, and nothing
+  puts it back, so her parents row (where Burr just demoted to) is above the fold on arrival. Cold-load
+  the same page and he is right there. **Every card is composed as one picture and that picture only
+  holds at `scrollY` 0**; nothing guarantees it. The fix is a scroll reset on warm nav, and it is not
+  free — the flight's captures are VIEWPORT rects, so scrolling during one is exactly the class of thing
+  §32 was lost to. Measure before writing.
+- **The vertical budget is misfiled as "blocked on the +K chip decision".** It is not. `childCap` is
+  `null` on the roomy rung, so wiring it changes nothing at 1440×900 where the worst failures are;
+  Wadsworth overflows by 156px with **zero** children; and Thomas — no children, no blade — needs 905px
+  and misses a 900px viewport by 5. The floor is `80 pad + 100 parents + 70 connector + 575 card + 80
+  pad`. **240px of that does not scale with `u`** (`.parents-slot`'s `min-height: 100px`, `.connector`'s
+  `70px` ×2 — the "unscaled Tailwind spacing tail" §35.7 lists), which is why dropping a rung makes
+  things *worse*: at 1440×790 Thomas goes from +5 to +56, because the rung saves ~55px of scaling stage
+  while the viewport lost 110. Put that 240px on `u` and a height clamp becomes the same closed-form
+  division the width clamp already is — §33.4's "height cannot be clamped, it would oscillate" objection
+  is about *measuring*, and dissolves once every term is linear in `u`.
+- **`Melanie Jackson (HD6313)` is absent from `PYNCHON_LINE`** though she is Jackson's mother and the
+  generator's own header says the rainbow set includes "the mother at each step". Pre-existing in
+  `derive-pynchon-line.mjs`; affects her card and her chip identically, so the rail change neither
+  introduced nor exposed it. Possibly deliberate — she is Hooker bloodline, and gold may be the stronger
+  statement. Unruled.
+- **Two connectors read "Aaron's parents" at once** on Burr with the tier open: the tier names the
+  revealed parent (Rev. Aaron Burr), the row below names the hero (Aaron Burr Jr.), and they collide on a
+  shared first name. Cosmetic, narrow, visible on the card most used for testing.
+- Unchanged and still standing: arming `overflow: clip` (now two-tier), the unscaled spacing tail,
+  centring the card in the viewport minus its chrome, `scripts/probe-out/` not gitignored, and the stray
+  screenshots in the source tree.

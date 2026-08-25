@@ -1,6 +1,6 @@
 # HOOKER FAMILY DESCENDANTS — ENRICHED DESIGN (FABLE PASS)
 
-**Date: August 8, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
+**Date: August 25, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
 **Prepared by the architect stream for Samuel Talcott Hooker's review. Nothing here is a decision until Sam says so.**
 **The 070926 edition added §13 (viewport-lock / scrollbar doctrine) and §14 (Zoom 1 card-grid refinements). This 071226 edition adds §17 (motion physics doctrine — learned the hard way in the July 11 card-transition maintenance phase) and threads the one-physics/velocity-ceiling lessons into §3. The card-transition layer is now CLOSED, probe-guarded, and pushed; see docs/CODING_HANDOFF.md in the repo for the session record and ghost taxonomy.**
 
@@ -29,10 +29,12 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The same 080626 edition also adds §28 — THE FEATURED CARD'S FIXED GEOMETRY AND TYPE (as built), the card-surface work that ran alongside the blade and is easy to mistake for cosmetics. Two of its constants are now structural (`CARD_TOP_H` is exact for every person and `CORNER_R` is exported, because the blade is carved with the card's own radius — `DeckRiffle` imports rather than duplicating). It records the REVERSED header rule (a fixed header row buys a constant lower-content start and pays with a variable gap; the old auto-sizing rule swung the content start 23px between a blurb card and a no-blurb one), the durable face-swap rule (apparent size is CAP HEIGHT, not px — Outfit at 26 reads as exactly the size Inter read at 24), one ink at different strengths with ALPHA rather than a second colour token (so it composes with the died-young dimming), age-at-death's honesty rule including when it returns null rather than a number it cannot stand behind, and §28.6 — what was tried and returned from, Carlito included.**
 
+**The 082526 edition (August 25) adds §37 — THE ARMY REACHES THE CHILDREN ROW, and §32.5 — THE PRISM ON A BAR. §37 closes the last exemption from the army: the grandparent tier opens IN FLOW so everything below is displaced by layout with no row told to move, and the children were the one row answering it with ALPHA instead of with mass (`opacity: 0` + `translateY(60px)`). The measurement is the durable part — neither property removes any layout, so the row's 227px stayed reserved either way and the retreat saved nothing it appeared to save, which generalises to: before defending a concession, weigh what it actually buys, because a treatment that makes something disappear may only be making the cost invisible. It also records why the push needed no code (a row in flow moves with the army if the thing above it is in flow too) and why one condition serving both tiers was a smell in a component whose two tiers are mirrored but not symmetric. §32.5 puts the Pynchon spectrum on a third surface and records what does NOT transfer between surfaces: a bar is the opposite aspect from a chip, so §32.4's stripe returns in the other axis; the fill must sit on `::before` or a guessed date would dissolve the paper out from under an un-masked rainbow; the INK crosses the lane classes rather than replacing them (the line contains a bloodline person, a married-in person and neither); the ink must be set where the inline `color` is computed, because CSS loses to it silently; and the EDGE'S THREE STATES, tabled so none is re-picked. §33.5's vertical rule took its SECOND sanctioned exception as a consequence.**
+
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_081426.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_082526.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
@@ -3760,6 +3762,58 @@ washed it out.
 The fade is a **white veil layer, never `opacity`** — a veil tints the image without touching anything the
 element draws, and has no edge to give away. It is the only dial in both components.
 
+### 32.5 THE PRISM ON A BAR — the third surface (AS BUILT, August 25)
+
+The timeline rail carries it too now, for the same people. **Membership is `isPynchonKin`, the same
+derived RAINBOW set the card and the chip ask** — three surfaces, one rule, no second list to drift from
+the genealogy it describes.
+
+**A bar is not a small chip, and 32.4's lesson repeats in the other axis.** A bar is ~23px wide and
+77–400px tall — the opposite aspect from both the card (925×575) and the chip (220×75). `cover` scales
+the source to the bar's HEIGHT and then crops ~90% of its width away, leaving one narrow *vertical*
+column of whatever hue sat there: the same stripe 32.4 forbids, reached from the other direction.
+`100% 100%` is what it takes instead, and it buys something the other two do not need — **every bar shows
+the complete spectrum regardless of its height**, so William at 146px and Ann at 77px read as a matched
+pair rather than as two different crops of one picture. A percentage crop would have made every bar a
+different length of rainbow, which is a statement about lifespan that the fill has no business making.
+
+**It goes on `::before`, not on the bar.** That pseudo-element exists so the dissolving-end mask can
+soften the paper without touching the name (§36.6). On the anchor the spectrum would be un-masked — so a
+guessed birth or death would dissolve the *fill* out from under a rainbow that stayed hard-edged, and the
+bar would lose the ability to say "we are not sure" at exactly the ends where it must.
+
+**THE INK IS APPLIED ON TOP OF THE LANE, NOT INSTEAD OF IT** — the one structural idea here. The Pynchon
+line **crosses** the other three classes: Jackson is bloodline, Thomas Ruggles Jr. married in, William is
+neither, and all three are in the line. A fourth `LANE_STYLE` entry would have forced them to be one
+thing when they are genuinely two. So `styleFor` resolves the lane as it always did and then overrides
+only the ink. It degrades honestly: strip the CSS rule and these bars fall back to their own lane's paper
+with the line's ink still on the name.
+
+**And the ink has to be decided in JS.** `color` is written *inline* on `.bar` from `b.style.ink`, and an
+inline declaration beats any stylesheet rule — a `.bar.prism { color: … }` loses silently. The fill and
+the edge can live in CSS because they ride custom properties; the ink cannot. This is a general trap for
+this component: anything already set inline must be overridden where the inline value is computed.
+
+**THE EDGE, IN THREE STATES.** Two were wrong, for different reasons, and the third is not a compromise
+between them — recorded so none of them is re-picked:
+
+| | |
+|---|---|
+| **purple at 60%** | The line's own colour. It **fenced the bar in**, and said the same thing the fill already said. |
+| **none at all** | Right about the fencing, wrong about the ground. A spectrum is pale by construction — the veil is what keeps the name legible — so a borderless bar has nothing holding it off the parchment, and it is the one lane whose fill cannot be darkened to compensate. |
+| **navy at 50%** | **Contrast without a claim.** `--color-inkblue`, the hero display name's own colour, so the edge is the house's structural ink rather than a fourth statement about this line. Half alpha keeps it a containing edge rather than a drawn outline. |
+
+The name takes `#7c3aed` — the 0% stop of `.descent-line.pynchon-descent`, the purple the card's own
+"Great-Grandson of William Pynchon" is painted in, so rail and card name the line in one colour. **Flat
+where the title is a gradient**, and that is a size decision: the title is a 40-character line with room
+for a sweep, where this is a first name at 13px down a 23px column, and a three-stop gradient there lands
+as one arbitrary slice of itself that differs per name length.
+
+Both colours are **referenced, not restated** — `color-mix` against `--color-inkblue` for the edge — so
+neither can drift from the surface it is matching. Same reason `CARD_TOP_H` is exported rather than
+copied (§28.1), and this file has already paid for a second definition of one number once (§36, `LANE_W`
+vs `BAR_W`).
+
 ---
 
 ## 33. THE STAGE'S THREE REGISTERS — SCREEN-SIZE ADJUSTMENT (AS BUILT, August 8)
@@ -3867,13 +3921,22 @@ left. Budgeting it once read green on the card while the column hung 6px off an 
 §13's "no scrollbars anywhere in zoom 1" was too strong. The live rule (Sam, Aug 8):
 
 - **Horizontal — never**, under any circumstances, in any state.
-- **Vertical — never, EXCEPT while the grandchild tier is open.** Hovering a child chip for 1.2s reveals
-  that child's own children, and a twelve-child family puts three rows on the stage. That is a
-  deliberate, transient, user-summoned overflow and it is allowed to scroll.
+- **Vertical — never, EXCEPT while a TIER is open.** Hovering a child chip for 1.2s reveals that child's
+  own children, and a twelve-child family puts three rows on the stage. That is a deliberate, transient,
+  user-summoned overflow and it is allowed to scroll.
+
+**THE EXCEPTION TOOK A SECOND TIER ON AUGUST 25**, and the wording above was widened to match. It named
+only the grandchild tier until the children stopped retreating out of the *grandparent* tier's way
+(§37). That row used to fade to `opacity: 0` while the tier was open, so the overflow it caused was
+invisible rather than absent; it is now pushed by the tier's own in-flow height like every other row,
+stays visible, and the stage is allowed to scroll to reach it. Sam, ruling on the trade: *"there should
+be a scrollbar when the kids push down because that's a lot of army rows on the screen at once… we can't
+expect every user to have a tall browser window esp if there are 10 kids for the current hero person."*
 
 So **the fit target is the RESTING stage**, and `overflow: clip` can never simply be armed as §13.2
-wrote it — clipping the resting stage is right; clipping an open grandchild tier would amputate the row
-that earned the exception. Whatever arms it must be state-aware.
+wrote it — clipping the resting stage is right; clipping an open tier would amputate the row that earned
+the exception. Whatever arms it must be state-aware, and must now test for **both** `.grandparent-tier`
+and `.grandchild-tier`. The note beside the commented line in `layout.css` carries the same warning.
 
 ### 33.6 A COMMENT IS NOT A MECHANISM — three times in one session
 
@@ -4520,3 +4583,88 @@ Everything above was settled by measurement, and the measurements are cheap to r
   card's rect, then read off first-change and last-change. This is how the 850ms gap was found.
 - **Which element is which mid-flight:** stamp `dataset` on every bar before the click, then read it
   back after — that is how "new lanes are born at their destination" was proven rather than guessed.
+
+---
+
+## 37. THE ARMY REACHES THE CHILDREN ROW (AS BUILT, August 25)
+
+_(The grandparent tier's push, finally applied to the one row that was exempt from it. Read with §30
+(the stage must not move while anything is flying) and §34 (how a row of children breaks).)_
+
+### 37.1 The army, stated once, because this section is an application of it
+
+Every row moves **together, one direction, one clock**, as displaced mass — not as each row
+independently deciding to travel. Sam, on why it is architecture rather than polish: *"every row moves
+together as if they are physical, being pushed and forced down as much as moving down independently.
+That's a big architectural underpinning of my project."*
+
+In the code it is literal — `getPanDir()` hands the whole board one direction, `rowTravel`/`marchTravel`
+one measured 145px pitch, `rowClockMs()` one clock — and §18 exists because distance and time were once
+decided *separately in each place* instead of once for the whole stage, so rows crossed through each
+other.
+
+**The grandparent tier is the purest case of it, because nothing is choreographed at all.** The tier
+opens IN FLOW; `tierPush` animates the block's own `margin-top`; everything below is displaced by
+layout. No row is told to move. That is why the tier must never be given a transform or taken out of
+flow to "fix" something later — the displacement *is* the mechanism.
+
+### 37.2 The row that answered by leaving
+
+The children were the one exception, and had been since the tier shipped: `.children-slot.tier-open`
+set `opacity: 0`, `transform: translateY(60px)`, `pointer-events: none`. The row did not get pushed —
+it was told to leave, on the reasoning that it was "the same gesture they already make when a parent is
+promoted."
+
+That is a defensible gesture and it was still wrong here, because **a row that vanishes is not a row
+that was displaced.** It was the only object on the stage answering the tier with alpha instead of with
+mass, which is the one thing the army does not permit.
+
+### 37.3 THE MEASUREMENT THAT MADE IT FREE — and the general lesson
+
+The retreat looked like a trade (visibility for height). It was not one. Measured on Burr at 1440×900:
+
+| | stage | children row |
+|---|---|---|
+| tier closed | 1353px | 227px of layout, opacity 1 |
+| tier open | 1473px | **227px of layout**, opacity 0 |
+
+**`opacity` and `transform` remove nothing from layout.** The row's 227px stayed reserved either way, so
+the stage was 1473px whether the children were painted or not — scrolling down with the tier open
+reached 227px of empty parchment with the children standing in it invisible. The retreat did not save a
+pixel; it only hid what the pixel cost had already bought.
+
+> **The lesson worth carrying:** before defending a concession, measure what it actually buys. A
+> treatment that *looks* like it saves space because it makes something disappear may only be making the
+> cost invisible. This is the same family as §35.4's "a comment is not a mechanism" — a thing that reads
+> as an optimisation is not one until it has been weighed.
+
+### 37.4 What the push cost to build: nothing
+
+Removing two CSS rules was the whole of it. `tierPush` already animates the block's margin-top on the
+tier's clock and curve, and the block is already in flow — so the children glide **120px** (the 145px
+pitch less the 25px dead lead `.parents-slot` reclaims, §32's arithmetic) as a consequence of layout, at
+the army's tempo, with nothing scheduling it. Sampled every 60ms: `1047 → 1060 → 1103 → 1136 → 1154 →
+1161 → 1165 → 1166`, monotonic and eased.
+
+**A row that is in flow does not need a transition to move with the army. It needs the thing above it to
+be in flow too.**
+
+### 37.5 The connector: one condition was serving two tiers that want opposite things
+
+`.connector-children` was hidden on `revealedParentId || activeChildId` — both tiers through one class,
+agreeing only by accident:
+
+- the **grandchild** tier collapses the children row to the single hovered chip, so "Eleven children" is
+  describing a row that is no longer on screen and the label must go;
+- the **grandparent** tier merely pushes, so the children are all still there and still true, and the
+  label travels with them like every other part of the army.
+
+Renamed to `.child-tier-open` so the selector states which tier it means. **A shared condition between
+two tiers is a smell in this component specifically**, because the two are mirrored and their
+similarities are superficial: one pushes the whole stage and forces every later flight to know about the
+collapse (§30), the other opens below everything and moves nothing above the card (§31).
+
+### 37.6 The price, named
+
+The stage overflows further while the tier is open, and may scroll. That is deliberate and it is Sam's
+call, not a defect — see §33.5, which took a second sanctioned exception on the strength of it.
