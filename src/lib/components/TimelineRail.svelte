@@ -43,6 +43,7 @@
 	// parent graph, not listed. Reusing it is what stops the rail from growing a third, drifting answer to
 	// "is this person in the line": FeaturedCard.prism, PersonBox.prism and this bar are now one rule.
 	import { isPynchonKin } from '$lib/data/pynchonLine';
+	import { ascension } from '$lib/state/ascension.svelte';
 	import { getCameraMove, subscribeCameraMove } from '$lib/state/camera';
 	import { ccFlyTo } from '$lib/state/shuffle.svelte';
 	import { warmPersonLinks } from '$lib/state/navigate';
@@ -835,6 +836,12 @@
 					? ANCHOR_BAR_MS
 					: (getCameraMove()?.duration ?? 420);
 			barEase = isCc && !prefersReducedMotion.current ? ANCHOR_BAR_EASE : BAR_EASE;
+			// THE ASCENSION DOES NOT LIFT THE RAIL (roadmap §40). The lift exists because a deck CC sweeps
+			// a card ACROSS the window's edge and the rail should read as a pane of glass it passes
+			// behind. A head-on crossing passes no edge — it comes straight out of the foreground — so
+			// the reason does not apply, and lifting anyway would put the rail on top of the arriving
+			// orbit card for the whole flight. Measured as a conflict before it was built, not after.
+			if (m.ascend) return;
 			if (!RAIL_OVER_FLIGHT || !isCc) return;
 			overFlight = true;
 			// THE LIFT ENDS WHEN THE FLIGHT ENDS — the flight lock releases at landing, and the subscriber
@@ -1573,6 +1580,7 @@
 <div
 	use:warmPersonLinks
 	class="rail"
+	class:ascended={ascension.active}
 	class:over-flight={overFlight}
 	style="--rail-w: {RAIL_W}px; --move-ms: {moveMs}ms; --tip-ms: {barFadeMs}ms;
 	       --bar-ease: {barEase}"
@@ -1931,6 +1939,72 @@
 	   nothing; this olive comes from the ground's own hue family (H 66) and measures 5.0:1, comfortable
 	   at 9px. Third time this pairing has had to move together: ink and ground are ONE decision, and
 	   changing either alone has cost legibility every time. */
+	/* ── THE RAIL UNDER THE ASCENSION (roadmap §40) ────────────────────────────────────────────────
+	   Sam: "the midnight blue background will basically make the headshots not visible, but the years
+	   and horizontal year bars will be visible in a cream color, and the vertical bars will still be
+	   visible, just a different color so they stand out."
+
+	   THE RAIL RESTYLES ITSELF; IT IS NOT COVERED — and the difference is not pedantry. To hide the
+	   portraits by painting over them, the veil would have to sit ABOVE the rail; to leave the years
+	   legible it would have to sit BELOW them. Those are the same layer, so no stacking order satisfies
+	   both and any attempt lands in §18.6's stacking-context trap with a fourth participant. Owning its
+	   own dark palette costs one class and cannot be got wrong that way. Same result, and it keeps the
+	   rail the only thing that decides how the rail looks (design §25.3 — a render switch, never a
+	   data edit).
+
+	   The GROUND goes first: `.rail::before` is the warm paper strip, and against midnight it is the one
+	   element that reads as a mistake rather than as a dark version of itself. */
+	/* AND IT HAS TO OUTRANK THE VEIL, or none of the palette below is ever seen. Both sit at z 0 and the
+	   veil is later in the DOM, so source order gave it the rail's whole column — the years, the ticks and
+	   the bars all vanished under it, which is the §18.6 stacking-context family arriving on schedule with
+	   a fourth participant, exactly where this feature's spec predicted it would.
+	   z 1 puts the rail over the veil and still UNDER `.page-container` (also z 1, but later in the DOM),
+	   so the card stays in front of the rail exactly as it does at rest. */
+	.rail.ascended {
+		z-index: 1;
+	}
+	.rail.ascended::before {
+		opacity: 0;
+		transition: opacity var(--move-ms, 420ms) cubic-bezier(0.33, 1, 0.68, 1);
+	}
+	/* THE PORTRAITS GO, and by opacity rather than `display: none` — they have to be able to come BACK
+	   on the same clock when the user descends, and a display swap cannot be tweened. Inert while gone,
+	   so a pointer over a face in the dark finds nothing. */
+	.rail.ascended .anchor {
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity var(--move-ms, 420ms) cubic-bezier(0.33, 1, 0.68, 1);
+	}
+	/* CREAM — #f7f1e6, the house's own Manuscript ground colour, so the zone borrows a palette that
+	   already exists rather than inventing a light. Ticks and year labels both, since Sam named "the
+	   years and horizontal year bars" as one thing. */
+	.rail.ascended .tick,
+	.rail.ascended .tick-year {
+		color: #f7f1e6;
+		border-color: #f7f1e6;
+		background-color: #f7f1e6;
+		opacity: 0.82;
+		transition:
+			color var(--move-ms, 420ms) ease-out,
+			opacity var(--move-ms, 420ms) ease-out;
+	}
+	.rail.ascended .tick-year {
+		background-color: transparent; /* a label is ink, not a rule — undo the bar treatment above */
+	}
+	/* THE BARS STAND OUT rather than blending: the lane fill is what carries a bar's identity, and on a
+	   dark ground the pale papers all collapse toward one another. Lifting the fill's own colour toward
+	   the cream keeps the three hues distinguishable while making every bar read as lit from within,
+	   which is the "still visible, just a different color so they stand out" Sam asked for. Applied as a
+	   filter so NO lane's hue is restated here — the three-hue system in LANE_STYLE stays the one
+	   definition, and a fourth lane added later inherits this for free. */
+	.rail.ascended .bar::before {
+		filter: brightness(1.06) saturate(1.35);
+		transition: filter var(--move-ms, 420ms) ease-out;
+	}
+	.rail.ascended .bar-label {
+		text-shadow: 0 1px 2px rgb(8 13 23 / 0.55);
+	}
+
 	.tick {
 		position: absolute;
 		height: 1px;

@@ -42,6 +42,14 @@ export type CameraMove = {
 	// shared ancestor within the bake's depth cap (orbit, in-laws, far branches). With genDelta it is the
 	// deck's SAME-LINE test — it replaced the seat-distance proxy (design §22.2b). Absent for chip navs.
 	kinDistance?: number | null;
+	// THE ASCENSION (roadmap §40) — a CC that CROSSES the orbit boundary. +1 = ascending into the zone,
+	// −1 = descending out of it, absent/null = an ordinary CC that stays on one side.
+	//
+	// A DELTA, NOT A DESTINATION, and that is the whole reason this is one field rather than a mode. An
+	// orbit component is entered by CC and then moved around inside with ORDINARY navigation (Lincoln to
+	// his son is a plain child promotion), so what earns the head-on flight is the CROSSING, not the
+	// arriving. A move within the zone has no delta and every existing flight path is untouched by it.
+	ascend?: 1 | -1 | null;
 	// ALTITUDE ARC (far collateral CCs): the camera pulls back to this scale, traverses, descends. The
 	// subject card and the tile substrate both read it. Absent/null → a flat flight (no pull-back).
 	scaleMin?: number | null;

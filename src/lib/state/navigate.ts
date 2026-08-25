@@ -18,6 +18,7 @@ import { publishCameraMove, type CameraMove } from './camera';
 import { hideCcRoster, showCcRoster } from './ccRoster.svelte';
 import { isFlightLocked, lockFlight } from './flightLock';
 import { startArc } from './arc.svelte';
+import { markAscent, clearAscent } from './ascension.svelte';
 import { isArcMove, arcScaleMinFor, arcDurationMsFor } from '$lib/transitions/arc-math';
 import { fetchFeatured } from '$lib/data/buildFeatured';
 import { planSiblingNav, clearSiblingNavPlan } from './siblingNav';
@@ -34,7 +35,8 @@ import {
 	clearFlightCaptures,
 	spouseGrowMs,
 	relativeGrowMs,
-	resolveLateralDir
+	resolveLateralDir,
+	captureAscend
 } from '$lib/transitions/flight';
 
 /** Fetch a person and set them as featured. No history change. False if not found. */
@@ -197,13 +199,31 @@ export function warmPersonLinks(node: HTMLElement) {
 		// regenerate kinDistance). Absent on the anchor = no shared ancestor within the cap → far/orbit.
 		// Siblings share both parents (distance 2), but their genDelta is 0, so they ride lateral regardless.
 		const kinDistance = isCC ? numOr((anchor as HTMLElement).dataset.kinDistance) : null;
+		// THE ASCENSION (roadmap §40) — does this navigation CROSS the orbit boundary? Resolved here, in
+		// the same frame as every other capture, because that is the only instant where BOTH sides are
+		// known: the target's orbit-ness rides the anchor (data-orbit, baked per CC row), and the source's
+		// is the featured person we are still standing on. One frame later the payload has swapped and the
+		// question cannot be asked at all.
+		//
+		// A DELTA. Equal on both sides — tree→tree, or a move WITHIN an orbit component — yields null and
+		// nothing about the flight changes, which is what keeps Lincoln's sub-lineage free.
+		const toOrbit = (anchor as HTMLElement).dataset.orbit === 'true';
+		const fromOrbit = featured.current?.orbit === true;
+		const ascend = toOrbit === fromOrbit ? null : toOrbit ? 1 : -1;
+		// The door, remembered on the way IN only — a single slot, never a stack (see ascension.svelte.ts).
+		if (ascend === 1) {
+			markAscent(decodeURIComponent(window.location.pathname.replace(/^\/person\//, '')));
+		} else if (ascend === -1) {
+			clearAscent();
+		}
+		if (ascend) captureAscend(ascend);
 		// duration reuses flight.ts's per-kind curve directly (single source of truth — no drift; the
 		// published value is informational metadata, the real flight clock lives in growFrom).
 		const duration = kind === 'spouse' ? spouseGrowMs(distance) : relativeGrowMs(distance);
 		// ALTITUDE ARC: a FAR COLLATERAL CC pulls the camera back (scaleMin) to reveal the real table, then
 		// descends. Publish scaleMin so the card + substrate read it; start the shared arc clock. Direct dives
 		// and short collateral hops stay flat (scaleMin null). Reduced motion never arcs.
-		const provisional = { from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, kinDistance, seq: 0 } as CameraMove;
+		const provisional = { from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, kinDistance, ascend, seq: 0 } as CameraMove;
 		const arc = !prefersReducedMotion.current && isArcMove(provisional);
 		const scaleMin = arc ? arcScaleMinFor(provisional) : null;
 		// DECK lateral direction: resolve the ping-pong memory ONCE here, before the flight reads deckDirFor.
@@ -213,7 +233,7 @@ export function warmPersonLinks(node: HTMLElement) {
 			const source = decodeURIComponent(window.location.pathname.replace(/^\/person\//, ''));
 			resolveLateralDir(provisional, source, decodeURIComponent(match[1]));
 		}
-		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, kinDistance, scaleMin });
+		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, kinDistance, ascend, scaleMin });
 		// The arc clock is started at the STATE SWAP (below), not here — so it shares its time origin with the
 		// card + substrate transitions that mount then, guaranteeing one clock (no fetch-time offset).
 		const arcFrom = from && to ? { x: from.x, y: from.y ?? to.y ?? 0 } : null;

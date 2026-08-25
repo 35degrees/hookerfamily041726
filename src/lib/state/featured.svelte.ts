@@ -23,6 +23,8 @@ export type CrossConnection = {
 	link_text: string;
 	display_label: string;
 	slug: string | null;
+	/** ORBIT (§40) — the target's orbit-ness, read at click time to decide the flight's axis. */
+	orbit?: boolean;
 };
 
 /** The fully-resolved payload one person page renders from (matches +page.ts `load`). */
@@ -39,6 +41,11 @@ export type FeaturedData = {
 	 *  Baked by regenerate-data.js (lineAnchorsFor) because it needs a graph walk a single
 	 *  neighbourhood payload cannot answer. Absent on everyone else. */
 	lineAnchors?: PersonCompact[];
+	/** ORBIT (roadmap §40) — this person's family component never touches the tree; the app reaches
+	 *  them only by cross-connection. Derived in regenerate-data.js (computeOrbit) and emitted at the
+	 *  PAYLOAD ROOT beside lineAnchors, not on `person`: `person` mirrors the canonical record, and a
+	 *  derived fact does not belong in it. The single predicate the Ascension reads. Absent = false. */
+	orbit?: boolean;
 };
 
 class FeaturedManager {

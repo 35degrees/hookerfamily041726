@@ -30,6 +30,7 @@
 	 * the fetch takes — which on the 3G profile is exactly when it is least forgivable.
 	 */
 	import { shuffleToNotable, warmShuffle } from '$lib/state/shuffle.svelte';
+	import { ascension } from '$lib/state/ascension.svelte';
 	import { onMount } from 'svelte';
 
 	let { settled = true }: { settled?: boolean } = $props();
@@ -47,6 +48,12 @@
 	}
 </script>
 
+<!-- THE SHUFFLE LEAVES THE ZONE (roadmap §40). Two reasons, and the second is the one that decided it.
+     It is a door OUT to a random notable, and offering an exit that skips the descent undoes the whole
+     gesture — an orbit figure is reached by one specific connection and should be left the same way.
+     And it occupies exactly the corner the X wants; rather than crowd two controls together, the
+     control that does not belong here yields to the one that does. -->
+{#if !ascension.active}
 <button
 	bind:this={el}
 	class="shuffle-notables"
@@ -69,6 +76,7 @@
 	</svg>
 	Notable People
 </button>
+{/if}
 
 <style>
 	/* Takes .ground-toggle's shell (Field.svelte) — same type, same blur, same 16px inset — so the two

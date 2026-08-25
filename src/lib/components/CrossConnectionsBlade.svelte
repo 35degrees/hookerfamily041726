@@ -104,6 +104,9 @@
 		relation_class?: 'direct' | 'collateral' | null;
 		gen_delta?: number | null;
 		kin_distance?: number | null;
+		/** ORBIT (§40) — the target's orbit-ness, surfaced as data-orbit so warmPersonLinks can decide
+		 *  the ascension's axis at click time, the same way it reads gen_delta and kin_distance. */
+		orbit?: boolean;
 	};
 	type Props = {
 		crossConnections?: CC[];
@@ -265,6 +268,7 @@
 			data-relation-class={cc.relation_class ?? undefined}
 			data-gen-delta={cc.gen_delta ?? undefined}
 			data-kin-distance={cc.kin_distance ?? undefined}
+			data-orbit={cc.orbit ? 'true' : undefined}
 			class="cc-link">{bindName(cc.link_text)}</a
 		>{:else}<span class="cc-name">{bindName(cc.link_text)}</span>{/if}{#if cc.display_label}<span
 			class="cc-label-text">{ccTail(cc.display_label)}</span

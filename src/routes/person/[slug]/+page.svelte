@@ -14,7 +14,7 @@
 	import { cardinalWord, cardinalWordLower, possessive } from '$lib/utils/dates';
 	import { page } from '$app/state';
 	import { featured } from '$lib/state/featured.svelte';
-	import { loadFeatured, warmPersonLinks } from '$lib/state/navigate';
+	import { loadFeatured, warmPersonLinks, focusPerson } from '$lib/state/navigate';
 	import { buildRoster } from '$lib/data/roster';
 	import {
 		flyOut,
@@ -31,7 +31,9 @@
 		rowHandoffIds,
 		rowTravel,
 		marchTravel,
-		retractBladeIn
+		retractBladeIn,
+		captureFlightKind,
+		captureAscend
 	} from '$lib/transitions/flight';
 	import { getSiblingNavPlan } from '$lib/state/siblingNav';
 	import { anchorOffsetFor, showsSiblingPanel } from '$lib/state/siblingLayout';
@@ -41,6 +43,8 @@
 	import { unlockFlight } from '$lib/state/flightLock';
 	import { preloadNeighborhood } from '$lib/photo';
 	import SiblingPanel from '$lib/components/SiblingPanel.svelte';
+	import Ascension from '$lib/components/Ascension.svelte';
+	import { ascension, clearAscent } from '$lib/state/ascension.svelte';
 	import Caret from '$lib/components/Caret.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -114,6 +118,45 @@
 	// slot into the same seams. Transitions are NOT wired yet — this milestone is
 	// structure + notch docking only.
 	const zoom = 1;
+
+	/**
+	 * ── THE DESCENT (roadmap §40) — what the X does ────────────────────────────────────────────────
+	 *
+	 * Sam: "the X will just take the user back to the previous card where they clicked the CC… the orbit
+	 * card exits the UX forward, the reverse of its entry, and the original hero card enters from the
+	 * back to normal position."
+	 *
+	 * IT IS NOT A BACK BUTTON, and that is a correctness point rather than a preference. Browser back
+	 * goes through the popstate reconcile above, which calls `loadFeatured(slug)` with NO flight
+	 * captures — so it snaps, with no flight at all. The X has to perform the descent, which means
+	 * synthesising the same click the reciprocal CC would have produced.
+	 *
+	 * SO IT DISPATCHES THE REAL LINK WHERE ONE EXISTS. The same trick the timeline bar uses to hand its
+	 * click to the spouse chip (TimelineRail.onBarClick): a second implementation of a flight is the
+	 * thing that eventually disagrees with the first, so wherever the blade already renders a link back
+	 * to the door, that anchor IS the gesture — it carries data-cc, data-orbit and the rest, and
+	 * warmPersonLinks reads the crossing off it exactly as it would from a click.
+	 *
+	 * THE FALLBACK MATTERS because reciprocity is not guaranteed — William Wadsworth → John Talcott has
+	 * no reciprocal, so a blade will not always hold the way home. Then we navigate to the remembered
+	 * door directly, capturing the crossing by hand so the descent still flies.
+	 */
+	function descend() {
+		const home = ascension.from;
+		if (!home) return; // entered cold (a direct URL) — nothing to descend to; see ascension.svelte.ts
+		const link = document.querySelector<HTMLElement>(
+			`.cc-blade a[data-cc="true"][href="/person/${home}"]`
+		);
+		if (link) {
+			link.click();
+			return;
+		}
+		// No reciprocal on the blade. Capture what the click would have captured, then go.
+		captureFlightKind('cc');
+		captureAscend(-1);
+		clearAscent();
+		void focusPerson(home);
+	}
 	const roster = $derived(buildRoster(f, zoom));
 
 	// animate:flip glides SURVIVORS (e.g. children shared across a spouse swap) to their new
@@ -1559,6 +1602,13 @@
      card and connector use, so the button can never disagree with the flight lock about whether a flight
      is in progress. -->
 <ShuffleNotables settled={familyLanded} />
+
+<!-- THE ASCENSION'S SURROUND (roadmap §40) — the midnight veil and the way out. Mounted HERE, beside the
+     other screen chrome, rather than inside `.page-container`: it must cover the whole window, which is
+     not something a stage child can promise, and a stage that is ever transformed would re-base it
+     (design §33.1). It gates itself on `ascension.active`, so on every ordinary card it renders nothing
+     at all and the current UX is untouched. -->
+<Ascension onexit={descend} />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
 <!-- The keep-alive test listens on the WINDOW, not on the stage. On .page-container it simply stopped

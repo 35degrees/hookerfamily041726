@@ -26,6 +26,9 @@ export type PersonPayload = {
 	crossConnections: CrossConnection[];
 	/** Easter eggs only — their route back to the Hooker line. See regenerate-data.js lineAnchorsFor. */
 	lineAnchors?: PersonCompact[];
+	/** ORBIT (roadmap §40) — a person the tree reaches only by cross-connection. Payload ROOT, beside
+	 *  lineAnchors, because it is derived rather than canonical. Absent on everyone who is not. */
+	orbit?: boolean;
 };
 
 const TITLE_ABBREVIATIONS: Record<string, string> = {
@@ -199,7 +202,14 @@ export function buildFeatured(payload: PersonPayload): FeaturedData {
 		crossConnections,
 		institutionsById,
 		// Passed straight through, untouched. Absent on everyone who is not an easter egg.
-		lineAnchors: payload.lineAnchors
+		lineAnchors: payload.lineAnchors,
+		// THIS BUILDER IS AN EXPLICIT MAP, NOT A SPREAD, so a new payload key reaches the app only by
+		// being named here. That is a good property — nothing arrives by accident — and it is also
+		// exactly how the Ascension's flag went missing on its first run: it was emitted at the root,
+		// read from the store, and silently dropped in between, so the blade's data-orbit was correct,
+		// the navigation was correct, and the zone simply never activated. Anything added to
+		// PersonPayload above must be added here too.
+		orbit: payload.orbit
 	};
 }
 

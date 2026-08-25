@@ -52,6 +52,47 @@ function settleBackFor(distance: number, boost = 1): number {
 	return solveBackS(Math.min(0.1, targetPx / distance));
 }
 
+// ── THE ASCENSION (roadmap §40) — the head-on axis ──────────────────────────────────────────────
+//
+// An orbit entry is a person the tree reaches only by cross-connection, and CROSSING that boundary
+// flies head-on instead of across: the arriving card comes out of the foreground, the leaving one
+// recedes, and for the millisecond they overlap the near one occludes the far one — §17.4's
+// "occlusion is legitimate language… do not suppress it; choreograph it".
+//
+// A HEAD-ON MOVE HAS NO PIXEL DISTANCE, AND THAT IS THE TRAP THIS SECTION EXISTS FOR. Origin and
+// destination are the SAME slot, so dx = dy = 0, every clock in this file divides by nothing, and
+// `settleBackFor` short-circuits on `distance < 1`. Reusing the CC path naively produces a legal,
+// clean-looking, MOTIONLESS transition that passes every check in the arsenal.
+//
+// The answer is the project's own HONEST MAX-CORNER VELOCITY (§18.2) — the measure `shrinkTo` already
+// uses. A scale change moves corners through real pixels: half the card's diagonal is ~545px at u = 1,
+// so the corner travel is |Δscale| × halfDiagonal, and that feeds RELATIVE_V_CEIL untouched.
+//
+//     1.5x -> 272px -> 410ms (floor)      2.5x -> 816px -> 486ms
+//     2.0x -> 545px -> 410ms (floor)      3.0x -> 1090px -> 649ms
+//
+// So ENTRY SCALE IS A LOOK DECISION, NOT A TIMING ONE, below ~2.3x — the floor governs, and how close
+// the card comes to the viewer costs no tempo until it is large. 2.0 is chosen on that: a full doubling
+// reads as arrival rather than as a zoom, and it is still free of the clock.
+const ASCEND_ENTRY_SCALE = 2.0; // the arriving card starts this much nearer than its resting size
+const ASCEND_EXIT_SCALE = 0.42; // the leaving card recedes to this before the arrival covers it
+// THE OVERSHOOT IS A SCALE, AND §17.2 IS NOT BEING BROKEN. That rule says the settle is "a TRANSLATE
+// overshoot along the captured travel vector — never an origin-anchored scale puff", and the ban was
+// earned: a puff on a card that travelled IN THE PLANE reads as the object inflating rather than as
+// mass carrying past its stop. For a head-on move the travel vector IS the depth axis, so "overshoot
+// along the travel vector" resolves to scale BY THE RULE'S OWN TERMS. Sam reached the same place from
+// the pixels: "if there's any overshoot it's going backwards, so it applies to the entire card equally
+// on all sides, since the user is looking at it head on."
+const ASCEND_SETTLE = 0.055; // fraction of the way PAST rest, i.e. it carries to ~0.945 and returns
+let ascendDir: 1 | -1 | 0 = 0;
+/** Capture the boundary crossing for the flight about to launch. +1 into the zone, −1 out of it. */
+export function captureAscend(dir: 1 | -1): void {
+	ascendDir = dir;
+}
+export function getAscend(): 1 | -1 | 0 {
+	return ascendDir;
+}
+
 // ── Click-time origin capture for the card's "grow from the clicked box" flight ──
 // crossfade self-measures rects DURING the DOM update, which is corrupted when the
 // children/parents row reflows (all old boxes leave + new boxes enter the same flex
@@ -72,7 +113,10 @@ type HeroSchedule = {
 	/** Which axis the card actually ARRIVES along. A vertical arrival hides a vertical blade draw — see
 	 *  BLADE_DRAW. Taken from the deck's own entry vector, NOT from panDir: panDir is set from the clicked
 	 *  RELATION (parent→down, child→up, spouse→lateral) and says nothing about a CC's deck direction. */
-	axis: 'vertical' | 'lateral';
+	// 'front' = THE ASCENSION (§40): a head-on crossing of the orbit boundary. It is neither of the
+	// planar axes and must not be mistaken for one — the blade's draw keys off this, and a front arrival
+	// hides nothing the way a vertical one does, because nothing sweeps past the card's edge.
+	axis: 'vertical' | 'lateral' | 'front';
 };
 let heroSchedule: HeroSchedule = { duration: 0, delay: 0, kind: 'relative', axis: 'lateral' };
 export function getHeroSchedule(): HeroSchedule {
@@ -109,6 +153,7 @@ export function captureFlightKind(kind: 'spouse' | 'relative' | 'cc' | 'sibling'
 	// late handlers (revealPending at introend) that run well after the one-rAF capture sweep.
 	tierSpan = 1;
 	tierOpen = false;
+	ascendDir = 0; // §40 — a boundary crossing belongs to ONE navigation, like every capture here
 	if (kind !== 'cc') clearLateralMemory(); // a chip/sibling/relative nav ends the lateral back-and-forth
 }
 // Read the current nav's kind. Stable through the whole flight — clearFlightCaptures (1 rAF after
@@ -423,6 +468,9 @@ export function clearLateralMemory(): void {
 // ping-pongs (each hop swings the convoy the other way) and repeating A→B is always identical — no memory,
 // no "return" special case that got stuck armed while ping-ponging.
 export function deckDirFor(m: CameraMove | null): { x: number; y: number } {
+	// THE ASCENSION HAS NO PLANAR DIRECTION (§40). It travels on the depth axis, so there is no edge to
+	// enter from and no lateral memory to consult — the same self-skip a VERTICAL CC already performs.
+	if (m?.ascend) return { x: 0, y: 0 };
 	const gd = m?.genDelta ?? null;
 	if (isVerticalMove(m)) {
 		return { x: 0, y: (gd as number) < 0 ? -1 : 1 }; // ancestor tier → from TOP; descendant tier → from BOTTOM
@@ -948,6 +996,31 @@ export function growFrom(node: Element) {
 	// chip; the keyframe animation (whose 0% is the same origin) then takes over seamlessly. Cleared at
 	// introend (onIncomingLand) so the landed card rests at identity — else it would snap back to origin.
 	const hero = node as HTMLElement;
+	// ── THE ASCENSION'S ARRIVAL ──────────────────────────────────────────────────────────────────
+	// Head-on: no slide, no chip morph, no offscreen entry. The card comes out of the foreground at
+	// ASCEND_ENTRY_SCALE and settles to rest, carrying a little PAST it and returning — the depth-axis
+	// reading of the house settle (see the note on ASCEND_SETTLE).
+	//
+	// CLOCKED OFF HONEST CORNER TRAVEL, never off `distance`, which is zero here by construction.
+	if (ascendDir === 1) {
+		const halfDiag = Math.hypot(dest.width, dest.height) / 2;
+		const ms = relativeGrowMs(Math.abs(ASCEND_ENTRY_SCALE - 1) * halfDiag);
+		heroSchedule = { duration: ms, delay: 0, kind: flightKind, axis: 'front' };
+		hero.style.transformOrigin = 'center center';
+		hero.style.transform = `scale(${ASCEND_ENTRY_SCALE})`;
+		hero.style.zIndex = '2';
+		return {
+			duration: ms,
+			easing: (t: number) => easeOutBack(t, solveBackS(ASCEND_SETTLE)),
+			css: (t: number) => {
+				const sc = ASCEND_ENTRY_SCALE + (1 - ASCEND_ENTRY_SCALE) * t;
+				// The fade is the LAST third only. A card that fades across the whole flight reads as a
+				// dissolve rather than as an object approaching; arriving already opaque and merely
+				// growing is what makes it read as depth.
+				return `transform: scale(${sc}); opacity: ${Math.min(1, t * 3)}; transform-origin: center center; z-index: 2;`;
+			}
+		};
+	}
 	if (arc) {
 		// ARC: the card DESCENDS onto the seat — no slide, no chip-morph. BOTH its scale AND its fade-in are
 		// read from the shared arc clock (never its own transition t), so it stays locked to the substrate:
@@ -1055,6 +1128,38 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// do NOT use this branch — see the spouse-retraction reuse below.)
 	if (flightKind === 'cc') {
 		const arcM = getCameraMove();
+		// ── THE ASCENSION'S DEPARTURE (§40) ──────────────────────────────────────────────────────
+		// The outgoing card RECEDES rather than sliding off an edge — it falls back into the depth the
+		// arriving card is coming out of. Sam: "the existing hero card exits by shrinking to the back,
+		// which you'll see for a millisecond before the entering card covers it up."
+		//
+		// THAT MILLISECOND IS THE POINT, NOT A TOLERANCE. The deck's rule is strict EXIT → BEAT → ENTRY
+		// with "no co-occupancy, ever", because two cards crossing IN THE PLANE read as a collision.
+		// On the depth axis the overlap is the opposite: the near object covering the far one is the
+		// only cue that says which is nearer. §17.4 — occlusion is legitimate language; choreograph it.
+		//
+		// Runs on BOTH directions of the crossing. Ascending, this is the tree card falling away;
+		// descending, it is the orbit card — and the descent's arrival is an ordinary CC, so the zone
+		// is left by the same gesture in reverse without a second code path.
+		if (ascendDir !== 0) {
+			const halfDiag = Math.hypot(card.width, card.height) / 2;
+			// The DEMOTE ceiling, not the promotion's: this is the receding object, and the house already
+			// holds that a leaving card is quicker than an arriving one (SPOUSE_DEMOTE_V_CEIL).
+			const ms = Math.max(260, (Math.abs(1 - ASCEND_EXIT_SCALE) * halfDiag) / SPOUSE_DEMOTE_V_CEIL);
+			el.style.transformOrigin = 'center center';
+			el.style.zIndex = '1'; // beneath the arrival at z 2 — the occlusion, stated rather than raced
+			return {
+				duration: ms,
+				easing: cubicOut,
+				css: (t: number) => {
+					const sc = 1 + (ASCEND_EXIT_SCALE - 1) * (1 - t);
+					// Opacity trails the scale: it is still fully solid while it is still large, so what the
+					// eye reads is DISTANCE, not a dissolve. It only gives up its last third once it is
+					// small enough that the arriving card is already covering it.
+					return `transform: scale(${sc}); opacity: ${Math.min(1, t * 2.4)}; transform-origin: center center; z-index: 1;`;
+				}
+			};
+		}
 		if (isArcMove(arcM)) {
 			// ARC: the old card RECEDES on the shared arc clock (scale 1 → scaleMin over the rise), fading out
 			// before the traverse — no opposite slide. Same clock the incoming card + substrate read.
