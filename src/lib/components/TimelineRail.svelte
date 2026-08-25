@@ -38,6 +38,11 @@
 	 * two-clock desync as THE failure mode of this layer. One clock, many subscribers.
 	 */
 	import { featured } from '$lib/state/featured.svelte';
+	// THE SAME FUNCTION THE CARD AND THE CHIP ASK. `isPynchonKin` is the RAINBOW set — the direct line to
+	// Thomas Ruggles Pynchon Jr. plus Jackson and the mother at each step — and it is derived from the
+	// parent graph, not listed. Reusing it is what stops the rail from growing a third, drifting answer to
+	// "is this person in the line": FeaturedCard.prism, PersonBox.prism and this bar are now one rule.
+	import { isPynchonKin } from '$lib/data/pynchonLine';
 	import { getCameraMove, subscribeCameraMove } from '$lib/state/camera';
 	import { ccFlyTo } from '$lib/state/shuffle.svelte';
 	import { warmPersonLinks } from '$lib/state/navigate';
@@ -133,10 +138,20 @@
 	 * Tying colour to lane index — which the first version did — would have painted one of them wrong.
 	 */
 	function styleFor(p: PersonCompact): LaneStyle {
-		if (p.hd) return LANE_STYLE[0];
-		if (p.sp) return LANE_STYLE[1];
-		if (p.ee) return LANE_STYLE[2];
-		return PLAIN_STYLE;
+		const lane = p.hd ? LANE_STYLE[0] : p.sp ? LANE_STYLE[1] : p.ee ? LANE_STYLE[2] : PLAIN_STYLE;
+		// THE PYNCHON LINE TAKES THE INK AND NOTHING ELSE, and it is applied ON TOP of the lane rather
+		// than instead of it — because it is the one class that CROSSES the other three. Jackson is
+		// bloodline, Thomas Jr. married in, William is neither, and all three are in the line; a fourth
+		// LANE_STYLE entry would have forced them to be one thing when they are genuinely two.
+		//
+		// DECIDED HERE AND NOT IN CSS, which is not a preference. `color` is written INLINE on `.bar` from
+		// `b.style.ink` (see the markup), and an inline declaration beats any stylesheet rule — so a
+		// `.bar.prism { color: … }` would simply lose, silently. The fill and the border can live in CSS
+		// because they ride custom properties; the ink cannot.
+		//
+		// It degrades honestly, too: strip the .bar.prism rule and these bars fall back to their lane's
+		// own paper with the line's ink still on the name, rather than to nothing.
+		return isPynchonKin(p.id) ? { ...lane, ink: PYNCHON_INK } : lane;
 	}
 
 	type Bar = {
@@ -163,6 +178,8 @@
 		yr: number;
 		/** Died at 15 or under — the bar is a stub and cannot carry a name. See barFor. */
 		young: boolean;
+		/** In the Pynchon line's RAINBOW set — the bar carries the spectrum. See .bar.prism. */
+		prism: boolean;
 	};
 
 	// ── HOW LONG A LIFE WAS, WHEN WE DO NOT KNOW ────────────────────────────────────────────────────
@@ -240,6 +257,19 @@
 	];
 	// No line status at all — a true neutral, so it reads as unclassified rather than as a faded lane.
 	const PLAIN_STYLE: LaneStyle = { bg: '#f2f2f0', border: '#9a9a94', ink: '#55554e' };
+	/**
+	 * THE PYNCHON LINE'S INK — the name inside a spectrum bar, and the ONE colour this line owns here.
+	 *
+	 * #7c3aed is the 0% stop of `.descent-line.pynchon-descent`'s gradient in FeaturedCard: the purple the
+	 * card's own title — "Great-Grandson of William Pynchon" — is painted in. Sam asked for the bar's name
+	 * to match that title, so the rail and the card name the same line in the same colour.
+	 *
+	 * FLAT, WHERE THE CARD'S TITLE IS A GRADIENT, and that is a size decision rather than an inconsistency.
+	 * The title is a 40-character line with room for a sweep across it; this is a first name set at 13px
+	 * down a 23px column, where a three-stop gradient would land as one arbitrary slice of itself and
+	 * differ per name length. The purple end is the one the eye commits to first, so it is the one taken.
+	 */
+	const PYNCHON_INK = '#7c3aed';
 
 	/**
 	 * Turn a compact into a bar. Returns null when there is nothing honest to draw.
@@ -426,6 +456,7 @@
 			// else on the page, and a child dimmed on the card but named on the rail is worse than either
 			// answer alone.
 			young: known.by != null && known.dy != null && known.dy - known.by <= 15,
+			prism: isPynchonKin(p.id),
 			slug: p.slug ?? null,
 			tx: p.t?.x ?? null,
 			ty: p.t?.y ?? null,
@@ -1613,6 +1644,7 @@
 		<a
 			class="bar"
 			class:linked={!!link}
+			class:prism={b.prism}
 			href={link ? `/person/${b.slug}` : undefined}
 			data-relation={link && link.spouse ? 'spouse' : undefined}
 			data-cc={link && !link.spouse ? 'true' : undefined}
@@ -2114,6 +2146,61 @@
 		-webkit-mask-image: var(--bar-mask, none);
 		mask-image: var(--bar-mask, none);
 	}
+	/* ── THE PYNCHON LINE'S SPECTRUM, ON A BAR ──────────────────────────────────────────────────────
+	   The third surface to carry it, after the card (925x575) and the chip (220x75). NEITHER OF THEIR
+	   CROPS TRANSFERS, because a bar is the opposite shape from both: ~23px wide and 77-400px tall.
+
+	   `cover` — the card's — would scale the 900x600 source to the bar's HEIGHT and then crop away ~90%
+	   of its width, leaving one narrow vertical column of whatever hue happened to sit there. That is the
+	   stripe PersonBox's note says this effect must never be, arriving from the other direction.
+
+	   ON `::before`, NOT ON `.bar`, and that is load-bearing rather than tidy. This pseudo-element exists
+	   precisely so the dissolving-end MASK can soften the paper without touching the name (see the note
+	   above). Putting the spectrum on the anchor instead would leave it un-masked, so a guessed birth or
+	   death would dissolve the fill out from under a rainbow that stayed hard-edged — the bar would stop
+	   being able to say "we are not sure" at exactly the ends where it must.
+
+	   THE EDGE, IN THREE STATES — worth recording, because two of them were wrong for different reasons
+	   and the third is not a compromise between them.
+
+	     purple at 60%   the line's own colour, and it FENCED THE BAR IN. It also said the same thing the
+	                     fill already said, twice.
+	     none at all     right about the fencing, wrong about the ground. A spectrum is pale by
+	                     construction — the veil is what keeps the name legible — so a borderless bar has
+	                     nothing holding it off the parchment behind it, and it is the one lane whose fill
+	                     cannot be darkened to compensate.
+	     navy at 50%     CONTRAST WITHOUT CLAIM. It is `--color-inkblue`, the hero's own display-name
+	                     colour, so the edge is the house's structural ink rather than a fourth statement
+	                     about this line — the bar is held off the ground by the same navy that draws the
+	                     name at the top of the card. Half alpha keeps it a containing edge rather than a
+	                     drawn outline, and lets the spectrum through it.
+
+	   REFERENCED, NOT RESTATED. `color-mix` against the token means this edge cannot drift from the name
+	   it is matching — the same reason CARD_TOP_H is exported rather than copied. Restating it as a hex
+	   would be a second definition of one colour, and this file has already paid for that once (see the
+	   note on LANE_W vs BAR_W).
+
+	   `--bar-bd` IS STILL SET INLINE ON A PRISM BAR, and must stay — `.bar-tip` reads it for the tooltip's
+	   own edge, which is flat paper and wants the LANE's colour there, not this one.
+
+	   THE VEIL IS THE DIAL, exactly as on the other two surfaces: higher = paler. It is the only number
+	   to touch to change the strength. */
+	.bar.prism::before {
+		--prism-fade: 0.48;
+		background-image:
+			linear-gradient(
+				rgba(255, 255, 255, var(--prism-fade)),
+				rgba(255, 255, 255, var(--prism-fade))
+			),
+			url('/textures/prism-card.jpg');
+		background-size:
+			100% 100%,
+			100% 100%;
+		background-position: center, center;
+		background-repeat: no-repeat, no-repeat;
+		border: 1px solid color-mix(in oklab, var(--color-inkblue) 50%, transparent);
+	}
+
 	/* An ESTIMATED year stays honest — §3.6 asks for dimmed/hatched, and a hatch reads as "about"
 	   where a flat tint would just read as a different person.
 	   TWO HATCHES, because one cannot serve both treatments: white stripes are what read on the
