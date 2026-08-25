@@ -92,23 +92,43 @@ function settleBackFor(distance: number, boost = 1): number {
 //
 // MIRRORED, NOT IMPORTED: `ANCHOR_BAR_MS` lives in TimelineRail.svelte and a transition module has no
 // business importing a component. Both carry a note pointing at the other — if one moves, move both.
-const ASCEND_TOTAL_MS = 1200;
+// 1200 WAS THE BAR'S NUMBER AND THE BAR IS NOT THE REFERENCE — measurement corrected this twice.
+// §17.1 is the doc that presides: "perceived weight is VELOCITY, not duration", with RELATIVE_V_CEIL as
+// its instrument. Sam asked for the ascension to be judged against a real CC rather than against the
+// rail, so a plain lateral CC was measured end to end: its card SETTLES AT ~991ms, while its bar is
+// still travelling until ~1209ms. The bar trailing a CC by ~200ms is pre-existing and known (§37.4 —
+// "the bar's 1200ms does not lead every CC"), so matching the bar meant matching the wrong object and
+// the ascension came out ~210ms slow.
+const ASCEND_TOTAL_MS = 980;
 // THE PUSH. Sam: "maybe the first 300ms after clicking on a CC are Aaron Burr, where I clicked the CC,
 // moving back, and then the Thomas Jefferson orbit comes into view from foreground." So the departure
 // owns the opening beat alone and the arrival is DELAYED into it — and the two then overlap for the
 // rest, which is what makes it read as one card pushing the other rather than as two independent
 // animations that happen to be scheduled near each other. This is the army idea on the depth axis:
 // one gesture, one clock, everything moving together.
-const ASCEND_ENTRY_DELAY = 300;
+// 300 -> 230. Sam: "I like the ability to see the old card move out, you can speed up that process
+// just a bit, it is pretty slow but overall very effective." The beat survives — it is still the only
+// thing on screen for nearly a quarter second — it just stops being a pause.
+const ASCEND_ENTRY_DELAY = 230;
 const ASCEND_ENTRY_MS = ASCEND_TOTAL_MS - ASCEND_ENTRY_DELAY;
 // The receding card keeps going well past the arrival's start — it is still being pushed while the new
 // card bears down on it. Ending it early is what made the first build read as a cut.
-const ASCEND_EXIT_MS = 820;
+const ASCEND_EXIT_MS = 610;
 // 2.0 -> 2.4. With a real clock under it the card can afford to come from further out: more travel at
 // the same duration is more distance for the eye to hold, which is where heft comes from (§17.1 —
 // perceived weight is velocity, and this is now slow enough that the extra travel reads as mass).
-const ASCEND_ENTRY_SCALE = 2.4; // the arriving card starts this much nearer than its resting size
+// 2.4 -> 2.0. Sam: "the Jefferson orbit card entry into view is a bit harsh, there's a jarring effect
+// as it instantly covers the existing view." At 2.4 the card is 2220px wide on a 1440 screen, so its
+// first painted frame is a wall — you never see an object approach, you see the view get replaced.
+const ASCEND_ENTRY_SCALE = 2.0;
 const ASCEND_EXIT_SCALE = 0.34; // the leaving card recedes to this before the arrival covers it
+// THE ARRIVAL FADE, and it is the other half of the same complaint. It used to reach full opacity by
+// t = 0.33, so the card was solid while it was still enormous — which is precisely "instantly covers
+// the existing view". Spending the fade over the first ~62% instead means the card is still translucent
+// while it is largest and only commits once it is near its own size, so it reads as approaching THROUGH
+// the view rather than landing on top of it. Sam: "maybe orbit entry into view has a very subtle fade
+// in."
+const ASCEND_FADE_RATE = 1.6; // opacity = min(1, t * this)
 /**
  * THE SETTLE, WITH A LITTLE DISHONESTY IN IT.
  *
@@ -1058,7 +1078,7 @@ export function growFrom(node: Element) {
 	// reading of the house settle (see the note on ASCEND_SETTLE).
 	//
 	// CLOCKED OFF HONEST CORNER TRAVEL, never off `distance`, which is zero here by construction.
-	if (ascendDir === 1) {
+	if (ascendDir !== 0) {
 		// Rolled ONCE, here, as the flight is created — see the note on ASCEND_WOBBLE.
 		const jitter = 0.85 + Math.random() * 0.3; // ±15% on the settle's amplitude
 		const phase = 0.9 + Math.random() * 0.2; // and a little on where the bounces fall
@@ -1069,7 +1089,13 @@ export function growFrom(node: Element) {
 			axis: 'front'
 		};
 		hero.style.transformOrigin = 'center center';
-		hero.style.transform = `scale(${ASCEND_ENTRY_SCALE})`;
+		// THE DESCENT IS THE ASCENT REVERSED, and this is where that is expressed. Going IN, the new card
+		// arrives out of the FOREGROUND (it was in front of you all along). Coming OUT, the card you left
+		// behind returns from the BACKGROUND — it never went anywhere, it was simply behind the thing that
+		// covered it. Sam: "the orbit card and spouse exit into foreground and Burr's original card enters
+		// from background and settles into final position like a discrete physical baseball card."
+		const from = ascendDir === 1 ? ASCEND_ENTRY_SCALE : ASCEND_EXIT_SCALE;
+		hero.style.transform = `scale(${from})`;
 		hero.style.opacity = '0';
 		hero.style.zIndex = '2';
 		return {
@@ -1080,7 +1106,7 @@ export function growFrom(node: Element) {
 			// easing; it is in the css below, where it can carry the jitter.
 			easing: (t: number) => 1 - Math.pow(1 - t, 3),
 			css: (t: number) => {
-				const base = ASCEND_ENTRY_SCALE + (1 - ASCEND_ENTRY_SCALE) * t;
+				const base = from + (1 - from) * t;
 				// A decaying wobble that is exactly zero at both ends, so the card cannot miss its rest.
 				const wob =
 					Math.sin(t * Math.PI * ASCEND_WOBBLE_CYCLES * phase) *
@@ -1090,7 +1116,7 @@ export function growFrom(node: Element) {
 					(1 - t);
 				// The fade is the FIRST third and then done. A card still fading while it settles reads as
 				// a dissolve; opaque early and merely still growing is what reads as depth.
-				return `transform: scale(${base + wob}); opacity: ${Math.min(1, t * 3)}; transform-origin: center center; z-index: 2;`;
+				return `transform: scale(${base + wob}); opacity: ${Math.min(1, t * ASCEND_FADE_RATE)}; transform-origin: center center; z-index: 2;`;
 			}
 		};
 	}
@@ -1226,7 +1252,10 @@ export function shrinkTo(node: Element, params: { id: string }) {
 				duration: ms,
 				easing: cubicOut,
 				css: (t: number) => {
-					const sc = 1 + (ASCEND_EXIT_SCALE - 1) * (1 - t);
+							// Leaving the zone, the card goes the other way — TOWARD the viewer and out past them,
+					// which is the only exit that reads as the reverse of having arrived from there.
+					const to = ascendDir === 1 ? ASCEND_EXIT_SCALE : ASCEND_ENTRY_SCALE;
+					const sc = 1 + (to - 1) * (1 - t);
 					// Opacity trails the scale: it is still fully solid while it is still large, so what the
 					// eye reads is DISTANCE, not a dissolve. It only gives up its last third once it is
 					// small enough that the arriving card is already covering it.

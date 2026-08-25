@@ -38,6 +38,8 @@
 	import { ascension } from '$lib/state/ascension.svelte';
 	import { getHeroSchedule } from '$lib/transitions/flight';
 	import { prefersReducedMotion } from 'svelte/motion';
+	import { fade } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 
 	type Props = { onexit?: () => void };
 	let { onexit }: Props = $props();
@@ -64,10 +66,18 @@
 {#if active}
 	<!-- aria-hidden: it is atmosphere, and the card behind it is the content. The X below is the only
 	     thing in here a screen reader should meet. -->
+	<!-- A SVELTE TRANSITION, NOT A CSS ANIMATION, and the reason is the half that was missing. A keyframe
+	     on mount can only describe ARRIVING; an `{#if}` block with nothing on the way out is removed in a
+	     single frame. Sam: "the transition back to the original Burr card is wrong — it just instantly
+	     flashes back to original state." The dark has to leave the way it came, so it needs a transition
+	     the framework will wait for, not an animation the element plays once.
+	     The OUT runs shorter than the IN: arriving somewhere should take longer than leaving it, and the
+	     returning card is what the eye should be following on the way back. -->
 	<div
 		class="ascend-veil"
 		aria-hidden="true"
-		style="--fade-ms: {fadeMs}ms; --lead-ms: {LEAD_MS}ms"
+		in:fade={{ duration: fadeMs, delay: 0, easing: cubicOut }}
+		out:fade={{ duration: Math.round(fadeMs * 0.72), easing: cubicOut }}
 	></div>
 	<!-- THE X IS OVER THE GROUND, NOT ON THE CARD (Sam: "the X can be in the upper right of the screen,
 	     not within the card, over the midnight blue gradient background"). Two reasons beyond his: the
@@ -77,6 +87,7 @@
 	<button
 		type="button"
 		class="ascend-exit"
+		out:fade={{ duration: 160 }}
 		style="--fade-ms: {fadeMs}ms"
 		onclick={() => onexit?.()}
 		aria-label="Leave and return to the previous card"
@@ -110,16 +121,6 @@
 		pointer-events: none;
 		background:
 			radial-gradient(120% 90% at 50% 42%, #1b2740 0%, #0f1626 55%, #080d17 100%);
-		animation: veil-in var(--fade-ms, 520ms) cubic-bezier(0.33, 1, 0.68, 1) both;
-		animation-delay: calc(-1 * var(--lead-ms, 0ms));
-	}
-	@keyframes veil-in {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
 	}
 
 	/* The X arrives AFTER the ground has committed — it is an offer to leave, and offering it while the

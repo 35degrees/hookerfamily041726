@@ -484,6 +484,14 @@
 		node.style.transform = '';
 		node.style.transformOrigin = '';
 		node.style.zIndex = '';
+		// AND THE OPACITY, which this cleared for years without needing to — because until the Ascension
+		// no arrival set one inline. A depth-axis flight does: it starts the card at opacity 0 so frame 0
+		// cannot paint it fully-formed at its destination (the same first-frame-flash the transform above
+		// is guarding). Left uncleared, the landed card kept `opacity: 0` forever — Sam saw Jefferson's
+		// card vanish entirely on arrival with only his spouse chip left on screen, which looked like a
+		// data bug and was a housekeeping one. The parked arc branch sets it too and had the same latent
+		// defect. Anything a flight writes inline, this has to give back.
+		node.style.opacity = '';
 		// Reveal the spouse chips PROMPTLY here, in the introend handler itself — the hero's transform
 		// has just hit identity, so the notch is in its final spot and a chip can never be caught under
 		// the still-flying card. Doing it here (with the quicker CHIP_REVEAL_MS fade) instead of waiting
