@@ -1690,6 +1690,7 @@
 
 <div
 	class="page-container"
+	class:in-orbit={ascension.active}
 	class:tier-nav-close={tierClosingForNav}
 	class:tier-collapsed={tierCollapsed}
 	data-density={stage.density}
@@ -2080,6 +2081,16 @@
 </div>
 
 <style>
+	/* ── THE STAGE'S OWN LABELS, IN THE ZONE ────────────────────────────────────────────────────────
+	   "Sarah's parents", "Two children" and the rest are set in a grey chosen against parchment. In the
+	   Ascension the ground is midnight, and that grey lands almost exactly between the two — too dark to
+	   read, too light to disappear. Cream is the ink the zone already uses for the rail's years and the
+	   blade's label, so this is joining an established palette rather than adding to it.
+	   The stems keep their own treatment: they are structure, and structure should stay quiet. */
+	.page-container.in-orbit :global(.connector-label) {
+		color: var(--color-creamprimary);
+	}
+
 	.page-container {
 		display: flex;
 		flex-direction: column;
