@@ -1740,7 +1740,7 @@
 						animate:flip={{ duration: flipMs }}
 						out:tierChipExit|global={{ key: gp.id }}
 					>
-						<PersonBox person={gp} relation="parent" dimmed={gp.dy_young} />
+						<PersonBox person={gp} relation="parent" dimmed={gp.dy_young} orbit={f.orbit === true} />
 					</div>
 				{/each}
 			</div>
@@ -1771,7 +1771,7 @@
 				out:flyOut={{ key: parent.id }}
 				animate:flip={{ duration: flipMs }}
 			>
-				<PersonBox person={parent} relation="parent" />
+				<PersonBox person={parent} relation="parent" orbit={f.orbit === true} />
 				<!-- THE ONLY WAY UP. Rendered only when there is something to show, so its ABSENCE is the
 				     answer for a parent with no parents — the shake used to be that answer, and had to be
 				     performed after the user had already committed to a hover. A real <button>, so it is
@@ -1877,6 +1877,7 @@
 								<PersonBox
 									person={chip.spouse}
 									relation="spouse"
+									orbit={f.orbit === true}
 									marriageYear={chip.year}
 									relationshipType={chip.rel}
 									compact={useCompact}
@@ -1960,10 +1961,14 @@
 				     for the box's CONTENT too, and a child chip carries a "(died young)" suffix a parent
 				     chip does not. See demoteSeatRelation. -->
 				<div class="demote-chipface" inert>
+					<!-- THE DEMOTE CHIP-FACE takes the orbit paper too, and reading it off `cur` rather than `f`
+					     is the point: this face belongs to the card that is LEAVING, so during a crossing it
+					     must wear the paper of the zone it came from, not the one being entered. -->
 					<PersonBox
 						person={cur.neighborhood.focus}
 						relation={demoteSeatRelation(cur)}
 						dimmed={cur.neighborhood.focus.dy_young}
+						orbit={cur.orbit === true}
 					/>
 				</div>
 			</div>
@@ -2029,7 +2034,7 @@
 				out:flyOut={{ key: child.id }}
 				animate:flip={{ duration: flipMs }}
 			>
-				<PersonBox person={child} relation="child" dimmed={child.dy_young} />
+				<PersonBox person={child} relation="child" dimmed={child.dy_young} orbit={f.orbit === true} />
 			</div>
 		{/each}
 	</div>
@@ -2066,7 +2071,7 @@
 						in:gcArrive|global
 						out:gcExit|global={{ key: gc.id }}
 					>
-						<PersonBox person={gc} relation="child" dimmed={gc.dy_young} />
+						<PersonBox person={gc} relation="child" dimmed={gc.dy_young} orbit={f.orbit === true} />
 					</div>
 				{/each}
 			</div>

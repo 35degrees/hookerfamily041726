@@ -13,6 +13,10 @@
 		relationshipType?: string | null;
 		compact?: boolean;
 		dimmed?: boolean;
+		/** ORBIT (§38) — this chip's person is in a detached component, so it takes the line's rule.
+		 *  Passed IN rather than read off the compact: inside the zone every family chip is in the same
+		 *  component by definition (that is what a component IS), so the page already knows. */
+		orbit?: boolean;
 	};
 
 	let {
@@ -21,7 +25,8 @@
 		marriageYear = null,
 		relationshipType = null,
 		compact = false,
-		dimmed = false
+		dimmed = false,
+		orbit = false
 	}: Props = $props();
 
 	// The spouse chip's third line answers "what was this union": normally the marriage year, but a
@@ -268,6 +273,7 @@
 		class:spouse-line={person.sp}
 		class:ee-line={person.ee}
 		class:prism={isPynchonKin(person.id)}
+		class:orbit-chip={orbit}
 		data-relation={relation}
 	>
 		<div class="photo aspect-square shrink-0 bg-stone-100 {photoW}">
@@ -319,6 +325,7 @@
 		class:spouse-line={person.sp}
 		class:ee-line={person.ee}
 		class:prism={isPynchonKin(person.id)}
+		class:orbit-chip={orbit}
 		data-relation={relation}
 	>
 		<div class="photo h-full shrink-0 bg-stone-100 {photoW}">

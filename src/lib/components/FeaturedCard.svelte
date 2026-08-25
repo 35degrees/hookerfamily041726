@@ -430,6 +430,121 @@
             curve to ${CORNER_R}px 0 with 0 0
         )`;
 
+	/**
+	 * THE ORBIT RULE'S SILHOUETTE — the card's own shape, inset, so the navy rule BENDS around the
+	 * spouse notch instead of being deleted at it.
+	 *
+	 * The rule was an inset box-shadow, which cannot do this and never could: a shadow is drawn as a
+	 * rectangular ring inset from the element's BOX, and the clip-path then erases everything outside
+	 * the silhouette. In the notch region the ring is not bent, it is cut away — Sam: "it still fails to
+	 * bend with the existing notch." No thickness or inset changes that; it is the technique.
+	 *
+	 * So the ring becomes a SHAPE, built by the same construction as `clipPath` below with one number
+	 * threaded through it. Two things move in opposite directions and getting either backwards is what
+	 * would make it look almost right:
+	 *
+	 *   THE OUTER EDGE comes IN by `d` on all four sides.
+	 *   THE NOTCH BITE grows OUT by `d`, because the rule hugs the notch from INSIDE the card — so the
+	 *   piece missing from the card is `d` larger as far as the rule is concerned.
+	 *
+	 * Corner radii shrink by `d` too, floored at 1: a radius smaller than its own inset would invert.
+	 */
+	function silhouette(d: number, notched = true): string {
+		// CONVEX RADII SHRINK, CONCAVE RADII GROW — the rule for offsetting a path inward, and getting it
+		// wrong is what put a hard point in the notch. Sam: "there's a sharp corner not rounded for the
+		// stripe near the notch, especially the one in the middle of the notch with the corner facing
+		// into the featured card."
+		//
+		// Every corner on this outline is convex (90° of card) except ONE: where the notch's left edge
+		// meets its underside, the card wraps 270° around the cut. That corner is the inside of a bend,
+		// so an inward offset opens it up rather than tightening it. Shrinking it along with the rest
+		// drove it to the `max(1, …)` floor and it came out square.
+		// ONE RADIUS FOR EVERY CORNER, and it is the CONCAVE one. Geometrically the convex corners want
+		// CORNER_R − d (3px, 1px) so the rule runs parallel to the card's own 8px corner — which is what
+		// they had, and Sam's verdict on seeing the two side by side was that the parallel ones look
+		// pinched: "the rounded corner is good, but it's so much more rounded than the other corners. I
+		// actually like the rounded corner degree you made in the notch, so maybe all stripe corners can
+		// round to that degree."
+		//
+		// So correctness loses to the eye here, deliberately. The rule stops being an exact offset of the
+		// card and becomes its own object with its own corner — which is also the more honest reading of
+		// what it is: a rule PRINTED on the card, not a tracing of its edge.
+		// EVEN WIDTH NEEDS CONCENTRIC CURVES, which is a constraint on the CENTRE and not on the radius.
+		// Both `CORNER_R − d` (parallel, "pinched") and `CORNER_R + d` (rounder, what Sam then saw as
+		// "ink smears with extra ink") get this wrong in opposite directions: with + d the outer curve's
+		// centre lands 18px from the corner and the inner one's 24px, so the band is thin on the diagonal
+		// and thick where it straightens out. That variation IS the smear.
+		//
+		// So the corner is defined by its CENTRE instead, one point both curves turn about, and each
+		// radius falls out of its own inset. The band is then exactly 3px the whole way round by
+		// construction rather than by luck. 14 is chosen for the look: it gives a 9px outer corner —
+		// visibly rounder than the 3px parallel version Sam rejected, well short of the notch's 13.
+		const CORNER_C = 14;
+		const r = CORNER_C - d;
+		// The concave corner keeps its own, larger radius — Sam picked that one by eye and it is the one
+		// bend he asked to keep ("I actually like the rounded corner degree you made in the notch").
+		const rc = CORNER_R + d;
+		if (notchChipCount === 0 || !notched) {
+			return `shape(
+				from ${d + r}px ${d}px,
+				line to calc(100% - ${d + r}px) ${d}px,
+				curve to calc(100% - ${d}px) ${d + r}px with calc(100% - ${d}px) ${d}px,
+				line to calc(100% - ${d}px) calc(100% - ${d + r}px),
+				curve to calc(100% - ${d + r}px) calc(100% - ${d}px) with calc(100% - ${d}px) calc(100% - ${d}px),
+				line to ${d + r}px calc(100% - ${d}px),
+				curve to ${d}px calc(100% - ${d + r}px) with ${d}px calc(100% - ${d}px),
+				line to ${d}px ${d + r}px,
+				curve to ${d + r}px ${d}px with ${d}px ${d}px
+			)`;
+		}
+		const cw = chipZoneWidth + d; // the bite is LARGER from inside — see above
+		const ch = chipZoneHeight + d;
+		return `shape(
+			from ${d + r}px ${d}px,
+			line to calc(100% - ${cw}px - ${r}px) ${d}px,
+			curve to calc(100% - ${cw}px) ${d + r}px with calc(100% - ${cw}px) ${d}px,
+			line to calc(100% - ${cw}px) calc(${ch}px - ${rc}px),
+			curve to calc(100% - ${cw}px + ${rc}px) ${ch}px with calc(100% - ${cw}px) ${ch}px,
+			line to calc(100% - ${d + r}px) ${ch}px,
+			curve to calc(100% - ${d}px) calc(${ch}px + ${r}px) with calc(100% - ${d}px) ${ch}px,
+			line to calc(100% - ${d}px) calc(100% - ${d + r}px),
+			curve to calc(100% - ${d + r}px) calc(100% - ${d}px) with calc(100% - ${d}px) calc(100% - ${d}px),
+			line to ${d + r}px calc(100% - ${d}px),
+			curve to ${d}px calc(100% - ${d + r}px) with ${d}px calc(100% - ${d}px),
+			line to ${d}px ${d + r}px,
+			curve to ${d + r}px ${d}px with ${d}px ${d}px
+		)`;
+	}
+	/**
+	 * 5px of the card's own surface outside the rule; the rule is 3px; content starts at 8px.
+	 *
+	 * AND A FLAT PAIR, because the notch is not always real. Sam: "the stripe shouldn't be notched before
+	 * the spouse card appears — there's a moment where it's just the full card before the spouse chip
+	 * appears… so the stripe should be full around the card, and change into its notch shape only after
+	 * the spouse notch is visible again."
+	 *
+	 * He is right and the card already agrees with him: `.flat` exists precisely because a notch cut into
+	 * a card with nothing docked in it reads as damage rather than as a seat, so the card morphs to a
+	 * complete rounded rectangle while it flies. The rule simply was not told. Keying off the same class
+	 * means the two can never disagree about whether the notch is there — one signal, read twice.
+	 */
+	/**
+	 * `settled`, NOT `.flat` — and the first attempt keyed off the wrong one. `.flat` is the class the
+	 * page puts on a card while it flies, and it is NEVER APPLIED ON THIS PATH: measured across a whole
+	 * ascension, the orbit card carried it for 0 frames, so the rule I gated on it could not fire once.
+	 * The probe said so plainly and I read the second line of its output instead of the first.
+	 *
+	 * `settled` is already a prop here, is already what the card uses to know it is at rest, and is the
+	 * same signal the spouse chips reveal on — so the rule takes its bite in the same beat the seat
+	 * becomes real, which is exactly what Sam asked for: "the stripe should be full around the card, and
+	 * change into its notch shape only after the spouse notch is visible again."
+	 */
+	const ringNotched = $derived(settled && notchChipCount > 0);
+	// 3px -> 2.7px, taken off the INNERMOST edge (Sam), so the 5px of surface outside is untouched and
+	// the rule simply retreats a third of a pixel further from the text.
+	const ringOuter = $derived(silhouette(5, ringNotched));
+	const ringInner = $derived(silhouette(7.2, ringNotched)); // 2.2px of rule (Sam), all of it inboard
+
 	let clipPath = $derived.by(() => {
 		const r = CORNER_R;
 		// No chips → the flat silhouette IS the resting shape (also reused while flying).
@@ -475,7 +590,7 @@
 		class:ee-line={person.classification?.is_easter_egg}
 		class:prism={isPynchonKin(person.id)}
 		class:orbit-card={orbit}
-		style="clip-path: {clipPath}; --flat-shape: {flatShape};"
+		style="clip-path: {clipPath}; --flat-shape: {flatShape}; --ring-outer: {ringOuter}; --ring-inner: {ringInner}; --ring-live: {settled ? 1 : 0};"
 	>
 		<!-- Fixed-height TOP region: header + content area, always exactly CARD_TOP_H tall.
 		     The header row is a FIXED height (HEADER_H) so the LOWER CONTENT — the photo / narrative /

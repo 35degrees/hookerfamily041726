@@ -443,17 +443,90 @@ html[data-exhibit] body {
 	   from 6px to 3px, and its INNER edge retreats from 11px to 8px, so there are three more px between
 	   the navy and the first text. The outer 5px of surface is untouched — that margin is what makes it
 	   read as a rule printed on the card rather than as the card's own edge. */
-	/* ROUNDED, TO MATCH THE CARD. An inset box-shadow follows the element's BORDER-RADIUS, and this card
-	   has none — its corners come from the clip-path, which only ever CUT the ring's square corners off
-	   rather than rounding them. So the outer edge looked right (the clip did it) while the inner edge of
-	   the stripe stayed square, which is visible at the corners once the stripe has any weight.
-	   8px MIRRORS CORNER_R in FeaturedCard.svelte — the one number the blade also mitres against. It is
-	   restated rather than imported because CSS cannot read it; if that constant moves, this moves. */
-	border-radius: 8px;
-	box-shadow:
-		inset 0 0 0 5px var(--card-bg),
-		inset 0 0 0 8px var(--color-inkblue);
 }
+
+/* ── THE SAME RULE, AT CHIP SCALE ──────────────────────────────────────────────────────────────────
+   An orbit person's chip carries the line's navy too, so a spouse in the zone is marked the same way
+   the card is. Same two-shadow construction as the card — surface on top of navy, so the outer ring
+   covers all but the inboard edge.
+
+   1.5px RATHER THAN 3. Not a strict scaling: 220/925 would give 0.7px, which at this size is a grey
+   smudge rather than a line. Small objects need relatively heavier detail to read as the same treatment,
+   which is the same reason the chip's own type does not scale linearly with the card's (design §33.2).
+
+   IT PASSES BEHIND THE PHOTO, AND THAT COSTS NOTHING TO ARRANGE. Sam: "the stripe can start and end at
+   the right edge of the photo area, but go under the photo so the stripe doesn't have a left edge."
+   An inset box-shadow paints in the element's own background phase, and the photo is an in-flow CHILD —
+   children paint later. So the ring is already behind it: it runs the full perimeter, is covered for the
+   photo's width, and emerges exactly at the photo's right edge. No masking, no second shape, and it
+   stays correct at all three chip tiers because the photo's width is a percentage.
+
+   NO RADIUS DECLARED. The chip's own `rounded-lg` is 8px and an inset shadow follows border-radius, so
+   these corners are already concentric with it — the card needed its own only because its corners come
+   from a clip-path, which a shadow cannot see. */
+/* IT COMPOSES WITH THE CHIP'S OWN SHADOW RATHER THAN REPLACING IT. `box-shadow` is one property and
+   one declaration wins outright — so the first version silently took the chip's drop shadow away, and
+   then LOST to `a.person-box:hover` further down, which is why Sam saw the rule vanish on hover. Both
+   are the same mistake: a ring and a shadow are different jobs sharing a property, so the ring has to be
+   restated in every rule that sets one, with the drop shadow appended last. */
+/* THE SAME PAPER AS THE CARD. Without this an orbit chip kept whatever line-status shading it had —
+   Martha came out on `--ee-bg`'s pale blue while her husband's card was wax, so the two did not match.
+   Inside the zone the line statuses are not the relevant fact about anybody: every chip is in the same
+   detached component as the card, which is what makes them all orbit in the first place. Declared AFTER
+   the line-shading block so source order settles it (design §29.9) without a specificity arms race. */
+.person-box.orbit-chip {
+	--card-bg: var(--color-orbitwax);
+	background-color: var(--color-orbitwax);
+}
+.person-box.orbit-chip {
+	box-shadow:
+		inset 0 0 0 2px var(--card-bg),
+		inset 0 0 0 3.5px var(--color-inkblue),
+		var(--chip-shadow);
+}
+a.person-box.orbit-chip:hover {
+	box-shadow:
+		inset 0 0 0 2px var(--card-bg),
+		inset 0 0 0 3.5px var(--color-inkblue),
+		var(--chip-shadow-hover);
+}
+
+/* ── THE RULE BENDS, BECAUSE IT IS A SHAPE AND NOT A SHADOW ─────────────────────────────────────────
+   The box-shadow version could not follow the spouse notch and never could: a shadow is a rectangular
+   ring inset from the element's BOX, which the clip-path then erases outside the silhouette — so at the
+   notch it was deleted rather than bent. This is two layers clipped to two GENERATED silhouettes
+   (FeaturedCard's `silhouette(d)`), so the navy traces the real outline, notch included.
+
+   ::before, NOT ::after — the latter carries the line-status spine.
+
+   THE STACKING IS THE WHOLE RISK, and design §32.4 records the exact failure: the prism's first build
+   used absolutely positioned layers, which paint in the POSITIONED layer, i.e. ABOVE the card's in-flow
+   content — so the effect ran across the photo and the text. A navy sheet over the whole card would do
+   the same thing. `.card-top` is therefore given a stacking context of its own so it paints above the
+   rule, and the rule is inert to the pointer. */
+/* THE RULE IS PAINTED AT ALL TIMES, INCLUDING IN FLIGHT.
+   It was briefly gated on `settled` to kill a navy fringe that appears at intermediate scales, and that
+   was the wrong trade: the stripe then vanished on every transition and returned only once the card had
+   parked — on the ascension arrival, on a spouse promotion, on every parent/child move. Sam: "before,
+   the stripe would always be shown." A momentary fringe is a smaller fault than a rule that blinks out
+   whenever anything moves, so the fringe stays open (roadmap §41.4) rather than being paid for here. */
+.featured-card.orbit-card::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--color-inkblue);
+	clip-path: var(--ring-outer);
+	pointer-events: none;
+}
+/* The card's own surface, clipped 3px further in — it covers the middle of the navy sheet and leaves
+   only the 3px band showing. Same paper as the card so the two cannot drift. */
+.featured-card.orbit-card > .card-top {
+	position: relative;
+	z-index: 1;
+	background-color: var(--card-bg);
+	clip-path: var(--ring-inner);
+}
+
 /* (easter egg is declared ABOVE spouse — see the ordering note there) */
 
 /* THE DESCENT LINE ("Founder of the American Hooker Line", "Daughter of Thomas Hooker") in gold, and
