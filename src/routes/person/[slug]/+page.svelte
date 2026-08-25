@@ -1848,7 +1848,7 @@
 			class:connector-no-label={isEasterEgg}
 			class:landed={familyLanded}
 			class:cc-hidden={ccRoster.hidden}
-			class:tier-open={!!revealedParentId || !!activeChildId}
+			class:child-tier-open={!!activeChildId}
 		>
 			{#if !isEasterEgg}
 				<div class="connector-line"></div>
@@ -1860,10 +1860,12 @@
 		</div>
 	{/if}
 
+	<!-- NO `tier-open` CLASS ANY MORE. The grandparent tier used to fade this row out through it; the row
+	     is now PUSHED by the tier's in-flow height like every other row on the stage, so there is no state
+	     for it to carry. See the tombstone on `.children-slot` in the stylesheet. -->
 	<div
 		class="children-slot"
 		class:cc-hidden={ccRoster.hidden}
-		class:tier-open={!!revealedParentId}
 		class:child-focus={!!activeChildId}
 		class:child-settling={childSettling}
 		style={childSlotH != null ? `height: ${childSlotH}px` : ''}
@@ -2310,26 +2312,57 @@
 		transition: none;
 	}
 
-	/* CHILDREN RETREAT while the tier is open — the same gesture they already make when a parent is
-	   promoted: down one tier and gone, on the row clock and the row curve. Alpha and travel only; the
-	   row is not re-laid-out, so nothing below it moves and nothing has to move back. */
+	/* THE CHILDREN ARE PUSHED, NOT RETREATED (Aug 24, Sam's call). The old gesture was defensible, so the
+	   reasoning is kept rather than erased — it is not coming back.
+
+	   It was `.children-slot.tier-open { opacity: 0; transform: translateY(60px); pointer-events: none }`:
+	   the row faded down one tier and left while the grandparent tier was open, "the same gesture they
+	   already make when a parent is promoted."
+
+	   IT WAS THE ONE ROW EXEMPT FROM THE ARMY. The tier opens IN FLOW precisely so that everything below is
+	   displaced by its own height with no row told to move (see the markup). Every other row obeys that;
+	   the children answered the tier by VANISHING instead of by being PUSHED, which is the one thing the
+	   army doctrine does not allow — Sam: "every row moves together as if they are physical, being pushed
+	   and forced down as much as moving down independently."
+
+	   AND IT BOUGHT NO HEIGHT. Measured on Burr at 1440x900: opacity and transform remove nothing from
+	   layout, so the row's 227px stayed reserved either way — stage 1353 shut, 1473 open, identical
+	   whether the children were painted or not. The retreat saved not one pixel; it only meant that
+	   scrolling down with the tier open reached 227px of empty parchment with the children standing in it
+	   invisible. Showing them costs nothing that was not already being paid.
+
+	   THE PUSH NEEDS NO CODE HERE. tierPush animates the block's own margin-top on the tier's clock and
+	   curve, and the block is in flow — so the children glide down 120px (the 145px pitch less the 25px
+	   dead lead `.parents-slot` reclaims) as a CONSEQUENCE OF LAYOUT, at the army's tempo, with nothing in
+	   this rule scheduling it.
+
+	   THE PRICE, ACCEPTED DELIBERATELY (Sam: "there should be a scrollbar when the kids push down because
+	   that's a lot of army rows on the screen at once"): the stage overflows further while the tier is
+	   open. That makes this the SECOND sanctioned vertical overflow beside the grandchild tier — design
+	   §33.5, and the commented `overflow: clip` in layout.css must now be state-aware for BOTH tiers.
+
+	   THE BASE TRANSITION BELOW STAYS. It is no longer the retreat's, but `.grandchild-tier .children-slot`
+	   carries an inline translateX that rides it, and `.child-focus` replaces the whole shorthand with its
+	   own height transition regardless. */
 	.children-slot {
 		transition:
 			opacity 420ms cubic-bezier(0.33, 1, 0.68, 1),
 			transform 420ms cubic-bezier(0.33, 1, 0.68, 1);
-	}
-	.children-slot.tier-open {
-		opacity: 0;
-		transform: translateY(60px);
-		pointer-events: none;
 	}
 	/* The children's CONNECTOR goes with them. It was left behind — a line and a label hanging under the
 	   card pointing at children that are no longer there (Sam). Same clock and curve as the row.
 	   THREE classes deep on purpose: `.connector.landed` sets opacity 0.75 AND a 150ms transition, and it
 	   is declared later in this stylesheet, so a two-class rule here loses on source order and the
 	   connector merely sat at 0.75 (measured). This has to out-specify it, and restate the timing, or the
-	   line leaves on the landing clock instead of the row's. */
-	.connector.connector-children.tier-open {
+	   line leaves on the landing clock instead of the row's.
+
+	   NOW THE GRANDCHILD TIER'S ALONE. This condition used to fire for both tiers, but the two ask for
+	   opposite things and only ever agreed by accident. The GRANDCHILD tier collapses the children row to
+	   the one hovered chip, so "Eleven children" is describing a row that is no longer on screen and the
+	   label must go. The GRANDPARENT tier now merely PUSHES the row — the children are still all there,
+	   still true, so their label is pushed with them like every other part of the army. Renamed from
+	   `.tier-open` so the selector states which tier it means; no probe selects either name. */
+	.connector.connector-children.child-tier-open {
 		opacity: 0;
 		pointer-events: none;
 		transition: opacity 420ms cubic-bezier(0.33, 1, 0.68, 1);
@@ -2411,9 +2444,9 @@
 		.children-slot {
 			transition: opacity 420ms ease-out;
 		}
-		.children-slot.tier-open {
-			transform: none;
-		}
+		/* `.children-slot.tier-open { transform: none }` lived here to cancel the retreat's 60px travel
+		   under reduced motion. The retreat is gone (see the note on .children-slot above) and the push
+		   that replaced it is a layout change, which reduced motion does not need cancelling. */
 	}
 
 	.parents-slot {

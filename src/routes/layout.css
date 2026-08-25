@@ -80,6 +80,20 @@ html {
    stage and report success. The clip line below therefore stays commented until probe-fit is GREEN — at
    which point uncommenting it is the whole of the change, and the probe is what earns it.
 
+   AND IT MUST BE STATE-AWARE FOR TWO TIERS, NOT ONE (Aug 25). Design §33.5's vertical rule carried a
+   single exception — a scrollbar is allowed while the GRANDCHILD tier is open — and there are now two.
+   The GRANDPARENT tier joined it when the children stopped retreating out of its way: that row used to
+   fade to `opacity: 0` while the tier was open, so the overflow it caused was invisible; it is now
+   pushed by the tier's own in-flow height like every other row on the stage, stays visible, and the
+   stage is allowed to scroll to reach it (Sam: "there should be a scrollbar when the kids push down
+   because that's a lot of army rows on the screen at once"). See the tombstone on `.children-slot` in
+   the person page for why the retreat bought no height in the first place.
+
+   So whatever eventually arms the line below has to test for BOTH `.grandparent-tier` and
+   `.grandchild-tier` before clipping. Arming it against the resting stage alone would amputate whichever
+   tier happened to be open — which is the same "clip without a fit policy" failure §13.3 warns about,
+   wearing a different hat.
+
    What IS armed is the honest part: `100dvh` (correct across an iPad's URL-bar resize, where `vh` lies)
    and `overscroll-behavior: none` (kills the rubber-band and pull-to-refresh). Neither can hide
    anything, so neither has to wait. */
@@ -90,9 +104,10 @@ html[data-exhibit] body {
 }
 html[data-exhibit] body {
 	min-height: 100dvh;
-	/* overflow: clip;  <- ARM THIS WHEN probe-fit IS GREEN. `clip`, never `hidden`: hidden still creates
-	   a scroll container, so focus events and scrollIntoView can silently scroll it and produce
-	   "mysteriously cropped layout" with no visible scrollbar. See §13.2. */
+	/* overflow: clip;  <- ARM THIS WHEN probe-fit IS GREEN, AND ONLY WHEN NEITHER TIER IS OPEN (see the
+	   two-tier note above). `clip`, never `hidden`: hidden still creates a scroll container, so focus
+	   events and scrollIntoView can silently scroll it and produce "mysteriously cropped layout" with no
+	   visible scrollbar. See §13.2. */
 }
 :root {
 	/* Phase 3b — the ground behind the stage (Field, person-page only; NOT on body, so other routes keep
