@@ -45,7 +45,7 @@
 	/** How far ahead of the card the ground dims, in ms. THE dial for the ceremony. */
 	const LEAD_MS = 120;
 	/** The floor, for a cold load into the zone where no flight published a clock. */
-	const FALLBACK_MS = 520;
+	const FALLBACK_MS = 1200;
 
 	const active = $derived(ascension.active);
 	// Read at the moment the state flips, not continuously: the schedule belongs to the flight that just
@@ -54,7 +54,10 @@
 	$effect(() => {
 		void active;
 		const s = getHeroSchedule();
-		fadeMs = prefersReducedMotion.current ? 0 : Math.max(240, s?.duration || FALLBACK_MS);
+		// The FULL gesture, not just the hero's own leg: the hero is DELAYED into the push, so its
+		// duration alone is 300ms short of the thing the eye is watching. Sam saw the first build as
+		// having no background fade at all, and this is why — it ran on the short number.
+		fadeMs = prefersReducedMotion.current ? 0 : Math.max(240, (s?.duration || 0) + (s?.delay || 0) || FALLBACK_MS);
 	});
 </script>
 

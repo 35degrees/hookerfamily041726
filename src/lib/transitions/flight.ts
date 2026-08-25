@@ -74,8 +74,64 @@ function settleBackFor(distance: number, boost = 1): number {
 // So ENTRY SCALE IS A LOOK DECISION, NOT A TIMING ONE, below ~2.3x — the floor governs, and how close
 // the card comes to the viewer costs no tempo until it is large. 2.0 is chosen on that: a full doubling
 // reads as arrival rather than as a zoom, and it is still free of the clock.
-const ASCEND_ENTRY_SCALE = 2.0; // the arriving card starts this much nearer than its resting size
-const ASCEND_EXIT_SCALE = 0.42; // the leaving card recedes to this before the arrival covers it
+// ── THE CLOCK IS THE RAIL'S, NOT THE CEILING'S ──────────────────────────────────────────────────
+// The first build clocked this off `relativeGrowMs`, which floored it at 410ms, and Sam read the result
+// against the one thing on screen that was still moving: "it's crazy that the incoming Alexander
+// Hamilton comes into its final position at lightning speed while the vertical bars have barely begun
+// transitioning… we want to measure at the speed of the vertical bar transitioning into place."
+//
+// He is right that the bar is the reference, and it is a NUMBER rather than a feel: TimelineRail gives
+// every CC `ANCHOR_BAR_MS` = 1200ms on an ease-in-out, because a bar that arrived on the camera's own
+// ~410ms duration "screams down the timeline". So the ascension is 1200ms end to end and the two land
+// together instead of one waiting on the other.
+//
+// THE VELOCITY CEILING IS NOT VIOLATED BY THIS, and it is worth being exact about why. §17.1's ceiling
+// is a MAXIMUM ("a distant relative travels with weight, not a missile"), not a target. At 1200ms the
+// card's fastest corner covers ~760px, i.e. ~0.6 px/ms against a 1.68 ceiling — comfortably under it.
+// The ceiling caps speed; the bar sets tempo; nothing here asks the two to be the same thing.
+//
+// MIRRORED, NOT IMPORTED: `ANCHOR_BAR_MS` lives in TimelineRail.svelte and a transition module has no
+// business importing a component. Both carry a note pointing at the other — if one moves, move both.
+const ASCEND_TOTAL_MS = 1200;
+// THE PUSH. Sam: "maybe the first 300ms after clicking on a CC are Aaron Burr, where I clicked the CC,
+// moving back, and then the Thomas Jefferson orbit comes into view from foreground." So the departure
+// owns the opening beat alone and the arrival is DELAYED into it — and the two then overlap for the
+// rest, which is what makes it read as one card pushing the other rather than as two independent
+// animations that happen to be scheduled near each other. This is the army idea on the depth axis:
+// one gesture, one clock, everything moving together.
+const ASCEND_ENTRY_DELAY = 300;
+const ASCEND_ENTRY_MS = ASCEND_TOTAL_MS - ASCEND_ENTRY_DELAY;
+// The receding card keeps going well past the arrival's start — it is still being pushed while the new
+// card bears down on it. Ending it early is what made the first build read as a cut.
+const ASCEND_EXIT_MS = 820;
+// 2.0 -> 2.4. With a real clock under it the card can afford to come from further out: more travel at
+// the same duration is more distance for the eye to hold, which is where heft comes from (§17.1 —
+// perceived weight is velocity, and this is now slow enough that the extra travel reads as mass).
+const ASCEND_ENTRY_SCALE = 2.4; // the arriving card starts this much nearer than its resting size
+const ASCEND_EXIT_SCALE = 0.34; // the leaving card recedes to this before the arrival covers it
+/**
+ * THE SETTLE, WITH A LITTLE DISHONESTY IN IT.
+ *
+ * Sam: "the overshoot doesn't need to be 100% clean, like silky buttery smooth — there can be some
+ * imperceptible randomness in the overshoot that gives the impression of a real object settling into a
+ * final position."
+ *
+ * A pure easeOutBack is a mathematical curve and reads as one: every flight settles identically, which
+ * is the one thing a physical object never does. So the amplitude is JITTERED PER FLIGHT and a small
+ * decaying wobble rides on top of the main approach.
+ *
+ * PER FLIGHT, NOT PER FRAME, and the distinction is the whole thing. Rolled once when the flight is
+ * created, so the card settles along one smooth-but-slightly-different path each time. Rolled per frame
+ * it would be noise — a vibrating card, not a settling one. Same intent as the deck's seeded `jitter`
+ * (protected variation): identical within a flight, varied between them.
+ *
+ * The wobble term is zero at BOTH ends by construction — `sin(0) = 0`, and the `(1 - t)` factor kills it
+ * at t = 1 — so however much it wanders in the middle, the card lands exactly at rest. A settle that can
+ * miss its own resting size is a bug wearing a physics costume.
+ */
+const ASCEND_WOBBLE = 0.018; // peak excursion of the secondary bounce, as a fraction of final scale
+const ASCEND_WOBBLE_CYCLES = 2.35; // not a whole number, so the two bounces are visibly unequal
+const ASCEND_WOBBLE_DECAY = 3.1;
 // THE OVERSHOOT IS A SCALE, AND §17.2 IS NOT BEING BROKEN. That rule says the settle is "a TRANSLATE
 // overshoot along the captured travel vector — never an origin-anchored scale puff", and the ban was
 // earned: a puff on a card that travelled IN THE PLANE reads as the object inflating rather than as
@@ -1003,21 +1059,38 @@ export function growFrom(node: Element) {
 	//
 	// CLOCKED OFF HONEST CORNER TRAVEL, never off `distance`, which is zero here by construction.
 	if (ascendDir === 1) {
-		const halfDiag = Math.hypot(dest.width, dest.height) / 2;
-		const ms = relativeGrowMs(Math.abs(ASCEND_ENTRY_SCALE - 1) * halfDiag);
-		heroSchedule = { duration: ms, delay: 0, kind: flightKind, axis: 'front' };
+		// Rolled ONCE, here, as the flight is created — see the note on ASCEND_WOBBLE.
+		const jitter = 0.85 + Math.random() * 0.3; // ±15% on the settle's amplitude
+		const phase = 0.9 + Math.random() * 0.2; // and a little on where the bounces fall
+		heroSchedule = {
+			duration: ASCEND_ENTRY_MS,
+			delay: ASCEND_ENTRY_DELAY,
+			kind: flightKind,
+			axis: 'front'
+		};
 		hero.style.transformOrigin = 'center center';
 		hero.style.transform = `scale(${ASCEND_ENTRY_SCALE})`;
+		hero.style.opacity = '0';
 		hero.style.zIndex = '2';
 		return {
-			duration: ms,
-			easing: (t: number) => easeOutBack(t, solveBackS(ASCEND_SETTLE)),
+			delay: ASCEND_ENTRY_DELAY,
+			duration: ASCEND_ENTRY_MS,
+			// The APPROACH is a strong ease-out — most of the distance is spent early, so the card reads
+			// as arriving with momentum and then taking its time to seat. The overshoot is NOT in this
+			// easing; it is in the css below, where it can carry the jitter.
+			easing: (t: number) => 1 - Math.pow(1 - t, 3),
 			css: (t: number) => {
-				const sc = ASCEND_ENTRY_SCALE + (1 - ASCEND_ENTRY_SCALE) * t;
-				// The fade is the LAST third only. A card that fades across the whole flight reads as a
-				// dissolve rather than as an object approaching; arriving already opaque and merely
-				// growing is what makes it read as depth.
-				return `transform: scale(${sc}); opacity: ${Math.min(1, t * 3)}; transform-origin: center center; z-index: 2;`;
+				const base = ASCEND_ENTRY_SCALE + (1 - ASCEND_ENTRY_SCALE) * t;
+				// A decaying wobble that is exactly zero at both ends, so the card cannot miss its rest.
+				const wob =
+					Math.sin(t * Math.PI * ASCEND_WOBBLE_CYCLES * phase) *
+					Math.exp(-ASCEND_WOBBLE_DECAY * t) *
+					ASCEND_WOBBLE *
+					jitter *
+					(1 - t);
+				// The fade is the FIRST third and then done. A card still fading while it settles reads as
+				// a dissolve; opaque early and merely still growing is what reads as depth.
+				return `transform: scale(${base + wob}); opacity: ${Math.min(1, t * 3)}; transform-origin: center center; z-index: 2;`;
 			}
 		};
 	}
@@ -1145,7 +1218,8 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			const halfDiag = Math.hypot(card.width, card.height) / 2;
 			// The DEMOTE ceiling, not the promotion's: this is the receding object, and the house already
 			// holds that a leaving card is quicker than an arriving one (SPOUSE_DEMOTE_V_CEIL).
-			const ms = Math.max(260, (Math.abs(1 - ASCEND_EXIT_SCALE) * halfDiag) / SPOUSE_DEMOTE_V_CEIL);
+			void halfDiag; // the clock here is the gesture's, not the ceiling's — see ASCEND_TOTAL_MS
+			const ms = ASCEND_EXIT_MS;
 			el.style.transformOrigin = 'center center';
 			el.style.zIndex = '1'; // beneath the arrival at z 2 — the occlusion, stated rather than raced
 			return {

@@ -1421,6 +1421,10 @@
 	// 1000 → 1200 ("a bit slower to arrive... not a ton slower, maybe just a couple of more beats").
 	// This is the ceiling if the bar is still to arrive FIRST: it now lands ~1400ms against the card's
 	// ~1400ms, so the two are effectively simultaneous and any more would put the bar in last.
+	// MIRRORED IN flight.ts AS `ASCEND_TOTAL_MS` — the Ascension is timed to land WITH the bar, because
+	// the bar is what Sam judges a CC against: "we want to measure at the speed of the vertical bar
+	// transitioning into place." If this number moves, move that one. A transition module cannot import
+	// a component, so the two carry notes at each other rather than one constant.
 	const ANCHOR_BAR_MS = 1200;
 	const ANCHOR_BAR_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
 	const BAR_EASE = 'cubic-bezier(0.33, 1, 0.68, 1)';
