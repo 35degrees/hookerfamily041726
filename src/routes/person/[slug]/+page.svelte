@@ -33,7 +33,8 @@
 		marchTravel,
 		retractBladeIn,
 		captureFlightKind,
-		captureAscend
+		captureAscend,
+		getAscend
 	} from '$lib/transitions/flight';
 	import { getSiblingNavPlan } from '$lib/state/siblingNav';
 	import { anchorOffsetFor, showsSiblingPanel } from '$lib/state/siblingLayout';
@@ -117,6 +118,8 @@
 	// for now; buildRoster/zone-rendering are already zoom-parameterized so z2/z3
 	// slot into the same seams. Transitions are NOT wired yet — this milestone is
 	// structure + notch docking only.
+	/** How much longer the roster waits on the ascension EXIT only — see the note at its use site. */
+	const ASCENSION_CHIP_BEAT_MS = 100;
 	const zoom = 1;
 
 	/**
@@ -142,8 +145,37 @@
 	 * door directly, capturing the crossing by hand so the descent still flies.
 	 */
 	function descend() {
-		const home = ascension.from;
-		if (!home) return; // entered cold (a direct URL) — nothing to descend to; see ascension.svelte.ts
+		// ── THE WAY OUT MUST NEVER BE DEAD ──────────────────────────────────────────────────────────
+		// It used to `return` when there was no remembered door, which is true on a cold load, on a
+		// refresh, and after any HMR reload — so the control was visibly present, correctly hit-tested,
+		// and did nothing. Sam hit it twice and both times it looked like a broken button rather than an
+		// empty variable. Verified with elementFromPoint: the click WAS landing on the button.
+		//
+		// And it is the case that matters most, in Sam's own words: "if a user clicks on an orbit spouse
+		// with no CCs and they don't know how to return to the normal tree, the X working is important."
+		// Martha Wayles Jefferson has no cross-connections at all — from her card the X is the ONLY way
+		// back, so it has to answer even when nothing was remembered.
+		//
+		// Four rungs, most-specific first. Each is a real way home, not a guess:
+		const blade = () =>
+			[...document.querySelectorAll<HTMLElement>('.cc-blade a[data-cc="true"]')].find(
+				(a) => a.dataset.orbit !== 'true'
+			);
+		const home =
+			ascension.from ?? // 1. the door we came in by
+			blade()?.getAttribute('href')?.replace('/person/', '') ?? // 2. any CC that leaves the zone
+			null;
+		if (!home) {
+			// 3. nothing on this card reaches the tree (Martha, cold-loaded). History is the honest next
+			//    answer — it is where the reader actually was.
+			if (history.length > 1) {
+				history.back();
+				return;
+			}
+			// 4. and if even that is empty, the line's own root always exists.
+			window.location.href = '/person/thomas-hooker';
+			return;
+		}
 		const link = document.querySelector<HTMLElement>(
 			`.cc-blade a[data-cc="true"][href="/person/${home}"]`
 		);
@@ -535,8 +567,26 @@
 				siblingsOpen = true;
 			}
 		}
-		featuredLanded = true; // → reveals the pivot box + any remaining pending boxes (safety-net effect)
-		landedPersonId = f.person.id; // the shown person has now landed → ungate its trigger (see above)
+		// ── THE BEAT BEFORE THE CHIPS, +100ms ON THE ASCENSION EXIT ONLY ────────────────────────────
+		// Sam: "the parent and child chip appearance just needs 100ms longer to appear specifically in
+		// the ascension exit background-to-hero transition, without impacting other transitions."
+		//
+		// The beat itself is the app's, not something added here — a lateral CC already settles the hero,
+		// waits, then extends the roster, and Sam has called that rhythm perfect. What the depth return
+		// costs is its LENGTH: the card is still closing the last of the room when the clock runs out, so
+		// the pause that follows is shorter than the one a lateral flight leaves.
+		//
+		// SURGICAL BY CONSTRUCTION. `getAscend()` is the per-navigation capture and is −1 on exactly one
+		// gesture — leaving the zone. Every other navigation in the app reads 0 here and takes the
+		// untouched synchronous path, so there is no timing anywhere else to get wrong. Cleared on the
+		// next capture, so a stale value cannot leak into the flight after it.
+		const beat = getAscend() === -1 && !prefersReducedMotion.current ? ASCENSION_CHIP_BEAT_MS : 0;
+		const land = () => {
+			featuredLanded = true; // → reveals the pivot box + any remaining pending boxes
+			landedPersonId = f.person.id; // the shown person has landed → ungate its trigger (see above)
+		};
+		if (beat) setTimeout(land, beat);
+		else land();
 		unlockFlight(); // card is in final position, chips extending → nav clicks honored again
 
 		// JANITOR (PROD belt for the finished-animation teardown residue the sweep can't safely touch):

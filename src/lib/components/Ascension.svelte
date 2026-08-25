@@ -36,7 +36,7 @@
 	 * Set to 0 to have them arrive exactly together.
 	 */
 	import { ascension } from '$lib/state/ascension.svelte';
-	import { getHeroSchedule } from '$lib/transitions/flight';
+	import { ASCEND_MS } from '$lib/transitions/flight';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
@@ -44,23 +44,27 @@
 	type Props = { onexit?: () => void };
 	let { onexit }: Props = $props();
 
-	/** How far ahead of the card the ground dims, in ms. THE dial for the ceremony. */
-	const LEAD_MS = 120;
-	/** The floor, for a cold load into the zone where no flight published a clock. */
-	const FALLBACK_MS = 1200;
-
+	/**
+	 * THE VEIL RUNS THE GESTURE'S OWN CLOCK, READ AS A CONSTANT.
+	 *
+	 * It used to read `getHeroSchedule()` inside an $effect, and that was a RACE with two ways to lose.
+	 * The effect fires when `active` flips — which happens the instant the payload lands — while the
+	 * schedule is not published until the incoming card's transition is CREATED, one flush later. So the
+	 * veil either read the previous navigation's schedule or a zero, and Sam saw the result: "you've lost
+	 * touch with the midnight blue background fade-in, that seems to now be instant on CC click, not
+	 * fading over the whole screen along with the orbit card entry."
+	 *
+	 * Reading the constant removes the race outright. It is still ONE CLOCK in §30's sense — the ground
+	 * and both cards are all driven by the same number — it is simply taken from the source rather than
+	 * chased through a publish that has not happened yet. A constant cannot be stale.
+	 */
+	/** The one predicate: the ground, the way out and the rail all read this. */
 	const active = $derived(ascension.active);
-	// Read at the moment the state flips, not continuously: the schedule belongs to the flight that just
-	// launched, and clearFlightCaptures resets its neighbours a frame later.
-	let fadeMs = $state(FALLBACK_MS);
-	$effect(() => {
-		void active;
-		const s = getHeroSchedule();
-		// The FULL gesture, not just the hero's own leg: the hero is DELAYED into the push, so its
-		// duration alone is 300ms short of the thing the eye is watching. Sam saw the first build as
-		// having no background fade at all, and this is why — it ran on the short number.
-		fadeMs = prefersReducedMotion.current ? 0 : Math.max(240, (s?.duration || 0) + (s?.delay || 0) || FALLBACK_MS);
-	});
+	const fadeMs = $derived(prefersReducedMotion.current ? 0 : ASCEND_MS);
+	/** The dark leads the card slightly, so the room dims before the figure arrives rather than with it.
+	 *  Set to 0 to have them land together. */
+	const LEAD_MS = 120;
+
 </script>
 
 {#if active}
@@ -76,29 +80,43 @@
 	<div
 		class="ascend-veil"
 		aria-hidden="true"
-		in:fade={{ duration: fadeMs, delay: 0, easing: cubicOut }}
+		in:fade={{ duration: Math.max(1, fadeMs - LEAD_MS), delay: 0, easing: cubicOut }}
 		out:fade={{ duration: Math.round(fadeMs * 0.72), easing: cubicOut }}
 	></div>
-	<!-- THE X IS OVER THE GROUND, NOT ON THE CARD (Sam: "the X can be in the upper right of the screen,
-	     not within the card, over the midnight blue gradient background"). Two reasons beyond his: the
-	     card is a fixed-geometry object every other feature measures against, and the blade already owns
-	     the one edge the card does not control. A close affordance on it would be the first thing to
-	     collide with either. -->
+	<!-- ── THE WAY DOWN ────────────────────────────────────────────────────────────────────────────
+	     NOT A CLOSE BUTTON. Sam: "I don't just want that standard X in a circle." An X means dismiss —
+	     it belongs on a dialog that interrupted you. Nothing here interrupted anything: the reader chose
+	     to come, and what they want back is the card they left. So the control names the GESTURE rather
+	     than the widget, and the gesture already has a name in this project — you ascended, so this is
+	     the descent, and it points the way it goes.
+
+	     THE CHEVRON IS THE HOUSE'S OWN GLYPH (design §26.4 — the sibling panel's chevron became an SVG
+	     for exactly this reason: a text arrow is a font's opinion, an SVG is ours). Pointed DOWN, in the
+	     rail's cream, on nothing — no circle, no plate. The dark IS the surround; drawing a container on
+	     top of it would be putting a button on a sky.
+
+	     THE HIT AREA IS 56px AND THE INK IS 24px. The glyph should be quiet and the target should not
+	     be — Sam reported the X "doesn't do anything", and a 38px circle at the screen's corner is a
+	     small target to find with a mouse even when it is working. This also stops the two failure modes
+	     looking identical: a control that is hard to hit and a handler that does nothing both read as
+	     "nothing happened", so the target is now generous enough that a miss is unlikely to be the
+	     explanation. -->
 	<button
 		type="button"
 		class="ascend-exit"
-		out:fade={{ duration: 160 }}
 		style="--fade-ms: {fadeMs}ms"
+		out:fade={{ duration: 160 }}
 		onclick={() => onexit?.()}
-		aria-label="Leave and return to the previous card"
+		aria-label="Return to the card you came from"
 		title="Return"
 	>
-		<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+		<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
 			<path
-				d="M6 6 L18 18 M18 6 L6 18"
+				d="M5 9 L12 16 L19 9"
 				stroke="currentColor"
-				stroke-width="1.6"
+				stroke-width="1.5"
 				stroke-linecap="round"
+				stroke-linejoin="round"
 				fill="none"
 			/>
 		</svg>
@@ -127,33 +145,36 @@
 	   card is still arriving reads as an interruption of the thing you just asked for. */
 	.ascend-exit {
 		position: fixed;
-		top: 22px;
-		right: 26px;
-		z-index: 4; /* above the flying hero (z 2) and the rail's transient lift (z 3) */
+		top: 18px;
+		right: 20px;
+		z-index: 5; /* above the flying hero (2) and the rail's transient lift (3), with headroom */
 		display: grid;
 		place-items: center;
-		width: 38px;
-		height: 38px;
-		border-radius: 50%;
-		border: 1px solid rgb(247 241 230 / 0.28);
-		background: rgb(15 22 38 / 0.55);
-		color: #f7f1e6; /* the house cream, so it belongs to the same palette as the rail's years */
+		/* A GENEROUS TARGET AROUND A QUIET GLYPH — see the markup note. */
+		width: 56px;
+		height: 56px;
+		border: 0;
+		background: none;
+		padding: 0;
+		color: #f7f1e6;
+		opacity: 0.6; /* present, not insistent — it should be found, not noticed */
 		cursor: pointer;
 		animation: exit-in 420ms cubic-bezier(0.33, 1, 0.68, 1) both;
 		animation-delay: var(--fade-ms, 520ms);
 		transition:
-			background 160ms ease-out,
-			border-color 160ms ease-out,
-			transform 160ms cubic-bezier(0.33, 1, 0.68, 1);
+			opacity 200ms ease-out,
+			transform 200ms cubic-bezier(0.33, 1, 0.68, 1);
 	}
+	/* The hover moves it DOWN a hair — the direction it sends you. A control that previews its own
+	   result is the cheapest affordance there is, and it costs 2px. */
 	.ascend-exit:hover {
-		background: rgb(27 39 64 / 0.85);
-		border-color: rgb(247 241 230 / 0.55);
-		transform: scale(1.08);
+		opacity: 1;
+		transform: translateY(2px);
 	}
 	.ascend-exit:focus-visible {
 		outline: 2px solid #f7f1e6;
-		outline-offset: 3px;
+		outline-offset: 2px;
+		opacity: 1;
 	}
 	@keyframes exit-in {
 		from {

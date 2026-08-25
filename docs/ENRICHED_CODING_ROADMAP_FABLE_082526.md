@@ -25,6 +25,8 @@
 
 **The 072326 edition (July 23) adds §13 — THE DECK SHIPPED. The July-22 §12 sequence's item 1 is DONE: the CC transition is built, probe-guarded, and committed (commit 0c652f6c, Stream B). It shipped as the DECK PUSH — two solid weighted cards + an empty gap, not the visible riffle (the convoy read as "adjacent" and shrank the tree; ghosts parked behind DECK_GHOSTS=false). Records the gen_delta direction model, the fixed ping-pong memory, the weight-physics dials, the flight-lock/connector-cut/belt, the seven-probe guard, and the resequence (Shuffle Notables now unblocked). Design rationale: design doc §22 (as built). Also adds §14 — PHOTO-LOADING RESTORED: a hover-preload experiment had degraded foundational chip loading; fixed by making the NEIGHBORHOOD the load unit (batch preload, on-screen chips tiered first, one shared Cloudinary derivative per person, media demoted to on-demand). The Cloudinary warm-up script is queued. Design rationale: design doc §24.**
 
+**AUGUST 25 (§41): THE ASCENSION — PARTIALLY BUILT, ENTRY SIGNED OFF, EXIT NOT. The depth axis exists: an orbit entry (a person the tree reaches ONLY by cross-connection) is now derived rather than flagged (94 people, 55 components), excluded from the shuffle, and arriving at one flies head-on with a midnight veil, a restyled rail and a way out. **The durable part is design §38** — the doctrine cost six rebuilds of the exit and is already worth keeping whatever the remaining dials settle at: SCALE IS NOT DISTANCE (four separate symptoms, one units error); the IMAX RULE (a card is ABSENT above 1.42x, never translucent, so it can neither inflate into a wall nor become a window onto the card behind it); TWO CONCENTRIC CARDS CANNOT CROSS-FADE at any duration; the ARMY ON Z (one belt, and it REVERSES between the directions or it is a carousel); and DISTANCE IS SPENT ON THE RECEDING CARD, because the passing one is only visible across ~0.3 depth units however far it is sent. Records eight defects including five of my own making, and the two instruments that reported false readings during the work. Nothing is finished; §41.4 is the honest open list.**
+
 **AUGUST 25 (§39): THE ARMY REACHES THE CHILDREN ROW, AND THE PRISM REACHES THE RAIL. Two unrelated pieces, committed separately. The children row stopped being the ONE row exempt from the grandparent tier's push — it used to fade to `opacity: 0` and translate 60px out of the way, which is a row answering the tier with alpha instead of with mass, and Sam named the doctrine it broke: *"every row moves together as if they are physical, being pushed and forced down as much as moving down independently."* The measurement is what made it free: `opacity` and `transform` remove NO layout, so the row's 227px stayed reserved either way (stage 1353 shut, 1473 open, identical whether the children were painted or not) — the retreat saved not one pixel and only hid what the cost had already bought. It cost two deleted CSS rules; the push is a consequence of layout on the tier's own clock. Design §33.5 took a SECOND sanctioned vertical overflow on Sam's ruling. Then the Pynchon spectrum became the rail's, as the third surface after the card and the chip, on the same `isPynchonKin` set — recording why neither existing crop transferred, why the fill must sit on `::before` to stay maskable, why the ink had to be decided in JS rather than CSS, and the EDGE'S THREE STATES (purple 60% → none → navy 50%), two of which were wrong for different reasons. Also §39.3: the session's process failure, which was mine — I answered "why is this open" with arithmetic instead of with the screen. Design rationale: design §32.5, §33.5, §37.**
 
 **AUGUST 14 (§38): SVELTEKIT 3 ASSESSED — a verdict and a trigger, no code. Sam surfaced the `@next` preview (`3.0.0-next.23`). The measured answer: this codebase's migration surface is **five things**, four of them mechanical, because the app has NO SERVER — which deletes most of SK3's breaking list outright. We already meet every version floor but a Svelte patch. The recommendation is YES, and NOT NOW: wait for `3.0.0` stable (the preview relocated its own types three times between next.19 and next.21, and next.20 removed the `#lib` definition next.15 introduced — migrating today means migrating twice), then do it in a dedicated session **before Phase 2.5**. §38 carries the inventory, the one genuinely risky item (`pushState` → shallow `goto`, which is the warm path's seam and now fires navigation hooks it previously did not), the trigger condition, and the order of operations — headed by re-baselining the probe suite BEFORE the framework changes, not after.**
@@ -3882,3 +3884,80 @@ that exists. Same result, and it keeps the rail owning its own presentation.
 - **50 of the 94 are `is_notable`**, so the shuffle leak is not Jefferson alone.
 - Sam, on the questions this spec does not answer: *"leave these unchanged for now — I'll have a better
   read on what to do after this component and process is built and tested."*
+
+---
+
+## 41. AUGUST 25 — THE ASCENSION, PART BUILT (design §38)
+
+**Status: the ENTRY is signed off; the EXIT is not.** Sam, closing the session: *"this is something I can
+live with for now… but this is not the final final version."* Committed because the data layer is
+finished and correct, and because the doctrine in design §38 is durable independent of where the exit
+lands. The live ledger of approved/rejected attempts is `docs/ASCENSION_WORKING_NOTES.md` — read it
+before touching this, it exists specifically to stop settled ground being re-litigated.
+
+### 41.1 What shipped
+
+| | |
+|---|---|
+| **`orbit` derived** | connected family component with no Thomas descendant, reachable by CC. 94 people, 55 components. `is_easter_egg` is NOT this flag and is untouched — 68 overlap, 86 orbit unflagged, 550 flagged not orbit |
+| **The shuffle door closed** | 1126 eligible notables → 1076. `is_searchable` deliberately untouched (it gates the app's own future search menu, not Google) |
+| **The depth axis** | `growFrom` / `shrinkTo` gain a head-on branch, resolved BEFORE the origin guard because such a flight has no origin rect by definition |
+| **The veil, the rail's dark palette, the way out** | midnight ground on the flight's clock; the rail restyles ITSELF rather than being covered; a descent chevron, not an X, with four fallback rungs so it is never dead |
+| **A +100ms roster beat, exit only** | keyed on `getAscend() === −1`, which is true for exactly one gesture — every other navigation takes the untouched synchronous path |
+
+### 41.2 The process failure worth carrying
+
+**I generalised a rule Sam had approved for ONE direction and applied it to both.** The result was a
+carousel, and it replaced the half he liked with the half he had already rejected — so he had nothing
+testable and had to re-explain a thing he had described consistently since the first message. His
+question afterwards is the entry: *"do you want to keep notes so you don't mess things up a lot?"*
+
+That is what the working-notes file is. The rule it encodes: **an approved behaviour is scoped to the
+case it was approved in.** Symmetry is a hypothesis, not a licence.
+
+A second, smaller one: when the exit was going badly I proposed reverting the working tree to the last
+commit. Sam: *"we are in the heart of the action here, why stop and revert."* He was right — the work
+was progressing, and offering to throw it away read as giving up on his behalf.
+
+### 41.3 The defects, and the two instruments that lied
+
+Five were mine, three were latent in the app and only exposed by a slow, centred, head-on flight:
+
+- **An absent attribute read as a meaningful `false`** — `data-orbit` is on CC links only, so every family
+  chip inside the zone computed as "leaving" and got the depth flight. **It leaked into the spouse
+  promotion**, which is the one thing this subproject was told not to touch.
+- **`onIncomingLand` cleared `transform` but never `opacity`** — the landed card stayed invisible. Latent;
+  the parked arc branch has it too.
+- **`buildFeatured` is an explicit map, not a spread** — a new payload key reaches the app only if named
+  there. The flag was emitted, read, and silently dropped in between.
+- **The origin guard** — `growFrom` returns `duration: 0` with no click-captured rect, which is right for
+  a cold load and wrong for an axis that has no origin. This is what made the X change the URL with no
+  transition.
+- **An outro's `t` runs 1 → 0** — a travel term written as `t` plays the exit in reverse.
+- **`NarrativeBlocks` opens its first block in an `$effect`**, so the body is created a frame late and its
+  local `transition:slide` runs on EVERY card arrival in the app. Invisible on flights that enter from
+  offscreen; glaring on one that is large, centred and still.
+
+And the instruments:
+
+- **A payload route-intercept that measured nothing** — a cold `goto` loads through SSR, so the browser
+  never fetches and the intercept never fires. It printed a clean, plausible, entirely fictional result.
+  **On this app a route intercept only sees a payload on a WARM path.**
+- **A depth check that compared a clamped value against a real one** and reported a rigid belt as
+  mismatched. The belt was correct; the check was reading `scaleAt`'s divide-by-zero guard.
+
+Both went straight into the family recorded at §36.4, §37.3 and §39.4.
+
+### 41.4 STILL OPEN
+
+- **The exit.** Six rebuilds. Rejected outright, with reasons, in the ledger: enlarge-and-fade
+  ("vomit-inducing"), hard cull at the plane (a flash), out the top of the screen ("ridiculously goofy",
+  and a shallower angle is not geometrically available), and the one-way belt (a carousel).
+- **The CC blade draws while the card is too far away to see it.** Measured: the draw completes by ~700ms
+  while the card is still ~106px wide. It is on the FLIGHT's clock; the card's legibility is on the DEPTH
+  curve. Fixing it means gating the draw on depth SURGICALLY — `unsheathBlade` is shared with every CC in
+  the app.
+- **The ascent still interpolates scale rather than depth** — design §38.2's units bug, latent on the half
+  that reads well. Deliberately not touched while it is signed off.
+- **The orbiting sprites** — Field's three seeded depth layers and `DOCK_X`/`DOCK_Y` are ready.
+- **13 orbit→orbit cross-connections** await Sam's review (§40.6); two are not simple deletes.

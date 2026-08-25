@@ -10,7 +10,7 @@
  * Click-time captures (origin rect, flight kind, clicked id, pan direction, rect snapshot) live at
  * the top of this file and are read by the transitions during the flush, then cleared one frame on.
  */
-import { cubicOut, cubicIn } from 'svelte/easing';
+import { cubicOut, cubicIn, cubicInOut } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
 import { su } from '$lib/state/stage.svelte';
 import { getCameraMove, type CameraMove } from '../state/camera';
@@ -99,7 +99,14 @@ function settleBackFor(distance: number, boost = 1): number {
 // still travelling until ~1209ms. The bar trailing a CC by ~200ms is pre-existing and known (§37.4 —
 // "the bar's 1200ms does not lead every CC"), so matching the bar meant matching the wrong object and
 // the ascension came out ~210ms slow.
-const ASCEND_TOTAL_MS = 980;
+// 840 -> 660. Sam, twice now: "it's still happening too slowly", and the reason is stated rather than
+// felt — "the point of these transitions is not to have users marvel at how good the transitions are,
+// it's to get them to see the orbit card, but not in an instant flash that removes the idea and
+// illusion of the discrete baseball cards." A gesture that has to be admired has already failed.
+const ASCEND_TOTAL_MS = 660;
+/** The gesture's whole clock, for the surround — see the note in Ascension.svelte on why it is read
+ *  from here rather than off the published hero schedule. */
+export const ASCEND_MS = ASCEND_TOTAL_MS; // 980 -> 840 (Sam: still slow)
 // THE PUSH. Sam: "maybe the first 300ms after clicking on a CC are Aaron Burr, where I clicked the CC,
 // moving back, and then the Thomas Jefferson orbit comes into view from foreground." So the departure
 // owns the opening beat alone and the arrival is DELAYED into it — and the two then overlap for the
@@ -109,26 +116,270 @@ const ASCEND_TOTAL_MS = 980;
 // 300 -> 230. Sam: "I like the ability to see the old card move out, you can speed up that process
 // just a bit, it is pretty slow but overall very effective." The beat survives — it is still the only
 // thing on screen for nearly a quarter second — it just stops being a pause.
-const ASCEND_ENTRY_DELAY = 230;
-const ASCEND_ENTRY_MS = ASCEND_TOTAL_MS - ASCEND_ENTRY_DELAY;
+// ── ONE CLOCK, BOTH CARDS — THE ARMY ON THE DEPTH AXIS ──────────────────────────────────────────
+//
+// Sam: "the entering orbit card and exiting original card need to have the same army row lockstep feel
+// of the parent chip card click — everything moving together."
+//
+// THIS SUPERSEDES THE STAGED VERSION ABOVE, and the two cannot both be true. It ran as a 230ms lead
+// where the departure owned the opening beat and the arrival was DELAYED into it — two durations, two
+// start times, one gesture. That is exactly the shape §18 was written to kill: "distance and time were
+// being decided SEPARATELY in each place instead of once for the whole stage." A parent-chip click does
+// not stage its rows — getPanDir gives the board one direction and rowClockMs one clock, and everything
+// moves at once. The depth axis gets the same treatment or it is not the same app.
+//
+// THE OPENING BEAT IS NOT SCHEDULED NOW, IT IS EARNED. Both cards start at t = 0 on one duration and
+// one curve; the arriving card simply begins far away and nearly transparent, so for the first couple
+// hundred ms the only thing the eye can track is the departing card receding. Sam liked that opening
+// ("I like the ability to see the old card move out") and it survives — as a consequence of the
+// physics rather than as a second schedule someone has to keep in sync with the first.
+//
+// A CARD IS A DISCRETE OBJECT AND 1.55 IS WHERE THAT HOLDS. At 2.0 the card is 1850px on a 1440
+// monitor: the first frame has no edges, so it is a wall of enlarged type rather than a thing arriving.
+// 1434px fits, and it also answers "it's jarring to have the font of the NBs be so big right in my
+// face" — the narrative type never gets large enough to read as its own object.
+const ASCEND_ENTRY_DELAY = 0; // see ONE CLOCK below
+const ASCEND_ENTRY_MS = ASCEND_TOTAL_MS; 
 // The receding card keeps going well past the arrival's start — it is still being pushed while the new
 // card bears down on it. Ending it early is what made the first build read as a cut.
-const ASCEND_EXIT_MS = 610;
+// ── THE TWO DEPARTURES ARE NOT THE SAME JOB ─────────────────────────────────────────────────────
+// Sam: "the exiting orbit card takes a while to enlarge and fade out, when on entry that all happens
+// much faster — maybe we can exit the orbit card a little faster, without the jarring flash of just
+// removing it or sending it at superhuman velocity."
+//
+// Measured, he is describing a real asymmetry rather than an impression. The two departures are
+// visible for very different fractions of the same clock:
+//
+//   ASCENDING   the tree card RECEDES, shrinking away from you, and stays visible the whole flight —
+//               it is the only thing on screen while the arrival is still hidden past the plane, so it
+//               is doing the work and wants the full duration. LOCKSTEP HOLDS HERE.
+//   DESCENDING  the orbit card ADVANCES, and is culled the moment it reaches full coverage. Under one
+//               shared clock it crossed the plane at ~88% of the flight, so it spent almost the entire
+//               transition slowly swelling in front of the reader — which is exactly the complaint.
+//
+// So the descent's departure gets a shorter leg. It is not out of lockstep in the sense that matters
+// (§18's "one direction, one clock for the whole stage"): both cards still start together on one
+// gesture, and this one simply finishes its visible travel first, because it has less of a journey to
+// make on screen. The arrival still lands on the full clock and is still the thing that settles.
+const ASCEND_EXIT_MS = ASCEND_TOTAL_MS;
 // 2.0 -> 2.4. With a real clock under it the card can afford to come from further out: more travel at
 // the same duration is more distance for the eye to hold, which is where heft comes from (§17.1 —
 // perceived weight is velocity, and this is now slow enough that the extra travel reads as mass).
 // 2.4 -> 2.0. Sam: "the Jefferson orbit card entry into view is a bit harsh, there's a jarring effect
 // as it instantly covers the existing view." At 2.4 the card is 2220px wide on a 1440 screen, so its
 // first painted frame is a wall — you never see an object approach, you see the view get replaced.
-const ASCEND_ENTRY_SCALE = 2.0;
-const ASCEND_EXIT_SCALE = 0.34; // the leaving card recedes to this before the arrival covers it
+// 2.05 -> 1.80. Sam: "the orbit card can enter a couple of beats sooner — there's no point in seeing
+// Aaron Burr Jr's original featured card just squished into unreadable form for a beat or two while we
+// wait for the entrance of the orbit Jefferson card."
+//
+// The lever is the distance ABOVE the plane, not the clock. The arrival is invisible while it is past
+// 1.56, so how long you wait for it is exactly how long it takes to fall from ENTRY_SCALE to the plane
+// — 2.05 spent ~47% of the flight up there, 1.80 spends ~34%. The departure is unchanged and still
+// travels the whole time; it simply gets covered sooner, before it has shrunk to something unreadable.
+const ASCEND_ENTRY_SCALE = 1.8; // 1434px on a 1440 monitor — a whole card, close
+// 0.34 -> 0.46. It is covered from ~a third of the way in now, so the last two thirds of its travel
+// were never seen — all 0.34 bought was a card that had already gone unreadable in the frames Sam DID
+// see. It still recedes plainly; it just does not shrink to a stamp on its way out.
+const ASCEND_PASS = 1.9; // past the reader and gone; everything above ASCEND_REVEAL is unseen
+// ── THE PARK: HOW FAR THE TREE CARD IS PUSHED WHILE THE ZONE IS OPEN ────────────────────────────
+// 0.46 -> 0.26. Sam: "it feels like Jefferson is just off screen — the Ascension zone is like changing
+// positions on a sofa, just scooch over. But I want to give the illusion Jefferson is coming from a
+// greater distance… so maybe Burr moves out more, a longer distance away, like a space warp zone."
+//
+// THE DISTANCE IS SOLD BY THE CARD THAT LEAVES, NOT THE ONE THAT ARRIVES — which is why this is the
+// right lever and why nothing about the approved entry needs touching. Jefferson's visible journey is
+// capped at 1.42 by construction (above that he has no edges and cannot be shown at all), so no amount
+// of starting further out lengthens what the eye actually sees of him. Burr has no such ceiling: he can
+// recede as far as we like and every pixel of it is visible. Push him to 0.26 and the SPACE reads as
+// deep, which is the only thing that can make what arrives into it feel far away.
+// 0.26 -> 0.13 -> 0.09. Sam: "I don't feel any sense of increased distance travelled… maybe the
+// disappearing point for Aaron Burr in the background can be a little further back, like travelling a
+// greater distance." Depth 3.85 -> 7.7 -> 11.1: the tree card now goes nearly three times as far as it
+// originally did, and the room it leaves behind reads that deep.
+//
+// THIS IS THE ONE END WHERE DISTANCE IS FREE, which is why it is the only one being pushed. The tree
+// card is visible for its ENTIRE journey — it never crosses the reveal threshold, it just gets small —
+// so every unit of depth added here is a unit the eye actually gets. The near end is the opposite: the
+// departing card is only visible across ~0.3 depth units no matter how far it is sent, so distance
+// there costs watchable frames and buys nothing (see DEPTH_BEHIND_READER).
+//
+// 0.09 is 83x52px at the far point — still legibly a CARD rather than a dot, which is the floor. Past
+// roughly 0.06 it stops reading as an object at a distance and starts reading as something that shrank
+// to nothing, which is a different and worse idea.
+// 0.09 -> 0.115. Sam: "I think you are making the re-entrance of Burr from the background too far
+// back." The park serves two journeys and they do not want the same depth — going away it is spent
+// entirely on distance (good), coming back it is spent on a room that has to be crossed inside one
+// clock, and past ~11 depth units the last stretch arrives too fast to land softly. 0.115 is ~8.7
+// units: still nearly twice the original 3.85, and close enough that the return can decelerate.
+const ASCEND_PARK = 0.115;
+/**
+ * THE VANISHING POINTS — stated, because they were implicit and one of them was a WALL.
+ *
+ * Sam: "have you created an exit point far in the distance that the Burr card exits to, even if we
+ * never see it? …and if Jefferson's exit point was much further in the FOREGROUND, like behind the
+ * user's head by 1000 feet, it wouldn't feel so jarring — it would be like the Jefferson card is going
+ * through the user itself smoothly, so it never slows down or feels like it's trying to stop."
+ *
+ * He is describing a real defect rather than a preference. `scaleAt` clamps depth at 0.06 to keep the
+ * reciprocal finite, and that clamp was doing double duty as a destination: the departing card ran at
+ * the clamp and then SAT there. It had no vanishing point out behind the reader — it had a wall a few
+ * inches in front of one, which it reached and stopped against. Invisible by then, but the frames
+ * leading up to it are a card decelerating into a surface, which is exactly the "trying to stop" the
+ * eye is picking up.
+ *
+ * So both ends are now named, and both are far enough away that neither is ever arrived AT:
+ */
+// ── THE CONSTRAINT, WRITTEN DOWN SO IT IS NOT REDISCOVERED ──────────────────────────────────────
+// A card is only VISIBLE across ~0.3 depth units (from the seat at 1.0 to ASCEND_REVEAL at 0.70).
+// Whatever fraction of the total journey those 0.3 units represent is the fraction of the clock the
+// reader gets to watch. So distance and watchability are in direct opposition on this leg:
+//
+//     terminus  -9   ->  0.3 of 10.0 units  ->   20ms visible   (a flash — measured)
+//     terminus -1.8  ->  0.3 of  2.8 units  ->   70ms visible
+//     terminus -0.15 ->  0.3 of  1.15 units ->  ~180ms visible  (a pass you can follow)
+//
+// The instinct that a further vanishing point reads as smoother is right about EASING and wrong about
+// DISTANCE: what makes a pass-through feel unhurried is constant velocity and no terminus in view, and
+// both of those are already true at -0.15. The card is culled at 0.70 while still moving at exactly the
+// rate it started at, so nothing about its last visible frame says where it was going to stop. Sending
+// it a further thousand feet changes nothing the eye can see and costs every frame of the part it can.
+//
+// SO THE FAR DISTANCE IS SPENT WHERE IT IS VISIBLE — on the tree card receding to depth 7.7, which is
+// seen the whole way, rather than on the departing card, which is not.
+const DEPTH_BEHIND_READER = -0.15; // just past the reader; still moving when culled, never arriving
+const DEPTH_FAR = 1 / 0.115; // Burr's: the back of the room (~8.7 depth units)
+/** DEPTH, not scale. Apparent size goes as 1/distance, so equal depth steps are what a conveyor makes
+ *  — equal SCALE steps are not, and mistaking one for the other is what made the exit read as two
+ *  unrelated animations. */
+const depthOf = (scale: number) => 1 / scale;
+/** The clamp is a GUARD, not a destination — see DEPTH_BEHIND_READER. A card must never be travelling
+ *  toward it, only through the region long before it. */
+const scaleAt = (depth: number) => 1 / Math.max(0.06, depth);
+// LEAVING THE ZONE the card goes PAST the viewer, so it may be as large as it likes — nobody is asked
+// to read it. 1.55 was barely wider than the screen, which is why it read as lingering rather than
+// passing. It only fades in its last quarter, once it is big enough that the card behind is fully
+// covered anyway.
+// 2.05 -> 1.72. Everything past the plane is invisible by construction, so the surplus travel was
+// pure cost: it stretched the clock and bought frames nobody sees. A little past full coverage is all
+// that is needed to guarantee the card is gone rather than caught mid-crossing on a slow frame.
+// ── LEAVING THE ZONE: OFF THE TOP, ON THE SAME LINE ─────────────────────────────────────────────
+// Sam, having rejected every version of enlarge-and-dissolve: "it can exit at an angle up off screen,
+// and it doesn't have to exit the top of the screen at 300% magnification — it can be just slightly
+// larger, to give the effect of getting closer to the user's point of view without being IMAX sized."
+//
+// THE SCALE STOPS BEING THE EXIT AND BECOMES ONLY THE DEPTH CUE. A card that leaves the FRAME needs no
+// alpha and no magnification to disappear — geometry does it, the way every other flight in this app
+// already leaves (deckExit puts a card past the window edge and stops worrying about it). 1.22 is
+// enough to read as "coming nearer" and nowhere near enough to become a wall.
+//
+// AND IT IS ONE AXIS, WHICH IS WHAT MAKES IT THE ARMY. Sam: "the entering and exiting cards are on the
+// same planes, so the incoming card from background has to be coming up from a slightly down place."
+// Up-and-near at one end, down-and-far at the other, and BOTH cards travel the same direction along it
+// on any given navigation — leaving the zone, the orbit card rises out of frame while the tree card
+// rises INTO rest from slightly below and behind. Not a vertical transition with a scale on it: a
+// depth move whose line happens to be tilted, which is the only reason it can leave the screen at all.
 // THE ARRIVAL FADE, and it is the other half of the same complaint. It used to reach full opacity by
 // t = 0.33, so the card was solid while it was still enormous — which is precisely "instantly covers
 // the existing view". Spending the fade over the first ~62% instead means the card is still translucent
 // while it is largest and only commits once it is near its own size, so it reads as approaching THROUGH
 // the view rather than landing on top of it. Sam: "maybe orbit entry into view has a very subtle fade
 // in."
-const ASCEND_FADE_RATE = 1.6; // opacity = min(1, t * this)
+// ── THE MONITOR PLANE — opacity is a function of DEPTH, not of time ─────────────────────────────
+//
+// Sam, and this is the correction the gesture was missing: "the endpoint of the orbit card, both before
+// entry and after exit, is NOT right at the monitor plane where it slows down and stops and fades out.
+// The final settlement point is beyond the plane of the monitor, going towards the user — maybe it's
+// like on the user's forehead. It can exit the monitor plane at a smaller size and keep the same
+// velocity, but once it crosses the monitor plane it is hypothetically still growing, just hidden."
+//
+// Everything wrong with the previous build follows from having modelled the endpoint as the SCREEN. The
+// card decelerated to a halt exactly where it was largest and least readable, and dissolved there —
+// "it presses itself up to the monitor plane where I'm reading the NB text in massive font, and it sort
+// of stops its transition and fades out, which is a vomit-inducing experience."
+//
+// So the card's rest position is BEHIND THE VIEWER and the monitor is a window it passes through:
+//
+//   1. OPACITY IS DECIDED BY SCALE, NOT BY t. Past the plane the card is too close to see, so it is
+//      transparent there whatever the clock says. That is also what buys the lockstep back — while the
+//      arriving card is still beyond the plane it is invisible, so the DEPARTING card is what the eye
+//      tracks, and the two are visibly moving together instead of one flashing over the other.
+//   2. IT NEVER DECELERATES AT THE PLANE. It crosses at speed; what ends is our ability to see it.
+//
+// PLANE = the scale at which a 925x575 card covers a 1440x900 viewport: 1440/925 = 1.557, 900/575 =
+// 1.565. Past ~1.56 every pixel is off-screen anyway, which is why 2.9x was pointless — most of that
+// travel was invisible and merely made the fade look like a stall.
+const ASCEND_PLANE = 1.56; // fully covers the viewport — beyond here the card cannot be seen
+// ── WHERE THE CARD MAY BE SEEN — THE BEAT LIVES IN THIS NUMBER ──────────────────────────────────
+// The arrival used to start resolving AT THE PLANE, 1.56 — the exact scale at which the card covers
+// the whole viewport. Measured: its first visible frame was 1.55x with its left edge at −4px. So the
+// thing fading up out of nothing had no edges anywhere on screen; it was not an object arriving, it
+// was the entire view brightening, with a card emerging from it afterwards. That is the beat Sam could
+// feel and not name — "a weird beat when the Jefferson card appears that's distracting, it's hard to
+// describe."
+//
+// Moved BELOW full coverage. At 1.42 the card is 1314x817 in a 1440x900 viewport — 63px of ground down
+// each side, 42px top and bottom — so the first thing seen is unmistakably a CARD, with corners,
+// already on its way to its seat. The oversized portion is untouched and still entirely invisible
+// (1.80 down to 1.42 at opacity 0), which is the property that made the entry work and is not what
+// needed fixing.
+/**
+ * HOW VISIBLE A CARD IS AT A GIVEN DEPTH — one function, used by BOTH directions.
+ *
+ * Sam: "the card 100% will exit the same way, there's no veil — the user has to see an exit of the
+ * orbit card." So the exit is not a different gesture with its own dials; it is this same curve read
+ * as the card travels the other way. Whatever fixes the arrival's beat fixes the departure's by
+ * construction, and the two can never drift apart because there is only one rule to drift.
+ *
+ * 1 at rest, falling to 0 as the card nears the viewer, and completely gone before it is large enough
+ * to have lost its edges. That last clause is the whole design: a card is only allowed to be
+ * PARTIALLY transparent while it still reads as a card. Above ASCEND_REVEAL it is not translucent, it
+ * is absent — which is also why it can never become a window onto the card behind it.
+ */
+const revealAt = (scale: number) =>
+	Math.max(0, Math.min(1, (ASCEND_REVEAL - scale) / (ASCEND_REVEAL - ASCEND_SOLID)));
+
+// ── THE CONVEYOR: ONE RAIL, ONE DIRECTION, TWO CARDS AT DIFFERENT POINTS ON IT ──────────────────
+//
+// Sam, and this reframes the whole gesture: "maybe the two cards can be more on the same rails, like
+// the army row lockstep philosophy… their cards can't occupy the same physical space naturally, so
+// they are forced to move together but on the same rails… like it's a front-to-back conveyor belt
+// that is invisible but moves cards in and out of Hero position." And: "the Ascension zone needs to
+// feel like we've moved somewhere totally different, like from far away — like the Jefferson card
+// entered from a mile off. The way we have it, it's like the Jefferson card was always sitting right
+// off screen super close, just waiting for the click."
+//
+// BOTH COMPLAINTS ARE THE SAME MISTAKE, AND IT WAS MINE FROM THE FIRST BUILD: the arrival was coming
+// from the NEAR end. Starting at 1.8x it was already almost on top of the reader, so its whole journey
+// was the last few feet — which is exactly "waiting just off screen" — and because both cards were
+// travelling toward each other from opposite ends, they were never on one rail at all. They met,
+// crossed, and one of them had to be got rid of at the crossing. Every artefact of the last six
+// attempts lived at that crossing.
+//
+// SO THE BELT ONLY EVER RUNS ONE WAY: toward the reader. The new card comes up from FAR — small, whole,
+// with edges, behind everything — and travels to the seat. The old card carries on past the seat toward
+// the reader and out. They are at two points on one line moving the same direction, never toward each
+// other, so they cannot cross and there is no crossing to hide. The far card is behind the near one the
+// entire time and is simply UNCOVERED as the near one leaves, which is what "cards can't occupy the
+// same space" looks like when it is honest.
+//
+// It also buys the distance for free: 0.26 -> 1.0 is a card growing from a speck to full size, which is
+// a long visible journey, where 1.8 -> 1.0 was a short one that had to happen mostly off-camera.
+// THE BELT REVERSES BETWEEN THE TWO DIRECTIONS — it is not a one-way conveyor, and making it one was
+// a mistake of mine that cost a round trip. Sam: "the exit is the poor transition, and you've made both
+// transitions the exit… if you are just doing a carousel, which is not what I ever want, you are going
+// the wrong direction. I want to ENTER and EXIT the ascension zone."
+//
+// Entering and leaving are OPPOSITES. Generalising the exit's shape onto the entry replaced the one
+// half he had approved with the half he had rejected — and a single rule applied both ways is by
+// definition a carousel, which is a thing that goes round rather than somewhere you go and come back
+// from. The orbit card is on the NEAR side in both directions: it arrives out of the foreground and it
+// leaves back into the foreground. What reverses is which card is doing the arriving.
+//
+//     ENTERING   orbit card  FRONT -> seat        tree card   seat -> BACK
+//     LEAVING    orbit card  seat  -> FRONT/out   tree card   BACK -> seat
+const ASCEND_FAR = 0.26; // unused by the flight; kept only as the far end of the axis for reference
+const ASCEND_REVEAL = 1.42; // first frame the card may be seen — it has edges here; the plane does not
+const ASCEND_SOLID = 1.18; // and fully committed by here, with the settle still to come
 /**
  * THE SETTLE, WITH A LITTLE DISHONESTY IN IT.
  *
@@ -918,8 +1169,153 @@ function demoteSettleBackFor(distance: number, footprint: number, factor = 1): n
 export function growFrom(node: Element) {
 	const origin = flightOrigin;
 	flightOrigin = null; // consume: no click → no stale reuse
+	// ── THE ASCENSION IS RESOLVED BEFORE THE ORIGIN GUARD, AND MUST BE ───────────────────────────────
+	// Everything below this point is a FLIP: it grows the card from a click-captured rect, so with no
+	// rect there is no flight and the guard that follows is exactly right for a cold load or a
+	// back/forward. A head-on crossing has NO ORIGIN RECT BY DEFINITION — it comes out of depth at the
+	// featured slot and never grows from anything — so it has to be answered first.
+	//
+	// It was answered last, and that is what left the X "toggling the URL slug but no transition": the
+	// descent's fallback path calls focusPerson directly and captures no origin, so the guard returned
+	// { duration: 0 } and the ascend branch was never reached. Relaxing the guard instead was the wrong
+	// repair — it let `origin` be null through 300 lines of FLIP arithmetic that all assume otherwise
+	// (svelte-check found five). Answering the depth axis on its own terms costs nothing and leaves the
+	// planar path exactly as strict as it was.
+	if (ascendDir !== 0 && !prefersReducedMotion.current) {
+		const seat = (node as HTMLElement).getBoundingClientRect();
+		if (seat.width && seat.height) {
+			const hero = node as HTMLElement;
+			// Rolled ONCE, here, as the flight is created — see the note on ASCEND_WOBBLE.
+			const jitter = 0.85 + Math.random() * 0.3; // ±15% on the settle's amplitude
+			const phase = 0.9 + Math.random() * 0.2; // and a little on where the bounces fall
+			heroSchedule = {
+					duration: ASCEND_ENTRY_MS,
+					delay: ASCEND_ENTRY_DELAY,
+					kind: flightKind,
+					axis: 'front'
+			};
+			hero.style.transformOrigin = 'center center';
+			// THE DESCENT IS THE ASCENT REVERSED, and this is where that is expressed. Going IN, the new card
+			// arrives out of the FOREGROUND (it was in front of you all along). Coming OUT, the card you left
+			// behind returns from the BACKGROUND — it never went anywhere, it was simply behind the thing that
+			// covered it. Sam: "the orbit card and spouse exit into foreground and Burr's original card enters
+			// from background and settles into final position like a discrete physical baseball card."
+			// ENTERING: out of the foreground, exactly as approved — do not generalise this.
+			// LEAVING: the tree card rides the same belt back, from its parked depth to the seat.
+			const from = ascendDir === 1 ? ASCEND_ENTRY_SCALE : ASCEND_PARK;
+			// ── DEPTH DECIDES WHO IS IN FRONT, NOT WHO IS ARRIVING ───────────────────────────────────
+			// Ascending, the incoming card is the near one all the way (1.55 down to 1, against a departure
+			// shrinking from 1 to 0.34), so it sits on top. DESCENDING it is the FAR one — it grows from
+			// 0.34 while the card it replaces advances past the viewer — so it must sit BEHIND.
+			//
+			// Getting this backwards is what Sam saw: "it looks like the outgoing orbit card is giving birth
+			// to the incoming card — it emerges from its belly tiny, so the entering card is technically in
+			// front of the exiting card, which violates everything about the rules of this project." Exactly
+			// right: a smaller card is a further card, and a further card cannot be in front. z-order on this
+			// axis is a function of SCALE, never of arrival.
+			// ENTERING, the arrival comes out of the FOREGROUND and is the near card — this is the half
+			// Sam has approved and it must not be generalised again. LEAVING, the arrival is the tree card
+			// returning from BEHIND, so it is the far one and needs no alpha at all.
+			const nearer = ascendDir === 1;
+			const z = nearer ? '2' : '1';
+			// The returning card starts a little BELOW its seat as well as behind it — the shallow end of the
+		// same line the departing card is leaving along, so the two read as one movement rather than two
+		// objects that happen to be animating at once. Zero on the way in; the arrival there already
+		// comes from directly ahead.
+		const drop = 0; // the shared-line return went with the top exit — see the note in shrinkTo
+		hero.style.transform = `translateY(${drop}px) scale(${from})`;
+			hero.style.opacity = '0';
+			hero.style.zIndex = z;
+			return {
+					delay: ASCEND_ENTRY_DELAY,
+					duration: ASCEND_ENTRY_MS,
+					// The APPROACH is a strong ease-out — most of the distance is spent early, so the card reads
+					// as arriving with momentum and then taking its time to seat. The overshoot is NOT in this
+					// easing; it is in the css below, where it can carry the jitter.
+					// NOT cubicOut, which spends most of its distance early — the card was through the plane
+					// within a fifth of the flight and covering the stage before the departure had gone anywhere
+					// (Sam: "it just covers it up in a flash"). An ease-IN-out leaves slowly, keeping the arrival
+					// beyond the plane and invisible while the departure does its visible travelling, then brings
+					// it through the window and decelerates it into rest. The departure accelerates to match —
+					// one clock, and two curves that are mirror images rather than the same function.
+					// LINEAR ON THE RETURN, and this is the other half of the depth fix directly above. Svelte
+			// applies the easing BEFORE css() sees `t`, so interpolating depth linearly against an
+			// already-eased clock is still lumpy — cubicInOut is slow at both ends, which is exactly the
+			// loiter-then-rush the trace showed. Even room-per-second needs both: linear units AND a
+			// linear clock. The settle wobble still lands it, so nothing arrives with a hard stop.
+			//
+			// The ASCENT keeps cubicInOut. There the arriving card is invisible for its first third, and
+			// leaving slowly is what keeps it hidden past the reveal while the departing card does the
+			// visible travelling — a linear clock there would bring it through the window too early.
+			// A MILD EASE-OUT ON THE RETURN, NOT PURE LINEAR. Sam: "his acceleration is so fast near the
+			// end and his card has a hard stop so quick it's like hitting a wall."
+			//
+			// Both halves of that are one fact about perspective. A LINEAR depth clock is constant
+			// distance per second, but apparent size goes as 1/depth — so the last stretch, where depth
+			// changes from 2 to 1, doubles the card's size in the same time the stretch from 11 to 10
+			// barely moved it. Even travel LOOKS like acceleration near the seat, and then the clock ends
+			// and it simply stops. Exponent 1.35 is gentle enough to keep the long middle of the journey
+			// close to even — which is what fixed the loiter-then-rush — while taking the sting out of the
+			// arrival, so it decelerates into the seat instead of reaching it at full speed.
+			easing: ascendDir === -1 ? (x: number) => 1 - Math.pow(1 - x, 1.35) : cubicInOut,
+					css: (t: number) => {
+						// ── THE RETURN IS INTERPOLATED IN DEPTH, NOT IN SCALE ────────────────────────────────
+				// Sam: "when Burr is entering again from the background as we exit the Ascension zone,
+				// he's right on Jefferson's ass coming in."
+				//
+				// He was, and it was a units bug rather than a timing one. This ran linearly in SCALE,
+				// and equal scale steps are wildly unequal distances — measured, the return spent its
+				// first 200ms covering 1.1 depth units and the next 114ms covering 6.2. So the card
+				// loitered at the back of the room, then crossed the whole thing in a rush, catching up
+				// to the departing card instead of following it home from a distance.
+				//
+				// Interpolating DEPTH makes the approach uniform: the same units of room per unit of
+				// time, all the way in. That is also the only version that spends the distance the park
+				// was widened to buy — a card that crosses ten depth units in a third of a second has
+				// not travelled further in any sense the eye can collect, however far back it started.
+				//
+				// The ENTERING recede is deliberately left in scale-space: Sam has signed that half off
+				// ("I like Burr exiting to the background having some distance") and it is not the same
+				// motion — going away, the far end is where the card is least legible and slowing down
+				// into it reads correctly.
+				const base =
+					ascendDir === -1
+						? scaleAt(DEPTH_FAR + (1 - DEPTH_FAR) * t)
+						: from + (1 - from) * t;
+						// A decaying wobble that is exactly zero at both ends, so the card cannot miss its rest.
+						const wob =
+							Math.sin(t * Math.PI * ASCEND_WOBBLE_CYCLES * phase) *
+							Math.exp(-ASCEND_WOBBLE_DECAY * t) *
+							ASCEND_WOBBLE *
+							jitter *
+							(1 - t);
+						// The fade is the FIRST third and then done. A card still fading while it settles reads as
+						// a dissolve; opaque early and merely still growing is what reads as depth.
+						// THE FADE IS A GLIMPSE, NOT A CROSSFADE. Sam, on the first version: "both entering and
+						// exiting cards are on screen at the same time!! ack." A card you can see through is not
+						// a discrete object, and two of them at once is not a flight, it is a dissolve. So the
+						// arrival goes opaque within the first fifth — long enough to catch the departing card
+						// receding behind it (Sam's own "you'll see it for a millisecond before the entering card
+						// covers it up"), short enough that everything after that is one solid card OCCLUDING
+						// another, which is §17.4's honest physics.
+						// Descending, this card is BEHIND and never needs to fade at all — it is covered.
+						// Materialise by DEPTH: invisible at the plane, solid by ASCEND_SOLID, solid for the whole
+						// settle after that. The far card never fades — it is behind, and covered.
+						const op = nearer ? revealAt(base + wob) : 1;
+						return `transform: translateY(${drop * (1 - t)}px) scale(${base + wob}); opacity: ${op}; transform-origin: center center; z-index: ${z};`;
+					}
+			};
+		}
+	}
 	// A cold load / reduced motion / a card with no box has NO flight — clear the published schedule so
 	// the blade can't inherit the previous navigation's clock and draw on a page that never flew.
+	// A HEAD-ON FLIGHT HAS NO ORIGIN RECT — BY DEFINITION. This guard is right for a cold load or a
+	// back/forward, where nothing was clicked and there is nothing to grow from. But the Ascension does
+	// not grow from a clicked rect at all: it comes out of depth, at the featured slot, and needs no
+	// origin. Excluding it here is what left the X "toggling the URL slug but no transition" — the
+	// descent's fallback path calls focusPerson directly, captures no origin, and this returned
+	// { duration: 0 } before the ascend branch below could ever be reached. The payload swapped, the URL
+	// changed, and nothing moved.
 	if (!origin || prefersReducedMotion.current) {
 		heroSchedule = { duration: 0, delay: 0, kind: 'relative', axis: 'lateral' };
 		return { duration: 0 };
@@ -1078,48 +1474,6 @@ export function growFrom(node: Element) {
 	// reading of the house settle (see the note on ASCEND_SETTLE).
 	//
 	// CLOCKED OFF HONEST CORNER TRAVEL, never off `distance`, which is zero here by construction.
-	if (ascendDir !== 0) {
-		// Rolled ONCE, here, as the flight is created — see the note on ASCEND_WOBBLE.
-		const jitter = 0.85 + Math.random() * 0.3; // ±15% on the settle's amplitude
-		const phase = 0.9 + Math.random() * 0.2; // and a little on where the bounces fall
-		heroSchedule = {
-			duration: ASCEND_ENTRY_MS,
-			delay: ASCEND_ENTRY_DELAY,
-			kind: flightKind,
-			axis: 'front'
-		};
-		hero.style.transformOrigin = 'center center';
-		// THE DESCENT IS THE ASCENT REVERSED, and this is where that is expressed. Going IN, the new card
-		// arrives out of the FOREGROUND (it was in front of you all along). Coming OUT, the card you left
-		// behind returns from the BACKGROUND — it never went anywhere, it was simply behind the thing that
-		// covered it. Sam: "the orbit card and spouse exit into foreground and Burr's original card enters
-		// from background and settles into final position like a discrete physical baseball card."
-		const from = ascendDir === 1 ? ASCEND_ENTRY_SCALE : ASCEND_EXIT_SCALE;
-		hero.style.transform = `scale(${from})`;
-		hero.style.opacity = '0';
-		hero.style.zIndex = '2';
-		return {
-			delay: ASCEND_ENTRY_DELAY,
-			duration: ASCEND_ENTRY_MS,
-			// The APPROACH is a strong ease-out — most of the distance is spent early, so the card reads
-			// as arriving with momentum and then taking its time to seat. The overshoot is NOT in this
-			// easing; it is in the css below, where it can carry the jitter.
-			easing: (t: number) => 1 - Math.pow(1 - t, 3),
-			css: (t: number) => {
-				const base = from + (1 - from) * t;
-				// A decaying wobble that is exactly zero at both ends, so the card cannot miss its rest.
-				const wob =
-					Math.sin(t * Math.PI * ASCEND_WOBBLE_CYCLES * phase) *
-					Math.exp(-ASCEND_WOBBLE_DECAY * t) *
-					ASCEND_WOBBLE *
-					jitter *
-					(1 - t);
-				// The fade is the FIRST third and then done. A card still fading while it settles reads as
-				// a dissolve; opaque early and merely still growing is what reads as depth.
-				return `transform: scale(${base + wob}); opacity: ${Math.min(1, t * ASCEND_FADE_RATE)}; transform-origin: center center; z-index: 2;`;
-			}
-		};
-	}
 	if (arc) {
 		// ARC: the card DESCENDS onto the seat — no slide, no chip-morph. BOTH its scale AND its fade-in are
 		// read from the shared arc clock (never its own transition t), so it stays locked to the substrate:
@@ -1240,26 +1594,155 @@ export function shrinkTo(node: Element, params: { id: string }) {
 		// Runs on BOTH directions of the crossing. Ascending, this is the tree card falling away;
 		// descending, it is the orbit card — and the descent's arrival is an ordinary CC, so the zone
 		// is left by the same gesture in reverse without a second code path.
+		// ── ONLY THE ASCENT IS THE ASCENSION ────────────────────────────────────────────────────
+		// The descent used to have its own depth gesture and every version of it was rejected: a fade
+		// at the plane turns the front card into a window onto the back one; a hard cull at the plane
+		// is a jarring flash; and leaving through the top is, in Sam's words, "ridiculously goofy —
+		// 0% chance of proceeding."
+		//
+		// Three failures with one thing in common: each was a NEW gesture invented for the exit. The
+		// app already owns a departure for exactly this situation — a cross-connection leaving one
+		// card for another — and it is tuned, probe-guarded and signed off. Leaving the zone IS an
+		// ordinary CC; what made arriving special was the arrival.
+		//
+		// So the descent falls through to the deck, and the asymmetry is the point rather than a
+		// compromise: you ASCEND to an orbit figure (a gesture the app has never made before, because
+		// nothing else in the tree is reached this way) and you simply RETURN to the tree (a gesture
+		// it makes constantly). The zone's specialness lives in the arrival and in the dark, which is
+		// where Sam has consistently said it reads well.
 		if (ascendDir !== 0) {
 			const halfDiag = Math.hypot(card.width, card.height) / 2;
 			// The DEMOTE ceiling, not the promotion's: this is the receding object, and the house already
 			// holds that a leaving card is quicker than an arriving one (SPOUSE_DEMOTE_V_CEIL).
 			void halfDiag; // the clock here is the gesture's, not the ceiling's — see ASCEND_TOTAL_MS
 			const ms = ASCEND_EXIT_MS;
+			const leaving = ascendDir === -1; // the orbit card, on its way back out toward the reader
 			el.style.transformOrigin = 'center center';
-			el.style.zIndex = '1'; // beneath the arrival at z 2 — the occlusion, stated rather than raced
+			el.style.zIndex = ascendDir === -1 ? '2' : '1'; // depth decides: the nearer card is on top
 			return {
 				duration: ms,
-				easing: cubicOut,
+				// ACCELERATING when it is the one passing you: a card coming at you covers ground faster
+				// the nearer it gets, and it must never slow at the window. cubicOut did exactly that —
+				// it arrived at its largest and stalled.
+				// NOT x*x. A pure ease-in creeps for the first third, which is what made the departure feel
+				// like it was swelling rather than going. A mild acceleration keeps the physics honest (a
+				// card coming toward you does cover ground faster as it nears) while still committing to
+				// the move immediately — Sam's "a little faster, without superhuman velocity".
+				// The belt leaves slowly and arrives slowly. cubicOut dumps most of its distance in the
+				// first third, which on the depth belt means the departing card is culled almost at once —
+				// the flash. An ease-in-out spends the opening on the departure, where the eye is.
+				// LINEAR on the way out — see the note on the belt below. Every easing family bends the
+				// velocity somewhere, and the one place this card must not bend it is while it is passing
+				// the reader, which is the only part that is visible.
+				easing: ascendDir === -1 ? (x: number) => x : cubicOut,
 				css: (t: number) => {
 							// Leaving the zone, the card goes the other way — TOWARD the viewer and out past them,
 					// which is the only exit that reads as the reverse of having arrived from there.
-					const to = ascendDir === 1 ? ASCEND_EXIT_SCALE : ASCEND_ENTRY_SCALE;
-					const sc = 1 + (to - 1) * (1 - t);
+					// ── THE EXIT IS THE ENTRY, READ BACKWARDS ──────────────────────────────────────────
+					// Sam: "the card 100% will exit the same way, there's no veil — the user has to see an
+					// exit of the orbit card." So the departure travels the SAME line the arrival came in
+					// on, to the same depth, and its visibility comes from the SAME function. It is not a
+					// second gesture; it is the first one played in reverse.
+					//
+					// Which also disposes of every failed exit at once. It cannot inflate to IMAX, because
+					// it is gone by 1.42 — the scale at which a card still has edges. It cannot become a
+					// window onto the card behind it, because above 1.42 it is absent rather than
+					// translucent. And it needs no rise out of the top, because it does not have to leave
+					// the FRAME to leave the view — it only has to get near enough to stop being a card.
+					// ── LEAVING: ONE BELT, ONE STEP, MEASURED IN DEPTH ─────────────────────────────────
+					// Sam: "the Jefferson card just kind of grows to the monitor and slaps me in the face
+					// and disappears, and then the Burr entry from the background just does his thing with
+					// no internal consistency."
+					//
+					// The two halves were travelling different distances. Jefferson ran 1.0 -> 1.9 and Burr
+					// 0.46 -> 1.0, which LOOK comparable and are not: in depth those are 0.47 and 1.17
+					// units. Two cards on one conveyor move THE SAME DISTANCE, so they were never on one
+					// conveyor — they were two animations that happened to run at once, which is exactly
+					// what "no internal consistency" describes.
+					//
+					// So the belt is defined once, in depth, as the GAP between them: Burr is parked at
+					// depth 1/PARK and Jefferson sits at depth 1. Advance the whole belt by that gap and
+					// Burr arrives at the seat in the same instant Jefferson reaches the reader. One step,
+					// both cards, rigidly linked — the army, on the axis it actually travels.
+					//
+					// It also disposes of the face-slap without a special case. Jefferson is culled at
+					// ASCEND_REVEAL (depth 0.70), which on this belt he reaches in the first third of the
+					// step — so he is gone EARLY and briskly, the way something passing your head is, and
+					// the remaining two thirds are Burr coming home. Nothing had to be tuned to make that
+					// happen; it falls out of both cards sharing one speed.
+					const e = 1 - t;
+					// LEAVING: from the seat to a point far behind the reader, at CONSTANT DEPTH VELOCITY.
+					// Linear, deliberately — an eased curve decelerates, and a card that decelerates on its
+					// way past you is a card trying to stop. It is culled at ASCEND_REVEAL long before the
+					// terminus, so what the eye sees is a uniform pass-through with no ending in it at all:
+					// the card is moving at exactly the same rate on its last visible frame as on its
+					// first. The distance is what makes that possible — over 10 depth units, the visible
+					// 0.3 of them cannot contain a curve.
+					const sc = leaving
+						? scaleAt(1 + (DEPTH_BEHIND_READER - 1) * e)
+						: 1 + (ASCEND_PARK - 1) * e; // entering: unchanged, and approved
 					// Opacity trails the scale: it is still fully solid while it is still large, so what the
 					// eye reads is DISTANCE, not a dissolve. It only gives up its last third once it is
 					// small enough that the arriving card is already covering it.
-					return `transform: scale(${sc}); opacity: ${Math.min(1, t * 2.4)}; transform-origin: center center; z-index: 1;`;
+					// Ascending, this card is the FAR one: it is covered by the arrival, so it stays solid
+					// and simply recedes — fading it was what let both cards be seen at once. Descending it
+					// is the NEAR one, passing the viewer, so it holds z 2 and gives up its opacity only in
+					// the last quarter, by which point it is 2.9x and the card behind is fully covered.
+					// ── A DEPARTING CARD IS OPAQUE UNTIL IT COVERS THE SCREEN ──────────────────────────
+					// Mirroring the arrival's fade was wrong, and Sam named the symptom exactly: "the fade
+					// out happens too soon and we see the entering Aaron Burr Jr card within the middle of
+					// the exiting Jefferson card… the fade is too long and too emphasized, you're losing
+					// the illusion of the card being a discrete baseball card."
+					//
+					// He is right and the reason is geometric rather than aesthetic. Both cards are CENTRED
+					// on the same point, and the departing one is always the larger, so the arriving card
+					// sits entirely inside its bounds. Any translucency at all therefore does not soften an
+					// edge — it turns the front card into a WINDOW onto the back one. There is no amount of
+					// fade that is "subtle" in that arrangement; a solid object that you can see through is
+					// simply not a solid object.
+					//
+					// So it does not fade while it can be seen. It holds full opacity all the way to the
+					// plane — where it covers every pixel of the viewport and there is nothing behind it
+					// left to reveal — and only then gives up its alpha, across a short crossing, while
+					// still accelerating away. Measured, that window is ~140ms of an 840ms flight, and the
+					// card behind is ~0.95x and nearly settled by the time any of it shows through, so what
+					// reads is a card passing you and revealing what was always behind it.
+					// ── IT LEAVES THE FRAME; IT DOES NOT DISSOLVE ──────────────────────────────────────
+					// Sam rejected the enlarge-and-dissolve outright ("I'll reject that 10 out of 10
+					// times") and then asked the right question: the ENTRY reads as "a solid object moving
+					// in from a slightly larger size", so what is it doing differently?
+					//
+					// Measured, the difference is not the scale — it is WHERE THE OVERSIZED PART HAPPENS.
+					// The arrival is at opacity 0 for every frame above the plane, so its visible life is
+					// only 1.56x down to 1.0x: a small, legible move. The departure ran 1.0x to 1.91x with
+					// every frame on screen, so the enlargement was not a side effect of the exit, it WAS
+					// the exit. No fade could have rescued that; the fade was being asked to hide
+					// something that had already been shown.
+					//
+					// So opacity here is BINARY at the plane, not a ramp. Below it the card is a solid
+					// object growing toward you; at it, the card covers every pixel of the viewport, so
+					// there is nothing behind it left to reveal and nothing to see through — which is
+					// exactly why the belly problem cannot occur. A window needs partial alpha, and there
+					// is none at any point.
+					//
+					// The mirror is now exact: the arrival is invisible above the plane and solid below it;
+					// the departure is solid below the plane and invisible above it. One rule, read in two
+					// directions.
+					// Solid at every frame, in both directions. Ascending, this card is behind the arrival
+					// and covered; descending, it is simply on its way out of the top of the window. Neither
+					// case needs alpha, and every version that used alpha turned the front card into a
+					// window onto the back one (both are centred, so the smaller always sits inside the
+					// larger — there is no "subtle" amount of translucency in that arrangement).
+					// `(1 - t)`, NOT `t`. An OUTRO's clock runs 1 -> 0 — the scale line above already reads
+					// it that way, which is exactly why this stood out on the trace instead of hiding: the
+					// leaving card jumped to top −635 on its first painted frame and then descended BACK
+					// toward the seat, i.e. it played its own exit in reverse. The scale was right and the
+					// travel was inverted, so it read as a card falling INTO frame while growing.
+					// Ascending, this card is BEHIND the arrival and covered, so it stays solid and simply
+					// recedes. Descending it is the NEAR one and takes the shared reveal curve, so it thins
+					// out as it closes on the reader and is gone before it loses its edges.
+					const op = leaving ? revealAt(sc) : 1;
+					return `transform: scale(${sc}); opacity: ${op}; transform-origin: center center; z-index: ${leaving ? 2 : 1};`;
 				}
 			};
 		}

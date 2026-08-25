@@ -4722,3 +4722,144 @@ collapse (§30), the other opens below everything and moves nothing above the ca
 
 The stage overflows further while the tier is open, and may scroll. That is deliberate and it is Sam's
 call, not a defect — see §33.5, which took a second sanctioned exception on the strength of it.
+
+---
+
+## 38. THE ASCENSION — THE DEPTH AXIS (IN PROGRESS, August 25)
+
+_(An orbit entry is a person the tree reaches ONLY by cross-connection. Arriving at one is the first
+gesture in this project that travels on Z rather than in the plane. NOT FINISHED — the entry is signed
+off, the exit is not. Recorded now because the DOCTRINE below was expensive and is already durable,
+whatever the remaining dials settle at. Build spec: roadmap §40. Live ledger: docs/ASCENSION_WORKING_NOTES.md.)_
+
+### 38.1 THE THESIS — you go somewhere, you do not change seats
+
+The zone has to feel like a **place you travelled to**, not a card swap with a dark background. Sam, on
+the version that failed this: *"it's like changing positions on a sofa, just scooch over."* And on what
+it should be: *"like we called to Jefferson to show up, not that he was right there itching to jump into
+view from just offscreen."*
+
+That distinction is the whole design and it is not decoration. An orbit figure is someone who influenced
+the line from outside it — Jefferson, Hamilton, Lincoln — and the app's claim is that reaching them is
+unlike reaching anyone else in the tree. If the transition reads as adjacency, the claim is false.
+
+**The zone is far away, not off screen.** Every other flight in this app enters from beyond an edge,
+which is a statement about the PLANE — the person was over there. Depth says something different: the
+person was not over there, they were nowhere on this stage, and the stage had to reach for them.
+
+### 38.2 SCALE IS NOT DISTANCE — the mistake underneath four separate bugs
+
+**Apparent size goes as 1/distance.** Equal steps in scale are wildly unequal steps in space. Four
+complaints that arrived as four different symptoms were all this one error:
+
+| symptom | what was actually wrong |
+|---|---|
+| the departing card "gives birth" to the arriving one | z-order assigned by ARRIVAL instead of by depth — a smaller card is a further card and cannot be in front |
+| the returning card "is right on Jefferson's ass" | its approach interpolated SCALE, so it covered 1.1 depth units in 200ms and 6.2 in the next 114 |
+| the exit "slaps me in the face" | equal scale steps accelerate viciously as depth → 0 |
+| the arrival "has a hard stop like hitting a wall" | a linear DEPTH clock still looks like acceleration near the seat, because size is the reciprocal |
+
+**Interpolate depth, then convert to scale. Never interpolate scale directly.** `depthOf` / `scaleAt` in
+flight.ts exist for this and every new motion on this axis must go through them.
+
+And a corollary that cost its own round: **easing is applied before the css callback sees `t`**, so a
+linear depth term against an eased clock is still lumpy. Even travel needs linear units AND a linear
+clock.
+
+### 38.3 THE IMAX RULE — a card may never be shown larger than it can be read as a card
+
+**Sam, unconditional: *"I don't ever want the IMAX effect of the 300% exit orbit card magnification…
+I'll reject that 10 out of 10 times."*** A featured card at 1.8× on a 1440px monitor is 1665px — it has
+no edges on screen, so it is not a card any more, it is a wall of enlarged type. Watching one inflate is
+the single most rejected thing in this arc.
+
+So visibility is a function of DEPTH, not of time, and the threshold is geometric:
+
+    ASCEND_REVEAL = 1.42   the largest scale at which the card still has edges in the viewport
+    ASCEND_SOLID  = 1.18   fully opaque by here
+
+Above 1.42 a card is **absent**, not translucent. That single rule disposes of three separate failures:
+
+- it **cannot** inflate into a wall, because it is gone before it could;
+- it **cannot** become a window onto the card behind it (see 38.4), because it is never partly
+  transparent while large;
+- and the entry's "weird beat" was this threshold set wrong — it began resolving AT full coverage, so
+  what faded up out of nothing had no edges anywhere and read as the whole view brightening rather than
+  as an object arriving.
+
+**This is structural, not a tuned value.** The cap is enforced by the reveal function itself, so it
+cannot drift back in a later tuning pass.
+
+### 38.4 TWO CONCENTRIC CARDS CANNOT CROSS-FADE
+
+Both cards sit centred on the same point, so the smaller is always entirely INSIDE the larger. Alpha on
+the front one therefore does not soften an edge — it turns that card into a **window** onto the one
+behind it. Sam: *"the outgoing orbit card is giving birth to the incoming card, it emerges from its
+belly."*
+
+**There is no subtle amount.** Any translucency at all, at any duration, produces it. The only cure is
+that a card is opaque whenever it can be seen at all — which is what 38.3 already guarantees.
+
+### 38.5 THE ARMY, ON THE DEPTH AXIS
+
+Sam: *"the two cards can be more on the same rails… they can't occupy the same physical space
+naturally, so they are forced to move together but on the same rails — like a front-to-back conveyor
+belt that is invisible but moves cards in and out of Hero position."*
+
+Both cards travel the **same direction** on any one navigation, which is §18's army stated on Z: away
+from the reader when ascending, toward the reader when leaving. Cards on one belt never travel toward
+each other, so **there is no crossing** — and every artefact in this arc lived at the crossing.
+
+**But the belt REVERSES between the two directions, and that is not optional.** Making it one-way turned
+entering into a second exit, which Sam named instantly: *"if you are just doing a carousel, which is not
+what I ever want, you are going the wrong direction — we ENTER and EXIT the ascension zone."* A single
+rule applied both ways is a carousel: a thing that goes round, rather than somewhere you go and return
+from.
+
+### 38.6 DISTANCE IS SOLD BY THE CARD THAT STAYS VISIBLE
+
+The near card is only ever visible across ~0.3 depth units (the seat, to the reveal threshold). So
+whatever fraction of ITS journey those units represent is the fraction of the clock the reader gets:
+
+    terminus  -9      0.3 of 10.0 units  ->   20ms visible   (a flash — measured)
+    terminus -0.15    0.3 of  1.15 units ->  205ms visible   (a pass you can follow)
+
+**Sending the departing card further away therefore buys nothing the eye can collect, and costs every
+frame of the part it can.** The FAR card is the opposite: it is visible for its entire journey, never
+crossing the threshold, so every unit of depth added there is a unit actually received.
+
+**So depth is spent on the receding card, never on the passing one.** The tree card parks at ~8.7 depth
+units — more than twice its first value — and that is what makes the room read as deep enough for the
+arriving figure to have come from somewhere.
+
+A floor, though: past roughly 0.06 the receding card stops reading as *an object at a distance* and
+starts reading as *something that shrank to nothing*, which is a different and worse idea.
+
+### 38.7 A CARD MUST NEVER ARRIVE AT ITS VANISHING POINT
+
+`scaleAt` clamps depth to avoid a divide-by-zero, and that clamp was silently doubling as a
+destination — the departing card ran to it and SAT there. Sam felt it without being able to see it:
+*"it never slows down or feels like it's trying to stop"* is what he wanted; a card decelerating into a
+clamp is what he had.
+
+**Vanishing points are named constants, and are placed where nothing ever reaches them.** A guard is not
+a destination.
+
+### 38.8 THE ZONE IS THE COMPONENT — see roadmap §40.0
+
+Membership is a graph property, not a curation flag: a connected family component containing no Thomas
+descendant, reachable by cross-connection. You enter by CC, move around inside with ORDINARY navigation,
+and leave by the X or a CC out. Which is why the flight's axis is a **delta** — what earns the head-on
+gesture is the crossing, not the arriving — and why Lincoln's sub-lineage costs nothing to support.
+
+### 38.9 STILL OPEN
+
+- **The exit.** The entry is signed off; the exit has been rebuilt six times and is "something I can
+  live with for now". Rejected outright: enlarge-and-fade, hard cull, out the top of the screen, and the
+  one-way belt. See the ledger.
+- **The CC blade draws while the card is too far away to see it** — it is on the FLIGHT's clock while the
+  card's legibility is on the DEPTH curve, and those are not the same thing. Measured: the draw completes
+  by ~700ms, while the card is still ~106px wide.
+- **The ascent still interpolates scale rather than depth** — the same units bug as 38.2, latent on the
+  half that reads well.
+- The orbiting sprites (Field's three seeded depth layers are ready; `DOCK_X`/`DOCK_Y` give them a centre).

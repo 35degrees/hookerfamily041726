@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
+	import { untrack } from 'svelte';
 	import type { NarrativeBlock } from '$lib/types/person';
 	import { stage } from '$lib/state/stage.svelte';
 
@@ -44,7 +45,27 @@
 			}))
 	);
 
-	let openKey = $state<string | number | null>(null);
+	// OPEN FROM THE FIRST FRAME, NOT ONE FRAME LATER — and this is a real fix, not a preference.
+	//
+	// It was `null` here with the $effect below opening the first block after mount. That means the
+	// `{#if openKey === key}` body did not exist at first paint and was CREATED a frame later, so its
+	// local `transition:slide` ran — every card, every arrival, on every navigation in the app. Nobody
+	// ever saw it because every other flight enters from offscreen or morphs from a chip, and 220ms of
+	// slide is invisible while a card is still travelling.
+	//
+	// A head-on flight is the one that shows it: the card is large, centred and stationary in the frame
+	// while it settles, so the first NB visibly unfurls and shoves the headers under it down the card.
+	// Sam: "the NBs slide or transition down… it's almost like the NBs are dropping down like stones as
+	// they enter. The card should be fully formed as it enters view."
+	//
+	// Seeding the state at creation means the block is present in the first render, so the transition has
+	// nothing to play — a card arrives already formed. The $effect below still owns the RESET when the
+	// blocks prop changes; it simply now writes the value that is already there on a fresh mount, which
+	// is a no-op and cannot re-trigger the slide. Toggling by hand still animates exactly as before.
+	// `untrack` states the intent the compiler asks about: this is deliberately the value AT CREATION,
+	// which is the whole point — the block has to exist in the FIRST render or its local transition
+	// plays. Subsequent changes are the $effect's job, below.
+	let openKey = $state<string | number | null>(untrack(() => sortedBlocks[0]?.key) ?? null);
 
 	// Reset to the first block whenever the blocks prop changes (e.g., new
 	// person navigated to). This ensures the first NB is expanded by default
