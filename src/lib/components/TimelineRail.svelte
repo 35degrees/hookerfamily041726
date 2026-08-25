@@ -1,6 +1,6 @@
 <script module lang="ts">
 	/** The rail's width at u = 1. Reserved in stage.svelte.ts's width clamp — keep the two in step. */
-	export const RAIL_W = 122;
+	export const RAIL_W = 170; // 122 + 48 — see LABEL_W: the year moved to the RIGHT of its rule
 </script>
 
 <script lang="ts">
@@ -93,9 +93,19 @@
 	// horizontal offset, and they OVERLAP by a few px so the set reads as one stacked object rather
 	// than three separate columns (Sam: "attached to the right side of the hooker bar or maybe a few
 	// pixels of overlay").
-	// The year gutter, left of the bars. 36 rather than 26: the years grew 25% and now run to x=32, and
-	// the first lane was starting at 30 — so a bar was covering the last digit of every century it passed.
-	const LABEL_W = 36;
+	// THE YEAR GUTTER, left of the bars — and the number that had to move when Sam put the year on the
+	// far side of its rule ("move the year like 1750 to the right of its horizontal bar and move those
+	// horizontal bars all the way to the left browser edge").
+	//
+	// Before, the two things stacked: year at x 2-32, then the rule beginning at 44 and running ACROSS
+	// the lanes, which is why 36 was enough. Now they run in series from the same left edge — rule from
+	// 5, then the year after it — so the gutter is the whole train, and a year that is also 20% larger.
+	// 84 = the rule's right end (43) + an 8px gap + a 33px four-digit Fraunces number, rounded up.
+	//
+	// THIS COSTS 48px OF RAIL, and RAIL_W, the ground's ramp and this constant are ONE measurement.
+	// The stage reserves nothing for the rail (stage.svelte.ts, TIMELINE_RAIL_BASE = 0), so nothing
+	// reflows — the instrument simply gets wider and reaches further under the card.
+	const LABEL_W = 84;
 	/** The RENDERED width of a bar. 26, less 5%, less 5% again (Sam, Aug 10). */
 	const BAR_W = 23.47;
 	/**
@@ -1552,28 +1562,51 @@
 	];
 
 	/**
-	 * THREE TIERS OF RULE, so the scale can be read at a glance instead of counted (Sam: "smaller bars
-	 * for every ten years and a longer one at 25 years in between the 50 bars").
+	 * THREE TIERS OF RULE, so the scale can be read at a glance instead of counted.
 	 *
-	 *   decade   every 10 years, a stub, held 5px off the window edge
-	 *   half     every 50 — inset, and the only tier that carries a year
+	 *   half      every 50 years   38px long, 3.6px thick, and the only tier that carries a year
+	 *   quarter   every 25         32.9px long, 2.6px thick
+	 *   eighth    every 12.5       32.9px long, 2.1px thick
 	 *
-	 * A QUARTER TIER (every 25) was built and REMOVED at Sam's word. On a 440-year scale at ~1.9px/year
-	 * a 25-year mark sits only 47px from its neighbours, so a third length did not read as a third rank —
-	 * it read as an irregularity in the decade rhythm. Two tiers keep the scale countable: ten stubs
-	 * between each pair of numbered rules, every time, with nothing to recount.
+	 * A QUARTER TIER WAS BUILT AND REMOVED ONCE BEFORE, and it is back now for a reason worth keeping in
+	 * writing. The first attempt ranked the tiers by LENGTH, and on a 440-year scale at ~1.9px/year a
+	 * 25-year mark sits only 47px from its neighbours — a third length there did not read as a third
+	 * rank, it read as an irregularity in the decade rhythm, and Sam had it taken out.
+	 * THE SECOND ATTEMPT RANKS THEM BY THICKNESS instead (Sam, this pass), and length now says only
+	 * "numbered or not". Weight survives at small differences where length does not: 3.6 / 2.6 / 2.1 is
+	 * legible at a glance, while 38 / 32.9 / 32.9 would be three of the same mark. If a tier is ever
+	 * added or removed again, that is the axis to move.
 	 *
-	 * Stepping by 10 is now safe. It was NOT safe with quarters in play — those fall on 1625, 1675, 1725,
-	 * which are not multiples of ten, so a ten-step loop dropped every one of them and the loop had to run
-	 * at 5. Noted because it is the kind of thing that gets "simplified" back into a bug.
+	 * THE STEP IS 12.5 AND MUST STAY A CLEAN BINARY FRACTION. The old loop stepped by 10 and the comment
+	 * here warned that quarters fall on 1625/1675/1725 and would be dropped by it — the same trap, one
+	 * level finer: 12.5 is 25/2 and exact, so `% 50` and `% 25` classify correctly and `t.year` stays a
+	 * usable key. A step that is not a binary fraction would reintroduce it as float drift.
 	 */
-	type Tick = { year: number; tier: 'decade' | 'half'; century: boolean };
+	type Tick = { year: number; tier: 'half' | 'quarter' | 'eighth'; century: boolean };
+	/**
+	 * THREE TIERS ON A TWELVE-AND-A-HALF-YEAR GRID — half, quarter and eighth of a century.
+	 *
+	 * The decade stub is gone. Sam: "instead of one line every 10 years inbetween the 50 year markers,
+	 * do one 25 year marker... and then do halfway markers inbetween the 25 and 50 year markers." A mark
+	 * halfway between a 25 and a 50 IS a 12.5, so the grid is 12.5 and the three tiers fall out of it by
+	 * divisibility. It reads as a ruler rather than as a count of decades: one long mark, one shorter at
+	 * the midpoint, one shorter still at each quarter of the gap.
+	 *
+	 * FEWER MARKS, NOT MORE — 35 across the 440-year span against the decade grid's 44. The note on the
+	 * abandoned 2-year tier below still holds: what killed it was density, and this moves away from that
+	 * rather than toward it.
+	 *
+	 * 12.5 IS EXACT IN BINARY (it is 25/2), so `% 50` and `% 25` are safe here in a way a 1/3 step would
+	 * not be, and `t.year` stays a usable key.
+	 */
 	const ticks = $derived.by(() => {
 		const out: Tick[] = [];
-		const first = Math.ceil(START_YEAR / 10) * 10;
-		for (let y = first; y <= endYear; y += 10) {
+		const STEP = 12.5;
+		const first = Math.ceil(START_YEAR / STEP) * STEP;
+		for (let y = first; y <= endYear; y += STEP) {
 			if (y % 50 === 0) out.push({ year: y, tier: 'half', century: y % 100 === 0 });
-			else out.push({ year: y, tier: 'decade', century: false });
+			else if (y % 25 === 0) out.push({ year: y, tier: 'quarter', century: false });
+			else out.push({ year: y, tier: 'eighth', century: false });
 		}
 		return out;
 	});
@@ -1593,7 +1626,9 @@
 	{#each ticks as t (t.year)}
 		<div class="tick {t.tier}" style="top: {yFor(t.year)}px;">
 			{#if t.tier === 'half'}
-				<span class="tick-year" class:century={t.century}>{t.year}</span>
+				<span class="tick-year" class:century={t.century} class:millennium={t.year % 1000 === 0}
+					>{t.year}</span
+				>
 			{/if}
 		</div>
 	{/each}
@@ -1767,6 +1802,8 @@
 		   which is the one thing this change must not produce — "don't make any hard fade lines or
 		   vertical stripes". `.rail` sets no overflow, so the ground can run past it. Nothing else moves;
 		   RAIL_W still governs where the ticks, labels, bars and portraits live. */
+		/* Still 12px past the rail's right edge, Sam's 10% overhang — RAIL_W absorbed the 48 the ramp
+		   travelled (122+48=170), so the box is 182 and the ramp still ends exactly on it. */
 		inset: 0 -12px 0 0;
 		z-index: 0;
 		pointer-events: none;
@@ -1804,42 +1841,42 @@
 			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch' result='t'/%3E%3CfeComponentTransfer in='t' result='o'%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix in='o' type='saturate' values='0' result='s'/%3E%3CfeColorMatrix in='s' type='matrix' values='1.125 0 0 0 -0.0625 1.125 0 0 0 -0.0625 1.125 0 0 0 -0.0625 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
 			linear-gradient(
 				to right,
-				rgb(226, 217, 152) 0px,
-				rgb(226, 217, 152) 3px,
-				rgb(227, 218, 153) 8px,
-				rgb(227, 218, 153) 11px,
-				rgb(227, 218, 153) 15px,
-				rgb(228, 219, 154) 19px,
-				rgb(228, 219, 154) 23px,
-				rgb(228, 219, 155) 26px,
-				rgb(229, 220, 155) 31px,
-				rgb(229, 220, 155) 34px,
-				rgb(229, 220, 156) 38px,
-				rgb(230, 221, 156) 42px,
-				rgb(230, 221, 156) 46px,
-				rgb(230, 221, 157) 49px,
-				rgb(231, 222, 157) 54px,
-				rgb(231, 222, 158) 57px,
-				rgb(232, 223, 158) 62px,
-				rgb(232, 223, 158) 65px,
-				rgb(232, 223, 159) 69px,
-				rgb(232, 223, 159) 72px,
-				rgb(233, 224, 159) 77px,
-				rgb(233, 224, 160) 80px,
-				rgb(234, 225, 160) 85px,
-				rgb(234, 225, 161) 88px,
-				rgb(234, 225, 161) 92px,
-				rgb(235, 226, 161) 96px,
-				rgb(235, 226, 162) 100px,
-				rgb(235, 226, 162) 103px,
-				rgb(236, 227, 162) 108px,
-				rgb(236, 227, 163) 111px,
-				rgb(236, 227, 163) 115px,
-				rgb(237, 228, 164) 119px,
-				rgb(237, 228, 164) 123px,
-				rgb(237, 228, 164) 126px,
-				rgb(238, 229, 165) 131px,
-				rgb(238, 229, 165) 134px
+				rgb(226, 217, 152) 48px,
+				rgb(226, 217, 152) 51px,
+				rgb(227, 218, 153) 56px,
+				rgb(227, 218, 153) 59px,
+				rgb(227, 218, 153) 63px,
+				rgb(228, 219, 154) 67px,
+				rgb(228, 219, 154) 71px,
+				rgb(228, 219, 155) 74px,
+				rgb(229, 220, 155) 79px,
+				rgb(229, 220, 155) 82px,
+				rgb(229, 220, 156) 86px,
+				rgb(230, 221, 156) 90px,
+				rgb(230, 221, 156) 94px,
+				rgb(230, 221, 157) 97px,
+				rgb(231, 222, 157) 102px,
+				rgb(231, 222, 158) 105px,
+				rgb(232, 223, 158) 110px,
+				rgb(232, 223, 158) 113px,
+				rgb(232, 223, 159) 117px,
+				rgb(232, 223, 159) 120px,
+				rgb(233, 224, 159) 125px,
+				rgb(233, 224, 160) 128px,
+				rgb(234, 225, 160) 133px,
+				rgb(234, 225, 161) 136px,
+				rgb(234, 225, 161) 140px,
+				rgb(235, 226, 161) 144px,
+				rgb(235, 226, 162) 148px,
+				rgb(235, 226, 162) 151px,
+				rgb(236, 227, 162) 156px,
+				rgb(236, 227, 163) 159px,
+				rgb(236, 227, 163) 163px,
+				rgb(237, 228, 164) 167px,
+				rgb(237, 228, 164) 171px,
+				rgb(237, 228, 164) 174px,
+				rgb(238, 229, 165) 179px,
+				rgb(238, 229, 165) 182px
 			);
 		background-blend-mode: overlay, normal;
 		background-repeat: repeat, no-repeat;
@@ -1848,81 +1885,81 @@
 		   colour stops use — so ground and grain vanish together, on one curve, with no second edge. */
 		-webkit-mask-image: linear-gradient(
 			to right,
-			rgba(0, 0, 0, 1.000) 0px,
-			rgba(0, 0, 0, 1.000) 3px,
-			rgba(0, 0, 0, 0.999) 8px,
-			rgba(0, 0, 0, 0.996) 11px,
-			rgba(0, 0, 0, 0.990) 15px,
-			rgba(0, 0, 0, 0.983) 19px,
-			rgba(0, 0, 0, 0.968) 23px,
-			rgba(0, 0, 0, 0.953) 26px,
-			rgba(0, 0, 0, 0.928) 31px,
-			rgba(0, 0, 0, 0.904) 34px,
-			rgba(0, 0, 0, 0.865) 38px,
-			rgba(0, 0, 0, 0.832) 42px,
-			rgba(0, 0, 0, 0.782) 46px,
-			rgba(0, 0, 0, 0.740) 49px,
-			rgba(0, 0, 0, 0.679) 54px,
-			rgba(0, 0, 0, 0.630) 57px,
-			rgba(0, 0, 0, 0.563) 62px,
-			rgba(0, 0, 0, 0.511) 65px,
-			rgba(0, 0, 0, 0.441) 69px,
-			rgba(0, 0, 0, 0.389) 72px,
-			rgba(0, 0, 0, 0.322) 77px,
-			rgba(0, 0, 0, 0.274) 80px,
-			rgba(0, 0, 0, 0.216) 85px,
-			rgba(0, 0, 0, 0.176) 88px,
-			rgba(0, 0, 0, 0.129) 92px,
-			rgba(0, 0, 0, 0.099) 96px,
-			rgba(0, 0, 0, 0.066) 100px,
-			rgba(0, 0, 0, 0.046) 103px,
-			rgba(0, 0, 0, 0.026) 108px,
-			rgba(0, 0, 0, 0.016) 111px,
-			rgba(0, 0, 0, 0.007) 115px,
-			rgba(0, 0, 0, 0.003) 119px,
-			rgba(0, 0, 0, 0.001) 123px,
-			rgba(0, 0, 0, 0.000) 126px,
-			rgba(0, 0, 0, 0.000) 131px,
-			rgba(0, 0, 0, 0.000) 134px
+			rgba(0, 0, 0, 1.000) 48px,
+			rgba(0, 0, 0, 1.000) 51px,
+			rgba(0, 0, 0, 0.999) 56px,
+			rgba(0, 0, 0, 0.996) 59px,
+			rgba(0, 0, 0, 0.990) 63px,
+			rgba(0, 0, 0, 0.983) 67px,
+			rgba(0, 0, 0, 0.968) 71px,
+			rgba(0, 0, 0, 0.953) 74px,
+			rgba(0, 0, 0, 0.928) 79px,
+			rgba(0, 0, 0, 0.904) 82px,
+			rgba(0, 0, 0, 0.865) 86px,
+			rgba(0, 0, 0, 0.832) 90px,
+			rgba(0, 0, 0, 0.782) 94px,
+			rgba(0, 0, 0, 0.740) 97px,
+			rgba(0, 0, 0, 0.679) 102px,
+			rgba(0, 0, 0, 0.630) 105px,
+			rgba(0, 0, 0, 0.563) 110px,
+			rgba(0, 0, 0, 0.511) 113px,
+			rgba(0, 0, 0, 0.441) 117px,
+			rgba(0, 0, 0, 0.389) 120px,
+			rgba(0, 0, 0, 0.322) 125px,
+			rgba(0, 0, 0, 0.274) 128px,
+			rgba(0, 0, 0, 0.216) 133px,
+			rgba(0, 0, 0, 0.176) 136px,
+			rgba(0, 0, 0, 0.129) 140px,
+			rgba(0, 0, 0, 0.099) 144px,
+			rgba(0, 0, 0, 0.066) 148px,
+			rgba(0, 0, 0, 0.046) 151px,
+			rgba(0, 0, 0, 0.026) 156px,
+			rgba(0, 0, 0, 0.016) 159px,
+			rgba(0, 0, 0, 0.007) 163px,
+			rgba(0, 0, 0, 0.003) 167px,
+			rgba(0, 0, 0, 0.001) 171px,
+			rgba(0, 0, 0, 0.000) 174px,
+			rgba(0, 0, 0, 0.000) 179px,
+			rgba(0, 0, 0, 0.000) 182px
 		);
 		mask-image: linear-gradient(
 			to right,
-			rgba(0, 0, 0, 1.000) 0px,
-			rgba(0, 0, 0, 1.000) 3px,
-			rgba(0, 0, 0, 0.999) 8px,
-			rgba(0, 0, 0, 0.996) 11px,
-			rgba(0, 0, 0, 0.990) 15px,
-			rgba(0, 0, 0, 0.983) 19px,
-			rgba(0, 0, 0, 0.968) 23px,
-			rgba(0, 0, 0, 0.953) 26px,
-			rgba(0, 0, 0, 0.928) 31px,
-			rgba(0, 0, 0, 0.904) 34px,
-			rgba(0, 0, 0, 0.865) 38px,
-			rgba(0, 0, 0, 0.832) 42px,
-			rgba(0, 0, 0, 0.782) 46px,
-			rgba(0, 0, 0, 0.740) 49px,
-			rgba(0, 0, 0, 0.679) 54px,
-			rgba(0, 0, 0, 0.630) 57px,
-			rgba(0, 0, 0, 0.563) 62px,
-			rgba(0, 0, 0, 0.511) 65px,
-			rgba(0, 0, 0, 0.441) 69px,
-			rgba(0, 0, 0, 0.389) 72px,
-			rgba(0, 0, 0, 0.322) 77px,
-			rgba(0, 0, 0, 0.274) 80px,
-			rgba(0, 0, 0, 0.216) 85px,
-			rgba(0, 0, 0, 0.176) 88px,
-			rgba(0, 0, 0, 0.129) 92px,
-			rgba(0, 0, 0, 0.099) 96px,
-			rgba(0, 0, 0, 0.066) 100px,
-			rgba(0, 0, 0, 0.046) 103px,
-			rgba(0, 0, 0, 0.026) 108px,
-			rgba(0, 0, 0, 0.016) 111px,
-			rgba(0, 0, 0, 0.007) 115px,
-			rgba(0, 0, 0, 0.003) 119px,
-			rgba(0, 0, 0, 0.001) 123px,
-			rgba(0, 0, 0, 0.000) 126px,
-			rgba(0, 0, 0, 0.000) 131px,
-			rgba(0, 0, 0, 0.000) 134px
+			rgba(0, 0, 0, 1.000) 48px,
+			rgba(0, 0, 0, 1.000) 51px,
+			rgba(0, 0, 0, 0.999) 56px,
+			rgba(0, 0, 0, 0.996) 59px,
+			rgba(0, 0, 0, 0.990) 63px,
+			rgba(0, 0, 0, 0.983) 67px,
+			rgba(0, 0, 0, 0.968) 71px,
+			rgba(0, 0, 0, 0.953) 74px,
+			rgba(0, 0, 0, 0.928) 79px,
+			rgba(0, 0, 0, 0.904) 82px,
+			rgba(0, 0, 0, 0.865) 86px,
+			rgba(0, 0, 0, 0.832) 90px,
+			rgba(0, 0, 0, 0.782) 94px,
+			rgba(0, 0, 0, 0.740) 97px,
+			rgba(0, 0, 0, 0.679) 102px,
+			rgba(0, 0, 0, 0.630) 105px,
+			rgba(0, 0, 0, 0.563) 110px,
+			rgba(0, 0, 0, 0.511) 113px,
+			rgba(0, 0, 0, 0.441) 117px,
+			rgba(0, 0, 0, 0.389) 120px,
+			rgba(0, 0, 0, 0.322) 125px,
+			rgba(0, 0, 0, 0.274) 128px,
+			rgba(0, 0, 0, 0.216) 133px,
+			rgba(0, 0, 0, 0.176) 136px,
+			rgba(0, 0, 0, 0.129) 140px,
+			rgba(0, 0, 0, 0.099) 144px,
+			rgba(0, 0, 0, 0.066) 148px,
+			rgba(0, 0, 0, 0.046) 151px,
+			rgba(0, 0, 0, 0.026) 156px,
+			rgba(0, 0, 0, 0.016) 159px,
+			rgba(0, 0, 0, 0.007) 163px,
+			rgba(0, 0, 0, 0.003) 167px,
+			rgba(0, 0, 0, 0.001) 171px,
+			rgba(0, 0, 0, 0.000) 174px,
+			rgba(0, 0, 0, 0.000) 179px,
+			rgba(0, 0, 0, 0.000) 182px
 		);
 	}
 	/* 3 clears the flying hero (2) and the deck ghosts (1). Set only while a CC flight is running — see
@@ -2001,17 +2038,62 @@
 	   which is the "still visible, just a different color so they stand out" Sam asked for. Applied as a
 	   filter so NO lane's hue is restated here — the three-hue system in LANE_STYLE stays the one
 	   definition, and a fourth lane added later inherits this for free. */
+	/* ── THE BARS TAKE THE ORBIT CARD'S PAPER ───────────────────────────────────────────────────────
+	   Sam: "when we are in the ascension zone and the orbit is the featured card, change the vertical
+	   bars too — same background colour as the waxy orbit card, with a thin stripe around the bar."
+	   So the rail stops shading by LANE in here and says the one thing that is true of everybody on it:
+	   these are the people the tree only reaches by cross-connection. Card, chips and bars end up on one
+	   surface, which is what makes the zone read as a place rather than as a recoloured stage.
+
+	   THE LANE HUES ARE NOT LOST, THEY ARE SUSPENDED. `--bar-bg` and `--bar-bd` are still written inline
+	   from LANE_STYLE on every bar; this only overrides what is PAINTED while the zone is open, so
+	   descending puts every bar back on its own hue with nothing to restore. Same idea as §25.3 — a
+	   render switch, never a data edit.
+
+	   1px, NOT 2.2. The card's rule is 2.2px on a 925px card; a bar is 23px wide, so the same treatment
+	   at the same weight would be most of the bar. This is the chip's lesson again (design §33.2): small
+	   objects need relatively heavier detail than a strict scaling gives, but a rule that eats its own
+	   object has stopped being a rule. 1px against 23 is proportionally close to 2.2 against 925 with a
+	   little added back for legibility.
+
+	   The filter is gone: it existed to keep three pale lane fills apart on a dark ground, and with one
+	   shared surface there is nothing left for it to separate. */
 	.rail.ascended .bar::before {
-		filter: brightness(1.06) saturate(1.35);
-		transition: filter var(--move-ms, 420ms) ease-out;
+		background: var(--color-orbitwax);
+		/* THE RULE MOVES INBOARD, so a hairline of the bar's own surface shows outside it — the card's
+		   arrangement at bar scale (Sam: "move the stripe toward the middle by 1.5px to leave a white
+		   external stripe around the navy border"). The BORDER becomes wax and the navy is carried by an
+		   inset shadow starting at 1.5px, which is the only way to get a margin outside a line on an
+		   element whose outer edge is already spoken for by the mask.
+		   The drop shadow is restated last: box-shadow is one property, and the base rule above sets one
+		   — a lesson this session already paid for on the orbit chip. */
+		border-color: var(--color-orbitwax);
+		box-shadow:
+			inset 0 0 0 0.9px var(--color-orbitwax),
+			inset 0 0 0 1.9px color-mix(in oklab, var(--color-inkblue) 55%, transparent),
+			0 1px 3px rgb(40 30 20 / 0.28);
+		transition:
+			background var(--move-ms, 420ms) ease-out,
+			border-color var(--move-ms, 420ms) ease-out;
 	}
+	/* NO SHADOW ON THE NAME (Sam). It was there to hold ink off a saturated lane fill on a dark ground;
+	   the bars are wax now, so it is a shadow cast onto paper by nothing — and at 13px it only thickens
+	   the letterforms. The rail's own note on the resting bars says the same thing about the lanes: once
+	   every fill is pale with dark ink of its own, a shadow just muddies it. */
 	.rail.ascended .bar-label {
-		text-shadow: 0 1px 2px rgb(8 13 23 / 0.55);
+		text-shadow: none;
 	}
 
 	.tick {
 		position: absolute;
-		height: 1px;
+		/* A PILL, not a hairline (Sam: "more pill like... a couple of px thicker and add rounded ends").
+		   1 -> 3 is the smallest step that can carry a radius at all: a rounded end needs height to be
+		   round IN, and at 2px the cap is a single pixel of antialiasing that reads as a blur rather
+		   than as a shape. The radius is deliberately larger than any possible half-height, so the cap
+		   is always a true semicircle and stays one if the height is ever tuned again.
+		   THICKNESS IS NOW THE TIER — see the three rules below. This is only the fallback. */
+		height: 3px;
+		border-radius: 999px;
 		background: var(--color-rail-ink, #595e26);
 	}
 	/* FLUSH TO THE WINDOW EDGE. The short rules used to begin at 28px, which read as a margin the
@@ -2023,43 +2105,90 @@
 	   The 5px inset it introduced was kept, and moved to the decade stubs — Sam: "move the ten year ticks
 	   off the exact left edge of browser by 5px". Flush against the window read as an accident of
 	   clipping; a small margin reads as a decision. */
-	.tick.decade {
+	/* THE MINOR TIERS. Both keep the decade stub's 32.9 — "14 -> 17.5 -> 21.9 -> 32.9, the last being
+	   +50% (Sam)", chosen so they run PAST the anchor portraits at x 4-23 and the scale stays readable
+	   straight through a headshot. Sam specified the new tiers by THICKNESS alone, so length is the one
+	   thing that does not change between them.
+	   The three thicknesses are one ladder and are written as arithmetic on purpose: 3.6 for the 50,
+	   "1px thinner" for the 25, "0.5px thinner than the 25" for the 12.5. Change the top and the other
+	   two follow. */
+	/* THE 25 NOW MATCHES THE 50's LENGTH (Sam: "keep 25 year marker lines same width at 50 years"), so
+	   the two long marks make one column and the ONLY thing separating them is weight and the year. */
+	.tick.quarter {
 		left: 5px;
-		/* 14 -> 17.5 -> 21.9 -> 32.9, the last being +50% (Sam). They now run PAST the anchor portraits,
-		   which sit at x 4-23 at rest — the point being that the scale stays readable straight through a
-		   headshot rather than disappearing behind it. */
-		width: 32.9px;
+		width: 38px; /* = .tick.half */
+		height: 2.86px; /* 2.6 +10% (Sam) */
+	}
+	/* AND THE 12.5 IS THE ONLY TIER THAT SAYS ITS RANK IN LENGTH — "20% less wide horizontally", the one
+	   place Sam qualified the axis. With the two long marks now equal, the short mark is what gives the
+	   scale its rhythm: long, short, long, short, and every second long one carries a number. */
+	.tick.eighth {
+		left: 5px;
+		width: 26.32px; /* 32.9 −20% (Sam) */
+		height: 2.1px;
 	}
 	/* The half-century rule is the one that shares its row with a year, so it alone is inset — and now
 	   SHORTER, ending at 84px rather than running the full width of the instrument. Staying inside the
 	   solid part of the ground is also what lets it be cream: past ~100px it would be drawing pale ink
 	   on pale parchment and simply vanish, which is why this rule used to need a gradient handover and
 	   no longer does. */
+	/* FLUSH WITH THE DECADE STUBS, both starting at 5. The inset this rule used to carry existed only
+	   to clear the digits sitting to its left; with the year moved to the far side there is nothing to
+	   clear, and Sam's "meet the other horizontal bars" is simply the two tiers sharing a left edge.
+	   38 against the stubs' 32.9 — a little LONGER, because the half-century is the major tier and the
+	   two rules now sit in one column where length is the only thing distinguishing them. */
 	.tick.half {
-		/* 44, not 38: the years grew 25% and a four-digit tabular number now needs ~26px rather than
-		   ~21. The rule moved right by the same amount the label box grew, which is what preserves the
-		   12px gap Sam asked for between the year and its rule. These three numbers — the label's left,
-		   its width, and this — are one measurement and must move together. */
-		left: 44px;
-		width: 46px;
+		left: 5px;
+		width: 38px;
+		/* +20%, then +15% again (Sam): 3 -> 3.6 -> 4.14. THICKNESS IS THE ONLY LEVER ON "make rounded
+		   ends more pronounced" — the radius is already 999px, so each cap is a true semicircle and
+		   cannot be made rounder; what it CAN be is bigger, and a cap's radius is half the thickness.
+		   3.6 gave a 1.8px cap, 4.14 gives 2.07. If Sam wants them rounder still, this is the number.
+		   NOTE THE AXIS: "wider" here is thickness, not length. Sam qualified exactly one of the four
+		   instructions in this pass with "horizontally" (the 12.5s), which is what distinguishes them. */
+		height: 4.14px;
 	}
 	.tick-year {
 		position: absolute;
-		/* NEGATIVE, because the label is a CHILD of the rule and the rule is inset to clear the digits.
-		   Offsetting the rule drags the label with it — an earlier pass measured the year at x 31-51
-		   instead of 3-23, back over the very rule it had just been moved out from under. The two are
-		   coupled: change `.tick.half`'s left and this must move by the same amount.
-		   −42 against a 44px rule puts the year at an absolute x of 2, right-aligned in a 30px box ending
-		   at 32 — so the gap to the rule stays the 12px Sam asked for ("add padding and slightly bigger
-		   gap between the years and the horizontal line") now that the type is 25% larger. */
-		left: -42px;
-		width: 30px;
-		text-align: right;
-		top: -6px;
-		/* +25% (Sam): 9 -> 11.25. The rail is read at a glance from the corner of the eye, and 9px was
-		   asking too much of it. */
-		font-size: 11.25px;
-		font-weight: 600; /* Sam — the years carry the scale and were reading too light for it */
+		/* POSITIVE NOW, and measured from the rule's own left edge, because the label is a CHILD of the
+		   rule: the rule sits at 5 and runs 38, so 46 here puts the year's left edge at an absolute 51,
+		   an 8px gap past the end of the pill. The label is LEFT-aligned — the gap to the rule is the
+		   thing that must stay constant, and with the year on this side it is the leading edge that
+		   defines it. These three numbers — .tick.half's left, its width, and this — are ONE measurement
+		   and move together; LABEL_W is the fourth, since the lanes have to start past all of it.
+		   46 -> 48.3 -> 45.9: Sam's +5%, then −5% back off it a moment later. Note the two do NOT cancel
+		   — 5% of 48.3 is more than 5% of 46 — so this sits slightly LEFT of where it started, which is
+		   what he asked for and is why the arithmetic is spelled out rather than reverted.
+		   Deliberately NOT the +15% the rule itself took: the rule grew in thickness, not in length, so
+		   the gap is the only thing this moves. */
+		left: 45.9px;
+		width: 40px;
+		text-align: left;
+		/* CENTRED ON THE RULE (Sam: "center align the year text to the center of the horizontal 50 year
+		   lines"). Bottom-aligning was the previous pass and it sat the digits ON the line, which put
+		   their whole mass above it.
+		   WHAT IS CENTRED IS THE DIGITS, NOT THE BOX — and that distinction is the reason the FIRST
+		   attempt at centring (a hand-guessed `top: -7px`) looked wrong. A line box carries ascender
+		   room above and descender room below that four numerals never occupy, so centring the box
+		   leaves the digits visibly high. `line-height: 1` collapses the box to the em, and the residual
+		   offset is corrected below — measured against the rendered glyph bounds rather than guessed. */
+		top: 50%;
+		/* −2.15px, MEASURED, not guessed: with line-height 1 the box's midline sits 2.15px above where
+		   the ink's does, because the box bottom is the baseline and the digits rise 10.77px above it
+		   while dropping only 0.22 below. Re-measure this if the size or the face changes — it is a
+		   property of Fraunces' digits at this size, not a constant. (Probe: compare a .tick-year's
+		   canvas actualBoundingBoxAscent/Descent midpoint against its rule's midpoint.) */
+		transform: translateY(calc(-50% + var(--year-optical, -2.15px)));
+		line-height: 1;
+		/* +25% (Sam), then +20% again (Sam): 9 -> 11.25 -> 13.5. The rail is read at a glance from the
+		   corner of the eye, and each step was Sam saying it was still asking too much of one. */
+		font-size: 14.85px;
+		/* FRAUNCES 500, Sam's pick, and the one place in the app that uses it. The rail's other type is
+		   Inter; a high-contrast serif says the years are a SCALE rather than more labelling. 500 is a
+		   real weight here because the variable face is imported — it replaces the 600 the years used to
+		   carry, which existed to stop 11px Inter from reading thin and is not needed by a serif at 13.5. */
+		font-family: var(--font-fraunces, Georgia, serif);
+		font-weight: 500;
 		font-variant-numeric: tabular-nums;
 		/* ONE CREAM FOR EVERY YEAR (Sam: "you don't need to rotate lighter and darker year text, they can
 		   all be the same cream color as 1700"). The alternating 62%/100% pair read as two kinds of
@@ -2068,9 +2197,20 @@
 		   of the ground, so a flat colour is right here. */
 		color: var(--color-rail-ink, #595e26);
 	}
+	/* "2000" ALONE MOVES LEFT (Sam), and it is the only label that needs to: measured at the rendered
+	   ink rather than the box, every other year ends between 83.8 and 88.2, while 2000 runs to 91.3 —
+	   0.3px INTO lane 0's bar, which begins at 91. Three round glyphs and a 2 is simply the widest
+	   four-digit combination the scale can produce.
+	   THE UNDERLYING CAUSE IS THAT `font-variant-numeric: tabular-nums` IS NOT TAKING on this face —
+	   the widths above should all be equal and they span 32.9 to 40.4, so Fraunces Variable's wght axis
+	   is shipping without a tnum feature. Flagged rather than fixed: making the column truly tabular is
+	   a different change from nudging one label, and it would move all nine. */
+	.tick-year.millennium {
+		left: 43.6px; /* 45.9 −5% (Sam) — ends at 89.0, clear of the lane by 2px */
+	}
 	/* A century is 5% larger and nothing else — the one place a difference is still worth drawing. */
 	.tick-year.century {
-		font-size: 11.81px;
+		font-size: 15.59px;
 		/* No font-weight here. It used to restate 500, which — being later in source order — quietly
 		   undid the 600 set on .tick-year above, so every century label stayed light while the rest
 		   went bold. Size is the only difference a century needs. */
@@ -2405,6 +2545,9 @@
 		   `0s linear 160ms` is a delayed step rather than a tween: full height for the entire descent,
 		   then one jump at the end when it is small enough for the bars to pass in front again. Same
 		   device the bar tooltip uses for `visibility`, for the same reason. */
+		/* COMPOSED, NOT REPLACED — that z-index delay is load-bearing, and `transition` is one property
+		   (the box-shadow lesson, in the other syntax). The opacity half is what lets a headshot FADE
+		   back in as the room lightens instead of reappearing whole. See the note on `.tick`. */
 		transition: z-index 0s linear 160ms;
 	}
 	/* THE PAINT. Same box as the button (inset 0) and the same transform-origin it used to carry, so the

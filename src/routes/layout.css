@@ -19,6 +19,10 @@
 	   Darkened 10% on Aug 4: lightness 67% -> 57%, i.e. ten percentage points, which is what a
 	   darken(10%) does. A relative -10% would have been 60.3%; say the word if that was the intent. */
 	--font-opensans: 'Open Sans Variable', 'Open Sans', sans-serif;
+	/* The timeline rail's years. A high-contrast display serif against the rail's Inter — the years are
+	   a scale, not a caption, and reading them as a different KIND of thing from the names in the bars
+	   is the point. */
+	--font-fraunces: 'Fraunces Variable', 'Fraunces', Georgia, serif;
 	--color-slateblue: hsl(252, 100%, 57%);
 	/* THE CARD'S INK — the featured NAME, the descent line, and every chip. Tailwind's blue-900 is
 	   oklch(0.379 0.146 265.522);

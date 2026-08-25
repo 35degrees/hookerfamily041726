@@ -21,6 +21,9 @@
 	// The vitals (Birth/Death dates, places, MAP) and the burial pin. VARIABLE, because those two blocks
 	// now use three weights between them (300 / 400 / 500) — one variable file beats three static ones.
 	import '@fontsource-variable/open-sans/wght.css';
+	// Supports weights 100-900 — the TIMELINE RAIL's years and nothing else (TimelineRail .tick-year).
+	// Variable, so the 500 Sam asked for is a real weight rather than a synthesised one.
+	import '@fontsource-variable/fraunces/wght.css';
 	import favicon from '$lib/assets/favicon.svg';
 
 	let { children } = $props();
