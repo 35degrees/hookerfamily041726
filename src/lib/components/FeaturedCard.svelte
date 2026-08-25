@@ -316,7 +316,46 @@
 		if (g === null) return null;
 		return buildDescendantLabel(g === 0 ? 0 : g + 1, person.gender ?? null, 'William Pynchon');
 	});
-	const allLabels = $derived(pynchonLabel ? [...generationLabels, pynchonLabel] : generationLabels);
+	/**
+	 * ── THE ORBIT TITLE ─────────────────────────────────────────────────────────────────────────────
+	 *
+	 * An orbit figure has no descent from Thomas — that is the definition — so the line under their name
+	 * has always been empty, which left the most interesting people in the corpus as the only ones the
+	 * card would not characterise. Sam's wording, and it is doing something careful: it does not claim
+	 * kinship, it states EFFECT. "Major influence on multiple Hooker descendants" is the honest thing to
+	 * say about someone the tree reaches only by cross-connection.
+	 *
+	 * WHO GETS THEIR OWN, AND WHO IS TITLED BY MARRIAGE. Sam's rule is a count of their own
+	 * cross-connections: three or more and the claim is theirs; fewer and they are in the zone by
+	 * marriage and are titled as such.
+	 *
+	 * AND THE COUNT NEEDS NO SPOUSE LOOKUP, which is the part worth noticing. An orbit component is a
+	 * family group the tree touches only by CC, so a member with almost no CCs of their own is in it
+	 * BECAUSE of the person they married — that is what put them in the component. The threshold is
+	 * therefore already asking "did they get here on their own account", and the marital case falls out
+	 * of it rather than needing to be looked up.
+	 */
+	const ORBIT_TITLE = 'Major influence on multiple Hooker descendants';
+	const ORBIT_OWN_CC = 3; // three of their own and the claim is theirs — Sam's number
+	const orbitLabel = $derived.by(() => {
+		if (!orbit) return null;
+		if (crossConnections.length >= ORBIT_OWN_CC) return ORBIT_TITLE;
+		const g = (person.gender ?? '').toLowerCase();
+		// Neither/unknown gets "Spouse of" rather than a guess — the same rule the rest of the card
+		// follows when a gender is absent.
+		const rel = g.startsWith('f') ? 'Wife' : g.startsWith('m') ? 'Husband' : 'Spouse';
+		return `${rel} of a ${ORBIT_TITLE[0].toLowerCase()}${ORBIT_TITLE.slice(1)}`;
+	});
+	// Orbit and Pynchon cannot both apply — the Pynchon line reaches the tree through family edges, so
+	// nobody in it is in a detached component — but the chain is written to be explicit rather than to
+	// rely on that holding forever.
+	const allLabels = $derived(
+		orbitLabel
+			? [...generationLabels, orbitLabel]
+			: pynchonLabel
+				? [...generationLabels, pynchonLabel]
+				: generationLabels
+	);
 	// Which of the rendered labels is the Pynchon one — the last, when there is one. Used only to colour
 	// it: the Pynchon line reads purple-into-magenta, so the two descents are told apart at a glance
 	// rather than by reading both lines.
