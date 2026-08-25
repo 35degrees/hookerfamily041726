@@ -590,7 +590,7 @@
 		class:ee-line={person.classification?.is_easter_egg}
 		class:prism={isPynchonKin(person.id)}
 		class:orbit-card={orbit}
-		style="clip-path: {clipPath}; --flat-shape: {flatShape}; --ring-outer: {ringOuter}; --ring-inner: {ringInner}; --ring-live: {settled ? 1 : 0};"
+		style="clip-path: {clipPath}; --flat-shape: {flatShape}; --ring-outer: {ringOuter}; --ring-inner: {ringInner};"
 	>
 		<!-- Fixed-height TOP region: header + content area, always exactly CARD_TOP_H tall.
 		     The header row is a FIXED height (HEADER_H) so the LOWER CONTENT — the photo / narrative /

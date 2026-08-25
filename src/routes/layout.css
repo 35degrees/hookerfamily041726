@@ -65,6 +65,8 @@
 	   near-whites (which are all cool or neutral) without becoming cream, which was tried and read as
 	   too red at any lightness that also read as "off-white". */
 	--color-orbitwax: hsl(45, 33%, 96%);
+	/* The zone's ink on dark — the same cream the rail's years take once the ground goes to midnight. */
+	--color-creamprimary: hsl(30, 38%, 92%);
 	/* THE SHADOW TINTS (Aug 7). Shadows were neutral black; these warm them. rose400 is what --shadow-ink
 	   currently carries; the others are kept as the alternatives already tried. */
 	--color-rose300: hsl(14, 25%, 72%);
@@ -443,6 +445,15 @@ html[data-exhibit] body {
 	   from 6px to 3px, and its INNER edge retreats from 11px to 8px, so there are three more px between
 	   the navy and the first text. The outer 5px of surface is untouched — that margin is what makes it
 	   read as a rule printed on the card rather than as the card's own edge. */
+}
+
+/* THE BLADE'S LABEL, IN THE ZONE. "CROSS CONNECTIONS" is set in a grey tuned against the blade's own
+   pale paper, which is unchanged here — but in the Ascension the blade sits on midnight, and a grey that
+   reads as quiet on white reads as dirty on a dark ground. Cream is the zone's own ink, the same one the
+   rail's years take (design §38), so the label joins the palette the surround already established rather
+   than introducing a fourth. Scoped to a card that is orbit, so no other blade in the app is touched. */
+.featured-card-wrap:has(.featured-card.orbit-card) .cc-label {
+	color: var(--color-creamprimary, hsl(30, 38%, 92%));
 }
 
 /* ── THE SAME RULE, AT CHIP SCALE ──────────────────────────────────────────────────────────────────

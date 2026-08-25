@@ -2358,19 +2358,24 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			if (cardTop) {
 				cardTop.style.transition = 'none';
 				cardTop.style.opacity = String(outOp);
-				// ── THE ORBIT RULE FADES WITH THE FACE IT BELONGS TO ──────────────────────────────
-				// The navy rule on an orbit card is painted by `.featured-card::before`, which is OUTSIDE
-				// `.card-top` — so this crossfade took the card's face to zero and left the rule standing
-				// behind the chip-face with nothing over it. Sam, with the exact repro: "right about when
-				// the transitioning Abraham parent chip crosses the top border of the featured card… it
-				// reveals bright royal blue behind the chip itself, like some loose-end old background
-				// colour showing through."
+				// ── THE ORBIT RULE AND THIS CROSSFADE — OPEN, DELIBERATELY NOT PATCHED HERE ───────
+				// The navy rule on an orbit card is painted by `.featured-card::before`, OUTSIDE
+				// `.card-top` — so this fade takes the card's face to zero and leaves the rule standing
+				// behind the chip-face. Sam sees it as a coloured flash as the demoting chip crosses the
+				// card's top border, and only in the zone, because only there is the ground dark enough
+				// to show it.
 				//
-				// It is a custom property rather than a second `style.opacity` because the sheet is a
-				// pseudo-element and JS cannot address one. Defaults to 1 in the stylesheet, so the rule
-				// is visible at every other moment and only this crossfade dims it — which is what makes
-				// this safe to set unconditionally: on a non-orbit card nothing reads the variable.
-				el.style.setProperty('--ring-live', String(outOp));
+				// Driving a `--ring-live` custom property from `outOp` was tried here and REVERTED. Set on
+				// the flight node it inherited to the ARRIVING card and blanked the rule on the way in;
+				// re-scoped to the fading card it still left the rule missing for 29 of 31 frames of an
+				// ascension entry, for a reason not yet understood. A flash on one gesture is a smaller
+				// fault than a rule that is absent for most of every other one, so it stays as it is until
+				// the mechanism is understood rather than guessed at.
+				//
+				// The likely real fix is structural rather than a second opacity: the rule should live
+				// INSIDE the element that fades, so it cannot be left behind. That means the ring's two
+				// layers moving into `.card-top`, which is a paint-order change worth doing deliberately.
+
 			}
 			if (footer) {
 				footer.style.transition = 'none';
