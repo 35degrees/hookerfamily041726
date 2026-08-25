@@ -138,6 +138,25 @@ export const ASCEND_MS = ASCEND_TOTAL_MS; // 980 -> 840 (Sam: still slow)
 // monitor: the first frame has no edges, so it is a wall of enlarged type rather than a thing arriving.
 // 1434px fits, and it also answers "it's jarring to have the font of the NBs be so big right in my
 // face" — the narrative type never gets large enough to read as its own object.
+/**
+ * ── THREE LEGS, THREE CLOCKS — and why that is not a retreat from lockstep ──────────────────────
+ *
+ * The gesture ran on ONE duration for everything, which was right while both directions were the same
+ * shape. They are not any more, and Sam has tuned them apart by eye:
+ *
+ *   ENTER      both cards, 760ms   "it moves a little slower" — Jefferson settling from the foreground
+ *   EXIT pass  the orbit card,     660ms — tuned deliberately and signed off; not to be touched
+ *   EXIT return the tree card,     792ms   "slow the arrival by 20%, its velocity is too hard and fast"
+ *
+ * LOCKSTEP IS PRESERVED WHERE IT MEANS SOMETHING. §18's rule is that the stage moves as one — one
+ * direction, one clock, for the cards travelling TOGETHER. On the ascent both cards still share 760ms
+ * exactly. On the descent they are doing different jobs at different depths: the orbit card is passing
+ * the reader and gone by ~380ms, while the tree card is crossing eight depth units of room. Holding
+ * those to one number was never coupling them, it was only making one of them wrong — which is what
+ * "too hard and fast coming in" was describing.
+ */
+const ASCEND_ENTER_MS = 760;
+const ASCEND_RETURN_MS = 792;
 const ASCEND_ENTRY_DELAY = 0; // see ONE CLOCK below
 const ASCEND_ENTRY_MS = ASCEND_TOTAL_MS; 
 // The receding card keeps going well past the arrival's start — it is still being pushed while the new
@@ -453,8 +472,91 @@ const ASCEND_SOLID = 1.18; // and fully committed by here, with the settle still
 // IT IS ZERO AT BOTH ENDS BY CONSTRUCTION, so however it wanders the card lands exactly at rest — a
 // settle that can miss its own resting size is a bug in a physics costume. And it is confined to the
 // TAIL, so it cannot disturb the even approach that fixed the loiter-and-rush.
-const ASCEND_CARRY = 0.0147; // depth units past the seat — see above
-const ASCEND_APPROACH = 0.85; // the card reaches its seat here; the rest is the settle
+// 0.0147 -> 0.035, window 0.85 -> 0.78. Sam: "I don't see any overshoot… it must be like 3px in 30ms.
+// It's too clean and tiny right now — it's moving fast from a long distance so the user needs to see
+// it." Measured, he was close: 99ms and an 8px corner excursion. Now 145ms and ~20px.
+//
+// STILL TIGHT — 3.6% of the card's size, against his own bound: "not lopey and theatrical, that makes
+// the re-entering card feel loose and sloppy — still tight." §26.6 has not moved; what moved is the
+// judgement of what "small" means on THIS axis. A planar carry is read against the card's edge sliding
+// past a fixed background; a depth carry is read only as the card's own size changing, which is a much
+// weaker signal. The same physical excursion is simply less visible head-on.
+// 0.0147 -> 0.035 -> 0.047, window 0.85 -> 0.78 -> 0.725. Sam: "it's still too tight and small of an
+// overshoot, can it be just a little looser i.e. bigger, with 25% longer duration of overshoot
+// pullback?" So: ~34% more excursion (+46px of width against +34) over a window 25% longer (181ms
+// against 145). Both dials moved together on purpose — a bigger carry in the same time is a FASTER
+// snap, which is the opposite of looser.
+//
+// THE BOUND HAS NOT MOVED, only the reading of it. §26.6's "a small overshoot is weight; a large one is
+// theatre" still holds at 5% of the card's size; what this axis keeps teaching is that a depth carry is
+// read ONLY as the card's own size changing, with no fixed background to measure it against, so it
+// needs materially more of the same physical excursion to land as the same amount of weight. Sam has
+// now walked it up three times from the planar figure, which is the measurement that matters.
+const ASCEND_CARRY = 0.041; // depth units past the seat — the middle of 0.035 (tight) and 0.047 (loose)
+// 0.75 -> 0.8125 (a 25% shorter settle: 198ms -> 149ms on the return's 792ms clock). Sam: "the
+// overshoot timing duration is 25% too long on the ascension exit, when Aaron Burr is settling into
+// final position after the orbit card exits to the foreground."
+//
+// THE AMPLITUDE IS DELIBERATELY UNTOUCHED — he asked for the duration and only the duration, and the two
+// are independent here by construction: the carry is a depth excursion and this is the window it is
+// spent over. Shortening the window with the same excursion is a TIGHTER settle, not a smaller one,
+// which is the distinction that took three rounds to find on the way up.
+const ASCEND_APPROACH = 0.8125; // the card reaches its seat here; the rest is the settle
+/**
+ * ── THE FOUR STRINGS ────────────────────────────────────────────────────────────────────────────
+ *
+ * Sam: "it can feel like it has an elastic string tied to all four corners, anchored at its
+ * disappearing point in the distance, so it pulls the entering hero card back into its final position…
+ * and is there a way to do a little randomness into the overshoot values, so maybe one corner pulls 20%
+ * deeper one time and more even the next time, to give it character?"
+ *
+ * A UNIFORM SCALE CANNOT SAY THAT. Scaling about the centre moves every corner by exactly the same
+ * distance along its own diagonal — four strings of identical tension, every time. It is the one
+ * transform guaranteed to have no character, which is why the settle read as mechanical no matter how
+ * large it was made. Amplitude was never the missing thing; evenness was.
+ *
+ * So the settle carries two more terms, both small, both rolled ONCE PER FLIGHT:
+ *
+ *   TILT   a fraction of a degree of rotation — which is precisely what makes two corners travel
+ *          further than the other two, i.e. the geometry of one string being tauter.
+ *   DRIFT  a few px off-centre, so the anchor is not perfectly behind the card's middle and the pull
+ *          is not perfectly square-on.
+ *
+ * PER FLIGHT, NEVER PER FRAME — the deck's seeded-jitter discipline. Rolled at creation, so a settle is
+ * one smooth path that differs from the last one. Rolled per frame it is a vibrating card: noise, not
+ * character.
+ *
+ * EVERY TERM IS ZERO AT BOTH ENDS of the window by construction, so however unevenly the strings pull,
+ * the card lands exactly square at exactly its resting size. A settle that can leave a card rotated or
+ * off-centre is a bug wearing a physics costume.
+ */
+/**
+ * THE ENTRY SETTLES TOO — smaller, and in the other direction. Sam: "now we need a slight overshoot on
+ * entering the ascension zone, with Jefferson's card entering and settling from the foreground."
+ *
+ * THE SIGN IS OPPOSITE AND THAT IS THE POINT. The arriving card is travelling AWAY from the reader
+ * (1.8x down to its seat), so momentum carries it a little too FAR — past the seat into the room,
+ * briefly smaller — and the strings draw it back out to rest. On the return the card is travelling
+ * toward the reader and overshoots nearer. Same physics, opposite direction of travel, so the settle
+ * reads as the same object being caught either way.
+ *
+ * "SLIGHT" IS HALF THE RETURN'S. The entry arrives at the end of a long, decelerating approach and is
+ * already nearly stopped when it seats; the return arrives across eight depth units of room and needs
+ * visibly more catching. Matching them would make the entry the louder of the two, which is backwards.
+ */
+// 0.021 -> 0.0158 (−25%). Sam: "the overshoot of entering the ascension zone, with Jefferson's card
+// settling into featured position, can be smaller — it's too loose by 25%." Measured at −19 to −21px of
+// dip; this brings it to roughly −15.
+//
+// So the entry ends up at about 38% of the return's carry rather than the 50% I reasoned it to, and the
+// gap is the part worth keeping: the return is the harder catch because it arrives with real speed
+// across eight depth units of room, where the entry is nearly stopped by the time it seats. My estimate
+// was directionally right and quantitatively soft — the asymmetry between the two settles is larger
+// than a halving.
+const ASCEND_ENTER_CARRY = 0.0158;
+const ASCEND_ENTER_APPROACH = 0.8; // the entry's own reserved settle window
+const ASCEND_TILT_DEG = 0.28; // peak rotation — scaled with the carry, so character grows with it
+const ASCEND_DRIFT_PX = 4.8; // peak off-centre pull, likewise
 const ASCEND_WOBBLE = 0.018; // peak excursion of the secondary bounce, as a fraction of final scale
 const ASCEND_WOBBLE_CYCLES = 2.35; // not a whole number, so the two bounces are visibly unequal
 const ASCEND_WOBBLE_DECAY = 3.1;
@@ -1243,8 +1345,14 @@ export function growFrom(node: Element) {
 			// Rolled ONCE, here, as the flight is created — see the note on ASCEND_WOBBLE.
 			const jitter = 0.85 + Math.random() * 0.3; // ±15% on the settle's amplitude
 			const phase = 0.9 + Math.random() * 0.2; // and a little on where the bounces fall
+			// THE STRINGS, rolled once for this flight — see ASCEND_TILT_DEG. Signed, so the tilt goes
+			// either way and the drift pulls from any quarter; and independently scaled, so "one corner
+			// 20% deeper" on some flights and "more even" on others falls out rather than being listed.
+			const jTilt = (Math.random() * 2 - 1) * (0.55 + Math.random() * 0.75);
+			const jDx = (Math.random() * 2 - 1) * (0.5 + Math.random() * 0.8);
+			const jDy = (Math.random() * 2 - 1) * (0.5 + Math.random() * 0.8);
 			heroSchedule = {
-					duration: ASCEND_ENTRY_MS,
+					duration: ascendDir === 1 ? ASCEND_ENTER_MS : ASCEND_RETURN_MS,
 					delay: ASCEND_ENTRY_DELAY,
 					kind: flightKind,
 					axis: 'front'
@@ -1283,7 +1391,7 @@ export function growFrom(node: Element) {
 			hero.style.zIndex = z;
 			return {
 					delay: ASCEND_ENTRY_DELAY,
-					duration: ASCEND_ENTRY_MS,
+					duration: ascendDir === 1 ? ASCEND_ENTER_MS : ASCEND_RETURN_MS,
 					// The APPROACH is a strong ease-out — most of the distance is spent early, so the card reads
 					// as arriving with momentum and then taking its time to seat. The overshoot is NOT in this
 					// easing; it is in the css below, where it can carry the jitter.
@@ -1347,11 +1455,20 @@ export function growFrom(node: Element) {
 				// bolted onto the end of a journey that had not finished.
 				const a = Math.min(1, t / ASCEND_APPROACH);
 				const su2 = Math.max(0, (t - ASCEND_APPROACH) / (1 - ASCEND_APPROACH));
-				const carry = ascendDir === -1 ? -ASCEND_CARRY * Math.sin(Math.PI * su2) * jitter : 0;
+				// ASYMMETRIC ENVELOPE — `u^0.72` inside the sine puts the peak at ~38% of the window rather
+				// than the middle. Elastic overshoots quickly and is drawn back more slowly; a symmetric
+				// bump reads as a machine easing out and back, which is half of the "too clean".
+				const env = ascendDir === -1 ? Math.sin(Math.PI * Math.pow(su2, 0.72)) : 0;
+				const carry = -ASCEND_CARRY * env * jitter;
+				// THE ENTRY'S OWN approach/settle split, mirroring the return's — the card reaches its seat
+				// at ASCEND_ENTER_APPROACH and the remainder catches it.
+				const ea = Math.min(1, t / ASCEND_ENTER_APPROACH);
+				const eu = Math.max(0, (t - ASCEND_ENTER_APPROACH) / (1 - ASCEND_ENTER_APPROACH));
+				const eEnv = ascendDir === 1 ? Math.sin(Math.PI * Math.pow(eu, 0.72)) : 0;
 				const base =
 					ascendDir === -1
 						? scaleAt(DEPTH_FAR + (1 - DEPTH_FAR) * a + carry)
-						: from + (1 - from) * t;
+						: from + (1 - from) * ea - ASCEND_ENTER_CARRY * eEnv * jitter;
 						// A decaying wobble that is exactly zero at both ends, so the card cannot miss its rest.
 						const wob =
 							Math.sin(t * Math.PI * ASCEND_WOBBLE_CYCLES * phase) *
@@ -1372,7 +1489,15 @@ export function growFrom(node: Element) {
 						// Materialise by DEPTH: invisible at the plane, solid by ASCEND_SOLID, solid for the whole
 						// settle after that. The far card never fades — it is behind, and covered.
 						const op = nearer ? revealAt(base + wob) : 1;
-						return `transform: translateY(${drop * (1 - t)}px) scale(${base + wob}); opacity: ${op}; transform-origin: center center; z-index: ${z};`;
+						// Both string terms ride the SAME envelope, so they arrive and resolve with the carry rather
+				// than on clocks of their own.
+				// The strings ride whichever settle is live. On the entry they are damped to match its
+				// smaller carry, so the character is present without the entry becoming the louder half.
+				const sEnv = ascendDir === -1 ? env : eEnv * 0.55;
+				const tilt = ASCEND_TILT_DEG * jTilt * sEnv;
+				const dx = ASCEND_DRIFT_PX * jDx * sEnv;
+				const dy = ASCEND_DRIFT_PX * jDy * sEnv + drop * (1 - t);
+				return `transform: translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) rotate(${tilt.toFixed(3)}deg) scale(${base + wob}); opacity: ${op}; transform-origin: center center; z-index: ${z};`;
 					}
 			};
 		}
