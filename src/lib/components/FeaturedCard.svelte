@@ -92,6 +92,10 @@
 		// Gates the hover-zoom so a cursor already over the incoming photo can't trigger the
 		// enlarge mid-flight (it flashed in then popped as the card grew). True at rest / introend.
 		settled?: boolean;
+		/** ORBIT (§38) — this person's family component never touches the tree. Passed in rather than read
+		 *  off `person`, because it is DERIVED at build time and lives at the payload root beside
+		 *  lineAnchors, not on the canonical record. Drives the card's paper and nothing else. */
+		orbit?: boolean;
 	};
 
 	// THE PYNCHON LINE carries a spectrum on its cards — hero and chip alike. NOT
@@ -108,7 +112,8 @@
 		crossConnections = [],
 		institutionsById = {},
 		onbladeheight,
-		settled = true
+		settled = true,
+		orbit = false
 	}: Props = $props();
 
 	let photoUrl = $derived(person.bio?.photo_url ?? person.name?.photo_url ?? null);
@@ -469,6 +474,7 @@
 		class:spouse-line={marriedIn}
 		class:ee-line={person.classification?.is_easter_egg}
 		class:prism={isPynchonKin(person.id)}
+		class:orbit-card={orbit}
 		style="clip-path: {clipPath}; --flat-shape: {flatShape};"
 	>
 		<!-- Fixed-height TOP region: header + content area, always exactly CARD_TOP_H tall.

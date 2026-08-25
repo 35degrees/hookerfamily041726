@@ -48,6 +48,23 @@
 	   measures 1.23:1, i.e. nothing. Ink and ground are ONE decision here; moving either alone has cost
 	   legibility every time. */
 	--color-rail-ink: #ab7a42;
+	/* ORBIT — the paper an out-of-line figure's card is printed on, so a card in the Ascension zone
+	   reads as different STOCK rather than as a different tint of the same page.
+	   Walked: hsl(30,18%,87%) "almost too red" -> hsl(30,38%,92%) cream -> hsl(236,100%,87%), which Sam
+	   read as "too dark and lavender and rich" -> this.
+
+	   THE LAVENDER WAS THE HUE, NOT THE LIGHTNESS. 236 is blue-VIOLET; powder blue lives around 200-210,
+	   and no amount of lightening moves a violet toward it. The richness was the other axis — S 100 is a
+	   pigment, not a paper. So both moved: hue down into true blue, saturation to 60.
+
+	   AND IT JOINS A FAMILY THAT ALREADY MEANS THIS. TimelineRail's orbit lane fill is #e2f0f9 —
+	   hsl(203, 62%, 93%) — the powder blue that already says "outside the line" on the rail. The card is
+	   two points deeper and two points darker than the lane on purpose: a 925px card carries a tint that
+	   a 23px bar would drown in, and the pair reads as one idea at two scales rather than as a match. */
+	/* WAXY OFF-WHITE — vellum rather than paper. Warm enough to sit apart from the line-status
+	   near-whites (which are all cool or neutral) without becoming cream, which was tried and read as
+	   too red at any lightness that also read as "off-white". */
+	--color-orbitwax: hsl(45, 33%, 96%);
 	/* THE SHADOW TINTS (Aug 7). Shadows were neutral black; these warm them. rose400 is what --shadow-ink
 	   currently carries; the others are kept as the alternatives already tried. */
 	--color-rose300: hsl(14, 25%, 72%);
@@ -353,6 +370,89 @@ html[data-exhibit] body {
 .person-box.hooker-line {
 	--card-bg: var(--hd-bg);
 	--line-edge: var(--hd-edge);
+}
+
+/* ── ORBIT CARDS TAKE THEIR OWN PAPER (roadmap §40 / design §38) ────────────────────────────────────
+   An orbit entry is someone the tree reaches only by cross-connection, and their card should say so
+   before a word of it is read. `--color-stone150` is a warm grey rather than another near-white: the
+   three line statuses above are all tints of the same page, and an orbit figure is not a member of that
+   family at all, so the card reads as different STOCK instead of a different shade.
+
+   AFTER the line-status rules ON PURPOSE. All four selectors are two classes, so specificity cannot
+   separate them and SOURCE ORDER is the precedence rule (design §29.9) — an orbit figure who is also
+   flagged `ee-line` must come out orbit. Moving this block above them silently inverts that.
+
+   THE BLADE IS DELIBERATELY UNTOUCHED (Sam: "not including the CC blade, that can stay same color"). It
+   has its own paper in `--color-bladepaper` and does not read `--card-bg`, so it needs no exception
+   written here — it simply never inherited this in the first place. */
+.featured-card.orbit-card {
+	--card-bg: var(--color-orbitwax);
+
+	/* ── THE WAX ────────────────────────────────────────────────────────────────────────────────────
+	   Three layers, painted first-listed on top, and the whole effect has to survive being looked at for
+	   a long time — this is the surface a reader stares through while reading, so anything with a
+	   pattern they can learn is wrong within a minute.
+
+	     SHEEN    an off-axis lustre. Wax and vellum are not matte: they take light unevenly, brightest
+	              across one diagonal and slightly cooler on the return. This is what says "waxy" rather
+	              than "textured" — a grain alone reads as paper.
+	     VEIL     93% opaque, so the sheet below is present as fine tonal mottling rather than as a
+	              picture. §29.5 and §32.4 both settled on a veil over an image for exactly this: the
+	              alternative is `opacity`, which would take the card's own text down with it.
+	     SHEET    the app's own Manuscript paper, already licensed and already loaded (Field serves it),
+	              at 720px so its fibre lands at roughly the right scale on a 925px card rather than
+	              tiling visibly.
+
+	   NO BLEND MODES. `.featured-card` is a stacking context (clip-path), and design §36.3 records four
+	   attempts at a blend over a semi-transparent backdrop inside one — it composites the source colour
+	   straight in and hazes, whatever you mask it with. Alpha layers only. */
+	background-color: var(--card-bg);
+	background-image:
+		linear-gradient(
+			118deg,
+			rgb(255 255 255 / 0.55) 0%,
+			rgb(255 255 255 / 0) 34%,
+			rgb(206 196 170 / 0.13) 63%,
+			rgb(255 255 255 / 0.42) 100%
+		),
+		linear-gradient(rgb(250 249 243 / 0.93), rgb(250 249 243 / 0.93)),
+		url('/textures/paper-manuscript-1400.webp');
+	background-size:
+		cover,
+		cover,
+		720px auto;
+	background-position: center, center, center;
+	background-repeat: no-repeat, no-repeat, repeat;
+
+	/* ── THE NAVY RING, INSET, WITH THE CARD'S OWN SURFACE OUTSIDE IT ──────────────────────────────
+	   Sam: "a navy stripe around the border of it — like a border, but with 5px of the background colour
+	   on the outside of it."
+
+	   TWO INSET SHADOWS, NOT A PSEUDO-ELEMENT OR A BORDER, and the reason is the NOTCH. This card's
+	   silhouette is a clip-path with a bite taken out of its top-right for the spouse chips; any
+	   rectangular inset — a `::before` at `inset: 5px`, an outline, a border — would run straight across
+	   that bite and hang in the air beside the chips. An INSET BOX-SHADOW is clipped by the clip-path, so
+	   it follows the real silhouette exactly, notch and all, at every stage width.
+	   (`::after` is spoken for anyway — it carries the line-status spine.)
+
+	   The order is the trick: shadows paint first-listed ON TOP, so the 5px ring of card surface covers
+	   the outer 5px of the 6.5px navy ring, leaving 1.5px of navy showing inboard of it. Both track
+	   `--card-bg`, so a later change of paper needs no second edit here.
+
+	   THE HALVING COMES OFF THE INSIDE (Sam), which does two things with one number: the stripe drops
+	   from 6px to 3px, and its INNER edge retreats from 11px to 8px, so there are three more px between
+	   the navy and the first text. The outer 5px of surface is untouched — that margin is what makes it
+	   read as a rule printed on the card rather than as the card's own edge. */
+	/* ROUNDED, TO MATCH THE CARD. An inset box-shadow follows the element's BORDER-RADIUS, and this card
+	   has none — its corners come from the clip-path, which only ever CUT the ring's square corners off
+	   rather than rounding them. So the outer edge looked right (the clip did it) while the inner edge of
+	   the stripe stayed square, which is visible at the corners once the stripe has any weight.
+	   8px MIRRORS CORNER_R in FeaturedCard.svelte — the one number the blade also mitres against. It is
+	   restated rather than imported because CSS cannot read it; if that constant moves, this moves. */
+	border-radius: 8px;
+	box-shadow:
+		inset 0 0 0 5px var(--card-bg),
+		inset 0 0 0 8px var(--color-inkblue);
 }
 /* (easter egg is declared ABOVE spouse — see the ordering note there) */
 

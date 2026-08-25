@@ -1950,6 +1950,7 @@
 					institutionsById={cur.institutionsById}
 					onbladeheight={(h) => onBladeHeight(cur.person.id, h)}
 					settled={featuredLanded && cur.person.id === landedPersonId}
+					orbit={cur.orbit === true}
 				/>
 				<!-- Chip-face for the "flip early, land as a chip" relative demotion: a real PersonBox of
 				     THIS person (identical to the parent/child box it becomes), pre-scaled to fill the card
