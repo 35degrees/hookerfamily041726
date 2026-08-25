@@ -207,9 +207,27 @@ export function warmPersonLinks(node: HTMLElement) {
 		//
 		// A DELTA. Equal on both sides — tree→tree, or a move WITHIN an orbit component — yields null and
 		// nothing about the flight changes, which is what keeps Lincoln's sub-lineage free.
+		// ONLY A CROSS-CONNECTION CAN CROSS THE BOUNDARY, and this gate is not a precaution — it is the
+		// definition. A component is a maximal set of people joined by parent/child/spouse edges, so a
+		// FAMILY chip can never leave one: the chip exists because the edge exists, and the edge is what
+		// put both people in the same component. Only a CC reaches across.
+		//
+		// LEFT UNGATED IT CORRUPTED A CORE TRANSITION, which is the whole reason this comment is long.
+		// `data-orbit` is baked onto CC links only, so a spouse chip inside the zone reported
+		// `toOrbit = false` against a `fromOrbit = true`, the delta came out as −1, and an ordinary spouse
+		// promotion was handed the ascension's 980ms depth flight. Sam, from inside Jefferson: "I click
+		// the spouse chip and the speed of spouse chip promotion to Featured Card is molasses… everything
+		// has changed about that very core transition." It also ran clearAscent(), so the X went dead in
+		// the same click.
+		//
+		// THE SHAPE OF THE MISTAKE IS WORTH MORE THAN THE FIX: an ABSENT attribute was read as a
+		// meaningful `false`. Every other flight input here is read the same way (`dataset.cc === 'true'`,
+		// `dataset.relationClass`), but those are only ever consulted on links that carry them. This one
+		// was consulted on every anchor in the app.
+		const isFamilyChip = !isCC;
 		const toOrbit = (anchor as HTMLElement).dataset.orbit === 'true';
 		const fromOrbit = featured.current?.orbit === true;
-		const ascend = toOrbit === fromOrbit ? null : toOrbit ? 1 : -1;
+		const ascend = isFamilyChip ? null : toOrbit === fromOrbit ? null : toOrbit ? 1 : -1;
 		// The door, remembered on the way IN only — a single slot, never a stack (see ascension.svelte.ts).
 		if (ascend === 1) {
 			markAscent(decodeURIComponent(window.location.pathname.replace(/^\/person\//, '')));
