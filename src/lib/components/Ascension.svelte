@@ -153,6 +153,19 @@
 	 * Two is the right number for the same reason 180 was the wrong one: a stray is only legible as a
 	 * stray while there is an obvious herd for it to be ignoring.
 	 */
+	/**
+	 * ── EVERYTHING IS SIZED IN VIEWPORT UNITS, AND THAT IS A BUG FIX ────────────────────────────────
+	 * Sam: "I should look at any point and see at least one sprite in the bottom 40% of the browser and
+	 * in the top 15%, and there are literally 0."
+	 *
+	 * The field was measured in PIXELS, tuned on a 1280x720 window. On a larger display those same
+	 * pixel radii describe a proportionally SMALLER ellipse, so the whole set retreats into the middle
+	 * of the screen and the outer bands empty out — which is exactly what he was seeing and what I could
+	 * not reproduce, because my probe's viewport option was being ignored and I was measuring the one
+	 * window size where the tuning happened to be right.
+	 * Radii are now a share of the window (`vw` for the herd's circuits, `vw`/`vh` for the visitors'
+	 * entry points), so the ecosystem is the same shape on every display instead of only on mine.
+	 */
 	const SPRITE_N = 18;
 	const STRAY_N = 2; // ~10% more, and deliberately additive — see above
 	/**
@@ -172,7 +185,9 @@
 		// 300-585 was a narrow annulus, and a narrow annulus IS a drawn ring. 260-800 (Sam: "a wider
 		// area") spreads the same eighteen over nearly twice the span, which both fills more of the
 		// room and leaves no single circle for the eye to trace.
-		r: Math.round(234 + rnd() * 486), // 260-800, less 10% (Sam)
+		// A SHARE OF THE WINDOW, NOT A PIXEL COUNT — see the note above SPRITE_N. 18-56vw reproduces
+		// the tuned 234-720px exactly at the 1280px width it was tuned on, and grows from there.
+		rf: +(18 + rnd() * 38).toFixed(1),
 		// SLOW. A full circuit is between half a minute and a minute — at anything faster the set reads
 		// as machinery. Avatar's are almost stationary; these only "tend" to circle.
 		dur: Math.round(34 + rnd() * 30),
@@ -199,7 +214,7 @@
 	 * one that takes even longer to get nowhere reads as something adrift.
 	 */
 	const STRAYS = Array.from({ length: STRAY_N }, () => ({
-		r: Math.round(270 + rnd() * 378), // the strays take the same 10% (Sam)
+		rf: +(21 + rnd() * 30).toFixed(1),
 		dur: Math.round(62 + rnd() * 46),
 		phase: Math.round(rnd() * 80),
 		size: +(5 + rnd() * 8).toFixed(1),
@@ -234,21 +249,43 @@
 	 * ellipse. The sprite carries `scaleY(1 / --squash)` to keep the blob round, so a visitor left on
 	 * the herd's 0.66 would be stretched half as tall again the entire way across.
 	 */
-	const VISITOR_N = 2;
+	/**
+	 * ── THE VISITORS ARE THE ECOSYSTEM (Sam) ────────────────────────────────────────────────────────
+	 * "There needs to be some idea that's not just swirling sprites but a larger ecosystem… more sprites
+	 * that enter and exit random places in the browser but have a light bend by the pull of the orbit
+	 * card."
+	 *
+	 * So the crossing traffic goes 2 -> 10 while the swirling herd stays exactly as it was. That split
+	 * is deliberate and it is what keeps this from repeating the 180-sprite disco: density in one place
+	 * reads as glitter, but the same objects spread over the WHOLE window read as a populated room.
+	 * Nothing here is added to the middle.
+	 *
+	 * ENTRY ANGLES ARE STRATIFIED, NOT DRAWN. Each visitor gets its own slice of the circle (i/N) plus
+	 * jitter inside that slice. Ten independent draws leave gaps by luck — and a gap here is a whole
+	 * quadrant of the window with nothing ever coming from it, which is the complaint being fixed.
+	 * Stratifying GUARANTEES arrivals from above and below, not merely makes them likely.
+	 *
+	 * PHASES ARE STRATIFIED FOR THE SAME REASON — spread across the full period so crossings overlap
+	 * rather than clumping into a flock and then a long empty stretch.
+	 *
+	 * THE RING IS 62vw x 62vh, i.e. outside a window whose half-extent is 50 of each, on any display.
+	 */
+	const VISITOR_N = 10;
 	const PULL = 0.42;
-	const RING = 760; // where they enter from — outside the 1265×720 block on every axis
-	const VISITORS = Array.from({ length: VISITOR_N }, () => {
-		const a0 = rnd() * Math.PI * 2;
+	const RING = 62; // vw / vh — comfortably off-screen on every axis, at every window size
+	const VISITORS = Array.from({ length: VISITOR_N }, (_, i) => {
+		const a0 = ((i + rnd() * 0.85) / VISITOR_N) * Math.PI * 2;
 		const a1 = a0 + Math.PI * (0.6 + rnd() * 0.8);
-		const ax = Math.cos(a0) * RING, ay = Math.sin(a0) * RING * 0.72;
-		const cx = Math.cos(a1) * RING, cy = Math.sin(a1) * RING * 0.72;
+		const ax = Math.cos(a0) * RING, ay = Math.sin(a0) * RING;
+		const cx = Math.cos(a1) * RING, cy = Math.sin(a1) * RING;
+		const dur = Math.round(34 + rnd() * 30);
 		return {
-			ax: Math.round(ax), ay: Math.round(ay),
-			cx: Math.round(cx), cy: Math.round(cy),
+			ax: +ax.toFixed(1), ay: +ay.toFixed(1),
+			cx: +cx.toFixed(1), cy: +cy.toFixed(1),
 			// the deflected midpoint — this is the gravity
-			bx: Math.round(((ax + cx) / 2) * PULL), by: Math.round(((ay + cy) / 2) * PULL),
-			dur: Math.round(30 + rnd() * 26),
-			phase: Math.round(rnd() * 50),
+			bx: +(((ax + cx) / 2) * PULL).toFixed(1), by: +(((ay + cy) / 2) * PULL).toFixed(1),
+			dur,
+			phase: Math.round(((i + rnd() * 0.7) / VISITOR_N) * dur),
 			rot: Math.round(120 + rnd() * 220) * (rnd() < 0.5 ? -1 : 1),
 			size: +(5 + rnd() * 8).toFixed(1),
 			op: +(0.2 + rnd() * 0.38).toFixed(2),
@@ -293,7 +330,7 @@
 			<span
 				class="sprite-orbit"
 				class:rev={s.rev}
-				style="--r: {s.r}px; --dur: {s.dur}s; --phase: -{s.phase}s"
+				style="--r: calc(var(--rf) * 1vw); --rf: {s.rf}; --dur: {s.dur}s; --phase: -{s.phase}s"
 			>
 				<span class="sprite-unsquash">
 					<span
@@ -306,7 +343,7 @@
 		{#each STRAYS as s, i (i)}
 			<span
 				class="sprite-orbit stray"
-				style="--r: {s.r}px; --dur: {s.dur}s; --phase: -{s.phase}s; --lx: {s.lx}; --ly: {s.ly}"
+				style="--r: calc(var(--rf) * 1vw); --rf: {s.rf}; --dur: {s.dur}s; --phase: -{s.phase}s; --lx: {s.lx}; --ly: {s.ly}"
 			>
 				<span class="sprite-unsquash">
 					<span
@@ -320,8 +357,8 @@
 			<span
 				class="sprite-orbit visitor"
 				style="--dur: {v.dur}s; --phase: -{v.phase}s; --squash: 1; --rot: {v.rot}deg;
-				       --ax: {v.ax}px; --ay: {v.ay}px; --bx: {v.bx}px; --by: {v.by}px;
-				       --cx: {v.cx}px; --cy: {v.cy}px"
+				       --ax: {v.ax}vw; --ay: {v.ay}vh; --bx: {v.bx}vw; --by: {v.by}vh;
+				       --cx: {v.cx}vw; --cy: {v.cy}vh"
 			>
 				<span class="sprite-unsquash">
 					<span
