@@ -539,10 +539,14 @@ a.person-box.orbit-chip:hover {
    whenever anything moves, so the fringe stays open (roadmap §41.4) rather than being paid for here. */
 .featured-card.orbit-card::before {
 	content: '';
-	/* DEFAULT 1 — the rule is painted at all times. The only thing that ever lowers it is the DEMOTE,
-	   which fades `.card-top` out to reveal the chip-face (flight.ts) and would otherwise leave this
-	   sheet standing behind a chip with nothing over it. See the note there. */
-	opacity: var(--ring-live, 1);
+	/* PAINTED AT ALL TIMES. This read `var(--ring-live, 1)` for a while and NOTHING EVER WROTE THAT
+	   PROPERTY — the mechanism that would have (driving it from `outOp` during a demote) was tried and
+	   reverted in flight.ts, because setting it on the flight node inherits to the ARRIVING card and
+	   blanks its rule too. So it was a permanently-1 expression whose comment claimed otherwise, which
+	   is worse than no hook at all. Removed rather than left standing as a promise.
+	   The demote flash it was meant to solve is still open (roadmap §41.4) and wants a STRUCTURAL fix —
+	   both ring layers moved inside `.card-top` — not another custom property. */
+	opacity: 1;
 	position: absolute;
 	inset: 0;
 	/* THE ZONE'S RULE, THROUGH ONE TOKEN. `--zone-rule` is unset by default, so the fallback keeps this

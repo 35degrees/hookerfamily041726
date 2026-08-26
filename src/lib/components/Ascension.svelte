@@ -15,10 +15,16 @@
 	 * ── THE STACKING ORDER, WHICH IS THE RISKIEST GEOMETRY IN THIS FEATURE ──────────────────────────
 	 * Four things want to order and only one arrangement is right:
 	 *
-	 *     rail        z 0 at rest (z 3 while it lifts over a CC flight — see below)
-	 *     THE VEIL    z 0, painted after the rail in DOM order
-	 *     .page-container  z 1
+	 *     THE VEIL         z 0
+	 *     rail             z 1 ALWAYS (z 3 while it lifts over a CC flight)
+	 *     .page-container  z 1, later in the document, so it wins over the rail on source order
 	 *     the flying hero  z 2 (body-level, fixed)
+	 *
+	 * THE RAIL USED TO BE z 0 AND CONDITIONALLY LIFTED, and that was a bug this feature caused: source
+	 * order puts this veil over a z-0 rail, so the only thing keeping the timeline visible in the zone
+	 * was a class tied to whether an orbit card happened to be featured. The moment one was not, the rail
+	 * sank under an opaque ground for the length of the exit. It is z 1 unconditionally now — design §41,
+	 * "depth is not a function of state" — which is why nothing here reasons about the rail any more.
 	 *
 	 * §18.6 records THE STACKING-CONTEXT TRAP — a z-index that measured as applied and did nothing — and
 	 * this adds a fourth participant to a problem that already cost a session with three. The veil sits
@@ -464,8 +470,13 @@
 {/if}
 
 <style>
-	/* MIDNIGHT IS NOT A NEW COLOUR. `--ground: #0f1626` is the app's own Midnight skin (ground.svelte.ts
-	   / layout.css), so the zone is the house's existing dark rather than a fourth palette. The gradient
+	/* MIDNIGHT IS NOT A NEW COLOUR. `#0f1626` is the app's own Midnight skin (ground.svelte.ts /
+	   layout.css), so the zone is the house's existing dark rather than a fourth palette.
+	   IT IS A LITERAL AND NOT `var(--ground)`, DELIBERATELY: `--ground` is whichever skin the READER has
+	   chosen, and the Ascension must be midnight whether they are on Manuscript, Parchment or anything
+	   else. Borrowing the value is right; following the variable would let the zone change out from
+	   under itself. (The founder skin below is the opposite case — its colour is its own, so it reads a
+	   token.) The gradient
 	   is a deepening toward the edges — the card sits in the lit centre and the room falls away from it,
 	   which is the whole reading Sam asked for.
 
@@ -480,13 +491,23 @@
 		background:
 			radial-gradient(120% 90% at 50% 42%, #1b2740 0%, #0f1626 55%, #080d17 100%);
 	}
-	/* HUNTER GREEN, built the same way the midnight is: a lit centre where the card sits, falling away
-	   to the edges. The three stops are the one colour under one light — hunter lifted for the centre,
-	   hunter itself, hunter deepened — rather than three greens picked separately by eye. Keeping that
-	   construction is what makes a ground read as a room rather than as a gradient. */
+	/* HUNTER GREEN — one colour under one light: lifted for the centre, itself, deepened at the edge.
+	   THE MIDDLE STOP IS THE TOKEN, and that is the stop that matters: `#355e3b` used to be written here
+	   AND as `--color-foundergreen` in layout.css, where the founder TITLE reads it. Two sources of
+	   truth for one colour means the words can stop matching the room they name.
+	   THE TWO END STOPS STAY LITERAL, and that was measured rather than assumed. Deriving them with
+	   `color-mix(… , white)` — even in oklab — desaturates: the centre came out rgb(99,130,102) against
+	   the hand-tuned rgb(72,127,80), grey enough to see. Mixing toward white moves a colour toward grey,
+	   not toward a brighter version of itself, which is the wrong operation for "the same green under
+	   more light". If the token is ever changed, RE-TUNE THESE TWO BY EYE; they are its lift and its
+	   shadow, not values derivable from it. */
 	.ascend-veil.founder {
-		background:
-			radial-gradient(120% 90% at 50% 42%, #487f50 0%, #355e3b 55%, #1d3420 100%);
+		background: radial-gradient(
+			120% 90% at 50% 42%,
+			#487f50 0%,
+			var(--color-foundergreen) 55%,
+			#1d3420 100%
+		);
 	}
 
 	/* ── THE FIELD ───────────────────────────────────────────────────────────────────────────────────

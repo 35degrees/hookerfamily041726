@@ -809,8 +809,9 @@
 	 * physical reading: an instrument bolted to the frame does not get painted over by the exhibit.
 	 *
 	 * WHY THE LIFT IS TRANSIENT rather than a permanent z-index. Three things want to stack and only two
-	 * orderings can be true at once. At rest the rail is z 0 — "above the field, behind the stage", and
-	 * the stage winning where it reaches the rail is standing doctrine. But the flying hero is a
+	 * orderings can be true at once. At rest the rail is z 1 — "above the field, above the veil, behind
+	 * the stage", the stage winning on SOURCE ORDER because `.page-container` is also z 1 and comes later
+	 * in the document (design §41). But the flying hero is a
 	 * body-level fixed element at z 2, ABOVE `.page-container`'s z 1, because it has to fly over the card
 	 * it is replacing. So "rail above the hero" also puts the rail above the resting stage, and no static
 	 * number says both. Lifting only for the duration of the flight buys the new ordering without

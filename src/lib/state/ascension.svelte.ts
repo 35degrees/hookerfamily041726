@@ -21,11 +21,11 @@
  * dark, and the X still means "leave, back to where I came in". The slot is written on the way IN and
  * never on a move within, so it always names the tree card that opened the door.
  */
-import { featured } from './featured.svelte';
+import { featured, type FeaturedData } from './featured.svelte';
 
 const HARTFORD = 'hartford_founder';
 /** Thomas Hooker carries the tag and is excluded by name — see the note on `founder` below. */
-const isFounder = (f: any): boolean =>
+const isFounder = (f: FeaturedData | null): boolean =>
 	f?.person?.id !== 'H00001' && Array.isArray(f?.person?.tags) && f.person.tags.includes(HARTFORD);
 /**
  * MARRIED TO ONE. Answered in buildFeatured rather than here, because the spouse's tags live in the
@@ -34,7 +34,7 @@ const isFounder = (f: any): boolean =>
  * MAP, so anything not named in it does not exist downstream. Same trap that swallowed the Ascension's
  * own orbit flag on its first run.
  */
-const isFounderSpouse = (f: any): boolean => f?.founderSpouse === true;
+const isFounderSpouse = (f: FeaturedData | null): boolean => f?.founderSpouse === true;
 
 /** The tree card the user ascended FROM. Null whenever we are not in the zone. */
 let enteredFrom = $state<string | null>(null);
