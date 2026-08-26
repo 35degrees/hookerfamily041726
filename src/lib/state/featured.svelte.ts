@@ -41,6 +41,10 @@ export type FeaturedData = {
 	 *  Baked by regenerate-data.js (lineAnchorsFor) because it needs a graph walk a single
 	 *  neighbourhood payload cannot answer. Absent on everyone else. */
 	lineAnchors?: PersonCompact[];
+	/** Thomas descendants, grandchild or deeper: every distinct route Thomas → this person, THOMAS
+	 *  FIRST, focus dropped. Baked beside lineAnchors and for the same reason — see pathsToThomasFor
+	 *  in regenerate-data.js. Absent = no Connect-to-Thomas button. */
+	pathsToThomas?: PersonCompact[][];
 	/** ORBIT (roadmap §40) — this person's family component never touches the tree; the app reaches
 	 *  them only by cross-connection. Derived in regenerate-data.js (computeOrbit) and emitted at the
 	 *  PAYLOAD ROOT beside lineAnchors, not on `person`: `person` mirrors the canonical record, and a

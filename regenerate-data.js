@@ -1196,6 +1196,139 @@ function lineAnchorsFor(p, byId, slugMap) {
 	return chain.reverse().map((id) => compact(byId[id], slugMap));
 }
 
+// ── PATHS TO THOMAS (the connect-to-Thomas modal's entire data layer) ─────────────────────────────
+//
+// PURELY ADDITIVE. Emits ONE new key, `pathsToThomas`, on 12,844 payloads; every other file is
+// byte-identical to before. Nothing existing is read for a different purpose or restructured, and
+// canonical.json is untouched — this pre-walks parent pointers that are already there.
+//
+// WHY IT IS BAKED, which is the same answer as lineAnchors above and for the same reason: a payload is
+// ONE NEIGHBOURHOOD DEEP, and a rung eight generations up is nobody's neighbour. The client cannot see
+// its own answer. Fetching an index instead was measured and rejected — a static JSON fetch is
+// all-or-nothing, so the modal would pay 600+ KB to render thirteen rows, while baking the finished
+// chain costs a mean of 2.6 KB inside a payload the page has already loaded. The modal opens with no
+// network at all.
+//
+// THE SHAPE: an array of routes, each an ordered PersonCompact[] running THOMAS FIRST and stopping one
+// short of the focus. Two conventions, both inherited rather than invented:
+//   - Thomas-first matches lineAnchors' own rule that a consumer should not have to know the walk's
+//     direction to read the array, and it matches the render (Sam: "Thomas will always be at the top").
+//   - The focus is DROPPED because the payload already carries them as `neighborhood.focus`. The
+//     modal appends that one compact; baking it would duplicate ~317 bytes per route.
+//
+// THE GATE IS THE CHAIN'S OWN LENGTH, NOT `generation_from_thomas`. A chain of >= 2 (Thomas plus at
+// least one intermediate) is a grandchild or deeper, which is exactly Sam's rule — Thomas himself and
+// his children are excluded, "too implicit in existing structure". Reading the length rather than the
+// generation field means the gate cannot be fooled by a null classification, and it disposes for free
+// of the 18 people who carry is_thomas_descendant with no parent wiring to support it (HD9826-HD9842
+// and their like) — they produce no chain, so they get no key and no button.
+//
+// MULTIPLE ROUTES ARE PEDIGREE COLLAPSE, and the tree's real ceiling is THREE. Measured across all
+// 12,870 descendants: 11,738 have exactly one route, 968 have two, 138 have three, nobody has four.
+// The three-route cluster is a single cousin marriage in the Peck/Curtiss line (HD9238-HD9249). The
+// cap below is a runaway guard set well above that, not a display limit.
+//
+// ORDER IS DETERMINISTIC AND MUST STAY THAT WAY. The modal's selector labels these 1, 2, 3, so a route
+// that changed position between builds would silently change what "path 2" means to anyone who had
+// looked before. Sorted shortest-first, then PATERNAL-FIRST at the point two equal-length routes
+// diverge — never by discovery order, which depends on parent-field ordering. The full reasoning for
+// the tiebreak, and the id-sequence rule it replaced, is at the sort itself below.
+//
+// THE STALENESS EXPOSURE, NAMED: like lineAnchors, this embeds a COPY of each rung, and a rung is by
+// definition not a neighbour. So `--only` on an ancestor rebuilds their own payload and leaves every
+// descendant quoting a stale name or photo. That is the standing exposure of every baked chain in this
+// file and the standing answer is unchanged — a full rebuild before commit or deploy.
+const THOMAS_ID = 'H00001';
+const PATHS_MAX_DEPTH = 26; // runaway guard; the deepest real chain measured is 14 rungs
+const PATHS_MAX_ROUTES = 8; // ditto; the measured ceiling is 3
+
+function pathsToThomasFor(p, byId, slugMap) {
+	const start = p.id;
+	if (start === THOMAS_ID) return null;
+	const routes = [];
+	let cappedRoutes = false;
+	let cappedDepth = false;
+	// Every distinct parent-hop sequence from the focus up to Thomas. `acc` carries the route so far and
+	// doubles as the cycle guard — a pedigree collapse legitimately revisits an ancestor by a different
+	// branch, but never within one route.
+	const walk = (id, acc) => {
+		if (routes.length >= PATHS_MAX_ROUTES) {
+			cappedRoutes = true;
+			return;
+		}
+		if (acc.length > PATHS_MAX_DEPTH) {
+			cappedDepth = true;
+			return;
+		}
+		if (id === THOMAS_ID) {
+			routes.push([...acc, id]);
+			return;
+		}
+		const cur = byId[id];
+		if (!cur) return;
+		const par = cur.parents || {};
+		for (const q of [par.father_id, par.mother_id]) {
+			if (q && byId[q] && !acc.includes(q)) walk(q, [...acc, id]);
+		}
+	};
+	walk(start, []);
+	// NO SILENT CAPS. Neither guard has ever fired — measured across the whole corpus at max 3 routes
+	// and max 14 rungs, against caps of 8 and 26. So a hit means the graph changed shape (a new cousin
+	// marriage, or a cycle the `acc` guard did not catch) and this person's route list is INCOMPLETE,
+	// which must not pass quietly: a truncated list still renders as a confident 1 | 2 | 3.
+	if (cappedRoutes) {
+		console.warn(
+			`  [pathsToThomas] ${start}: stopped at ${PATHS_MAX_ROUTES} routes — the list is incomplete`
+		);
+	}
+	if (cappedDepth) {
+		console.warn(`  [pathsToThomas] ${start}: a branch exceeded ${PATHS_MAX_DEPTH} hops`);
+	}
+	if (!routes.length) return null;
+
+	// [focus, parent, ..., Thomas] -> drop the focus, then reverse to put Thomas first.
+	const chains = routes.map((r) => r.slice(1).reverse()).filter((c) => c.length >= 2);
+	if (!chains.length) return null;
+	// PATERNAL-FIRST AT EACH DIVERGENCE — the tiebreak, and worth the lines it costs.
+	//
+	// Length decides first: the most direct descent is path 1. When two routes are the SAME length the
+	// order still has to be decided, because the modal's selector labels them 1, 2, 3 and a route that
+	// moved between builds would silently change what "path 2" means to anyone who had looked before.
+	//
+	// The obvious tiebreak — compare the two id sequences as strings — is stable and is NOT explainable.
+	// On Sam's own card the two chains part at Hon. John Hooker, and the id rule put his father's line
+	// first only because `H00098` happens to sort before `H00104`, i.e. because John Hooker was entered
+	// into the catalogue before Roger Hooker. Renumber those two and the paths swap with nothing to
+	// explain it.
+	//
+	// So the comparison is read from the FOCUS END instead: at each hop up, a route through the FATHER
+	// sorts before a route through the mother. That is the convention every pedigree chart already uses
+	// (Ahnentafel puts the father first at every level), it survives any future renumbering, and it is
+	// explainable in one sentence at the selector — "path 1 is your father's line". On Charles Elihu
+	// Curtiss (HD9249) it genuinely reorders: his two 8-rung routes swap, because Samuel Peck is
+	// Clemence's father and [Wife] Ingersoll Peck is her mother.
+	//
+	// The key is total on its own — two chains of equal length with the same father/mother sequence
+	// have made the same choice at every level and so ARE the same chain. No further tiebreak is needed.
+	const paternalKey = (chain) => {
+		const seq = [];
+		let below = start;
+		for (let i = chain.length - 1; i >= 0; i--) {
+			const par = (byId[below] && byId[below].parents) || {};
+			seq.push(par.father_id === chain[i] ? '0' : '1');
+			below = chain[i];
+		}
+		return seq.join('');
+	};
+	chains.sort((a, b) => {
+		if (a.length !== b.length) return a.length - b.length;
+		const ka = paternalKey(a);
+		const kb = paternalKey(b);
+		return ka < kb ? -1 : ka > kb ? 1 : 0;
+	});
+	return chains.map((c) => c.map((id) => compact(byId[id], slugMap)));
+}
+
 // Builds the self-contained payload that /person/[slug] fetches.
 // `clientById` are the stripped client records (research_notes etc. removed).
 // `reg` bundles the registry lookups: { landmarkById, artworkById, documentById,
@@ -1472,6 +1605,14 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 			? lineAnchorsFor(p, byId, slugMap)
 			: null;
 
+	// Descendants only — the modal is a DESCENT, and an orbit figure or an easter egg has no such thing
+	// (their route to the line is lineAnchors above, which is a different question with a different
+	// shape). Spouses are excluded for now by the same test; if they join later they hang off the side
+	// of their partner's row rather than owning a chain of their own.
+	const pathsToThomas = p.classification?.is_thomas_descendant
+		? pathsToThomasFor(p, byId, slugMap)
+		: null;
+
 	// Resolved media arrays live ON the focus person record (person.landmarksResolved,
 	// etc.) so the component reads them through its existing `person` prop. Spread a
 	// fresh object (don't mutate the shared clientById — context entries stay lean).
@@ -1493,6 +1634,9 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 		// everyone else — so `lineAnchors` costs nothing on 18,000 payloads and no existing consumer
 		// sees a new key. Computed ONCE above; the BFS is cheap but this runs 18,621 times.
 		...(lineAnchors ? { lineAnchors } : {}),
+		// ADDITIVE AND SPARSE, exactly like lineAnchors above: present on the 12,844 descendants who are
+		// a grandchild or deeper, absent on the other 6,884 payloads, which stay byte-identical.
+		...(pathsToThomas ? { pathsToThomas } : {}),
 		// ORBIT (roadmap §40) — the single predicate the whole ascension reads: the ground darkens on it,
 		// the X appears on it, and the flight axis keys off whether it CHANGED across the navigation.
 		// Sparse: emitted only for the ~94 who are, so 18,000 payloads are byte-identical to before.

@@ -29,6 +29,13 @@ export type PersonPayload = {
 	/** ORBIT (roadmap §40) — a person the tree reaches only by cross-connection. Payload ROOT, beside
 	 *  lineAnchors, because it is derived rather than canonical. Absent on everyone who is not. */
 	orbit?: boolean;
+	/** Thomas descendants who are a grandchild or deeper — every distinct route from Thomas down to
+	 *  this person, each ordered THOMAS FIRST and stopping one short of the focus (the payload already
+	 *  carries them as neighborhood.focus). Baked by regenerate-data.js pathsToThomasFor, because a
+	 *  payload is one neighbourhood deep and a rung eight generations up is nobody's neighbour.
+	 *  Sorted shortest-first, then paternal-first where two routes tie — the modal labels these
+	 *  1, 2, 3, so the order has to be stable across rebuilds and explainable at the selector. */
+	pathsToThomas?: PersonCompact[][];
 };
 
 const TITLE_ABBREVIATIONS: Record<string, string> = {
@@ -210,6 +217,8 @@ export function buildFeatured(payload: PersonPayload): FeaturedData {
 		// the navigation was correct, and the zone simply never activated. Anything added to
 		// PersonPayload above must be added here too.
 		orbit: payload.orbit,
+		// Passed straight through, untouched. Absent on Thomas, his children, and everyone off the line.
+		pathsToThomas: payload.pathsToThomas,
 		/**
 		 * MARRIED TO A HARTFORD FOUNDER — computed HERE, and that is the whole point.
 		 *
