@@ -34,7 +34,7 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_082526.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_082626.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
@@ -5065,3 +5065,175 @@ blurred `box-shadow` rasterising per element, which is why the halo is a gradien
 **deterministic and seeded**: `Math.random()` here mismatches on hydration and repaints the whole set.
 No JS ticker, no library — three composed CSS animations whose periods do not divide into each other,
 which is what stops the set reading as a wheel.
+
+### 42.6 THE FIELD IS SIZED IN VIEWPORT UNITS, AND THAT IS NOT COSMETIC
+
+The first field was measured in PIXELS, tuned on a 1280×720 window. On a larger display those same
+pixel radii describe a proportionally **smaller** ellipse, so the whole set retreats into the middle of
+the screen and the outer bands empty out. Sam: *"I should look at any point and see at least one sprite
+in the bottom 40% of the browser and in the top 15%, and there are literally 0."*
+
+Radii are now a share of the window — `vw` for the herd's circuits, `vw`/`vh` for the visitors' entry
+ring — so the field is the same **shape** on every display rather than the same size.
+
+**The ecosystem is the crossing traffic, not the swirl.** Visitors went 2 → 10 while the herd stayed at
+18. That split is the whole design, and it is what stops this being the 180-sprite disco again: density
+in ONE PLACE reads as glitter; the same objects spread across the WHOLE window read as a populated room.
+Nothing was added to the middle.
+
+**Stratified, not drawn.** Each visitor owns a slice of the circle (`i/N`) plus jitter inside it, and
+phases are spread across the period the same way. Ten independent draws leave gaps by luck — and a gap
+here is a whole quadrant of the window that nothing ever arrives from, which is the complaint being
+fixed. Stratifying **guarantees** arrivals from above and below rather than making them likely.
+
+Coverage, 14 samples at each size: `1280×720`, `1728×1080`, `2560×1440` — top-15% empty **0/14**,
+bottom-40% empty **0/14** at all three.
+
+**Known cost.** 38 fps at 2560×1440 against a 61 fps control with the field hidden. Bisected, and there
+is no single culprit: removing the breath, the clip, `will-change`, the gradient, the blurred shadow, or
+even the orbit animation each bought 1–6 fps. A diffuse cost proportional to pixel area across ~30
+animated layers is the signature of SOFTWARE compositing, which is what headless Chromium uses. It may be
+free on real hardware. If it is not, `VISITOR_N` is the dial — it is the group that grew, and 6 keeps the
+band coverage.
+
+---
+
+## 43. THE FOUNDER ZONE (AS BUILT, August 25–26)
+
+### 43.1 A SKIN, NOT A SECOND ZONE
+
+Hartford's founders get their own green room. The depth flight, the veil's schedule, the X, the sprites,
+the rail's day/night crossing are **identical to the Ascension**; two colours differ.
+
+That decision is the whole architecture. A parallel mechanism would have doubled the surface area of the
+hardest feature in the app in order to change a ground and a rule — and every future change to the
+ascension would then have had to be made twice, or would silently diverge.
+
+    ascension.founder  →  the room is green
+    ascension.active   →  there is a room at all
+
+### 43.2 THE FLAG WAS ALREADY THERE
+
+Sam asked for an `is_hartford_founder` boolean. `hartford_founder` was already in the schema's founding
+tag family (beside `farmington_founder`, `milford_founder`, `massachusetts_bay_founder`) and ten people
+already carried it. A boolean would have been a **second way to say one thing**.
+
+It reaches the client for free: person payloads already carry `tags`. No pipeline change was needed for
+the founders themselves.
+
+### 43.3 THE NAME-MATCH TRAP, IN NUMBERS
+
+Of Sam's 182 founders, **18 are in the corpus and five of those were the wrong person**:
+
+| matched | born | the founder would be |
+|---|---|---|
+| Lt. John Hall | 1698 | dead 40 years |
+| John Marsh | 1678 | dead 20 years |
+| Deacon John Stanley | 1647 | an adult in 1636 |
+| Samuel Stone | 1674 | — |
+| William H. Butler | d. 1847 | — |
+
+Descendants carrying a founder's name. A Hartford founder had to be an adult in 1636, so a birth after
+~1616 disqualifies. **Tagging by name match would have been exactly the silent damage the first law
+exists to prevent** — and nothing in the validator would have caught it, because a tag on the wrong
+person is perfectly well-formed.
+
+162 of the 182 are absent from the corpus entirely. Left absent by Sam's call, until they arrive through
+research with dates and families attached.
+
+### 43.4 TWO PREDICATES, WHICH IS SAM'S DOROTHY RULE MADE STRUCTURAL
+
+> "Dorothy just gets Hartford Founder title, not ascension zone."
+
+- **The title** follows the tag wherever it appears.
+- **The zone's surface** follows the tag AND orbit-ness.
+
+Dorothy Chester, William Goodwin and John Haynes are attached to the tree, so they are named as founders
+on ordinary cards and never enter the green. Eight founders are in detached components and do.
+
+The title **replaces** every other line — Talcott loses "Founder of the American Talcott Line", Dorothy
+loses her descent from her father. Sam chose that knowingly: for these eleven, founding Hartford outranks
+how the tree happens to reach them.
+
+### 43.5 THE MARRIED-IN CASE, AND THE EXPLICIT-MAP TRAP AGAIN
+
+Elizabeth Hart X01888 reads "Wife of a Hartford Founder" and gets the full green treatment. It follows
+the shape the orbit title already uses — the principal carries the claim, the spouse is named by it — for
+the same reason: she is on this ground **because of who she married**.
+
+It needed `founderSpouse` computed in `buildFeatured`, and the reason is worth keeping:
+
+- the spouse's `tags` exist only in `payload.context`
+- `buildFeatured` consumes context and does not pass it on
+- **`FeaturedData` is an EXPLICIT MAP**, so a first attempt reading `featured.current.context` silently
+  got `undefined`
+
+That is the same trap that swallowed the Ascension's own orbit flag on its first run (§38). The fix was
+to answer the one question inside the builder where the answer is already in hand, rather than widen the
+store with a whole context object.
+
+**Near-miss worth naming:** the compact spouse in `neighborhood.spouses` has a `t` key that looks exactly
+like "tags" and is a **table coordinate**.
+
+### 43.6 THE COLOURS, AND ONE REVERSAL
+
+PMS 349 C was built first, at Sam's specification, and replaced at his word with **hunter green**
+(`#355e3b`). 349 is a bright emerald: it lit the whole room and read as signage against wax cards.
+Hunter is desaturated and darker, so it **sits back the way the midnight does and lets the paper stay the
+brightest thing on screen** — which is the arrangement the entire zone depends on. The PMS 281 C rule
+also holds far better against it.
+
+Both grounds keep the same construction — one colour under one light, lifted for the centre and deepened
+at the edge — rather than three greens picked separately. That is what makes a ground read as a room.
+
+The rule travels through a single `--zone-rule` token, **unset by default**, so ink-blue is unchanged
+everywhere it already was and the founder skin sets it once on the view. PMS 429 C grey is defined and
+deliberately unused, held for a purpose Sam has not chosen.
+
+**The title takes the ground colour as ink.** It works because a founder card is wax, so hunter is dark
+enough for small bold type — and on Dorothy's card, which has no green ground at all, it is the only
+trace of the zone she belongs to.
+
+### 43.7 GOLD SPRITES, AND WHY THE CORE BARELY MOVES
+
+Warmed via three tokens rather than a second rule. **A light's colour lives in its skirt, not its
+centre** — any hot source reads near-white in the middle whatever it is made of, so pushing the core
+yellow would have produced painted dots rather than warmer lights. The core shifts three levels; the
+shoulder and skirt carry the gold, and the halo carries the most.
+
+It also earns its keep against this specific ground: hunter green is the one surround in the app where a
+neutral cream sprite goes slightly **cold**, because green and cream sit close in hue and the eye reads
+the difference as grey.
+
+### 43.8 THE WAY OUT MOVED TO THE CARD
+
+A full **X**, 2rem diagonally out from the card's top-right — the corner the spouse chip claims.
+
+The chevron was right when the control sat in the window's corner: it pointed the way it went. Next to
+the thing it closes, a downward arrow reads as scroll-or-collapse, and the unambiguous glyph for leaving
+is the cross. Its hover nudge now goes diagonally **out**, along the line it is offset on.
+
+**Measured, and measured late.** Ascension is chrome mounted outside the stage, so the card's rect is not
+knowable from there; and for the first half-second of every arrival the card is mid-flight and
+transformed, so an early read anchors the X to a position the card is only passing through. The
+measurement waits out the same `fadeMs` the button's own entrance waits for, with a width check as a
+second guard against measuring a shrunken clone.
+
+**A filled animation outranks ordinary declarations.** Setting the resting opacity to 0.7 did nothing
+while `animation-fill-mode: both` held the keyframe's `1`. `backwards` still supplies the pre-start state
+but releases the element when the animation finishes, which is where the resting value and the hover
+live. Third member of a family that now includes `box-shadow` and `transition`: **a mechanism silently
+outranking the declaration you are editing, so the edit looks like it did nothing.**
+
+### 43.9 THE SHUFFLE BUTTON WAITS FOR THE CARD
+
+`ascension.active` goes false when the payload lands — about a second before the room is light — so on
+every descent the Shuffle button was the **first** thing to arrive, ahead of everything it belongs beside.
+
+A **one-shot latch**, not a transition delay, and the distinction is what makes it safe: §7's standing
+rule is that this button never fades, because an earlier version faded it on every flight and spent
+longer looking broken than the transitions took to run. A latch armed once, when the card first settles
+after leaving the zone, cannot fire during ordinary navigation — only entering the zone disarms it.
+
+Its fade is **composed** into the existing `transition` declaration; a second rule of equal specificity
+would have silently dropped the button's transform, shadow and colour curves.

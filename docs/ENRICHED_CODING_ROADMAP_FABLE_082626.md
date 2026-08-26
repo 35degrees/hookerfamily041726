@@ -1,6 +1,6 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_082526.md (the what/why for every item below).**
+**Companion: ENRICHED_DESIGN_FABLE_082626.md (the what/why for every item below).**
 **The 080326 edition (August 3) adds §18 — THE BOARD MOVES AS ONE. The card-transition layer reopened after a long pause and closed again the same day, on three findings that were all the same finding: distance and time were being decided SEPARATELY in each place instead of once for the whole stage. `growFrom` clocked a promotion off the card's top-left corner while its far corner covered 3.5× the ground; the leaving rows drifted a flat 28px in the camera-pan direction while the arriving rows swept 150px from elsewhere, so they crossed through each other; and the non-promoted parent dissolved in the parents row to reappear in the notch a beat later. Now: honest max-corner velocity, a measured 145px tier pitch every row shares, one direction (the pan) and one clock (the demotion's) for every row at once, and a hand-off that travels in front of the card and lands wearing the destination's own face. Also records the STACKING-CONTEXT TRAP (a z-index that measured as applied and did nothing), two latent bugs the work exposed (`chipExit` holding a seat in the flex flow; `.flat` nearly overloaded as two signals), and the false-red/false-green lessons from both.**
 
 **The 080326 edition (August 3) adds §17 — THE KIN-DISTANCE BAKE SHIPPED, closing §15 and the §19.4 debt behind it. The deck's SAME-LINE test no longer proxies kinship with anything: `regenerate-data.js` stamps a per-CC `kin_distance` (edges through the nearest shared ancestor, ONE marriage allowed to bridge the two blood lines at a cost of 2), and `isVerticalMove` reads it. Uncles, aunts and parents-in-law ride vertical wherever the tidy tree seated them; second cousins, the in-laws of distant collaterals, and true strangers stay lateral. Also records the probe that was asserting the WRONG THING (a father-in-law logged as a cross-branch-peer control), and §17.4 — redirects.json wired as 301s after 673 entries of accumulated dead URLs.**
@@ -4049,3 +4049,96 @@ Three things, all the same shape:
 - **13 orbit→orbit cross-connections** await Sam's review (§40.6); two are not simple deletes.
 - **Bar labels still read in LANE inks** against the zone's wax — the last thing in the Ascension still
   speaking the lane vocabulary. Flagged to Sam; not a defect, a call.
+
+---
+
+## 43. AUGUST 25–26 — THE SPRITE ECOSYSTEM AND THE FOUNDER ZONE
+
+Design §42.6, §43. Two commits: `74e16dac` (the ecosystem), `2d7c5cf5` (the founder zone).
+
+### 43.1 WHAT SHIPPED
+
+- **The sprite field became an ecosystem** — crossing traffic 2 → 10, everything sized in viewport units,
+  guaranteed coverage of the top 15% and bottom 40% at 1280, 1728 and 2560 wide.
+- **The founder zone** — hunter-green ground, PMS 281 C rule, gold sprites, hunter-green title, the
+  married-in case, the X relocated to the card, the Shuffle button latched to the settle.
+- **Two founders tagged** in canonical: Gov. John Haynes (X02128) and William Wadsworth (Y00001).
+
+### 43.2 THE BUG UNDER THE SPRITE REQUEST, AND THE INSTRUMENT THAT HID IT
+
+Sam: *"I should look at any point and see at least one sprite in the bottom 40% and the top 15%, and
+there are literally 0."* He was describing a **pixel-sizing bug**, not a preference: the field was tuned
+on a 1280×720 window and every radius was in px, so on a larger display the ellipse retreats into the
+middle and the outer bands empty.
+
+**I could not reproduce it, and the reason is the session's running theme.** Playwright's
+`newPage({ viewportSize })` was being silently ignored, so every measurement all session ran at
+1280×720 — the exact size the tuning happened to be correct for. `setViewportSize()` is the call that
+works. Fourth instrument this session to confidently report what it could not see (§36.4, §37.3, §39.4,
+§42.2).
+
+### 43.3 THE FOUNDER LIST: WHAT A NAME MATCH IS WORTH
+
+182 names in, 18 matched, **five of those were the wrong person** — descendants born 30 to 200 years
+after the founding, carrying a founder's name. Full table in design §43.3.
+
+The check that caught them was arithmetic, not judgement: a Hartford founder had to be an adult in 1636,
+so a birth after ~1616 disqualifies. Nothing in `validate.py` would have flagged any of it — a tag on the
+wrong person is perfectly well-formed — which is precisely why the first law is about instructions and
+not about schemas.
+
+162 names are absent from the corpus. Sam's call: leave them out until they arrive with dates and
+families, rather than create name-only skeletons.
+
+### 43.4 THE DISCUSSION, AND WHERE IT LANDED
+
+- **"Is that already in there?"** Yes — as a **tag**, not a boolean, and already on ten people. Adding
+  `is_hartford_founder` would have made two ways to say one thing. Answered rather than built.
+- **Dorothy Hooker Chester** was the case that forced the design: *"she just gets Hartford Founder title,
+  not ascension zone."* One sentence, and it split one flag into two predicates — title follows the tag,
+  surface follows tag AND orbit. Three founders are attached to the tree and now read correctly on
+  ordinary cards.
+- **PMS 349 C → hunter green.** Built to spec, then replaced at Sam's word. 349 lit the room; the zone
+  depends on the paper being the brightest thing on screen. A case where following the spec exactly was
+  the right way to find out it was wrong.
+- **Elizabeth Hart** arrived as an "oops" and turned out to need a pipeline-adjacent change, because the
+  spouse's tags live in `payload.context` and `buildFeatured` drops it. See design §43.5.
+
+### 43.5 TRADEOFFS TAKEN, EXPLICITLY
+
+| decision | bought | cost |
+|---|---|---|
+| Founder zone as a **skin** on the Ascension | one mechanism, one set of timings | the two can never diverge deliberately; a founder-only motion change would need real work |
+| Title **replaces** all other lines | one clean line, Sam's ask | Talcott loses his Talcott-line label, Dorothy loses her descent from Thomas Hooker |
+| `founderSpouse` computed in **buildFeatured** | store stays narrow; context stays an implementation detail | one more thing that must be named in an explicit map, or it vanishes |
+| Rail bars take the founder blue | the zone reads as one room | more than Sam asked for; flagged, one line to revert |
+| Sprites at 22, visitors at 10 | window-wide coverage without glitter | a measurable frame-rate cost on large windows |
+| `--zone-rule` token, unset by default | ink-blue unchanged everywhere it already was | one more indirection between a colour and its use |
+
+### 43.6 THE THIRD MEMBER OF A FAMILY
+
+`animation-fill-mode: both` kept the X pinned at its keyframe's opacity, so the declared 0.7 never
+applied and the hover had nothing to travel from. This now joins:
+
+1. **`box-shadow` is one property** — a ring declared in a second rule replaces the drop shadow.
+2. **`transition` is one property** — a fade declared in a second rule of equal specificity drops the
+   curves above it (hit again this session, on the Shuffle button).
+3. **A filled animation outranks ordinary declarations** — the edit looks like it did nothing.
+
+All three have the same shape: **a mechanism silently outranking the declaration you are editing.** When
+a CSS change appears to have no effect, look for what else is already claiming that property.
+
+### 43.7 STILL OPEN
+
+- **Founder blurbs now repeat their own title.** Talcott's card says "Hartford Founder", then a blurb
+  reading "Hartford co-founder alongside Thomas Hooker", then an NB saying it a third time. Stream A work,
+  across the eleven.
+- **Sprite frame rate on large windows** — 38 fps at 2560×1440, cause diffuse, may be a headless-
+  compositor artifact. `VISITOR_N` is the dial.
+- **`canonical.json` is 55.47 MB** and GitHub warns on every push. Past their recommended ceiling and
+  growing.
+- **The stripe's sub-pixel disappearance during flights** (§41.4) — unchanged.
+- **The coloured flash on demote** (§41.4) — unchanged; likely wants both ring layers inside `.card-top`.
+- **`tabular-nums` is not taking on Fraunces Variable** (design §40.4) — fixing it moves all nine years.
+- **The CC blade draws while the card is too far away to see it** — unchanged.
+- **13 orbit→orbit cross-connections** await Sam's review; two are not simple deletes.
