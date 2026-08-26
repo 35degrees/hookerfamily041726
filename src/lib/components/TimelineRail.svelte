@@ -1742,9 +1742,22 @@
 		top: 0;
 		bottom: 0;
 		width: var(--rail-w);
-		/* ABOVE THE FIELD, BEHIND THE STAGE. The cards and rows own the foreground unconditionally; where
-		   the stage reaches the rail, the stage wins and the rail simply passes underneath. */
-		z-index: 0;
+		/* ── ABOVE THE FIELD AND THE VEIL, BEHIND THE STAGE — AND NEVER CONDITIONALLY ────────────────
+		   1, not 0, and the change is one number with a long reason.
+		   THE DOCTRINE IS UNCHANGED: the cards and rows own the foreground unconditionally, and where
+		   the stage reaches the rail the stage still wins — `.page-container` is also z 1 and comes
+		   LATER in the document, so source order settles it exactly as before (design §29.9).
+		   WHAT CHANGES IS THE VEIL. `.ascend-veil` is z 0 and is mounted AFTER this component, so at
+		   z 0 the rail lost its entire column to an opaque midnight ground the moment the Ascension
+		   opened. The rail was only ever visible in the zone because `.rail.ascended` lifted it to 1 —
+		   a CONDITIONAL depth, tied to whether an orbit card happened to be featured. So the instant a
+		   CC or the X changed the featured person, the lift went and the rail spent the rest of the
+		   exit underneath the ground, blank. Sam: "there's no reason for the timeline to ever be
+		   hidden."
+		   A constant is the fix, not a better-timed lift. Both previous attempts tried to hold the lift
+		   longer; the bug is that a ruler's depth was ever a function of the card. It is glass bolted to
+		   the window frame — the exhibit changes behind it, and it does not move. */
+		z-index: 1;
 		pointer-events: none;
 		/* NOTHING ON THE RAIL IS TEXT TO BE READ OFF AND COPIED — it is an instrument. Both properties
 		   INHERIT, so one declaration here covers the bars, their vertical labels, both kinds of tooltip
@@ -1878,6 +1891,8 @@
 				rgb(238, 229, 165) 179px,
 				rgb(238, 229, 165) 182px
 			);
+		/* The gold returns with everything else, and not before. */
+		transition: opacity var(--night-ms) cubic-bezier(0.33, 1, 0.68, 1) var(--night-out);
 		background-blend-mode: overlay, normal;
 		background-repeat: repeat, no-repeat;
 		background-size: 220px 220px, 100% 100%;
@@ -2001,12 +2016,9 @@
 	   a fourth participant, exactly where this feature's spec predicted it would.
 	   z 1 puts the rail over the veil and still UNDER `.page-container` (also z 1, but later in the DOM),
 	   so the card stays in front of the rail exactly as it does at rest. */
-	.rail.ascended {
-		z-index: 1;
-	}
 	.rail.ascended::before {
 		opacity: 0;
-		transition: opacity var(--move-ms, 420ms) cubic-bezier(0.33, 1, 0.68, 1);
+		transition: opacity var(--move-ms, 420ms) cubic-bezier(0.33, 1, 0.68, 1) 0ms;
 	}
 	/* THE PORTRAITS GO, and by opacity rather than `display: none` — they have to be able to come BACK
 	   on the same clock when the user descends, and a display swap cannot be tweened. Inert while gone,
@@ -2014,7 +2026,12 @@
 	.rail.ascended .anchor {
 		opacity: 0;
 		pointer-events: none;
-		transition: opacity var(--move-ms, 420ms) cubic-bezier(0.33, 1, 0.68, 1);
+		/* NO DELAY GOING IN — the entrance is the part Sam has called finished, and the explicit 0ms is
+		   what keeps it that way: `--night-out` is set on `.rail` and would otherwise cascade in here
+		   and delay the darkening too. Same for the three rules below. */
+		transition:
+			z-index 0s linear 160ms,
+			opacity var(--move-ms, 420ms) cubic-bezier(0.33, 1, 0.68, 1) 0ms;
 	}
 	/* CREAM — #f7f1e6, the house's own Manuscript ground colour, so the zone borrows a palette that
 	   already exists rather than inventing a light. Ticks and year labels both, since Sam named "the
@@ -2026,8 +2043,9 @@
 		background-color: #f7f1e6;
 		opacity: 0.82;
 		transition:
-			color var(--move-ms, 420ms) ease-out,
-			opacity var(--move-ms, 420ms) ease-out;
+			color var(--move-ms, 420ms) ease-out 0ms,
+			background-color var(--move-ms, 420ms) ease-out 0ms,
+			opacity var(--move-ms, 420ms) ease-out 0ms;
 	}
 	.rail.ascended .tick-year {
 		background-color: transparent; /* a label is ink, not a rule — undo the bar treatment above */
@@ -2073,8 +2091,9 @@
 			inset 0 0 0 1.9px color-mix(in oklab, var(--color-inkblue) 55%, transparent),
 			0 1px 3px rgb(40 30 20 / 0.28);
 		transition:
-			background var(--move-ms, 420ms) ease-out,
-			border-color var(--move-ms, 420ms) ease-out;
+			background var(--move-ms, 420ms) ease-out 0ms,
+			border-color var(--move-ms, 420ms) ease-out 0ms,
+			box-shadow var(--move-ms, 420ms) ease-out 0ms;
 	}
 	/* NO SHADOW ON THE NAME (Sam). It was there to hold ink off a saturated lane fill on a dark ground;
 	   the bars are wax now, so it is a shadow cast onto paper by nothing — and at 13px it only thickens
@@ -2084,8 +2103,58 @@
 		text-shadow: none;
 	}
 
+	/* ── DAY↔NIGHT: THE RETURN WAITS FOR THE ROOM, AND CSS ALONE KNOWS WHICH WAY WE ARE GOING ───────
+	   Two facts do all the work here and neither needs a line of JavaScript.
+
+	   ONE. A transition belongs to the rule being transitioned TO. Declared on `.rail.ascended` it only
+	   ever describes ARRIVING at night — remove the class and there is no transition property left, so
+	   the rail snapped back to daylight ink in a single frame. Declared on the BASE rule it describes
+	   the return, which is the half that was missing.
+
+	   TWO. That same asymmetry gives the delay for free. `--night-out` is set here, on the base rule, so
+	   it applies ONLY on the way back to day; the ascended rules restate the same transitions with a
+	   zero delay, so entering is unchanged. One property, two directions, no state and no timer.
+
+	   THE TWO NUMBERS ARE THE VEIL'S OWN SCHEDULE, MIRRORED. Ascension.svelte holds the dark for
+	   DARK_HOLD_MS (420) and then fades it over round(ASCEND_MS × 0.9) (594); traced end-to-end, both
+	   exit routes — a CC off the orbit card and the X — measured identically: still solid at 490ms,
+	   0.5 at ~655, gone by ~1066.
+
+	   SO THE INK MOVES *WITH* THE ROOM, NOT AFTER IT. The first version waited out the whole 1014ms
+	   before starting, and that was wrong for a reason only the film showed: the room does not go light
+	   at an instant, it lightens across 594ms, and cream ink held over that whole ramp ends up pale-on-
+	   pale for the last third of it — technically visible, practically washed out. Matching the delay to
+	   when the veil BEGINS to lift, and the duration to how long it takes, means ground and ink cross
+	   over together and neither is ever hunting for contrast against the other. That is what a dawn
+	   actually is, and it is the reverse of the entrance Sam already likes.
+
+	   THE FIRST 420ms ARE DELIBERATE AND UNCHANGED: full cream on full midnight, which is the beat the
+	   departing card is crossing the reader. The rail is at its most legible exactly when the stage is
+	   at its busiest.
+	   IF DARK_HOLD_MS OR ASCEND_MS MOVE, MOVE THESE — a mirror, like ANCHOR_BAR_MS's to flight.ts. */
+	.rail {
+		--night-out: 420ms; /* = DARK_HOLD_MS — the moment the veil starts to lift */
+		--night-ms: 594ms; /* = round(ASCEND_MS × 0.9) — how long it takes to go */
+		/* ── THE INK TURNS OVER A BEAT AHEAD OF THE ROOM ────────────────────────────────────────────
+		   Sam, after seeing the above land: "the white ink year text and horizontal lines last a beat
+		   too long — those are white while the light background is settled, so they are virtually
+		   invisible."
+		   He is describing the tail of an ease-out. The GROUND and the PORTRAITS can finish with the
+		   room, because both of them are surfaces: a surface that arrives late simply arrives. INK
+		   cannot — cream ink is defined entirely by the dark behind it, so the instant the ground has
+		   more light than dark in it, ink that has not yet turned is not "late", it is GONE. The two
+		   things want different clocks for a real reason, not a tuning preference.
+		   Starting 120ms sooner and running 114ms shorter puts the ink home at ~780ms against the
+		   room's ~1014 — turned over while there is still dark to turn against. Its own two variables
+		   so it can be tuned without touching the ground's mirror of the veil's schedule. */
+		--ink-out: 300ms;
+		--ink-ms: 480ms;
+	}
 	.tick {
 		position: absolute;
+		transition:
+			background-color var(--ink-ms) ease-out var(--ink-out),
+			opacity var(--ink-ms) ease-out var(--ink-out);
 		/* A PILL, not a hairline (Sam: "more pill like... a couple of px thicker and add rounded ends").
 		   1 -> 3 is the smallest step that can carry a radius at all: a rounded end needs height to be
 		   round IN, and at 2px the cap is a single pixel of antialiasing that reads as a blur rather
@@ -2150,6 +2219,10 @@
 	}
 	.tick-year {
 		position: absolute;
+		/* A label is ink, so it is `color` that travels. */
+		transition:
+			color var(--ink-ms) ease-out var(--ink-out),
+			opacity var(--ink-ms) ease-out var(--ink-out);
 		/* POSITIVE NOW, and measured from the rule's own left edge, because the label is a CHILD of the
 		   rule: the rule sits at 5 and runs 38, so 46 here puts the year's left edge at an absolute 51,
 		   an 8px gap past the end of the pill. The label is LEFT-aligned — the gap to the rule is the
@@ -2361,6 +2434,12 @@
 		background: var(--bar-bg);
 		border: 1px solid var(--bar-bd);
 		box-shadow: 0 1px 3px rgba(40, 30, 20, 0.28);
+		/* The lane hue coming back from the orbit wax. box-shadow is in the list because the navy rule
+		   rides on it. */
+		transition:
+			background var(--night-ms) ease-out var(--night-out),
+			border-color var(--night-ms) ease-out var(--night-out),
+			box-shadow var(--night-ms) ease-out var(--night-out);
 		-webkit-mask-image: var(--bar-mask, none);
 		mask-image: var(--bar-mask, none);
 	}
@@ -2547,8 +2626,10 @@
 		   device the bar tooltip uses for `visibility`, for the same reason. */
 		/* COMPOSED, NOT REPLACED — that z-index delay is load-bearing, and `transition` is one property
 		   (the box-shadow lesson, in the other syntax). The opacity half is what lets a headshot FADE
-		   back in as the room lightens instead of reappearing whole. See the note on `.tick`. */
-		transition: z-index 0s linear 160ms;
+		   back in once the room is light. See the note on `.tick`. */
+		transition:
+			z-index 0s linear 160ms,
+			opacity var(--night-ms) cubic-bezier(0.33, 1, 0.68, 1) var(--night-out);
 	}
 	/* THE PAINT. Same box as the button (inset 0) and the same transform-origin it used to carry, so the
 	   tooltip inside — whose containing block this now is — keeps its position and its counter-scale
