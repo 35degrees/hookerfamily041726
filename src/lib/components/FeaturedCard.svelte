@@ -96,6 +96,9 @@
 		 *  off `person`, because it is DERIVED at build time and lives at the payload root beside
 		 *  lineAnchors, not on the canonical record. Drives the card's paper and nothing else. */
 		orbit?: boolean;
+		/** Married to a Hartford founder. Passed in because it needs the payload's `context`, which the
+		 *  card does not receive — see ascension.svelte.ts. */
+		founderSpouse?: boolean;
 	};
 
 	// THE PYNCHON LINE carries a spectrum on its cards — hero and chip alike. NOT
@@ -113,8 +116,34 @@
 		institutionsById = {},
 		onbladeheight,
 		settled = true,
-		orbit = false
+		orbit = false,
+		founderSpouse = false
 	}: Props = $props();
+
+	/**
+	 * A HARTFORD FOUNDER. Read off the person's own tags rather than passed in, because unlike `orbit`
+	 * this is a CANONICAL FACT and not a build-time derivation — `hartford_founder` was already in the
+	 * schema's founding tag family, and payloads already carry `tags`.
+	 *
+	 * TWO PREDICATES, NOT ONE, and the split is Sam's: "Dorothy just gets Hartford Founder title, not
+	 * ascension zone." So the TITLE follows the tag wherever it appears, while the ZONE'S SURFACE — the
+	 * wax paper and the blue rule — follows the tag AND orbit-ness. Dorothy, William Goodwin and John
+	 * Haynes are attached to the tree, so they are named as founders on ordinary cards and never enter
+	 * the green.
+	 */
+	const founder = $derived(
+		person.id !== 'H00001' && (person.tags ?? []).includes('hartford_founder')
+	);
+	/**
+	 * THE MARRIED-IN CASE (Sam: "Elizabeth Hart needs to be Wife of a Hartford founder and get the same
+	 * green background treatment"). It follows the shape the orbit title already uses — the principal
+	 * gets the claim, the spouse is named by it — and for the same reason: she is in this component, and
+	 * on this ground, because of who she married.
+	 * The ZONE, though, does not care which of the two she is: a room is a room, so the green, the blue
+	 * rule and the gold sprites are keyed on `founderAny`, not on `founder`.
+	 */
+	const founderAny = $derived(founder || founderSpouse);
+	const founderZone = $derived(founderAny && orbit);
 
 	let photoUrl = $derived(person.bio?.photo_url ?? person.name?.photo_url ?? null);
 	// The featured portrait — the SAME shared derivative the chips use (so a chip→featured promotion is a
@@ -350,8 +379,31 @@
 	// nobody in it is in a detached component — but the chain is written to be explicit rather than to
 	// rely on that holding forever.
 	const allLabels = $derived(
-		orbitLabel
-			? [...generationLabels, orbitLabel]
+		founder
+			? // ── ONE LINE, REPLACING EVERYTHING ────────────────────────────────────────────────────
+				// Sam: "we'll delete this title from them, 'Major influence on multiple Hooker
+				// descendants', and instead it will just say Hartford Founder where the title is. John
+				// Talcott can have the founder of Talcott line removed."
+				// So it replaces the orbit title AND any descent or progenitor line. Talcott loses
+				// "Founder of the American Talcott Line"; Dorothy Hooker Chester loses her relation to
+				// her father. That is the cost of the rule and Sam chose it knowingly: for these eleven
+				// people, being one of the men and women who founded Hartford outranks how the tree
+				// happens to reach them.
+				['Hartford Founder']
+			: founderSpouse
+				? // Gendered the same way the orbit title is, and ungendered rather than guessed when the
+					// record does not say — see orbitLabel.
+					[
+						`${
+							(person.bio?.gender ?? person.gender ?? '').toLowerCase().startsWith('f')
+								? 'Wife'
+								: (person.bio?.gender ?? person.gender ?? '').toLowerCase().startsWith('m')
+									? 'Husband'
+									: 'Spouse'
+						} of a Hartford Founder`
+					]
+			: orbitLabel
+				? [...generationLabels, orbitLabel]
 			: pynchonLabel
 				? [...generationLabels, pynchonLabel]
 				: generationLabels
@@ -360,6 +412,17 @@
 	// it: the Pynchon line reads purple-into-magenta, so the two descents are told apart at a glance
 	// rather than by reading both lines.
 	const pynchonLabelIndex = $derived(pynchonLabel ? allLabels.length - 1 : -1);
+	/**
+	 * WHICH INK A TITLE LINE TAKES. Three cases, in precedence order, and the order matters: Pynchon
+	 * first because its spectrum names a whole line of descent and would be the more surprising thing to
+	 * lose; then the founder's green; then the house ink blue.
+	 * The green is the ZONE'S OWN GROUND colour, borrowed for type (Sam). It works because a founder
+	 * card is wax — hunter is dark enough to hold as small bold text on paper — and because it ties the
+	 * words to the room they open, the way the Pynchon spectrum ties a name to its line. Dorothy's card
+	 * has no green ground at all, so on hers this is the only trace of the zone she belongs to.
+	 */
+	const lineClass = (i: number) =>
+		i === pynchonLabelIndex ? 'pynchon-descent' : founderAny ? 'founder-descent' : 'text-inkblue';
 
 	let headerIsCrowded = $derived(allLabels.length >= 2 && !!blurb);
 
@@ -629,6 +692,7 @@
 		class:ee-line={person.classification?.is_easter_egg}
 		class:prism={isPynchonKin(person.id)}
 		class:orbit-card={orbit}
+		class:founder-card={founderZone}
 		style="clip-path: {clipPath}; --flat-shape: {flatShape}; --ring-outer: {ringOuter}; --ring-inner: {ringInner};"
 	>
 		<!-- Fixed-height TOP region: header + content area, always exactly CARD_TOP_H tall.
@@ -684,7 +748,7 @@
 								<!-- Merged cousin-marriage line: full-size, shrink-to-fit so a long
 								     "…Hooker Descendant & Wife of Hooker Descendant" stays one line. -->
 								<div
-									class="descent-line min-w-0 leading-tight font-medium {i === pynchonLabelIndex ? 'pynchon-descent' : 'text-inkblue'}"
+									class="descent-line min-w-0 leading-tight font-medium {lineClass(i)}"
 									use:shrinkToFit={{ max: t(14), min: t(10), key: `${label}|${u}|${k}` }}
 								>
 									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
@@ -695,9 +759,7 @@
 								     given on the ordinary branch below; the ceiling preserves the 5% relationship
 								     and the floor sits proportionally under the ordinary one. -->
 								<div
-									class="descent-line min-w-0 leading-tight font-medium {i === pynchonLabelIndex
-										? 'pynchon-descent'
-										: 'text-inkblue'}"
+									class="descent-line min-w-0 leading-tight font-medium {lineClass(i)}"
 									use:shrinkToFit={{ max: t(13), min: t(9.5), key: `${label}|${u}|${k}` }}
 								>
 									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
@@ -722,9 +784,7 @@
 								     Same range and same machinery as the merged '&' branch above, so all three
 								     descent branches now behave identically and only their ceilings differ. -->
 								<div
-									class="descent-line min-w-0 leading-tight font-medium {i === pynchonLabelIndex
-										? 'pynchon-descent'
-										: 'text-inkblue'}"
+									class="descent-line min-w-0 leading-tight font-medium {lineClass(i)}"
 									use:shrinkToFit={{ max: t(14), min: t(10), key: `${label}|${u}|${k}` }}
 								>
 									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
@@ -903,6 +963,10 @@
 	   because the line it names is a spectrum; `background-clip: text` paints it through the glyphs.
 	   Both hues are dark enough to hold their own as small bold type on white (the magenta end is the
 	   lighter of the two, so it is placed at the END of the phrase where the eye has already committed). */
+	/* Hunter green — the founder zone's ground, used as ink. See lineClass. */
+	.descent-line.founder-descent {
+		color: var(--color-foundergreen);
+	}
 	.descent-line.pynchon-descent {
 		background-image: linear-gradient(100deg, #7c3aed 0%, #a21caf 45%, #c026d3 100%);
 		-webkit-background-clip: text;

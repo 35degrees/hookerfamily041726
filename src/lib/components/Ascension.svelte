@@ -60,6 +60,52 @@
 	 */
 	/** The one predicate: the ground, the way out and the rail all read this. */
 	const active = $derived(ascension.active);
+	/** A founder turns the room green. Same veil, same schedule, same everything else — see the note in
+	 *  ascension.svelte.ts on why this is a skin rather than a second zone. */
+	const founder = $derived(ascension.founder);
+
+	/**
+	 * ── THE WAY OUT MOVES TO THE CARD ───────────────────────────────────────────────────────────────
+	 * Sam: "I want the X in the ascension and founder zone to be in closer to the card, outside the top
+	 * right corner — typically spouse chip corner — by 1rem diagonally up and right from that corner."
+	 *
+	 * It used to live at the WINDOW's top right (18/20), which had two faults. It sat a long way from
+	 * the thing it acts on, so the control and its subject were unrelated objects on one screen; and on
+	 * the way out it landed almost on top of the Shuffle button, which arrives in that same corner.
+	 * Anchoring it to the card fixes both at once — and the corner Sam names is the one the spouse chip
+	 * already claims, so the zone's control and the card's own furniture share a logic.
+	 *
+	 * MEASURED, NOT COMPUTED, and measured LATE. The card's rect is not knowable from here — this
+	 * component is screen chrome mounted beside Field and the rail, deliberately outside the stage — and
+	 * for the first half-second of every arrival the card is mid-flight and transformed, so an early
+	 * read would anchor the X to a position the card is only passing through. The measurement therefore
+	 * waits out the same `fadeMs` the button's own entrance already waits for, which is the moment the
+	 * card has parked. Re-measured on resize; nothing else moves it.
+	 */
+	// 1rem -> 2rem (Sam, "another rem higher and to the right away from the spouse chip"). The first
+	// offset put it close enough to the chip's rounded corner to read as part of the card's furniture;
+	// at 2rem it is unambiguously OUTSIDE the object, which is what a control that leaves should be.
+	const GAP = 32;
+	let anchor = $state<{ x: number; y: number } | null>(null);
+	function measureCard() {
+		const c = document.querySelector('.featured-card');
+		if (!c) return;
+		const b = c.getBoundingClientRect();
+		if (b.width < 40) return; // still flying — a shrunken clone is not the parked card
+		anchor = { x: b.right + GAP, y: b.top - GAP };
+	}
+	$effect(() => {
+		if (!active) {
+			anchor = null;
+			return;
+		}
+		const t = setTimeout(measureCard, fadeMs + 80);
+		window.addEventListener('resize', measureCard);
+		return () => {
+			clearTimeout(t);
+			window.removeEventListener('resize', measureCard);
+		};
+	});
 	const fadeMs = $derived(prefersReducedMotion.current ? 0 : ASCEND_MS);
 	/** The dark leads the card slightly, so the room dims before the figure arrives rather than with it.
 	 *  Set to 0 to have them land together. */
@@ -306,6 +352,7 @@
 	     returning card is what the eye should be following on the way back. -->
 	<div
 		class="ascend-veil"
+		class:founder
 		aria-hidden="true"
 		in:fade={{ duration: Math.max(1, fadeMs - LEAD_MS), delay: 0, easing: cubicInOut }}
 		out:fade={{
@@ -321,6 +368,7 @@
 	     lit would be the only thing on screen still saying "night". -->
 	<div
 		class="sprite-field"
+		class:founder
 		aria-hidden="true"
 		style="--squash: {SQUASH}"
 		in:fade={{ duration: fadeMs, delay: Math.round(fadeMs * 0.45), easing: cubicInOut }}
@@ -390,15 +438,21 @@
 	<button
 		type="button"
 		class="ascend-exit"
-		style="--fade-ms: {fadeMs}ms"
+		style="--fade-ms: {fadeMs}ms; {anchor
+			? `left:${anchor.x}px; top:${anchor.y}px; right:auto;`
+			: ''}"
 		out:fade={{ duration: 160 }}
 		onclick={() => onexit?.()}
 		aria-label="Return to the card you came from"
-		title="Return"
 	>
+		<!-- A FULL X (Sam). The chevron was chosen when this control sat in the window's corner and had to
+		     say "descend" rather than "dismiss" — it pointed the way it went. Anchored to the card, that
+		     argument no longer holds: next to the thing it closes, a downward arrow reads as scroll or
+		     collapse, and the one unambiguous glyph for leaving is the cross. Two strokes, same weight
+		     and caps as the chevron had, so nothing else about its presence changes. -->
 		<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
 			<path
-				d="M5 9 L12 16 L19 9"
+				d="M6 6 L18 18 M18 6 L6 18"
 				stroke="currentColor"
 				stroke-width="1.5"
 				stroke-linecap="round"
@@ -426,6 +480,14 @@
 		background:
 			radial-gradient(120% 90% at 50% 42%, #1b2740 0%, #0f1626 55%, #080d17 100%);
 	}
+	/* HUNTER GREEN, built the same way the midnight is: a lit centre where the card sits, falling away
+	   to the edges. The three stops are the one colour under one light — hunter lifted for the centre,
+	   hunter itself, hunter deepened — rather than three greens picked separately by eye. Keeping that
+	   construction is what makes a ground read as a room rather than as a gradient. */
+	.ascend-veil.founder {
+		background:
+			radial-gradient(120% 90% at 50% 42%, #487f50 0%, #355e3b 55%, #1d3420 100%);
+	}
 
 	/* ── THE FIELD ───────────────────────────────────────────────────────────────────────────────────
 	   Fixed and inert, in the same containing block as the veil so `50% 42%` means the same point to
@@ -441,6 +503,21 @@
 	/* THE ARM. Zero-sized, anchored on the centre of light, carrying the sprite out to its radius. The
 	   squash is applied OUTSIDE the rotation, which is what turns the circular path into an ellipse
 	   rather than just making a circle of squashed sprites. */
+	/* ── GOLD IN THE FOUNDER ZONE (Sam: "slightly more gold") ────────────────────────────────────────
+	   SLIGHTLY, and the core barely moves — a light's colour lives in its SKIRT, not its centre. Any hot
+	   source reads near-white at the middle whatever it is made of, so pushing the core yellow would
+	   have made them look like painted dots rather than warmer lights. The core shifts three levels; the
+	   shoulder and the skirt carry the gold, and the halo carries the most of all.
+	   It also earns its keep against the ground: hunter green is the one surround in the app where a
+	   neutral cream sprite goes slightly cold, because green and cream sit close in hue and the eye
+	   reads the difference as grey. Warming them is what keeps them looking lit. */
+	.sprite-field.founder {
+		--sp-core: rgba(255, 251, 240, 0.95);
+		--sp-mid: rgba(243, 226, 178, 0.62);
+		--sp-skirt: rgba(230, 200, 128, 0.19);
+		--sp-edge: rgba(230, 200, 128, 0);
+		--sp-glow: rgba(238, 214, 150, 0.16);
+	}
 	.sprite-orbit {
 		position: absolute;
 		left: 50%;
@@ -488,14 +565,16 @@
 		width: var(--size);
 		height: var(--size);
 		border-radius: 50%;
+		/* THE INK IS THREE TOKENS so the founder skin can warm it in one block — same reason the zone's
+		   rule travels through `--zone-rule`. The defaults are the ascension's waxy white. */
 		background: radial-gradient(
 			circle at 42% 38%,
-			rgba(255, 253, 248, 0.95) 0%,
-			rgba(247, 241, 230, 0.62) 34%,
-			rgba(238, 228, 202, 0.16) 68%,
-			rgba(238, 228, 202, 0) 100%
+			var(--sp-core, rgba(255, 253, 248, 0.95)) 0%,
+			var(--sp-mid, rgba(247, 241, 230, 0.62)) 34%,
+			var(--sp-skirt, rgba(238, 228, 202, 0.16)) 68%,
+			var(--sp-edge, rgba(238, 228, 202, 0)) 100%
 		);
-		box-shadow: 0 0 18px 4px rgba(247, 241, 230, 0.13);
+		box-shadow: 0 0 18px 4px var(--sp-glow, rgba(247, 241, 230, 0.13));
 		opacity: var(--op);
 		/* TWO ANIMATIONS ON TWO DIFFERENT PROPERTIES. `translate` and `scale` are independent longhands,
 		   so the bob and the breath compose instead of the second overwriting the first — inside
@@ -590,8 +669,14 @@
 	   card is still arriving reads as an interruption of the thing you just asked for. */
 	.ascend-exit {
 		position: fixed;
+		/* The fallback corner, used only until the card has been measured (and if it never can be —
+		   the control must exist even if the query fails, or the zone has no exit). The inline style
+		   above replaces both once the anchor is known. */
 		top: 18px;
 		right: 20px;
+		/* Centred ON the anchor point, so "1rem up and right of the corner" describes the glyph's middle
+		   rather than the corner of a 56px hit area. */
+		transform: translate(-50%, -50%);
 		z-index: 5; /* above the flying hero (2) and the rail's transient lift (3), with headroom */
 		display: grid;
 		place-items: center;
@@ -602,9 +687,14 @@
 		background: none;
 		padding: 0;
 		color: #f7f1e6;
-		opacity: 0.6; /* present, not insistent — it should be found, not noticed */
+		opacity: 0.7; /* present, not insistent — it should be found, not noticed (Sam: 70%, 100% hovered) */
 		cursor: pointer;
-		animation: exit-in 420ms cubic-bezier(0.33, 1, 0.68, 1) both;
+		/* `backwards`, NOT `both`. A filled animation OUTRANKS ordinary declarations for as long as it
+		   holds, so `both` kept this pinned at the keyframe's opacity 1 forever — the declared 0.7 never
+		   applied and the hover had nothing to travel from. `backwards` still supplies the pre-start
+		   state (so it cannot flash at full strength before its delay elapses) but releases the element
+		   to its own rules the moment it finishes, which is where the resting 0.7 and the hover live. */
+		animation: exit-in 420ms cubic-bezier(0.33, 1, 0.68, 1) backwards;
 		animation-delay: var(--fade-ms, 520ms);
 		transition:
 			opacity 200ms ease-out,
@@ -614,7 +704,10 @@
 	   result is the cheapest affordance there is, and it costs 2px. */
 	.ascend-exit:hover {
 		opacity: 1;
-		transform: translateY(2px);
+		/* The nudge is now diagonal, AWAY from the card along the same line the control is offset on —
+		   it used to move DOWN because it used to be a descend arrow. A control that previews its own
+		   direction costs 2px; this one previews "out". */
+		transform: translate(-50%, -50%) translate(1.5px, -1.5px);
 	}
 	.ascend-exit:focus-visible {
 		outline: 2px solid #f7f1e6;
@@ -624,11 +717,13 @@
 	@keyframes exit-in {
 		from {
 			opacity: 0;
-			transform: scale(0.8);
+			transform: translate(-50%, -50%) scale(0.8);
 		}
+		/* Ends at the RESTING opacity, not at 1 — otherwise the entrance arrives full strength and then
+		   drops to 0.7 the instant the animation releases, which reads as a flinch. */
 		to {
-			opacity: 1;
-			transform: scale(1);
+			opacity: 0.7;
+			transform: translate(-50%, -50%) scale(1);
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {

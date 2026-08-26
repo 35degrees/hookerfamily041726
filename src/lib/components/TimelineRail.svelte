@@ -1618,6 +1618,7 @@
 	use:warmPersonLinks
 	class="rail"
 	class:ascended={ascension.active}
+	class:founder={ascension.founder}
 	class:over-flight={overFlight}
 	style="--rail-w: {RAIL_W}px; --move-ms: {moveMs}ms; --tip-ms: {barFadeMs}ms;
 	       --bar-ease: {barEase}"
@@ -2016,6 +2017,13 @@
 	   a fourth participant, exactly where this feature's spec predicted it would.
 	   z 1 puts the rail over the veil and still UNDER `.page-container` (also z 1, but later in the DOM),
 	   so the card stays in front of the rail exactly as it does at rest. */
+	/* The rail keeps the room's company: while a founder is featured its bars take the founder's blue,
+	   the same one the card and the chips are wearing. Sam asked for the change "inside the card
+	   including the stripe"; extending it here is a judgement — a navy rail against a green ground with
+	   a blue card would be the only thing in the zone still speaking the ascension's palette. */
+	.rail.founder {
+		--zone-rule: var(--color-founderblue);
+	}
 	.rail.ascended::before {
 		opacity: 0;
 		transition: opacity var(--move-ms, 420ms) cubic-bezier(0.33, 1, 0.68, 1) 0ms;
@@ -2088,7 +2096,7 @@
 		border-color: var(--color-orbitwax);
 		box-shadow:
 			inset 0 0 0 0.9px var(--color-orbitwax),
-			inset 0 0 0 1.9px color-mix(in oklab, var(--color-inkblue) 55%, transparent),
+			inset 0 0 0 1.9px color-mix(in oklab, var(--zone-rule, var(--color-inkblue)) 55%, transparent),
 			0 1px 3px rgb(40 30 20 / 0.28);
 		transition:
 			background var(--move-ms, 420ms) ease-out 0ms,

@@ -69,6 +69,18 @@
 	   near-whites (which are all cool or neutral) without becoming cream, which was tried and read as
 	   too red at any lightness that also read as "off-white". */
 	--color-orbitwax: hsl(45, 33%, 96%);
+	/* ── THE FOUNDER ZONE'S TWO COLOURS (Sam, PMS-specified) ─────────────────────────────────────
+	   PMS 349 C for the ground and PMS 281 C for the rule. They replace midnight and ink-blue in the
+	   founder skin and nothing else — see ascension.svelte.ts on why this is a skin, not a second zone.
+	   The grey (PMS 429 C) is held for a use Sam has not chosen yet; it is defined so the set stays
+	   together and so nobody re-derives it from a screenshot later. */
+	/* HUNTER GREEN (Sam), replacing PMS 349 C. 349 is a bright emerald and it lit the whole room —
+	   against wax cards it read as signage rather than as ground. Hunter is desaturated and darker, so
+	   it sits back the way the midnight does and lets the paper be the brightest thing on screen, which
+	   is the arrangement the whole zone depends on. */
+	--color-foundergreen: #355e3b;
+	--color-founderblue: #00205b;
+	--color-foundergrey: #a2aaad;
 	/* The zone's ink on dark — the same cream the rail's years take once the ground goes to midnight. */
 	--color-creamprimary: hsl(30, 38%, 92%);
 	/* THE SHADOW TINTS (Aug 7). Shadows were neutral black; these warm them. rose400 is what --shadow-ink
@@ -496,13 +508,13 @@ html[data-exhibit] body {
 .person-box.orbit-chip {
 	box-shadow:
 		inset 0 0 0 2px var(--card-bg),
-		inset 0 0 0 3.5px var(--color-inkblue),
+		inset 0 0 0 3.5px var(--zone-rule, var(--color-inkblue)),
 		var(--chip-shadow);
 }
 a.person-box.orbit-chip:hover {
 	box-shadow:
 		inset 0 0 0 2px var(--card-bg),
-		inset 0 0 0 3.5px var(--color-inkblue),
+		inset 0 0 0 3.5px var(--zone-rule, var(--color-inkblue)),
 		var(--chip-shadow-hover);
 }
 
@@ -533,7 +545,10 @@ a.person-box.orbit-chip:hover {
 	opacity: var(--ring-live, 1);
 	position: absolute;
 	inset: 0;
-	background: var(--color-inkblue);
+	/* THE ZONE'S RULE, THROUGH ONE TOKEN. `--zone-rule` is unset by default, so the fallback keeps this
+	   ink-blue exactly as it was; the founder skin sets the token on the view (see +page.svelte) and
+	   this becomes PMS 281 C without a second rule or a specificity fight. */
+	background: var(--zone-rule, var(--color-inkblue));
 	clip-path: var(--ring-outer);
 	pointer-events: none;
 }

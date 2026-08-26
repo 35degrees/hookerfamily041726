@@ -23,6 +23,19 @@
  */
 import { featured } from './featured.svelte';
 
+const HARTFORD = 'hartford_founder';
+/** Thomas Hooker carries the tag and is excluded by name — see the note on `founder` below. */
+const isFounder = (f: any): boolean =>
+	f?.person?.id !== 'H00001' && Array.isArray(f?.person?.tags) && f.person.tags.includes(HARTFORD);
+/**
+ * MARRIED TO ONE. Answered in buildFeatured rather than here, because the spouse's tags live in the
+ * payload's `context` and the builder is the last thing holding it — see the note there. The first
+ * attempt read `featured.current.context` and silently got `undefined`: FeaturedData is an EXPLICIT
+ * MAP, so anything not named in it does not exist downstream. Same trap that swallowed the Ascension's
+ * own orbit flag on its first run.
+ */
+const isFounderSpouse = (f: any): boolean => f?.founderSpouse === true;
+
 /** The tree card the user ascended FROM. Null whenever we are not in the zone. */
 let enteredFrom = $state<string | null>(null);
 
@@ -30,6 +43,33 @@ export const ascension = {
 	/** Are we in the zone right now? The one predicate; the ground, the X and the rail all read it. */
 	get active(): boolean {
 		return featured.current?.orbit === true;
+	},
+	/**
+	 * ── THE FOUNDER ZONE ────────────────────────────────────────────────────────────────────────────
+	 * Sam: "let's call this the founder zone, along the lines of us calling the orbits entering and
+	 * exiting the ascension zone… re-use the existing ascension zone styling for the cards and
+	 * background but change the background colour from midnight blue to GREEN."
+	 *
+	 * It is a SKIN ON THE ASCENSION, not a second zone. Everything — the depth flight, the veil's
+	 * schedule, the X, the sprites, the rail's day/night crossing — is identical; two colours differ.
+	 * Building it as a parallel mechanism would have doubled the surface area of the hardest feature in
+	 * the app to change a ground and a rule.
+	 *
+	 * MEMBERSHIP IS THE EXISTING TAG. `hartford_founder` was already in the schema's founding tag family
+	 * and ten people already carried it — so there is no `is_hartford_founder` boolean, and adding one
+	 * would have created a second way to say one thing. It reaches the client because person payloads
+	 * already carry `tags`; no pipeline change was needed.
+	 *
+	 * THOMAS HOOKER IS EXCLUDED BY NAME. He carries the tag — he did found Hartford — but Sam: "the
+	 * Hartford founders, excluding Thomas Hooker himself of course." He is the tree's origin, not one of
+	 * its orbiting figures, and he is not in a detached component anyway; the guard is belt and braces.
+	 */
+	get founder(): boolean {
+		return isFounder(featured.current) || isFounderSpouse(featured.current);
+	},
+	/** True only for the MARRIED-IN case — the card needs it to word its own title. */
+	get founderSpouse(): boolean {
+		return !isFounder(featured.current) && isFounderSpouse(featured.current);
 	},
 	/** Where the X goes. Null means the zone was entered cold (a direct URL) — see exitTarget. */
 	get from(): string | null {

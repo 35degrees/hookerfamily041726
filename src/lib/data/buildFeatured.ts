@@ -209,7 +209,21 @@ export function buildFeatured(payload: PersonPayload): FeaturedData {
 		// read from the store, and silently dropped in between, so the blade's data-orbit was correct,
 		// the navigation was correct, and the zone simply never activated. Anything added to
 		// PersonPayload above must be added here too.
-		orbit: payload.orbit
+		orbit: payload.orbit,
+		/**
+		 * MARRIED TO A HARTFORD FOUNDER — computed HERE, and that is the whole point.
+		 *
+		 * The fact needs the spouse's `tags`, and the only place they exist on the client is
+		 * `payload.context`, which this builder consumes and does not pass on. The compact spouse in
+		 * `neighborhood.spouses` has no tags (its `t` is a table coordinate, not a tag list — a trap
+		 * worth naming, since the key looks exactly right). So the choice was to widen FeaturedData with
+		 * the whole context, or to answer the one question here where the answer is already in hand.
+		 * Answering it here keeps the store narrow and keeps `context` an implementation detail of the
+		 * builder, which is what it has always been.
+		 */
+		founderSpouse: (person.marriages ?? []).some((m) =>
+			(byId[m.spouse_id as string]?.tags ?? []).includes('hartford_founder')
+		)
 	};
 }
 

@@ -35,6 +35,29 @@
 
 	let { settled = true }: { settled?: boolean } = $props();
 
+	/**
+	 * ── COMING BACK FROM THE ZONE, IT WAITS FOR THE CARD ────────────────────────────────────────────
+	 * Sam: "the Shuffle Notable People button appears instantly after the ascension zone is exited. It
+	 * should fade in after the hero card is settled in final position — it's distracting and confusing
+	 * to have it instantly appear on screen before the rest of the content."
+	 *
+	 * The `{#if}` below is keyed on `ascension.active`, which goes false the moment the payload lands —
+	 * roughly a second before the room is light and the card has parked. So the button was the FIRST
+	 * thing to arrive on a descent, ahead of everything it belongs beside.
+	 *
+	 * A ONE-SHOT LATCH, NOT A TRANSITION DELAY, and the distinction is the whole reason this is safe.
+	 * §7's standing rule is that THIS BUTTON NEVER FADES — an earlier version faded it on every flight
+	 * and it spent longer looking broken than the transitions took to run. A delay on the `{#if}`'s
+	 * intro would have been fine here and useless everywhere else; a latch that is armed once, when the
+	 * card first settles after leaving the zone, and then stays armed, cannot fade during ordinary
+	 * navigation because it is never disarmed by one. Only entering the zone disarms it.
+	 */
+	let armed = $state(true);
+	$effect(() => {
+		if (ascension.active) armed = false;
+		else if (settled) armed = true;
+	});
+
 	let el = $state<HTMLButtonElement | null>(null);
 
 	onMount(() => {
@@ -58,6 +81,7 @@
 	bind:this={el}
 	class="shuffle-notables"
 	class:busy={!settled}
+	class:waiting={!armed}
 	type="button"
 	aria-disabled={!settled}
 	title="Fly to a notable at random"
@@ -141,7 +165,10 @@
 		transition:
 			transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1),
 			box-shadow 160ms ease-out,
-			color 180ms ease-out;
+			color 180ms ease-out,
+			/* COMPOSED, not declared in a second rule — `transition` is one property, and a later rule of
+			   equal specificity would have dropped the three curves above without a word. This is the
+			   only fade the button gets; see the latch. */ opacity 420ms ease-out;
 	}
 	/* HOVER — the button rises to meet the finger. Colour untouched.
 	   Walked −2px → −1px ("tone down the rise… more subtle movement") → −1.2px (+20%) → −1.32px (+10%,
@@ -208,5 +235,11 @@
 		width: 16px;
 		height: 16px;
 		fill: currentColor; /* inherits the gold, INCLUDING the 70% busy step — one ink, never two */
+	}
+	/* THE ONE FADE THIS BUTTON IS ALLOWED — see the latch. Inert as well as invisible while it waits,
+	   so it cannot be clicked or tabbed to before it is visible. */
+	.shuffle-notables.waiting {
+		opacity: 0;
+		pointer-events: none;
 	}
 </style>

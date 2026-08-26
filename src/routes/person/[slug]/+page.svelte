@@ -1691,6 +1691,7 @@
 <div
 	class="page-container"
 	class:in-orbit={ascension.active}
+	class:in-founder={ascension.founder}
 	class:tier-nav-close={tierClosingForNav}
 	class:tier-collapsed={tierCollapsed}
 	data-density={stage.density}
@@ -1953,6 +1954,7 @@
 					onbladeheight={(h) => onBladeHeight(cur.person.id, h)}
 					settled={featuredLanded && cur.person.id === landedPersonId}
 					orbit={cur.orbit === true}
+					founderSpouse={ascension.founderSpouse}
 				/>
 				<!-- Chip-face for the "flip early, land as a chip" relative demotion: a real PersonBox of
 				     THIS person (identical to the parent/child box it becomes), pre-scaled to fill the card
@@ -2089,6 +2091,15 @@
 	   The stems keep their own treatment: they are structure, and structure should stay quiet. */
 	.page-container.in-orbit :global(.connector-label) {
 		color: var(--color-creamprimary);
+	}
+	/* ── THE FOUNDER SKIN, SCOPED TO THE VIEW RATHER THAN TO EACH CHIP ───────────────────────────────
+	   The zone is a PLACE: while a founder is featured, everything wearing the orbit surface in that
+	   view takes the founder's blue rule. Doing it here rather than threading a `founder` prop down to
+	   every PersonBox is not a shortcut — a chip's rule should agree with the room it is standing in,
+	   not with a fact about the person on it, and the room is exactly what this selector names. */
+	.page-container.in-founder :global(.featured-card.orbit-card::before),
+	.page-container.in-founder :global(.person-box.orbit-chip) {
+		--zone-rule: var(--color-founderblue);
 	}
 
 	.page-container {

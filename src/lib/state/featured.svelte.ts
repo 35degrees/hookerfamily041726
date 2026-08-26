@@ -46,6 +46,9 @@ export type FeaturedData = {
 	 *  PAYLOAD ROOT beside lineAnchors, not on `person`: `person` mirrors the canonical record, and a
 	 *  derived fact does not belong in it. The single predicate the Ascension reads. Absent = false. */
 	orbit?: boolean;
+	/** Married to a Hartford founder — computed in buildFeatured, where the payload's `context` (and so
+	 *  the spouse's tags) is still in scope. See the note there. */
+	founderSpouse?: boolean;
 };
 
 class FeaturedManager {
