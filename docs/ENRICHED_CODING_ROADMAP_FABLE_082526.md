@@ -3961,3 +3961,91 @@ Both went straight into the family recorded at §36.4, §37.3 and §39.4.
   that reads well. Deliberately not touched while it is signed off.
 - **The orbiting sprites** — Field's three seeded depth layers and `DOCK_X`/`DOCK_Y` are ready.
 - **13 orbit→orbit cross-connections** await Sam's review (§40.6); two are not simple deletes.
+
+---
+
+## 42. AUGUST 25 (LATER) — THE ZONE'S SURFACE, THE RULER, THE EXIT, AND THE SPRITES
+
+Design §39–42. Six commits, in order: Morse's data, the orbit titles, the cream connector labels, the
+timeline scale, the exit fix, the sprites.
+
+### 42.1 WHAT SHIPPED
+
+- **Orbit entries got a title.** 94 orbit people: 33 carry "Major influence on multiple Hooker
+  descendants" on three or more CCs of their own; 61 are titled by marriage. The threshold needs **no
+  spouse lookup** — an orbit component is a family group the tree touches only by CC, so a member with
+  almost no CCs of their own is in it BECAUSE of who they married. The count already asks "did they get
+  here on their own account", and the marital case falls out of it. Two things the rule did not name that
+  the data forced: 30 of the 61 are men ("Husband of" is the larger half), and 4 have gender unknown and
+  read "Spouse of" — ungendered rather than guessed.
+- **Morse X03947** took a photo and two wives (X03982 Lucretia Walker, X03983 Sarah Griswold). Both came
+  out ORBIT automatically and were titled automatically — derived membership and the CC-count rule both
+  did the right thing on people who did not exist when either was written.
+- **The timeline became a ruler** — three tiers on a 12.5-year grid, Fraunces years to the right of their
+  rules, the whole gutter 48px wider.
+- **The rail is never hidden.** `z-index: 1`, unconditionally.
+- **The sprites** — §40's last unbuilt piece, at 22.
+
+### 42.2 THE THREE REVERSIONS, AND WHY EACH ONE HAPPENED
+
+**One: two attempts at the exit, both reverted whole.** Sam reported the rail blanking on exit. Both times
+I built an `ascension.night` predicate (active OR veil-still-present) to hold the conditional lift LONGER.
+Sam: *"nooo revert for sure. You are missing the point and I think you downgraded the good transition when
+entering the ascension zone. You did nothing to improve the exit… there's no reason for the timeline to
+ever be hidden."*
+
+He was right on all three counts. The bug was that a ruler's depth was ever a function of the card; both
+attempts treated the symptom, and both added a second clock to an entrance he had already signed off.
+**The tell I should have caught: when a fix has to make an approved thing more complicated, it is
+addressing the wrong layer.**
+
+I also diagnosed it from computed properties (`z-index: 1`, colour cream) rather than pixels, and reported
+it fixed when it was not. FILMING the exit — ten screenshots of the left 200px — showed a blank column in
+one frame. That is the standing lesson (§36.4, §37.3, §39.4) in its seventh form: **instruments
+confidently report things they cannot see.**
+
+**Two: the sprites at 180.** Sam asked for "10x more", got it, and called it "a disco with a disco ball".
+Reverted three passes — the 10x, the tint/direction split, and crisp cores with motion trails — by
+`git checkout`-ing the file to HEAD and rebuilding the 18-sprite version on top, so no experiment left
+residue. See design §42.3; the short version is that density, not softness, is what turns a field into
+glitter.
+
+**Three: a stale comment survived a revert.** Unpicking the first `night` attempt by string replacement
+restored a declaration but left the comment above it describing a transition that no longer existed, and
+it went out in commit `a0f5afdd`. Folded back in the next commit. **A surgical revert has to match
+comment blocks as well as code** — or `git checkout` the file and re-apply, which is what the sprite
+reversion did and which is cleaner.
+
+### 42.3 THE DISAGREEMENT THAT WAS MINE TO LOSE
+
+"Make horizontal 50 year line marker 15% **wider**" — I read *wider* as *thicker* twice, then as *longer*,
+then back. The resolution was in Sam's own wording: he qualified exactly one instruction in that message
+with *"less wide **horizontally**"*, and that qualifier is what distinguishes the axes. Everything
+unqualified meant thickness. Recorded because the next such message will look the same.
+
+### 42.4 WHAT SUCCESS CAME FROM
+
+Three things, all the same shape:
+
+1. **Reframing from timing to structure.** The exit was fixed by one number (`z-index: 0 → 1`) and one
+   deletion, after two elaborate failures. Sam's sentence — "the rail should never be in the veil's
+   stacking conversation at all" — was the whole fix.
+2. **Filming instead of measuring.** Every wrong conclusion this session came from a computed-style probe;
+   every right one came from a screenshot or from a canvas glyph measurement.
+3. **Letting CSS know the direction.** The day/night delay needed no state at all once the transition was
+   declared on the rule being transitioned *to*. Both reverted attempts were JavaScript solving a problem
+   the cascade already models.
+
+### 42.5 STILL OPEN
+
+- **The stripe's sub-pixel disappearance during flights** (from §41) — at scale 0.214 the 2.2px band
+  renders 0.47px. Needs the ring's insets counter-scaled by the flight's live scale.
+- **The coloured flash on demote** (from §41) — `cardTop.style.opacity` reveals the chip-face while the
+  navy `::before` lives on `.featured-card`, outside `.card-top`. Likely structural: move both ring layers
+  inside `.card-top`.
+- **`tabular-nums` is not taking on Fraunces Variable** (design §40.4). Fixing it moves all nine years.
+- **The CC blade draws while the card is too far away to see it** — unchanged from §41.4.
+- **The ascent still interpolates scale rather than depth** — design §38.2, still latent.
+- **13 orbit→orbit cross-connections** await Sam's review (§40.6); two are not simple deletes.
+- **Bar labels still read in LANE inks** against the zone's wax — the last thing in the Ascension still
+  speaking the lane vocabulary. Flagged to Sam; not a defect, a call.

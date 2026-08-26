@@ -4863,3 +4863,205 @@ gesture is the crossing, not the arriving — and why Lincoln's sub-lineage cost
 - **The ascent still interpolates scale rather than depth** — the same units bug as 38.2, latent on the
   half that reads well.
 - The orbiting sprites (Field's three seeded depth layers are ready; `DOCK_X`/`DOCK_Y` give them a centre).
+
+---
+
+## 39. THE ZONE'S SURFACE — WAX, THE NAVY RULE, AND THE CARD'S OWN SILHOUETTE (AS BUILT, August 25)
+
+### 39.1 THE COLOUR HUNT, AND WHY IT ENDED WHERE IT DID
+
+Five candidates were tried for the orbit card's paper and four were rejected by Sam on sight:
+`--stone-150` ("almost too red"), `--cream-primary` (no), `--pale-blue` ("too dark and lavender and
+rich"), a mixed powder blue. What was actually wanted turned out not to be a hue at all — "can we
+somehow make it off white and waxy looking? a different texture but subtle?"
+
+The answer is three layers, not a colour: a 118° sheen, a 93% veil, and the house's Manuscript paper
+grain at 720px, over `--color-orbitwax: hsl(45, 33%, 96%)`. **A surface reads as a material; a swatch
+reads as a choice.** Every hue candidate failed because a flat fill of any colour says "someone picked
+this", and the zone needs paper that was always there.
+
+### 39.2 THE RULE MUST BEND WITH THE NOTCH — AND THE CONCENTRIC-CURVE RULE THAT CAME OUT OF IT
+
+Sam: "can it bend with the spouse notch instead of pretending like the spouse notch isn't there?"
+
+The card's outline is a `clip-path: shape()` with a notch cut for the spouse chip. A border cannot follow
+it, so the rule is **two generated silhouettes** — an outer at 5px inset and an inner at 7.2px, the 2.2px
+between them being the rule — painted as a navy `::before` with the card's top clipped to the inner.
+
+The finding worth keeping is the corner arithmetic. **An even band width is a constraint on the CENTRE of
+each curve, not on its radius.** Offsetting inward:
+
+- a **convex** corner's radius SHRINKS (`CORNER_C − d`)
+- a **concave** corner's radius OPENS (`CORNER_C + d`)
+
+Getting the concave case backwards produced a hard point in the notch. Fixing that but keeping separate
+constants (18 vs 24) produced Sam's "ink smears with extra ink" — the curves were the right *shapes* but
+struck from different centres. **One shared centre constant is what makes a band read as a band.**
+
+### 39.3 SMALL OBJECTS NEED RELATIVELY HEAVIER DETAIL
+
+The card's rule is 2.2px on a 925px card. The same treatment on a 23px rail bar is 1px, not 0.05px — the
+chip lesson (§33.2) again. But a rule that eats its own object has stopped being a rule, which is the
+ceiling on that correction.
+
+`box-shadow` is ONE property. Both the orbit chip and the rail bar lost their drop shadow to a ring that
+replaced rather than composed with it. The second time cost nothing because the first was written down.
+
+---
+
+## 40. THE TIMELINE AS A RULER (AS BUILT, August 25)
+
+### 40.1 RANK BY WEIGHT, NOT BY LENGTH
+
+A 25-year tier was built and **removed** at Sam's word during §36. It ranked the tiers by LENGTH, and at
+~1.9px/year a 25-year mark sits only 47px from its neighbours — a third length there did not read as a
+third rank, it read as an irregularity in the decade rhythm.
+
+It is back now, and the reason it works is the axis:
+
+| tier | interval | length | thickness |
+|---|---|---|---|
+| half | 50y | 38.0 | 4.13 — carries the year |
+| quarter | 25y | 38.0 | 2.86 |
+| eighth | 12.5y | 26.3 | 2.09 |
+
+Length now says one thing only ("numbered or not"); weight says the rest. **Weight survives at small
+differences where length does not.** If a tier is ever added or dropped again, weight is the axis to move.
+
+The grid is 12.5 years and must stay a clean binary fraction — the old loop stepped by 10 and would
+silently drop every 25.
+
+### 40.2 THE GUTTER IS THE WHOLE TRAIN
+
+Moving the year to the RIGHT of its rule cost the rail 48px, and the arithmetic is not obvious. Year and
+rule used to STACK — year at x 2–32, rule beginning at 44 and running ACROSS the lanes. In series from
+one left edge they become the entire gutter: `LABEL_W` 36 → 84, `RAIL_W` 122 → 170.
+
+The ground's ramp was **translated** by the same 48 rather than rescaled, so the tuned curve is untouched
+and the gold under every lane keeps its alpha. Nothing reflows, because the stage reserves zero for the
+rail (`TIMELINE_RAIL_BASE = 0`).
+
+### 40.3 OPTICAL CENTRING IS MEASURED, NOT GUESSED
+
+Two attempts failed the same way. A line box carries ascender and descender room that four numerals never
+occupy: Fraunces' digits rise 10.77px above the baseline and drop 0.22 below, so the box's midline sits
+**2.15px** above the ink's. Centring the box leaves the digits visibly high; bottom-aligning sits them ON
+the line. `line-height: 1` plus the measured offset lands ±0.17px across all nine labels.
+
+**That number is a property of this face at this size, not a constant.** The probe recipe is in the file.
+
+### 40.4 KNOWN AND UNFIXED
+
+`font-variant-numeric: tabular-nums` is not taking on Fraunces Variable — the nine year widths span 32.9
+to 40.4 and should be equal. That is why the column is not flush and why "2000" (the widest four-digit
+combination the scale can produce) overran into lane 0 and needed its own 5% nudge.
+
+---
+
+## 41. DEPTH IS NOT A FUNCTION OF STATE (AS BUILT, August 25)
+
+### 41.1 THE DOCTRINE
+
+**A persistent instrument's stacking level must never depend on what is being displayed.**
+
+The rail was `z-index: 0` at rest and `z-index: 1` while `.rail.ascended` — a depth that was a function
+of *which card was featured*. The veil is z 0 and mounted after the rail, so source order gives it the
+rail's column; the conditional lift was the only thing holding the rail clear. The moment a CC or the X
+changed the featured person, the lift went and the rail sat under an opaque midnight ground for a second.
+
+It is now `z-index: 1` unconditionally. The "above the field, behind the stage" doctrine is untouched:
+`.page-container` is also z 1 and later in the document, so source order still gives the stage the win.
+
+**Two attempts to fix this by better TIMING both failed and were reverted whole** — an `ascension.night`
+predicate (active OR veil-still-present) published from the veil's lifecycle. Sam: "you are missing the
+point… there's no reason for the timeline to ever be hidden." The tell was that each attempt added a
+second clock to an entrance he had already signed off.
+
+### 41.2 A TRANSITION BELONGS TO THE RULE BEING TRANSITIONED **TO**
+
+Declared inside `.rail.ascended`, every day/night transition only ever described ARRIVING at night —
+remove the class and there is no transition property left, so the return snapped in one frame. Going in
+looked right and coming out looked broken, from one declaration in the wrong place.
+
+Moved to the base rules, the same asymmetry pays for the delay for free: `--night-out` on the base rule
+applies ONLY on the way back, and the ascended rules restate `0ms`. **No state, no timer, no second
+clock** — which is what the two reverted attempts were both trying to buy with JavaScript.
+
+### 41.3 INK AND SURFACES WANT DIFFERENT CLOCKS
+
+The ground and the portraits finish with the room; the ink starts 120ms sooner and runs 114ms shorter.
+Not a preference:
+
+> A surface that arrives late merely arrives. Cream ink is defined entirely by the dark behind it, so the
+> moment the ground has more light in it than dark, ink that has not yet turned is not *late* — it is
+> **gone**.
+
+The schedule was taken from film of the ENTRANCE, not invented: the entrance is still daylight at 342ms
+and committed to night by 621, i.e. it flips DURING the veil's rise. The exit flips during its fall.
+
+---
+
+## 42. THE SPRITES (AS BUILT, August 25)
+
+### 42.1 WHAT THEY ARE
+
+Twenty-two lights in the Ascension: **18 herd** on slow elliptical circuits (half each way round),
+**2 strays** wandering a four-waypoint path slower than the herd, and **2 visitors** that arrive from
+off-screen, cross, and leave. Behind the card (z 0 against the stage's z 1) so they are occluded as they
+pass — that occlusion is most of what sells them as being in a room with it.
+
+They orbit **the veil's own centre of light** (`50% 42%`), not a measured card rect. The veil's gradient
+already declares where the card is; a second measurement would be a second source of truth for one fact,
+and the card's box is mid-flight for the first half-second of every arrival.
+
+### 42.2 THE GRAVITY IS ONE NUMBER
+
+Sam's philosophy: "like the featured hero card is the source of light, gravitational pull… not strong,
+but a pull." Entry and exit are two points on a ring outside the frame; the path's MIDPOINT is dragged
+toward the centre by `PULL`. At 1.0 the path is a straight chord and the card has no field at all; 0.42
+bends it without ever looking aimed. Exit is drawn at entry + (0.6–1.4)π — a diametric pair reads as a
+straight line across the screen however much the middle bends.
+
+### 42.3 THE FAILED PATH, WHICH IS THE USEFUL PART
+
+Sam asked for "10x more" and got 180. His verdict: "now it's like a disco with a disco ball, which is not
+the effect at all — I want something natural, I preferred less sprites."
+
+**The count was not the variable.** At ten times the density every sprite has a neighbour, so the eye
+stops reading individual slow drifts and starts reading a TEXTURE — and a texture that pulses is a disco
+ball however soft its elements. Sparseness is what lets a single light be watched, which is the entire
+quality of the Avatar reference.
+
+Two further passes were reverted with it, and both were reasonable answers to real notes:
+
+- **"too blurry"** → crisp bodies with motion trails. Sam's reasoning was right physics: *"it doesn't make
+  sense to have the blur in front of the thing — shouldn't blur be based on movement going behind?"* A
+  halo drawn AROUND a light says the air is thick and softens the object; a TRAIL is a consequence of
+  motion, leaves the body alone, and reads as fast rather than out of focus. The implementation works —
+  because the sprite rides `rotate(θ) translateX(r)` and velocity is always perpendicular to the radius,
+  the direction of travel is CONSTANT in the arm's own frame, so a fixed tail is correct at every point of
+  the circuit with no per-frame maths.
+- **"too contained… a predetermined circle with an edge you can suss out"** → per-sprite orbit centres and
+  a skewed radius distribution.
+
+Both made the glitter worse, because both added *incident* to something already too busy.
+
+> **THE FIX FOR "TOO REGULAR" HERE IS SLOWER AND FEWER, NOT SMALLER AND MORE.**
+
+### 42.4 THE ARITHMETIC THAT WILL LOOK WRONG LATER
+
+"10% less wide but 15% taller" made the flatness constant go **up**, not down. Path height is radius ×
+squash, so `r × 0.90` means `squash = 0.52 × 1.15 ÷ 0.90 = 0.664`. Anyone "correcting" that number back
+down will make the field shorter.
+
+Visitors carry `--squash: 1` because theirs is the one path that is not the herd's flattened ellipse —
+the sprite undoes the squash to stay round, so a visitor left on 0.66 is stretched half as tall again for
+its entire crossing.
+
+### 42.5 COST
+
+61 fps with all 22, against a 61 fps control with the field hidden. At 180 it was 46 — most of it a
+blurred `box-shadow` rasterising per element, which is why the halo is a gradient. Layout is
+**deterministic and seeded**: `Math.random()` here mismatches on hydration and repaints the whole set.
+No JS ticker, no library — three composed CSS animations whose periods do not divide into each other,
+which is what stops the set reading as a wheel.
