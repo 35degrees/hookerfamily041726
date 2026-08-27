@@ -83,6 +83,34 @@
 	--color-foundergrey: #a2aaad;
 	/* The zone's ink on dark — the same cream the rail's years take once the ground goes to midnight. */
 	--color-creamprimary: hsl(30, 38%, 92%);
+
+	/* ── SAM'S PALETTE, CARRIED OVER FROM THE INVESTMENT PROJECT (held as backup; marshmallow is in use)
+	   ────────────────────────────────────────────────────────────────────────────────────────────────
+	   Added at Sam's request as a reserve set. Only `--color-marshmallow` has a consumer today — the
+	   Paths-to-Thomas veil — and the rest are here so a later surface can reach for one by name instead
+	   of a hex nobody can place.
+
+	   TWO OF THE NINE WERE DELIBERATELY NOT ADDED, and that is the note worth keeping:
+
+	     --color-cream: hsl(30, 38%, 92%)   COLLIDES. This project already defines `--color-cream` as
+	                                        #f7f1e6, and TimelineRail reads it twice (a background and an
+	                                        ink). Redefining it would have quietly repainted the rail.
+	                                        His value is not lost — it is already here, one line above,
+	                                        as `--color-creamprimary`, which is the same colour.
+	     --color-stone: hsl(30, 18%, 87%)   SKIPPED for a softer reason: Tailwind v4 generates utilities
+	                                        from `--color-*`, and `stone` is one of its own scales
+	                                        (`bg-stone-100` and `text-stone-500` are both used here). A
+	                                        bare `stone` alongside the numbered scale is a name asking to
+	                                        be confused with it. Available as `--color-orbitwax`'s
+	                                        neighbour if it is ever wanted under its own name. */
+	--main-green: hsl(161, 100%, 45%);
+	--output-background: #4b474775;
+	--color-marshmallow: #f0eee4;
+	--color-starwhite: #efefe8;
+	--color-vanillaice: #f0eada;
+	--color-papyrus-1: #faf7efe7;
+	--color-papyrus-2: #fbf5e3f1;
+	--color-papyrus-3: #f5edd6;
 	/* THE SHADOW TINTS (Aug 7). Shadows were neutral black; these warm them. rose400 is what --shadow-ink
 	   currently carries; the others are kept as the alternatives already tried. */
 	--color-rose300: hsl(14, 25%, 72%);
