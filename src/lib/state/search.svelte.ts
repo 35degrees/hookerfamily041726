@@ -43,6 +43,10 @@ export type SearchRow = {
 	pv?: boolean;
 	/** Display blurb, UNFOLDED. 16% of rows. Line two falls back to this on a name match. */
 	bl?: string;
+	/** `notable.is_notable === true` — 1,128 rows (5.7%). Sorts ahead of the merely dated. */
+	nb?: boolean;
+	/** Portrait URL. 3,083 rows. Same field the card and the ladder read. */
+	ph?: string;
 	/**
 	 * Estimated birth year — A SORT KEY ONLY, NEVER RENDERED. An era guess, not a fact; displaying
 	 * it as a date would be inventing data. Present on 781 of the 1,920 undated rows (680 placed by
@@ -225,8 +229,21 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 	// `eb` places the undated by era so the year-range exemption is visible rather than merely true:
 	// before it, all 107 undated "hooker" rows survived the 1800-1900 filter but the first ranked
 	// 1,006th, far below the 60-row cap.
-	const dec = hits.map((r) => ({ r, t: q ? tier(r, q, terms) : 5, b: r.by ?? r.eb ?? 9999 }));
-	dec.sort((a, b) => a.t - b.t || a.b - b.b);
+	const dec = hits.map((r) => ({
+		r,
+		t: q ? tier(r, q, terms) : 5,
+		// NOTABLE FIRST, THEN CHRONOLOGY (Sam). Search "Moffat" and you get a family cluster from the
+		// late 1800s; four of the thirteen are notable, and those four are what a reader is actually
+		// looking for. Relevance still leads — this only orders WITHIN a tier.
+		//
+		// I argued against this once, on the grounds that notability could not discriminate because
+		// 18,429 of 19,728 carried it. THAT NUMBER WAS WRONG: it counted rows carrying a `notable`
+		// OBJECT, most of them with the flag absent or false. The flag itself is on 1,128 rows (5.7%),
+		// which is exactly the useful density.
+		nb: r.nb ? 0 : 1,
+		b: r.by ?? r.eb ?? 9999
+	}));
+	dec.sort((a, b) => a.t - b.t || a.nb - b.nb || a.b - b.b);
 	return { rows: dec.slice(0, RESULT_CAP).map((d) => d.r), total: dec.length };
 });
 

@@ -40,6 +40,70 @@
 
 	const open = $derived(modal.kind === 'search');
 
+	/**
+	 * THE PHOTO POPOUT, TAKEN FROM THE LADDER RATHER THAN REDERIVED (Sam: same hover effect, same
+	 * larger display in the centre). The three things that make it work carry over exactly:
+	 *
+	 *   - it RESTS CENTRED in the window and swings 1.2x around the photo's own middle. Centring on the
+	 *     cursor is FeaturedCard's model and it cannot work down a tall list — rows near either end
+	 *     land mostly off-screen and the clamp pins them to 0px of travel.
+	 *   - the height ceiling is 0.66, not FeaturedCard's 0.9. A box 90% of the window tall can only be
+	 *     positioned across the remaining 10%, so the clamp swallows the whole gesture.
+	 *   - every enlargement opens at the COLUMN's right edge, not the individual photo's, so the box
+	 *     never drifts sideways from row to row.
+	 */
+	const ZOFFSET = 33;
+	const AMPLIFY = 1.2;
+	let zoom = $state<{
+		src: string;
+		alt: string;
+		w: number;
+		h: number;
+		ax: number;
+		dy: number;
+	} | null>(null);
+
+	function trackZoom(e: MouseEvent) {
+		const img = e.currentTarget as HTMLImageElement;
+		if (!img?.src) return;
+		const r = img.getBoundingClientRect();
+		const ar = img.naturalWidth ? img.naturalHeight / img.naturalWidth : 1;
+		let w = Math.max(r.width * 2, window.innerWidth * 0.26);
+		let h = w * ar;
+		const k = Math.min(1, (window.innerWidth * 0.6) / w, (window.innerHeight * 0.66) / h);
+		w *= k;
+		h *= k;
+		const pivot = r.top + r.height / 2;
+		const offset = (e.clientY - pivot) * AMPLIFY;
+		/**
+		 * ANCHORED TO THE PANEL'S RIGHT EDGE, NOT THE PHOTO COLUMN'S.
+		 *
+		 * The ladder anchors to its photo column and can afford to, because a rung is ~440px wide and
+		 * the enlargement opens across a card the reader has already read. This panel is 520px, so the
+		 * same rule put the box at x=541 over a list spanning 460-980 — it covered the very row being
+		 * hovered, which is the one thing it must never do. Opening past the panel keeps the name, the
+		 * years and the reason readable while the portrait is up.
+		 */
+		const panelEl = document.querySelector('.panel');
+		const ax = panelEl ? panelEl.getBoundingClientRect().right : r.right;
+		zoom = { src: img.src, alt: img.alt || '', w, h, ax, dy: offset };
+	}
+	const closeZoom = () => (zoom = null);
+
+	function zoomStyle(z: { w: number; h: number; ax: number; dy: number }): string {
+		const vw = window.innerWidth;
+		const vh = window.innerHeight;
+		const left = Math.max(8, Math.min(z.ax + ZOFFSET, vw - z.w - 8));
+		const top = Math.max(8, Math.min((vh - z.h) / 2 + z.dy, vh - z.h - 8));
+		return `left:${left}px; top:${top}px; width:${z.w}px; height:${z.h}px;`;
+	}
+
+	/** Portal to <body> so no ancestor's clip or overflow can reach it. */
+	function portalZoom(node: HTMLElement) {
+		document.body.appendChild(node);
+		return { destroy: () => node.remove() };
+	}
+
 	let input = $state<HTMLInputElement | null>(null);
 	let listEl = $state<HTMLElement | null>(null);
 	/** Which row the keyboard is on. Dies with the view, so it lives here and not in the module. */
@@ -232,7 +296,14 @@
 					spellcheck="false"
 				/>
 				{#if search.text}
-					<button class="x" onclick={() => { setText(''); input?.focus(); }} aria-label="Clear">
+					<button
+						class="x"
+						onclick={() => {
+							setText('');
+							input?.focus();
+						}}
+						aria-label="Clear"
+					>
 						&times;
 					</button>
 				{/if}
@@ -278,28 +349,59 @@
 						onclick={(e) => pick(e, r.slug, r.f)}
 						onmouseenter={() => (cursor = i)}
 					>
-						<span class="line1">
-							<span class="nm">{r.n}</span>
-							<span class="yr">{years(r)}</span>
-						</span>
-						<span class="line2">
-							{#if reason}
-								<span class="tag">{reason.tag}</span>{reason.text}
-							{:else if r.bl}
-								{r.bl}
+						<span class="hit-photo">
+							{#if r.ph}
+								<img
+									src={r.ph}
+									alt={r.n}
+									loading="lazy"
+									onmouseenter={trackZoom}
+									onmousemove={trackZoom}
+									onmouseleave={closeZoom}
+								/>
 							{/if}
+						</span>
+						<span class="hit-text">
+							<span class="line1">
+								<!-- THE STAR IS A GUTTER, NOT A PREFIX. It is drawn in a reserved column so every
+								     name in the list starts at the same x whether or not it carries one — a star
+								     that shoved its own name rightward would make the column ragged and the
+								     notables harder to scan, which is the opposite of the point. -->
+								<span
+									class="star"
+									class:has={r.nb}
+									title={r.nb ? 'Notable person' : undefined}
+									aria-hidden={!r.nb}>{r.nb ? '★' : ''}</span
+								>
+								<span class="nm">{r.n}</span>
+								<span class="yr">{years(r)}</span>
+							</span>
+							<span class="line2">
+								{#if reason}
+									<span class="tag">{reason.tag}</span>{reason.text}
+								{:else if r.bl}
+									{r.bl}
+								{/if}
+							</span>
 						</span>
 					</a>
 				{/each}
 			</div>
 		</div>
 
+		{#if zoom}
+			<div use:portalZoom class="zoom-float" style={zoomStyle(zoom)} aria-hidden="true">
+				<img src={zoom.src} alt={zoom.alt} />
+			</div>
+		{/if}
+
 		<button
 			class="close"
 			onclick={dismiss}
 			aria-label="Close search"
 			in:panel={{ duration: 300, delay: 40 }}
-			out:panel={{ duration: VEIL_OUT_MS }}>&times;</button>
+			out:panel={{ duration: VEIL_OUT_MS }}>&times;</button
+		>
 	</div>
 {/if}
 
@@ -440,9 +542,8 @@
 	   are in view, with the same paper, the same rose shadow and the same click. */
 	.hit {
 		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		gap: 3px;
+		align-items: center;
+		gap: 11px;
 		min-height: 54px;
 		padding: 8px 14px;
 		border-radius: 8px;
@@ -461,10 +562,47 @@
 	.hit.on {
 		background: #fffdf6;
 	}
+	/* THE PHOTO COLUMN IS ALWAYS RESERVED, even on the 84% of rows with no portrait, and the empty case
+	   is BLANK rather than a placeholder tile. Reserving keeps every name on one x — a column that
+	   appeared and vanished down the list would make the whole thing ragged — while a grey square on
+	   five rows in six would be the list's loudest element and it would be saying nothing. It also
+	   gives the popout a fixed anchor, which is what stops the enlargement drifting sideways. */
+	.hit-photo {
+		flex: 0 0 auto;
+		width: 38px;
+		height: 38px;
+		border-radius: 5px;
+		overflow: hidden;
+	}
+	.hit-photo img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+	.hit-text {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+		min-width: 0;
+	}
 	.line1 {
 		display: flex;
 		align-items: baseline;
 		gap: 8px;
+	}
+	/* SAME HEIGHT AS THE NAME (Sam), so it sits on the name's own optical line rather than floating.
+	   Fixed width, so it is a gutter: see the note in the markup. */
+	.star {
+		flex: 0 0 auto;
+		width: 11px;
+		font-size: 11px;
+		line-height: 1.2;
+		color: rgba(60, 54, 44, 0.3);
+	}
+	.star.has {
+		color: #c9a227;
+		cursor: help;
 	}
 	.nm {
 		font: 600 14.5px/1.2 var(--font-open-sans, 'Open Sans', sans-serif);
@@ -476,6 +614,8 @@
 		white-space: nowrap;
 	}
 	.line2 {
+		/* Aligned under the NAME, not under the star, so the gutter reads as one column top to bottom. */
+		padding-left: 19px;
 		font: 400 12px/1.3 var(--font-open-sans, 'Open Sans', sans-serif);
 		color: rgba(60, 54, 44, 0.66);
 		overflow: hidden;
@@ -492,6 +632,25 @@
 		margin-right: 7px;
 	}
 
+	/* The enlargement. FeaturedCard's shadow and hairline ring exactly, so the popout is visibly the
+	   same object here, on the ladder and on a card. */
+	.zoom-float {
+		position: fixed;
+		z-index: 60;
+		pointer-events: none;
+		border-radius: 10px;
+		overflow: hidden;
+		box-shadow:
+			0 24px 60px hsl(var(--shadow-ink) / 0.34),
+			0 4px 14px hsl(var(--shadow-ink) / 0.22);
+		outline: 1px solid rgba(255, 253, 247, 0.55);
+	}
+	.zoom-float img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
 	.close {
 		pointer-events: auto;
 		position: fixed;

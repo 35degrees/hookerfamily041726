@@ -25,12 +25,17 @@
 	let { settled = true }: { settled?: boolean } = $props();
 </script>
 
-{#if !ascension.active}
-	<div class="top-right-chrome">
+<div class="top-right-chrome">
+	<!-- SHUFFLE STILL YIELDS THE ZONE (roadmap §40, its own reasoning): it is a door OUT to a random
+	     notable, and offering an exit that skips the descent undoes the whole gesture. -->
+	{#if !ascension.active}
 		<ShuffleNotables {settled} />
-		<SearchTrigger />
-	</div>
-{/if}
+	{/if}
+	<!-- SEARCH DOES NOT YIELD (Sam). It is not an exit that skips anything — it is how you get anywhere
+	     from anywhere, and being stranded in the zone with no way to leave except the X was a smaller
+	     app than the one this is. It re-inks itself for the dark ground; see SearchTrigger. -->
+	<SearchTrigger />
+</div>
 
 <style>
 	.top-right-chrome {

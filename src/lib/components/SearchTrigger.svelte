@@ -13,6 +13,7 @@
 	import { openModal } from '$lib/state/modal.svelte';
 	import { load } from '$lib/state/search.svelte';
 	import { GROUNDS, groundState } from '$lib/state/ground.svelte';
+	import { ascension } from '$lib/state/ascension.svelte';
 
 	/**
 	 * THE INK IS A PROPERTY OF THE PAIR, NOT OF THE CONTROL (design §29). There are seven grounds and
@@ -22,6 +23,14 @@
 	 * behind: it has to answer the ground directly.
 	 */
 	const onDark = $derived(GROUNDS[groundState.idx]?.kind === 'dark');
+	/**
+	 * IN THE ZONE THE GROUND IS NOT THE GROUND ANY MORE. Midnight or founder-green covers whatever the
+	 * user picked, so the ground token stops being the right question and the zone answers instead.
+	 * Sam asked for the timeline rail's ink, and this is literally the rail's value —
+	 * `.rail.ascended .tick-year` is #f7f1e6 at 0.82 — so the two pieces of chrome that survive into the
+	 * zone are lit the same way rather than approximately the same way.
+	 */
+	const inZone = $derived(ascension.active);
 
 	function warm() {
 		void load().catch(() => {
@@ -33,6 +42,7 @@
 <span
 	class="search-trigger"
 	class:on-dark={onDark}
+	class:in-zone={inZone}
 	role="button"
 	tabindex="0"
 	title="Search everyone in the tree"
@@ -88,6 +98,15 @@
 	.search-trigger.on-dark:hover,
 	.search-trigger.on-dark:focus-visible {
 		color: rgba(255, 250, 240, 0.96);
+	}
+	/* THE ZONE OUTRANKS THE GROUND — it is painted over whatever the ground was, so this rule comes
+	   last and wins for both light and dark grounds alike. The rail's own cream, at the rail's own 0.82. */
+	.search-trigger.in-zone {
+		color: rgba(247, 241, 230, 0.82);
+	}
+	.search-trigger.in-zone:hover,
+	.search-trigger.in-zone:focus-visible {
+		color: rgba(247, 241, 230, 1);
 	}
 	.search-trigger svg {
 		width: 14px;

@@ -8,7 +8,7 @@
  *
  * Emits (paths relative to repo root, overridable via the CONFIG block):
  *   static/data/people.json             full records, research_notes stripped
- *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,pv?,f,x,bl?,eb?}
+ *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,pv?,f,x,bl?,eb?,nb?,ph?}
  *                                       bitfield, x=field-tagged folded fact blob (segment 0 = names)
  *   static/data/cemeteries.json         passthrough
  *   static/data/institutions.json       passthrough
@@ -652,6 +652,14 @@ function searchRow(p, slugMap, reg) {
 	// 3,237 rows carry one (16% of the corpus) for +32 KB gzipped.
 	const bl = (p.notable || {}).notable_blurb || b.bio_blurb;
 	if (bl) row.bl = bl;
+	// NOTABLE — the real flag, not the presence of the object. 1,128 of 19,728 (5.7%). Measured wrong
+	// once (18,435 — that is how many carry a `notable` OBJECT, most of them with is_notable absent or
+	// false) and the wrong number was used to argue that notability was useless for ranking. It is not:
+	// search "Moffat" and 4 of the 13 are notable, which is exactly the subset a reader wants first.
+	if ((p.notable || {}).is_notable === true) row.nb = true;
+	// The portrait. 3,083 rows. Same field the card and the ladder read.
+	const ph = b.photo_url || (p.name || {}).photo_url;
+	if (ph) row.ph = ph;
 	// `eb` (era placement for the undated) is backfilled by placeUndatedByEra after the map exists.
 	return row;
 }
