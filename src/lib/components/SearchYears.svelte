@@ -40,6 +40,18 @@
 
 	const pct = (y: number) => ((y - lo) / span) * 100;
 
+	/**
+	 * HALF-CENTURIES ONLY — about ten marks across the whole span. The version Sam called Minecraft ran
+	 * every 25 years and put forty rectangles on a 520px line, which stops being a scale and becomes
+	 * texture. Ten is enough to say where you are and few enough that the two cards stay the thing you
+	 * look at. No years on them: the cards carry the only numbers this control needs, and exactly.
+	 */
+	const ticks = $derived.by(() => {
+		const out: { y: number; century: boolean }[] = [];
+		for (let y = Math.ceil(lo / 50) * 50; y <= hi; y += 50) out.push({ y, century: y % 100 === 0 });
+		return out;
+	});
+
 	function yearAt(clientX: number): number {
 		if (!el) return lo;
 		const r = el.getBoundingClientRect();
@@ -104,6 +116,14 @@
 	>
 		<div class="scale" bind:this={el}>
 			<span class="rule"></span>
+			{#each ticks as t (t.y)}
+				<span
+					class="tick"
+					class:century={t.century}
+					class:out={t.y < from || t.y > to}
+					style="left:{pct(t.y)}%"
+				></span>
+			{/each}
 			<span class="held" style="left:{pct(from)}%; right:{100 - pct(to)}%"></span>
 
 			<button
@@ -171,6 +191,30 @@
 		height: 1px;
 		background: rgba(48, 42, 34, 0.18);
 		pointer-events: none;
+	}
+	/* NARROW, and hanging BELOW the rule so the cards keep the line to themselves. 1px wide — narrow is
+	   the whole brief — with height as the only difference between a half-century and a century, since
+	   thickness is what made the last set read as a fence. They fade outside the claimed span, same ink
+	   further back, so the range is legible even where the cards are not looked at. */
+	.tick {
+		position: absolute;
+		top: 50%;
+		width: 1px;
+		transform: translateX(-50%);
+		background: rgba(48, 42, 34, 0.3);
+		pointer-events: none;
+		transition: opacity 140ms ease-out;
+	}
+	.tick.century {
+		height: 6px;
+		opacity: 1;
+	}
+	.tick:not(.century) {
+		height: 3.5px;
+		opacity: 0.62;
+	}
+	.tick.out {
+		opacity: 0.2;
 	}
 	/* The claimed part, drawn on the same line so the rule THICKENS between the cards rather than a
 	   second bar appearing beside it. */
