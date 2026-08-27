@@ -614,13 +614,21 @@
 	   re-state the shadow or silently delete it. */
 	.hit.founder-row {
 		--card-bg: var(--color-foundergreen);
+		/* THE STRIPE SITS 2px IN, so a margin of green runs outside it (Sam) and the white reads as a
+		   band ON the card rather than as its edge. Two inset shadows do it and ORDER IS THE MECHANISM:
+		   the white ring is drawn 4px deep, then the green is drawn 2px deep ON TOP of it, masking the
+		   outer half back to the card's own colour. Earlier shadows paint over later ones, so reversing
+		   these two hides the stripe completely. The drop shadow is restated last, as it must be in any
+		   rule that sets a ring. */
 		box-shadow:
-			inset 0 0 0 2px rgba(255, 255, 255, 0.9),
+			inset 0 0 0 2px var(--color-foundergreen),
+			inset 0 0 0 4px rgba(255, 255, 255, 0.9),
 			var(--chip-shadow);
 	}
 	.hit.founder-row.on {
 		box-shadow:
-			inset 0 0 0 2px rgba(255, 255, 255, 0.9),
+			inset 0 0 0 2px var(--color-foundergreen),
+			inset 0 0 0 4px rgba(255, 255, 255, 0.9),
 			var(--chip-shadow-hover);
 	}
 	/* CREAM INK, because §41.3 is not optional here: navy on hunter green is the pair this app's own
@@ -637,13 +645,11 @@
 	.hit.founder-row .tag {
 		color: rgba(245, 238, 229, 0.55);
 	}
-	/* The empty photo well takes the green's own DEEPENED stop rather than the stone grey, which would
-	   read as a lit panel punched into a dark card. #1d3420 is the veil's outer stop — the token's
-	   shadow, hand-tuned beside it (see Ascension.svelte: mixing toward white greys it, so these are
-	   not derivable). */
-	.hit.founder-row .photo {
-		background: #1d3420;
-	}
+	/* THE EMPTY WELL STAYS THE HOUSE GREY. I had deepened it to the green's outer stop on the theory
+	   that a pale panel would read as a hole punched in a dark card; Sam's call is that the well is one
+	   thing across the whole app and it does not change costume per row. `bg-stone-100` off PersonBox
+	   is what every other photoless box in the project shows, so nothing is overridden here at all —
+	   this note exists only so the deepened version is not reintroduced as an improvement. */
 	/* THE HIGHLIGHT IS A SHADOW, NOT A FILL — the house's answer to a pointer (`a.person-box:hover`),
 	   and it has to be, because the fill is already carrying line status. Painting a highlight colour
 	   over it would erase the one thing the row's ground is saying. One rule for both pointer and
