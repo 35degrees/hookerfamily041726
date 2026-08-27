@@ -18,6 +18,7 @@
 	 * goes where it still means something — the veil coming in, and the exit into the card's flight.
 	 */
 	import { modal, closeModal } from '$lib/state/modal.svelte';
+	import { ascension } from '$lib/state/ascension.svelte';
 	import {
 		search,
 		load,
@@ -286,6 +287,7 @@
 {#if open}
 	<div
 		class="veil"
+		class:zone={ascension.active}
 		in:veil={{ duration: VEIL_IN_MS }}
 		out:veil={{ duration: VEIL_OUT_MS }}
 		onclick={dismiss}
@@ -460,6 +462,38 @@
 		);
 		backdrop-filter: blur(10px);
 		-webkit-backdrop-filter: blur(10px);
+	}
+	/**
+	 * IN THE ZONE THE VEIL COVERS FAR MORE, and the reason is §29 exactly: these alphas are a property
+	 * of the PAIR, and they were measured against parchment. Measured composites at 1440x900:
+	 *
+	 *                        result row   featured card THROUGH the veil   bare veil
+	 *   parchment              L253              L224                        L216
+	 *   ascension (midnight)   L253              L220                        L110   <-
+	 *   founder (green)        L253              L226                        L147   <-
+	 *
+	 * The row-against-card contrast was never the problem — it is 29 / 33 / 27, near enough the same
+	 * everywhere. What breaks is the FIELD'S UNIFORMITY. On parchment the backdrop is one flat
+	 * marshmallow: the card behind it reads 224 against a 216 surround, a difference of eight, so
+	 * there is nothing there to compete with the results. Over midnight the same alphas leave a 220
+	 * blob sitting in a 110 surround — a difference of a hundred and ten — and that bright patch in
+	 * the middle of a dark screen is the "big white blob" Sam is looking at.
+	 *
+	 * So the fix is not more contrast between the rows and their ground; it is making the GROUND one
+	 * thing again. Raising coverage does both at once: the surround comes up toward marshmallow and
+	 * the blob flattens into it, because how much of anything shows through is exactly (1 - alpha).
+	 *
+	 * The tree very nearly disappears behind this, and that is the trade. In the zone the thing behind
+	 * the veil is a room the reader has already arrived in; while the search is open it is a backdrop,
+	 * and a backdrop that competes with the list is worse than one you cannot quite see.
+	 */
+	.veil.zone {
+		background: radial-gradient(
+			120% 90% at 50% 42%,
+			rgba(233, 231, 223, 0.94) 0%,
+			rgba(229, 227, 219, 0.96) 55%,
+			rgba(224, 222, 214, 0.975) 100%
+		);
 	}
 	.search-layer {
 		position: fixed;
