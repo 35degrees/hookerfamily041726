@@ -69,6 +69,8 @@
 		 *  PRESENT is the button's whole gate — by construction it means "Thomas descendant, grandchild or
 		 *  deeper", so there is no second predicate here to fall out of step with the bake. */
 		pathsToThomas?: PersonCompact[][];
+		/** The ladder is the focus's PARTNER's — see pathsToThomasFor. Only affects the button's label. */
+		pathsSpouse?: boolean;
 		/** The focus's first name, for the Connect button's label. Passed in rather than derived here so
 		 *  it is the SAME name the page already uses for "<name>'s parents" — that resolution has four
 		 *  fallbacks (bio, name, the compact's `fn`, then the display name's first token) because two of
@@ -121,6 +123,7 @@
 	let {
 		person,
 		pathsToThomas,
+		pathsSpouse = false,
 		firstName = null,
 		spouses,
 		generationLabels = [],

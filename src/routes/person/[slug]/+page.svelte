@@ -1956,6 +1956,7 @@
 					onbladeheight={(h) => onBladeHeight(cur.person.id, h)}
 					settled={featuredLanded && cur.person.id === landedPersonId}
 					pathsToThomas={cur.pathsToThomas}
+					pathsSpouse={cur.pathsSpouse === true}
 					firstName={cur.neighborhood.focus?.cf ?? focalFirstName}
 					orbit={cur.orbit === true}
 					founderSpouse={ascension.founderSpouse}

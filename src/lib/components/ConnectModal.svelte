@@ -42,6 +42,7 @@
 	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
 	import { isPynchonKin } from '$lib/data/pynchonLine';
 	import { stage } from '$lib/state/stage.svelte';
+	import { shrinkToFit } from '$lib/actions/shrinkToFit';
 
 	const open = $derived(modal.kind === 'connect-thomas');
 	const paths = $derived(featured.current?.pathsToThomas ?? []);
@@ -173,12 +174,17 @@
 			null
 	);
 	type Rung = PersonCompact & { bl?: string };
+	/** Married-in: the chain is the PARTNER's and already ends on them, so the focus is not appended —
+	 *  they are rendered beside that last rung instead (see `.rung-spouse`). */
+	const viaSpouse = $derived(featured.current?.pathsSpouse === true);
 	const rows = $derived<Rung[]>(
 		paths.length && focus
-			? [
-					...((paths[Math.min(pathIndex, paths.length - 1)] ?? []) as Rung[]),
-					{ ...focus, ...(focusBlurb ? { bl: focusBlurb } : {}) } as Rung
-				]
+			? viaSpouse
+				? ((paths[Math.min(pathIndex, paths.length - 1)] ?? []) as Rung[])
+				: [
+						...((paths[Math.min(pathIndex, paths.length - 1)] ?? []) as Rung[]),
+						{ ...focus, ...(focusBlurb ? { bl: focusBlurb } : {}) } as Rung
+					]
 			: []
 	);
 
@@ -565,12 +571,23 @@
 		 */
 		const pivot = r.top + r.height / 2;
 		const offset = (e.clientY - pivot) * AMPLIFY;
+		/**
+		 * EVERY ENLARGEMENT OPENS IN ONE PLACE — the ladder's own photo column.
+		 *
+		 * The rung photos all share a left edge, so anchoring to `r.right` put every rung's popout at the
+		 * same x for free. The SPOUSE photo does not: it sits 343px further right, at the end of the
+		 * paired row, so its popout opened well clear of the others and read as a different mechanism.
+		 * Anchoring to the first rung's photo instead makes the column the anchor rather than the
+		 * individual image, which is what the eye was already reading it as.
+		 */
+		const col = document.querySelector('.rung .rung-photo');
+		const ax = col ? col.getBoundingClientRect().right : r.right;
 		zoom = {
 			src: img.src,
 			alt: img.alt || '',
 			w,
 			h,
-			ax: r.right,
+			ax,
 			dy: offset
 		};
 	}
@@ -638,18 +655,35 @@
 		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // let the browser have it
 		e.preventDefault();
 		const slug = p.slug;
-		const heroG = focus?.g ?? null;
 		if (!slug || p.id === focus?.id) {
 			requestClose();
 			return;
 		}
-		const delta = heroG != null && p.g != null ? p.g - heroG : null;
+
+		/**
+		 * ON A MARRIED-IN LADDER THE REFERENCE IS THE PARTNER, NOT THE FOCUS.
+		 *
+		 * A married-in person has no `generation_from_thomas` — they are not on the line — so measuring
+		 * against them yields null for every rung and every click would fall to the deck with no
+		 * direction. The ladder is the PARTNER's, and the partner stands where the focus stands, so their
+		 * generation is the honest reference: a rung two above the partner is two above the reader.
+		 *
+		 * And the partner's OWN rung is a spouse swap, not a promotion. They are the person on the other
+		 * half of this card's notch, which the app already has a gesture for — "a brisk in-corner swap"
+		 * — so it is asked for by name rather than approximated with a generation of 0.
+		 */
+		const lastRung = rows[rows.length - 1];
+		const isPartner = viaSpouse && p.id === lastRung?.id;
+		const refG = (viaSpouse ? lastRung?.g : focus?.g) ?? null;
+		const delta = !isPartner && refG != null && p.g != null ? p.g - refG : null;
 		requestClose();
 
 		{
 			const stage = document.querySelector('.page-container') ?? document.body;
+			// The partner is a spouse chip in the card's own notch — the app's briskest navigation, and it
+			// is right here for the same reason the ±1 case is: the chip is on stage, so click the real one.
 			// ±1 — the person IS on stage, as a parent chip or in the children row. Click the real one.
-			if (delta === -1 || delta === 1) {
+			if (isPartner || delta === -1 || delta === 1) {
 				const onStage = stage.querySelector<HTMLElement>(`a[href="/person/${slug}"]`);
 				if (onStage) {
 					onStage.click();
@@ -678,6 +712,22 @@
 			a.remove();
 		}
 	}
+
+	/**
+	 * TYPE THAT FITS, ROW BY ROW — the card's own `shrinkToFit`, not an ellipsis.
+	 *
+	 * A PAIRED rung is only 76% of the column, and at that width a name like "Martha Newton Whittlesey"
+	 * ran out of room and truncated mid-word beside its own years. Sam's shape: **no blurb, drop the
+	 * years to a second line so the name has the whole of the first; a blurb, clamp both rows to fit.**
+	 *
+	 * Applied to EVERY rung rather than only the narrow ones. A chip already shrinks independently of its
+	 * neighbours all over this app, so ragged sizes down a column is the house's normal look rather than
+	 * a new one — and a rule that only engages on the paired row would leave the ordinary rows truncating
+	 * for exactly the same reason, just less often.
+	 *
+	 * The action writes `fontSize` on the LINE, so the spans inside are sized in `em` against it.
+	 */
+	const tt = (px: number) => px * stage.k * fit;
 
 	const yearsOf = (p: PersonCompact) =>
 		p.pv ? '' : [p.by ?? '', p.dy ? `–${p.dy}` : p.by ? '–' : ''].join('');
@@ -755,6 +805,8 @@
 			     switch: survivors are never destroyed, so they can flip to a new seat while the leavers
 			     run out the left. -->
 			{#each rows as p, i (p.id)}
+				{@const paired = viaSpouse && i === rows.length - 1}
+				{@const yearsBelow = paired && !p.bl}
 				<!-- `|global` IS LOAD-BEARING, not a flourish. A `transition:` is LOCAL by default — it plays
 				     only when the element's OWN block changes, not when an ancestor block mounts. These
 				     rungs live inside the `{#if open}`, so on open the whole ladder is created at once and
@@ -776,11 +828,19 @@
 					class:spouse-line={p.sp}
 					class:ee-line={p.ee}
 					class:prism={isPynchonKin(p.id)}
+					class:paired={viaSpouse && i === rows.length - 1}
 					in:arrive|global={{ i, n: rows.length }}
 					out:depart|global={{ i, n: rows.length }}
 					animate:flip={{ duration: FLIP_MS, easing: cubicOut }}
 				>
-					<!-- SQUARE, like every chip's photo, and through the SAME Cloudinary derivative
+					<!-- `alt=""` ON PURPOSE, and it is the correct call twice over. The name is set immediately
+					     beside the photo, so to a screen reader the image is decorative and an alt would read
+					     the person twice. And 161 of the corpus's 3,083 photos are hotlinked off Cloudinary
+					     (findagrave, wikitree, honorstates); those hosts block it, and a failed image with an
+					     alt paints the NAME inside the little square, which reads as a broken card rather
+					     than as a missing photo. Empty alt fails to an empty seat.
+
+					     SQUARE, like every chip's photo, and through the SAME Cloudinary derivative
 					     (`cldSize(p.p, PHOTO_TRANSFORM)`) — one shared image per person means a rung is a
 					     cache hit off whatever chip or card already showed them, which is design §24's
 					     whole point. The seat keeps its width when empty: two thirds of rungs have no
@@ -788,7 +848,7 @@
 					<div class="rung-photo">
 						{#if p.p}<img
 								src={cldSize(p.p, PHOTO_TRANSFORM)}
-								alt={p.n}
+								alt=""
 								class={p.pp ? '' : 'object-top'}
 								style={p.pp ? `object-position: ${p.pp}` : undefined}
 								loading="eager"
@@ -812,19 +872,124 @@
 					     stack that fills a chip leaves a rung half empty and makes a long card look like a
 					     short one with padding. The extra width is the reason to set them in series. -->
 					<div class="rung-body">
-						<div class="rung-line1">
-							<span class="rung-n">{p.n}</span>
-							<span class="rung-y">{yearsOf(p)}</span>
+						<div
+							class="rung-line1"
+							use:shrinkToFit={{
+								max: tt(14.3),
+								min: tt(10.6),
+								key: `${p.id}|${yearsBelow}|${paired}|${stage.u}|${stage.k}|${fit}`
+							}}
+						>
+							<span data-fit class="inline-block whitespace-nowrap">
+								<span class="rung-n">{p.n}</span>{#if !yearsBelow}<span class="rung-y"
+										>{yearsOf(p)}</span
+									>{/if}
+							</span>
+							<!-- INSIDE the fitted line, not beside it. As its own element it carried an absolute
+							     size while the name above was being shrunk, so on a squeezed card the years came
+							     out nearly as large as the name and read heavier than it — Sam: "looks horrible
+							     when the year below is massively bigger than name". In here it inherits whatever
+							     `shrinkToFit` settled on and keeps its 0.846 ratio at every size. It sits AFTER
+							     the `[data-fit]` span, so it is not part of what the action measures. -->
+							{#if yearsBelow}
+								<span class="rung-y rung-y-below">{yearsOf(p)}</span>
+							{/if}
 						</div>
 						<!-- SECOND LINE: the blurb alone. It briefly also carried the marriage the descent ran
 						     through, at the far right; Sam cut it as "too much in one card". See the note in
 						     pathsToThomasFor for the derivation, which is cheap to restore. -->
+						<!-- The second line is the blurb when there is one, and the YEARS when there is not and the
+						     row is paired — which is what buys the name the whole of the line above. -->
 						{#if p.bl}
-							<div class="rung-line2"><span class="rung-bl">{p.bl}</span></div>
+							<div
+								class="rung-line2"
+								use:shrinkToFit={{
+									max: tt(11.55),
+									min: tt(9),
+									key: `${p.id}|${paired}|${stage.u}|${stage.k}|${fit}`
+								}}
+							>
+								<span data-fit class="rung-bl inline-block whitespace-nowrap">{p.bl}</span>
+							</div>
 						{/if}
 					</div>
 				</a>
 			{/each}
+
+			<!-- THE MARRIED-IN PARTNER — a SIBLING of the rungs, not a child of the last one.
+			     It was briefly nested inside that anchor, which was wrong in two ways at once: clicking
+			     this card would have navigated to the Hooker spouse rather than doing nothing, and its
+			     text joined the link's accessible name (a probe caught both — "resolved to 2 elements").
+			     Out here it is exactly what it looks like: a second card, beside the first, that is not a
+			     link because it is the card you are already on.
+
+			     Docked past the last rung's right edge and overhanging the ladder, at half the column's
+			     width, name and dates only, on the mint `spouse-line` paper this person's own chip takes
+			     everywhere else (§29.4) — so the pair reads as "this person, and the Hooker they married"
+			     without a word of explanation. -->
+			{#if viaSpouse && focus}
+				<!-- AN ANCHOR like every other card here (Sam) — pointer cursor and the house hover come from
+				     `a.person-box:hover` for free. Clicking it goes through the same handler, which
+				     short-circuits on `p.id === focus.id` and simply closes: this is the card you are
+				     already on, so "return to it" and "close" are the same gesture. -->
+				<a
+					href={focus.slug ? `/person/${focus.slug}` : '#'}
+					onclick={(e) => rungNav(focus as Rung, e)}
+					class="rung-spouse person-box spouse-line"
+					in:arrive|global={{ i: rows.length - 1, n: rows.length }}
+					out:depart|global={{ i: rows.length - 1, n: rows.length }}
+				>
+					<!-- The photo appears only when there is one, and its seat goes with it — unlike a rung's,
+					     which holds its width empty. A rung keeps the ladder's left edge straight down twelve
+					     rows; this card is alone, so an empty square beside it would be a hole rather than a
+					     column. Same square crop and the same shared derivative as everywhere else. -->
+					{#if focus.p}
+						<div class="rung-photo">
+							<img
+								src={cldSize(focus.p, PHOTO_TRANSFORM)}
+								alt=""
+								class={focus.pp ? '' : 'object-top'}
+								style={focus.pp ? `object-position: ${focus.pp}` : undefined}
+								loading="eager"
+								onmouseenter={trackZoom}
+								onmousemove={trackZoom}
+								onmouseleave={closeZoom}
+							/>
+						</div>
+					{/if}
+					<!-- FIRST AND LAST NAME (Sam), which is the compact's `sn` — the same short name this
+					     person's own chips show, so the pair does not call her one thing here and another on
+					     the stage. It is also the only form that fits: this card is half a rung wide and the
+					     photo takes a square of it. -->
+					<div class="rung-spouse-body">
+						<!-- Clamped for the same reason and with the same action: this card is 220px with a
+						     square photo in it, and a married-in surname can easily outrun Chauncey's. -->
+						<div
+							class="rung-line1"
+							use:shrinkToFit={{
+								max: tt(14.3),
+								// A LOWER FLOOR THAN A RUNG'S, because this card has less room than any of them:
+								// 220px with a 73px square photo in it leaves ~125px of text. "Alexander John
+								// Chandler" is 23 characters and stopped at the old 10px floor with an ellipsis
+								// still showing — and an ellipsis here hides a surname, which is the half of the
+								// name that says who they married into.
+								min: tt(8.2),
+								key: `${focus.id}|${stage.u}|${stage.k}|${fit}`
+							}}
+						>
+							<!-- THE SAME NESTING AS A RUNG'S, and it has to be. Here `.rung-n` was the `[data-fit]`
+							     inline-block itself, while on a rung it is an inline span INSIDE that block —
+							     so one reported the inline-block's line-height box and the other the text's own
+							     ascent/descent, and the years sat 3.3px under the name on this card against
+							     −0.6px on the one beside it. Identical structure, identical spacing. -->
+							<span data-fit class="inline-block whitespace-nowrap">
+								<span class="rung-n">{focus.sn ?? focus.n}</span>
+							</span>
+							<span class="rung-y rung-y-below">{yearsOf(focus)}</span>
+						</div>
+					</div>
+				</a>
+			{/if}
 		</div>
 	</div>
 {/if}
@@ -1037,7 +1202,65 @@
 		align-items: stretch;
 		height: calc(72.8px * var(--stage-u, 1) * var(--ladder-fit, 1));
 		border-radius: 8px;
+		/* VISIBLE, not hidden, so a married-in partner's card can overhang the right edge. The photo was
+		   the only thing that ever needed clipping and it now clips itself, which is the smaller claim. */
+		overflow: visible;
+	}
+	/* THE PAIR. Cut to 76% so the two together still read as ONE row rather than a row and a half; the
+	   partner takes 50% of the column and is docked past the Hooker card's right edge, so the pair runs
+	   about 120px beyond the ladder and that overhang is what says "this one is attached to that one".
+	   Sam: "stick it to the right of the hooker spouse, sticking off to the right to make clear this is
+	   the spouse." */
+	.rung.paired {
+		width: 76%;
+	}
+	/* Positioned against `.ladder-rows` (which is already `position: relative` for the leavers), and
+	   anchored to its BOTTOM — the paired rung is always the last one, so the bottom edge is the same
+	   edge, and this needs no measurement of the row it sits beside. */
+	.rung-spouse {
+		cursor: pointer;
+		text-decoration: none;
+		position: absolute;
+		bottom: 0;
+		height: calc(72.8px * var(--stage-u, 1) * var(--ladder-fit, 1));
+		left: calc(76% + 8px);
+		display: flex;
+		align-items: stretch;
+		width: 50%;
+		border-radius: 8px;
+		overflow: visible;
+		/**
+		 * A DEEPER MINT THAN A CHIP'S, and §29.1 is why that is not a divergence.
+		 *
+		 * `--spouse-bg` (#f3fefa) was measured against the PHOTOGRAPHED PARCHMENT, where the whole
+		 * line-status palette lives inside ~5 DeltaE on purpose (§29.11). Here the card sits on a
+		 * marshmallow veil, beside a cream Hooker card — a different pair, and §29.1's rule is that every
+		 * one of those numbers is a property of the PAIR rather than of the colour. Against #fffdf8 the
+		 * chip value came out nearly white and Sam read the mint as gone: "that was essential."
+		 *
+		 * So the tint is deepened HERE and `--spouse-bg` is untouched, which keeps every chip on the
+		 * stage exactly as measured. §29.6 is the reason it is only a few points: up at L* 97 a small
+		 * lightness move releases a great deal of chroma, so this is walked in fractions rather than
+		 * stepped.
+		 */
+		--card-bg: #e3fbf2;
+	}
+	/* STACKED, not inline. A rung is 440 wide and sets name and years in series; this card is 220 with a
+	   square photo in it, so the same two facts have to go one above the other. */
+	.rung-spouse-body {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
+		justify-content: center;
+		gap: 2px;
+		min-width: 0;
+		padding: 0 calc(11px * var(--stage-u, 1));
+	}
+	.rung-spouse .rung-n,
+	.rung-spouse .rung-y {
+		max-width: 100%;
 		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	/* `:global` because the portal moves this node to <body>, where Svelte's scoping attribute still
 	   rides along but the component's own scope no longer contains it in the way a nested rule expects.
@@ -1070,6 +1293,10 @@
 		aspect-ratio: 1 / 1;
 		height: 100%;
 		background: var(--color-stone100, #f5f5f4);
+		/* Its own clip, now that the rung's is gone. */
+		border-top-left-radius: 8px;
+		border-bottom-left-radius: 8px;
+		overflow: hidden;
 	}
 	.rung-photo img {
 		width: 100%;
@@ -1097,20 +1324,23 @@
 		min-width: 0;
 		padding: 0 calc(10px * var(--stage-u, 1));
 	}
+	/* A BLOCK, not a flex row. `shrinkToFit` measures the wrapper's available width against a single
+	   `[data-fit]` inline span; a flex parent sizes to its children instead and nothing ever shrinks —
+	   the same `min-w-0` trap FeaturedCard records for the card's own name. */
 	.rung-line1 {
-		display: flex;
-		align-items: baseline;
-		gap: calc(8px * var(--stage-u, 1));
+		display: block;
 		min-width: 0;
+		line-height: 1.15;
 	}
 	.rung-line2 {
 		min-width: 0;
 		margin-top: 1px;
 	}
+
 	.rung-bl {
 		display: block;
 		font-family: var(--font-opensans, sans-serif);
-		font-size: calc(11.55px * var(--type-k, 1) * var(--ladder-fit, 1));
+		font-size: 1em;
 		color: var(--color-inkblue);
 		opacity: 0.62;
 		white-space: nowrap;
@@ -1127,9 +1357,12 @@
 	   is the face that was here before. Worth writing down so it is not "corrected" back: the surface is
 	   shared because the object is the same KIND of thing, but a rung is set at a different width and
 	   read in a list, and those are type decisions of their own. */
+	/* `em`, NOT px. `shrinkToFit` writes `fontSize` on `.rung-line1`/`.rung-line2`, so anything inside
+	   that restated its own px size would ignore the fit it was just given. The ratios are the ones the
+	   old absolute values expressed: years 12.1/14.3, blurb 11.55 against its own line's 11.55. */
 	.rung-n {
 		font-family: var(--font-opensans, sans-serif);
-		font-size: calc(14.3px * var(--type-k, 1) * var(--ladder-fit, 1));
+		font-size: 1em;
 		font-weight: 500;
 		color: var(--color-inkblue);
 		white-space: nowrap;
@@ -1138,10 +1371,30 @@
 	}
 	.rung-y {
 		flex: 0 0 auto;
+		margin-left: calc(8px * var(--stage-u, 1));
 		font-family: var(--font-opensans, sans-serif);
-		font-size: calc(12.1px * var(--type-k, 1) * var(--ladder-fit, 1));
+		font-size: 0.846em;
 		color: var(--color-inkblue);
 		opacity: 0.7;
 		white-space: nowrap;
+	}
+	/* PROPORTIONAL, like the inline form — 0.846 of whatever the fitted line settled on. `block` puts it
+	   on its own row without leaving the fitted parent.
+
+	   DECLARED AFTER `.rung-y`, and that placement is the rule rather than tidiness. Both are single
+	   classes, so specificity cannot separate them and SOURCE ORDER decides (§29.9). Sitting above
+	   `.rung-y`, its `margin-left: 0` lost to that rule's 8px gap and the years sat indented under the
+	   name — visible on Josephine's card and on nothing else, because hers is the only form that puts
+	   them on their own line. */
+	.rung-y-below {
+		display: block;
+		margin-left: 0;
+		/* AIR UNDER THE NAME, in `em` so it scales with whatever `shrinkToFit` settled on. Matching the
+		   two cards' nesting closed the gap to −0.2px on both, which Sam read as too tight — the earlier
+		   3.3px was the spacing he wanted, it was just arriving by accident on one card only. Now it is
+		   the same deliberate amount on both, at every size. */
+		margin-top: 0.25em;
+		font-size: 0.846em;
+		line-height: 1.3;
 	}
 </style>

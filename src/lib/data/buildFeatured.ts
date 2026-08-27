@@ -36,6 +36,9 @@ export type PersonPayload = {
 	 *  Sorted shortest-first, then paternal-first where two routes tie — the modal labels these
 	 *  1, 2, 3, so the order has to be stable across rebuilds and explainable at the selector. */
 	pathsToThomas?: PersonCompact[][];
+	/** The chain belongs to a married-in person's HOOKER PARTNER, so its last rung is that partner and
+	 *  the focus stands BESIDE them rather than below. Absent on a descendant's own ladder. */
+	pathsSpouse?: boolean;
 };
 
 const TITLE_ABBREVIATIONS: Record<string, string> = {
@@ -219,6 +222,7 @@ export function buildFeatured(payload: PersonPayload): FeaturedData {
 		orbit: payload.orbit,
 		// Passed straight through, untouched. Absent on Thomas, his children, and everyone off the line.
 		pathsToThomas: payload.pathsToThomas,
+		pathsSpouse: payload.pathsSpouse,
 		/**
 		 * MARRIED TO A HARTFORD FOUNDER — computed HERE, and that is the whole point.
 		 *

@@ -1242,6 +1242,14 @@ const THOMAS_ID = 'H00001';
 const PATHS_MAX_DEPTH = 26; // runaway guard; the deepest real chain measured is 14 rungs
 const PATHS_MAX_ROUTES = 8; // ditto; the measured ceiling is 3
 
+/** One rung: the person's compact plus their blurb. Hoisted out of pathsToThomasFor because the
+ *  married-in case below needs to build the partner's own rung to put on the end of every route. */
+function rungOf(id, byId, slugMap) {
+	const c = compact(byId[id], slugMap);
+	const bl = (byId[id] && (byId[id].notable?.notable_blurb || byId[id].bio?.bio_blurb)) || null;
+	if (bl) c.bl = bl;
+	return c;
+}
 function pathsToThomasFor(p, byId, slugMap) {
 	const start = p.id;
 	if (start === THOMAS_ID) return null;
@@ -1303,12 +1311,7 @@ function pathsToThomasFor(p, byId, slugMap) {
 	 * it, so it is cheap to restore if a second line ever earns its keep.
 	 */
 	const blurbOf = (q) => (q && (q.notable?.notable_blurb || q.bio?.bio_blurb)) || null;
-	const rung = (id) => {
-		const c = compact(byId[id], slugMap);
-		const bl = blurbOf(byId[id]);
-		if (bl) c.bl = bl;
-		return c;
-	};
+	const rung = (id) => rungOf(id, byId, slugMap);
 
 	// [focus, parent, ..., Thomas] -> drop the focus, then reverse to put Thomas first.
 	const chains = routes.map((r) => r.slice(1).reverse()).filter((c) => c.length >= 2);
@@ -1633,9 +1636,53 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 	// (their route to the line is lineAnchors above, which is a different question with a different
 	// shape). Spouses are excluded for now by the same test; if they join later they hang off the side
 	// of their partner's row rather than owning a chain of their own.
+	/**
+	 * A MARRIED-IN SPOUSE BORROWS THEIR HOOKER PARTNER'S LADDER (Sam, Aug 26).
+	 *
+	 * The membership test is `marriedIntoLine`, which already means exactly this and is already derived
+	 * for the chip shading: NOT a Thomas descendant, and married to someone who IS. Reusing it rather
+	 * than re-deriving keeps one answer to one question — and it is a GRAPH question computed once for
+	 * the corpus, not a property asked 18,621 times.
+	 *
+	 * NEVER FOR AN EASTER EGG OR AN ORBIT FIGURE (Sam, explicitly). An egg's route to the line is
+	 * `lineAnchors`, which is a different question with a different shape, and an orbit figure has no
+	 * route at all — that is what makes them orbit. A married-in spouse is neither: they are standing
+	 * beside someone who is on the line, which is precisely what the paired last rung says.
+	 *
+	 * THE CHAIN IS THE PARTNER'S, AND IT KEEPS THE PARTNER ON THE END. For a descendant the chain stops
+	 * one short of the focus because the payload already carries them; here the last rung IS the partner
+	 * and the focus stands beside them, so the partner has to be in the array. `pathsSpouse` tells the
+	 * client which of the two shapes it has — without it the ladder would append the married-in person
+	 * below their own partner as though they descended from them.
+	 *
+	 * FIRST HOOKER SPOUSE BY MARRIAGE ORDER, not by chain length. `marriage_number` is what the card
+	 * sorts spouses by, so the ladder names the same partner the card shows first; picking the shortest
+	 * route instead would silently disagree with the chips a foot above it.
+	 */
 	const pathsToThomas = p.classification?.is_thomas_descendant
 		? pathsToThomasFor(p, byId, slugMap)
 		: null;
+	let pathsSpouseOf = null;
+	if (
+		!pathsToThomas &&
+		marriedIntoLine.has(p.id) &&
+		!p.classification?.is_easter_egg &&
+		!orbitIds.has(p.id)
+	) {
+		const partner = (p.marriages || [])
+			.slice()
+			.sort((a, b) => (a?.marriage_number ?? 99) - (b?.marriage_number ?? 99))
+			.map((m) => m && m.spouse_id)
+			.find((q) => q && byId[q]?.classification?.is_thomas_descendant);
+		if (partner) {
+			const inherited = pathsToThomasFor(byId[partner], byId, slugMap);
+			if (inherited) {
+				// The partner is appended to every route, because for THEM the chain stopped one short.
+				const tail = rungOf(partner, byId, slugMap);
+				pathsSpouseOf = inherited.map((c) => [...c, tail]);
+			}
+		}
+	}
 
 	// Resolved media arrays live ON the focus person record (person.landmarksResolved,
 	// etc.) so the component reads them through its existing `person` prop. Spread a
@@ -1661,6 +1708,9 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 		// ADDITIVE AND SPARSE, exactly like lineAnchors above: present on the 12,844 descendants who are
 		// a grandchild or deeper, absent on the other 6,884 payloads, which stay byte-identical.
 		...(pathsToThomas ? { pathsToThomas } : {}),
+		// The married-in case reuses the SAME key, so every consumer reads one thing; `pathsSpouse` is
+		// the only signal that the last rung is a partner to stand beside rather than a parent above.
+		...(pathsSpouseOf ? { pathsToThomas: pathsSpouseOf, pathsSpouse: true } : {}),
 		// ORBIT (roadmap §40) — the single predicate the whole ascension reads: the ground darkens on it,
 		// the X appears on it, and the flight axis keys off whether it CHANGED across the navigation.
 		// Sparse: emitted only for the ~94 who are, so 18,000 payloads are byte-identical to before.

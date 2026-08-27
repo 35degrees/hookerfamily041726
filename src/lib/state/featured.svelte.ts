@@ -45,6 +45,9 @@ export type FeaturedData = {
 	 *  FIRST, focus dropped. Baked beside lineAnchors and for the same reason — see pathsToThomasFor
 	 *  in regenerate-data.js. Absent = no Connect-to-Thomas button. */
 	pathsToThomas?: PersonCompact[][];
+	/** Married-in: the chain is the HOOKER PARTNER's and ends ON them; the focus is paired beside the
+	 *  last rung instead of appended under it. See pathsToThomasFor in regenerate-data.js. */
+	pathsSpouse?: boolean;
 	/** ORBIT (roadmap §40) — this person's family component never touches the tree; the app reaches
 	 *  them only by cross-connection. Derived in regenerate-data.js (computeOrbit) and emitted at the
 	 *  PAYLOAD ROOT beside lineAnchors, not on `person`: `person` mirrors the canonical record, and a
