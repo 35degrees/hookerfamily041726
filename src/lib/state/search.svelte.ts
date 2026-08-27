@@ -56,7 +56,7 @@ export type SearchRow = {
 };
 
 /** Prepared once at load: segment 0 split out so ranking never re-parses or re-folds. */
-export type Prepared = SearchRow & { nm: string; wd: string[]; np: string[] };
+export type Prepared = SearchRow & { nm: string; wd: string[]; nd: string };
 
 export const CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8, FOUNDER: 16 } as const;
 
@@ -135,9 +135,10 @@ export async function load(): Promise<void> {
 			return Object.assign(r, {
 				nm,
 				wd: nm.split(/[\s,]+/).filter(Boolean),
-				// The `n:` segment's comma PARTS — display name, then each other name form. Kept split
-				// because a whole-name test has to run against one part, not the whole segment; see tier().
-				np: nm.split(', ')
+				// THE DISPLAY NAME ALONE — the first comma part of the `n:` segment, since `factSegments`
+				// pushes display_name before every other name form. Tiers 0 and 2 test THIS and not the
+				// other parts; see tier() for the surname that made the difference.
+				nd: nm.split(', ')[0] ?? nm
 			}) as Prepared;
 		});
 		ready = true;
@@ -160,18 +161,24 @@ export async function load(): Promise<void> {
  */
 function tier(r: Prepared, q: string, terms: string[]): number {
 	/**
-	 * TIERS 0 AND 2 TEST A SINGLE NAME PART, NOT THE WHOLE SEGMENT — and getting that wrong made
-	 * tier 0 unreachable for anyone with a title or a suffix.
+	 * TIERS 0 AND 2 TEST THE DISPLAY NAME, and nothing else. This took two goes.
 	 *
 	 * The `n:` segment is comma-joined: display name, then maiden, married, nickname, title, suffix.
-	 * George Washington's reads `george washington, general`, so `nm === q` was false for the query
-	 * "george washington" and the most famous match in the corpus fell to tier 1 — where the new
-	 * blood-before-marriage tiebreak then put two Hooker descendants who happen to be NAMED after him
-	 * above the man himself. A ranking bug hidden by a formatting decision three commits earlier.
+	 * First it tested the WHOLE segment — `nm === q` — so George Washington, whose segment reads
+	 * `george washington, general`, could never reach tier 0 and fell in with every namesake.
+	 *
+	 * The fix was to test the PARTS, and that overshot in the other direction. Every one of those name
+	 * fields is a part, and most of them are a single surname: searching "brown" put Emily Labouisse
+	 * Rooks at tier 0 because her MAIDEN NAME is Brown, ahead of Sarah Brown Hooker Capron, who is
+	 * actually called it. A bare surname sitting in one field is not "the whole name is the query".
+	 *
+	 * The display name is what "their name IS the query" means. Every other form still reaches tier 1
+	 * through the word test, which is the right weight for them — a maiden name is a real way to find
+	 * someone, just not evidence that you have found THE person of that name.
 	 */
-	if (r.np.includes(q)) return 0; // one whole name form IS the query
+	if (r.nd === q) return 0; // the DISPLAY NAME is the query
 	if (terms.every((t) => r.wd.includes(t))) return 1; // every term is a whole name word
-	if (r.np.some((n) => n.startsWith(q))) return 2; // a name form starts with the query
+	if (r.nd.startsWith(q)) return 2; // the display name starts with the query
 	if (terms.every((t) => r.wd.some((w) => w.startsWith(t)))) return 3; // every term starts a word
 	if (r.nm.includes(q)) return 4; // the query appears in the name
 	return 5; // a fact field only
