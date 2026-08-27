@@ -634,24 +634,42 @@
 	.hit.founder-row {
 		--card-bg: var(--color-foundergreen);
 	}
+	/* A BLOODLINE ROW GETS THE SAME BAND IN THE DESCENT GOLD — the ink the card's own
+	   "Sixth Generation Descendant of Thomas Hooker" is set in, read from the token so the list and the
+	   card cannot drift. Only the stripe changes: the ground stays the banana-cream `--hd-bg` and the
+	   ink stays inkblue, because this row is LIGHT and §41.3's cream is for dark grounds only.
+	   Declared BEFORE the dark rows so that source order settles any row carrying both classes in
+	   favour of the zone colour — the room outranks the line. */
+	.hit.hooker-line {
+		box-shadow:
+			inset 0 0 0 2px var(--card-bg),
+			inset 0 0 0 3.5px var(--color-descentgold),
+			var(--chip-shadow);
+	}
+	.hit.hooker-line.on {
+		box-shadow:
+			inset 0 0 0 2px var(--card-bg),
+			inset 0 0 0 3.5px var(--color-descentgold),
+			var(--chip-shadow-hover);
+	}
 	.hit.founder-row,
 	.hit.orbit-row {
 		/* THE STRIPE SITS 2px IN, so a margin of green runs outside it (Sam) and the white reads as a
 		   band ON the card rather than as its edge. Two inset shadows do it and ORDER IS THE MECHANISM:
-		   the white ring is drawn 4px deep, then the green is drawn 2px deep ON TOP of it, masking the
+		   the white ring is drawn 3.5px deep, then the green is drawn 2px deep ON TOP of it, masking the
 		   outer half back to the card's own colour. Earlier shadows paint over later ones, so reversing
 		   these two hides the stripe completely. The drop shadow is restated last, as it must be in any
 		   rule that sets a ring. */
 		box-shadow:
 			inset 0 0 0 2px var(--card-bg),
-			inset 0 0 0 4px rgba(255, 255, 255, 0.9),
+			inset 0 0 0 3.5px rgba(255, 255, 255, 0.9),
 			var(--chip-shadow);
 	}
 	.hit.founder-row.on,
 	.hit.orbit-row.on {
 		box-shadow:
 			inset 0 0 0 2px var(--card-bg),
-			inset 0 0 0 4px rgba(255, 255, 255, 0.9),
+			inset 0 0 0 3.5px rgba(255, 255, 255, 0.9),
 			var(--chip-shadow-hover);
 	}
 	/* CREAM INK, because §41.3 is not optional here: navy on hunter green is the pair this app's own

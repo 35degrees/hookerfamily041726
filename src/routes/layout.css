@@ -87,6 +87,12 @@
 	   is not about the zone. The gradient's two END stops stay literal in Ascension.svelte — they are
 	   this colour's hand-tuned lift and shadow, not values derivable from it. */
 	--color-ascendmidnight: #0f1626;
+	/* THE DESCENT GOLD — the ink of "Sixth Generation Descendant of Thomas Hooker" on a bloodline card,
+	   promoted to a token for the same reason as the two above: a second surface reads it now (a Hooker
+	   descendant's stripe in the search list), and one colour written in two places is one colour that
+	   can drift. It means specifically "this person IS the line" — an in-law's descent line keeps the
+	   ordinary ink — so the stripe it draws carries exactly that claim and no other. */
+	--color-descentgold: #827400;
 	--color-founderblue: #00205b;
 	--color-foundergrey: #a2aaad;
 	/* The zone's ink on dark — the same cream the rail's years take once the ground goes to midnight. */
@@ -631,7 +637,7 @@ a.person-box.orbit-chip:hover {
    All three of the label's render branches (merged cousin-marriage, dual-descent, ordinary) carry the
    .descent-line hook, so the colour cannot apply to two of the three and silently miss the rare one. */
 .featured-card.hooker-line .descent-line {
-	color: #827400;
+	color: var(--color-descentgold);
 }
 
 /* THE SPINE ITSELF. Drawn as a pseudo-element rather than a border, for two reasons:
