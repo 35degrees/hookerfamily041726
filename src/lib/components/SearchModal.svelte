@@ -175,6 +175,43 @@
 	/** Which row the keyboard is on. Dies with the view, so it lives here and not in the module. */
 	let cursor = $state(0);
 
+	/**
+	 * NO ORPHAN ON THE LAST ROW.
+	 *
+	 * Nine tags of wildly uneven length wrap unevenly, and the ugly case is one pill alone on a third
+	 * row. `flex-wrap: balance` solves it in CSS and is used below — but it shipped in Chrome 150, so
+	 * today it fixes this for almost nobody. This is the part that works now.
+	 *
+	 * MEASURE, DO NOT PREDICT. Every non-`balance` workaround in the article Sam sent needs the item
+	 * width known in advance — container queries, conditional clamps, split groups — and these items
+	 * are words of unpredictable length. So it renders, reads the pills' `top` values to find the rows,
+	 * and if the last row holds exactly one, shows one tag fewer and looks again. Sam's brief was 8-10,
+	 * so dropping to 8 is inside spec rather than a compromise.
+	 *
+	 * Bounded and floored: at most three trims, never below six, and it stops the moment the last row
+	 * has company. Where `balance` IS supported no orphan ever forms, so this simply never fires.
+	 */
+	let tagShown = $state(0);
+	async function trimOrphans() {
+		for (let guard = 0; guard < 3; guard++) {
+			await tick();
+			const row =
+				listEl?.parentElement?.querySelector('.tagrow') ?? document.querySelector('.tagrow');
+			if (!row) return;
+			const pills = [...row.querySelectorAll('.tagpill')];
+			if (pills.length <= 6) return;
+			const tops = pills.map((p) => Math.round(p.getBoundingClientRect().top));
+			const last = tops[tops.length - 1];
+			if (tops.filter((t) => t === last).length > 1) return;
+			tagShown = pills.length - 1;
+		}
+	}
+	$effect(() => {
+		const pool = search.tagPool;
+		tagShown = pool.length;
+		if (pool.length) void trimOrphans();
+	});
+
 	$effect(() => {
 		if (!open) return;
 		// A NEW HANDFUL PER VISIT — the mechanic only works if opening the search twice offers two
@@ -432,7 +469,7 @@
 				<div class="tagblock">
 					<p class="tagtitle">Assorted tags <span>(optional)</span></p>
 					<div class="tagrow">
-						{#each search.tagPool as t (t)}
+						{#each search.tagPool.slice(0, tagShown) as t (t)}
 							<button
 								class="tagpill"
 								class:on={search.tags.includes(t)}
@@ -845,7 +882,11 @@
 	 */
 	.tagrow {
 		display: flex;
+		/* `balance` where it exists (Chrome 150+), plain `wrap` everywhere else — an unknown value makes
+		   the declaration invalid and the browser keeps the previous one, which is the whole progressive
+		   -enhancement trick. `trimOrphans` covers the everywhere-else case. */
 		flex-wrap: wrap;
+		flex-wrap: balance;
 		justify-content: center;
 		gap: 5px;
 		padding: 0 8px;
