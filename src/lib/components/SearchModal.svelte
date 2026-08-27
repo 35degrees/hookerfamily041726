@@ -54,12 +54,29 @@
 	 * veil until every card has left plus a beat. Search had both on one clock, ending together, which
 	 * is why it read as a cut rather than a dissolve.
 	 */
-	const PANEL_OUT_MS = 300;
+	const PANEL_OUT_MS = 250;
 	/** The ground waits for the panel to be most of the way gone — the ladder's VEIL_HOLD, same idea. */
-	const VEIL_OUT_DELAY = 120;
-	/** Twice the panel's clock: the last thing to leave should be the slowest, so the stage is uncovered
-	 *  rather than revealed. It is still lifting while the outgoing card sweeps left underneath. */
-	const VEIL_OUT_MS = 520;
+	const VEIL_OUT_DELAY = 90;
+	/**
+	 * Still the slowest thing on screen, so the stage is uncovered rather than revealed — but trimmed a
+	 * beat (Sam: "unnecessary to have that much"). 520 -> 430, and the hold 120 -> 90.
+	 *
+	 * THIS TRADES BACK SOME OF THE EMPTY BEAT, knowingly. The veil is what covers the CC transition's
+	 * deliberate empty-stage gap, so a shorter fade means slightly longer with nothing on screen:
+	 *
+	 *   veil gone   empty beat
+	 *      390ms       580ms     before any of this — read as a cut
+	 *      745ms       236ms     the long version — read as too much
+	 *      630ms       310ms     here
+	 *
+	 * All three rows MEASURED, not derived — the smoothstep's tail runs longer than the nominal
+	 * duration suggests, so 430 + 90 lands near 630 rather than the 520 the arithmetic gives. That gap
+	 * between the number in the code and the number on screen is exactly why these are filmed.
+	 *
+	 * The middle column is the one Sam is judging and the right column is what it costs; both are
+	 * written down so the next tuning pass is not a blind one.
+	 */
+	const VEIL_OUT_MS = 430;
 
 	const open = $derived(modal.kind === 'search');
 	/** True from the moment a close begins until the transitions finish — see the pointer-events note. */
