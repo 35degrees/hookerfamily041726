@@ -8,7 +8,8 @@
  *
  * Emits (paths relative to repo root, overridable via the CONFIG block):
  *   static/data/people.json             full records, research_notes stripped
- *   static/data/search-index.json       compact rows: {id,slug,n,by,dy,g,t,sx,st,ci,hd,td,ee}
+ *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,f,x} - f=category
+ *                                       bitfield, x=field-tagged folded fact blob (segment 0 = names)
  *   static/data/cemeteries.json         passthrough
  *   static/data/institutions.json       passthrough
  *   static/data/stats.json              corpus tallies (total, thomas/talcott descendants)
@@ -38,6 +39,7 @@ import { gzipSync } from 'node:zlib';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { computeTableCoords } from './table-coords.mjs';
+import { fold } from './src/lib/search/fold.js';
 
 // Phase 3a Block 1: table coordinates, computed at emit time only (never at runtime, never stored in
 // canonical). Set once in main(), read by compact() so `t:{x,y,e?}` rides on every payload.
@@ -421,10 +423,154 @@ function compact(p, slugMap) {
 	};
 }
 
-// search-index row = compact + tags/state/city (and reordered to match existing file)
-function searchRow(p, slugMap) {
+// ---------------------------------------------------------------------------
+// search-index row  (see docs: search architecture, 082726)
+//
+// ONE row per visible person, and the ONLY file the search modal loads. Nothing else consumes it,
+// so its shape is chosen for search alone rather than kept compatible with the old
+// {t,sx,st,ci,hd,td,ee} row — tags/state/city now live INSIDE the fact blob (they are searched, not
+// displayed) and the three booleans collapse into the `f` bitfield.
+//
+// WHY A FLAT STRING AND NO INDEX STRUCTURE: a linear scan of all 19,728 rows measured 1.2-5.9ms in
+// the browser — inside a single frame. An inverted index or trigram table would add a build step
+// and real complexity to save four milliseconds. Measured, not assumed.
+//
+// WHY THE BLOB IS FIELD-TAGGED (`born:...|work:...`) rather than flat: it costs +26 KB gzipped and
+// buys the result row the ability to say WHY someone matched — search "Oyster Bay", and Theodore
+// Roosevelt's row can read `died - Oyster Bay, New York`. The scan still runs `includes()` over the
+// whole string at full speed; only the ~60 rows actually rendered get split into segments.
+// This matters because the match reason is the ONLY per-row field with 100% coverage: just 16% of
+// the corpus has a photo and 16% has a blurb, so a row sized for those is empty three times in four.
+// ---------------------------------------------------------------------------
+
+/** Category bitfield. Multi-select is an OR of these; 0 means All. Overlap is expected and fine. */
+const CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8, FOUNDER: 16 };
+
+/**
+ * Every searchable fact, tagged by the field it came from, folded, joined with '|'.
+ * Tag names are the words shown to the user in the match reason, so they read as English.
+ */
+function factSegments(p, reg) {
+	const { cemById, instById, lmById, warById } = reg;
+	const segs = [];
+	// `residence` is a bare OBJECT 14,462 times and an array only 15 times (and a bare string 3
+	// times). Every other list field is consistently an array today — this normalises anyway,
+	// because the corpus has already proved it varies and a shape surprise here is a hard crash
+	// mid-build, not a soft miss.
+	const asList = (v) => (v == null ? [] : Array.isArray(v) ? v : [v]);
+	// Words are de-duplicated WITHIN a segment, which is pure waste removal, not trimming: bio
+	// carries display_name AND first/middle/last, so an undeduped name reads
+	// `n:theodore roosevelt theodore roosevelt`, and a birth in New York City reads
+	// `born:new york new york new york` (city, county, state). Worth 86 KB gzipped across the
+	// corpus. Dedupe is per-segment and never across them — "new york" has to survive under BOTH
+	// `born` and `died` or the match reason cannot tell you which one you hit.
+	const push = (tag, ...parts) => {
+		const v = parts
+			.flat()
+			.filter(Boolean)
+			.map((x) => String(x).replace(/_/g, ' '))
+			.join(' ')
+			.trim();
+		if (!v) return;
+		const seen = new Set();
+		const words = fold(v)
+			.split(/\s+/)
+			.filter((w) => w && !seen.has(w) && seen.add(w));
+		if (words.length) segs.push(tag + ':' + words.join(' '));
+	};
+	const b = p.bio || {};
+	// Every name form, because people are searched by any of them. `nickname` and `chip_first_name`
+	// are load-bearing, NOT decoration: "tony" is not a substring of "anthony", so without them
+	// Anthony Shreve Hooker is unreachable by the name everyone actually calls him.
+	// THE `n:` SEGMENT IS THE RANKING HAYSTACK and is always segment 0 (display_name is present on
+	// all 19,728 rows). The client pulls it out once at load and tiers against it, so everything a
+	// person could be NAMED has to be in here — a hit on any of these is a name hit (tier 0-4),
+	// while a hit anywhere else in the blob is a fact hit (tier 5).
+	push(
+		'n',
+		b.display_name,
+		b.first_name,
+		b.middle_name,
+		b.last_name,
+		b.maiden_name,
+		b.nickname,
+		b.chip_first_name,
+		b.title,
+		b.suffix,
+		b.married_names || []
+	);
+	const place = (e) => {
+		if (!e) return '';
+		if (typeof e === 'string') return e;
+		return [e.city, e.county, e.state, e.country].filter(Boolean).join(' ');
+	};
+	push('born', place(p.birth));
+	push('died', place(p.death));
+	// Burial carries a cemetery_id 7,030 times and a cemetery_name only 109, so an unresolved
+	// burial would make almost every cemetery unsearchable.
+	const bu = p.burial || {};
+	const cem = bu.cemetery_id ? cemById[bu.cemetery_id] : null;
+	if (cem) push('buried', cem.name, cem.city, cem.state);
+	else push('buried', bu.cemetery_name, place(bu));
+	for (const r of asList(p.residence)) push('lived', place(r));
+	for (const c of asList(p.career))
+		push('work', c.role, c.title, c.organization, c.location, c.location_city, c.location_state);
+	for (const e of asList(p.education))
+		push('school', e.school_name, e.institution_name, e.degree, e.degree_or_field, e.location);
+	for (const m of asList(p.military_service)) {
+		// 12 entries carry a war_id with no `war` string; the registry closes that gap.
+		const w = m && m.war_id ? warById[m.war_id] : null;
+		push(
+			'served',
+			m.war || (w && w.name),
+			m.unit,
+			m.branch,
+			m.rank,
+			m.rank_start,
+			m.rank_end,
+			m.role,
+			m.battles
+		);
+	}
+	// Landmarks are searchable by name (Sam, 082726). The person's own `landmark_blurb` goes in
+	// too: it never renders on the card, but it is real text ("Wigglesworth Hall, Harvard Yard")
+	// and search is the only place it can ever be reached from.
+	for (const l of asList(p.landmarks)) {
+		const rec = l && l.landmark_id ? lmById[l.landmark_id] : null;
+		const loc = rec && rec.location;
+		push(
+			'landmark',
+			rec && (rec.primary_name || rec.name),
+			rec && rec.type,
+			loc && loc.city,
+			loc && loc.state,
+			l && l.landmark_blurb
+		);
+	}
+	// Institutions are id-only on the person; alt_names matter ("College of Connecticut" -> Yale).
+	for (const i of asList(p.institutions)) {
+		const rec = i && i.institution_id ? instById[i.institution_id] : null;
+		if (rec) push('inst', rec.primary_name || rec.name, rec.short_name, rec.alt_names || []);
+	}
+	push('tag', asList(p.tags));
+	const n = p.notable || {};
+	push('is', n.notable_blurb || b.bio_blurb, asList(n.notable_category));
+	// Identical segments collapse too — repeated `work:` rows for the same role, or a residence
+	// that restates the birthplace.
+	return [...new Set(segs)].join('|');
+}
+
+function searchRow(p, slugMap, reg) {
 	const c = compact(p, slugMap);
-	const b = p.birth || {};
+	const b = p.bio || {};
+	let f = 0;
+	if (c.hd) f |= CAT.HD;
+	// Spouses is `marriedIntoLine`, NOT the I-prefix. Measured 082726: the prefix would miss 2,598
+	// genuine Hooker spouses (2,586 of them X-prefixed) — 44% of the category.
+	if (marriedIntoLine.has(p.id)) f |= CAT.SPOUSE;
+	if (c.ee) f |= CAT.INLAW;
+	if (orbitIds.has(p.id)) f |= CAT.INFLUENCE;
+	if ((p.tags || []).includes('hartford_founder')) f |= CAT.FOUNDER;
 	const row = {
 		id: c.id,
 		slug: c.slug,
@@ -432,15 +578,10 @@ function searchRow(p, slugMap) {
 		by: c.by,
 		dy: c.dy,
 		g: c.g,
-		t: p.tags || [],
 		sx: c.sx,
-		hd: c.hd,
-		td: c.td,
-		ee: c.ee
+		f,
+		x: factSegments(p, reg)
 	};
-	const st = b.state || b.country || null;
-	if (st) row.st = st;
-	if (b.city) row.ci = b.city;
 	return row;
 }
 
@@ -1767,6 +1908,14 @@ function main() {
 			.map((p) => p.id)
 	);
 	orbitIds = computeOrbit(visible, byId);
+	// Hoisted above the search-index build (cemById/instById/landmarkById were declared with the
+	// per-person payloads): the fact blob resolves cemetery_id, institution_id, landmark_id and
+	// war_id to their NAMES, so an unresolved id would make that whole class unsearchable.
+	const cemById = Object.fromEntries((data.cemeteries || []).map((c) => [c.id, c]));
+	const instById = Object.fromEntries((data.institutions || []).map((i) => [i.id, i]));
+	const landmarkById = Object.fromEntries((data.landmarks || []).map((x) => [x.id, x]));
+	const warById = Object.fromEntries((data.wars || []).map((w) => [w.id, w]));
+	const searchReg = { cemById, instById, lmById: landmarkById, warById };
 	log(`  ${people.length} people (${visible.length} visible, ${hiddenIds.size} hidden)`);
 	log(`  ${marriedIntoLine.size} married into the Hooker line (derived; see marriedIntoLine)`);
 
@@ -1881,7 +2030,7 @@ function main() {
 	let talcottDescendants = 0;
 	if (!only) {
 		// 3) search-index.json
-		searchIndex = visible.map((p) => searchRow(p, slugMap));
+		searchIndex = visible.map((p) => searchRow(p, slugMap, searchReg));
 
 		// 4) redirects: every former/merged id -> current slug
 		for (const p of visible) {
@@ -2017,13 +2166,10 @@ function main() {
 	// ONLY_IDS=H00007,X00126 regenerates just those (incremental rebuild / testing);
 	// a full run clears the stale dir first.
 	const clientById = Object.fromEntries(clientPeople.map((p) => [p.id, p]));
-	const cemById = Object.fromEntries((data.cemeteries || []).map((c) => [c.id, c]));
-	const instById = Object.fromEntries((data.institutions || []).map((i) => [i.id, i]));
 
 	// Registry lookups for Build-1 resolution. Landmarks/artworks/documents/videos
 	// are forward id->obj maps (person carries {..._id} backlinks); statues invert —
 	// they carry subject_id, so build a reverse index subject_id -> [statue,...].
-	const landmarkById = Object.fromEntries((data.landmarks || []).map((x) => [x.id, x]));
 	const artworkById = Object.fromEntries((data.artworks || []).map((x) => [x.id, x]));
 	const documentById = Object.fromEntries((data.documents || []).map((x) => [x.id, x]));
 	const videoById = Object.fromEntries((data.videos || []).map((x) => [x.id, x]));
