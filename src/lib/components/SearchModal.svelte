@@ -296,7 +296,9 @@
 					oninput={(e) => setText((e.currentTarget as HTMLInputElement).value)}
 					onkeydown={onKey}
 					type="text"
-					placeholder="Search 19,728 people — a name, a place, a war, a school"
+					placeholder={search.corpus
+						? `Search ${search.corpus.toLocaleString()} people — a name, a place, a war, a school`
+						: 'Search the tree — a name, a place, a war, a school'}
 					autocomplete="off"
 					spellcheck="false"
 				/>

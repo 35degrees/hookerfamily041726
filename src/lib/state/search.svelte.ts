@@ -60,13 +60,22 @@ export type Prepared = SearchRow & { nm: string; wd: string[]; np: string[] };
 
 export const CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8, FOUNDER: 16 } as const;
 
-/** Chip order as Sam specified it: All first, then these five. Counts are the 082726 build. */
+/**
+ * Chip order as Sam specified it: All first, then these five.
+ *
+ * NO COUNTS HERE. They were literals — 12871 / 5919 / 530 / 96 / 12 — and the 530 was already wrong
+ * within a day, stale the moment three presidents lost `is_easter_egg` in canonical. A hard-coded
+ * corpus figure in Stream B is a promise that Stream A will never change, which is the one promise
+ * this repo cannot make: the whole point of the pipeline is that canonical moves and everything
+ * downstream re-derives. Counts now come from `search.counts`, computed from the index that was
+ * actually loaded.
+ */
 export const CATEGORIES = [
-	{ mask: CAT.HD, key: 'hd', label: 'Hooker descendants', count: 12871 },
-	{ mask: CAT.SPOUSE, key: 'spouse', label: 'Spouses', count: 5919 },
-	{ mask: CAT.INLAW, key: 'ee', label: 'Notable In-Laws', count: 527 },
-	{ mask: CAT.INFLUENCE, key: 'orbit', label: 'Major Influences', count: 96 },
-	{ mask: CAT.FOUNDER, key: 'founder', label: 'Hartford Founders', count: 12 }
+	{ mask: CAT.HD, key: 'hd', label: 'Hooker descendants' },
+	{ mask: CAT.SPOUSE, key: 'spouse', label: 'Spouses' },
+	{ mask: CAT.INLAW, key: 'ee', label: 'Notable In-Laws' },
+	{ mask: CAT.INFLUENCE, key: 'orbit', label: 'Major Influences' },
+	{ mask: CAT.FOUNDER, key: 'founder', label: 'Hartford Founders' }
 ] as const;
 
 /**
@@ -167,6 +176,22 @@ function tier(r: Prepared, q: string, terms: string[]): number {
 	if (r.nm.includes(q)) return 4; // the query appears in the name
 	return 5; // a fact field only
 }
+
+/**
+ * Corpus size and per-category counts, DERIVED from the loaded index rather than written down.
+ *
+ * One pass over 19k rows the first time `ready` flips, then memoized by `$derived` — the index is
+ * fetched once and never mutated, so there is nothing to invalidate. Cheaper than the maintenance
+ * cost of a literal, and it cannot be wrong.
+ */
+const corpus = $derived(ready ? index.length : 0);
+const counts = $derived.by(() => {
+	const out: Record<number, number> = {};
+	for (const c of CATEGORIES) out[c.mask] = 0;
+	if (!ready) return out;
+	for (const r of index) for (const c of CATEGORIES) if (r.f & c.mask) out[c.mask]++;
+	return out;
+});
 
 /** Folded query terms. Multi-term is an AND across the whole blob. */
 const terms = $derived(fold(applied).split(/\s+/).filter(Boolean));
@@ -466,6 +491,14 @@ export function clear(): void {
 export const search = {
 	get ready() {
 		return ready;
+	},
+	/** How many people are searchable. 0 until the index lands — callers must handle that. */
+	get corpus() {
+		return corpus;
+	},
+	/** mask -> how many rows carry it, from the loaded index. All zero until ready. */
+	get counts() {
+		return counts;
 	},
 	/** Bound to the input. */
 	get text() {
