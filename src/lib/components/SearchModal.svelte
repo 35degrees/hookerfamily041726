@@ -861,10 +861,14 @@
 		text-align: center;
 		font: 400 10.5px/1.3 var(--font-inter, sans-serif);
 		letter-spacing: 0.03em;
-		color: color-mix(in srgb, var(--color-inkblue) 55%, transparent);
+		/* DARKENED (Sam). At 55/35 the label — and "(optional)" especially — was faint enough to read as
+		   something showing THROUGH from another layer rather than as text belonging to this one. On a
+		   veil that is deliberately letting the room beneath show, anything under about two-thirds
+		   strength stops looking authored. */
+		color: color-mix(in srgb, var(--color-inkblue) 78%, transparent);
 	}
 	.tagtitle span {
-		color: color-mix(in srgb, var(--color-inkblue) 35%, transparent);
+		color: color-mix(in srgb, var(--color-inkblue) 58%, transparent);
 	}
 	/**
 	 * NAVY AT HALF STRENGTH, and BIGGER (Sam) — the cream pass went too far the other way: 9px of warm
@@ -880,7 +884,18 @@
 	 */
 	.tagpill {
 		border: 1px solid color-mix(in srgb, var(--color-inkblue) 50%, transparent);
-		background: transparent;
+		/**
+		 * AN OPAQUE INTERIOR, and "no fill until selected" was simply wrong. §29 already records why for
+		 * the cards — a card cannot be translucent, it shows what is behind it through itself — and a
+		 * pill is the same object at a smaller size. With no fill these sat over a veil that is
+		 * deliberately letting the blurred room through, so the featured card read STRAIGHT THROUGH
+		 * them: they looked like holes punched in the overlay rather than things resting on it.
+		 *
+		 * `--hd-bg` (Sam) — the warm near-white a Hooker descendant's card is made of, not
+		 * `--color-creamprimary`, which is the ZONE'S ink-on-dark and reads muddy out here on paper. A
+		 * pill is then literally a small piece of the same stock as the rows below it.
+		 */
+		background: var(--hd-bg, #fffdf8);
 		color: color-mix(in srgb, var(--color-inkblue) 50%, transparent);
 		font: 400 10.5px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.01em;
@@ -899,8 +914,16 @@
 	}
 	/* SELECTED IS A 20% NAVY FILL (Sam). The ink goes to full strength with it — at 50% over its own
 	   20% wash the text would have less contrast selected than unselected, which is backwards. */
+	/* The 20% navy is LAYERED OVER the cream rather than replacing it, so a selected pill stays as
+	   opaque as an unselected one — the same reason the category chips wash their ground instead of
+	   mixing into it. */
 	.tagpill.on {
-		background: color-mix(in srgb, var(--color-inkblue) 20%, transparent);
+		background:
+			linear-gradient(
+				color-mix(in srgb, var(--color-inkblue) 20%, transparent),
+				color-mix(in srgb, var(--color-inkblue) 20%, transparent)
+			),
+			var(--hd-bg, #fffdf8);
 		border-color: color-mix(in srgb, var(--color-inkblue) 60%, transparent);
 		color: var(--color-inkblue);
 	}
