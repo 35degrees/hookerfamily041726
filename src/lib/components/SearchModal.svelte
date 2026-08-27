@@ -845,7 +845,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: 4px;
+		gap: 5px;
 		padding: 0 8px;
 		max-width: 100%;
 	}
@@ -854,29 +854,37 @@
 	   inherited its `text-transform: uppercase` and 0.07em tracking and came out shouting. A collision
 	   inside one component's scoped styles, which is the kind scoping does not protect you from. */
 	/* A LABEL, because a row of unexplained hashtags is a puzzle rather than an invitation.
-	   "(optional)" is Sam's and it does real work: sitting between two filters that DO narrow, an
-	   unlabelled row of pills reads like something you are expected to choose from. */
+	   "(optional)" is Sam's and does real work: sitting between two filters that DO narrow, an
+	   unlabelled row of pills reads like something you are expected to pick from. */
 	.tagtitle {
-		margin: 0 0 1px;
+		margin: 0 0 3px;
 		text-align: center;
-		font: 400 9.5px/1.3 var(--font-inter, sans-serif);
-		letter-spacing: 0.04em;
-		color: rgba(48, 42, 34, 0.5);
+		font: 400 10.5px/1.3 var(--font-inter, sans-serif);
+		letter-spacing: 0.03em;
+		color: color-mix(in srgb, var(--color-inkblue) 55%, transparent);
 	}
 	.tagtitle span {
-		color: rgba(48, 42, 34, 0.34);
+		color: color-mix(in srgb, var(--color-inkblue) 35%, transparent);
 	}
+	/**
+	 * NAVY AT HALF STRENGTH, and BIGGER (Sam) — the cream pass went too far the other way: 9px of warm
+	 * grey on a cream fill was quiet to the point of being unreadable, which is a worse failure than
+	 * the navy that was too loud, because at least the loud one could be read.
+	 *
+	 * So the ink and the line are the app's own inkblue at 50%, and the type goes 9 -> 10.5px, which is
+	 * the category chips' size. Matching them is fine now that the WEIGHT is carried by opacity rather
+	 * than by a filled ground: a half-strength outline beside a solid chip still reads as the quieter
+	 * of the two, at a size that can actually be read.
+	 *
+	 * NO FILL UNTIL SELECTED. An empty pill is an offer; a filled one is a state.
+	 */
 	.tagpill {
-		border: 1px solid rgba(48, 42, 34, 0.12);
-		/* CREAM, NOT WHITE, and the selected state is a DARKER CREAM rather than the navy it had (Sam:
-		   the navy "makes these too prominent like people will think they have to pick tag"). Selection
-		   still has to be unmistakable, so it moves twelve points of lightness and picks up the ink —
-		   a deepening of the same paper rather than a different material. */
-		background: var(--color-creamprimary, hsl(30 38% 92%));
-		color: rgba(48, 42, 34, 0.6);
-		font: 400 9px/1 var(--font-inter, sans-serif);
-		letter-spacing: 0.02em;
-		padding: 4px 7px;
+		border: 1px solid color-mix(in srgb, var(--color-inkblue) 50%, transparent);
+		background: transparent;
+		color: color-mix(in srgb, var(--color-inkblue) 50%, transparent);
+		font: 400 10.5px/1 var(--font-inter, sans-serif);
+		letter-spacing: 0.01em;
+		padding: 5px 9px;
 		border-radius: 999px;
 		cursor: pointer;
 		white-space: nowrap;
@@ -886,13 +894,15 @@
 			color 140ms ease-out;
 	}
 	.tagpill:hover {
-		border-color: rgba(48, 42, 34, 0.3);
-		color: rgba(48, 42, 34, 0.9);
+		border-color: color-mix(in srgb, var(--color-inkblue) 75%, transparent);
+		color: color-mix(in srgb, var(--color-inkblue) 80%, transparent);
 	}
+	/* SELECTED IS A 20% NAVY FILL (Sam). The ink goes to full strength with it — at 50% over its own
+	   20% wash the text would have less contrast selected than unselected, which is backwards. */
 	.tagpill.on {
-		background: hsl(30 34% 80%);
-		border-color: hsl(30 30% 68%);
-		color: rgba(48, 42, 34, 0.92);
+		background: color-mix(in srgb, var(--color-inkblue) 20%, transparent);
+		border-color: color-mix(in srgb, var(--color-inkblue) 60%, transparent);
+		color: var(--color-inkblue);
 	}
 	.count {
 		margin: 0 2px;
