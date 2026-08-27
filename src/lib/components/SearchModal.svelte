@@ -408,6 +408,24 @@
 			in:panel={{ duration: 300, delay: 40 }}
 			out:panel={{ duration: PANEL_OUT_MS }}
 		>
+			<!-- THE LADDER'S HEADER, taken rather than reinvented: a title on the left, the X pushed right
+			     by `margin-left: auto`, both in inkblue and told apart from the cards by WEIGHT and SIZE
+			     rather than hue. ConnectModal records why they are not cream — §41.3, "cream ink is
+			     defined entirely by the dark behind it", and marshmallow is a shade of the PAGE, so cream
+			     on it is cream on cream. -->
+			<div class="head">
+				<span class="head-title">Search</span>
+				<button type="button" class="head-x" onclick={dismiss} aria-label="Close search">
+					<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+						<path
+							d="M6 6 L18 18 M18 6 L6 18"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+						/>
+					</svg>
+				</button>
+			</div>
 			<div class="box">
 				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
 					<path
@@ -544,18 +562,19 @@
 								/>
 							{/if}
 						</div>
+						<!-- THE STAR IS A GUTTER, NOT A PREFIX, and its OWN column rather than an item on the
+						     name's baseline — so it centres against the card's height instead of riding the
+						     first line. Reserved whether or not it is filled, so every name starts at the same
+						     x: a star that shoved its own name rightward would make the column ragged and the
+						     notables harder to scan, which is the opposite of the point. -->
+						<span
+							class="star"
+							class:has={r.nb}
+							title={r.nb ? 'Notable person' : undefined}
+							aria-hidden={!r.nb}>{r.nb ? '★' : ''}</span
+						>
 						<div class="text-area flex min-w-0 flex-col justify-center">
 							<span class="line1">
-								<!-- THE STAR IS A GUTTER, NOT A PREFIX. It is drawn in a reserved column so every
-								     name in the list starts at the same x whether or not it carries one — a star
-								     that shoved its own name rightward would make the column ragged and the
-								     notables harder to scan, which is the opposite of the point. -->
-								<span
-									class="star"
-									class:has={r.nb}
-									title={r.nb ? 'Notable person' : undefined}
-									aria-hidden={!r.nb}>{r.nb ? '★' : ''}</span
-								>
 								<span class="nm">{r.n}</span>
 								<span class="yr">{years(r)}</span>
 							</span>
@@ -577,14 +596,6 @@
 				<img src={zoom.src} alt={zoom.alt} />
 			</div>
 		{/if}
-
-		<button
-			class="close"
-			onclick={dismiss}
-			aria-label="Close search"
-			in:panel={{ duration: 300, delay: 40 }}
-			out:panel={{ duration: PANEL_OUT_MS }}>&times;</button
-		>
 	</div>
 {/if}
 
@@ -996,6 +1007,42 @@
 		border-color: color-mix(in srgb, var(--color-inkblue) 75%, transparent);
 		color: var(--color-inkblue);
 	}
+	/* THE LADDER'S PROPORTIONS: 34px hit area, inkblue at 0.55 lifting to 1, the title uppercase and
+	   letterspaced so the chrome reads as chrome beside solid cards. Sized to the panel rather than the
+	   ladder's 440px, since that is the column it belongs to here. */
+	.head {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+	}
+	.head-title {
+		font-family: var(--font-opensans, 'Open Sans', sans-serif);
+		font-size: 14px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-inkblue);
+		opacity: 0.83;
+	}
+	.head-x {
+		margin-left: auto;
+		display: grid;
+		place-items: center;
+		width: 34px;
+		height: 34px;
+		padding: 0;
+		color: var(--color-inkblue);
+		background: none;
+		border: 0;
+		opacity: 0.55;
+		cursor: pointer;
+		transition: opacity 200ms ease-out;
+	}
+	.head-x:hover,
+	.head-x:focus-visible {
+		opacity: 1;
+		outline: none;
+	}
 	.count {
 		margin: 0 2px;
 		text-align: center;
@@ -1295,11 +1342,16 @@
 	/* NAVY, THE NAME'S OWN COLOUR (Sam), not gold. A gold mark on a navy name reads as a separate
 	   object stacked down its own column; in the name's ink the star belongs to the name it marks and
 	   the indent is just where names start. Same optical size as the name, so it sits on its line. */
+	/* CENTRED ON THE CARD'S HEIGHT, in a column of its own (Sam), and 10% narrower: 12 -> 10.8px. */
 	.star {
 		flex: 0 0 auto;
-		width: 12px;
+		align-self: stretch;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 10.8px;
 		font-size: 12px;
-		line-height: 1.2;
+		line-height: 1;
 		color: transparent;
 	}
 	.star.has {
@@ -1323,8 +1375,6 @@
 		white-space: nowrap;
 	}
 	.line2 {
-		/* Aligned under the NAME, not under the star, so the gutter reads as one column top to bottom. */
-		padding-left: 20px;
 		font: 400 12px/1.3 var(--font-open-sans, 'Open Sans', sans-serif);
 		color: rgba(60, 54, 44, 0.66);
 		overflow: hidden;
@@ -1359,24 +1409,5 @@
 		height: 100%;
 		object-fit: cover;
 		display: block;
-	}
-	.close {
-		pointer-events: auto;
-		position: fixed;
-		right: 16px;
-		top: 16px;
-		width: 30px;
-		height: 30px;
-		border-radius: 6px;
-		border: 1px solid rgba(60, 54, 44, 0.18);
-		background: rgba(255, 253, 247, 0.7);
-		color: rgba(60, 54, 44, 0.7);
-		font-size: 19px;
-		line-height: 1;
-		cursor: pointer;
-	}
-	.close:hover {
-		color: rgba(60, 54, 44, 0.95);
-		border-color: rgba(60, 54, 44, 0.34);
 	}
 </style>
