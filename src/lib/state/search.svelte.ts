@@ -185,6 +185,23 @@ function tier(r: Prepared, q: string, terms: string[]): number {
  * cost of a literal, and it cannot be wrong.
  */
 const corpus = $derived(ready ? index.length : 0);
+/**
+ * [earliest birth year, latest] in the LOADED corpus — the year slider's scale, derived rather than
+ * written down for the same reason the counts are. It is 1550..2025 today; a 1540 record landing
+ * tomorrow should move the scale without anyone editing a constant.
+ */
+const yearBounds = $derived.by((): [number, number] | null => {
+	if (!ready) return null;
+	let min = Infinity;
+	let max = -Infinity;
+	for (const r of index) {
+		if (r.by == null) continue;
+		if (r.by < min) min = r.by;
+		if (r.by > max) max = r.by;
+	}
+	return min === Infinity ? null : [min, max];
+});
+
 const counts = $derived.by(() => {
 	const out: Record<number, number> = {};
 	for (const c of CATEGORIES) out[c.mask] = 0;
@@ -238,19 +255,30 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 	const hits: Prepared[] = [];
 	for (const r of index) {
 		if (cats && !(r.f & cats)) continue;
-		// The undated are EXEMPT from the year range, never hidden by it (Sam, 082726): 1,920 people
-		// have no birth year, and a slider that silently swallowed them would be a lie about the
-		// corpus. The range narrows the dated; it does not filter away the unknown.
-		// `!= null` is LOOSE on purpose — it catches undefined as well as null. Today the index only
-		// ever writes null (1,920 rows), but a strict check would silently start range-filtering the
-		// undated the day a build omitted the key instead.
-		//
-		// KNOWN CONSEQUENCE, not a bug: exempt rows still sort last within their tier (null -> 9999),
-		// so on a broad query they fall below the 60-row cap. "hooker" + 1800-1900 keeps all 107 of
-		// them in `total`, but the first one ranks 1,006th. They are never filtered away; they are
-		// simply not competitive for the visible sixty.
-		if (yearFrom !== null && r.by != null && (r.by < yearFrom || r.by > (yearTo ?? yearFrom)))
-			continue;
+		/**
+		 * THE RANGE FILTERS ON `by ?? eb` — the real birth year where there is one, the era ESTIMATE
+		 * where there is not (Sam: "no birth year people can be 'estimated' based on lifespan of
+		 * parents, spouse dates, etc, but we won't print the estimate").
+		 *
+		 * This supersedes the earlier "undated are exempt" rule, which was the right answer only while
+		 * nothing could place them. `eb` places 781 of the 1,920 from generation or death year, so
+		 * exempting those now would mean ignoring a position we already hold.
+		 *
+		 * THE 1,139 WITH NO SIGNAL AT ALL STAY EXEMPT, and that is the honest half of the same rule: a
+		 * slider cannot narrow by a year nobody has, and silently dropping them would make the corpus
+		 * look smaller than it is. They pass every range.
+		 *
+		 * THE ESTIMATE FILTERS BUT NEVER PRINTS. `eb` is a sort and filter key only; a row with no `by`
+		 * still renders blank years, because showing a guess as a date would be inventing data — and
+		 * Sam is filling these in over time, so the blank is also the to-do list.
+		 *
+		 * `!= null` is LOOSE on purpose: it catches undefined as well as null, so a build that omitted
+		 * the key could not silently start range-filtering people it cannot place.
+		 */
+		if (yearFrom !== null) {
+			const placed = r.by ?? r.eb;
+			if (placed != null && (placed < yearFrom || placed > (yearTo ?? yearFrom))) continue;
+		}
 		let ok = true;
 		for (const m of matchers) {
 			if (!m.test(r.x)) {
@@ -499,6 +527,10 @@ export const search = {
 	/** mask -> how many rows carry it, from the loaded index. All zero until ready. */
 	get counts() {
 		return counts;
+	},
+	/** [earliest, latest] birth year present, or null before the index lands. */
+	get yearBounds() {
+		return yearBounds;
 	},
 	/** Bound to the input. */
 	get text() {

@@ -31,6 +31,7 @@
 		CATEGORIES,
 		RESULT_CAP
 	} from '$lib/state/search.svelte';
+	import SearchYears from './SearchYears.svelte';
 	import { linear, cubicOut } from 'svelte/easing';
 	import { tick } from 'svelte';
 
@@ -329,6 +330,8 @@
 				{/each}
 			</div>
 
+			<SearchYears />
+
 			{#if !search.idle}
 				<!-- NO SILENT CAPS (§44). The count is the TRUE total and the line says plainly that only
 				     RESULT_CAP are drawn — a query returning hundreds wants narrowing, and saying so is
@@ -484,12 +487,16 @@
 		flex-direction: column;
 		gap: 10px;
 	}
+	/* QUIETER (Sam: "the search is so wide, and the font you use for text box placeholder is big").
+	   The COUNT stays — he wants the tree's size said out loud — so the line is shortened by setting it
+	   smaller rather than by dropping what it says. 52 -> 42 and 16 -> 13.5 together take the box from
+	   the loudest element in the modal to the same voice as the rows it produces. */
 	.box {
 		display: flex;
 		align-items: center;
-		gap: 10px;
-		padding: 0 14px;
-		height: 52px;
+		gap: 9px;
+		padding: 0 12px;
+		height: 42px;
 		border-radius: 10px;
 		background: var(--paper, #f7f5ee);
 		box-shadow:
@@ -497,17 +504,18 @@
 			0 0.8px 2.4px hsl(var(--shadow-ink) / calc(var(--shadow-a2) * 1.35));
 	}
 	.box svg {
-		width: 17px;
-		height: 17px;
+		width: 15px;
+		height: 15px;
 		flex: none;
 		color: rgba(60, 54, 44, 0.42);
 	}
 	.box input {
 		flex: 1;
+		min-width: 0;
 		border: 0;
 		background: none;
 		outline: none;
-		font: 400 16px/1 var(--font-open-sans, 'Open Sans', sans-serif);
+		font: 400 13.5px/1 var(--font-open-sans, 'Open Sans', sans-serif);
 		color: #2b2620;
 	}
 	.box input::placeholder {
@@ -653,7 +661,7 @@
 		gap: 6px;
 		overflow-y: auto;
 		/* The list scrolls; the box above it does not move. */
-		max-height: calc(88vh - 12vh - 130px);
+		max-height: calc(88vh - 12vh - 180px);
 		padding: 2px 2px 14px;
 	}
 
