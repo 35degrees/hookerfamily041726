@@ -1286,6 +1286,30 @@ function pathsToThomasFor(p, byId, slugMap) {
 	}
 	if (!routes.length) return null;
 
+	/**
+	 * THE RUNG'S SECOND LINE — a blurb, and the spouse the LINE ITSELF runs through.
+	 *
+	 * `bl` is `notable_blurb ?? bio_blurb`, in that order, because a notable's blurb SHADOWS their bio
+	 * one everywhere else in the app (the card reads the same pair the same way) and a ladder that
+	 * disagreed with the card about a person's one-line description would be a second source of truth.
+	 * 60.2% of chain rungs have one; the rest simply have no second line.
+	 *
+	 * THE CHAIN-SPOUSE WAS BUILT HERE AND REMOVED. Each rung briefly also carried `cs`/`cy` — the
+	 * co-parent of the next rung down, i.e. the marriage the descent itself passed through, which is a
+	 * genuinely better fact than "this person's spouse" for someone who had several. It rendered as
+	 * "Husband of Susanna Garbrand (m. 1621)" at the right of the blurb and Sam cut it on sight: "too
+	 * much in one card." Recorded rather than mourned — the derivation is four lines (co-parent of
+	 * `belowId`, then `date_year` off the matching marriage) and the rung already receives the id below
+	 * it, so it is cheap to restore if a second line ever earns its keep.
+	 */
+	const blurbOf = (q) => (q && (q.notable?.notable_blurb || q.bio?.bio_blurb)) || null;
+	const rung = (id) => {
+		const c = compact(byId[id], slugMap);
+		const bl = blurbOf(byId[id]);
+		if (bl) c.bl = bl;
+		return c;
+	};
+
 	// [focus, parent, ..., Thomas] -> drop the focus, then reverse to put Thomas first.
 	const chains = routes.map((r) => r.slice(1).reverse()).filter((c) => c.length >= 2);
 	if (!chains.length) return null;
@@ -1326,7 +1350,7 @@ function pathsToThomasFor(p, byId, slugMap) {
 		const kb = paternalKey(b);
 		return ka < kb ? -1 : ka > kb ? 1 : 0;
 	});
-	return chains.map((c) => c.map((id) => compact(byId[id], slugMap)));
+	return chains.map((c) => c.map((id) => rung(id)));
 }
 
 // Builds the self-contained payload that /person/[slug] fetches.
