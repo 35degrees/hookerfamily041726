@@ -926,15 +926,30 @@
 	 * grey on a cream fill was quiet to the point of being unreadable, which is a worse failure than
 	 * the navy that was too loud, because at least the loud one could be read.
 	 *
-	 * So the ink and the line are MIDNIGHT (`--color-ascendmidnight`, the zone's own ground colour) at
-	 * 65%, and the type goes 9 -> 10.5px, which is the category chips' size. Matching them is fine now that the WEIGHT is carried by opacity rather
+	 * THE BLUE IS `--color-inkblue`, NOT `--color-ascendmidnight`, and that is a correction. Midnight
+	 * was the obvious pick by name and it came out grey — Sam: "looks black or grey". Measured at 65%
+	 * over the pill's white:
+	 *
+	 *   --color-ascendmidnight  rgb(99,103,112)   blue-minus-red  13   reads grey
+	 *   --color-inkblue         rgb(109,116,133)                  24   reads blue
+	 *   --color-founderblue     rgb(89,109,146)                   57   strongly blue
+	 *
+	 * #0f1626 has almost no chroma. It reads BLUE as a large dark field — which is the only job it has
+	 * in the zone — and GREY as thin ink at low opacity. §29 says a value belongs to the pair (colour,
+	 * ground); this is the same lesson with AREA as the third term, and the third one that has caught
+	 * me: the descent gold failed the same way going from a name to a hairline.
+	 *
+	 * `--color-founderblue` is bluer still, and is deliberately not used — it is the founder zone's
+	 * rule colour and carries that meaning.
+	 *
+	 * The type goes 9 -> 10.5px, the category chips' size. Matching them is fine now that the WEIGHT is carried by opacity rather
 	 * than by a filled ground: a half-strength outline beside a solid chip still reads as the quieter
 	 * of the two, at a size that can actually be read.
 	 *
 	 * NO FILL UNTIL SELECTED. An empty pill is an offer; a filled one is a state.
 	 */
 	.tagpill {
-		border: 1px solid color-mix(in srgb, var(--color-ascendmidnight) 65%, transparent);
+		border: 1px solid color-mix(in srgb, var(--color-inkblue) 65%, transparent);
 		/**
 		 * AN OPAQUE INTERIOR, and "no fill until selected" was simply wrong. §29 already records why for
 		 * the cards — a card cannot be translucent, it shows what is behind it through itself — and a
@@ -950,7 +965,7 @@
 		   opaque either: at 60 over the marshmallow the pill still reads as a solid object while the
 		   veil's warmth comes through it, which is what keeps nine of them from becoming a white block. */
 		background: color-mix(in srgb, var(--hd-bg, #fffdf8) 60%, transparent);
-		color: color-mix(in srgb, var(--color-ascendmidnight) 65%, transparent);
+		color: color-mix(in srgb, var(--color-inkblue) 65%, transparent);
 		font: 400 10.5px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.01em;
 		padding: 5px 9px;
@@ -963,8 +978,8 @@
 			color 140ms ease-out;
 	}
 	.tagpill:hover {
-		border-color: color-mix(in srgb, var(--color-ascendmidnight) 85%, transparent);
-		color: color-mix(in srgb, var(--color-ascendmidnight) 90%, transparent);
+		border-color: color-mix(in srgb, var(--color-inkblue) 85%, transparent);
+		color: color-mix(in srgb, var(--color-inkblue) 90%, transparent);
 	}
 	/* SELECTED IS A 20% NAVY FILL (Sam). The ink goes to full strength with it — at 50% over its own
 	   20% wash the text would have less contrast selected than unselected, which is backwards. */
@@ -978,8 +993,8 @@
 				color-mix(in srgb, var(--color-inkblue) 20%, transparent)
 			),
 			color-mix(in srgb, var(--hd-bg, #fffdf8) 60%, transparent);
-		border-color: color-mix(in srgb, var(--color-ascendmidnight) 75%, transparent);
-		color: var(--color-ascendmidnight);
+		border-color: color-mix(in srgb, var(--color-inkblue) 75%, transparent);
+		color: var(--color-inkblue);
 	}
 	.count {
 		margin: 0 2px;
