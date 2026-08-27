@@ -1342,7 +1342,15 @@
 	/* NAVY, THE NAME'S OWN COLOUR (Sam), not gold. A gold mark on a navy name reads as a separate
 	   object stacked down its own column; in the name's ink the star belongs to the name it marks and
 	   the indent is just where names start. Same optical size as the name, so it sits on its line. */
-	/* CENTRED ON THE CARD'S HEIGHT, in a column of its own (Sam), and 10% narrower: 12 -> 10.8px. */
+	/**
+	 * CENTRED BOTH WAYS, and horizontally was the one that was wrong: the column is 10.8px of a much
+	 * wider GUTTER, and it sat at the far left of it. The photo is flush to the card's edge with no gap
+	 * after it, and `.text-area` carries 12px of left padding before the name — so the star had zero
+	 * space on one side and twelve on the other, and read as stuck to the photograph.
+	 *
+	 * `margin-left` matches the text-area's padding, so the space either side of the star is the same
+	 * number. If that padding is ever retuned, this moves with it — they are one measurement.
+	 */
 	.star {
 		flex: 0 0 auto;
 		align-self: stretch;
@@ -1350,6 +1358,7 @@
 		align-items: center;
 		justify-content: center;
 		width: 10.8px;
+		margin-left: 12px;
 		font-size: 12px;
 		line-height: 1;
 		color: transparent;
@@ -1369,14 +1378,28 @@
 		line-height: 1.2;
 		color: var(--color-inkblue);
 	}
+	/**
+	 * THE YEARS AND THE SECOND LINE GO BLUE at 80% (Sam), so a row is one ink at three strengths — name
+	 * full, years and reason at 80, the field label quieter still — rather than a blue name sitting on
+	 * two lines of warm brown.
+	 *
+	 * `--color-inkblue`, not `--color-ascendmidnight`, and measured rather than picked by name. At 80%
+	 * over the card paper: midnight lands rgb(63,68,80), 17 points bluer than red, which the eye calls
+	 * charcoal; inkblue lands rgb(75,84,106) at 31 and reads as blue. Same trap as the tag pills an hour
+	 * ago — a token named midnight is a GROUND colour with nearly no chroma, and chroma is what survives
+	 * being thin.
+	 *
+	 * The dark rows override both to cream and still do: those rules are (0,3,0) against this (0,1,0),
+	 * so specificity settles it whatever the source order.
+	 */
 	.yr {
 		font: 400 12px/1.2 var(--font-open-sans, 'Open Sans', sans-serif);
-		color: rgba(60, 54, 44, 0.55);
+		color: color-mix(in srgb, var(--color-inkblue) 80%, transparent);
 		white-space: nowrap;
 	}
 	.line2 {
 		font: 400 12px/1.3 var(--font-open-sans, 'Open Sans', sans-serif);
-		color: rgba(60, 54, 44, 0.66);
+		color: color-mix(in srgb, var(--color-inkblue) 80%, transparent);
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -1387,7 +1410,9 @@
 		text-transform: uppercase;
 		font: 600 9.5px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.07em;
-		color: rgba(60, 54, 44, 0.42);
+		/* The field label follows the line it labels — same ink, further back, so BORN / SERVED / SCHOOL
+		   still reads as an annotation rather than turning the row into two colours. */
+		color: color-mix(in srgb, var(--color-inkblue) 45%, transparent);
 		margin-right: 7px;
 	}
 
