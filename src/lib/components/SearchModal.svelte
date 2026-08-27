@@ -27,6 +27,7 @@
 		clear,
 		remember,
 		reasonFor,
+		CAT,
 		CATEGORIES,
 		RESULT_CAP
 	} from '$lib/state/search.svelte';
@@ -154,7 +155,7 @@
 	 * transition start immediately on click, no delay"): the veil lifts while the stage is already in
 	 * motion underneath, so what you uncover is a flight in progress rather than one about to begin.
 	 */
-	function pick(e: MouseEvent, slug: string) {
+	function pick(e: MouseEvent, slug: string, f: number) {
 		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // let the browser have it
 		e.preventDefault();
 		remember(search.text);
@@ -166,6 +167,23 @@
 		const a = document.createElement('a');
 		a.href = `/person/${slug}`;
 		a.dataset.cc = 'true';
+		/**
+		 * ORBIT FIGURES AND HARTFORD FOUNDERS DESCEND INTO THE ZONE (Sam) — Abraham Lincoln and
+		 * William Pantry should arrive the way they arrive from a CC blade, foreground to background,
+		 * not as an ordinary lateral card.
+		 *
+		 * `warmPersonLinks` already owns that decision and needs exactly one fact from us:
+		 *   ascend = toOrbit === fromOrbit ? null : toOrbit ? 1 : -1
+		 * so the flag is the whole handoff. It also makes the REVERSE free — picking an ordinary person
+		 * while standing on Lincoln reads toOrbit=false against fromOrbit=true and ascends OUT.
+		 *
+		 * SET ONLY WHEN TRUE, never `'false'`: navigate.ts carries a scar about exactly this, where an
+		 * absent attribute got read as a meaningful false and killed the core transition.
+		 *
+		 * The green founder skin needs nothing here. The zone is one mechanism and `hartford_founder`
+		 * only re-colours it, read off the arriving person's own tags (ascension.svelte.ts §43.1).
+		 */
+		if (f & CAT.INFLUENCE) a.dataset.orbit = 'true';
 		a.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;opacity:0;pointer-events:none;`;
 		stage.appendChild(a);
 		a.click();
@@ -257,7 +275,7 @@
 						class="hit"
 						class:on={i === cursor}
 						href="/person/{r.slug}"
-						onclick={(e) => pick(e, r.slug)}
+						onclick={(e) => pick(e, r.slug, r.f)}
 						onmouseenter={() => (cursor = i)}
 					>
 						<span class="line1">
