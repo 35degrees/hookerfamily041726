@@ -5,7 +5,8 @@
 	import ConnectModal from '$lib/components/ConnectModal.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import TimelineRail from '$lib/components/TimelineRail.svelte';
-	import ShuffleNotables from '$lib/components/ShuffleNotables.svelte';
+	import TopRightChrome from '$lib/components/TopRightChrome.svelte';
+	import SearchModal from '$lib/components/SearchModal.svelte';
 	import DeckRiffle from '$lib/components/DeckRiffle.svelte';
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
@@ -1664,7 +1665,7 @@
      two pieces of fixed chrome live together, and gated on `familyLanded`, the SAME landing signal the
      card and connector use, so the button can never disagree with the flight lock about whether a flight
      is in progress. -->
-<ShuffleNotables settled={familyLanded} />
+<TopRightChrome settled={familyLanded} />
 
 <!-- THE ASCENSION'S SURROUND (roadmap §40) — the midnight veil and the way out. Mounted HERE, beside the
      other screen chrome, rather than inside `.page-container`: it must cover the whole window, which is
@@ -1673,6 +1674,7 @@
      at all and the current UX is untouched. -->
 <Ascension onexit={descend} />
 <ConnectModal />
+<SearchModal />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
 <!-- The keep-alive test listens on the WINDOW, not on the stage. On .page-container it simply stopped

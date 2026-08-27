@@ -35,6 +35,12 @@ export type SearchRow = {
 	f: number;
 	/** Field-tagged, folded fact blob. Segment 0 is always `n:` and is the ranking haystack. */
 	x: string;
+	/**
+	 * Dates are PRIVATE (presumed living, not notable) — 241 rows. by/dy are still present because
+	 * rosters sort on them, but a row carrying this MUST NOT display years. Same gate every other
+	 * render site in the app reads.
+	 */
+	pv?: boolean;
 	/** Display blurb, UNFOLDED. 16% of rows. Line two falls back to this on a name match. */
 	bl?: string;
 	/**
@@ -111,7 +117,9 @@ export async function load(): Promise<void> {
 		index = raw.map((r) => {
 			const end = r.x.indexOf('|');
 			const nm = end < 0 ? r.x.slice(2) : r.x.slice(2, end);
-			return Object.assign(r, { nm, wd: nm.split(' ') }) as Prepared;
+			// Split on commas AS WELL as spaces: segment parts are comma-joined, so a plain space
+			// split yields "hooker," which never equals "hooker" and silently costs a tier.
+			return Object.assign(r, { nm, wd: nm.split(/[\s,]+/).filter(Boolean) }) as Prepared;
 		});
 		ready = true;
 	} catch (err) {
@@ -124,15 +132,19 @@ export async function load(): Promise<void> {
 /**
  * Relevance tier, low is better. Tested against the `n:` segment, which carries EVERY name form —
  * display, first, middle, last, maiden, married, title, suffix, nickname, chip_first_name.
- * Nicknames being in there is why "tony" ranks Anthony Shreve Hooker as a NAME hit (1) rather than a
- * fact hit (5); "tony" is not a substring of "anthony", so on display_name alone he is unreachable.
+ * Nicknames being in there is why "tony" ranks Anthony Shreve Hooker as a NAME hit rather than a
+ * fact hit; "tony" is not a substring of "anthony", so on display_name alone he is unreachable.
+ *
+ * THE WHOLE QUERY IS RANKED, not just its first word. Ranking on `terms[0]` alone made every
+ * multi-word query a one-word query: "annie hooker" scored purely on "annie", so an exact
+ * "Annie Hooker" tied with everyone else called Annie and lost the tiebreak on birth year.
  */
-function tier(r: Prepared, term: string): number {
-	if (r.nm === term) return 0; // the whole name is the term
-	if (r.wd.includes(term)) return 1; // a whole name word is the term
-	if (r.nm.startsWith(term)) return 2; // the name starts with it
-	for (const w of r.wd) if (w.startsWith(term)) return 3; // a name word starts with it
-	if (r.nm.includes(term)) return 4; // anywhere in the name
+function tier(r: Prepared, q: string, terms: string[]): number {
+	if (r.nm === q) return 0; // the whole name IS the query
+	if (terms.every((t) => r.wd.includes(t))) return 1; // every term is a whole name word
+	if (r.nm.startsWith(q)) return 2; // the name starts with the query
+	if (terms.every((t) => r.wd.some((w) => w.startsWith(t)))) return 3; // every term starts a word
+	if (r.nm.includes(q)) return 4; // the query appears in the name
 	return 5; // a fact field only
 }
 
@@ -181,11 +193,11 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 	// (18,429 of 19,728 carry the flag), while earliest-first surfaces the historically central
 	// people — "yale" returns Davenport 1597, Newton 1620, Buckingham 1646, Pierson 1646,
 	// Pierpont 1659, which is essentially Yale's founders in order.
-	const first = terms[0] ?? '';
+	const q = terms.join(' ');
 	// `eb` places the undated by era so the year-range exemption is visible rather than merely true:
 	// before it, all 107 undated "hooker" rows survived the 1800-1900 filter but the first ranked
 	// 1,006th, far below the 60-row cap.
-	const dec = hits.map((r) => ({ r, t: first ? tier(r, first) : 5, b: r.by ?? r.eb ?? 9999 }));
+	const dec = hits.map((r) => ({ r, t: q ? tier(r, q, terms) : 5, b: r.by ?? r.eb ?? 9999 }));
 	dec.sort((a, b) => a.t - b.t || a.b - b.b);
 	return { rows: dec.slice(0, RESULT_CAP).map((d) => d.r), total: dec.length };
 });

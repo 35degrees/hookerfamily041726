@@ -8,7 +8,7 @@
  *
  * Emits (paths relative to repo root, overridable via the CONFIG block):
  *   static/data/people.json             full records, research_notes stripped
- *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,f,x,bl?,eb?} - f=cat
+ *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,pv?,f,x,bl?,eb?}
  *                                       bitfield, x=field-tagged folded fact blob (segment 0 = names)
  *   static/data/cemeteries.json         passthrough
  *   static/data/institutions.json       passthrough
@@ -637,6 +637,12 @@ function searchRow(p, slugMap, reg) {
 		dy: c.dy,
 		g: c.g,
 		sx: c.sx,
+		// PRIVATE DATES. `datesPrivate` deliberately keeps by/dy in the payload (rosters sort on `by`
+		// and a null would shunt every living person to the end of their row, which is itself a tell)
+		// and suppresses the DISPLAY instead, through this one gate that every render site reads.
+		// The search row is a render site: without `pv` a result would print "1982" for a living
+		// person that the rest of the app hides.
+		...(c.pv ? { pv: true } : {}),
 		f,
 		x: factSegments(p, reg)
 	};

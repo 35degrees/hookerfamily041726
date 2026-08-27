@@ -41,7 +41,8 @@
 	 * should fade in after the hero card is settled in final position — it's distracting and confusing
 	 * to have it instantly appear on screen before the rest of the content."
 	 *
-	 * The `{#if}` below is keyed on `ascension.active`, which goes false the moment the payload lands —
+	 * The mount gate (now TopRightChrome's `{#if}`) is keyed on `ascension.active`, which goes false the
+ * moment the payload lands —
 	 * roughly a second before the room is light and the card has parked. So the button was the FIRST
 	 * thing to arrive on a descent, ahead of everything it belongs beside.
 	 *
@@ -76,7 +77,6 @@
      gesture — an orbit figure is reached by one specific connection and should be left the same way.
      And it occupies exactly the corner the X wants; rather than crowd two controls together, the
      control that does not belong here yields to the one that does. -->
-{#if !ascension.active}
 <button
 	bind:this={el}
 	class="shuffle-notables"
@@ -100,7 +100,6 @@
 	</svg>
 	Notable People
 </button>
-{/if}
 
 <style>
 	/* Takes .ground-toggle's shell (Field.svelte) — same type, same blur, same 16px inset — so the two
@@ -136,10 +135,12 @@
 		--press: -0.53px;
 		--press-shadow: 0 0.79px 1.58px rgba(20, 28, 46, 0.25);
 
-		position: fixed;
-		right: 16px;
-		top: 16px;
-		z-index: 10;
+		/* IN-FLOW inside TopRightChrome's cluster — this was `fixed; right:16px; top:16px` back when it
+		   owned the corner alone. Now that Search shares the corner, the CLUSTER positions both: a
+		   hard-coded offset the width of the word "Search" would go wrong on any font or zoom change,
+		   and would go wrong silently, as an overlap. Everything below this line — the gold, the three
+		   heights, the curves — is untouched. */
+		position: relative;
 		display: inline-flex;
 		align-items: center;
 		gap: 7px;
@@ -149,8 +150,16 @@
 		/* ONE background, the whole way through (Sam). A real button does not change colour when you
 		   approach it — it changes HEIGHT. Lighting the surface as well would be saying the same thing
 		   twice, and the second saying is the one that reads as a web widget. */
-		background: rgba(20, 28, 46, 0.6);
-		border: 1px solid rgba(255, 250, 240, 0.18);
+		/* DEEPENED FROM 0.6 (design §29: read the Δ, never the alpha). 0.6 was chosen against the
+		   MIDNIGHT field, where a 60%-opaque midnight over midnight still reads as midnight. Over the
+		   default Manuscript sheet — light, lum ~245 — the same alpha lets the paper through and the
+		   chip turns a muddy warm grey, which is what made the button look cheap on the ground it is
+		   actually seen against. At 0.86 it reads as one deliberate dark object on every ground, and
+		   the gold has something to sit on. The blur still carries the glass. */
+		background: rgba(20, 28, 46, 0.86);
+		/* Softened to match: at 0.18 against the muddy fill the border was doing the work of defining
+		   the shape. Now the fill defines it and the border only catches the light along the edge. */
+		border: 1px solid rgba(255, 250, 240, 0.13);
 		border-radius: 5px;
 		cursor: pointer;
 		backdrop-filter: blur(6px);
