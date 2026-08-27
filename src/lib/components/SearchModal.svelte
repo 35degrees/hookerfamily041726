@@ -649,16 +649,39 @@
 	   is LIGHT and §41.3's cream is for dark grounds only.
 	   Declared BEFORE the dark rows so source order settles a row carrying both — the room outranks the
 	   line. */
+	/* ALL THREE LIGHT ROWS TAKE THE SAME STRIPE AT THE SAME 70%, differing only in hue, so the list
+	   says which of the four kinds of person a row is without a legend.
+	   SPOUSE AND EASTER EGG READ THE HOUSE'S OWN EDGE TOKENS rather than new colours: --spouse-edge and
+	   --ee-edge are already the darker variants of those two grounds, tuned for §29.10's spine and left
+	   dormant at --edge-w: 0. That is exactly Sam's "a variant of the existing mint green and light
+	   blue, a little darker", and it was already in the sheet.
+	   THE GOLD STAYS A LITERAL, and that is the one deliberate inconsistency here. --hd-edge is
+	   rgb(206,158,39) and would have been the tidy choice, but it was tuned for a 4px vertical SPINE
+	   and this is a 1.5px ring at 70% — a different pair (§29) — and Sam approved this exact value on
+	   sight. An approved appearance outranks a tidier reference. */
 	.hit.hooker-line {
+		--stripe: rgba(212, 175, 55, 0.7);
+	}
+	.hit.spouse-line {
+		--stripe: color-mix(in srgb, var(--spouse-edge) 70%, transparent);
+	}
+	.hit.ee-line {
+		--stripe: color-mix(in srgb, var(--ee-edge) 70%, transparent);
+	}
+	.hit.hooker-line,
+	.hit.spouse-line,
+	.hit.ee-line {
 		box-shadow:
 			inset 0 0 0 2px var(--card-bg),
-			inset 0 0 0 3.5px rgba(212, 175, 55, 0.7),
+			inset 0 0 0 3.5px var(--stripe),
 			var(--chip-shadow);
 	}
-	.hit.hooker-line.on {
+	.hit.hooker-line.on,
+	.hit.spouse-line.on,
+	.hit.ee-line.on {
 		box-shadow:
 			inset 0 0 0 2px var(--card-bg),
-			inset 0 0 0 3.5px rgba(212, 175, 55, 0.7),
+			inset 0 0 0 3.5px var(--stripe),
 			var(--chip-shadow-hover);
 	}
 	.hit.founder-row,

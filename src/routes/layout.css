@@ -406,6 +406,16 @@ html[data-exhibit] body {
 	   tab. The colours are left exactly as they were tuned. */
 	--hd-edge: hsl(43, 68%, 48%);
 	--spouse-edge: hsl(172, 42%, 44%);
+	/* THE THIRD ONE, added when the search list gave the set a live consumer. The spine shipped with two
+	   because it only ever marked the two LINES — blood and married-in; an easter egg had no edge
+	   because it was not being claimed as a line. A search row is doing a different job: it says which
+	   of the four kinds of person this is, and leaving one of the four unmarked would read as an
+	   omission rather than as a statement.
+	   DERIVED, NOT MEASURED, and flagged as such: hue 198 is --ee-bg's own (#f1f8fb sits at h198), and
+	   the saturation and lightness are --spouse-edge's exactly, so the two in-law-ish edges are one
+	   family separated by hue — which is the stated reason the first two differ in hue as well as
+	   lightness (colour-blind viewers). If Sam's eye wants it warmer or deeper, this is the line. */
+	--ee-edge: hsl(198, 42%, 44%);
 	--edge-w: 0px;
 }
 /* --card-bg IS THE CARD'S SURFACE, and every fill inside a card must read it rather than hard-coding
