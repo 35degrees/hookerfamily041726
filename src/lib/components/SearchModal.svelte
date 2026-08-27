@@ -18,7 +18,6 @@
 	 * goes where it still means something — the veil coming in, and the exit into the card's flight.
 	 */
 	import { modal, closeModal } from '$lib/state/modal.svelte';
-	import { warmPersonLinks } from '$lib/state/navigate';
 	import {
 		search,
 		load,
@@ -31,7 +30,7 @@
 		CATEGORIES,
 		RESULT_CAP
 	} from '$lib/state/search.svelte';
-	import { linear } from 'svelte/easing';
+	import { linear, cubicOut } from 'svelte/easing';
 	import { tick } from 'svelte';
 
 	const VEIL_IN_MS = 340;
@@ -57,6 +56,27 @@
 		void search.rows;
 		cursor = 0;
 	});
+
+	/**
+	 * THE PANEL ARRIVES WITH THE GROUND, NOT BEFORE IT.
+	 *
+	 * The first pass gave the veil a 340ms smoothstep and the panel nothing at all, so the ground
+	 * faded up softly underneath a box that had already snapped into place — which is what read as a
+	 * broken fade (Sam). Two elements of one gesture cannot be on different clocks; one of them being
+	 * on NO clock is the worst version of that.
+	 *
+	 * A short drop rather than a scale: the panel is a sheet arriving over the tree, and 8px is enough
+	 * to say "this came from somewhere" without competing with the card flight that a pick starts.
+	 * cubicOut so it decelerates into place — §17.1, weight is velocity.
+	 */
+	function panel(_node: Element, { duration, delay = 0 }: { duration: number; delay?: number }) {
+		return {
+			delay,
+			duration,
+			easing: cubicOut,
+			css: (t: number) => `opacity: ${t}; transform: translateY(${((1 - t) * -8).toFixed(2)}px);`
+		};
+	}
 
 	function veil(_node: Element, { duration }: { duration: number }) {
 		return {
@@ -110,11 +130,46 @@
 		closeModal();
 	}
 
-	/** Close BEFORE the navigation runs, so the card underneath is back in its seat before the deck
-	 *  deals — the same rule the ladder follows. `warmPersonLinks` on the list handles the flight. */
-	function pick() {
+	/**
+	 * A PICK IS A CC ARRIVAL, and it must be launched from the STAGE, not from the row.
+	 *
+	 * The first version made the row a plain `<a href>` inside the modal and let `warmPersonLinks`
+	 * pick it up. That was wrong in a way that looked broken rather than merely plain: a flight grows
+	 * from the clicked anchor's RECT, so the incoming card grew out of a result row halfway up the
+	 * overlay — Sam saw it "slide in over the existing hero card from the top" — and then the modal
+	 * unmounted out from under the animation, which is where the flash back to the old card came from.
+	 *
+	 * The ladder solved this already and this is the same solution rather than a second one: synthesise
+	 * an anchor AT THE FEATURED CARD'S OWN RECT and click it, so the one delegated handler in
+	 * `warmPersonLinks` does all the work — flight lock, rect snapshot, tier span, pivot — and search
+	 * inherits every one of them instead of reimplementing them badly.
+	 *
+	 * `data-cc="true"` and NOTHING ELSE. No `genDelta`, because a search result can be any distance
+	 * from the reader and claiming a direction we have not measured would send lineal moves sideways;
+	 * omitting it says "direction unknown", which is the truth and is what produces the ordinary
+	 * lateral CC — inbound from the right while the old card leaves left. No `relationClass` either:
+	 * the ladder can assert 'direct' because it is true by construction there, and here it is not.
+	 *
+	 * Closing FIRST and flying immediately is deliberate and is the ladder's rule too (Sam: "can the
+	 * transition start immediately on click, no delay"): the veil lifts while the stage is already in
+	 * motion underneath, so what you uncover is a flight in progress rather than one about to begin.
+	 */
+	function pick(e: MouseEvent, slug: string) {
+		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // let the browser have it
+		e.preventDefault();
 		remember(search.text);
 		closeModal();
+
+		const stage = document.querySelector('.page-container') ?? document.body;
+		const card = document.querySelector('.featured-card');
+		const r = (card ?? stage).getBoundingClientRect();
+		const a = document.createElement('a');
+		a.href = `/person/${slug}`;
+		a.dataset.cc = 'true';
+		a.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;opacity:0;pointer-events:none;`;
+		stage.appendChild(a);
+		a.click();
+		a.remove();
 	}
 
 	/** Years, or nothing at all when the dates are private (241 rows). `pv` is the one gate every
@@ -136,7 +191,11 @@
 	></div>
 
 	<div class="search-layer" role="dialog" aria-modal="true" aria-label="Search the tree">
-		<div class="panel">
+		<div
+			class="panel"
+			in:panel={{ duration: 300, delay: 40 }}
+			out:panel={{ duration: VEIL_OUT_MS }}
+		>
 			<div class="box">
 				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
 					<path
@@ -191,14 +250,14 @@
 				</p>
 			{/if}
 
-			<div class="results" bind:this={listEl} use:warmPersonLinks>
+			<div class="results" bind:this={listEl}>
 				{#each search.rows as r, i (r.id)}
 					{@const reason = reasonFor(r, search.term)}
 					<a
 						class="hit"
 						class:on={i === cursor}
 						href="/person/{r.slug}"
-						onclick={pick}
+						onclick={(e) => pick(e, r.slug)}
 						onmouseenter={() => (cursor = i)}
 					>
 						<span class="line1">
@@ -217,7 +276,12 @@
 			</div>
 		</div>
 
-		<button class="close" onclick={dismiss} aria-label="Close search">&times;</button>
+		<button
+			class="close"
+			onclick={dismiss}
+			aria-label="Close search"
+			in:panel={{ duration: 300, delay: 40 }}
+			out:panel={{ duration: VEIL_OUT_MS }}>&times;</button>
 	</div>
 {/if}
 
@@ -255,7 +319,10 @@
 	}
 	.panel {
 		pointer-events: auto;
-		width: min(680px, 92vw);
+		/* 680px was a search-engine's width, not this app's — a name and a short reason left most of a
+		   row empty and the eye had to travel the gap. 520 keeps the pair close enough to read as one
+		   line of information. */
+		width: min(520px, 92vw);
 		display: flex;
 		flex-direction: column;
 		gap: 10px;

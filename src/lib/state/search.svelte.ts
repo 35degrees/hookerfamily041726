@@ -152,6 +152,34 @@ function tier(r: Prepared, q: string, terms: string[]): number {
 const terms = $derived(fold(applied).split(/\s+/).filter(Boolean));
 
 /**
+ * TERMS MATCH AT WORD BOUNDARIES, AND A SECOND WORD MEANS THE USER IS BEING SPECIFIC.
+ *
+ * Plain `x.includes(term)` matched mid-word across every field, which produced two different kinds
+ * of noise. The reasonable kind: "lea davison" returned four Leavitt Davisons, because "lea" opens
+ * "leavitt". The unreasonable kind: it also returned John Davison Rockefeller III, because "lea"
+ * sits inside "mt. p-lea-sant". The second is indefensible at any query length.
+ *
+ * So every term must now start a word. That alone kills "pleasant". The rest is Sam's rule: "if a
+ * user enters a second word they probably aren't looking for the partial word" — a specific query
+ * that still has to be dredged is what makes Google feel like muck. With two or more terms, every
+ * term BUT THE LAST must match a WHOLE word; the last stays a prefix because that is the one the
+ * user is most likely still typing. So "lea davison" finds only Lea Davison, while "thomas h" still
+ * narrows live as you type.
+ *
+ * Single-term queries stay loose — one word is a typeahead, not a specification, and there the
+ * looseness is the feature.
+ */
+const matchers = $derived.by(() => {
+	const n = terms.length;
+	return terms.map((t, i) => {
+		const esc = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		// `(^|[^a-z0-9])` rather than a lookbehind: same meaning, and no Safari-version question.
+		const wholeWord = n > 1 && i < n - 1;
+		return new RegExp(`(^|[^a-z0-9])${esc}${wholeWord ? '(?![a-z0-9])' : ''}`);
+	});
+});
+
+/**
  * ONE derived holding both rows and total. `$derived` already memoizes on its dependencies, so
  * there is no hand-rolled cache here — a second derived calling this again would recompute nothing.
  */
@@ -179,8 +207,8 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 		if (yearFrom !== null && r.by != null && (r.by < yearFrom || r.by > (yearTo ?? yearFrom)))
 			continue;
 		let ok = true;
-		for (const t of terms) {
-			if (!r.x.includes(t)) {
+		for (const m of matchers) {
+			if (!m.test(r.x)) {
 				ok = false;
 				break;
 			}
@@ -243,12 +271,16 @@ function titleCase(s: string): string {
  */
 export function reasonFor(r: SearchRow, term: string): { tag: string; text: string } | null {
 	if (!term) return null;
+	// Word-boundary, to agree with the scan. On a plain `includes` the reason could point at a segment
+	// the scan never accepted — "lea" would report a death in Mt. Pleasant.
+	const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	const at = new RegExp(`(^|[^a-z0-9])${esc}`);
 	for (const seg of r.x.split('|')) {
 		const i = seg.indexOf(':');
 		const tag = seg.slice(0, i);
 		if (tag === 'n') continue;
 		const body = seg.slice(i + 1);
-		if (!body.includes(term)) continue;
+		if (!at.test(body)) continue;
 		const parts = body.split(', ');
 		// A place segment is `city, state, county, country` (most specific first), so the reason
 		// shows the leading two and drops the country, which is never the informative part:
@@ -275,8 +307,11 @@ export function setText(v: string): void {
 	text = v;
 	if (debounceTimer) clearTimeout(debounceTimer);
 	// Clearing the box must feel instant — there is nothing to compute and nothing to read.
+	// It also drops back to "All" (Sam): the X reads as "start over", and leaving a chip latched after
+	// an emptied box is how you end up staring at a filter you no longer remember setting.
 	if (v === '') {
 		applied = '';
+		cats = 0;
 		return;
 	}
 	debounceTimer = setTimeout(() => (applied = v), DEBOUNCE_MS);
