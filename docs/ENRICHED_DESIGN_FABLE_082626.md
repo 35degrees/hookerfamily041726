@@ -33,6 +33,8 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The 082626 edition (August 25–26) adds §39–§43, the Ascension's second half and the zone that copies it.** §39 records the orbit card's WAX and the CONCENTRIC-CURVE RULE — an even band is a constraint on the CENTRE of each curve, not on its radius, so convex radii shrink on inward offset while concave radii OPEN, and one shared centre constant is what stops a rule reading as "ink smears with extra ink". §40 turns the timeline into a RULER and records the axis that made the difference: a 25-year tier failed once when ranked by LENGTH and works now ranked by WEIGHT, because weight survives at small differences where length does not; it also carries the measured 2.15px optical-centring offset, which is a property of Fraunces at that size and not a constant. §41 states the doctrine the exit cost two reverted attempts to find — **DEPTH IS NOT A FUNCTION OF STATE** — plus the CSS half nobody should re-derive: a transition belongs to the rule being transitioned TO, so the same asymmetry that made the return snap also pays for its delay, with no state and no timer. §42 is THE SPRITES, including the 180-sprite failure (density, not softness, is what turns a field into glitter) and §42.6's finding that a field measured in PIXELS silently shrinks on a larger display. §43 is THE FOUNDER ZONE, built as a SKIN on the Ascension rather than a second zone, and carrying the name-match trap in numbers: 182 founders in, 18 matched, FIVE the wrong person — caught by arithmetic (an adult in 1636) rather than by any validator, since a tag on the wrong person is perfectly well-formed.
 
+**The same 082626 edition also adds §44 — PATHS TO THOMAS (as built, August 26), the first of the three modals and the shell the other two inherit.** It leads with the correction that cost an iteration: the first build set cream type directly on the blurred veil with hairlines between the lines, and Sam named it — *"this looks like an amazon page song list for amazon music nothing to do with my site."* **The veil is a ROOM; it is not a surface anything is printed on**, so a rung is a real `.person-box` — the actual global class, taking the chip shadow, `--card-bg` and the line-status fills — with only its geometry its own, and deliberately NOT a fourth entry in the chip's size-tier family (those hold aspect 2.933 exactly because flight.ts reads it to decide same-tier landings). Records why the chain is BAKED with the number that decided it (a static fetch is all-or-nothing: 600+ KB from an index against 2.6 KB in a payload already loaded), the paternal-first tiebreak and why the obvious id-sequence one is stable but not explainable, the fact that a ladder holds only ANCESTORS so two coded branches are unreachable, the ink corollary to §41.3 when the ground inverted to marshmallow (cream cannot outlive the dark it was defined against), the shadow deepening as §29.7 predicts because a shadow is a property of the PAIR (colour, ground), the three hover-popout models built before one worked, and §44.5 — **FOUR more mechanisms that present as "my change did nothing"**, three of them the framework doing something reasonable the code did not know about. §44.10 is what a twelve-generation parent walk found in canonical that no card ever would.
+
 **A family of three, completed in this edition:** `box-shadow` is one property, `transition` is one property, and a filled animation outranks ordinary declarations. All three are the same shape — a mechanism silently outranking the declaration being edited — and all three present as "my change did nothing". When a CSS edit appears inert, look for what else already claims that property.
 
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
@@ -5241,3 +5243,190 @@ after leaving the zone, cannot fire during ordinary navigation — only entering
 
 Its fade is **composed** into the existing `transition` declaration; a second rule of equal specificity
 would have silently dropped the button's transform, shadow and colour curves.
+
+---
+
+## 44. PATHS TO THOMAS — THE LADDER (AS BUILT, August 26)
+
+_(The first of the three modals. Connect-to-anyone and search inherit its shell. Roadmap §44 is the
+session record; this is the doctrine.)_
+
+### 44.1 THE MODAL IS THE ROWS, AND EVERY ROW IS A CARD
+
+There is no panel, no sheet, no table for the entries to sit on. Sam: *"i actually don't want like a
+modal 'Table' or solid element that the rows of entries will sit on top of. i want it pretty raw. like
+the modal is the rows of entries."*
+
+**But raw does not mean bodiless, and the first build got that wrong.** It set cream type directly onto
+the blurred veil with hairline rules between the lines, and Sam named it exactly: *"this looks like an
+amazon page song list for amazon music nothing to do with my site."*
+
+The correction is one sentence and it is the whole section: **the veil is a ROOM; it is not a surface
+anything is printed on.** Every person in this project is a discrete card with paper, weight and a
+shadow — that is the app's visual argument — and a rung is a person.
+
+So a rung is a real `.person-box`. Not a lookalike: the actual global class, which is where the chip
+shadow, `--card-bg`, the line-status fills and `--line-edge` all live (global rather than scoped
+precisely so flight.ts's cloned ghosts keep them). It takes `hd`/`sp`/`ee` off the same compact every
+chip reads, so a rung is shaded by the same rule as that person's chip elsewhere on the page, and the
+Pynchon prism reaches it for free.
+
+**Only the geometry is the component's own — 440×72.8, long and low — and it deliberately does NOT join
+the chip's size-tier family.** Those three tiers hold aspect 2.933 exactly, because flight.ts decides
+whether a landing is same-tier by comparing x and y scale factors; a fourth aspect in that set would
+quietly change which flight runs for a real chip. A rung borrows the chip's SURFACE, not its tier.
+
+### 44.2 WHY THE CHAIN IS BAKED, WITH THE NUMBER THAT DECIDED IT
+
+Same answer as `lineAnchors` and for the same reason: a payload is ONE NEIGHBOURHOOD DEEP, and a rung
+eight generations up is nobody's neighbour, so the client cannot see its own answer.
+
+The alternative was measured rather than argued. **A static JSON fetch is all-or-nothing** — there is no
+partial read — so serving this from `table-index.json` would cost 600+ KB to render thirteen rows.
+Baking the finished chain costs a mean of **2.6 KB** inside a payload the page has already loaded, so
+the modal opens with no network at all. Measured: Burr went 146 → 148 KB raw and **33 → 33 KB gzipped**,
+i.e. no change over the wire.
+
+**The gate is the chain's own length, not `generation_from_thomas`.** A chain of ≥2 is a grandchild or
+deeper, which is Sam's rule. Reading the length rather than the field means the gate cannot be fooled by
+a null classification, and it disposes for free of the 18 people carrying `is_thomas_descendant` with no
+parent wiring to support it.
+
+**Order is deterministic because the selector labels the paths 1, 2, 3.** Shortest first, then
+PATERNAL-FIRST where two routes tie. The obvious tiebreak — comparing id sequences — is stable and is
+NOT explainable: on Sam's own card it put his father's line first only because `H00098` sorts before
+`H00104`, i.e. because John Hooker was catalogued before Roger Hooker. Paternal-first survives any
+renumbering, is the convention every pedigree chart already uses, and reads as one sentence at the
+selector.
+
+### 44.3 THE LADDER ONLY EVER CONTAINS ANCESTORS — a fact, not a limitation
+
+A chain runs Thomas → the focus's parent, then the focus is appended. **Every rung is therefore a lineal
+ancestor, and `delta` is always negative.** Two consequences:
+
+- The move is ALWAYS vertical, so `relation_class` is `'direct'` by construction and the laterality
+  question that bites cross-connections cannot arise here.
+- The child-promotion and downward-deck branches are coded and correct but **unreachable today**. Sam,
+  on being shown the arithmetic: *"this is an excellent point, not a bug just not logistically
+  possible."* They come alive only if spouses ever join the ladder.
+
+### 44.4 THE VEIL INVERTED THE ROOM, AND THE INK CANNOT OUTLIVE THE DARK
+
+The ground walked midnight → neutral grey → marshmallow, and the last step changed its kind rather than
+its value. Marshmallow is a shade of the PAGE, so separation stops coming from contrast and comes from
+the blur plus each card's own shadow.
+
+**The chrome was cream, and cream on marshmallow is invisible.** Design §41.3 states the rule from the
+other side — *"cream ink is defined entirely by the dark behind it"* — and the corollary is that it
+cannot outlive the dark. The title, tabs and X are ink-blue now, and chrome is told apart from cards by
+WEIGHT and SIZE rather than by hue: small, letterspaced and set back, against solid objects with
+shadows.
+
+**Two dials, and they were conflated once.** "Too deep" is the COLOUR; "too dense, too white, covered up
+too much of background" is the ALPHA. The first correction was read as the second and the colour was
+moved when the opacity was what was wrong. Worth naming because the two look identical in a screenshot.
+
+**And the shadow had to deepen as the ground lightened** — the same decision seen from two ends. §29.7:
+a shadow value is a property of the PAIR (colour, ground), so a chip's alpha measured against
+photographed parchment reads lighter on a marshmallow veil over a BLURRED version of it. The geometry
+and the ink stay the chip's exactly; only the two alphas are multiplied, through `calc()` on the
+existing tokens, so re-hueing `--shadow-ink` still reaches the ladder.
+
+### 44.5 FOUR MECHANISMS THAT ALL PRESENTED AS "MY CHANGE DID NOTHING"
+
+The design doc already collects a family of these — `box-shadow` is one property, `transition` is one
+property, a filled animation outranks ordinary declarations. **Four more, all found by measurement and
+none by reading:**
+
+| what | how it presented |
+|---|---|
+| **`transition:` is LOCAL by default** | The rungs sit two blocks inside the `{#if}`, so on open every intro was skipped. `translateX` read 0 on every row in every frame while the veil beside them animated correctly — because the veil is a direct child of the `{#if}` and the rungs are two blocks deep. `\|global`. |
+| **`animate:flip` transforms LEAVERS too** | It writes an inline transform on every keyed element the update touched, including one on its way out. Each leaver was handed `translateY(+703px)` and sat there through its stagger delay: eight cards parked below Anne's own rung, i.e. the ladder appearing to double in length. |
+| **`opacity` does not scale `backdrop-filter`** | The filter hits the backdrop at full strength from frame 1 whatever the element is composited at. Filmed: the tree was fully blurred at 40ms while the ground was a fifth in. |
+| **Svelte does not preserve an outgoing item's seat** | It pulls it out of flow so survivors can close the gap, but leaves it at the container's origin. All leavers reported `y = 0` and departed as one stack from the top of the ladder. |
+
+The through-line: **three of the four are the framework doing something reasonable that the code did not
+know about, and all four were invisible to reading and obvious to a probe.**
+
+### 44.6 A CURSOR-CENTRED POPOUT CANNOT WORK DOWN A LIST
+
+FeaturedCard and RightColumn both centre their enlargement on the cursor, and both are right, because
+each has ONE source sitting near the middle of the window. A ladder spreads twelve photos down 800px.
+
+- **Centred on the cursor:** for a rung near either end the box lands mostly off-screen and the on-screen
+  clamp pins it. Measured, rungs 0 and 10 moved **0px** however far the cursor travelled. Shrinking the
+  box did not fix it, because the fault is the mapping.
+- **Cursor's fraction mapped across the whole window:** every rung moves, and by far too much — a 29px
+  cursor move threw the picture 190px, about 6×.
+- **Shipped:** the box RESTS centred and the cursor's distance from the photo's own middle displaces it
+  by 1.2× (FeaturedCard's 1:1 plus Sam's "20% wider vertical swings"). About ±37px, identical for the
+  top rung and the bottom one, because the rest position no longer depends on where the card sits.
+
+It is anchored to its OWN card's photo, right edge + 33px. Centring it on the window was wrong in a way
+worth naming: with twelve rungs the enlargement appeared in the same spot regardless of which face was
+under the cursor, so it read as a lightbox rather than as that person's photo opening.
+
+### 44.7 THE PATHS ARE A ROW, AND THE TABS MOVE YOU ALONG IT
+
+Forward (1→2, 2→3, 1→3) the next path arrives from the right and the old one leaves to the left; going
+back it reverses, and the path you left is still where you left it. Which is why path 3 always arrives
+from the right — nothing lies beyond it — while path 2 depends on whether you reached it from 1 or 3.
+
+**§17.2 makes this more than a sign flip.** The overshoot is "a few px past its destination IN ITS
+DIRECTION OF TRAVEL", so it turns round with the travel; without that, a card arriving from the left
+would overshoot back toward the side it came from.
+
+**Keyed by `p.id` ALONE** is what buys the whole gesture. Keyed by `id + position` every card counts as
+a different card, the list is torn down and rebuilt in one frame, and the height jumps — Sam: *"its just
+lazy coding."* By id, a person in both paths is the same element, so survivors are never destroyed and
+can flip to a new seat while the leavers run out. *"its value is in seeing who stays and having the
+timing to differentiate who stays and who goes."*
+
+### 44.8 THE STAGE DOES THE FLIGHT, NOT THE MODAL
+
+The ladder is a way of CHOOSING; once chosen, the app performs the move it would have performed anyway.
+There is no bespoke transition bridging the two views.
+
+It reuses `warmPersonLinks` rather than calling flight.ts. Every navigation in the app is driven off a
+clicked anchor's attributes, and re-implementing here would have meant duplicating the flight lock, the
+tier span, the tier-open height test, the pivot and the rect snapshot — the parallel-mechanism mistake.
+For a ±1 move the REAL on-stage chip is clicked, so the promotion grows from the seat it always grows
+from; beyond that there is no chip on stage, so a correctly-attributed anchor is synthesised at the
+card's own rect and clicked.
+
+**The flight starts in the same frame as the click**, under the closing veil, and that is the safer
+order as well as the nicer one: the on-stage chip is clicked while the ladder still covers it, so its
+rect is read before anything the close does can disturb the layout underneath.
+
+### 44.9 TIMING, AND WHICH DIAL ANSWERS WHICH COMPLAINT
+
+| complaint | the dial that was wrong |
+|---|---|
+| "like hummingbird wings" | the STAGGER, not the speed — separation is what stops a set reading as a blur |
+| "can they be 8% faster" | ROW_MS. §17.1: perceived weight is VELOCITY, not duration, so the same distance in less time reads as heavier rather than hurried |
+| "a couple of beats, then the replacements enter" | the arrivals' delay was POSITIVE, measured from the last leaver finishing. Now negative — they launch 240ms before it ends and the two halves cross |
+| "the backdrop fade disappears immediately" | not the duration but the DELAY: it holds while the cascade launches, then goes quickly |
+
+**The header arrives last**, delayed by the ladder's own build time, because furniture that is already
+there before the objects arrive says the page merely loaded.
+
+**Closing is not switching.** On a switch the stagger is the point — the reader is being shown who left.
+On a close nobody is comparing anything, so it gets a tight cascade of its own; at the switch's spacing
+the last card would still be travelling at 1375ms while the veil was back to full light at 200ms.
+
+### 44.10 WHAT THE LADDER FOUND IN THE DATA
+
+A ladder walks parent pointers for twelve generations, which nothing else in the app does, so it
+surfaces defects no card ever would.
+
+- **12 people stand in a chain while flagged `hd: false`** — split between genuine inverted parent links
+  (Henry Flint is recorded as the child of his own daughter) and merely stale flags.
+- **34 parent edges fail a 12–60-year age test**, five of them impossible (a parent born after the
+  child) and twelve of them mothers over 50.
+- **53 of 2165 chains** hold a rung with no generation, a repeated generation, or one at/below the
+  focus — all downstream of the above.
+- **556 buttons show a multi-token first name**, because a middle name is stored inside `first_name`.
+
+None of it is caught by `validate.py`, because a wrong parent link is perfectly well-formed. The
+standing lesson repeats: **arithmetic catches what a schema cannot.** All of it is Stream A work and is
+listed in roadmap §44.

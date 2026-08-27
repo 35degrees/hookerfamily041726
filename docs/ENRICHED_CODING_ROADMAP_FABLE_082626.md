@@ -1,6 +1,7 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_082626.md (the what/why for every item below).**
+**AUGUST 26 (§44): PATHS TO THOMAS SHIPPED END TO END — the ladder, the button, the switch and the click (design §44).** The connect-to-Thomas modal is built: every route Thomas → a descendant is BAKED into the payload (12,844 of them, mean 2.6 KB, no measurable gzip change) rather than served from an index, because a static JSON fetch is all-or-nothing and the index would have cost 600+ KB to render thirteen rows. The durable half is design §44, and it is headed by the correction that cost an iteration: the first build was cream type on a blurred veil, and Sam named it — *"this looks like an amazon page song list for amazon music nothing to do with my site."* The veil is a ROOM, not a surface anything is printed on, so a rung is a real `.person-box` taking the house paper, the house shadow and the line-status fills, with only its geometry its own. Records FOUR more mechanisms that present as "my change did nothing" (`transition:` is local by default; `animate:flip` transforms leavers too; `opacity` does not scale `backdrop-filter`; Svelte does not preserve an outgoing item's seat), the three hover-popout models built before one worked, the ink corollary to §41.3 when the ground inverted, and §44.10 — what a twelve-generation parent walk found in canonical that no card ever would.
 **The 080326 edition (August 3) adds §18 — THE BOARD MOVES AS ONE. The card-transition layer reopened after a long pause and closed again the same day, on three findings that were all the same finding: distance and time were being decided SEPARATELY in each place instead of once for the whole stage. `growFrom` clocked a promotion off the card's top-left corner while its far corner covered 3.5× the ground; the leaving rows drifted a flat 28px in the camera-pan direction while the arriving rows swept 150px from elsewhere, so they crossed through each other; and the non-promoted parent dissolved in the parents row to reappear in the notch a beat later. Now: honest max-corner velocity, a measured 145px tier pitch every row shares, one direction (the pan) and one clock (the demotion's) for every row at once, and a hand-off that travels in front of the card and lands wearing the destination's own face. Also records the STACKING-CONTEXT TRAP (a z-index that measured as applied and did nothing), two latent bugs the work exposed (`chipExit` holding a seat in the flex flow; `.flat` nearly overloaded as two signals), and the false-red/false-green lessons from both.**
 
 **The 080326 edition (August 3) adds §17 — THE KIN-DISTANCE BAKE SHIPPED, closing §15 and the §19.4 debt behind it. The deck's SAME-LINE test no longer proxies kinship with anything: `regenerate-data.js` stamps a per-CC `kin_distance` (edges through the nearest shared ancestor, ONE marriage allowed to bridge the two blood lines at a cost of 2), and `isVerticalMove` reads it. Uncles, aunts and parents-in-law ride vertical wherever the tidy tree seated them; second cousins, the in-laws of distant collaterals, and true strangers stay lateral. Also records the probe that was asserting the WRONG THING (a father-in-law logged as a cross-branch-peer control), and §17.4 — redirects.json wired as 301s after 673 entries of accumulated dead URLs.**
@@ -4142,3 +4143,88 @@ a CSS change appears to have no effect, look for what else is already claiming t
 - **`tabular-nums` is not taking on Fraunces Variable** (design §40.4) — fixing it moves all nine years.
 - **The CC blade draws while the card is too far away to see it** — unchanged.
 - **13 orbit→orbit cross-connections** await Sam's review; two are not simple deletes.
+
+---
+
+## 44. AUGUST 26 — PATHS TO THOMAS, END TO END (design §44)
+
+Three commits: `f47650b6` (the palette), `ed757304` (the blurb on each rung), `bf9ff58d` (the ladder and
+the way into it). The data layer landed earlier the same day as `a4fb084c`.
+
+**This closes Phase 6's first half.** Connect-to-anyone and search inherit the shell, the veil, the
+rung, the keyed-diff switch and the click handoff; what they add is a picker.
+
+### 44.1 WHAT SHIPPED
+
+| | |
+|---|---|
+| **`pathsToThomas`, baked** | every distinct route Thomas → this person, THOMAS FIRST, focus dropped. 12,844 payloads, mean 2.6 KB, **no measurable gzip change**. Sorted shortest-first then paternal-first at a tie |
+| **The button** | under the vitals, gated on the key's presence alone, personalised through `chip_first_name ?? first_name`, `shrinkToFit` at full column width |
+| **The ladder** | rungs are real `.person-box` cards on a marshmallow veil; portrait, generation, name, years, blurb |
+| **The path switch** | keyed by id, so survivors flip while leavers run out; direction rotates with the tabs |
+| **The click** | reuses `warmPersonLinks` — the on-stage chip for ±1, a synthesised anchor beyond that |
+| **Sam's palette** | seven of nine tokens; two rejected for collisions (see the commit) |
+
+### 44.2 THE ORDER THINGS WENT WRONG, AND WHAT EACH COST
+
+Worth reading as a sequence, because four of the six are the same shape.
+
+1. **I built a text list on a blur and called it done.** Sam: *"you aren't really looking at what the
+   project looks and feels like are you? can you review the ENRICHED DESIGN md file before your next
+   iteration."* He was right — I had read the docs for *facts* and never for what a card IS here. The
+   fix was to go and read §29 and the global `.person-box` rules and then use them, not imitate them.
+   **Cost: a whole iteration.** The lesson is the one CLAUDE.md already states — extend the existing
+   pattern, do not invent a parallel one — and I had applied it to data and not to surface.
+2. **`transition:` is local by default**, so no rung ever animated. Invisible to reading; a probe found
+   it in one run.
+3. **Blur and alpha ran on two clocks**, because an element's opacity does not scale its own
+   `backdrop-filter`. Found by FILMING, not by measuring.
+4. **`animate:flip` transformed the leavers**, parking eight cards below the focus. Found by dumping
+   every rung's y and transform mid-switch; the tell was `animationName: none` beside a static
+   `translateY(703)`.
+5. **Svelte does not preserve an outgoing item's seat**, so closing the modal dropped the whole ladder a
+   third of a page before it left.
+6. **Two string edits silently no-opped** because prettier had reformatted the lines they targeted and I
+   had omitted the assertion on exactly those two. One left the zoom pinned at `left: 0`; the other left
+   a stale type and took svelte-check to 4 errors. **Every scripted edit now asserts its anchor and
+   reads the file back afterwards.**
+
+### 44.3 THE INSTRUMENTS LIED FOUR MORE TIMES
+
+Consistent with §36.4, §37.3, §39.4, §42.2 and §43.2, and the tally is now hard to dismiss.
+
+- A film loop whose frame labels were **fiction** — each screenshot took longer than the interval it
+  claimed to sample, so "t=40ms" was nothing of the kind.
+- A motion detector that counted **parked** cards as moving, because it tested for a non-zero transform
+  rather than a CHANGING one. Reported the arrivals starting at 7ms when they start at 995.
+- Three probe suites that went red on **their own stale literals** after a dial moved — the exact defect
+  `probe-tier.mjs`'s header exists to warn about, committed by me, three times.
+- A "leaving toward" reading taken during the stagger delay, before anything had moved.
+
+**The pattern worth extracting: an instrument that samples a MOMENT will lie about a system with
+delays in it.** Every one of these was fixed by sampling the whole gesture and keeping the extreme.
+
+### 44.4 STILL OPEN
+
+**Frontend**
+- The ladder has no keyboard traversal — Escape closes it, but the rungs are only reachable by tab
+  order and nothing is focus-managed beyond the dialog itself.
+- `closeMs`/`NAV_PAD` survive as constants although the flight no longer waits for the close. Harmless,
+  but they are the shape of a dial nobody reads.
+- Connect-to-anyone and search: the picker is the whole remaining job, and it needs
+  `search-index.json` (555 KB gzipped) — which both of them share.
+
+**Stream A, all found by the ladder walking twelve generations of parent pointers**
+- **12 people** stand in a chain while flagged `hd: false`. Category A (inverted links, and these
+  MANUFACTURE false genealogy): `X00014`/`I00007` and `X00534`/`H00878`, both mutual loops. Category B
+  (stale flag, descent is genuine): `I01105`, `X00130`, `X00490`, `X00660`, `X02269`. Undated and
+  uncheckable: `I03013`, `X00452`. Impossible on arithmetic: `X00478` (−41 years), `X00411` (−2).
+- **Five more impossible parent edges** and **twelve mothers over 50**, headed by `HD7299` Mary
+  Ingersoll with four children at 51, 53, 55 and 61 — the Ingersoll merge.
+- **101 people carry a spurious extra path** from those inverted links, so they show a `1 | 2` selector
+  that should not exist; **7** have no clean chain at all.
+- **556 buttons** show a multi-token first name. `chip_first_name` is the per-person escape hatch and
+  needs no slug change; splitting `first_name` does, and belongs in a deliberate batch.
+- **`validate.py` could catch the first of these mechanically**: every rung between Thomas and a
+  descendant is itself flagged `hd`. It is the same shape as the founder name-match trap — a wrong
+  parent link is perfectly well-formed.
