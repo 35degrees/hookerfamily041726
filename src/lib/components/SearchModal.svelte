@@ -462,9 +462,16 @@
 		 * two places, the two have drifted. Cascading them from the panel is the smallest fix that makes
 		 * drift impossible rather than merely unlikely.
 		 */
-		--stripe-hd: rgba(212, 175, 55, 0.5);
-		--stripe-spouse: hsl(158 45% 45% / 0.5);
-		--stripe-ee: color-mix(in srgb, var(--color-ascendmidnight) 50%, transparent);
+		/* ONE OPAQUE ACCENT PER CATEGORY, and both strengths derived from it — the 50% that draws the
+		   stripe and the 10% that washes a selected chip's interior. Writing the two strengths as
+		   separate literals would be the same two-readers-of-one-colour trap one level down: someone
+		   re-tunes the stripe, the wash stays behind, and the chip stops matching its own edge. */
+		--accent-hd: rgb(212, 175, 55);
+		--accent-spouse: hsl(158 45% 45%);
+		--accent-ee: var(--color-ascendmidnight);
+		--stripe-hd: color-mix(in srgb, var(--accent-hd) 50%, transparent);
+		--stripe-spouse: color-mix(in srgb, var(--accent-spouse) 50%, transparent);
+		--stripe-ee: color-mix(in srgb, var(--accent-ee) 50%, transparent);
 		--stripe-dark: rgba(255, 255, 255, 0.9);
 		pointer-events: auto;
 		/* 680px was a search-engine's width, not this app's — a name and a short reason left most of a
@@ -581,29 +588,44 @@
 		box-shadow:
 			inset 0 0 0 2px var(--chip-bg),
 			inset 0 0 0 3.5px var(--chip-stripe);
-		background: var(--chip-bg);
+		/* THE WASH IS WHY A SELECTED LIGHT CHIP READS AS SELECTED AT ALL (Sam: "shade the interior…
+		   so it feels more selected but just barely"). --hd-bg, --spouse-bg and --ee-bg are all
+		   near-whites — that is their whole job as card grounds — so a chip wearing one was very nearly
+		   the unselected chip. 10% of its own accent over that ground is enough to register and little
+		   enough that the stripe is still the thing announcing it.
+		   Layered as a gradient over the ground rather than mixed into it, so --chip-bg stays the exact
+		   card colour that the 2px mask paints outside the stripe. */
+		background:
+			linear-gradient(var(--chip-wash, transparent), var(--chip-wash, transparent)), var(--chip-bg);
 		color: var(--chip-ink);
 	}
 	/* ALL has no row to preview — it is the absence of a filter — so it takes a neutral slate rather
 	   than borrowing a category's colour and claiming to be one. */
+	/* ALL TAKES NO STRIPE (Sam). It is the ABSENCE of a filter, so it has no category edge to preview
+	   and no ground to borrow — a solid neutral says "nothing is narrowing this" without pretending to
+	   be a sixth category. The box-shadow is cleared rather than given a transparent ring, so nothing
+	   is left implying a mark that is not drawn. */
 	.chip.on:not(.chip-hd):not(.chip-spouse):not(.chip-ee):not(.chip-orbit):not(.chip-founder) {
 		--chip-bg: #2f3a52;
-		--chip-stripe: var(--stripe-dark);
 		--chip-ink: #f4efe4;
+		box-shadow: none;
 	}
 	.chip-hd.on {
 		--chip-bg: var(--hd-bg);
 		--chip-stripe: var(--stripe-hd);
+		--chip-wash: color-mix(in srgb, var(--accent-hd) 10%, transparent);
 		--chip-ink: var(--color-inkblue);
 	}
 	.chip-spouse.on {
 		--chip-bg: var(--spouse-bg);
 		--chip-stripe: var(--stripe-spouse);
+		--chip-wash: color-mix(in srgb, var(--accent-spouse) 10%, transparent);
 		--chip-ink: var(--color-inkblue);
 	}
 	.chip-ee.on {
 		--chip-bg: var(--ee-bg);
 		--chip-stripe: var(--stripe-ee);
+		--chip-wash: color-mix(in srgb, var(--accent-ee) 10%, transparent);
 		--chip-ink: var(--color-inkblue);
 	}
 	.chip-orbit.on {
