@@ -1,60 +1,69 @@
 <script lang="ts">
 	/**
-	 * SearchYears — the birth-year range, drawn as a horizontal cut of the LEFT RAIL.
+	 * SearchYears — the year range, drawn as the SHAPE OF THE MATCHES over time.
 	 *
-	 * NOT A RANGE INPUT WITH THE HOUSE COLOURS PAINTED ON. The app already owns a timeline and it has a
-	 * specific vocabulary, recorded in design §35/§36 and built in TimelineRail.svelte:
+	 * The first version transposed the left rail: pill ticks, thickness-as-tier, Fraunces years, rail
+	 * ink. It was a careful inheritance from a component Sam does not like, which makes it a careful
+	 * inheritance of the wrong thing. Thrown out.
 	 *
-	 *   - ticks are PILLS, not hairlines (Sam: "more pill like… a couple of px thicker and add rounded
-	 *     ends"), with `border-radius: 999px` so every cap is a true semicircle
-	 *   - THICKNESS IS THE TIER. The rail does not draw long/short ticks to rank them, it draws
-	 *     thick/thin ones — `.tick.half` is 4.14px, and the note beside it says thickness is "the ONLY
-	 *     lever" on how pronounced a tick reads
-	 *   - the rhythm is 12.5 YEARS, tiered at 12.5 / 50
-	 *   - years are set in FRAUNCES, tabular figures, in `--color-rail-ink` — "a high-contrast serif
-	 *     says the years are a SCALE rather than more labelling", and it is the one place in the app
-	 *     that uses that face. Borrowing it here is what makes this read as the same instrument.
+	 * WHAT THIS IS INSTEAD: a ruler tells you where 1780 is, which you already know. A genealogy has a
+	 * far more interesting answer to "what happened between 1550 and now" — the tree's own mass. So the
+	 * control is a decade histogram of the CURRENT matches, and the range is a window dragged across
+	 * it. Search "yale" and the shape tells you when Yale men were being born; pick Hooker descendants
+	 * and the whole curve rises through the 1800s. The user is selecting ON something rather than
+	 * against an abstract axis, and every drag is answerable before it is made.
 	 *
-	 * So this is the rail turned ninety degrees: same ink, same face, same pill, same 12.5-year beat.
-	 * A vertical tick becomes a vertical pill of the same thickness — the axis of "thickness" is
-	 * preserved, which is the part that would have been lost by naively transposing width and height.
+	 * THE BARS ARE THE QUESTION AND THE RANGE IS THE ANSWER, which is why the histogram is built from
+	 * the term-and-category set BEFORE the year cut (see `result` in search.svelte.ts). Drawn from the
+	 * filtered set it would be circular: dragging a handle would eat the shape you are dragging
+	 * against, and it could never show you what you are excluding.
 	 *
-	 * THE SELECTED SPAN IS SOLID AND THE REST DISSOLVES, which is §35.4's rule rather than a choice of
-	 * mine: the rail answers uncertainty by SOFTENING an end, never by adding a second mark. Excluded
-	 * years are not greyed with a different colour or hatched; they are the same ink at lower opacity.
+	 * COLOUR: neither gold nor navy — Sam rejected both here. It uses the modal's own ink, the warm
+	 * near-black already carrying `.line2`, `.count` and the chip labels, at three strengths: excluded
+	 * bars, included bars, and the grips. One ink, three weights. Nothing in this control introduces a
+	 * hue the modal was not already using, which is what keeps it from reading as a widget dropped in
+	 * from somewhere else.
 	 *
-	 * THE UPPER BOUND IS "now" AND IS COMPUTED, not written down — Sam: "or 'now' this year, so it
-	 * automatically updates in future years". The lower bound comes from the corpus, not from a
-	 * constant: the earliest birth year in the tree happens to be 1550 today, and if a 1540 record
-	 * lands tomorrow the scale should already know.
+	 * The upper bound is COMPUTED, never written down — `new Date().getFullYear()`, so it becomes 2027
+	 * on its own (Sam: "or 'now' this year, so it automatically updates in future years"). The lower
+	 * bound is the earliest birth year in the loaded index.
 	 */
 	import { search, setYears } from '$lib/state/search.svelte';
-
-	/** 12.5 years, the rail's own beat (TimelineRail's STEP). Tiered by thickness at 50. */
-	const STEP = 12.5;
-	const LABEL_EVERY = 100;
 
 	let el = $state<HTMLElement | null>(null);
 	let dragging = $state<'lo' | 'hi' | null>(null);
 
 	const now = new Date().getFullYear();
-	/** Corpus-derived, so the scale tracks the data rather than a hard-coded 1550. */
-	const lo = $derived(search.yearBounds ? search.yearBounds[0] : 1550);
-	const hi = $derived(Math.max(now, search.yearBounds ? search.yearBounds[1] : now));
+	const lo = $derived(search.hist.length ? search.hist[0].year : 1550);
+	const hi = $derived(search.hist.length ? search.hist[search.hist.length - 1].year + 10 : now);
 	const span = $derived(Math.max(1, hi - lo));
 
-	/** null means "no bound set" — the handle rests at the end of the scale. */
 	const from = $derived(search.yearFrom ?? lo);
 	const to = $derived(search.yearTo ?? hi);
 	const full = $derived(search.yearFrom === null && search.yearTo === null);
 
 	const pct = (y: number) => ((y - lo) / span) * 100;
 
-	const ticks = $derived.by(() => {
-		const out: { y: number; tier: 'step' | 'half' | 'label' }[] = [];
-		for (let y = Math.ceil(lo / STEP) * STEP; y <= hi; y += STEP) {
-			out.push({ y, tier: y % LABEL_EVERY === 0 ? 'label' : y % 50 === 0 ? 'half' : 'step' });
-		}
+	/**
+	 * Bar heights on a SQUARE ROOT, not linear. The tree is wildly uneven — a peak decade holds many
+	 * times what the 1500s do — and on a linear scale four centuries of real people flatten into a rule
+	 * along the bottom while one spike owns the control. The root keeps the peak obviously the peak and
+	 * still lets a decade of nine people be visible as nine rather than as nothing. It is a reading aid,
+	 * and the axis is deliberately unlabelled because the height is not a number anyone should read off.
+	 */
+	const bars = $derived.by(() => {
+		const p = Math.sqrt(Math.max(1, search.peak));
+		return search.hist.map((b) => ({
+			year: b.year,
+			n: b.n,
+			h: b.n ? Math.max(0.06, Math.sqrt(b.n) / p) : 0
+		}));
+	});
+
+	/** Centuries only. A label every 50 would crowd 520px, and the century is the unit people think in. */
+	const marks = $derived.by(() => {
+		const out: number[] = [];
+		for (let y = Math.ceil(lo / 100) * 100; y < hi; y += 100) out.push(y);
 		return out;
 	});
 
@@ -65,18 +74,18 @@
 		return Math.round(lo + t * span);
 	}
 
-	/** Writing back through `setYears` keeps ONE owner of the range — the module, not this component. */
-	function commit(nextFrom: number, nextTo: number) {
-		const a = Math.min(nextFrom, nextTo);
-		const b = Math.max(nextFrom, nextTo);
-		// Snapping the full range back to null/null matters: the scan short-circuits on it, and it is
-		// also what lets the readout say "all years" without a second flag meaning the same thing.
-		if (a <= lo && b >= hi) setYears(null, null);
-		else setYears(a, b);
+	/** One owner of the range: the module. Snapping the full span back to null/null is what lets the
+	 *  scan short-circuit and the readout say "all years" without a second flag meaning the same. */
+	function commit(a: number, b: number) {
+		const from2 = Math.min(a, b);
+		const to2 = Math.max(a, b);
+		if (from2 <= lo && to2 >= hi) setYears(null, null);
+		else setYears(from2, to2);
 	}
 
 	function onDown(e: PointerEvent, which: 'lo' | 'hi') {
 		e.preventDefault();
+		e.stopPropagation();
 		(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 		dragging = which;
 	}
@@ -90,8 +99,8 @@
 		if (dragging) (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
 		dragging = null;
 	}
-	/** A click on the track moves whichever handle is nearer — the whole rail is the control. */
-	function onTrack(e: PointerEvent) {
+	/** The whole plot is the control: a press moves whichever edge is nearer. */
+	function onPlot(e: PointerEvent) {
 		if (dragging) return;
 		const y = yearAt(e.clientX);
 		if (Math.abs(y - from) <= Math.abs(y - to)) commit(y, to);
@@ -109,31 +118,35 @@
 		if (which === 'lo') commit(Math.min(Math.max(lo, from + d), to), to);
 		else commit(from, Math.max(Math.min(hi, to + d), from));
 	}
+	const reset = () => setYears(null, null);
 </script>
 
-<div class="years">
+<div class="years" class:live={search.hist.length > 0}>
 	<div
-		class="track"
+		class="plot"
 		bind:this={el}
-		onpointerdown={onTrack}
+		onpointerdown={onPlot}
 		onpointermove={onMove}
 		onpointerup={onUp}
 		role="presentation"
 	>
-		<!-- The scale. Ticks are the rail's pills; the ones outside the selection dissolve rather than
-		     changing colour (§35.4). -->
-		{#each ticks as t (t.y)}
+		{#each bars as b (b.year)}
 			<span
-				class="tick {t.tier}"
-				class:out={t.y < from || t.y > to}
-				style="left:{pct(t.y)}%"
+				class="bar"
+				class:out={b.year + 10 <= from || b.year >= to}
+				style="left:{pct(b.year)}%; width:{(10 / span) * 100}%; height:{(b.h * 100).toFixed(1)}%"
 			></span>
-			{#if t.tier === 'label'}
-				<span class="yr" class:out={t.y < from || t.y > to} style="left:{pct(t.y)}%">{t.y}</span>
-			{/if}
 		{/each}
 
-		<span class="band" style="left:{pct(from)}%; right:{100 - pct(to)}%"></span>
+		<!-- Century marks sit UNDER the bars as hairlines, so the plot is read as one surface rather
+		     than as a chart with a separate axis pinned beneath it. -->
+		{#each marks as m (m)}
+			<span class="mark" style="left:{pct(m)}%"></span>
+			<span class="mark-y" class:out={m < from || m > to} style="left:{pct(m)}%">{m}</span>
+		{/each}
+
+		<span class="edge" style="left:{pct(from)}%"></span>
+		<span class="edge" style="left:{pct(to)}%"></span>
 
 		<button
 			class="grip"
@@ -167,7 +180,9 @@
 		{#if full}
 			all years
 		{:else}
-			{from} – {to >= now ? 'now' : to}
+			<button class="clear-years" onclick={reset} title="Back to all years">
+				{from} – {to >= now ? 'now' : to} &times;
+			</button>
 		{/if}
 	</p>
 </div>
@@ -176,106 +191,126 @@
 	.years {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
-		padding: 0 6px;
+		gap: 1px;
+		padding: 0 4px;
+		/* Nothing to plot while idle — the control appears with its data rather than sitting empty and
+		   inviting a drag that could not mean anything. */
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 200ms ease-out;
 	}
-	.track {
+	.years.live {
+		opacity: 1;
+		pointer-events: auto;
+	}
+	.plot {
 		position: relative;
-		height: 26px;
-		cursor: pointer;
+		height: 38px;
+		cursor: crosshair;
 		touch-action: none;
 	}
-	/* THE PILL, and thickness is the tier — TimelineRail's rule, transposed. A vertical tick keeps
-	   `width` as its thickness so the axis that ranks them is the same axis in both instruments. */
-	.tick {
+	/* ONE INK AT THREE STRENGTHS — the modal's own warm near-black, already carrying .line2, .count and
+	   the chip labels. No new hue enters with this control. */
+	.bar {
 		position: absolute;
-		bottom: 9px;
-		transform: translateX(-50%);
-		border-radius: 999px;
-		background: var(--color-rail-ink, #ab7a42);
+		bottom: 11px;
+		background: rgba(48, 42, 34, 0.5);
+		border-radius: 1.5px 1.5px 0 0;
 		transition:
-			opacity 140ms ease-out,
-			background-color 140ms ease-out;
+			background-color 130ms ease-out,
+			opacity 130ms ease-out;
 	}
-	.tick.step {
-		width: 1.5px;
+	.bar.out {
+		background: rgba(48, 42, 34, 0.15);
+	}
+	/* The baseline is the one continuous line in the plot — it is what the bars stand on and what the
+	   grips run to, so the whole control reads as one object. */
+	.plot::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 11px;
+		height: 1px;
+		background: rgba(48, 42, 34, 0.22);
+		pointer-events: none;
+	}
+	.mark {
+		position: absolute;
+		bottom: 11px;
+		width: 1px;
 		height: 4px;
-		opacity: 0.5;
+		background: rgba(48, 42, 34, 0.28);
+		pointer-events: none;
 	}
-	.tick.half {
-		width: 2.4px;
-		height: 7px;
-		opacity: 0.72;
-	}
-	.tick.label {
-		width: 4.14px; /* the rail's own .tick.half thickness */
-		height: 10px;
-		opacity: 0.92;
-	}
-	/* DISSOLVES, never re-colours (§35.4: an end that is not claimed is softened, not marked). */
-	.tick.out {
-		opacity: 0.16;
-	}
-	.yr {
+	.mark-y {
 		position: absolute;
-		bottom: -4px;
+		bottom: -1px;
 		transform: translateX(-50%);
-		font-family: var(--font-fraunces, Georgia, serif);
-		font-weight: 500;
-		font-size: 9.5px;
+		font: 400 9px/1 var(--font-inter, sans-serif);
 		font-variant-numeric: tabular-nums;
-		color: var(--color-rail-ink, #ab7a42);
-		opacity: 0.86;
+		letter-spacing: 0.03em;
+		color: rgba(48, 42, 34, 0.42);
 		pointer-events: none;
-		transition: opacity 140ms ease-out;
+		transition: color 130ms ease-out;
 	}
-	.yr.out {
-		opacity: 0.22;
+	.mark-y.out {
+		color: rgba(48, 42, 34, 0.2);
 	}
-	/* The claimed span. A hairline along the tick baseline rather than a filled box: the ticks are the
-	   instrument and this only says how much of it is live. */
-	.band {
+	/* The two edges of the window, drawn full height so the cut is legible against the bars themselves
+	   rather than only at the grips. */
+	.edge {
 		position: absolute;
-		bottom: 9px;
-		height: 1.5px;
-		border-radius: 999px;
-		background: var(--color-rail-ink, #ab7a42);
-		opacity: 0.55;
+		top: 0;
+		bottom: 11px;
+		width: 1px;
+		background: rgba(48, 42, 34, 0.34);
 		pointer-events: none;
 	}
-	/* A GRIP IS A TICK THAT GREW — same pill, same ink, one tier past the labelled one. It is not a
-	   circle: a knob would be the one round thing in an instrument made entirely of pills. */
+	/* A grip is a small square tab sitting ON the baseline — square because everything this modal is
+	   made of is squared (the rows, the chips), and small because the plot is the thing to look at. */
 	.grip {
 		position: absolute;
-		bottom: 5px;
+		bottom: 6px;
 		transform: translateX(-50%);
-		width: 5.5px;
-		height: 18px;
+		width: 9px;
+		height: 11px;
 		padding: 0;
 		border: 0;
-		border-radius: 999px;
-		background: var(--color-inkblue);
-		cursor: grab;
+		border-radius: 2px;
+		background: rgba(48, 42, 34, 0.72);
+		cursor: ew-resize;
 		touch-action: none;
 		transition:
-			height 140ms ease-out,
-			box-shadow 140ms ease-out;
+			background-color 130ms ease-out,
+			box-shadow 130ms ease-out;
 	}
 	.grip:hover,
 	.grip:focus-visible {
-		height: 21px;
-		box-shadow: 0 0 0 3px hsl(var(--shadow-ink) / 0.14);
+		background: rgba(48, 42, 34, 0.95);
+		box-shadow: 0 0 0 3px rgba(48, 42, 34, 0.12);
 		outline: none;
-	}
-	.grip:active {
-		cursor: grabbing;
 	}
 	.readout {
 		margin: 0;
 		text-align: center;
-		font: 400 10.5px/1.2 var(--font-inter, sans-serif);
+		font: 400 10px/1.3 var(--font-inter, sans-serif);
 		letter-spacing: 0.02em;
-		color: rgba(48, 42, 34, 0.55);
+		color: rgba(48, 42, 34, 0.5);
 		font-variant-numeric: tabular-nums;
+	}
+	/* The readout becomes the way OUT of a narrowed range once there is one — the control that undoes a
+	   filter belongs on the filter, not in a row of buttons somewhere else. */
+	.clear-years {
+		border: 0;
+		background: none;
+		padding: 0;
+		cursor: pointer;
+		font: inherit;
+		color: rgba(48, 42, 34, 0.62);
+		letter-spacing: inherit;
+	}
+	.clear-years:hover {
+		color: rgba(48, 42, 34, 0.95);
 	}
 </style>

@@ -245,105 +245,119 @@ const matchers = $derived.by(() => {
  * ONE derived holding both rows and total. `$derived` already memoizes on its dependencies, so
  * there is no hand-rolled cache here — a second derived calling this again would recompute nothing.
  */
-const result = $derived.by((): { rows: Prepared[]; total: number } => {
-	if (!ready) return { rows: [], total: 0 };
-	// Empty box with a category selected BROWSES that category (Sam, 082726) — it makes the small
-	// categories genuinely explorable: 12 Hartford Founders, 96 Major Influences. Empty box with no
-	// category stays empty, because 60 arbitrary rows out of 19,728 mean nothing.
-	if (!terms.length && !cats) return { rows: [], total: 0 };
+/** Decade buckets of the CURRENT match set, before the year range narrows it. See `result`. */
+export type Bucket = { year: number; n: number };
 
-	const hits: Prepared[] = [];
-	for (const r of index) {
-		if (cats && !(r.f & cats)) continue;
+const result = $derived.by(
+	(): { rows: Prepared[]; total: number; hist: Bucket[]; peak: number } => {
+		if (!ready) return { rows: [], total: 0, hist: [], peak: 0 };
+		// Empty box with a category selected BROWSES that category (Sam, 082726) — it makes the small
+		// categories genuinely explorable: 12 Hartford Founders, 96 Major Influences. Empty box with no
+		// category stays empty, because 60 arbitrary rows out of 19,728 mean nothing.
+		if (!terms.length && !cats) return { rows: [], total: 0, hist: [], peak: 0 };
+
 		/**
-		 * THE RANGE FILTERS ON `by ?? eb` — the real birth year where there is one, the era ESTIMATE
-		 * where there is not (Sam: "no birth year people can be 'estimated' based on lifespan of
-		 * parents, spouse dates, etc, but we won't print the estimate").
-		 *
-		 * This supersedes the earlier "undated are exempt" rule, which was the right answer only while
-		 * nothing could place them. `eb` places 781 of the 1,920 from generation or death year, so
-		 * exempting those now would mean ignoring a position we already hold.
-		 *
-		 * THE 1,139 WITH NO SIGNAL AT ALL STAY EXEMPT, and that is the honest half of the same rule: a
-		 * slider cannot narrow by a year nobody has, and silently dropping them would make the corpus
-		 * look smaller than it is. They pass every range.
-		 *
-		 * THE ESTIMATE FILTERS BUT NEVER PRINTS. `eb` is a sort and filter key only; a row with no `by`
-		 * still renders blank years, because showing a guess as a date would be inventing data — and
-		 * Sam is filling these in over time, so the blank is also the to-do list.
-		 *
-		 * `!= null` is LOOSE on purpose: it catches undefined as well as null, so a build that omitted
-		 * the key could not silently start range-filtering people it cannot place.
+		 * THE HISTOGRAM IS BUILT BEFORE THE YEAR RANGE IS APPLIED, and that ordering is the whole point.
+		 * Drawn from the year-filtered set it would be circular — dragging a handle would empty the very
+		 * shape being dragged against, so the curve could never show where the REST of the matches are.
+		 * Built from the term-and-category set it stays still while the range moves across it, which is
+		 * what makes the control legible: the bars are the question, the range is the answer.
 		 */
-		if (yearFrom !== null) {
-			const placed = r.by ?? r.eb;
-			if (placed != null && (placed < yearFrom || placed > (yearTo ?? yearFrom))) continue;
-		}
-		let ok = true;
-		for (const m of matchers) {
-			if (!m.test(r.x)) {
-				ok = false;
-				break;
+		const bounds = yearBounds ?? [1550, new Date().getFullYear()];
+		const D0 = Math.floor(bounds[0] / 10) * 10;
+		const D1 = Math.ceil(Math.max(bounds[1], new Date().getFullYear()) / 10) * 10;
+		const buckets = new Int32Array((D1 - D0) / 10 + 1);
+
+		const hits: Prepared[] = [];
+		for (const r of index) {
+			if (cats && !(r.f & cats)) continue;
+
+			let ok = true;
+			for (const m of matchers) {
+				if (!m.test(r.x)) {
+					ok = false;
+					break;
+				}
 			}
+			if (!ok) continue;
+			// Counted on the same `by ?? eb` the range filters on, so the curve and the cut agree. Someone
+			// with neither is in `total` but has no place on a time axis, so joins no bucket.
+			const placed = r.by ?? r.eb;
+			if (placed != null) {
+				const i = Math.floor((placed - D0) / 10);
+				if (i >= 0 && i < buckets.length) buckets[i]++;
+			}
+			if (
+				yearFrom !== null &&
+				placed != null &&
+				(placed < yearFrom || placed > (yearTo ?? yearFrom))
+			)
+				continue;
+			hits.push(r);
 		}
-		if (ok) hits.push(r);
-	}
+		const hist: Bucket[] = [];
+		let peak = 0;
+		for (let i = 0; i < buckets.length; i++) {
+			hist.push({ year: D0 + i * 10, n: buckets[i] });
+			if (buckets[i] > peak) peak = buckets[i];
+		}
 
-	// DECORATE ONCE, then sort — tier() inside the comparator runs O(n log n) times and was the
-	// 2,238ms bug. Secondary sort is birth year ascending: "notable" measured useless as a tiebreak
-	// (18,429 of 19,728 carry the flag), while earliest-first surfaces the historically central
-	// people — "yale" returns Davenport 1597, Newton 1620, Buckingham 1646, Pierson 1646,
-	// Pierpont 1659, which is essentially Yale's founders in order.
-	const q = terms.join(' ');
-	// `eb` places the undated by era so the year-range exemption is visible rather than merely true:
-	// before it, all 107 undated "hooker" rows survived the 1800-1900 filter but the first ranked
-	// 1,006th, far below the 60-row cap.
-	const dec = hits.map((r) => ({
-		r,
-		/**
-		 * DIED YOUNG SINKS TO THE END, ahead of every other key including relevance (Sam). Searching
-		 * "Annie Hooker" led with a four-year-old, 1861–1865: she is the EXACT name and so wins tier 0
-		 * outright, which is why demoting her needed a key that outranks the tier rather than one
-		 * inside it.
-		 *
-		 * The test is the house's, not a threshold of mine — `by && dy && dy - by <= 15`, the same
-		 * computation regenerate-data.js bakes as `dy_young` and PersonBox reads to print "died young".
-		 * Its comment says it MUST match diedYoung() in buildFeatured.ts; this is a third reader of the
-		 * same rule, so it copies the rule exactly rather than picking a number that looks similar.
-		 *
-		 * They are demoted, never dropped: they stay in `total` and reachable, just never leading.
-		 */
-		dyoung: r.by != null && r.dy != null && r.dy - r.by <= 15 ? 1 : 0,
-		t: q ? tier(r, q, terms) : 5,
-		// Cohesion outranks notability on purpose: a notable whose terms are scattered across
-		// unrelated fields is still not what was asked for, and putting fame ahead of relevance is
-		// exactly the muck this is meant to avoid.
-		c: cohesion(r, terms, q),
-		// NOTABLE FIRST, THEN CHRONOLOGY (Sam). Search "Moffat" and you get a family cluster from the
-		// late 1800s; four of the thirteen are notable, and those four are what a reader is actually
-		// looking for. Relevance still leads — this only orders WITHIN a tier.
-		//
-		// I argued against this once, on the grounds that notability could not discriminate because
-		// 18,429 of 19,728 carried it. THAT NUMBER WAS WRONG: it counted rows carrying a `notable`
-		// OBJECT, most of them with the flag absent or false. The flag itself is on 1,128 rows (5.7%),
-		// which is exactly the useful density.
-		nb: r.nb ? 0 : 1,
-		/**
-		 * BLOOD BEFORE MARRIAGE, but only as a tiebreak — which is what lets one key serve both of Sam's
-		 * cases. A SPECIFIC query is already separated by the tier: "Walter Hope" makes Walter a
-		 * whole-name-word match and everyone else a fact match, so he leads on relevance and this key is
-		 * never consulted. A VAGUE one — plain "hope" — puts a whole cohort in the same tier, and there
-		 * the tree's own people should lead: Walter drops behind the two Hooker notables he was ahead of.
-		 */
-		hd: r.f & CAT.HD ? 0 : 1,
-		b: r.by ?? r.eb ?? 9999
-	}));
-	dec.sort(
-		(a, b) =>
-			a.dyoung - b.dyoung || a.t - b.t || a.c - b.c || a.nb - b.nb || a.hd - b.hd || a.b - b.b
-	);
-	return { rows: dec.slice(0, RESULT_CAP).map((d) => d.r), total: dec.length };
-});
+		// DECORATE ONCE, then sort — tier() inside the comparator runs O(n log n) times and was the
+		// 2,238ms bug. Secondary sort is birth year ascending: "notable" measured useless as a tiebreak
+		// (18,429 of 19,728 carry the flag), while earliest-first surfaces the historically central
+		// people — "yale" returns Davenport 1597, Newton 1620, Buckingham 1646, Pierson 1646,
+		// Pierpont 1659, which is essentially Yale's founders in order.
+		const q = terms.join(' ');
+		// `eb` places the undated by era so the year-range exemption is visible rather than merely true:
+		// before it, all 107 undated "hooker" rows survived the 1800-1900 filter but the first ranked
+		// 1,006th, far below the 60-row cap.
+		const dec = hits.map((r) => ({
+			r,
+			/**
+			 * DIED YOUNG SINKS TO THE END, ahead of every other key including relevance (Sam). Searching
+			 * "Annie Hooker" led with a four-year-old, 1861–1865: she is the EXACT name and so wins tier 0
+			 * outright, which is why demoting her needed a key that outranks the tier rather than one
+			 * inside it.
+			 *
+			 * The test is the house's, not a threshold of mine — `by && dy && dy - by <= 15`, the same
+			 * computation regenerate-data.js bakes as `dy_young` and PersonBox reads to print "died young".
+			 * Its comment says it MUST match diedYoung() in buildFeatured.ts; this is a third reader of the
+			 * same rule, so it copies the rule exactly rather than picking a number that looks similar.
+			 *
+			 * They are demoted, never dropped: they stay in `total` and reachable, just never leading.
+			 */
+			dyoung: r.by != null && r.dy != null && r.dy - r.by <= 15 ? 1 : 0,
+			t: q ? tier(r, q, terms) : 5,
+			// Cohesion outranks notability on purpose: a notable whose terms are scattered across
+			// unrelated fields is still not what was asked for, and putting fame ahead of relevance is
+			// exactly the muck this is meant to avoid.
+			c: cohesion(r, terms, q),
+			// NOTABLE FIRST, THEN CHRONOLOGY (Sam). Search "Moffat" and you get a family cluster from the
+			// late 1800s; four of the thirteen are notable, and those four are what a reader is actually
+			// looking for. Relevance still leads — this only orders WITHIN a tier.
+			//
+			// I argued against this once, on the grounds that notability could not discriminate because
+			// 18,429 of 19,728 carried it. THAT NUMBER WAS WRONG: it counted rows carrying a `notable`
+			// OBJECT, most of them with the flag absent or false. The flag itself is on 1,128 rows (5.7%),
+			// which is exactly the useful density.
+			nb: r.nb ? 0 : 1,
+			/**
+			 * BLOOD BEFORE MARRIAGE, but only as a tiebreak — which is what lets one key serve both of Sam's
+			 * cases. A SPECIFIC query is already separated by the tier: "Walter Hope" makes Walter a
+			 * whole-name-word match and everyone else a fact match, so he leads on relevance and this key is
+			 * never consulted. A VAGUE one — plain "hope" — puts a whole cohort in the same tier, and there
+			 * the tree's own people should lead: Walter drops behind the two Hooker notables he was ahead of.
+			 */
+			hd: r.f & CAT.HD ? 0 : 1,
+			b: r.by ?? r.eb ?? 9999
+		}));
+		dec.sort(
+			(a, b) =>
+				a.dyoung - b.dyoung || a.t - b.t || a.c - b.c || a.nb - b.nb || a.hd - b.hd || a.b - b.b
+		);
+		return { rows: dec.slice(0, RESULT_CAP).map((d) => d.r), total: dec.length, hist, peak };
+	}
+);
 
 /**
  * HOW TIGHTLY THE TERMS SIT TOGETHER. 0 = they appear as an adjacent PHRASE inside one field,
@@ -571,6 +585,14 @@ export const search = {
 	},
 	get capped() {
 		return result.total > RESULT_CAP;
+	},
+	/** Decade buckets of the current matches BEFORE the year range narrows them — the shape the
+	 *  range is dragged across. Empty while idle. */
+	get hist() {
+		return result.hist;
+	},
+	get peak() {
+		return result.peak;
 	},
 	get recent() {
 		return recent;
