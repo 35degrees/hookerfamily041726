@@ -8,7 +8,7 @@
  *
  * Emits (paths relative to repo root, overridable via the CONFIG block):
  *   static/data/people.json             full records, research_notes stripped
- *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,f,x,bl?} - f=category
+ *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,f,x,bl?,eb?} - f=cat
  *                                       bitfield, x=field-tagged folded fact blob (segment 0 = names)
  *   static/data/cemeteries.json         passthrough
  *   static/data/institutions.json       passthrough
@@ -446,6 +446,57 @@ function compact(p, slugMap) {
 /** Category bitfield. Multi-select is an OR of these; 0 means All. Overlap is expected and fine. */
 const CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8, FOUNDER: 16 };
 
+/** Median years between birth and death across the dated population — the proxy for a dy-only row. */
+const TYPICAL_LIFESPAN = 70;
+
+/**
+ * Place the undated by era — A SORT KEY ONLY, NEVER RENDERED. `eb` is an era guess, not a fact, and
+ * anything displaying it as a date would be inventing data.
+ *
+ * It exists because "exempt from the year range" was hollow without it: the 1,920 undated people
+ * survive the filter, but sorting them at 9999 buried them below the 60-row cap — on
+ * "hooker" + 1800-1900 the first one ranked 1,006th. Placing them by era makes the exemption mean
+ * something.
+ *
+ * Learned from the FINISHED ROWS rather than from canonical, so it cannot drift from whatever `g`
+ * means: an earlier pass read `p.generation_from_thomas` when the real field is
+ * `p.classification.generation_from_thomas`, silently placed only 160 of 741, and put a ninth-
+ * generation woman in 1774 instead of 1861. Reading the same `g` the index ships makes that
+ * class of mistake impossible.
+ */
+function placeUndatedByEra(rows) {
+	const buckets = new Map();
+	for (const r of rows) {
+		if (r.by == null || r.g == null) continue;
+		if (!buckets.has(r.g)) buckets.set(r.g, []);
+		buckets.get(r.g).push(r.by);
+	}
+	const median = new Map();
+	for (const [g, years] of buckets) {
+		years.sort((a, b) => a - b);
+		median.set(g, years[years.length >> 1]);
+	}
+	let byGen = 0;
+	let byDeath = 0;
+	let unplaceable = 0;
+	for (const r of rows) {
+		if (r.by != null) continue;
+		// Generation is the better signal; a death year minus a typical lifespan is the fallback.
+		const g = r.g != null ? median.get(r.g) : undefined;
+		if (g != null) {
+			r.eb = g;
+			byGen++;
+		} else if (r.dy != null) {
+			r.eb = r.dy - TYPICAL_LIFESPAN;
+			byDeath++;
+		} else {
+			// No signal at all. These still sort last, which is honest.
+			unplaceable++;
+		}
+	}
+	return { byGen, byDeath, unplaceable, generations: median.size };
+}
+
 /**
  * Every searchable fact, tagged by the field it came from, folded, joined with '|'.
  * Tag names are the words shown to the user in the match reason, so they read as English.
@@ -465,18 +516,23 @@ function factSegments(p, reg) {
 	// corpus. Dedupe is per-segment and never across them — "new york" has to survive under BOTH
 	// `born` and `died` or the match reason cannot tell you which one you hit.
 	const push = (tag, ...parts) => {
-		const v = parts
-			.flat()
-			.filter(Boolean)
-			.map((x) => String(x).replace(/_/g, ' '))
-			.join(' ')
-			.trim();
-		if (!v) return;
+		// Parts stay COMMA-SEPARATED inside the segment so the row can render a sane match reason:
+		// `died:oyster bay, new york, nassau, united states` displays as "Oyster Bay, New York",
+		// where a space-joined blob could not be split back into components. Commas cost matching
+		// nothing, because a query is AND-ed word by word (`x.includes(term)`) and never as a phrase.
 		const seen = new Set();
-		const words = fold(v)
-			.split(/\s+/)
-			.filter((w) => w && !seen.has(w) && seen.add(w));
-		if (words.length) segs.push(tag + ':' + words.join(' '));
+		const out = [];
+		for (const raw of parts.flat()) {
+			if (!raw) continue;
+			// Word dedupe spans the whole segment (not just the part) — that is where the 86 KB is:
+			// bio carries display_name AND first/middle/last, so an undeduped name reads
+			// `n:theodore roosevelt theodore roosevelt`. A part emptied by dedupe is simply dropped.
+			const words = fold(String(raw).replace(/_/g, ' '))
+				.split(/\s+/)
+				.filter((w) => w && !seen.has(w) && seen.add(w));
+			if (words.length) out.push(words.join(' '));
+		}
+		if (out.length) segs.push(tag + ':' + out.join(', '));
 	};
 	const b = p.bio || {};
 	// Every name form, because people are searched by any of them. `nickname` and `chip_first_name`
@@ -499,20 +555,22 @@ function factSegments(p, reg) {
 		b.suffix,
 		b.married_names || []
 	);
+	// Returns COMPONENTS, most-specific first, so the match reason can show the leading two
+	// ("Oyster Bay, New York") while county and country stay searchable behind them.
 	const place = (e) => {
-		if (!e) return '';
-		if (typeof e === 'string') return e;
-		return [e.city, e.county, e.state, e.country].filter(Boolean).join(' ');
+		if (!e) return [];
+		if (typeof e === 'string') return [e];
+		return [e.city, e.state, e.county, e.country].filter(Boolean);
 	};
-	push('born', place(p.birth));
-	push('died', place(p.death));
+	push('born', ...place(p.birth));
+	push('died', ...place(p.death));
 	// Burial carries a cemetery_id 7,030 times and a cemetery_name only 109, so an unresolved
 	// burial would make almost every cemetery unsearchable.
 	const bu = p.burial || {};
 	const cem = bu.cemetery_id ? cemById[bu.cemetery_id] : null;
 	if (cem) push('buried', cem.name, cem.city, cem.state);
-	else push('buried', bu.cemetery_name, place(bu));
-	for (const r of asList(p.residence)) push('lived', place(r));
+	else push('buried', bu.cemetery_name, ...place(bu));
+	for (const r of asList(p.residence)) push('lived', ...place(r));
 	for (const c of asList(p.career))
 		push('work', c.role, c.title, c.organization, c.location, c.location_city, c.location_state);
 	for (const e of asList(p.education))
@@ -588,6 +646,7 @@ function searchRow(p, slugMap, reg) {
 	// 3,237 rows carry one (16% of the corpus) for +32 KB gzipped.
 	const bl = (p.notable || {}).notable_blurb || b.bio_blurb;
 	if (bl) row.bl = bl;
+	// `eb` (era placement for the undated) is backfilled by placeUndatedByEra after the map exists.
 	return row;
 }
 
@@ -2037,6 +2096,11 @@ function main() {
 	if (!only) {
 		// 3) search-index.json
 		searchIndex = visible.map((p) => searchRow(p, slugMap, searchReg));
+		const era = placeUndatedByEra(searchIndex);
+		log(
+			`  era placement: ${era.byGen} by generation / ${era.byDeath} by death year / ` +
+				`${era.unplaceable} unplaceable (${era.generations} generation bands)`
+		);
 
 		// 4) redirects: every former/merged id -> current slug
 		for (const p of visible) {

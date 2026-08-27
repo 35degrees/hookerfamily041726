@@ -37,6 +37,12 @@ export type SearchRow = {
 	x: string;
 	/** Display blurb, UNFOLDED. 16% of rows. Line two falls back to this on a name match. */
 	bl?: string;
+	/**
+	 * Estimated birth year — A SORT KEY ONLY, NEVER RENDERED. An era guess, not a fact; displaying
+	 * it as a date would be inventing data. Present on 781 of the 1,920 undated rows (680 placed by
+	 * generation, 101 by death year); the other 1,139 have no signal and still sort last.
+	 */
+	eb?: number;
 };
 
 /** Prepared once at load: segment 0 split out so ranking never re-parses or re-folds. */
@@ -176,7 +182,10 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 	// people — "yale" returns Davenport 1597, Newton 1620, Buckingham 1646, Pierson 1646,
 	// Pierpont 1659, which is essentially Yale's founders in order.
 	const first = terms[0] ?? '';
-	const dec = hits.map((r) => ({ r, t: first ? tier(r, first) : 5, b: r.by ?? 9999 }));
+	// `eb` places the undated by era so the year-range exemption is visible rather than merely true:
+	// before it, all 107 undated "hooker" rows survived the 1800-1900 filter but the first ranked
+	// 1,006th, far below the 60-row cap.
+	const dec = hits.map((r) => ({ r, t: first ? tier(r, first) : 5, b: r.by ?? r.eb ?? 9999 }));
 	dec.sort((a, b) => a.t - b.t || a.b - b.b);
 	return { rows: dec.slice(0, RESULT_CAP).map((d) => d.r), total: dec.length };
 });
@@ -195,6 +204,9 @@ const TAG_LABEL: Record<string, string> = {
 	tag: 'tag',
 	is: 'known for'
 };
+
+/** Tags whose segment is `city, state, county, country` rather than free text. */
+const PLACE_TAGS = new Set(['born', 'died', 'buried', 'lived']);
 
 const LOWER = new Set(['of', 'the', 'and', 'a', 'an', 'in', 'at', 'on', 'for', 'to']);
 
@@ -225,7 +237,16 @@ export function reasonFor(r: SearchRow, term: string): { tag: string; text: stri
 		if (tag === 'n') continue;
 		const body = seg.slice(i + 1);
 		if (!body.includes(term)) continue;
-		return { tag: TAG_LABEL[tag] ?? tag, text: titleCase(body) };
+		const parts = body.split(', ');
+		// A place segment is `city, state, county, country` (most specific first), so the reason
+		// shows the leading two and drops the country, which is never the informative part:
+		// `died:oyster bay, new york, nassau, united states` reads "Oyster Bay, New York".
+		const shown = PLACE_TAGS.has(tag)
+			? parts.filter((x) => x !== 'united states').slice(0, 2).length
+				? parts.filter((x) => x !== 'united states').slice(0, 2)
+				: parts.slice(0, 2)
+			: parts;
+		return { tag: TAG_LABEL[tag] ?? tag, text: shown.map(titleCase).join(', ') };
 	}
 	return null;
 }
