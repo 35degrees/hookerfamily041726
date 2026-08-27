@@ -343,25 +343,30 @@
 				{#each search.rows as r, i (r.id)}
 					{@const reason = reasonFor(r, search.term, search.terms, search.phrase)}
 					<a
-						class="hit"
+						class="person-box hit flex overflow-hidden rounded-lg"
 						class:on={i === cursor}
+						class:hooker-line={(r.f & CAT.HD) !== 0}
+						class:spouse-line={(r.f & CAT.SPOUSE) !== 0}
+						class:ee-line={(r.f & CAT.INLAW) !== 0}
+						class:orbit-chip={(r.f & CAT.INFLUENCE) !== 0}
 						href="/person/{r.slug}"
 						onclick={(e) => pick(e, r.slug, r.f)}
 						onmouseenter={() => (cursor = i)}
 					>
-						<span class="hit-photo">
+						<div class="photo aspect-square shrink-0 bg-stone-100">
 							{#if r.ph}
 								<img
 									src={r.ph}
 									alt={r.n}
+									class="h-full w-full object-cover object-top"
 									loading="lazy"
 									onmouseenter={trackZoom}
 									onmousemove={trackZoom}
 									onmouseleave={closeZoom}
 								/>
 							{/if}
-						</span>
-						<span class="hit-text">
+						</div>
+						<div class="text-area flex min-w-0 flex-col justify-center">
 							<span class="line1">
 								<!-- THE STAR IS A GUTTER, NOT A PREFIX. It is drawn in a reserved column so every
 								     name in the list starts at the same x whether or not it carries one — a star
@@ -383,7 +388,7 @@
 									{r.bl}
 								{/if}
 							</span>
-						</span>
+						</div>
 					</a>
 				{/each}
 			</div>
@@ -540,51 +545,40 @@
 	   blurb, and 77% have NEITHER, so three rows in four would be a tall card holding a name and a lot
 	   of air — and at that pitch you would see under eight at a time. This is ~54px, so ten or eleven
 	   are in view, with the same paper, the same rose shadow and the same click. */
+	/**
+	 * A RESULT ROW IS A `.person-box`. Not a list item that resembles one — the same class every chip,
+	 * sibling and ladder rung in the app already is, so it inherits the whole system rather than
+	 * approximating it: `--chip-shadow`, the line-status grounds (hooker banana-cream, spouse, easter
+	 * egg, orbit stone), the `--line-edge` spine, and `a.person-box:hover`'s shadow.
+	 *
+	 * The first version was a bespoke card with its own paper, its own shadow and an inset 38px rounded
+	 * thumbnail — a generic search-result avatar, which is exactly what it looked like. Sam: "it's like
+	 * you just came in off the street and didn't review my design." The house had already answered every
+	 * one of those questions and the answers were three files away.
+	 *
+	 * Only the size is stated here. Everything else is the house.
+	 */
 	.hit {
-		display: flex;
-		align-items: center;
-		gap: 11px;
 		min-height: 54px;
-		padding: 8px 14px;
-		border-radius: 8px;
 		text-decoration: none;
-		background: var(--paper, #f7f5ee);
-		box-shadow:
-			0 3.2px 9.6px hsl(var(--shadow-ink) / calc(var(--shadow-a1) * 1.45)),
-			0 0.8px 2.4px hsl(var(--shadow-ink) / calc(var(--shadow-a2) * 1.35));
 		cursor: pointer;
-		/* Colour only. The row does NOT lift on hover — a list of sixty objects all offering to rise is
-		   noise, and the ladder already settled that a chip's answer to a pointer is its shadow. */
-		transition: background 120ms ease-out;
 	}
-	/* ONE highlight for both pointer and keyboard: `cursor` follows the mouse on enter, so the two can
-	   never disagree about which row is live. */
+	/* THE HIGHLIGHT IS A SHADOW, NOT A FILL — the house's answer to a pointer (`a.person-box:hover`),
+	   and it has to be, because the fill is already carrying line status. Painting a highlight colour
+	   over it would erase the one thing the row's ground is saying. One rule for both pointer and
+	   keyboard: `cursor` follows the mouse on enter, so the two can never disagree about which row is
+	   live. */
 	.hit.on {
-		background: #fffdf6;
+		box-shadow: var(--chip-shadow-hover);
 	}
-	/* THE PHOTO COLUMN IS ALWAYS RESERVED, even on the 84% of rows with no portrait, and the empty case
-	   is BLANK rather than a placeholder tile. Reserving keeps every name on one x — a column that
-	   appeared and vanished down the list would make the whole thing ragged — while a grey square on
-	   five rows in six would be the list's loudest element and it would be saying nothing. It also
-	   gives the popout a fixed anchor, which is what stops the enlargement drifting sideways. */
-	.hit-photo {
-		flex: 0 0 auto;
-		width: 38px;
-		height: 38px;
-		border-radius: 5px;
-		overflow: hidden;
-	}
-	.hit-photo img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-	}
-	.hit-text {
-		display: flex;
-		flex-direction: column;
+	/* THE PHOTO IS THE CARD'S LEFT EDGE — full height, aspect-square, flush, clipped by the card's own
+	   `overflow-hidden` + `rounded-lg`. That is how a photo is drawn everywhere else in this app
+	   (PersonBox's `.photo aspect-square shrink-0 bg-stone-100`, and the ladder rung's), and the stone
+	   ground stands in when there is no portrait. My first pass inset a 38px rounded thumbnail with air
+	   around it, which is a pattern from somewhere else entirely. */
+	.text-area {
+		padding: 7px 12px;
 		gap: 3px;
-		min-width: 0;
 	}
 	.line1 {
 		display: flex;
@@ -614,7 +608,7 @@
 	.nm {
 		font-family: var(--font-outfit, 'Outfit Variable', sans-serif);
 		font-size: 15px;
-		font-weight: 500;
+		font-weight: 400;
 		line-height: 1.2;
 		color: var(--color-inkblue);
 	}
