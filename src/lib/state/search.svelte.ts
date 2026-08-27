@@ -62,11 +62,11 @@ export const CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8, FOUNDER: 16 } as 
 
 /** Chip order as Sam specified it: All first, then these five. Counts are the 082726 build. */
 export const CATEGORIES = [
-	{ mask: CAT.HD, label: 'Hooker descendants', count: 12871 },
-	{ mask: CAT.SPOUSE, label: 'Spouses', count: 5919 },
-	{ mask: CAT.INLAW, label: 'Notable In-Laws', count: 530 },
-	{ mask: CAT.INFLUENCE, label: 'Major Influences', count: 96 },
-	{ mask: CAT.FOUNDER, label: 'Hartford Founders', count: 12 }
+	{ mask: CAT.HD, key: 'hd', label: 'Hooker descendants', count: 12871 },
+	{ mask: CAT.SPOUSE, key: 'spouse', label: 'Spouses', count: 5919 },
+	{ mask: CAT.INLAW, key: 'ee', label: 'Notable In-Laws', count: 527 },
+	{ mask: CAT.INFLUENCE, key: 'orbit', label: 'Major Influences', count: 96 },
+	{ mask: CAT.FOUNDER, key: 'founder', label: 'Hartford Founders', count: 12 }
 ] as const;
 
 /**

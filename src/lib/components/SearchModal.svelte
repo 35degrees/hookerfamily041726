@@ -318,7 +318,7 @@
 				<button class="chip" class:on={search.cats === 0} onclick={selectAll}>All</button>
 				{#each CATEGORIES as c (c.mask)}
 					<button
-						class="chip"
+						class="chip chip-{c.key}"
 						class:on={(search.cats & c.mask) !== 0}
 						onclick={() => toggleCategory(c.mask)}
 					>
@@ -455,6 +455,17 @@
 		pointer-events: none;
 	}
 	.panel {
+		/**
+		 * THE FOUR STRIPES, DEFINED ONCE HERE and read by both the result rows and the category chips.
+		 * A selected chip is now a preview of the rows it will produce (Sam), which means two surfaces
+		 * share every one of these values — and every time in this feature that one colour has lived in
+		 * two places, the two have drifted. Cascading them from the panel is the smallest fix that makes
+		 * drift impossible rather than merely unlikely.
+		 */
+		--stripe-hd: rgba(212, 175, 55, 0.5);
+		--stripe-spouse: hsl(158 45% 45% / 0.5);
+		--stripe-ee: color-mix(in srgb, var(--color-ascendmidnight) 50%, transparent);
+		--stripe-dark: rgba(255, 255, 255, 0.9);
 		pointer-events: auto;
 		/* 680px was a search-engine's width, not this app's — a name and a short reason left most of a
 		   row empty and the eye had to travel the gap. 520 keeps the pair close enough to read as one
@@ -506,16 +517,44 @@
 		color: rgba(60, 54, 44, 0.8);
 	}
 
+	/* ONE LINE, NO WRAP (Sam). Six labels have to share the panel's 520px, so the type comes down and
+	   the padding tightens rather than the labels being abbreviated — a shortened category name is a
+	   different name, and these are the words the rest of the app uses. */
 	.chips {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
+		flex-wrap: nowrap;
+		justify-content: center;
+		gap: 3px;
+		/**
+		 * THE CHIP ROW IS WIDER THAN THE PANEL, ON PURPOSE.
+		 *
+		 * Six labels need 625px at legible type and the panel is 520 — measured, not estimated. The
+		 * three ways to close a 105px gap are: shrink the type (9px, which is smaller than anything else
+		 * in the modal), abbreviate the labels (a shortened category name is a different name, and these
+		 * are the words the rest of the app uses), or let this one row be wider than the rows below it.
+		 * The last costs nothing: it stays centred on the same axis, and the RESULTS keep the 520 Sam
+		 * asked for, which is the width that actually governs reading.
+		 *
+		 * `left: 50%` + `translateX(-50%)` centres an element wider than its parent. Capped at 96vw so a
+		 * narrow window falls back to shrinking chips rather than overflowing the screen.
+		 */
+		width: max-content;
+		max-width: 96vw;
+		position: relative;
+		left: 50%;
+		transform: translateX(-50%);
 	}
 	.chip {
-		font: 500 11.5px/1 var(--font-inter, sans-serif);
+		flex: 0 1 auto;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		font: 500 10.5px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.01em;
-		padding: 6px 10px;
-		border-radius: 999px;
+		/* SQUARED OFF (Sam) — 4px, which is the card's 8px halved, so a chip reads as a smaller member of
+		   the same family rather than as a pill from somewhere else. */
+		padding: 7px 7px;
+		border-radius: 4px;
 		cursor: pointer;
 		border: 1px solid rgba(60, 54, 44, 0.18);
 		background: rgba(255, 253, 247, 0.72);
@@ -529,10 +568,53 @@
 		border-color: rgba(60, 54, 44, 0.34);
 		color: rgba(60, 54, 44, 0.95);
 	}
+
+	/* ── A SELECTED CHIP IS A PREVIEW OF ITS ROWS ───────────────────────────────────────────────────
+	   Sam: "when Major Influences is selected, that button should have the same midnight blue
+	   background and white stripe. When Spouses is selected that button should be mint green with the
+	   green stripe (with some mint green on the outside of stripe)."
+	   So the chip takes its category's GROUND and its STRIPE, by the same 2px-mask/3.5px-ring mechanism
+	   the rows use and from the same four tokens — the outer 2px of ground is what puts colour outside
+	   the stripe. The border is dropped when selected, because the stripe is now the edge. */
 	.chip.on {
-		background: #2f3a52;
-		border-color: #2f3a52;
-		color: #f4efe4;
+		border-color: transparent;
+		box-shadow:
+			inset 0 0 0 2px var(--chip-bg),
+			inset 0 0 0 3.5px var(--chip-stripe);
+		background: var(--chip-bg);
+		color: var(--chip-ink);
+	}
+	/* ALL has no row to preview — it is the absence of a filter — so it takes a neutral slate rather
+	   than borrowing a category's colour and claiming to be one. */
+	.chip.on:not(.chip-hd):not(.chip-spouse):not(.chip-ee):not(.chip-orbit):not(.chip-founder) {
+		--chip-bg: #2f3a52;
+		--chip-stripe: var(--stripe-dark);
+		--chip-ink: #f4efe4;
+	}
+	.chip-hd.on {
+		--chip-bg: var(--hd-bg);
+		--chip-stripe: var(--stripe-hd);
+		--chip-ink: var(--color-inkblue);
+	}
+	.chip-spouse.on {
+		--chip-bg: var(--spouse-bg);
+		--chip-stripe: var(--stripe-spouse);
+		--chip-ink: var(--color-inkblue);
+	}
+	.chip-ee.on {
+		--chip-bg: var(--ee-bg);
+		--chip-stripe: var(--stripe-ee);
+		--chip-ink: var(--color-inkblue);
+	}
+	.chip-orbit.on {
+		--chip-bg: var(--color-ascendmidnight);
+		--chip-stripe: var(--stripe-dark);
+		--chip-ink: var(--color-creamprimary);
+	}
+	.chip-founder.on {
+		--chip-bg: var(--color-foundergreen);
+		--chip-stripe: var(--stripe-dark);
+		--chip-ink: var(--color-creamprimary);
 	}
 
 	.count {
@@ -669,17 +751,17 @@
 	   tuned"). A 1.5px ring at 50% is a different pair (§29), so it gets its own values rather than
 	   re-tuning colours that belong to a different feature. */
 	.hit.hooker-line {
-		--stripe: rgba(212, 175, 55, 0.5);
+		--stripe: var(--stripe-hd);
 	}
 	.hit.spouse-line {
-		--stripe: hsl(158 45% 45% / 0.5);
+		--stripe: var(--stripe-spouse);
 	}
 	.hit.ee-line {
 		/* MIDNIGHT BLUE (Sam), after two attempts at a mid blue both read aqua once composited. This is
 		   `--color-ascendmidnight` — the ascension's own ground — so the in-law stripe is not a fourth
 		   invented colour but the room these figures orbit, and at 50% it composites to a slate that
 		   cannot be mistaken for cyan at any lightness. */
-		--stripe: color-mix(in srgb, var(--color-ascendmidnight) 50%, transparent);
+		--stripe: var(--stripe-ee);
 	}
 	.hit.hooker-line,
 	.hit.spouse-line,
@@ -707,14 +789,14 @@
 		   rule that sets a ring. */
 		box-shadow:
 			inset 0 0 0 2px var(--card-bg),
-			inset 0 0 0 3.5px rgba(255, 255, 255, 0.9),
+			inset 0 0 0 3.5px var(--stripe-dark),
 			var(--chip-shadow);
 	}
 	.hit.founder-row.on,
 	.hit.orbit-row.on {
 		box-shadow:
 			inset 0 0 0 2px var(--card-bg),
-			inset 0 0 0 3.5px rgba(255, 255, 255, 0.9),
+			inset 0 0 0 3.5px var(--stripe-dark),
 			var(--chip-shadow-hover);
 	}
 	/* CREAM INK, because §41.3 is not optional here: navy on hunter green is the pair this app's own
