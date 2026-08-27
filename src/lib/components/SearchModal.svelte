@@ -675,14 +675,11 @@
 		--stripe: hsl(158 45% 45% / 0.5);
 	}
 	.hit.ee-line {
-		/* DARKER AND FURTHER FROM CYAN, second correction. 215 was already a blue as a RAW value, but the
-		   eye never sees the raw value — it sees the COMPOSITE over --ee-bg at 50%, and rgb(66,117,189)
-		   half-mixed with a pale cyan-ish ground came back as rgb(154,182,220): light, low-chroma and
-		   still reading aqua beside the mint row. Measuring the composite rather than the swatch is the
-		   whole lesson here; §29's "read the Δ column, never the alpha" is the same point one step on.
-		   224 at 60/38 composites to rgb(140,159,203) — darker, and far enough round the wheel that
-		   nothing about it is cyan. */
-		--stripe: hsl(224 60% 38% / 0.5);
+		/* MIDNIGHT BLUE (Sam), after two attempts at a mid blue both read aqua once composited. This is
+		   `--color-ascendmidnight` — the ascension's own ground — so the in-law stripe is not a fourth
+		   invented colour but the room these figures orbit, and at 50% it composites to a slate that
+		   cannot be mistaken for cyan at any lightness. */
+		--stripe: color-mix(in srgb, var(--color-ascendmidnight) 50%, transparent);
 	}
 	.hit.hooker-line,
 	.hit.spouse-line,

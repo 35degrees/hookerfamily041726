@@ -231,6 +231,20 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 	// 1,006th, far below the 60-row cap.
 	const dec = hits.map((r) => ({
 		r,
+		/**
+		 * DIED YOUNG SINKS TO THE END, ahead of every other key including relevance (Sam). Searching
+		 * "Annie Hooker" led with a four-year-old, 1861–1865: she is the EXACT name and so wins tier 0
+		 * outright, which is why demoting her needed a key that outranks the tier rather than one
+		 * inside it.
+		 *
+		 * The test is the house's, not a threshold of mine — `by && dy && dy - by <= 15`, the same
+		 * computation regenerate-data.js bakes as `dy_young` and PersonBox reads to print "died young".
+		 * Its comment says it MUST match diedYoung() in buildFeatured.ts; this is a third reader of the
+		 * same rule, so it copies the rule exactly rather than picking a number that looks similar.
+		 *
+		 * They are demoted, never dropped: they stay in `total` and reachable, just never leading.
+		 */
+		dyoung: r.by != null && r.dy != null && r.dy - r.by <= 15 ? 1 : 0,
 		t: q ? tier(r, q, terms) : 5,
 		// Cohesion outranks notability on purpose: a notable whose terms are scattered across
 		// unrelated fields is still not what was asked for, and putting fame ahead of relevance is
@@ -245,9 +259,20 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 		// OBJECT, most of them with the flag absent or false. The flag itself is on 1,128 rows (5.7%),
 		// which is exactly the useful density.
 		nb: r.nb ? 0 : 1,
+		/**
+		 * BLOOD BEFORE MARRIAGE, but only as a tiebreak — which is what lets one key serve both of Sam's
+		 * cases. A SPECIFIC query is already separated by the tier: "Walter Hope" makes Walter a
+		 * whole-name-word match and everyone else a fact match, so he leads on relevance and this key is
+		 * never consulted. A VAGUE one — plain "hope" — puts a whole cohort in the same tier, and there
+		 * the tree's own people should lead: Walter drops behind the two Hooker notables he was ahead of.
+		 */
+		hd: r.f & CAT.HD ? 0 : 1,
 		b: r.by ?? r.eb ?? 9999
 	}));
-	dec.sort((a, b) => a.t - b.t || a.c - b.c || a.nb - b.nb || a.b - b.b);
+	dec.sort(
+		(a, b) =>
+			a.dyoung - b.dyoung || a.t - b.t || a.c - b.c || a.nb - b.nb || a.hd - b.hd || a.b - b.b
+	);
 	return { rows: dec.slice(0, RESULT_CAP).map((d) => d.r), total: dec.length };
 });
 
