@@ -154,6 +154,20 @@
 		return { destroy: () => node.remove() };
 	}
 
+	/**
+	 * THE EDGE FADES ONLY WHERE THERE IS SOMETHING TO FADE INTO. A mask that softens the first row when
+	 * nothing is above it is a lie in the same family as the hatch design §35.4 removed: a mark that
+	 * says "there is more here" while there is not. Both ends are tracked so each fades only when the
+	 * list actually runs past it.
+	 */
+	let atTop = $state(true);
+	let atBottom = $state(true);
+	function readEdges(node: HTMLElement | null) {
+		if (!node) return;
+		atTop = node.scrollTop <= 1;
+		atBottom = node.scrollTop + node.clientHeight >= node.scrollHeight - 1;
+	}
+
 	let input = $state<HTMLInputElement | null>(null);
 	let listEl = $state<HTMLElement | null>(null);
 	/** Which row the keyboard is on. Dies with the view, so it lives here and not in the module. */
@@ -170,6 +184,9 @@
 	$effect(() => {
 		void search.rows;
 		cursor = 0;
+		// A new set is a new scroll height, so the edges have to be re-read or a short list keeps the
+		// bottom fade it inherited from a long one.
+		void tick().then(() => readEdges(listEl));
 	});
 
 	/**
@@ -412,7 +429,13 @@
 				</p>
 			{/if}
 
-			<div class="results" bind:this={listEl}>
+			<div
+				class="results"
+				class:at-top={atTop}
+				class:at-bottom={atBottom}
+				bind:this={listEl}
+				onscroll={(e) => readEdges(e.currentTarget as HTMLElement)}
+			>
 				{#each search.rows as r, i (r.id)}
 					{@const reason = reasonFor(r, search.term, search.terms, search.phrase)}
 					<!-- A founder who is ALSO orbit takes the GREEN, because that is what the zone does: the
@@ -771,20 +794,81 @@
 		--chip-ink: var(--color-creamprimary);
 	}
 
+	/* Centred, a tenth smaller, a fifth quieter (Sam). It is a status line under a control, not a
+	   heading over a list — 12 -> 10.8px and 0.62 -> 0.5 alpha. */
 	.count {
 		margin: 0 2px;
-		font: 400 12px/1.4 var(--font-inter, sans-serif);
-		color: rgba(48, 42, 34, 0.62);
+		text-align: center;
+		font: 400 10.8px/1.4 var(--font-inter, sans-serif);
+		color: rgba(48, 42, 34, 0.5);
 	}
 
+	/**
+	 * THE SCROLL EDGE DISSOLVES, AND THE BAR STOPS LOOKING LIKE A BROWSER'S.
+	 *
+	 * Two changes, and the first is the one that matters. A native scroll area ends in a HARD CUT — a
+	 * row is sliced mid-height at the top and bottom of the box — and then a widget is bolted on to
+	 * explain that there is more. This app has an answer for "there is more here than you can see" and
+	 * it is not a widget: design §35.4, the rail softens an uncertain end rather than marking it, and
+	 * the hatch was REMOVED for being a second channel saying what the dissolve already said. So the
+	 * list fades at both ends and the rows pass out of view instead of being cut off.
+	 *
+	 * The bar itself then only has to stop announcing itself: no track, a thin warm-ink pill in the
+	 * same ink as everything else here, darkening under the pointer. Sam liked the pill; what made it
+	 * read as a browser was the white channel it sat in.
+	 */
 	.results {
 		display: flex;
 		flex-direction: column;
 		gap: 6px;
 		overflow-y: auto;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(48, 42, 34, 0.22) transparent;
+		--fade-top: 16px;
+		--fade-bottom: 20px;
+		-webkit-mask-image: linear-gradient(
+			to bottom,
+			transparent 0,
+			#000 var(--fade-top),
+			#000 calc(100% - var(--fade-bottom)),
+			transparent 100%
+		);
+		mask-image: linear-gradient(
+			to bottom,
+			transparent 0,
+			#000 var(--fade-top),
+			#000 calc(100% - var(--fade-bottom)),
+			transparent 100%
+		);
 		/* The list scrolls; the box above it does not move. */
 		max-height: calc(88vh - 12vh - 180px);
 		padding: 2px 2px 14px;
+	}
+
+	/* At an end, that end is square: 0 collapses the gradient stop so the mask is fully opaque there. */
+	.results.at-top {
+		--fade-top: 0px;
+	}
+	.results.at-bottom {
+		--fade-bottom: 0px;
+	}
+	.results::-webkit-scrollbar {
+		width: 7px;
+	}
+	.results::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	.results::-webkit-scrollbar-thumb {
+		background: rgba(48, 42, 34, 0.2);
+		border-radius: 999px;
+		/* An inset border rather than a narrower thumb: it keeps the pill off the rows without the
+		   track reappearing as a visible channel. */
+		border: 2px solid transparent;
+		background-clip: content-box;
+	}
+	.results::-webkit-scrollbar-thumb:hover {
+		background: rgba(48, 42, 34, 0.42);
+		background-clip: content-box;
 	}
 
 	/* THE ROW — a rung's material at a rung's shorter cousin's height.
