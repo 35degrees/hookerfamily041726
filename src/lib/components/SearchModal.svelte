@@ -487,12 +487,33 @@
 	 * the veil is a room the reader has already arrived in; while the search is open it is a backdrop,
 	 * and a backdrop that competes with the list is worse than one you cannot quite see.
 	 */
+	/**
+	 * HALFWAY (Sam) — 0.94/0.96/0.975 left nothing visible beneath, which is the opposite failure.
+	 *
+	 * The two goals are DIRECTLY OPPOSED and it is worth writing down why, so nobody tunes one of them
+	 * again without knowing the cost: how much of the room shows through is (1 - alpha), and so is how
+	 * much of the featured card shows through. Every step that reveals the zone re-reveals the blob in
+	 * exactly the same proportion. There is no value that gets both.
+	 *
+	 * Measured, at 1440x900, over midnight:
+	 *
+	 *   alphas             bare   blob   blob-bare Δ   row-bare Δ
+	 *   0.36/0.43/0.49      112    222       110           141    original — blobby
+	 *   0.68/0.72/0.76      171    226        55            82
+	 *   0.74/0.78/0.82      183    226        43            70    <- this
+	 *   0.80/0.84/0.88      194    227        33            59
+	 *   0.94/0.96/0.975     219    229        10            34    too covered
+	 *
+	 * This sits where the blob is down 61% from where it started while roughly a fifth of the room
+	 * still comes through, and the rows still clear their field by 70 — more than they do on
+	 * parchment, where the same measurement is 37.
+	 */
 	.veil.zone {
 		background: radial-gradient(
 			120% 90% at 50% 42%,
-			rgba(233, 231, 223, 0.94) 0%,
-			rgba(229, 227, 219, 0.96) 55%,
-			rgba(224, 222, 214, 0.975) 100%
+			rgba(233, 231, 223, 0.74) 0%,
+			rgba(229, 227, 219, 0.78) 55%,
+			rgba(224, 222, 214, 0.82) 100%
 		);
 	}
 	.search-layer {
