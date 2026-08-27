@@ -232,6 +232,10 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 	const dec = hits.map((r) => ({
 		r,
 		t: q ? tier(r, q, terms) : 5,
+		// Cohesion outranks notability on purpose: a notable whose terms are scattered across
+		// unrelated fields is still not what was asked for, and putting fame ahead of relevance is
+		// exactly the muck this is meant to avoid.
+		c: cohesion(r, terms, q),
 		// NOTABLE FIRST, THEN CHRONOLOGY (Sam). Search "Moffat" and you get a family cluster from the
 		// late 1800s; four of the thirteen are notable, and those four are what a reader is actually
 		// looking for. Relevance still leads — this only orders WITHIN a tier.
@@ -243,9 +247,45 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 		nb: r.nb ? 0 : 1,
 		b: r.by ?? r.eb ?? 9999
 	}));
-	dec.sort((a, b) => a.t - b.t || a.nb - b.nb || a.b - b.b);
+	dec.sort((a, b) => a.t - b.t || a.c - b.c || a.nb - b.nb || a.b - b.b);
 	return { rows: dec.slice(0, RESULT_CAP).map((d) => d.r), total: dec.length };
 });
+
+/**
+ * HOW TIGHTLY THE TERMS SIT TOGETHER. 0 = they appear as an adjacent PHRASE inside one field,
+ * 1 = same field but apart, 2 = scattered across unrelated fields. Lower is better.
+ *
+ * "trinity college" is the case. 48 rows match, and most really did attend a Trinity College — but
+ * Herbert Livingston Satterlee ranked second on `buried: trinity church cemetery` plus
+ * `school: columbia college`. Two unrelated fields, no Trinity College anywhere, and the reader has
+ * to wade past him. Sam: "it's clear the user specifically wants trinity college and not to wade
+ * through things they don't want."
+ *
+ * THIS RANKS, IT DOES NOT FILTER, and that distinction is the whole design. Requiring one field
+ * would break the query this search was specified around — Sam's original ask was that "Thomas" and
+ * "Oyster Bay" find every Thomas connected to Oyster Bay, which is a NAME in one field and a PLACE
+ * in another and must keep working. Scattered matches still appear; they simply stop outranking the
+ * people who actually match.
+ *
+ * Single-term queries return 0 immediately, which also keeps it off the hot path: "t" matches 17,874
+ * rows and none of them pay for a split.
+ */
+function cohesion(r: Prepared, terms: string[], phrase: string): number {
+	if (terms.length < 2) return 0;
+	const segs = r.x.split('|');
+	for (const seg of segs) if (seg.includes(phrase)) return 0;
+	for (const seg of segs) {
+		let all = true;
+		for (const t of terms) {
+			if (!new RegExp(`(^|[^a-z0-9])${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(seg)) {
+				all = false;
+				break;
+			}
+		}
+		if (all) return 1;
+	}
+	return 2;
+}
 
 /** Segment tag -> the word shown on the row. `n` never surfaces: a name hit shows the blurb. */
 const TAG_LABEL: Record<string, string> = {
@@ -286,16 +326,40 @@ function titleCase(s: string): string {
  * right for the places, employers and schools this mostly surfaces (all proper nouns) and rough on a
  * prose blurb.
  */
-export function reasonFor(r: SearchRow, term: string): { tag: string; text: string } | null {
+export function reasonFor(
+	r: SearchRow,
+	term: string,
+	all: string[] = [],
+	phrase = ''
+): { tag: string; text: string } | null {
 	if (!term) return null;
 	// Word-boundary, to agree with the scan. On a plain `includes` the reason could point at a segment
 	// the scan never accepted — "lea" would report a death in Mt. Pleasant.
-	const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	const at = new RegExp(`(^|[^a-z0-9])${esc}`);
-	for (const seg of r.x.split('|')) {
+	const rx = (t: string) => new RegExp(`(^|[^a-z0-9])${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`);
+	const at = rx(term);
+	/**
+	 * THE REASON MUST NAME THE SEGMENT THAT EARNED THE RANK, not merely the first one containing the
+	 * first word. Search "trinity college" and Rev. Clement Moore Butler is here on
+	 * `school: trinity college` — but his `work: Rector, Trinity Church` comes earlier in the blob, so
+	 * reporting the first "trinity" told the reader he was ranked for the wrong thing, and made a
+	 * correct result look like the noise the cohesion pass had just removed.
+	 *
+	 * Same order cohesion ranks by: the adjacent phrase first, then a field holding every term, then
+	 * the plain first-term fallback for single-word queries.
+	 */
+	const segs = r.x.split('|').filter((seg) => !seg.startsWith('n:'));
+	const rest = all.slice(1).map(rx);
+	const ordered =
+		all.length > 1
+			? [
+					...segs.filter((seg) => phrase && seg.includes(phrase)),
+					...segs.filter((seg) => at.test(seg) && rest.every((re) => re.test(seg))),
+					...segs
+				]
+			: segs;
+	for (const seg of ordered) {
 		const i = seg.indexOf(':');
 		const tag = seg.slice(0, i);
-		if (tag === 'n') continue;
 		const body = seg.slice(i + 1);
 		if (!at.test(body)) continue;
 		const parts = body.split(', ');
@@ -373,6 +437,14 @@ export const search = {
 	/** First folded term — what `reasonFor` should be asked about, and what ranking used. */
 	get term() {
 		return terms[0] ?? '';
+	},
+	/** Every folded term, and the whole query as one string — `reasonFor` needs both to pick the
+	 *  segment that actually earned the rank rather than the first one mentioning word one. */
+	get terms() {
+		return terms;
+	},
+	get phrase() {
+		return terms.join(' ');
 	},
 	get cats() {
 		return cats;

@@ -341,7 +341,7 @@
 
 			<div class="results" bind:this={listEl}>
 				{#each search.rows as r, i (r.id)}
-					{@const reason = reasonFor(r, search.term)}
+					{@const reason = reasonFor(r, search.term, search.terms, search.phrase)}
 					<a
 						class="hit"
 						class:on={i === cursor}
@@ -593,20 +593,30 @@
 	}
 	/* SAME HEIGHT AS THE NAME (Sam), so it sits on the name's own optical line rather than floating.
 	   Fixed width, so it is a gutter: see the note in the markup. */
+	/* NAVY, THE NAME'S OWN COLOUR (Sam), not gold. A gold mark on a navy name reads as a separate
+	   object stacked down its own column; in the name's ink the star belongs to the name it marks and
+	   the indent is just where names start. Same optical size as the name, so it sits on its line. */
 	.star {
 		flex: 0 0 auto;
-		width: 11px;
-		font-size: 11px;
+		width: 12px;
+		font-size: 12px;
 		line-height: 1.2;
-		color: rgba(60, 54, 44, 0.3);
+		color: transparent;
 	}
 	.star.has {
-		color: #c9a227;
+		color: var(--color-inkblue);
 		cursor: help;
 	}
+	/* THE HERO CARD'S OWN NAME TREATMENT (Sam): Outfit at medium, in inkblue. FeaturedCard sets
+	   `font-outfit` + `font-medium` + `text-inkblue` on its <h1>, and a result row is the same person
+	   named the same way at a smaller size — so it takes the same face and the same ink rather than a
+	   near-miss of both. */
 	.nm {
-		font: 600 14.5px/1.2 var(--font-open-sans, 'Open Sans', sans-serif);
-		color: #241f1a;
+		font-family: var(--font-outfit, 'Outfit Variable', sans-serif);
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 1.2;
+		color: var(--color-inkblue);
 	}
 	.yr {
 		font: 400 12px/1.2 var(--font-open-sans, 'Open Sans', sans-serif);
@@ -615,7 +625,7 @@
 	}
 	.line2 {
 		/* Aligned under the NAME, not under the star, so the gutter reads as one column top to bottom. */
-		padding-left: 19px;
+		padding-left: 20px;
 		font: 400 12px/1.3 var(--font-open-sans, 'Open Sans', sans-serif);
 		color: rgba(60, 54, 44, 0.66);
 		overflow: hidden;
