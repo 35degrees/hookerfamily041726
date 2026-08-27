@@ -429,22 +429,24 @@
 				read top to bottom in the order they narrow.
 			-->
 			{#if search.tagPool.length}
-				<p class="tagtitle">Assorted tags <span>(optional)</span></p>
-				<div class="tagrow">
-					{#each search.tagPool as t (t)}
-						<button
-							class="tagpill"
-							class:on={search.tags.includes(t)}
-							onclick={() => toggleTag(t)}
-							title={search.tags.includes(t) ? 'Remove this tag' : 'Show everyone tagged this'}
-							><!-- UNDERSCORES, like a real hashtag. The stored form is snake_case; factSegments turned
+				<div class="tagblock">
+					<p class="tagtitle">Assorted tags <span>(optional)</span></p>
+					<div class="tagrow">
+						{#each search.tagPool as t (t)}
+							<button
+								class="tagpill"
+								class:on={search.tags.includes(t)}
+								onclick={() => toggleTag(t)}
+								title={search.tags.includes(t) ? 'Remove this tag' : 'Show everyone tagged this'}
+								><!-- UNDERSCORES, like a real hashtag. The stored form is snake_case; factSegments turned
 							     those into spaces so the words stay separately searchable, and this puts them back
 							     for DISPLAY only — the value used to filter is still the spaced one. -->#{t.replace(
-								/ /g,
-								'_'
-							)}</button
-						>
-					{/each}
+									/ /g,
+									'_'
+								)}</button
+							>
+						{/each}
+					</div>
 				</div>
 			{/if}
 
@@ -856,8 +858,16 @@
 	/* A LABEL, because a row of unexplained hashtags is a puzzle rather than an invitation.
 	   "(optional)" is Sam's and does real work: sitting between two filters that DO narrow, an
 	   unlabelled row of pills reads like something you are expected to pick from. */
+	/* ONE BLOCK, so ONE gap governs the space between the label and the pills. They used to be separate
+	   children of `.panel`, which meant the panel's own 10px gap PLUS the title's 3px margin — 13px,
+	   and halving it (Sam) is not something either value could do alone. */
+	.tagblock {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
 	.tagtitle {
-		margin: 0 0 3px;
+		margin: 0;
 		text-align: center;
 		font: 400 10.5px/1.3 var(--font-inter, sans-serif);
 		letter-spacing: 0.03em;
@@ -875,15 +885,15 @@
 	 * grey on a cream fill was quiet to the point of being unreadable, which is a worse failure than
 	 * the navy that was too loud, because at least the loud one could be read.
 	 *
-	 * So the ink and the line are the app's own inkblue at 50%, and the type goes 9 -> 10.5px, which is
-	 * the category chips' size. Matching them is fine now that the WEIGHT is carried by opacity rather
+	 * So the ink and the line are MIDNIGHT (`--color-ascendmidnight`, the zone's own ground colour) at
+	 * 65%, and the type goes 9 -> 10.5px, which is the category chips' size. Matching them is fine now that the WEIGHT is carried by opacity rather
 	 * than by a filled ground: a half-strength outline beside a solid chip still reads as the quieter
 	 * of the two, at a size that can actually be read.
 	 *
 	 * NO FILL UNTIL SELECTED. An empty pill is an offer; a filled one is a state.
 	 */
 	.tagpill {
-		border: 1px solid color-mix(in srgb, var(--color-inkblue) 50%, transparent);
+		border: 1px solid color-mix(in srgb, var(--color-ascendmidnight) 65%, transparent);
 		/**
 		 * AN OPAQUE INTERIOR, and "no fill until selected" was simply wrong. §29 already records why for
 		 * the cards — a card cannot be translucent, it shows what is behind it through itself — and a
@@ -895,8 +905,11 @@
 		 * `--color-creamprimary`, which is the ZONE'S ink-on-dark and reads muddy out here on paper. A
 		 * pill is then literally a small piece of the same stock as the rows below it.
 		 */
-		background: var(--hd-bg, #fffdf8);
-		color: color-mix(in srgb, var(--color-inkblue) 50%, transparent);
+		/* 60% (Sam). Not the 0% it started at — that was the hole-in-the-overlay failure — but not fully
+		   opaque either: at 60 over the marshmallow the pill still reads as a solid object while the
+		   veil's warmth comes through it, which is what keeps nine of them from becoming a white block. */
+		background: color-mix(in srgb, var(--hd-bg, #fffdf8) 60%, transparent);
+		color: color-mix(in srgb, var(--color-ascendmidnight) 65%, transparent);
 		font: 400 10.5px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.01em;
 		padding: 5px 9px;
@@ -909,8 +922,8 @@
 			color 140ms ease-out;
 	}
 	.tagpill:hover {
-		border-color: color-mix(in srgb, var(--color-inkblue) 75%, transparent);
-		color: color-mix(in srgb, var(--color-inkblue) 80%, transparent);
+		border-color: color-mix(in srgb, var(--color-ascendmidnight) 85%, transparent);
+		color: color-mix(in srgb, var(--color-ascendmidnight) 90%, transparent);
 	}
 	/* SELECTED IS A 20% NAVY FILL (Sam). The ink goes to full strength with it — at 50% over its own
 	   20% wash the text would have less contrast selected than unselected, which is backwards. */
@@ -923,9 +936,9 @@
 				color-mix(in srgb, var(--color-inkblue) 20%, transparent),
 				color-mix(in srgb, var(--color-inkblue) 20%, transparent)
 			),
-			var(--hd-bg, #fffdf8);
-		border-color: color-mix(in srgb, var(--color-inkblue) 60%, transparent);
-		color: var(--color-inkblue);
+			color-mix(in srgb, var(--hd-bg, #fffdf8) 60%, transparent);
+		border-color: color-mix(in srgb, var(--color-ascendmidnight) 75%, transparent);
+		color: var(--color-ascendmidnight);
 	}
 	.count {
 		margin: 0 2px;
