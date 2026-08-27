@@ -236,6 +236,27 @@ html[data-exhibit] body {
 		0 1.2px 3.5px hsl(var(--shadow-ink) / var(--shadow-a2));
 }
 
+/* ── --ladder-fit IS ANIMATABLE ON PURPOSE (design §44) ────────────────────────────────────────────
+   The Paths-to-Thomas ladder scales itself to fit the window. A custom property cannot be interpolated
+   until it has a registered type, so declaring it here is what lets `.ladder` transition it at all.
+
+   IT NO LONGER FIRES ON A PATH SWITCH, and the history is worth keeping because it is a wrong turn
+   somebody could easily repeat. The fit used to be computed from the CURRENT path, so switching between
+   routes of different length changed it — and `animate:flip` interpolates SIZE as well as position, so
+   every surviving card was scaled ~10% and sprang back. Easing the fit was the first fix and it made
+   things worse: the layout was then moving WHILE flip was transforming, which is exactly what design
+   §30 forbids. The real fix was to size the ladder for the person's LONGEST path so the fit never
+   changes on a switch at all.
+
+   What remains is a genuine viewport-resize case: resize the window with the ladder open and the fit
+   changes, and this is what makes that ease rather than step. Keep it for that; do not read it as the
+   switch's mechanism. */
+@property --ladder-fit {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1;
+}
+
 /* The chip shadow lives GLOBALLY rather than in PersonBox, because the flight CLONES `.person-box`
    into travelling ghosts (flight.ts) that are attached outside the component — a Svelte-scoped rule
    would leave every ghost shadowless mid-flight. The same is true of the line shading below. */

@@ -40,7 +40,6 @@
 	import { featured } from '$lib/state/featured.svelte';
 	import type { PersonCompact } from '$lib/types/neighborhood';
 	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
-	import { isPynchonKin } from '$lib/data/pynchonLine';
 	import { stage } from '$lib/state/stage.svelte';
 	import { shrinkToFit } from '$lib/actions/shrinkToFit';
 
@@ -71,14 +70,17 @@
 	 * is exactly what Sam saw. The seat has to be remembered by us, before the list changes, and pinned
 	 * back on in `depart`.
 	 */
-	const seatY = new Map<string, number>();
+	const seatY = new Map<string, { top: number; left: number; width: number }>();
 	function snapshotSeats() {
 		const box = document.querySelector('.ladder-rows');
 		if (!box) return;
-		const top = box.getBoundingClientRect().top;
-		for (const el of box.querySelectorAll<HTMLElement>('.rung')) {
+		// `.rung` AND `.rung-spouse` — the paired card leaves with the rest and needs its seat too. It was
+		// the only departing card without one, which left it alone in depending on the container.
+		for (const el of box.querySelectorAll<HTMLElement>('.rung, .rung-spouse')) {
 			const id = el.dataset.rid;
-			if (id) seatY.set(id, Math.round(el.getBoundingClientRect().top - top));
+			if (!id) continue;
+			const r = el.getBoundingClientRect();
+			seatY.set(id, { top: r.top, left: r.left, width: r.width });
 		}
 	}
 
@@ -112,6 +114,25 @@
 	 * overshoot back towards the side it came from.
 	 */
 	let switchDir = $state(1);
+	/**
+	 * THE THREE BEATS OF A SWITCH, IN ORDER — and the order is the fix.
+	 *
+	 * `animate:flip` fires on the frame the list changes, while the LEAVERS are still sitting in their
+	 * seats waiting out their stagger. So a survivor closed the gap into space that was still occupied:
+	 * Sam, on Sarah Knutti, "#9 still covers up #8 aurelia card before she departs and does it in a very
+	 * jerky instant way." It was not a curve problem — it was two things happening at once that have to
+	 * happen in sequence.
+	 *
+	 *     1. the leavers go, staggered, out the side
+	 *     2. THEN the gap closes, on flip's own clock
+	 *     3. THEN the replacements arrive
+	 *
+	 * Each beat waits for the one before, so nothing is ever moving into a seat something else is still
+	 * in. It costs time, and Sam asked for that explicitly here — "wait for departures to happen and
+	 * slowly close the space with a gradual transition" — which reverses the overlap he asked for when
+	 * the two halves were merely queued rather than colliding.
+	 */
+	let flipDelay = $state(0);
 	let switchInDelay = $state(0);
 	/** True from the moment a close is requested — `depart` reads it to pick the close cascade over the
 	 *  switch stagger. Reset when the modal is next opened. */
@@ -134,7 +155,10 @@
 			.map((id, ix) => (nextIds.includes(id) ? -1 : (n - 1 - ix) * OUT_STAGGER))
 			.filter((d) => d >= 0);
 		const lastOut = outDelays.length ? Math.max(...outDelays) + OUT_MS : 0;
-		switchInDelay = Math.max(0, lastOut - FOLLOW_LAP);
+		// Beat 2 starts when the last leaver is clear; beat 3 when the gap has finished closing. The
+		// small lap keeps the seam from reading as three separate events rather than one gesture.
+		flipDelay = lastOut;
+		switchInDelay = Math.max(0, lastOut + FLIP_MS - FOLLOW_LAP);
 
 		switchDir = i > pathIndex ? 1 : -1;
 		switching = true;
@@ -209,8 +233,36 @@
 	const HEAD_H = 34;
 	const HEAD_GAP = 14;
 	const MARGIN = 56; // breathing room top and bottom together
+	/**
+	 * SIZED FOR THE LONGEST PATH, NOT THE CURRENT ONE — so a switch never resizes anything.
+	 *
+	 * THE STAGE MUST NOT MOVE WHILE ANYTHING IS FLYING (design §30). Sizing to the current path meant
+	 * that switching between routes of different length changed the fit, which changed every rung's
+	 * height, which moved the layout under cards that `animate:flip` was already transforming. Measured
+	 * on Sarah Knutti, whose two routes are 10 and 11 rows:
+	 *
+	 *     t=23    flip translateY −40.5   layout top 805
+	 *     t=203   flip translateY −10.5   layout top 754
+	 *     t=460   flip translateY   0     layout top 735
+	 *
+	 * An in-flow element is painted at layout(t) + transform(t), so those two curves composed into the
+	 * ideal path PLUS §30's error term. Net travel was 8.5px — the residue of a 70px layout slide against
+	 * a 40px transform — and the residue wobbled: peak per-frame movement 6.4x the mean. That is the
+	 * "jerky flick" Sam saw, and easing the fit had made it worse rather than better, because before that
+	 * the layout at least settled in one frame.
+	 *
+	 * Taking the MAXIMUM over every path fixes it at the source instead of correcting for it. The ladder
+	 * is sized once per person, for their worst case, so a switch changes the row COUNT and nothing else:
+	 * the layout settles in a single frame and flip is the only thing moving. A shorter path renders
+	 * fractionally smaller than it strictly needs to, which is invisible because it never changes.
+	 */
+	/** The tallest this person's ladder ever gets — the row count of their longest path. Both the fit
+	 *  and the container's reserved height are computed from it, so neither changes on a switch. */
+	const maxRows = $derived(
+		paths.length ? Math.max(...paths.map((c) => c.length + (viaSpouse ? 0 : 1))) : rows.length
+	);
 	const fit = $derived.by(() => {
-		const n = rows.length;
+		const n = maxRows;
 		if (!n) return 1;
 		const needed = (n * RUNG_H + (n - 1) * RUNG_GAP + HEAD_H + HEAD_GAP) * stage.u;
 		const room = stage.vh - MARGIN;
@@ -278,6 +330,25 @@
 	/** +50 past the last card's launch: the cascade is not only started but visibly under way before the
 	 *  ground begins to go. */
 	const VEIL_HOLD = 50;
+	/**
+	 * THE ROWS BOX RESERVES ITS TALLEST HEIGHT, so the header never moves.
+	 *
+	 * `.ladder` is a centred column of {header, rows}. With an auto-height rows box, dropping a rung made
+	 * the box shorter IN LAYOUT, instantly, while the rungs themselves were still being animated by flip
+	 * — so the whole column re-centred in one frame and the title jumped, leaving a gap above a #1 that
+	 * had not moved yet. Sam: "Paths To Thomas … instantly jumps up to higher position with huge gap
+	 * between title and #1 before #1 actually slides up."
+	 *
+	 * It is design §30 once more, on the last piece of this component still free to move: an in-flow
+	 * element painted at layout(t) + transform(t), where the layout stepped and the transform eased.
+	 * Reserving the maximum removes the step at the source — the box is the same size on every path, the
+	 * header has nothing to react to, and a shorter path simply centres its rows inside a box already
+	 * the right size.
+	 */
+	const rowsHeight = $derived(
+		maxRows ? (maxRows * RUNG_H + (maxRows - 1) * RUNG_GAP) * stage.u * fit : 0
+	);
+
 	const veilOutDelay = $derived(
 		rows.length ? (rows.length - 1) * CLOSE_STAGGER + VEIL_HOLD : VEIL_HOLD
 	);
@@ -385,12 +456,26 @@
 		// PIN THE SEAT before anything moves. The element is already out of the flow by the time this
 		// runs, so without this it reports y = 0 and every leaver departs from the top of the ladder.
 		const el = node as HTMLElement;
-		const y = seatY.get(el.dataset.rid ?? '');
-		if (y != null) {
-			el.style.position = 'absolute';
-			el.style.top = `${y}px`;
-			el.style.left = '0';
-			el.style.right = '0';
+		const seat = seatY.get(el.dataset.rid ?? '');
+		if (seat) {
+			/**
+			 * FIXED, IN VIEWPORT COORDINATES — not absolute inside `.ladder-rows`.
+			 *
+			 * The seat was recorded as an offset from the container and pinned back the same way, which
+			 * is only right if the container has not moved. It moves on every switch between paths of
+			 * different length: one fewer row is a shorter block, and `.ladder` CENTRES, so the whole
+			 * thing slides half a row. Every leaver was therefore pinned half a row from where it had
+			 * actually been — measured on Sarah Knutti, Aurelia sat 29px into Thomas Hooker Sr.'s card
+			 * and the two overlapped from the first frame. Sam saw it as "#9 covers up #8 before she
+			 * departs", and it read as a timing fault because it appeared the instant the list changed.
+			 *
+			 * Viewport coordinates have no such dependency: a departing card is leaving the layout, so it
+			 * should not be positioned by a box that is still rearranging itself.
+			 */
+			el.style.position = 'fixed';
+			el.style.top = `${seat.top}px`;
+			el.style.left = `${seat.left}px`;
+			el.style.width = `${seat.width}px`;
 			/**
 			 * AND CANCEL THE FLIP. `animate:flip` writes an inline `transform` on EVERY keyed element the
 			 * update touched — including one that is on its way out — to carry it from where it used to be
@@ -448,35 +533,19 @@
 	}
 
 	/**
-	 * CLOSING FREEZES THE LADDER WHERE IT STANDS, and the seat snapshot alone is not enough for that.
+	 * CLOSING SNAPSHOTS THE SEATS AND NOTHING ELSE.
 	 *
-	 * On close every rung departs at once, so every rung goes `position: absolute` — which empties
-	 * `.ladder-rows` of in-flow content and collapses it to zero height. `.ladder` is a CENTRED flex
-	 * column, so it immediately re-centres what is left, and the pinned cards travel with their now
-	 * relocated container: the whole ladder dropped about a third of the page in one frame and only then
-	 * started leaving (Sam: "the entire ladder drops instantly like 30% the height of the page and then
-	 * exits left so its jarring").
-	 *
-	 * The seats are correct; the box under them is what moves. So the box is taken out of the flex flow
-	 * entirely and pinned to the viewport at the geometry it already has. Nothing above it can move it
-	 * after that — not the header leaving, not the rows emptying. No cleanup is needed because the
-	 * element unmounts when the outros finish.
-	 *
-	 * A path switch deliberately does NOT do this: there the box MUST re-flow, because the new path may
-	 * be a row shorter or longer and the survivors flip into the difference.
+	 * It used to also PIN `.ladder-rows` itself to the viewport, because leavers were positioned inside
+	 * that box and it collapsed the moment they all went out of flow — the whole ladder dropped a third
+	 * of a page before it left. Two later changes retired that: every leaver is now pinned in viewport
+	 * coordinates rather than container coordinates, and the box reserves the height of the longest path
+	 * instead of sizing to its contents. Neither depends on the other holding still any more, so the
+	 * freeze was doing nothing. Measured after removing it: 0px drift on both a descendant ladder and a
+	 * paired one.
 	 */
 	function requestClose() {
 		closing = true;
 		snapshotSeats();
-		const box = document.querySelector<HTMLElement>('.ladder-rows');
-		if (box) {
-			const r = box.getBoundingClientRect();
-			box.style.position = 'fixed';
-			box.style.top = `${r.top}px`;
-			box.style.left = `${r.left}px`;
-			box.style.width = `${r.width}px`;
-			box.style.height = `${r.height}px`;
-		}
 		closeModal();
 	}
 
@@ -530,6 +599,23 @@
 	} | null>(null);
 	/** Walked on pixels: FeaturedCard's 33, +25, −15, −10. Back at 33, which is where that file started —
 	 *  worth noting rather than quietly rediscovering, because it says the original offset was right. */
+	/**
+	 * THE ONE CARD THAT KEEPS ITS RAINBOW — a LIST OF ONE, which is the house's form for this.
+	 *
+	 * Sam: "on Thomas Ruggles Pynchon Jr. when Connect to Thomas is clicked, can he keep his rainbow
+	 * background instead of the mint green? one singleton exception. nowhere else." So it is an id and
+	 * not a predicate: `isPynchonKin` holds 24 people and TWO of them can appear as a paired card
+	 * (X03232 and X01014, Mary Smith Lord Hooker), so using it would have made two exceptions out of a
+	 * request for one. Design §35.7 records the same call on the line-anchor overrides — "a list, never
+	 * a rule… add a row with a sentence saying why; do not generalise it."
+	 *
+	 * The RUNGS deliberately do not take it. They carried `class:prism` for a while and it did nothing:
+	 * PersonBox's `.person-box.prism` rule is Svelte-SCOPED to that component, so the class never
+	 * matched anything here. Removed rather than made to work — Sam's "nowhere else" is the answer to
+	 * whether it should have.
+	 */
+	const PRISM_SPOUSE = 'X03232';
+
 	const ZOFFSET = 33;
 	/** FeaturedCard follows the cursor 1:1; this is that plus the 20% Sam asked for. */
 	const AMPLIFY = 1.2;
@@ -801,7 +887,7 @@
 			</button>
 		</div>
 
-		<div class="ladder-rows">
+		<div class="ladder-rows" style="height: {rowsHeight.toFixed(1)}px">
 			<!-- KEYED BY `p.id` ALONE. A person cannot repeat inside one chain (the walk's own cycle guard
 			     sees to that), so the id is unique per path — and across two paths it is what makes a
 			     shared ancestor the SAME element rather than a new one. That is what buys the whole
@@ -830,11 +916,10 @@
 					class:hooker-line={p.hd}
 					class:spouse-line={p.sp}
 					class:ee-line={p.ee}
-					class:prism={isPynchonKin(p.id)}
 					class:paired={viaSpouse && i === rows.length - 1}
 					in:arrive|global={{ i, n: rows.length }}
 					out:depart|global={{ i, n: rows.length }}
-					animate:flip={{ duration: FLIP_MS, easing: cubicOut }}
+					animate:flip={{ delay: flipDelay, duration: FLIP_MS, easing: cubicOut }}
 				>
 					<!-- `alt=""` ON PURPOSE, and it is the correct call twice over. The name is set immediately
 					     beside the photo, so to a screen reader the image is decorative and an alt would read
@@ -864,12 +949,23 @@
 					     belongs to the person, so it travels with their face; parked on the far edge it
 					     read as a row number in a table, which is the thing this ladder is not.
 
-					     AND IT COUNTS FROM ONE. `generation_from_thomas` is already 1-based in canonical —
-					     Thomas is 1 — and showing it raw is what lines the ladder up with the descent line
-					     printed on every card ("Twelfth Generation Descendant of Thomas Hooker"). An earlier
-					     pass subtracted one to match a Ø in the mockup and quietly put the ladder a
-					     generation out of step with every title in the app. -->
-					<div class="rung-gen">{p.g ?? ''}</div>
+					     IT IS THE RUNG'S DEPTH IN *THIS* PATH, NOT THE PERSON'S STORED GENERATION — and
+					     that distinction is the whole of it. `generation_from_thomas` is one number per
+					     PERSON; depth is a property of the ROUTE, and under pedigree collapse the two
+					     genuinely differ. Sarah Knutti's path 2 showed TWO number 8s: Aurelia Dwight Hooker
+					     is a descendant in her own right at generation 8 who married a SEVENTH-generation
+					     Hooker, so their son is 8 generations from Thomas through his father and 9 through
+					     his mother. His stored 8 is the shorter of the two and is correct; it is simply not
+					     the depth of the rung he occupies on the longer route. 278 of 20,473 paths carry a
+					     repeat like this.
+
+					     Counting the position instead is always consecutive and always true of the path on
+					     screen. It also keeps Sam's reason for the original choice intact: measured across
+					     the corpus, position equals the stored generation on PATH 1 for 99.93% of rungs, so
+					     the shortest route still lines up with the descent line printed on the card. Where a
+					     longer route disagrees, it disagrees because it IS longer — which is the fact the
+					     path selector exists to show. -->
+					<div class="rung-gen">{i + 1}</div>
 					<!-- NAME AND YEARS ON ONE LINE, years to the RIGHT (Sam). A chip stacks them, and this
 					     was briefly changed to match — but a chip is 220 wide and a rung is 440, so the
 					     stack that fills a chip leaves a rung half empty and makes a long card look like a
@@ -938,8 +1034,10 @@
 				<a
 					href={focus.slug ? `/person/${focus.slug}` : '#'}
 					onclick={(e) => rungNav(focus as Rung, e)}
+					data-rid={focus.id}
 					class="rung-spouse person-box spouse-line"
 					class:no-photo={!focus.p}
+					class:prism={focus.id === PRISM_SPOUSE}
 					in:arrive|global={{ i: rows.length - 1, n: rows.length }}
 					out:depart|global={{ i: rows.length - 1, n: rows.length }}
 				>
@@ -1048,6 +1146,11 @@
 		-webkit-backdrop-filter: blur(10px);
 	}
 	.ladder {
+		/* THE FIT EASES, IT DOES NOT STEP. See the @property note in layout.css: a stepped change made
+		   `animate:flip` scale every surviving card ~10% and spring back, because flip interpolates size
+		   as well as position. Eased, its two measurements land at the same size and it translates only.
+		   The clock is the survivors' own (FLIP_MS), so the resize and the reshuffle finish together. */
+		transition: --ladder-fit 460ms cubic-bezier(0.33, 1, 0.68, 1);
 		position: fixed;
 		inset: 0;
 		z-index: 41;
@@ -1141,10 +1244,11 @@
 		opacity: 1;
 	}
 	.ladder-rows {
-		/* The leavers are pinned into this box with `position: absolute` while they run for the left
-		   edge, so it has to be their containing block. */
 		position: relative;
 		display: flex;
+		/* Centred inside its own reserved height: on the longest path the rows fill it exactly, on a
+		   shorter one they sit centred in a box that has not changed size. */
+		justify-content: center;
 		flex-direction: column;
 		/* A REAL GAP, because these are separate objects. The first build butted the lines together and
 		   ruled between them, which is a table; discrete cards need air, the way every chip row on the
@@ -1265,6 +1369,28 @@
 	   empty and keeps the column straight; this card drops the seat entirely when there is nothing to put
 	   in it (see the markup), so the inset has to come back as padding. Deliberately NOT a photo's width:
 	   the point is breathing room, not a phantom square. */
+	/* PersonBox's OWN values, and they transfer here because the two boxes are almost the same size —
+	   its comment warns that neither the crop nor the veil carries between a 220x75 chip and a 925x575
+	   card, and this paired card is 220x73. `cover` on the veil, `200% auto` on the texture so the chip
+	   shows a legibly DIAGONAL piece of the band rather than a thin horizontal stripe of one hue.
+	   It overrides the mint by sitting after `--card-bg` in this file: `background-image` paints above
+	   the `background-color` the spouse-line sets, so both are still there and the tint warms it. */
+	.rung-spouse.prism {
+		--prism-fade: 0.48;
+		background-image:
+			linear-gradient(
+				rgba(255, 255, 255, var(--prism-fade)),
+				rgba(255, 255, 255, var(--prism-fade))
+			),
+			url('/textures/prism-card.jpg');
+		background-repeat: no-repeat, no-repeat;
+		background-position:
+			center,
+			30% 40%;
+		background-size:
+			cover,
+			200% auto;
+	}
 	.rung-spouse.no-photo .rung-spouse-body {
 		padding-left: calc(20px * var(--stage-u, 1));
 	}
