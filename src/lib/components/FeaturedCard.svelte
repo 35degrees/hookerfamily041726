@@ -32,6 +32,7 @@
 	import { buildDescendantLabel } from '$lib/utils/generation';
 	import type { Person } from '$lib/types/person';
 	import type { SpouseEntry, PersonCompact } from '$lib/types/neighborhood';
+	import { openModal } from '$lib/state/modal.svelte';
 	import type { Cemetery } from '$lib/types/cemetery';
 	import type { Institution } from '$lib/types/institution';
 	import RightColumn from './RightColumn.svelte';
@@ -62,6 +63,17 @@
 
 	type Props = {
 		person: Person;
+		/** Every distinct route Thomas → this person, THOMAS FIRST, focus dropped. Baked into the payload
+		 *  (pathsToThomasFor in regenerate-data.js) and passed in the same way `orbit` is, rather than read
+		 *  off `person`: it is a build-time derivation, and `person` mirrors the canonical record.
+		 *  PRESENT is the button's whole gate — by construction it means "Thomas descendant, grandchild or
+		 *  deeper", so there is no second predicate here to fall out of step with the bake. */
+		pathsToThomas?: PersonCompact[][];
+		/** The focus's first name, for the Connect button's label. Passed in rather than derived here so
+		 *  it is the SAME name the page already uses for "<name>'s parents" — that resolution has four
+		 *  fallbacks (bio, name, the compact's `fn`, then the display name's first token) because two of
+		 *  them are routinely absent, and a second derivation here would eventually disagree with it. */
+		firstName?: string | null;
 		spouses: SpouseEntry[];
 		generationLabels?: string[];
 		burialCemetery?: Cemetery | null;
@@ -108,6 +120,8 @@
 	// drift away from the genealogy it describes.
 	let {
 		person,
+		pathsToThomas,
+		firstName = null,
 		spouses,
 		generationLabels = [],
 		burialCemetery = null,
@@ -402,11 +416,11 @@
 									: 'Spouse'
 						} of a Hartford Founder`
 					]
-			: orbitLabel
-				? [...generationLabels, orbitLabel]
-			: pynchonLabel
-				? [...generationLabels, pynchonLabel]
-				: generationLabels
+				: orbitLabel
+					? [...generationLabels, orbitLabel]
+					: pynchonLabel
+						? [...generationLabels, pynchonLabel]
+						: generationLabels
 	);
 	// Which of the rendered labels is the Pynchon one — the last, when there is one. Used only to colour
 	// it: the Pynchon line reads purple-into-magenta, so the two descents are told apart at a glance
@@ -707,9 +721,7 @@
 		>
 			<div
 				class="header min-w-0 px-[calc(24px*var(--stage-u,1))] pt-[calc(16px*var(--stage-u,1))] pb-[calc(12px*var(--stage-u,1))]"
-				style="padding-right: {Math.round(
-					notchChipCount > 0 ? chipZoneWidth + 16 * u : 24 * u
-				)}px;"
+				style="padding-right: {Math.round(notchChipCount > 0 ? chipZoneWidth + 16 * u : 24 * u)}px;"
 			>
 				<div class="name-block min-w-0" class:tight-stack={headerIsCrowded}>
 					<!-- min-w-0 + [data-fit] inline span: shrinkToFit measures the wrapper's real
@@ -819,7 +831,7 @@
 			>
 				<!-- space-y: photo->vitals is the original 16 less 5% then a further 20% (15.2 -> 12.16);
 					     .vitals block spacing is the original 10 less 5% (9.5). -->
-				<div class="portrait-column space-y-[10.94px]">
+				<div class="portrait-column relative space-y-[10.94px]">
 					{#if photoUrl}
 						<img
 							src={portraitSrc}
@@ -846,12 +858,16 @@
 							age: { years: number; approx: boolean } | null = null
 						)}
 							<div>
-								<div class="text-[calc(10px*var(--type-k,1))] font-semibold tracking-wider text-stone-500 uppercase">
+								<div
+									class="text-[calc(10px*var(--type-k,1))] font-semibold tracking-wider text-stone-500 uppercase"
+								>
 									{label}
 								</div>
 								<!-- The age rides the date line at a lighter weight so the DATE stays primary and the
 								     derived figure reads as an annotation on it, not a second fact. -->
-								<div class="font-opensans text-[calc(12.45px*var(--type-k,1))] leading-snug font-normal text-inkblue">
+								<div
+									class="font-opensans text-[calc(12.45px*var(--type-k,1))] leading-snug font-normal text-inkblue"
+								>
 									{date}{#if age}<span class="ml-1.5 font-normal opacity-70"
 											>({age.approx ? '~' : ''}Age {age.years})</span
 										>{/if}
@@ -880,6 +896,52 @@
 								ageAtDeathValue
 							)}{/if}
 					</div>
+
+					<!-- CONNECT TO THOMAS. Its ONLY gate is that the payload carries a chain: by construction
+					     `pathsToThomas` is present exactly for Thomas descendants who are a grandchild or
+					     deeper, so Thomas himself, his children, and everyone off the line are excluded with
+					     no second predicate here to fall out of step with the bake.
+
+					     ABSOLUTELY POSITIONED, and that is structural rather than styling. `.card-top` is
+					     exactly CARD_TOP_H tall for every person (§28) — the CC blade is carved to that
+					     height and DeckRiffle imports it — so an affordance taking part in the flow would
+					     make the card's one constant depend on whether a person happens to be a descendant.
+					     Out of flow it costs zero height and cannot.
+
+					     MEASURED FIRST, because design §14.3 planned two 32px buttons here and predates the
+					     fixed geometry. The column's real slack under the vitals is 43px typical and 27px at
+					     its worst — Burr at 1280x720, whose vitals carry locations, map links and an age. So
+					     ONE quiet button at ~26px fits with room to spare; TWO WOULD NOT FIT ANYWHERE, and
+					     the connect-to-anyone affordance will need somewhere else to live.
+
+					     INERT UNTIL `settled`, checked in the HANDLER rather than by withholding the button.
+					     `flightLock` swallows navigation clicks, not this one, so mid-flight the control was
+					     live and would have opened an overlay across a card still in the air. Gating the
+					     RENDER would make it vanish and pop back on every arrival; gating the handler is what
+					     `trackZoom` already does two elements above, for the same reason and in the same
+					     words — during the morph the card is transform-scaled and is not yet itself.
+
+					     BOTTOM-ANCHORED rather than hung under the vitals, so it lands in the same place on
+					     every card. A living, non-notable person has their dates withheld entirely and 161px
+					     of slack; Burr has 27px. Hung in flow, the control would wander half the column's
+					     height between two cards. -->
+					{#if pathsToThomas?.length}
+						<!-- PERSONALISED, and shrunk to fit rather than truncated — design §14.3 wanted the name
+						     on this button and the card's own `shrinkToFit` is how every other long string
+						     here survives. `[data-fit]` is the span the action measures; the button cannot
+						     grow to the text because it is positioned by left/right, so the measurement is
+						     honest. -->
+						<button
+							type="button"
+							class="connect-thomas"
+							onclick={() => settled && openModal('connect-thomas')}
+							use:shrinkToFit={{ max: t(10), min: t(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
+						>
+							<span data-fit class="inline-block whitespace-nowrap"
+								>Connect {firstName ? `${firstName} ` : ''}to Thomas</span
+							>
+						</button>
+					{/if}
 				</div>
 
 				<div class="narrative min-h-0 min-w-0 overflow-hidden pr-4 pl-4">
@@ -1005,7 +1067,6 @@
 		background-repeat: no-repeat, no-repeat;
 	}
 
-
 	/* See the markup comment: no layout height, pinned to the card's bottom edge, behind the card. */
 	.cc-blade-mount {
 		position: absolute;
@@ -1025,5 +1086,93 @@
 	}
 	.tight-stack > *:first-child {
 		margin-top: 0;
+	}
+
+	/* CONNECT TO THOMAS — the way into the descent ladder.
+
+	   AN OBJECT AT A HEIGHT, not a set of styled states. ShuffleNotables' doctrine, inherited rather
+	   than re-derived (Sam, on that button: "i'm trying to make it like a button, not you just taking
+	   my literal instructions"). Rest sits on the paper, hover lifts it under the finger, press gives
+	   back 60% of the lift and never settles below rest. Leave and release need no rules of their own —
+	   they are what the cascade already does once hover and press are described as heights.
+
+	   ONE BACKGROUND THE WHOLE WAY THROUGH, for the same reason: a real button does not change colour
+	   when you approach it, it changes height. Lighting the surface as well would be saying the same
+	   thing twice, and the second saying is the one that reads as a web widget.
+
+	   THE WASH IS A TINT OF THE INK, NOT A PAPER. The card's ground is not one colour — line-status
+	   shading gives a Thomas descendant a banana-cream sheet and leaves everyone else white (§29) — so
+	   a button filled with a chosen cream would separate on one card and disappear on the other. A
+	   4.5% wash of the ink is defined against whatever is behind it, so it sits correctly on both.
+
+	   THE ZERO-SIZE REST SHADOW is not a stray declaration: CSS cannot interpolate FROM `none`, so a
+	   shadow declared only on :hover pops into existence instead of growing.
+
+	   `margin-top: 0` because the column carries `space-y-[10.94px]`, whose selector reaches every child
+	   after the first — this one included. It cannot move a box positioned from `bottom`, but leaving it
+	   would hand a silent 11px to whoever next gives this button a `top`. That is the family the design
+	   doc keeps naming: a mechanism already claiming the property being edited. */
+	.connect-thomas {
+		/* The two heights as tokens, so nothing below repeats a literal. --press is always the SMALLER
+		   give-back: 60% of the lift returned, settling at 40% of --lift. */
+		--lift: -1.1px;
+		--lift-shadow: 0 1.6px 3.2px rgba(30, 42, 71, 0.16);
+		--press: -0.44px;
+		--press-shadow: 0 0.66px 1.32px rgba(30, 42, 71, 0.14);
+
+		position: absolute;
+		/* FULL COLUMN WIDTH. It ran at 95% for a while, inset on the right so it stopped short of the
+		   photo's edge — then long names needed the last 5% back and a per-button latch was built to hand
+		   it over selectively. Sam's call is simpler and better: every button takes the whole width, so
+		   there is no exception to maintain, no threshold to tune, and no latch that could oscillate.
+		   `shrinkToFit` still handles the long names; it just does it against a wider box. */
+		right: 0;
+		bottom: 0;
+		left: 0;
+		margin-top: 0;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: calc(7px * var(--stage-u, 1)) calc(8px * var(--stage-u, 1));
+		/* Type rides --type-k and the box rides --stage-u — the vitals above already split them this
+		   way, because the two scales are not the same dial. */
+		font-family: var(--font-opensans, sans-serif);
+		/* NO font-size here: `shrinkToFit` writes `node.style.fontSize` itself, and a CSS declaration
+		   alongside it would be the value the action is trying to replace. Its ceiling is `t(10)`, which
+		   is the size this rule used to state. */
+		font-weight: 600;
+		line-height: 1;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--color-inkblue);
+		background: rgba(30, 42, 71, 0.045);
+		border: 1px solid rgba(30, 42, 71, 0.18);
+		border-radius: calc(3px * var(--stage-u, 1));
+		cursor: pointer;
+		transform: translateY(0);
+		box-shadow: 0 0 0 rgba(30, 42, 71, 0);
+		transition:
+			transform 160ms cubic-bezier(0.33, 1, 0.68, 1),
+			box-shadow 160ms cubic-bezier(0.33, 1, 0.68, 1),
+			border-color 160ms ease-out;
+	}
+	.connect-thomas:hover {
+		transform: translateY(var(--lift));
+		box-shadow: var(--lift-shadow);
+		border-color: rgba(30, 42, 71, 0.32);
+	}
+	.connect-thomas:active {
+		transform: translateY(var(--press));
+		box-shadow: var(--press-shadow);
+	}
+	.connect-thomas:focus-visible {
+		outline: 2px solid var(--color-inkblue);
+		outline-offset: 2px;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.connect-thomas {
+			transition: none;
+		}
 	}
 </style>

@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import PersonBox from '$lib/components/PersonBox.svelte';
 	import FeaturedCard from '$lib/components/FeaturedCard.svelte';
+	import ConnectModal from '$lib/components/ConnectModal.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import TimelineRail from '$lib/components/TimelineRail.svelte';
 	import ShuffleNotables from '$lib/components/ShuffleNotables.svelte';
@@ -1671,6 +1672,7 @@
      (design §33.1). It gates itself on `ascension.active`, so on every ordinary card it renders nothing
      at all and the current UX is untouched. -->
 <Ascension onexit={descend} />
+<ConnectModal />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
 <!-- The keep-alive test listens on the WINDOW, not on the stage. On .page-container it simply stopped
@@ -1953,6 +1955,8 @@
 					institutionsById={cur.institutionsById}
 					onbladeheight={(h) => onBladeHeight(cur.person.id, h)}
 					settled={featuredLanded && cur.person.id === landedPersonId}
+					pathsToThomas={cur.pathsToThomas}
+					firstName={cur.neighborhood.focus?.cf ?? focalFirstName}
 					orbit={cur.orbit === true}
 					founderSpouse={ascension.founderSpouse}
 				/>
