@@ -1,6 +1,8 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_082626.md (the what/why for every item below).**
+**AUGUST 26, LATER (§45): THE SPOUSE LADDER, AND §30 FOUND THREE MORE TIMES (design §44.11–44.14).** A married-in person now borrows their Hooker partner's chain (5,911 people), with the partner as the last rung and the focus paired beside them in mint. Sam's rule — *a Hooker spouse is never an easter egg* — applied structurally to all 86 people who were both; all 86 were `notable` and 49 had descendant children, so the flag was marking "notable person who married in", which `sp` already carries. The ladder's number became the rung's DEPTH rather than the person's stored generation, after Sarah Knutti's second path showed two number 8s: a per-person value printed in a per-path slot, and 278 paths carry such a repeat. **The motion arc is the part worth reading**: every remaining complaint reduced to design §30, and none looked like it — the fit, the seat's frame of reference, and the rows box's height were each STEPPING while `animate:flip` was EASING. Records the wrong turn in full, because it is repeatable: the first fix eased the changing fit rather than removing the change, and Sam called it *"harsher"* — **easing a moving layout is not a fix for a moving layout.**
+
 **AUGUST 26 (§44): PATHS TO THOMAS SHIPPED END TO END — the ladder, the button, the switch and the click (design §44).** The connect-to-Thomas modal is built: every route Thomas → a descendant is BAKED into the payload (12,844 of them, mean 2.6 KB, no measurable gzip change) rather than served from an index, because a static JSON fetch is all-or-nothing and the index would have cost 600+ KB to render thirteen rows. The durable half is design §44, and it is headed by the correction that cost an iteration: the first build was cream type on a blurred veil, and Sam named it — *"this looks like an amazon page song list for amazon music nothing to do with my site."* The veil is a ROOM, not a surface anything is printed on, so a rung is a real `.person-box` taking the house paper, the house shadow and the line-status fills, with only its geometry its own. Records FOUR more mechanisms that present as "my change did nothing" (`transition:` is local by default; `animate:flip` transforms leavers too; `opacity` does not scale `backdrop-filter`; Svelte does not preserve an outgoing item's seat), the three hover-popout models built before one worked, the ink corollary to §41.3 when the ground inverted, and §44.10 — what a twelve-generation parent walk found in canonical that no card ever would.
 **The 080326 edition (August 3) adds §18 — THE BOARD MOVES AS ONE. The card-transition layer reopened after a long pause and closed again the same day, on three findings that were all the same finding: distance and time were being decided SEPARATELY in each place instead of once for the whole stage. `growFrom` clocked a promotion off the card's top-left corner while its far corner covered 3.5× the ground; the leaving rows drifted a flat 28px in the camera-pan direction while the arriving rows swept 150px from elsewhere, so they crossed through each other; and the non-promoted parent dissolved in the parents row to reappear in the notch a beat later. Now: honest max-corner velocity, a measured 145px tier pitch every row shares, one direction (the pan) and one clock (the demotion's) for every row at once, and a hand-off that travels in front of the card and lands wearing the destination's own face. Also records the STACKING-CONTEXT TRAP (a z-index that measured as applied and did nothing), two latent bugs the work exposed (`chipExit` holding a seat in the flex flow; `.flat` nearly overloaded as two signals), and the false-red/false-green lessons from both.**
 
@@ -4228,3 +4230,73 @@ delays in it.** Every one of these was fixed by sampling the whole gesture and k
 - **`validate.py` could catch the first of these mechanically**: every rung between Thomas and a
   descendant is itself flagged `hd`. It is the same shape as the founder name-match trap — a wrong
   parent link is perfectly well-formed.
+
+
+---
+
+## 45. AUGUST 26 (LATER) — THE SPOUSE LADDER, AND §30 THREE MORE TIMES (design §44.11–44.14)
+
+Commits: `6e2c0070` (the spouse ladder), `07a00fda` and `12d2aa48` (the easter-egg rule in canonical),
+then the motion arc. Design §44.11–44.14 carries the durable half.
+
+### 45.1 WHAT SHIPPED
+
+| | |
+|---|---|
+| **The spouse ladder** | a married-in person borrows their Hooker partner's chain; 5,911 people. The partner is the last rung and the focus is paired beside them in mint, overhanging the ladder |
+| **A Hooker spouse is never an easter egg** | 86 flags flipped in canonical, structurally rather than one at a time |
+| **The number is the rung's depth** | not the person's stored generation — 278 paths carried a repeat before this |
+| **The switch runs in three beats** | leavers out, then the gap closes, then the replacements arrive |
+| **Two Sam-caught data cases** | William Graham Sumner (X03493) and Bernard Shea Horne Sr. (X02849), both fixed ahead of the batch |
+
+### 45.2 THE SAME LAW, FOUND THREE TIMES
+
+Every remaining complaint about the path switch reduced to design §30 — **the stage must not move while
+anything is flying** — and none of them looked like it from the outside. The full table is design
+§44.13; the short version is that the fit, the seat's frame of reference and the rows box's height were
+each stepping while `animate:flip` was easing, and each read to Sam as a different kind of jerk.
+
+**The instructive one is the wrong turn.** The first fix EASED the changing fit instead of removing the
+change, and Sam's verdict was immediate: *"i don't see a change if anything its harsher."* He was right,
+and the reason is worth carrying: **easing a moving layout is not a fix for a moving layout** — it
+converts a one-frame step into a sustained composition, which is worse. §30's own answer was an
+instantaneous settle plus an arithmetic correction; ours was to remove the change at the source.
+
+### 45.3 WHAT THE INSTRUMENTS DID THIS TIME
+
+Consistent with §44.3 and everything it cites. Four more:
+
+- A collision detector that measured **leaver-vs-survivor overlap** and found the fault in one run,
+  after three rounds of reasoning about timing had found nothing. The bug was a coordinate space, not a
+  clock.
+- A smoothness metric that reported "stutter" from **frame jitter** — 19 samples across ~460ms at
+  1–52ms intervals, so per-frame deltas varied for perfectly smooth motion. Velocity per millisecond is
+  the honest unit, and headless Chromium's software compositing (§42.6) is not a place to judge feel.
+- A probe that read `.rung-n` with `.pop()` and got the SPOUSE card's name, because that class exists
+  inside `.rung-spouse` too — the same "resolved to 2 elements" shape Playwright had already flagged
+  once in this component.
+- Three probe suites that went red on **their own stale literals** after a dial moved.
+
+### 45.4 STILL OPEN
+
+**Frontend**
+- No keyboard traversal of the rungs; Escape closes but nothing is focus-managed beyond the dialog.
+- The whole switch is now ~2.3s. That is the price of sequencing the three beats and it is Sam's call;
+  `FLIP_MS` and `FOLLOW_LAP` are the dials, and now that only one thing moves at a time they do what
+  they say.
+- Connect-to-anyone and search still want the picker, and both need `search-index.json` (555 KB gz).
+
+**Stream A**
+- **Capt. John May Sr. (X03481)** — Sam asked for him to read as a husband; he is not one. Neither wife
+  descends from Thomas and neither has parents recorded, so removing his egg flag would give him no mint
+  and no ladder and would strip his `lineAnchors`. The missing piece is upstream in the marriage.
+- **161 of 3,083 photos are hotlinked off Cloudinary** (findagrave 56, wikimedia 55, wikitree 30). Those
+  hosts block it, so they fail to render — HD1534 William Constable Pierrepont is the live example.
+  Design §24's one-derivative-per-person doctrine already says where they should be.
+- **556 buttons show a multi-token first name**, because a middle name is stored inside `first_name`.
+  `chip_first_name` is the per-person escape hatch and needs no slug change; splitting `first_name` does.
+- The chain-integrity defects from §44.4 are unchanged: 12 mis-flagged rungs, five impossible parent
+  edges, twelve mothers over 50, 101 people carrying a spurious extra path.
+- **X01014 Mary Smith Lord Hooker** is the other married-in member of the Pynchon rainbow set. The
+  prism-on-a-paired-card exception is a list of one (X03232) by Sam's instruction; she is the second row
+  if it is ever wanted.

@@ -35,6 +35,8 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The same 082626 edition also adds §44 — PATHS TO THOMAS (as built, August 26), the first of the three modals and the shell the other two inherit.** It leads with the correction that cost an iteration: the first build set cream type directly on the blurred veil with hairlines between the lines, and Sam named it — *"this looks like an amazon page song list for amazon music nothing to do with my site."* **The veil is a ROOM; it is not a surface anything is printed on**, so a rung is a real `.person-box` — the actual global class, taking the chip shadow, `--card-bg` and the line-status fills — with only its geometry its own, and deliberately NOT a fourth entry in the chip's size-tier family (those hold aspect 2.933 exactly because flight.ts reads it to decide same-tier landings). Records why the chain is BAKED with the number that decided it (a static fetch is all-or-nothing: 600+ KB from an index against 2.6 KB in a payload already loaded), the paternal-first tiebreak and why the obvious id-sequence one is stable but not explainable, the fact that a ladder holds only ANCESTORS so two coded branches are unreachable, the ink corollary to §41.3 when the ground inverted to marshmallow (cream cannot outlive the dark it was defined against), the shadow deepening as §29.7 predicts because a shadow is a property of the PAIR (colour, ground), the three hover-popout models built before one worked, and §44.5 — **FOUR more mechanisms that present as "my change did nothing"**, three of them the framework doing something reasonable the code did not know about. §44.10 is what a twelve-generation parent walk found in canonical that no card ever would.
 
+**The same 082626 edition extends §44 with the spouse ladder and the motion arc (§44.11–§44.14, August 26 later).** A married-in person borrows their partner's chain; the partner is the last rung and the focus is paired beside them, on a mint deepened from `--spouse-bg` because §29.1's rule is that a value is a property of the PAIR and this card sits beside cream rather than on parchment. §44.12 records why the rung's number had to become its DEPTH rather than the person's stored generation — Sarah Knutti's second path showed two number 8s, and the data was right: her ancestor is 8 generations from Thomas through his father and 9 through his mother, so a per-person number cannot label a per-path position. **§44.13 is the one to read**: every remaining complaint about the path switch reduced to §30 and none of them looked like it, because a fit, a coordinate space and a container height were each STEPPING while `animate:flip` was EASING. It records the wrong turn too — easing the changing fit made it worse, and **easing a moving layout is not a fix for a moving layout.** §44.14 is the hygiene: four mechanisms removed rather than left inert, and the assertion that refused to flip 53 of 86 canonical records because its window had spilled into the next person's.
+
 **A family of three, completed in this edition:** `box-shadow` is one property, `transition` is one property, and a filled animation outranks ordinary declarations. All three are the same shape — a mechanism silently outranking the declaration being edited — and all three present as "my change did nothing". When a CSS edit appears inert, look for what else already claims that property.
 
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
@@ -5430,3 +5432,97 @@ surfaces defects no card ever would.
 None of it is caught by `validate.py`, because a wrong parent link is perfectly well-formed. The
 standing lesson repeats: **arithmetic catches what a schema cannot.** All of it is Stream A work and is
 listed in roadmap §44.
+
+
+### 44.11 THE SPOUSE LADDER — a married-in person borrows their partner's (August 26, later)
+
+Membership is `marriedIntoLine`, which already meant exactly this and was already derived for the chip
+shading: NOT a Thomas descendant, and married to someone who IS. Reusing it kept one answer to one
+question — and it is a GRAPH question computed once for the corpus, not a property asked 18,000 times.
+
+**The chain is the partner's and keeps the partner ON THE END.** For a descendant it stops one short
+because the payload already carries the focus; here the last rung IS the partner and the focus stands
+beside them. `pathsSpouse` is the only signal telling the client which of the two shapes it has —
+without it the ladder would append a married-in person below their own partner as though they descended
+from them. The partner is chosen by `marriage_number`, so the ladder names the same spouse the card's
+chips show first rather than whichever route happens to be shortest.
+
+**The pair:** the Hooker card cut to 76%, the partner at 50% docked past its right edge and overhanging
+the ladder by ~120px — that overhang is what says "attached to that one". Photo only when there is one
+(983 of 5,911) and **its seat goes with it**, unlike a rung's: a rung keeps the column's left edge
+straight down twelve rows, and this card stands alone, so an empty square beside it would be a hole
+rather than a column. When there is no photo the inset returns as padding instead.
+
+**A HOOKER SPOUSE IS NEVER AN EASTER EGG** (Sam, structurally). 86 people were both. All 86 were
+`notable` and 49 had Thomas-descendant children, so `is_easter_egg` there was not marking "reached only
+through the tree" — it was marking "notable person who married in", which `sp` already carries. The
+visible change was smaller than the count suggests, and Sam predicted why before the batch ran:
+`spouse-line` is declared after `ee-line`, so anyone who was both was ALREADY taking the mint. What
+actually moved was the ladder (gained) and `lineAnchors` (lost, being eggs-only — and their route home
+is now their spouse, which the ladder draws).
+
+**Two values that are properties of the PAIR, not of the colour** (§29.1), both scoped to the ladder so
+the chip tokens stay exactly as measured: the rung's shadow is deeper than a chip's because it sits on a
+blurred veil rather than on parchment, and the partner card's mint is deeper than `--spouse-bg` because
+it sits beside cream rather than on the sheet. Measured, the mint at chip value read as white here —
+RGB distance 8 against the Hooker paper, 29 after.
+
+### 44.12 THE NUMBER IS THE RUNG'S DEPTH, NOT THE PERSON'S GENERATION
+
+Sarah Knutti's second path showed **two number 8s**, and the data was right. Aurelia Dwight Hooker is a
+descendant in her own right at generation 8 who married a SEVENTH-generation Hooker, so their son is 8
+generations from Thomas through his father and 9 through his mother. His stored 8 is the shorter and is
+correct; it is simply not the depth of the rung he occupies on the longer route. **278 of 20,473 paths
+carry a repeat like this.**
+
+The fault was structural and mine: **a per-person number printed in a per-path slot.**
+`generation_from_thomas` is one number for a person; depth is a property of the route.
+
+Counting the position instead is always consecutive and always true of the path on screen. It also keeps
+the original reason for showing a generation at all: measured across the corpus, **position equals the
+stored generation on PATH 1 for 99.93% of rungs**, so the shortest route still lines up with the descent
+line printed on the card. Where a longer route disagrees it disagrees because it IS longer, which is the
+fact the selector exists to show.
+
+### 44.13 §30 THREE MORE TIMES, IN ONE COMPONENT
+
+Every remaining complaint about the path switch turned out to be the same law: **an in-flow element is
+painted at layout(t) + transform(t), so if the layout moves while something is flying, the two curves
+compose into the ideal path plus an error.** Three separate faults, one cause:
+
+| what moved | the symptom | the fix |
+|---|---|---|
+| **the fit** — computed from the CURRENT path, so a switch resized every rung | `animate:flip` interpolates SIZE too, so every card was scaled ~10% and sprang back | size the ladder for the person's LONGEST path; the fit never changes on a switch |
+| **the seat's frame of reference** — leavers pinned as an offset INSIDE `.ladder-rows`, which itself re-centres when the row count changes | every leaver pinned half a row from where it had been; Aurelia sat 29px inside the card below her, from the first frame | pin leavers in VIEWPORT coordinates: a departing card is leaving the layout, so it must not be positioned by a box that is still rearranging |
+| **the rows box's height** — auto, so dropping a rung shortened it instantly while the rungs were still animating | the title jumped, leaving a gap above a #1 that had not moved yet | reserve the height of the longest path; the header has nothing to react to |
+
+**The wrong turn worth recording:** the first attempt at the first row EASED the fit rather than removing
+the change. That made it worse, and Sam said so — "if anything its harsher" — because before that the
+layout at least settled in one frame. Easing a moving layout is not a fix for a moving layout. §30's own
+answer is an instantaneous settle plus arithmetic; ours is to remove the change at the source.
+
+**And the beats now run in sequence** — leavers out, THEN the gap closes, THEN the replacements arrive.
+`animate:flip` fires on the frame the list changes, so the survivors used to close the gap into space the
+leavers were still standing in. Each beat waits for the one before. It costs about a second, which Sam
+asked for explicitly here and which reverses the overlap he wanted when the two halves were merely
+queued rather than colliding.
+
+### 44.14 HYGIENE, AND WHAT A GUARD IS WORTH
+
+Four things were removed rather than left inert, all the `--ring-live` shape — a mechanism whose presence
+implies behaviour that does not exist:
+
+- a `pathsSpouse` prop threaded through `FeaturedCard` that nothing there read (ConnectModal takes it
+  from the store);
+- `class:prism` on the rungs, which never matched anything because PersonBox's rule is Svelte-SCOPED to
+  that component;
+- a widen latch on the Connect button, retired when every button went to full width;
+- the close-time freeze of `.ladder-rows`, made redundant once leavers were pinned in viewport space and
+  the box reserved its tallest height. Verified by measurement rather than by reading: 0px drift after.
+
+**The guard that paid for itself.** Flipping 86 easter-egg flags was first attempted by scanning a fixed
+character window after each id in canonical.json. It correctly REFUSED 53 of them, because a compact
+record's window spills into the next person's and two `is_easter_egg` flags appeared in it — without the
+count assertion it would have flipped the wrong people silently. The batch was redone through a JSON
+round-trip after verifying that `json.dumps(indent=2, ensure_ascii=False)` reproduces that 58 MB file
+byte-identically, which is what made it possible to prove only the 86 intended records changed.
