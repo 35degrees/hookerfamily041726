@@ -353,6 +353,7 @@
 						class:hooker-line={(r.f & CAT.HD) !== 0}
 						class:spouse-line={(r.f & CAT.SPOUSE) !== 0}
 						class:ee-line={(r.f & CAT.INLAW) !== 0}
+						class:founder-row={(r.f & CAT.FOUNDER) !== 0 && r.id !== 'H00001'}
 						href="/person/{r.slug}"
 						onclick={(e) => pick(e, r.slug, r.f)}
 						onmouseenter={() => (cursor = i)}
@@ -595,6 +596,53 @@
 	.hit .line1 {
 		white-space: nowrap;
 		overflow: hidden;
+	}
+
+	/* ── THE FOUNDER ROW ────────────────────────────────────────────────────────────────────────────
+	   A Hartford founder carries the zone's own ground into the list, so the room you are about to
+	   enter is legible before you click. `--color-foundergreen` is the token the veil's middle stop and
+	   the founder TITLE already read — taken by name, so the row cannot drift away from the room it
+	   names.
+
+	   THOMAS HOOKER IS EXCLUDED, and by the same test ascension.svelte.ts uses: `id !== 'H00001'`. He
+	   carries the tag — he did found Hartford — but he is the tree's origin rather than one of its
+	   orbiting figures, and the zone already refuses him. A second, looser rule here would have let
+	   search disagree with the room.
+
+	   THE RING IS RESTATED WITH THE DROP SHADOW AFTER IT, which is layout.css's standing instruction:
+	   a ring and a shadow are different jobs sharing one property, so any rule that sets a ring must
+	   re-state the shadow or silently delete it. */
+	.hit.founder-row {
+		--card-bg: var(--color-foundergreen);
+		box-shadow:
+			inset 0 0 0 2px rgba(255, 255, 255, 0.9),
+			var(--chip-shadow);
+	}
+	.hit.founder-row.on {
+		box-shadow:
+			inset 0 0 0 2px rgba(255, 255, 255, 0.9),
+			var(--chip-shadow-hover);
+	}
+	/* CREAM INK, because §41.3 is not optional here: navy on hunter green is the pair this app's own
+	   colour system says never to make. The zone answers the same question with the same token — the
+	   cream the rail's years take once the ground goes dark. */
+	.hit.founder-row .nm,
+	.hit.founder-row .star.has {
+		color: var(--color-creamprimary);
+	}
+	.hit.founder-row .yr,
+	.hit.founder-row .line2 {
+		color: rgba(245, 238, 229, 0.78);
+	}
+	.hit.founder-row .tag {
+		color: rgba(245, 238, 229, 0.55);
+	}
+	/* The empty photo well takes the green's own DEEPENED stop rather than the stone grey, which would
+	   read as a lit panel punched into a dark card. #1d3420 is the veil's outer stop — the token's
+	   shadow, hand-tuned beside it (see Ascension.svelte: mixing toward white greys it, so these are
+	   not derivable). */
+	.hit.founder-row .photo {
+		background: #1d3420;
 	}
 	/* THE HIGHLIGHT IS A SHADOW, NOT A FILL — the house's answer to a pointer (`a.person-box:hover`),
 	   and it has to be, because the fill is already carrying line status. Painting a highlight colour
