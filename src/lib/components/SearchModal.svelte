@@ -76,16 +76,21 @@
 		const pivot = r.top + r.height / 2;
 		const offset = (e.clientY - pivot) * AMPLIFY;
 		/**
-		 * ANCHORED TO THE PANEL'S RIGHT EDGE, NOT THE PHOTO COLUMN'S.
+		 * THE PHOTO COLUMN'S RIGHT EDGE — the ladder's own anchor, and now literally the same rule
+		 * (`.rung .rung-photo` there, `.hit .photo` here), so the enlargement opens in the same
+		 * relationship to its row in both places.
 		 *
-		 * The ladder anchors to its photo column and can afford to, because a rung is ~440px wide and
-		 * the enlargement opens across a card the reader has already read. This panel is 520px, so the
-		 * same rule put the box at x=541 over a list spanning 460-980 — it covered the very row being
-		 * hovered, which is the one thing it must never do. Opening past the panel keeps the name, the
-		 * years and the reason readable while the portrait is up.
+		 * I had moved this to the PANEL's right edge on the reasoning that opening over the list hid the
+		 * row being hovered. That was solving a problem the ladder had already decided was not one: the
+		 * popout belongs beside the photo it came from, mid-list, and pushing it out past the results
+		 * broke the connection between the small picture and the large one. Sam: "it should be in the
+		 * middle of the search bars just to the right of the photos."
+		 *
+		 * Anchoring to the COLUMN rather than to the hovered image is what keeps it from drifting
+		 * sideways row to row — every row's photo shares one left edge, so one x serves all of them.
 		 */
-		const panelEl = document.querySelector('.panel');
-		const ax = panelEl ? panelEl.getBoundingClientRect().right : r.right;
+		const col = document.querySelector('.hit .photo');
+		const ax = col ? col.getBoundingClientRect().right : r.right;
 		zoom = { src: img.src, alt: img.alt || '', w, h, ax, dy: offset };
 	}
 	const closeZoom = () => (zoom = null);
