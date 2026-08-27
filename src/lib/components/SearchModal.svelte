@@ -429,6 +429,7 @@
 				read top to bottom in the order they narrow.
 			-->
 			{#if search.tagPool.length}
+				<p class="tagtitle">Assorted tags <span>(optional)</span></p>
 				<div class="tagrow">
 					{#each search.tagPool as t (t)}
 						<button
@@ -436,7 +437,12 @@
 							class:on={search.tags.includes(t)}
 							onclick={() => toggleTag(t)}
 							title={search.tags.includes(t) ? 'Remove this tag' : 'Show everyone tagged this'}
-							>#{t}</button
+							><!-- UNDERSCORES, like a real hashtag. The stored form is snake_case; factSegments turned
+							     those into spaces so the words stay separately searchable, and this puts them back
+							     for DISPLAY only — the value used to filter is still the spaced one. -->#{t.replace(
+								/ /g,
+								'_'
+							)}</button
 						>
 					{/each}
 				</div>
@@ -847,9 +853,26 @@
 	   (the small uppercase BORN / SERVED / SCHOOL before a reason), so the first version silently
 	   inherited its `text-transform: uppercase` and 0.07em tracking and came out shouting. A collision
 	   inside one component's scoped styles, which is the kind scoping does not protect you from. */
+	/* A LABEL, because a row of unexplained hashtags is a puzzle rather than an invitation.
+	   "(optional)" is Sam's and it does real work: sitting between two filters that DO narrow, an
+	   unlabelled row of pills reads like something you are expected to choose from. */
+	.tagtitle {
+		margin: 0 0 1px;
+		text-align: center;
+		font: 400 9.5px/1.3 var(--font-inter, sans-serif);
+		letter-spacing: 0.04em;
+		color: rgba(48, 42, 34, 0.5);
+	}
+	.tagtitle span {
+		color: rgba(48, 42, 34, 0.34);
+	}
 	.tagpill {
-		border: 1px solid rgba(48, 42, 34, 0.14);
-		background: rgba(255, 253, 247, 0.5);
+		border: 1px solid rgba(48, 42, 34, 0.12);
+		/* CREAM, NOT WHITE, and the selected state is a DARKER CREAM rather than the navy it had (Sam:
+		   the navy "makes these too prominent like people will think they have to pick tag"). Selection
+		   still has to be unmistakable, so it moves twelve points of lightness and picks up the ink —
+		   a deepening of the same paper rather than a different material. */
+		background: var(--color-creamprimary, hsl(30 38% 92%));
 		color: rgba(48, 42, 34, 0.6);
 		font: 400 9px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.02em;
@@ -867,9 +890,9 @@
 		color: rgba(48, 42, 34, 0.9);
 	}
 	.tagpill.on {
-		background: #2f3a52;
-		border-color: #2f3a52;
-		color: #f4efe4;
+		background: hsl(30 34% 80%);
+		border-color: hsl(30 30% 68%);
+		color: rgba(48, 42, 34, 0.92);
 	}
 	.count {
 		margin: 0 2px;

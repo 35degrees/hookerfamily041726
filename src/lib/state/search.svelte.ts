@@ -120,7 +120,7 @@ let cats = $state(0);
 let yearFrom = $state<number | null>(null);
 let yearTo = $state<number | null>(null);
 let recent = $state<string[]>([]);
-/** The tags currently switched on. OR'd, like the category chips — see `result`. */
+/** The tags currently switched on. AND'd — see `result`. */
 let tags = $state<string[]>([]);
 /** The handful offered this visit. Re-rolled by `rollTags()` when the modal opens. */
 let tagPool = $state<string[]>([]);
@@ -303,10 +303,17 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 	const hits: Prepared[] = [];
 	for (const r of index) {
 		if (cats && !(r.f & cats)) continue;
-		// OR, exactly like the category chips above it — two tags widen rather than narrow. Selecting
-		// `minister` and `longevity` and being handed nothing is the opposite of a discovery surface,
-		// and AND is available anyway by typing a word into the box.
-		if (tags.length && !tags.some((t) => r.tg.includes(t))) continue;
+		/**
+		 * AND, NOT OR — and it is the opposite of the category chips deliberately. I built OR first, on
+		 * the grounds that an empty result is a dead end for a discovery surface. Sam's reading is the
+		 * better one: adding a second tag is a NARROWING gesture. Nobody clicks `#spy` and then
+		 * `#olympian` hoping for more spies; they are asking who is both. OR made the second click feel
+		 * like it did nothing, because the count only ever went up.
+		 *
+		 * A chip is a KIND of person — blood, married-in, in-law — and those are alternatives, so OR is
+		 * right there. A tag is an attribute, and attributes accumulate.
+		 */
+		if (tags.length && !tags.every((t) => r.tg.includes(t))) continue;
 		/**
 		 * THE RANGE FILTERS ON `by ?? eb` — the real birth year where there is one, the era ESTIMATE
 		 * where there is not (Sam: "no birth year people can be 'estimated' based on lifespan of
