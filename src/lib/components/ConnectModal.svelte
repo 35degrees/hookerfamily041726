@@ -33,6 +33,7 @@
   Building downward from Thomas would be the same rows in the same places telling the opposite story.
 -->
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { linear, cubicOut } from 'svelte/easing';
 	import { flip } from 'svelte/animate';
@@ -815,6 +816,50 @@
 	 */
 	const tt = (px: number) => px * stage.k * fit;
 
+	/**
+	 * THE SPOUSE CARD MAY NOT BE SET LARGER THAN THE ROW IT SITS ON.
+	 *
+	 * Both cards share one ceiling, `tt(14.3)`, and that is not the same as sharing a SIZE: shrinkToFit
+	 * only shrinks what does not fit, so a long name on a squeezed card lands near its floor while
+	 * "John Rockefeller" — short, and with no blurb under it — never shrinks at all and renders at the
+	 * full ceiling. The pair then reads as two different type scales sitting on one row, and the spouse
+	 * is the one that looks wrong because it is the one that is bigger (Sam: "it needs to be max the
+	 * same size as the rest otherwise it stands out").
+	 *
+	 * So the partner's SETTLED size becomes the spouse's ceiling. Measured rather than predicted —
+	 * shrinkToFit writes the value, and the only honest way to know what it chose is to read it back.
+	 * `null` until the first measurement, which is what keeps the ceiling at tt(14.3) for the frame
+	 * before it lands rather than briefly clamping to zero.
+	 */
+	let partnerLine = $state<HTMLElement | null>(null);
+	/** An ACTION rather than `bind:this`, because only the PAIRED row's line is the partner and Svelte
+	 *  cannot bind to a conditional expression. It clears itself too, so a ladder that stops being a
+	 *  spouse ladder cannot leave a stale node behind for the cap to read. */
+	function partnerRef(node: HTMLElement, isPaired: boolean) {
+		if (isPaired) partnerLine = node;
+		return {
+			update(next: boolean) {
+				if (next) partnerLine = node;
+				else if (partnerLine === node) partnerLine = null;
+			},
+			destroy() {
+				if (partnerLine === node) partnerLine = null;
+			}
+		};
+	}
+	let partnerPx = $state<number | null>(null);
+	$effect(() => {
+		// Re-read whenever anything that could re-fit the partner changes.
+		void [rows, stage.u, stage.k, fit, viaSpouse];
+		if (!partnerLine) {
+			partnerPx = null;
+			return;
+		}
+		void tick().then(() => {
+			if (partnerLine) partnerPx = parseFloat(getComputedStyle(partnerLine).fontSize) || null;
+		});
+	});
+
 	const yearsOf = (p: PersonCompact) =>
 		p.pv ? '' : [p.by ?? '', p.dy ? `–${p.dy}` : p.by ? '–' : ''].join('');
 </script>
@@ -973,9 +1018,26 @@
 					<div class="rung-body">
 						<div
 							class="rung-line1"
+							use:partnerRef={paired}
 							use:shrinkToFit={{
 								max: tt(14.3),
-								min: tt(10.6),
+								/**
+								 * A PAIRED CARD GETS A LOWER FLOOR, because it is a narrower card. It is cut to
+								 * 76% to make room for the spouse beside it, and 10.6 is the floor for the full
+								 * width — so a paired row whose line one cannot fit at 10.6 simply overflowed
+								 * and the card clipped it.
+								 *
+								 * That is exactly what happened to Blanchette Ferry Hooker Rockefeller: she has
+								 * a blurb, so `yearsBelow` does not fire and her years stay on line one behind a
+								 * 35-character name. At the floor the line still overran and the YEARS were the
+								 * part that got cut — "1909–199" — which is the worst thing to lose, because a
+								 * clipped name still reads as a name while a clipped year reads as an error.
+								 *
+								 * 8.6 is 10.6 scaled by the same 76% the card itself was, so the floor now means
+								 * the same thing on both widths. The spouse card beside it already had its own
+								 * lower floor (8.2) for precisely this reason.
+								 */
+								min: tt(paired ? 8.6 : 10.6),
 								key: `${p.id}|${yearsBelow}|${paired}|${stage.u}|${stage.k}|${fit}`
 							}}
 						>
@@ -1069,14 +1131,17 @@
 						<div
 							class="rung-line1"
 							use:shrinkToFit={{
-								max: tt(14.3),
+								// Capped by whatever the partner settled at — see partnerPx. Never larger than the
+								// row it sits on; still free to shrink below it if this card is tighter.
+								max: Math.min(tt(14.3), partnerPx ?? tt(14.3)),
 								// A LOWER FLOOR THAN A RUNG'S, because this card has less room than any of them:
 								// 220px with a 73px square photo in it leaves ~125px of text. "Alexander John
 								// Chandler" is 23 characters and stopped at the old 10px floor with an ellipsis
 								// still showing — and an ellipsis here hides a surname, which is the half of the
 								// name that says who they married into.
 								min: tt(8.2),
-								key: `${focus.id}|${stage.u}|${stage.k}|${fit}`
+								// partnerPx is in the key, or the cap would land without a re-fit to apply it.
+								key: `${focus.id}|${stage.u}|${stage.k}|${fit}|${partnerPx}`
 							}}
 						>
 							<!-- THE SAME NESTING AS A RUNG'S, and it has to be. Here `.rung-n` was the `[data-fit]`
