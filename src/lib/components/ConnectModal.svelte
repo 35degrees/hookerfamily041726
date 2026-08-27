@@ -768,7 +768,10 @@
 			in:fade={{ delay: buildMs, duration: 300 }}
 			out:fade={{ duration: CLOSE_MS }}
 		>
-			<span class="ladder-title">Paths to Thomas</span>
+			<!-- SINGULAR WHEN THERE IS ONE, and that is the common case rather than an edge: 91.3% of
+			     descendants have exactly one route. The tab strip is already hidden for them, so a plural
+			     title was the last thing on screen claiming a choice they do not have. -->
+			<span class="ladder-title">{paths.length > 1 ? 'Paths' : 'Path'} to Thomas</span>
 			<!-- HIDDEN AT ONE PATH (Sam). 91.3% of descendants have exactly one route, so for nearly
 			     everyone this control does not exist rather than sitting there with a single option. -->
 			{#if paths.length > 1}
@@ -936,6 +939,7 @@
 					href={focus.slug ? `/person/${focus.slug}` : '#'}
 					onclick={(e) => rungNav(focus as Rung, e)}
 					class="rung-spouse person-box spouse-line"
+					class:no-photo={!focus.p}
 					in:arrive|global={{ i: rows.length - 1, n: rows.length }}
 					out:depart|global={{ i: rows.length - 1, n: rows.length }}
 				>
@@ -1255,6 +1259,14 @@
 		gap: 2px;
 		min-width: 0;
 		padding: 0 calc(11px * var(--stage-u, 1));
+	}
+	/* WITHOUT A PHOTO the text is the card's first thing, and 11px against the edge reads as shoved up
+	   against it — Sam, on Gertrude. A rung never has this problem because its photo seat holds its width
+	   empty and keeps the column straight; this card drops the seat entirely when there is nothing to put
+	   in it (see the markup), so the inset has to come back as padding. Deliberately NOT a photo's width:
+	   the point is breathing room, not a phantom square. */
+	.rung-spouse.no-photo .rung-spouse-body {
+		padding-left: calc(20px * var(--stage-u, 1));
 	}
 	.rung-spouse .rung-n,
 	.rung-spouse .rung-y {
