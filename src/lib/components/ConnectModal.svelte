@@ -1292,6 +1292,11 @@
 	}
 	.ladder-x {
 		margin-left: auto;
+		/* THE GLYPH IS FLUSH, NOT THE BOX. The hit area is 34px around a 22px icon, so a box aligned to
+		   the edge leaves the visible X six pixels short of it — measured against the rungs' right edge
+		   at 933 vs the glyph's 927. The negative margin gives those six back, so what the eye lines up
+		   against the cards is the mark rather than its padding. The 34px target is untouched. */
+		margin-right: -6px;
 		display: grid;
 		place-items: center;
 		width: 34px;

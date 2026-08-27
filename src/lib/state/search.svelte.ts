@@ -93,6 +93,7 @@ export const RESULT_CAP = 60;
 const DEBOUNCE_MS = 110;
 
 const INDEX_URL = '/data/search-index.json';
+const VOCAB_URL = '/data/tag-vocab.json';
 /** Shared so the ~14,000 tagless rows all point at one array rather than 14,000 empty ones. */
 const EMPTY_TAGS: string[] = [];
 /** How many tags the discovery row offers per visit. */
@@ -109,6 +110,8 @@ const RECENT_MAX = 8;
  */
 let index: Prepared[] = [];
 let ready = $state(false);
+/** The schema's §6 canonical tag names, spaced to match the folded form stored on each row. */
+let canonTags: Set<string> = new Set();
 /** Memoised so every caller awaits the SAME work rather than skipping it — see load(). */
 let loadPromise: Promise<void> | null = null;
 
@@ -142,8 +145,14 @@ let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 export function load(): Promise<void> {
 	if (loadPromise) return loadPromise;
 	loadPromise = (async () => {
-		const res = await fetch(INDEX_URL);
+		// Both in parallel — the vocab is ~2KB and must not add a round trip to the index's 1.2MB.
+		const [res, vres] = await Promise.all([fetch(INDEX_URL), fetch(VOCAB_URL)]);
 		if (!res.ok) throw new Error(`search index ${res.status}`);
+		if (vres.ok) {
+			const names: string[] = await vres.json();
+			// Stored tags are folded with underscores turned into spaces; match that form.
+			canonTags = new Set(names.map((n) => n.replace(/_/g, ' ')));
+		}
 		const raw: SearchRow[] = await res.json();
 		// One pass, ~5ms. Pulls the `n:` segment out ONCE so tier() never folds or splits at query
 		// time — leaving that inside the sort was measured at 2,238ms for "t" (O(n log n) Unicode
@@ -238,15 +247,26 @@ const yearBounds = $derived.by((): [number, number] | null => {
 });
 
 /**
- * EVERY TAG IN THE CORPUS, sorted, derived from the loaded index. 642 of them, and the point of the
- * feature is that almost none are things anyone would think to type: `extraordinary longevity`,
- * `seven pillars`, `compiler ancestor`. The search box can only answer questions you already have;
- * this is the surface that hands you one.
+ * THE TAGS WORTH OFFERING — the intersection of what people actually carry and what the SCHEMA
+ * sanctions.
+ *
+ * The first version took every distinct tag in the index, which is why the suggestion row served
+ * `#not_yet_fully_entered`, `#duplicate_entry` and `#abcfm`. Schema §6 is explicit — "Only canonical
+ * tags listed below are valid. Invented tags are a schema violation" — and the data does not obey it:
+ * 642 distinct tags are in use and only 157 are canonical. Sampling the DATA meant sampling 485
+ * invented ones, so roughly three offers in four were junk by construction.
+ *
+ * `tag-vocab.json` is parsed from the schema at build time, so the list has ONE owner and moves when
+ * the schema does. If the fetch fails `canonTags` is empty and the row simply does not appear —
+ * offering nothing beats offering housekeeping notes.
+ *
+ * What is left is the point of the feature: things nobody would think to type — `seven pillars`,
+ * `compiler ancestor`, `indigenous rights`.
  */
 const vocab = $derived.by(() => {
 	if (!ready) return [] as string[];
 	const set = new Set<string>();
-	for (const r of index) for (const t of r.tg) set.add(t);
+	for (const r of index) for (const t of r.tg) if (canonTags.has(t)) set.add(t);
 	return [...set].sort();
 });
 
@@ -563,12 +583,30 @@ export function rollTags(): void {
 	const all = vocab;
 	if (!all.length) return;
 	const keep = tags.filter((t) => all.includes(t));
+	/**
+	 * A ROLL NEVER REPEATS THE ONE BEFORE IT. Uniform sampling is correct and still FEELS repetitive —
+	 * measured over eight rolls of nine from 157 canonical tags, 55 of 70 offers were distinct, which
+	 * is exactly what uniform random predicts and is also exactly what Sam noticed. Excluding the
+	 * previous handful costs nothing at this vocabulary size and makes consecutive visits visibly
+	 * different, which is the property the feature is actually trading on.
+	 *
+	 * Selected tags are exempt: one you chose must not vanish from under the pointer.
+	 */
+	const previous = new Set(tagPool.filter((t) => !tags.includes(t)));
+	const fresh = all.filter((t) => !previous.has(t));
+	const draw = fresh.length >= TAG_SAMPLE ? fresh : all;
 	const pool = new Set(keep);
 	let guard = 0;
-	while (pool.size < Math.min(TAG_SAMPLE, all.length) && guard++ < 400) {
-		pool.add(all[Math.floor(Math.random() * all.length)]);
+	while (pool.size < Math.min(TAG_SAMPLE, draw.length) && guard++ < 400) {
+		pool.add(draw[Math.floor(Math.random() * draw.length)]);
 	}
 	tagPool = [...pool];
+}
+
+/** Drop every selected tag at once. The pool is left alone — the handful on offer this visit is not
+ *  a selection, so clearing what you picked should not reshuffle what you were choosing from. */
+export function clearTags(): void {
+	tags = [];
 }
 
 /** On, off, and never more than TAG_MAX — the oldest drops out to make room. */

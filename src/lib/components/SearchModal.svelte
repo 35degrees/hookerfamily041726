@@ -25,6 +25,7 @@
 		setText,
 		toggleCategory,
 		toggleTag,
+		clearTags,
 		rollTags,
 		selectAll,
 		clear,
@@ -502,6 +503,14 @@
 							>
 						{/each}
 					</div>
+					<!-- Only once there is something to undo — the same rule the year readout follows. A
+					     standing "clear" beside an empty selection is a control describing a state that is
+					     not happening. -->
+					{#if search.tags.length}
+						<button class="tagclear" onclick={clearTags}
+							>clear {search.tags.length === 1 ? 'tag' : 'tags'}</button
+						>
+					{/if}
 				</div>
 			{/if}
 
@@ -1026,6 +1035,9 @@
 	}
 	.head-x {
 		margin-left: auto;
+		/* Same six pixels as the ladder's, for the same reason — a 22px glyph centred in a 34px target.
+		   Measured: panel edge 973, glyph 967. */
+		margin-right: -6px;
 		display: grid;
 		place-items: center;
 		width: 34px;
@@ -1042,6 +1054,26 @@
 	.head-x:focus-visible {
 		opacity: 1;
 		outline: none;
+	}
+	/* Very small and underlined (Sam) — a link's manners rather than a button's, because it undoes a
+	   choice rather than making one. No ground, no border, so nothing about it competes with the pills
+	   it sits under. */
+	.tagclear {
+		align-self: center;
+		margin-top: 1px;
+		border: 0;
+		background: none;
+		padding: 0;
+		font: 400 9px/1.3 var(--font-inter, sans-serif);
+		letter-spacing: 0.03em;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+		color: color-mix(in srgb, var(--color-inkblue) 55%, transparent);
+		cursor: pointer;
+		transition: color 140ms ease-out;
+	}
+	.tagclear:hover {
+		color: var(--color-inkblue);
 	}
 	.count {
 		margin: 0 2px;

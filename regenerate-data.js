@@ -8,6 +8,7 @@
  *
  * Emits (paths relative to repo root, overridable via the CONFIG block):
  *   static/data/people.json             full records, research_notes stripped
+ *   static/data/tag-vocab.json          canonical tag names, parsed from the schema's §6
  *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,pv?,f,x,bl?,eb?,nb?,ph?}
  *                                       bitfield, x=field-tagged folded fact blob (segment 0 = names)
  *   static/data/cemeteries.json         passthrough
@@ -34,7 +35,7 @@
  * --------------------------------------------------------------------------
  */
 
-import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -1995,6 +1996,38 @@ function main() {
 	const landmarkById = Object.fromEntries((data.landmarks || []).map((x) => [x.id, x]));
 	const warById = Object.fromEntries((data.wars || []).map((w) => [w.id, w]));
 	const searchReg = { cemById, instById, lmById: landmarkById, warById };
+
+	/**
+	 * THE CANONICAL TAG VOCABULARY, read from the SCHEMA rather than from the data.
+	 *
+	 * §6 says it plainly: "Only canonical tags listed below are valid. Invented tags are a schema
+	 * violation." The data does not obey that — 642 distinct tags are in use and only 157 of them are
+	 * in §6, so anything sampling the DATA is sampling 485 invented ones. That is what was feeding the
+	 * search modal's suggestion row, and why three in four of its offers were junk.
+	 *
+	 * Parsed from the markdown because that is where the list actually lives. Fragile by nature, so it
+	 * ABORTS rather than emitting an empty file: a silent zero here would quietly turn the feature off
+	 * and look like a design change.
+	 */
+	const schemaFile = readdirSync('docs')
+		.filter((f) => /^hooker_json_schema_v\d+\.md$/.test(f))
+		.sort()
+		.pop();
+	if (!schemaFile) throw new Error('no docs/hooker_json_schema_v*.md found — cannot build tag vocab');
+	const schemaText = readFileSync(join('docs', schemaFile), 'utf8');
+	const sixStart = schemaText.indexOf('## 6. TAG TAXONOMY');
+	const sixEnd = schemaText.indexOf('## 7.', sixStart);
+	if (sixStart < 0 || sixEnd < 0) throw new Error(`${schemaFile}: could not locate §6 TAG TAXONOMY`);
+	// Entries read `tag_name — definition`; the em dash is what marks a definition line.
+	const tagVocab = [
+		...new Set(
+			[...schemaText.slice(sixStart, sixEnd).matchAll(/(?:^|[^a-z0-9_])([a-z][a-z0-9_]{2,})\s+—/g)].map(
+				(m) => m[1]
+			)
+		)
+	].sort();
+	if (tagVocab.length < 100)
+		throw new Error(`${schemaFile}: parsed only ${tagVocab.length} canonical tags — parser is broken`);
 	log(`  ${people.length} people (${visible.length} visible, ${hiddenIds.size} hidden)`);
 	log(`  ${marriedIntoLine.size} married into the Hooker line (derived; see marriedIntoLine)`);
 
@@ -2143,6 +2176,8 @@ function main() {
 		};
 		W(join(CONFIG.dataDir, 'people.json'), clientPeople);
 		W(join(CONFIG.dataDir, 'search-index.json'), searchIndex);
+		W(join(CONFIG.dataDir, 'tag-vocab.json'), tagVocab);
+		log(`  tag-vocab.json: ${tagVocab.length} canonical tags from ${schemaFile} §6`);
 		if (data.cemeteries) W(join(CONFIG.dataDir, 'cemeteries.json'), data.cemeteries);
 		if (data.institutions) W(join(CONFIG.dataDir, 'institutions.json'), data.institutions);
 		W(CONFIG.redirectsFile, redirects);
