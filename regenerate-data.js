@@ -8,7 +8,7 @@
  *
  * Emits (paths relative to repo root, overridable via the CONFIG block):
  *   static/data/people.json             full records, research_notes stripped
- *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,f,x} - f=category
+ *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,f,x,bl?} - f=category
  *                                       bitfield, x=field-tagged folded fact blob (segment 0 = names)
  *   static/data/cemeteries.json         passthrough
  *   static/data/institutions.json       passthrough
@@ -582,6 +582,12 @@ function searchRow(p, slugMap, reg) {
 		f,
 		x: factSegments(p, reg)
 	};
+	// DISPLAY blurb, unfolded. The blob is folded and therefore unrenderable — you fold for
+	// MATCHING and keep the original for DISPLAY, and this is the "original" half. Line two of a
+	// result row is the match reason, falling back to this when the hit was on the name itself.
+	// 3,237 rows carry one (16% of the corpus) for +32 KB gzipped.
+	const bl = (p.notable || {}).notable_blurb || b.bio_blurb;
+	if (bl) row.bl = bl;
 	return row;
 }
 
