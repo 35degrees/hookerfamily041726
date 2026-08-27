@@ -56,7 +56,7 @@ export type SearchRow = {
 };
 
 /** Prepared once at load: segment 0 split out so ranking never re-parses or re-folds. */
-export type Prepared = SearchRow & { nm: string; wd: string[] };
+export type Prepared = SearchRow & { nm: string; wd: string[]; np: string[] };
 
 export const CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8, FOUNDER: 16 } as const;
 
@@ -123,7 +123,13 @@ export async function load(): Promise<void> {
 			const nm = end < 0 ? r.x.slice(2) : r.x.slice(2, end);
 			// Split on commas AS WELL as spaces: segment parts are comma-joined, so a plain space
 			// split yields "hooker," which never equals "hooker" and silently costs a tier.
-			return Object.assign(r, { nm, wd: nm.split(/[\s,]+/).filter(Boolean) }) as Prepared;
+			return Object.assign(r, {
+				nm,
+				wd: nm.split(/[\s,]+/).filter(Boolean),
+				// The `n:` segment's comma PARTS — display name, then each other name form. Kept split
+				// because a whole-name test has to run against one part, not the whole segment; see tier().
+				np: nm.split(', ')
+			}) as Prepared;
 		});
 		ready = true;
 	} catch (err) {
@@ -144,9 +150,19 @@ export async function load(): Promise<void> {
  * "Annie Hooker" tied with everyone else called Annie and lost the tiebreak on birth year.
  */
 function tier(r: Prepared, q: string, terms: string[]): number {
-	if (r.nm === q) return 0; // the whole name IS the query
+	/**
+	 * TIERS 0 AND 2 TEST A SINGLE NAME PART, NOT THE WHOLE SEGMENT — and getting that wrong made
+	 * tier 0 unreachable for anyone with a title or a suffix.
+	 *
+	 * The `n:` segment is comma-joined: display name, then maiden, married, nickname, title, suffix.
+	 * George Washington's reads `george washington, general`, so `nm === q` was false for the query
+	 * "george washington" and the most famous match in the corpus fell to tier 1 — where the new
+	 * blood-before-marriage tiebreak then put two Hooker descendants who happen to be NAMED after him
+	 * above the man himself. A ranking bug hidden by a formatting decision three commits earlier.
+	 */
+	if (r.np.includes(q)) return 0; // one whole name form IS the query
 	if (terms.every((t) => r.wd.includes(t))) return 1; // every term is a whole name word
-	if (r.nm.startsWith(q)) return 2; // the name starts with the query
+	if (r.np.some((n) => n.startsWith(q))) return 2; // a name form starts with the query
 	if (terms.every((t) => r.wd.some((w) => w.startsWith(t)))) return 3; // every term starts a word
 	if (r.nm.includes(q)) return 4; // the query appears in the name
 	return 5; // a fact field only
