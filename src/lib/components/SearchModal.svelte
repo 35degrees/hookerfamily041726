@@ -37,10 +37,36 @@
 	import { tick } from 'svelte';
 
 	const VEIL_IN_MS = 340;
-	const VEIL_OUT_MS = 260;
 	const VEIL_BLUR = 10;
+	/**
+	 * THE EXIT, and the numbers come from measuring the whole handover rather than from taste.
+	 *
+	 * Filmed at 1440x900, clicking a result: the modal was gone at 390ms, and the incoming card sat
+	 * parked off-screen at x=1512 until ~970ms before it began to travel. Nearly SIX HUNDRED
+	 * MILLISECONDS of empty stage between the two — that is what reads as jarring, not the length of
+	 * the fade.
+	 *
+	 * The gap itself is not a bug and is not mine to close: the design doc records the shipping CC
+	 * transition as "two solid cards trading places with WEIGHT and an EMPTY-STAGE gap", deliberately.
+	 * So the answer is to still be LEAVING while it happens instead of cutting to nothing.
+	 *
+	 * The ladder already had the shape: content goes, then the ground lifts, `veilOutDelay` holding the
+	 * veil until every card has left plus a beat. Search had both on one clock, ending together, which
+	 * is why it read as a cut rather than a dissolve.
+	 */
+	const PANEL_OUT_MS = 300;
+	/** The ground waits for the panel to be most of the way gone — the ladder's VEIL_HOLD, same idea. */
+	const VEIL_OUT_DELAY = 120;
+	/** Twice the panel's clock: the last thing to leave should be the slowest, so the stage is uncovered
+	 *  rather than revealed. It is still lifting while the outgoing card sweeps left underneath. */
+	const VEIL_OUT_MS = 520;
 
 	const open = $derived(modal.kind === 'search');
+	/** True from the moment a close begins until the transitions finish — see the pointer-events note. */
+	let leaving = $state(false);
+	$effect(() => {
+		if (open) leaving = false;
+	});
 
 	/**
 	 * THE PHOTO POPOUT, TAKEN FROM THE LADDER RATHER THAN REDERIVED (Sam: same hover effect, same
@@ -150,8 +176,9 @@
 		};
 	}
 
-	function veil(_node: Element, { duration }: { duration: number }) {
+	function veil(_node: Element, { duration, delay = 0 }: { duration: number; delay?: number }) {
 		return {
+			delay,
 			duration,
 			easing: linear,
 			// Alpha and blur on ONE `t` — an element's opacity does not scale the result of its own
@@ -199,6 +226,7 @@
 	}
 
 	function dismiss() {
+		leaving = true;
 		closeModal();
 	}
 
@@ -230,6 +258,7 @@
 		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // let the browser have it
 		e.preventDefault();
 		remember(search.text);
+		leaving = true;
 		closeModal();
 
 		const stage = document.querySelector('.page-container') ?? document.body;
@@ -288,8 +317,9 @@
 	<div
 		class="veil"
 		class:zone={ascension.active}
+		class:leaving
 		in:veil={{ duration: VEIL_IN_MS }}
-		out:veil={{ duration: VEIL_OUT_MS }}
+		out:veil={{ duration: VEIL_OUT_MS, delay: VEIL_OUT_DELAY }}
 		onclick={dismiss}
 		role="presentation"
 	></div>
@@ -298,7 +328,7 @@
 		<div
 			class="panel"
 			in:panel={{ duration: 300, delay: 40 }}
-			out:panel={{ duration: VEIL_OUT_MS }}
+			out:panel={{ duration: PANEL_OUT_MS }}
 		>
 			<div class="box">
 				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -438,7 +468,7 @@
 			onclick={dismiss}
 			aria-label="Close search"
 			in:panel={{ duration: 300, delay: 40 }}
-			out:panel={{ duration: VEIL_OUT_MS }}>&times;</button
+			out:panel={{ duration: PANEL_OUT_MS }}>&times;</button
 		>
 	</div>
 {/if}
@@ -450,6 +480,12 @@
 	   TODO once the third overlay lands: this and ConnectModal's veil want extracting into the shared
 	   shell `modal.svelte.ts` already describes. Left duplicated for now rather than refactoring a
 	   working ladder to make room for a first-pass search. */
+	/* ONCE A CLOSE HAS STARTED THE VEIL IS SCENERY. It outlives the modal by half a second now, and a
+	   full-screen element with a click handler sitting over a stage that is already flying would eat
+	   the next click and offer a second dismiss for something already dismissed. */
+	.veil.leaving {
+		pointer-events: none;
+	}
 	.veil {
 		position: fixed;
 		inset: 0;
