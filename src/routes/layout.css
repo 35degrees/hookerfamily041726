@@ -79,6 +79,14 @@
 	   it sits back the way the midnight does and lets the paper be the brightest thing on screen, which
 	   is the arrangement the whole zone depends on. */
 	--color-foundergreen: #355e3b;
+	/* THE ASCENSION'S MIDNIGHT — the middle stop of `.ascend-veil`'s gradient, promoted to a token for
+	   the same reason the green was: a second surface now reads it (a Major Influence's row in search),
+	   and two sources of truth for one colour means the words can stop matching the room they name.
+	   NOT `--ground`, which is the FIELD's colour behind the stage: it happens to hold the same value
+	   today and is explicitly flippable to deep pine, so borrowing it would tie the zone to a dial that
+	   is not about the zone. The gradient's two END stops stay literal in Ascension.svelte — they are
+	   this colour's hand-tuned lift and shadow, not values derivable from it. */
+	--color-ascendmidnight: #0f1626;
 	--color-founderblue: #00205b;
 	--color-foundergrey: #a2aaad;
 	/* The zone's ink on dark — the same cream the rail's years take once the ground goes to midnight. */

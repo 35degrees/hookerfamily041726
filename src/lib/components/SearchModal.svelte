@@ -347,13 +347,19 @@
 			<div class="results" bind:this={listEl}>
 				{#each search.rows as r, i (r.id)}
 					{@const reason = reasonFor(r, search.term, search.terms, search.phrase)}
+					<!-- A founder who is ALSO orbit takes the GREEN, because that is what the zone does: the
+					     founder skin overrides the plain ascension, and eight of the eleven founders are
+					     orbit. Deriving both here keeps search and the room agreeing on one precedence. -->
+					{@const isFounder = (r.f & CAT.FOUNDER) !== 0 && r.id !== 'H00001'}
+					{@const isOrbit = (r.f & CAT.INFLUENCE) !== 0 && !isFounder}
 					<a
 						class="person-box hit flex overflow-hidden rounded-lg"
 						class:on={i === cursor}
 						class:hooker-line={(r.f & CAT.HD) !== 0}
 						class:spouse-line={(r.f & CAT.SPOUSE) !== 0}
 						class:ee-line={(r.f & CAT.INLAW) !== 0}
-						class:founder-row={(r.f & CAT.FOUNDER) !== 0 && r.id !== 'H00001'}
+						class:founder-row={isFounder}
+						class:orbit-row={isOrbit}
 						href="/person/{r.slug}"
 						onclick={(e) => pick(e, r.slug, r.f)}
 						onmouseenter={() => (cursor = i)}
@@ -365,6 +371,7 @@
 									alt={r.n}
 									class="h-full w-full object-cover object-top"
 									loading="lazy"
+									onerror={(e) => ((e.currentTarget as HTMLImageElement).style.display = 'none')}
 									onmouseenter={trackZoom}
 									onmousemove={trackZoom}
 									onmouseleave={closeZoom}
@@ -612,8 +619,23 @@
 	   THE RING IS RESTATED WITH THE DROP SHADOW AFTER IT, which is layout.css's standing instruction:
 	   a ring and a shadow are different jobs sharing one property, so any rule that sets a ring must
 	   re-state the shadow or silently delete it. */
+	/* ── A MAJOR INFLUENCE ──────────────────────────────────────────────────────────────────────────
+	   Not "any old easter egg" (Sam) — an orbit figure is someone the tree reaches ONLY by
+	   cross-connection, with no family-id link into it at all, which is what `computeOrbit` derives and
+	   what the Major Influences chip already selects. Abraham Lincoln is the type. Their row takes the
+	   ascension's own midnight for the same reason a founder's takes the green: the room is legible
+	   before the click.
+
+	   The two share everything but the colour, so the stripe, the ink and the shadow are written once
+	   below and only `--card-bg` differs. */
+	.hit.orbit-row {
+		--card-bg: var(--color-ascendmidnight);
+	}
 	.hit.founder-row {
 		--card-bg: var(--color-foundergreen);
+	}
+	.hit.founder-row,
+	.hit.orbit-row {
 		/* THE STRIPE SITS 2px IN, so a margin of green runs outside it (Sam) and the white reads as a
 		   band ON the card rather than as its edge. Two inset shadows do it and ORDER IS THE MECHANISM:
 		   the white ring is drawn 4px deep, then the green is drawn 2px deep ON TOP of it, masking the
@@ -621,13 +643,14 @@
 		   these two hides the stripe completely. The drop shadow is restated last, as it must be in any
 		   rule that sets a ring. */
 		box-shadow:
-			inset 0 0 0 2px var(--color-foundergreen),
+			inset 0 0 0 2px var(--card-bg),
 			inset 0 0 0 4px rgba(255, 255, 255, 0.9),
 			var(--chip-shadow);
 	}
-	.hit.founder-row.on {
+	.hit.founder-row.on,
+	.hit.orbit-row.on {
 		box-shadow:
-			inset 0 0 0 2px var(--color-foundergreen),
+			inset 0 0 0 2px var(--card-bg),
 			inset 0 0 0 4px rgba(255, 255, 255, 0.9),
 			var(--chip-shadow-hover);
 	}
@@ -635,17 +658,29 @@
 	   colour system says never to make. The zone answers the same question with the same token — the
 	   cream the rail's years take once the ground goes dark. */
 	.hit.founder-row .nm,
-	.hit.founder-row .star.has {
+	.hit.founder-row .star.has,
+	.hit.orbit-row .nm,
+	.hit.orbit-row .star.has {
 		color: var(--color-creamprimary);
 	}
 	.hit.founder-row .yr,
-	.hit.founder-row .line2 {
+	.hit.founder-row .line2,
+	.hit.orbit-row .yr,
+	.hit.orbit-row .line2 {
 		color: rgba(245, 238, 229, 0.78);
 	}
-	.hit.founder-row .tag {
+	.hit.founder-row .tag,
+	.hit.orbit-row .tag {
 		color: rgba(245, 238, 229, 0.55);
 	}
-	/* THE EMPTY WELL STAYS THE HOUSE GREY. I had deepened it to the green's outer stop on the theory
+	/* A FAILED PORTRAIT FALLS BACK TO THE EMPTY WELL. 161 of the 3,083 photo URLs are hotlinked to
+	   other sites rather than served from our own Cloudinary, and when one of those 404s or is blocked
+	   the <img> renders its ALT TEXT — a person's name in browser-default type, spilling across a dark
+	   card. That is the known hotlink debt and the real fix is upstream in Stream A; hiding the broken
+	   element is only so the list degrades to the same stone well a photoless row already shows.
+	   Search is where this bites first: a card shows one portrait, a result list shows sixty.
+
+	   THE EMPTY WELL STAYS THE HOUSE GREY. I had deepened it to the green's outer stop on the theory
 	   that a pale panel would read as a hole punched in a dark card; Sam's call is that the well is one
 	   thing across the whole app and it does not change costume per row. `bg-stone-100` off PersonBox
 	   is what every other photoless box in the project shows, so nothing is overridden here at all —

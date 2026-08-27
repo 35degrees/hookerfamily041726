@@ -488,8 +488,15 @@
 		inset: 0;
 		z-index: 0;
 		pointer-events: none;
-		background:
-			radial-gradient(120% 90% at 50% 42%, #1b2740 0%, #0f1626 55%, #080d17 100%);
+		/* MIDDLE STOP IS THE TOKEN, exactly as the founder gradient below already does — search's Major
+		   Influence rows read the same `--color-ascendmidnight`, so the list and the room cannot drift
+		   apart. The two END stops stay literal: they are this colour's hand-tuned lift and shadow. */
+		background: radial-gradient(
+			120% 90% at 50% 42%,
+			#1b2740 0%,
+			var(--color-ascendmidnight) 55%,
+			#080d17 100%
+		);
 	}
 	/* HUNTER GREEN — one colour under one light: lifted for the centre, itself, deepened at the edge.
 	   THE MIDDLE STOP IS THE TOKEN, and that is the stop that matters: `#355e3b` used to be written here
