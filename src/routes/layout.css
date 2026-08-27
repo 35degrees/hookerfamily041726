@@ -87,11 +87,12 @@
 	   is not about the zone. The gradient's two END stops stay literal in Ascension.svelte — they are
 	   this colour's hand-tuned lift and shadow, not values derivable from it. */
 	--color-ascendmidnight: #0f1626;
-	/* THE DESCENT GOLD — the ink of "Sixth Generation Descendant of Thomas Hooker" on a bloodline card,
-	   promoted to a token for the same reason as the two above: a second surface reads it now (a Hooker
-	   descendant's stripe in the search list), and one colour written in two places is one colour that
-	   can drift. It means specifically "this person IS the line" — an in-law's descent line keeps the
-	   ordinary ink — so the stripe it draws carries exactly that claim and no other. */
+	/* THE DESCENT GOLD — the ink of "Sixth Generation Descendant of Thomas Hooker" on a bloodline card.
+	   It means specifically "this person IS the line"; an in-law's descent line keeps the ordinary ink.
+	   ONE CONSUMER, and deliberately. The search list's bloodline stripe started here and was moved off
+	   it: this value is INK ON PAPER at ~14px, and the same hex drawn as a 1.5px rule on banana-cream
+	   read as a dark olive scratch rather than as gold. §29 — a value is a property of the PAIR, not of
+	   the colour — so the stripe gets its own, tuned for its own pair. */
 	--color-descentgold: #827400;
 	--color-founderblue: #00205b;
 	--color-foundergrey: #a2aaad;

@@ -634,22 +634,31 @@
 	.hit.founder-row {
 		--card-bg: var(--color-foundergreen);
 	}
-	/* A BLOODLINE ROW GETS THE SAME BAND IN THE DESCENT GOLD — the ink the card's own
-	   "Sixth Generation Descendant of Thomas Hooker" is set in, read from the token so the list and the
-	   card cannot drift. Only the stripe changes: the ground stays the banana-cream `--hd-bg` and the
-	   ink stays inkblue, because this row is LIGHT and §41.3's cream is for dark grounds only.
-	   Declared BEFORE the dark rows so that source order settles any row carrying both classes in
-	   favour of the zone colour — the room outranks the line. */
+	/* A BLOODLINE ROW GETS THE SAME BAND IN GOLD LEAF.
+	   It began as `--color-descentgold` (#827400), the ink of the card's own "Sixth Generation
+	   Descendant of Thomas Hooker". Same claim, wrong value — Sam: "ouch". That hex is INK ON PAPER at
+	   ~14px, where its darkness is legibility; drawn as a 1.5px rule on banana-cream the darkness is all
+	   you see and it reads as an olive scratch. §29 is exactly this: a value is a property of the PAIR,
+	   so a colour that works as text does not transfer to a hairline on the same ground.
+	   Gold leaf rather than olive — lighter, yellow-forward — and at 70% so it sits ON the paper like
+	   leaf rather than ruling a line across it.
+	   NOT tied to ShuffleNotables' #e8c66d either, for the same §29 reason in the other direction: that
+	   gold was measured against dark glass, this one against cream, and binding them would mean tuning
+	   one breaks the other.
+	   Only the stripe changes here. The ground stays --hd-bg and the ink stays inkblue, because this row
+	   is LIGHT and §41.3's cream is for dark grounds only.
+	   Declared BEFORE the dark rows so source order settles a row carrying both — the room outranks the
+	   line. */
 	.hit.hooker-line {
 		box-shadow:
 			inset 0 0 0 2px var(--card-bg),
-			inset 0 0 0 3.5px var(--color-descentgold),
+			inset 0 0 0 3.5px rgba(212, 175, 55, 0.7),
 			var(--chip-shadow);
 	}
 	.hit.hooker-line.on {
 		box-shadow:
 			inset 0 0 0 2px var(--card-bg),
-			inset 0 0 0 3.5px var(--color-descentgold),
+			inset 0 0 0 3.5px rgba(212, 175, 55, 0.7),
 			var(--chip-shadow-hover);
 	}
 	.hit.founder-row,
