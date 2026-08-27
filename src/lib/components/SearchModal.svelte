@@ -353,7 +353,6 @@
 						class:hooker-line={(r.f & CAT.HD) !== 0}
 						class:spouse-line={(r.f & CAT.SPOUSE) !== 0}
 						class:ee-line={(r.f & CAT.INLAW) !== 0}
-						class:orbit-chip={(r.f & CAT.INFLUENCE) !== 0}
 						href="/person/{r.slug}"
 						onclick={(e) => pick(e, r.slug, r.f)}
 						onmouseenter={() => (cursor = i)}
@@ -564,9 +563,38 @@
 	 * Only the size is stated here. Everything else is the house.
 	 */
 	.hit {
-		min-height: 54px;
+		height: 54px;
+		/* `flex: none` IS LOAD-BEARING, not tidiness. `.results` is a column flex container that
+		   overflows, and a flex item's default `flex-shrink: 1` applies to a definite height just as it
+		   does to a basis — so swapping min-height for height handed the browser permission to compress
+		   every row, and it did: 54px became 33px at three viewports and 39px at a fourth. `min-height`
+		   had been quietly preventing that all along. */
+		flex: none;
 		text-decoration: none;
 		cursor: pointer;
+	}
+	/**
+	 * THE PHOTO IS SIZED, NOT INFERRED — and leaving it inferred is what made John Talcott's row grow.
+	 *
+	 * PersonBox writes an explicit width onto this box (`{photoW}`) and I dropped it when porting the
+	 * pattern, leaving `aspect-square shrink-0` to work the size out from the stretched row height.
+	 * That is circular: the row's height depends on its content, the photo is content, and with
+	 * `shrink-0` the box can never be squeezed back down. Whichever way a given browser breaks the
+	 * cycle, the input is the image's INTRINSIC size — and Talcott's source is 720x962, three times
+	 * every other founder's — so his was the row that escaped.
+	 *
+	 * It did not reproduce here at 1440x900, at 2x, at 92vw or at 560px, which is exactly why the fix
+	 * is to remove the circularity rather than to tune a number until the screenshot looks right: a
+	 * definite width and a definite row height cannot resolve differently under any of them.
+	 */
+	.hit .photo {
+		width: 54px;
+	}
+	/* And the text cannot grow the row either: one line each, clipped. A long name used to be the other
+	   way in. */
+	.hit .line1 {
+		white-space: nowrap;
+		overflow: hidden;
 	}
 	/* THE HIGHLIGHT IS A SHADOW, NOT A FILL — the house's answer to a pointer (`a.person-box:hover`),
 	   and it has to be, because the fill is already carrying line status. Painting a highlight colour
