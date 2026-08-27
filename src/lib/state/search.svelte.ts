@@ -56,7 +56,7 @@ export type SearchRow = {
 };
 
 /** Prepared once at load: segment 0 split out so ranking never re-parses or re-folds. */
-export type Prepared = SearchRow & { nm: string; wd: string[]; nd: string };
+export type Prepared = SearchRow & { nm: string; wd: string[]; nd: string; tg: string[] };
 
 export const CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8, FOUNDER: 16 } as const;
 
@@ -93,6 +93,12 @@ export const RESULT_CAP = 60;
 const DEBOUNCE_MS = 110;
 
 const INDEX_URL = '/data/search-index.json';
+/** Shared so the ~14,000 tagless rows all point at one array rather than 14,000 empty ones. */
+const EMPTY_TAGS: string[] = [];
+/** How many tags the discovery row offers per visit. */
+export const TAG_SAMPLE = 9;
+/** At most two at a time (Sam) — a third is a filter, not a suggestion. */
+export const TAG_MAX = 2;
 const RECENT_MAX = 8;
 
 /**
@@ -103,7 +109,8 @@ const RECENT_MAX = 8;
  */
 let index: Prepared[] = [];
 let ready = $state(false);
-let loadStarted = false;
+/** Memoised so every caller awaits the SAME work rather than skipping it — see load(). */
+let loadPromise: Promise<void> | null = null;
 
 /** What the input shows — updates on every keystroke. */
 let text = $state('');
@@ -113,14 +120,28 @@ let cats = $state(0);
 let yearFrom = $state<number | null>(null);
 let yearTo = $state<number | null>(null);
 let recent = $state<string[]>([]);
+/** The tags currently switched on. OR'd, like the category chips — see `result`. */
+let tags = $state<string[]>([]);
+/** The handful offered this visit. Re-rolled by `rollTags()` when the modal opens. */
+let tagPool = $state<string[]>([]);
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-/** Fetch + prepare, once per session. Idempotent; safe to call on every modal open. */
-export async function load(): Promise<void> {
-	if (loadStarted) return;
-	loadStarted = true;
-	try {
+/**
+ * Fetch + prepare, once per session.
+ *
+ * THE PROMISE IS MEMOISED, NOT A BOOLEAN, and that distinction was a live bug. Guarding on a boolean
+ * handed a SECOND caller a promise that resolved immediately while the fetch was still in flight, so
+ * anything awaiting it ran against an empty index. It surfaced as the tag row being blank on the
+ * FIRST visit and full on the second: the trigger warms the index on hover, so by the time the modal
+ * opened the load had already begun, and `.then(rollTags)` fired against a vocabulary that did not
+ * exist yet.
+ *
+ * "Idempotent" has to mean every caller awaits the same work, not that later callers skip it.
+ */
+export function load(): Promise<void> {
+	if (loadPromise) return loadPromise;
+	loadPromise = (async () => {
 		const res = await fetch(INDEX_URL);
 		if (!res.ok) throw new Error(`search index ${res.status}`);
 		const raw: SearchRow[] = await res.json();
@@ -138,15 +159,22 @@ export async function load(): Promise<void> {
 				// THE DISPLAY NAME ALONE — the first comma part of the `n:` segment, since `factSegments`
 				// pushes display_name before every other name form. Tiers 0 and 2 test THIS and not the
 				// other parts; see tier() for the surname that made the difference.
-				nd: nm.split(', ')[0] ?? nm
+				nd: nm.split(', ')[0] ?? nm,
+				// The row's own tags, parsed once. Only 5,369 of 19,728 rows carry any, so most of these
+				// are the same empty array and cost nothing.
+				tg: (() => {
+					const seg = r.x.split('|').find((x) => x.startsWith('tag:'));
+					return seg ? seg.slice(4).split(', ').filter(Boolean) : EMPTY_TAGS;
+				})()
 			}) as Prepared;
 		});
 		ready = true;
-	} catch (err) {
-		// Let it retry on the next open rather than latching a permanent failure.
-		loadStarted = false;
-		throw err;
-	}
+	})();
+	// Let it retry on the next open rather than latching a permanent failure.
+	loadPromise.catch(() => {
+		loadPromise = null;
+	});
+	return loadPromise;
 }
 
 /**
@@ -209,6 +237,19 @@ const yearBounds = $derived.by((): [number, number] | null => {
 	return min === Infinity ? null : [min, max];
 });
 
+/**
+ * EVERY TAG IN THE CORPUS, sorted, derived from the loaded index. 642 of them, and the point of the
+ * feature is that almost none are things anyone would think to type: `extraordinary longevity`,
+ * `seven pillars`, `compiler ancestor`. The search box can only answer questions you already have;
+ * this is the surface that hands you one.
+ */
+const vocab = $derived.by(() => {
+	if (!ready) return [] as string[];
+	const set = new Set<string>();
+	for (const r of index) for (const t of r.tg) set.add(t);
+	return [...set].sort();
+});
+
 const counts = $derived.by(() => {
 	const out: Record<number, number> = {};
 	for (const c of CATEGORIES) out[c.mask] = 0;
@@ -257,11 +298,15 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 	// Empty box with a category selected BROWSES that category (Sam, 082726) — it makes the small
 	// categories genuinely explorable: 12 Hartford Founders, 96 Major Influences. Empty box with no
 	// category stays empty, because 60 arbitrary rows out of 19,728 mean nothing.
-	if (!terms.length && !cats) return { rows: [], total: 0 };
+	if (!terms.length && !cats && !tags.length) return { rows: [], total: 0 };
 
 	const hits: Prepared[] = [];
 	for (const r of index) {
 		if (cats && !(r.f & cats)) continue;
+		// OR, exactly like the category chips above it — two tags widen rather than narrow. Selecting
+		// `minister` and `longevity` and being handed nothing is the opposite of a discovery surface,
+		// and AND is available anyway by typing a word into the box.
+		if (tags.length && !tags.some((t) => r.tg.includes(t))) continue;
 		/**
 		 * THE RANGE FILTERS ON `by ?? eb` — the real birth year where there is one, the era ESTIMATE
 		 * where there is not (Sam: "no birth year people can be 'estimated' based on lifespan of
@@ -494,9 +539,35 @@ export function setText(v: string): void {
 	if (v === '') {
 		applied = '';
 		cats = 0;
+		// TAGS SURVIVE the X. They are not a refinement of the query — they are a way IN to one, and
+		// clearing the words you typed is not a reason to throw away the thing you clicked to get here.
 		return;
 	}
 	debounceTimer = setTimeout(() => (applied = v), DEBOUNCE_MS);
+}
+
+/**
+ * A NEW HANDFUL, drawn uniformly from the whole vocabulary. Called when the modal opens, so every
+ * visit offers something different — that is the whole mechanic, and it is why the pool is state
+ * rather than derived: a derived would re-roll on any dependency and the row would churn while you
+ * type. Selected tags are kept in the pool so a chosen one cannot vanish from under the pointer.
+ */
+export function rollTags(): void {
+	const all = vocab;
+	if (!all.length) return;
+	const keep = tags.filter((t) => all.includes(t));
+	const pool = new Set(keep);
+	let guard = 0;
+	while (pool.size < Math.min(TAG_SAMPLE, all.length) && guard++ < 400) {
+		pool.add(all[Math.floor(Math.random() * all.length)]);
+	}
+	tagPool = [...pool];
+}
+
+/** On, off, and never more than TAG_MAX — the oldest drops out to make room. */
+export function toggleTag(tag: string): void {
+	if (tags.includes(tag)) tags = tags.filter((t) => t !== tag);
+	else tags = [...tags, tag].slice(-TAG_MAX);
 }
 
 export function toggleCategory(mask: number): void {
@@ -519,6 +590,7 @@ export function clear(): void {
 	text = '';
 	applied = '';
 	cats = 0;
+	tags = [];
 	yearFrom = null;
 	yearTo = null;
 }
@@ -562,6 +634,18 @@ export const search = {
 	get cats() {
 		return cats;
 	},
+	/** The handful of tags offered this visit. */
+	get tagPool() {
+		return tagPool;
+	},
+	/** Which of them are switched on. */
+	get tags() {
+		return tags;
+	},
+	/** Every tag in the corpus — 642 of them. */
+	get vocab() {
+		return vocab;
+	},
 	get yearFrom() {
 		return yearFrom;
 	},
@@ -584,6 +668,6 @@ export const search = {
 	},
 	/** Nothing typed and no chip picked — the modal's resting state. */
 	get idle() {
-		return applied === '' && cats === 0;
+		return applied === '' && cats === 0 && tags.length === 0;
 	}
 };

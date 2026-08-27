@@ -24,6 +24,8 @@
 		load,
 		setText,
 		toggleCategory,
+		toggleTag,
+		rollTags,
 		selectAll,
 		clear,
 		remember,
@@ -175,7 +177,12 @@
 
 	$effect(() => {
 		if (!open) return;
-		void load().catch(() => {});
+		// A NEW HANDFUL PER VISIT — the mechanic only works if opening the search twice offers two
+		// different sets. `load()` resolves immediately once the index is warm, so the roll happens on
+		// the same frame on every open after the first.
+		void load()
+			.then(() => rollTags())
+			.catch(() => {});
 		void tick().then(() => input?.focus());
 	});
 
@@ -411,6 +418,29 @@
 			</div>
 
 			<SearchYears />
+
+			<!--
+				THE TAG ROW — the way in for someone who does not have a question yet.
+				Sam: 500-odd tags that are "fun and delightful or insightful that users would never know to
+				search for". A search box can only answer a question you already have; this hands you one.
+				Nine at random per visit, click to switch on, at most two.
+				It stays visible while typing, because a tag is a way IN to a query rather than a
+				refinement of one — and it sits between the years and the results so the three filters
+				read top to bottom in the order they narrow.
+			-->
+			{#if search.tagPool.length}
+				<div class="tagrow">
+					{#each search.tagPool as t (t)}
+						<button
+							class="tagpill"
+							class:on={search.tags.includes(t)}
+							onclick={() => toggleTag(t)}
+							title={search.tags.includes(t) ? 'Remove this tag' : 'Show everyone tagged this'}
+							>#{t}</button
+						>
+					{/each}
+				</div>
+			{/if}
 
 			{#if !search.idle}
 				<!-- NO SILENT CAPS (§44). The count is the TRUE total and the line says plainly that only
@@ -796,6 +826,51 @@
 
 	/* Centred, a tenth smaller, a fifth quieter (Sam). It is a status line under a control, not a
 	   heading over a list — 12 -> 10.8px and 0.62 -> 0.5 alpha. */
+	/**
+	 * SMALLER THAN THE CATEGORY CHIPS (Sam) and wrapped to two or three centred rows. They are
+	 * suggestions rather than controls, so they sit below the chips in weight as well as in position:
+	 * 10.5 -> 9px, and no ground at all until one is chosen.
+	 *
+	 * NO STRIPE ON THE SELECTED STATE (Sam: "just in a standard styleing no stripe"). The stripe means
+	 * a LINE — blood, marriage, in-law, the founder's room — and it is load-bearing everywhere else in
+	 * this modal. A tag is not a line, and borrowing the mark would say it was.
+	 */
+	.tagrow {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 4px;
+		padding: 0 8px;
+		max-width: 100%;
+	}
+	/* `.tagpill`, NOT `.tag` — `.tag` is already the match-reason field label in this same component
+	   (the small uppercase BORN / SERVED / SCHOOL before a reason), so the first version silently
+	   inherited its `text-transform: uppercase` and 0.07em tracking and came out shouting. A collision
+	   inside one component's scoped styles, which is the kind scoping does not protect you from. */
+	.tagpill {
+		border: 1px solid rgba(48, 42, 34, 0.14);
+		background: rgba(255, 253, 247, 0.5);
+		color: rgba(48, 42, 34, 0.6);
+		font: 400 9px/1 var(--font-inter, sans-serif);
+		letter-spacing: 0.02em;
+		padding: 4px 7px;
+		border-radius: 999px;
+		cursor: pointer;
+		white-space: nowrap;
+		transition:
+			background-color 140ms ease-out,
+			border-color 140ms ease-out,
+			color 140ms ease-out;
+	}
+	.tagpill:hover {
+		border-color: rgba(48, 42, 34, 0.3);
+		color: rgba(48, 42, 34, 0.9);
+	}
+	.tagpill.on {
+		background: #2f3a52;
+		border-color: #2f3a52;
+		color: #f4efe4;
+	}
 	.count {
 		margin: 0 2px;
 		text-align: center;
