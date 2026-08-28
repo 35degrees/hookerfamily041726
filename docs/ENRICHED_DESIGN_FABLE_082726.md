@@ -37,6 +37,8 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The same 082626 edition extends §44 with the spouse ladder and the motion arc (§44.11–§44.14, August 26 later).** A married-in person borrows their partner's chain; the partner is the last rung and the focus is paired beside them, on a mint deepened from `--spouse-bg` because §29.1's rule is that a value is a property of the PAIR and this card sits beside cream rather than on parchment. §44.12 records why the rung's number had to become its DEPTH rather than the person's stored generation — Sarah Knutti's second path showed two number 8s, and the data was right: her ancestor is 8 generations from Thomas through his father and 9 through his mother, so a per-person number cannot label a per-path position. **§44.13 is the one to read**: every remaining complaint about the path switch reduced to §30 and none of them looked like it, because a fit, a coordinate space and a container height were each STEPPING while `animate:flip` was EASING. It records the wrong turn too — easing the changing fit made it worse, and **easing a moving layout is not a fix for a moving layout.** §44.14 is the hygiene: four mechanisms removed rather than left inert, and the assertion that refused to flip 53 of 86 canonical records because its window had spilled into the next person's.
 
+**The same 082726 edition extends §44 with §44.15–§44.17 — the paired row's type, the smoosh, and a schedule that was charging for beats that never happened.** §44.15 is the rule that arrived by being got wrong twice: the ladder has ONE type ceiling and every card is measured against it, never against a neighbour. §44.16 is the flex finding — `.ladder-rows` holds both paths for one frame, that is the frame Svelte measures an outgoing box in, and an explicit `height` on a flex item is a request rather than a floor until `flex: none` says otherwise; the staircase of wrong heights was the tell, and "only the cards with no photo" was Sam's diagnosis before it was mine. §44.17 is the two speed complaints that were both answered by deleting waits rather than by shortening anything — a stagger counting list positions instead of leavers, and a `FLIP_MS` charged for a gap that equal-length paths never open.
+
 **The 082726 edition (August 27) adds §45 — SEARCH, THE THIRD SURFACE (as built). The second of the three modals, inheriting §44's shell and adding the two things the ladder never needed: a corpus and an opinion about it.** §45.2 is the architecture — one flat 19,728-row array, scanned, with every fact folded into a field-tagged blob; §45.3 the single-definition fold rule; §45.4–§45.6 the ranking (six tiers, cohesion, and tiebreaks that encode who this app thinks matters), including the 2,238 ms → 11.7 ms lesson that a comparator is not a place to compute anything. §45.7 is the rebuke that a result row must literally BE a `.person-box`. §45.8 extends §29 with AREA as a third term — the same colour at the same alpha is a different colour at 1.5 px — and §45.9 names `--color-ascendmidnight` a FIELD colour rather than an INK colour, after it read grey on three separate surfaces. §45.10–§45.11 are the per-ground veil and the exit that dissolves content-first. §45.12 is the year range and the three widgets rejected before it, which is really the rule that three failed treatments means the OBJECT is wrong. §45.13–§45.14 are the assorted tags and the discovery that 485 of 642 in-use tags are not canonical.
 
 **A family of three, completed in this edition:** `box-shadow` is one property, `transition` is one property, and a filled animation outranks ordinary declarations. All three are the same shape — a mechanism silently outranking the declaration being edited — and all three present as "my change did nothing". When a CSS edit appears inert, look for what else already claims that property.
@@ -5530,6 +5532,129 @@ round-trip after verifying that `json.dumps(indent=2, ensure_ascii=False)` repro
 byte-identically, which is what made it possible to prove only the 86 intended records changed.
 
 ---
+
+### 44.15 THE SPOUSE CARD IS MEASURED AGAINST THE LADDER, NOT AGAINST ITS NEIGHBOUR
+
+The paired row carries two cards at once, and twice now the wrong instinct has been to size one of them
+from the other.
+
+**First it was too big.** "John Rockefeller" is short and has no blurb under it, so it never shrank and
+sat at the full ceiling beside a partner whose long name had shrunk — two type scales on one row, and
+Sam: *"it needs to be max the same size as the rest otherwise it stands out."* The fix taken was to
+measure the partner's settled size out of the DOM and use it as the spouse's ceiling.
+
+**Then it was too small,** for a reason that should have been foreseen: the partner is the ONE card on
+the ladder guaranteed to be shrunk, because it is cut to 76% to make room for the spouse beside it. So
+pinning the spouse to it made the spouse the smallest text in the modal, and the pair read as two type
+scales in the other direction. Sam: *"why is the John Rockefeller and his years so small? he doesn't
+have to match his spouse. the idea is that he just matches all of the other font sizes that aren't his
+spouse … you are making it very complicated and coming up with scenarios in your head that I never
+requested."*
+
+> **THE LADDER HAS ONE TYPE CEILING AND EVERY CARD IS MEASURED AGAINST THAT, NEVER AGAINST A NEIGHBOUR.**
+> A card that has to shrink shrinks on its own account. Deriving one card's size from another's makes the
+> derived card hostage to whatever squeezed the other one.
+
+It is a CLAMP, not a fixed size — `max: tt(14.3)` (the same expression every rung uses, so it scales with
+the stage) and `min: tt(8.2)` (a lower floor than a rung's, because this card is 220px with a square
+photo in it). Measured across five spouse ladders, four sit exactly at their own ladder's ceiling and one
+shrank 4% on its own account. The whole measuring apparatus behind the old cap — the action, the
+`$effect`, the read-back — was removed rather than left inert.
+
+**THE YEARS GET THEIR OWN CEILING, and the reason is a layout difference rather than a colour one.**
+Everywhere else on the ladder the name and the years share ONE line, so a long name drags the years down
+with it. On this card they are stacked, so the years do not participate in the fit — a short spouse name
+sitting at the ceiling puts its years at full size next to rungs whose long names have shrunk theirs.
+`--sp-y-max` is the ladder's own ceiling in px, so the cap scales with the stage instead of being a
+literal that goes wrong the first time a ladder gets tall.
+
+**AND THE SUFFIX IS SHOWN HERE AND NOWHERE ELSE.** `sn` is the CHIP name and chips are 220px, so a
+generational suffix is dropped from it by design — but this card is the one place a married-in person is
+named ALONE, beside a partner who carries the same surname, and "John Rockefeller" next to "Blanchette
+Ferry Hooker Rockefeller" loses the one token that says WHICH John Rockefeller. It comes from `sf` on the
+compact, built by the SAME `generationalSuffix()` the slug uses, so a card and a URL can never disagree
+about whether someone is a III. Opt-in like `pp` and `df`.
+
+The honest cost, recorded because it is the kind of thing that gets re-litigated: the suffix does not fit
+at the ceiling, so `John Rockefeller III` settles at 13.8 against the rungs' 14.3. The card cannot widen
+without breaking the paired row's geometry. It is shrink-a-hair or no suffix, and Sam has the suffix.
+
+### 44.16 A RUNG MAY NOT SHRINK — THE SMOOSH, AND WHY IT LOOKED LIKE A BUG ABOUT PHOTOS
+
+Sam, on the path switch: *"the cards that are about to exit the list, the first thing they do is reduce
+all vertical whitespace so they smoosh themselves into much smaller heights against the cards above them.
+then they exit out the screen."* And then the observation that actually cracked it: *"it seems to
+specifically impact the cards with NO PHOTO."*
+
+**It was not a timing fault. It was frame 0.** A per-frame probe caught the leavers already
+`position: fixed` with `transform: none` — nothing was animating them — while their measured heights read
+39.2, 44.4, 48.5, 53.2, 58.8 against a true 65.4. Reading the computed style showed each of them carrying
+an INLINE `height` at exactly those values.
+
+The chain:
+
+| step | what happens |
+|---|---|
+| 1 | `.ladder-rows` is a flex COLUMN with a reserved height, and `.rung` had the default `flex: 0 1 auto` — **shrinkable** |
+| 2 | for one frame a switch holds BOTH paths: arrivals are in flow the moment they mount, leavers have not been pulled out yet |
+| 3 | the column is over-full, so the flex algorithm squashes every item to fit |
+| 4 | **that is the frame Svelte measures in.** A keyed `each` with `animate:` freezes an outgoing element's box by reading its computed size and writing it back inline |
+| 5 | each leaver departs at the squashed height it happened to be caught at |
+
+**The gradient was the tell.** 39.2 → 44.4 → 48.5 → 53.2 → 58.8 climbs toward the real 65.4 because each
+leaver Svelte pulls out of the flow makes the column a little less over-full, so the next one measures a
+little taller. A single wrong number would have suggested one bad calculation; a *staircase* said the
+measurement was being taken repeatedly during a changing layout.
+
+**Why only cards with no photo.** `min-height: auto` floors a flex item at its min-content height, and an
+`<img>` supplies one. Text alone collapses to almost nothing. The photo cards were being squashed too —
+they just had a floor to land on. Sam's observation was the diagnosis; it is worth saying that the user
+report named the discriminating variable before the instrumentation did.
+
+**The fix is one line: `flex: none` on `.rung`.** Second net, because the seat map already existed:
+`snapshotSeats()` now records `height` and `depart` pins it, since the seat is the one measurement taken
+before anything moved at all.
+
+> **An explicit `height` on a flex item is a REQUEST, not a floor, until `flex: none` says otherwise.**
+> This is the same finding as the search result row (§45.7), in a second component, two days apart. When
+> a box is measured by someone else's code during a transition, the layout must be incapable of moving —
+> not merely expected not to.
+
+### 44.17 THE SCHEDULE WAS PAYING FOR BEATS THAT NEVER HAPPENED
+
+Two "make it faster" requests, and neither was answered by making anything faster. Both were dead air
+that the schedule had been charging for.
+
+**One: the stagger counted list positions instead of leavers.** The exit delay was
+`(rows.length - 1 - index) * OUT_STAGGER` — a card's slot in the WHOLE ladder — so a rung leaving from
+the middle waited out one beat for every SURVIVOR beneath it, and survivors are not going anywhere. On
+Sarah Knutti's 1→2 the five leavers sit at indices 2–6 with three survivors below them: **255ms in which
+nothing moved at all**, on a gesture that had already been asked for. And it got worse the higher up the
+change was. Ranking bottom-first among the leavers alone keeps the cascade exactly as it reads — one
+after another, 85ms apart, from the bottom — and starts it on the click.
+
+**Two: beat 2 does not always exist.** `animate:flip` only has work when a survivor changes SEAT. Between
+two paths of the SAME LENGTH nobody does — Anne Austen Hooker's paths are both 12 rungs — so there is no
+gap to close, and the schedule was charging a full `FLIP_MS` for it anyway: **460ms of empty ladder while
+nothing was moving.** The wait is now charged only when it is owed.
+
+**Then the floor itself.** With both of those gone, both ladders were sitting on the `lastOut` floor, so
+a further "beat faster" had nowhere to come from except the floor. `IN_OVERLAP` lets the arrivals cross
+one beat INTO the tail of the exit, and it is safe for a reason rather than by luck: the two sets travel
+in opposite directions from opposite edges, so what overlaps is the last leaver's final 85ms against an
+arrival that is still essentially off screen (`ROW_MS` is 519 — a card has barely entered at 85ms). §44.9
+already recorded the crossing as the intent.
+
+| | first leaver moves | first arrival on screen |
+|---|---|---|
+| Sarah Knutti (10→11) | 255ms → **on the click** | 1282 → 1135 → **1012ms** |
+| Anne Hooker (12→12) | 85ms → **on the click** | 1365 → 1157 → **1081ms** |
+
+**WHAT WAS NOT TOUCHED, deliberately:** `OUT_STAGGER` stays at 85. §44.9 records it as the dial that
+answered "like hummingbird wings", and *"on a switch the stagger is the point — the reader is being shown
+who left."* Every millisecond above came from removing a wait, not from compressing the gesture. When a
+motion feels slow, look first for a beat being charged for something that is not happening; the dial that
+sets the RHYTHM is the last thing to touch, not the first.
 
 ## 45. SEARCH — THE THIRD SURFACE (AS BUILT, August 27)
 

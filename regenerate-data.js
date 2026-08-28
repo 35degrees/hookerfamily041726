@@ -382,6 +382,15 @@ function compact(p, slugMap) {
 		// KEY resolved through an allow-list in the components, never a class or raw CSS.
 		...(bioOf(p).display_font ? { df: bioOf(p).display_font } : {}),
 		sn: computeShortName(p),
+		// sf (generational suffix) — "Jr."/"Sr."/"III", from the SAME `generationalSuffix()` the slug
+		// uses, so a card and a URL can never disagree about whether someone is a III. Opt-in like pp
+		// and df: absent on all but ~500 records, so nobody else's payload grows. It is deliberately
+		// NOT folded into `sn` — sn is the CHIP name and chips are 220px wide, where a suffix costs
+		// room that the surname needs. Only the surface that has asked for it reads this.
+		...((() => {
+			const suf = generationalSuffix(p);
+			return suf ? { sf: suf } : {};
+		})()),
 		// fn (first name) — sibling chips render just the first name ("from the POV of the card, he knows them
 		// as Abigail"). A DATA field, not a UI split of sn/n (which breaks on titles/maiden names/suffixes).
 		// On ALL compacts (~10 bytes); only sibling chips read it, everyone else keeps sn.

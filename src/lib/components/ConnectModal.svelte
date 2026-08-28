@@ -33,7 +33,6 @@
   Building downward from Thomas would be the same rows in the same places telling the opposite story.
 -->
 <script lang="ts">
-	import { tick } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { linear, cubicOut } from 'svelte/easing';
 	import { flip } from 'svelte/animate';
@@ -71,7 +70,7 @@
 	 * is exactly what Sam saw. The seat has to be remembered by us, before the list changes, and pinned
 	 * back on in `depart`.
 	 */
-	const seatY = new Map<string, { top: number; left: number; width: number }>();
+	const seatY = new Map<string, { top: number; left: number; width: number; height: number }>();
 	function snapshotSeats() {
 		const box = document.querySelector('.ladder-rows');
 		if (!box) return;
@@ -81,9 +80,14 @@
 			const id = el.dataset.rid;
 			if (!id) continue;
 			const r = el.getBoundingClientRect();
-			seatY.set(id, { top: r.top, left: r.left, width: r.width });
+			seatY.set(id, { top: r.top, left: r.left, width: r.width, height: r.height });
 		}
 	}
+
+	/** Bottom-first rank AMONG THE LEAVERS of the switch being scheduled — 0 is the lowest card that is
+	 *  actually going. Filled by `choosePath`, read by `depart`. Empty on a CLOSE, where every card
+	 *  leaves and the rank is its list position anyway. */
+	const outRank = new Map<string, number>();
 
 	let switching = $state(false);
 	/**
@@ -151,15 +155,51 @@
 		// Who is actually leaving, and where they sit — the schedule is derived from that, not assumed.
 		const oldIds = rows.map((r) => r.id);
 		const nextIds = [...((paths[i] ?? []) as Rung[]).map((r) => r.id), focus?.id ?? ''];
-		const n = oldIds.length;
-		const outDelays = oldIds
-			.map((id, ix) => (nextIds.includes(id) ? -1 : (n - 1 - ix) * OUT_STAGGER))
-			.filter((d) => d >= 0);
-		const lastOut = outDelays.length ? Math.max(...outDelays) + OUT_MS : 0;
+		/**
+		 * THE STAGGER COUNTS LEAVERS, NOT LIST POSITIONS (Sam: "there's just a little bit too much of a
+		 * delay before the exit of the leaving cards").
+		 *
+		 * It used to be `(rows.length - 1 - index) * OUT_STAGGER` — the card's slot in the WHOLE ladder.
+		 * So a rung that leaves from the middle waited out a slot for every survivor beneath it, and
+		 * those survivors are not going anywhere. On Sarah Knutti's 1→2 the five leavers sit at indices
+		 * 2–6 with three survivors below them, so nothing moved for the first 255ms of a switch that had
+		 * already been asked for — dead air, and dead air that got WORSE the higher up the change was.
+		 *
+		 * Ranking bottom-first among the leavers alone keeps the cascade exactly as it reads — they still
+		 * go one after another, 85ms apart, from the bottom — and starts it on the click. It also pulls
+		 * beats 2 and 3 in behind it, because `lastOut` is the clock all three run on.
+		 */
+		outRank.clear();
+		const leaving = oldIds.filter((id) => !nextIds.includes(id));
+		leaving.forEach((id, k) => outRank.set(id, leaving.length - 1 - k));
+		const lastOut = leaving.length ? (leaving.length - 1) * OUT_STAGGER + OUT_MS : 0;
 		// Beat 2 starts when the last leaver is clear; beat 3 when the gap has finished closing. The
-		// small lap keeps the seam from reading as three separate events rather than one gesture.
+		// lap keeps the seam from reading as three separate events rather than one gesture.
 		flipDelay = lastOut;
-		switchInDelay = Math.max(0, lastOut + FLIP_MS - FOLLOW_LAP);
+		/**
+		 * BEAT 2 DOES NOT ALWAYS EXIST, and beat 3 used to wait for it anyway.
+		 *
+		 * `animate:flip` only has work to do when a survivor changes SEAT. Between two paths of the same
+		 * length nobody does — Anne Austen Hooker's two paths are both 12 rungs, so every survivor is
+		 * already where it belongs and the gap that beat 2 closes is not there to close. The schedule
+		 * charged a full FLIP_MS for it regardless, which is 460ms of the ladder sitting empty while
+		 * nothing at all was moving.
+		 *
+		 * So the wait is charged only when it is owed, and beat 3 is floored just short of `lastOut`.
+		 *
+		 * THE FLOOR IS ONE BEAT INSIDE THE EXIT, not at the end of it. Both ladders had walked down onto
+		 * that floor — Anne through the no-flip case, Sarah through the lap — so a further "beat faster"
+		 * had nowhere to come from except the floor itself. IN_OVERLAP buys it, and it is safe for a
+		 * reason rather than by luck: the two sets travel in OPPOSITE directions from opposite edges, so
+		 * the only thing that overlaps is the last leaver's final 85ms against an arrival that is still
+		 * essentially off screen (ROW_MS is 519 — a card has barely entered at 85ms). §44.9 already
+		 * records the crossing as the intent: "they launch before it ends and the two halves cross".
+		 */
+		const survivorsMove = oldIds.some(
+			(id, ix) => nextIds.includes(id) && nextIds.indexOf(id) !== ix
+		);
+		const gapCloses = lastOut + (survivorsMove ? FLIP_MS : 0);
+		switchInDelay = Math.max(lastOut - IN_OVERLAP, gapCloses - FOLLOW_LAP);
 
 		switchDir = i > pathIndex ? 1 : -1;
 		switching = true;
@@ -372,7 +412,15 @@
 	 * the same speed and the stagger is untouched (Sam: "you don't need to speed anything up"). Only the
 	 * silence between the two halves is gone, which is what was actually being felt.
 	 */
-	const FOLLOW_LAP = 240;
+	// HOW FAR THE ARRIVALS LAP INTO THE GAP CLOSING. Raised from 240 (Sam: "can the entering cards after
+	// clicking a different path enter the screen a beat or two sooner") — two beats of the exit stagger.
+	// An arrival takes ROW_MS to travel, so even launching this early it lands well after the flip has
+	// finished; what moves is the start of its run, not the moment it settles.
+	const FOLLOW_LAP = 485;
+	/** How far the arrivals may cross INTO the tail of the exit — one beat of the exit stagger. See the
+	 *  note in `choosePath`: opposite directions from opposite edges, so a beat of overlap costs nothing
+	 *  visually and is the only place a faster entry was left to come from. */
+	const IN_OVERLAP = OUT_STAGGER;
 	const UNLOCK_EARLY = 300; // the buttons come back while the last card is still settling
 	/**
 	 * THE VEIL HAS ITS OWN SHORT CLOCK AGAIN — and this REPLACES the rule it used to follow.
@@ -478,6 +526,13 @@
 			el.style.left = `${seat.left}px`;
 			el.style.width = `${seat.width}px`;
 			/**
+			 * AND THE HEIGHT, from the same snapshot. `flex: none` on `.rung` stops the squash at source,
+			 * so this is a second net rather than the fix — but it is the RIGHT second net, because the
+			 * inline height a leaver carries was written by Svelte from a measurement taken mid-relayout,
+			 * and the seat is the one measurement taken before anything moved at all.
+			 */
+			el.style.height = `${seat.height}px`;
+			/**
 			 * AND CANCEL THE FLIP. `animate:flip` writes an inline `transform` on EVERY keyed element the
 			 * update touched — including one that is on its way out — to carry it from where it used to be
 			 * to where the new list puts it. A leaver's "new" place is the end of the list, so it was
@@ -502,7 +557,12 @@
 			// ON A SWITCH, staggered to match the entry — bottom-first on the same 85ms spacing. They used
 			// to leave as one block, which read as the list being wiped rather than as objects departing.
 			// ON A CLOSE, the tight cascade above.
-			delay: (n - 1 - i) * (closing ? CLOSE_STAGGER : OUT_STAGGER),
+			// On a SWITCH the rank comes from `outRank` (leavers only); on a CLOSE everything is leaving,
+			// so its position in the list already IS its rank. The fallback covers a card that somehow
+			// departs without having been scheduled — it keeps the old spacing rather than going at 0.
+			delay:
+				(closing ? n - 1 - i : (outRank.get(el.dataset.rid ?? '') ?? n - 1 - i)) *
+				(closing ? CLOSE_STAGGER : OUT_STAGGER),
 			duration: closing ? CLOSE_MS : OUT_MS,
 			easing: linear,
 			css: (t: number, u: number) => {
@@ -816,50 +876,28 @@
 	 */
 	const tt = (px: number) => px * stage.k * fit;
 
-	/**
-	 * THE SPOUSE CARD MAY NOT BE SET LARGER THAN THE ROW IT SITS ON.
-	 *
-	 * Both cards share one ceiling, `tt(14.3)`, and that is not the same as sharing a SIZE: shrinkToFit
-	 * only shrinks what does not fit, so a long name on a squeezed card lands near its floor while
-	 * "John Rockefeller" — short, and with no blurb under it — never shrinks at all and renders at the
-	 * full ceiling. The pair then reads as two different type scales sitting on one row, and the spouse
-	 * is the one that looks wrong because it is the one that is bigger (Sam: "it needs to be max the
-	 * same size as the rest otherwise it stands out").
-	 *
-	 * So the partner's SETTLED size becomes the spouse's ceiling. Measured rather than predicted —
-	 * shrinkToFit writes the value, and the only honest way to know what it chose is to read it back.
-	 * `null` until the first measurement, which is what keeps the ceiling at tt(14.3) for the frame
-	 * before it lands rather than briefly clamping to zero.
-	 */
-	let partnerLine = $state<HTMLElement | null>(null);
-	/** An ACTION rather than `bind:this`, because only the PAIRED row's line is the partner and Svelte
-	 *  cannot bind to a conditional expression. It clears itself too, so a ladder that stops being a
-	 *  spouse ladder cannot leave a stale node behind for the cap to read. */
-	function partnerRef(node: HTMLElement, isPaired: boolean) {
-		if (isPaired) partnerLine = node;
-		return {
-			update(next: boolean) {
-				if (next) partnerLine = node;
-				else if (partnerLine === node) partnerLine = null;
-			},
-			destroy() {
-				if (partnerLine === node) partnerLine = null;
-			}
-		};
-	}
-	let partnerPx = $state<number | null>(null);
-	$effect(() => {
-		// Re-read whenever anything that could re-fit the partner changes.
-		void [rows, stage.u, stage.k, fit, viaSpouse];
-		if (!partnerLine) {
-			partnerPx = null;
-			return;
-		}
-		void tick().then(() => {
-			if (partnerLine) partnerPx = parseFloat(getComputedStyle(partnerLine).fontSize) || null;
-		});
-	});
+	/** `.rung-y`'s own `font-size: 0.846em`, in JS so the spouse card's year CEILING can be expressed
+	 *  in the same unit the rungs are. Keep the two in step if either moves. */
+	const RUNG_Y_EM = 0.846;
 
+	/**
+	 * THE SPOUSE CARD IS SET AT THE ORDINARY RUNG SIZE — `tt(14.3)`, the same ceiling every other card
+	 * on the ladder uses. It is not derived from anything.
+	 *
+	 * TRIED AND REVERTED (August 26–27): capping the spouse at the PARTNER's settled size, measured
+	 * back out of the DOM after shrinkToFit had run. The reasoning was that the pair reads as two type
+	 * scales on one row. The reasoning was wrong, because the partner is the one card on the ladder
+	 * that is guaranteed to be shrunk — it is cut to 76% to make room for this card — so pinning the
+	 * spouse to it made the spouse the SMALLEST text in the modal instead of the largest, and the pair
+	 * read as two type scales in the other direction. Sam: "why is the John Rockefeller and his years
+	 * so small? he doesn't have to match his spouse. the idea is that he just matches all of the other
+	 * font sizes that aren't his spouse."
+	 *
+	 * THE RULE THAT REPLACES IT, and it is the simpler one that should have been reached for first:
+	 * **the ladder has ONE type ceiling and every card is measured against that, never against a
+	 * neighbour.** A card that has to shrink shrinks on its own account. Deriving one card's size from
+	 * another's makes the derived card hostage to whatever squeezed the other one.
+	 */
 	const yearsOf = (p: PersonCompact) =>
 		p.pv ? '' : [p.by ?? '', p.dy ? `–${p.dy}` : p.by ? '–' : ''].join('');
 </script>
@@ -1018,7 +1056,6 @@
 					<div class="rung-body">
 						<div
 							class="rung-line1"
-							use:partnerRef={paired}
 							use:shrinkToFit={{
 								max: tt(14.3),
 								/**
@@ -1098,6 +1135,7 @@
 					onclick={(e) => rungNav(focus as Rung, e)}
 					data-rid={focus.id}
 					class="rung-spouse person-box spouse-line"
+					style="--sp-y-max: {tt(14.3) * RUNG_Y_EM}px"
 					class:no-photo={!focus.p}
 					class:prism={focus.id === PRISM_SPOUSE}
 					in:arrive|global={{ i: rows.length - 1, n: rows.length }}
@@ -1131,17 +1169,16 @@
 						<div
 							class="rung-line1"
 							use:shrinkToFit={{
-								// Capped by whatever the partner settled at — see partnerPx. Never larger than the
-								// row it sits on; still free to shrink below it if this card is tighter.
-								max: Math.min(tt(14.3), partnerPx ?? tt(14.3)),
+								// The ladder's one ceiling, the same as every rung's. Not derived from the partner —
+								// see the note above `yearsOf`. Still free to shrink on its own account below.
+								max: tt(14.3),
 								// A LOWER FLOOR THAN A RUNG'S, because this card has less room than any of them:
 								// 220px with a 73px square photo in it leaves ~125px of text. "Alexander John
 								// Chandler" is 23 characters and stopped at the old 10px floor with an ellipsis
 								// still showing — and an ellipsis here hides a surname, which is the half of the
 								// name that says who they married into.
 								min: tt(8.2),
-								// partnerPx is in the key, or the cap would land without a re-fit to apply it.
-								key: `${focus.id}|${stage.u}|${stage.k}|${fit}|${partnerPx}`
+								key: `${focus.id}|${stage.u}|${stage.k}|${fit}`
 							}}
 						>
 							<!-- THE SAME NESTING AS A RUNG'S, and it has to be. Here `.rung-n` was the `[data-fit]`
@@ -1150,7 +1187,13 @@
 							     ascent/descent, and the years sat 3.3px under the name on this card against
 							     −0.6px on the one beside it. Identical structure, identical spacing. -->
 							<span data-fit class="inline-block whitespace-nowrap">
-								<span class="rung-n">{focus.sn ?? focus.n}</span>
+								<!-- THE SUFFIX IS SHOWN HERE AND NOWHERE ELSE (Sam). `sn` is the chip name and chips
+								     are 220px wide, so a suffix is dropped from it by design — but this card is the
+								     one place a married-in person is named ALONE, beside a partner who carries the
+								     surname too, and "John Rockefeller" beside "Blanchette Ferry Hooker Rockefeller"
+								     loses the one token that says WHICH John Rockefeller. It comes from the same
+								     `generationalSuffix()` the slug uses, so the card and the URL agree. -->
+								<span class="rung-n">{focus.sn ?? focus.n}{focus.sf ? ` ${focus.sf}` : ''}</span>
 							</span>
 							<span class="rung-y rung-y-below">{yearsOf(focus)}</span>
 						</div>
@@ -1379,6 +1422,30 @@
 		display: flex;
 		align-items: stretch;
 		height: calc(72.8px * var(--stage-u, 1) * var(--ladder-fit, 1));
+		/**
+		 * A RUNG MAY NOT SHRINK — and this one line is the whole of the smoosh Sam filmed.
+		 *
+		 * `.ladder-rows` is a flex COLUMN with a reserved height, and a flex item's default is
+		 * `flex: 0 1 auto` — SHRINKABLE. For one frame during a switch the column holds BOTH paths
+		 * (the arrivals are in flow from the frame they mount; the leavers have not been pulled out
+		 * yet), so the column is over-full and the flex algorithm squashes every item to fit.
+		 *
+		 * That frame is where the damage is done, because it is the frame Svelte MEASURES IN. A keyed
+		 * each with `animate:` freezes an outgoing element's box by reading its computed size and
+		 * writing it back inline — so each leaver was frozen at its SQUASHED height (measured: 39.2,
+		 * 44.4, 48.5, 53.2, 58.8 against a true 65.4) and then departed at that size. The gradient is
+		 * the tell: each leaver Svelte pulls out makes the column less over-full, so the next one
+		 * measures a little taller.
+		 *
+		 * ONLY CARDS WITHOUT A PHOTO SHOWED IT (Sam saw this before I did), because `min-height: auto`
+		 * floors a flex item at its min-content height and an `<img>` supplies one — text alone
+		 * collapses to almost nothing. Which is why it read as a bug about photos rather than one
+		 * about flex.
+		 *
+		 * The same finding as the search result row, in a second component: an explicit `height` on a
+		 * flex item is a REQUEST, not a floor, until `flex: none` says otherwise.
+		 */
+		flex: none;
 		border-radius: 8px;
 		/* VISIBLE, not hidden, so a married-in partner's card can overhang the right edge. The photo was
 		   the only thing that ever needed clipping and it now clips itself, which is the smaller claim. */
@@ -1594,6 +1661,20 @@
 	   `.rung-y`, its `margin-left: 0` lost to that rule's 8px gap and the years sat indented under the
 	   name — visible on Josephine's card and on nothing else, because hers is the only form that puts
 	   them on their own line. */
+	/**
+	 * THE SPOUSE CARD'S YEARS ARE CAPPED AT A RUNG'S YEARS (Sam: "give the years a max font size in the
+	 * spouse chip even though its wrapped").
+	 *
+	 * Everywhere else on the ladder the years are `0.846em` of a line that shrinks when the NAME beside
+	 * them does not fit — name and years travel together because they share one line. On this card they
+	 * are stacked, so the years are not what forces the fit, and a short spouse name sitting at the
+	 * ceiling puts them at full size next to rungs whose long names have shrunk theirs. `--sp-y-max` is
+	 * the ladder's own ceiling in px (`tt(14.3) * RUNG_Y_EM`), so the cap scales with the stage instead
+	 * of being a literal that goes wrong the first time a ladder gets tall.
+	 */
+	.rung-spouse .rung-y-below {
+		font-size: min(0.846em, var(--sp-y-max, 0.846em));
+	}
 	.rung-y-below {
 		display: block;
 		margin-left: 0;

@@ -35,6 +35,7 @@ export interface PersonCompact {
 	    allow-list in PersonBox; absent = the chip's normal face. */
 	df?: string | null;
 	sn?: string | null;
+	sf?: string | null; // generational suffix ("III") — opt-in, from regenerate-data's generationalSuffix()
 	fn?: string | null; // first name — sibling chips render this (falls back to sn); other chips use sn
 	cf?: string | null; // chip_first_name alone ("Lent") — SIBLING chips show just this (first-name-only)
 	nk?: string | null; // opt-in chip name from bio.chip_first_name ("Cettie Mathews"); non-sibling chips prefer it; null → sn

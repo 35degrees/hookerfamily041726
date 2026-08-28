@@ -1,6 +1,8 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_082726.md (the what/why for every item below).**
+**AUGUST 27, LATER (§47): THE LADDER AGAIN — TYPE, THE SMOOSH, AND TWO DEAD BEATS (design §44.15–44.17).** The spouse card stops being sized from its partner and takes the ladder's one ceiling; it gains a `III` from a new opt-in `sf` field built by the same helper the slug uses. The vertical collapse Sam filmed on every path switch was `.rung` inheriting `flex: 0 1 auto`: the column holds both paths for one frame, and that is the frame Svelte measures an outgoing box in — leavers were departing frozen at 39–59px against a true 65.4, and only cards with no photo showed it because an `<img>` gives a flex item a min-content floor. Then two speed complaints answered by deleting waits rather than shortening anything: a stagger that counted list positions instead of leavers (255ms of dead air), and a `FLIP_MS` charged for a gap that equal-length paths never open (460ms). `OUT_STAGGER` deliberately untouched.
+
 **AUGUST 27 (§46): SEARCH SHIPPED END TO END — the index, the ranking, the modal, the years, the tags (design §45).** 43 commits from `7f449da9` to `6e9726aa`. A 19,728-row index (1,191 KB gzipped) with every fact folded and field-tagged; a ranking module that took typing `t` from 2,238 ms to 11.7 ms; result rows that are real `.person-box` cards; a year range that is two little cards on a hairline after three rejected widgets; nine assorted tags drawn from the SCHEMA's vocabulary rather than the data's. §46.2 is the file map — six files, `search.svelte.ts` first. §46.3 is the honest list of twenty-two things that went wrong in order. Two pre-existing ConnectModal defects fixed along the way (§46.5); `remember()` is still wired to nothing (§46.6).
 **AUGUST 26, LATER (§45): THE SPOUSE LADDER, AND §30 FOUND THREE MORE TIMES (design §44.11–44.14).** A married-in person now borrows their Hooker partner's chain (5,911 people), with the partner as the last rung and the focus paired beside them in mint. Sam's rule — *a Hooker spouse is never an easter egg* — applied structurally to all 86 people who were both; all 86 were `notable` and 49 had descendant children, so the flag was marking "notable person who married in", which `sp` already carries. The ladder's number became the rung's DEPTH rather than the person's stored generation, after Sarah Knutti's second path showed two number 8s: a per-person value printed in a per-path slot, and 278 paths carry such a repeat. **The motion arc is the part worth reading**: every remaining complaint reduced to design §30, and none looked like it — the fit, the seat's frame of reference, and the rows box's height were each STEPPING while `animate:flip` was EASING. Records the wrong turn in full, because it is repeatable: the first fix eased the changing fit rather than removing the change, and Sam called it *"harsher"* — **easing a moving layout is not a fix for a moving layout.**
 
@@ -4437,3 +4439,73 @@ Handed to Stream A from this session:
 - **160 photos are still hotlinked** off-site.
 - **Three Hartford founders** (Haynes, Goodwin, Dorothy Hooker Chester) are tagged `founder` but not
   `orbit`, so they cannot enter the green zone a search pick would send them to.
+
+---
+
+## 47. AUGUST 27 (LATER) — THE LADDER AGAIN: TYPE, THE SMOOSH, AND TWO DEAD BEATS (design §44.15–44.17)
+
+Search shipped in the morning; this is the same day's second half, all of it inside `ConnectModal` except
+one additive pipeline field. Design §44.15–44.17 carries the durable half.
+
+### 47.1 WHAT SHIPPED
+
+| | |
+|---|---|
+| **The spouse card takes the ladder's ceiling** | not the partner's settled size — the cap built the day before was reverted, and the measuring apparatus behind it removed rather than left inert |
+| **The years get their own ceiling** | `--sp-y-max`, because stacked years do not participate in the fit the way inline ones do |
+| **`III` on the spouse card** | a new `sf` field on the compact from the SAME `generationalSuffix()` the slug uses; opt-in, rendered on exactly one surface |
+| **The smoosh is gone** | `flex: none` on `.rung`, plus the seat map now carrying `height` |
+| **The exit starts on the click** | the stagger ranks leavers, not list positions |
+| **The arrivals come ~250–350ms sooner** | a `FLIP_MS` that equal-length paths never owed, then one beat of deliberate crossing |
+
+### 47.2 WHERE THE MEAT IS
+
+Everything below is [`src/lib/components/ConnectModal.svelte`](../src/lib/components/ConnectModal.svelte)
+unless marked:
+
+| what | where to look |
+|---|---|
+| the spouse card's type | the note above `yearsOf` (records the reverted partner-cap and why), and the `shrinkToFit` block on `.rung-line1` inside `.rung-spouse` |
+| the years ceiling | `RUNG_Y_EM` beside `tt()`, `--sp-y-max` on the `.rung-spouse` element, and the `.rung-spouse .rung-y-below` rule |
+| the suffix | `sf` in `compact()` in `regenerate-data.js`, the field on `PersonCompact` in `src/lib/types/neighborhood.ts`, and the `.rung-n` span on the spouse card |
+| the smoosh | `flex: none` in the `.rung` rule (the comment there is the whole diagnosis), `snapshotSeats()`, and the height pin in `depart` |
+| the schedule | `choosePath` — `outRank`, `survivorsMove`, `gapCloses` — with `FOLLOW_LAP`, `IN_OVERLAP` and `OUT_STAGGER` declared together further up |
+
+### 47.3 THE ORDER THINGS WENT WRONG
+
+1. **The spouse font cap was mine, not Sam's.** He asked for one thing — do not out-size the other rungs —
+   and I built a derivation that made the spouse the smallest text in the modal. *"you are making it very
+   complicated and coming up with scenarios in your head that I never requested."* The lesson is in
+   §44.15; the meta-lesson is that a constraint I inferred outlived the problem it was inferred for.
+2. **"Is the font the same?" was worth measuring rather than answering.** Decoding Sam's screenshot put
+   the matched letterforms at 22px of ink each and the years at 18px each — already identical. The years
+   cap still went in, for the real case (stacked years do not shrink with a long name), but the reported
+   symptom and the real defect were not the same thing and saying so was better than agreeing.
+3. **The smoosh looked like three different bugs** — a timing fault, a photo bug, a height bug — and was
+   one flex default. See §44.16. The instrumentation that found it took two passes: a per-frame height
+   probe to establish it happens at frame 0, then a computed-style read to find the inline height Svelte
+   had written.
+4. **My own beat-order probe reported a false failure.** It called Anne's switch "beats collide" because
+   no survivor moved — which is correct behaviour for equal-length paths, not a collision. A probe that
+   cannot tell "did not happen" from "happened wrong" will invent defects; the null case needs a branch.
+5. **The suffix costs 0.5px** and there is nowhere to get it back from. Flagged rather than absorbed.
+
+### 47.4 WHAT WAS MEASURED
+
+| | |
+|---|---|
+| spouse vs rungs | 14.3px name / 12.1px years on every unshrunk rung; spouse at the same, 13.8 / 11.7 once `III` is on it |
+| the smoosh | leavers frozen at 39.2 / 44.4 / 48.5 / 53.2 / 58.8 against a true 65.4 — now 0 lost on every card, both ladders |
+| exit start | Sarah Knutti 255ms → on the click; Anne Hooker 85ms → on the click |
+| arrival | Sarah 1282 → 1135 → 1012ms; Anne 1365 → 1157 → 1081ms |
+| round-trip | 1→2→1 on both ladders: 10→11→10 and 12→12→12, nothing stranded off screen, no console errors |
+| screenshot forensics | glyph ink heights read off a decoded PNG when the question was "is this bigger than that" |
+
+### 47.5 STILL OPEN
+
+- **`OUT_STAGGER` is untouched at 85** and is the next dial if a switch still feels slow. §44.9 argues
+  against it; `IN_OVERLAP` (one beat today) is the cheaper one to spend first.
+- The §45.4 ladder items are unchanged: no keyboard traversal of the rungs, and Capt. John May Sr.
+  (X03481) still cannot read as a husband because neither wife descends from Thomas.
+- **`sf` is on every compact but read by one surface.** That is deliberate, not an oversight — but if a
+  second surface ever wants it, it is there and needs no regenerate.
