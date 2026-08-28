@@ -37,12 +37,14 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The same 082626 edition extends §44 with the spouse ladder and the motion arc (§44.11–§44.14, August 26 later).** A married-in person borrows their partner's chain; the partner is the last rung and the focus is paired beside them, on a mint deepened from `--spouse-bg` because §29.1's rule is that a value is a property of the PAIR and this card sits beside cream rather than on parchment. §44.12 records why the rung's number had to become its DEPTH rather than the person's stored generation — Sarah Knutti's second path showed two number 8s, and the data was right: her ancestor is 8 generations from Thomas through his father and 9 through his mother, so a per-person number cannot label a per-path position. **§44.13 is the one to read**: every remaining complaint about the path switch reduced to §30 and none of them looked like it, because a fit, a coordinate space and a container height were each STEPPING while `animate:flip` was EASING. It records the wrong turn too — easing the changing fit made it worse, and **easing a moving layout is not a fix for a moving layout.** §44.14 is the hygiene: four mechanisms removed rather than left inert, and the assertion that refused to flip 53 of 86 canonical records because its window had spilled into the next person's.
 
+**The 082726 edition (August 27) adds §45 — SEARCH, THE THIRD SURFACE (as built). The second of the three modals, inheriting §44's shell and adding the two things the ladder never needed: a corpus and an opinion about it.** §45.2 is the architecture — one flat 19,728-row array, scanned, with every fact folded into a field-tagged blob; §45.3 the single-definition fold rule; §45.4–§45.6 the ranking (six tiers, cohesion, and tiebreaks that encode who this app thinks matters), including the 2,238 ms → 11.7 ms lesson that a comparator is not a place to compute anything. §45.7 is the rebuke that a result row must literally BE a `.person-box`. §45.8 extends §29 with AREA as a third term — the same colour at the same alpha is a different colour at 1.5 px — and §45.9 names `--color-ascendmidnight` a FIELD colour rather than an INK colour, after it read grey on three separate surfaces. §45.10–§45.11 are the per-ground veil and the exit that dissolves content-first. §45.12 is the year range and the three widgets rejected before it, which is really the rule that three failed treatments means the OBJECT is wrong. §45.13–§45.14 are the assorted tags and the discovery that 485 of 642 in-use tags are not canonical.
+
 **A family of three, completed in this edition:** `box-shadow` is one property, `transition` is one property, and a filled animation outranks ordinary declarations. All three are the same shape — a mechanism silently outranking the declaration being edited — and all three present as "my change did nothing". When a CSS edit appears inert, look for what else already claims that property.
 
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_082626.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_082726.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
@@ -5526,3 +5528,377 @@ record's window spills into the next person's and two `is_easter_egg` flags appe
 count assertion it would have flipped the wrong people silently. The batch was redone through a JSON
 round-trip after verifying that `json.dumps(indent=2, ensure_ascii=False)` reproduces that 58 MB file
 byte-identically, which is what made it possible to prove only the 86 intended records changed.
+
+---
+
+## 45. SEARCH — THE THIRD SURFACE (AS BUILT, August 27)
+
+_(The second of the three modals. It inherits §44's shell — the header, the X, the veil, the row-as-card
+rule — and adds the two things the ladder never needed: a corpus, and an opinion about which of 19,728
+people you meant. Roadmap §46 is the session record; this is the doctrine.)_
+
+### 45.1 WHAT SEARCH IS FOR, AND WHY IT IS NOT A FILTER PANEL
+
+Every other way into this tree is a walk: you arrive somewhere and move by kinship, by cross-connection,
+by shuffle, by the ascension. That is the whole point of the app and it is also its one limit — you can
+only reach what is adjacent to where you already are. Search is the one surface that is adjacent to
+everything.
+
+Which is why it is **not** a database front end. There is no field picker, no boolean builder, no column
+of checkboxes. There is a box, a handful of category chips, a year range, and a row of tags offered at
+random. Everything you can do to a query, you do by typing into it or by touching one object. The
+corpus is large; the control surface is deliberately small.
+
+**The row is the product, not the list.** A result is a card of the same species as every other card in
+this app — same paper, same shadow, same line-status ground, same square photo, same star. Search is a
+different way of getting to the cards, not a different kind of thing.
+
+### 45.2 THE INDEX IS THE ARCHITECTURE
+
+The single most important decision was made before a pixel was drawn: **build one flat array and scan
+it.** No inverted index, no trie, no worker, no server. 19,728 rows, 5.4 MB raw, **1,191 KB over the
+wire gzipped**, fetched once on first open and held for the session.
+
+A row is short keys only, because 19,728 × a long key name is real bytes:
+
+| key | what it is |
+|---|---|
+| `id`, `slug` | identity and destination |
+| `n` | display name, as rendered |
+| `by`, `dy` | birth and death year |
+| `g` | generation from Thomas |
+| `sx` | sex |
+| `pv` | photo, when there is one |
+| `f` | category bits (see below) |
+| `x` | **the fact blob** — every searchable fact, folded, field-tagged |
+| `bl`, `eb`, `nb`, `ph` | blurb, estimated birth, NB weight, photo flag |
+
+Categories are **bits in one integer**, not strings: `CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8,
+FOUNDER: 16 }`. A person can be several at once, the chips are a mask test, and the whole thing costs
+one number per row.
+
+**`x` is where the search actually happens.** It is not a name field with extras bolted on — it is a
+single lowercase string built from every fact the person carries, each segment prefixed by the field it
+came from:
+
+```
+n:… born:… died:… buried:… lived:… work:… school:… served:… landmark:… inst:… tag:… is:…
+```
+
+That prefixing is what makes a match explainable. When a row surfaces on something other than the name,
+the UI can say **which field it hit** and read the reason back like an address, because the field name
+is literally sitting in front of the matched substring. Parts within a segment are comma-separated;
+words are de-duplicated across a segment so a person who worked at Yale for forty years does not carry
+the word forty times.
+
+**Why linear scan is the right answer here and not laziness:** the corpus is fixed at build time, it
+fits in memory, and a scan over 19,728 short strings is a few milliseconds. An inverted index would have
+bought nothing measurable and cost the ability to do substring, cohesion and field-aware matching, all
+of which turned out to be where the quality lives. The thing that was actually slow was never the scan
+— see §45.4.
+
+### 45.3 ONE DEFINITION OF THE FOLD, IMPORTED BY BOTH SIDES
+
+`src/lib/search/fold.js` exists for exactly one reason: the build folds the corpus and the client folds
+the query, and **if those two ever disagree the failure is silent.** Nothing throws. Nothing logs. The
+person simply never appears, and there is no way to tell that from "not in the tree".
+
+So there is one file, imported by `regenerate-data.js` by relative path and by the client through
+`$lib`. It does the Unicode work in two steps — a table of PAIRS for the characters `NFD` cannot
+decompose (`ł`, `ø`, `æ`, `ß`, `đ`, and the curly quotes and dashes), then `NFD` + strip-combining +
+lowercase for everything else. 24 people carry non-ASCII names — Skłodowska, Ève, Martínez, O'Brien —
+and every one of them is reachable by typing plain ASCII.
+
+**The rule, generalised:** any transform applied at build time and again at query time is one function
+in one file, or it is a latent silent bug. Never two implementations that "do the same thing".
+
+### 45.4 RANKING IS THE PRODUCT — AND THE COST OF IT IS WHERE IT GOES
+
+Matching is easy; **ordering is the entire user-visible quality of this feature.** Sam's test case was
+"brown": Emily Labouisse Rooks came second because her maiden name was Brown somewhere in her record,
+while Sarah Brown Hooker Capron — a notable, with Brown in her rendered name — was fourth. That is the
+whole problem in one query.
+
+The scheme is six tiers, cheapest and most specific first:
+
+| tier | means |
+|---|---|
+| 0 | the query **is** the display name |
+| 1 | every term is a whole word of the name |
+| 2 | the display name starts with the query |
+| 3 | every term starts a word of the name |
+| 4 | the name contains the query as a substring |
+| 5 | fact-only match — the name never matched at all |
+
+**Tier 0 was wrong twice, both times for an instructive reason.** First it tested the folded blob
+(`n:george washington, general` never equals `george washington`). Then it tested "any name part equals
+the query", which handed tier 0 to Emily Rooks for the maiden name buried in her record — the exact bug
+it was written to fix, reintroduced one commit later. **The correct test is the DISPLAY name and only
+the display name**: the string on the card is the string the user typed at. Anything looser is a
+back door for a field the user cannot see.
+
+**THE PERFORMANCE LESSON, which is really an architecture lesson.** The first measurement said 1–6 ms
+and it was a lie — it timed the scan, not the query. With ranking wired in, typing `t` took **2,238 ms**,
+because `tier()` was being called from inside the sort comparator: an O(n log n) number of calls to a
+function that should run O(n) times. The fix is decorate-sort-undecorate — compute every row's tier,
+cohesion and tiebreak keys ONCE into a small object, then sort on the numbers. **11.7 ms.** Plus a 5 ms
+one-time prepare at load, which pre-splits each row's name into words so the hot loop never allocates.
+
+> **A comparator is not a place to compute anything.** If a sort key is expensive, it is a field on the
+> row before the sort starts. This is the second time this project has paid for work hidden inside a
+> per-comparison callback.
+
+Related: **`$derived` already memoises.** A hand-rolled result cache was written, measured, found to be
+doing nothing the runtime was not already doing, and removed. And the 19,728-row index is a **plain
+array, deliberately not `$state`** — Svelte 5 deep-proxies `$state` objects and arrays, so every read in
+the hot loop would go through a proxy trap. The one reactive thing in the module is `ready = $state(false)`.
+
+### 45.5 COHESION — TERMS THAT SIT TOGETHER OUTRANK TERMS THAT MERELY CO-OCCUR
+
+Two people can match "hartford bank" identically by term count: one banked in Hartford, the other lived
+in Hartford and separately worked at a bank in New Haven. The blob's field prefixes make the difference
+computable. `cohesion()` returns **0** when the terms form an adjacent phrase inside one field, **1**
+when they land in the same field but apart, **2** when they are scattered across fields. It sorts after
+tier and before everything else.
+
+This is the payoff for §45.2's field-tagging that was not anticipated when the tagging was added for
+match-reason display. Structure put in for one reason paid for a second.
+
+### 45.6 THE TIEBREAKS CARRY THE HOUSE'S OWN JUDGEMENT
+
+After tier and cohesion, the sort is the app's opinion about who matters, in order:
+
+```
+dyoung  →  tier  →  cohesion  →  NB weight  →  bloodline  →  birth year
+```
+
+- **Died-young sinks.** A child who died at four is a real person and stays in the corpus, but they are
+  almost never who you meant by a surname. (Computed age ≤ 15 — the computed age, not the tag.)
+- **Blood leads marriage.** Between two equal matches, the Hooker descendant is the one the tree is about.
+- **NB weight breaks the rest**, because a person with written narrative is a person someone has already
+  decided is worth reading.
+- **Birth year last**, ascending, so equal-in-every-way rows come out in a stable, historical order.
+
+**The year filter has an exemption that is doctrine, not an oversight:** it tests `by ?? eb` (real birth
+year, else the era-placed estimate), and the **1,139 people with neither stay visible at every range**.
+A filter must never silently delete people for whom the filtered fact does not exist. Absence of a date
+is not evidence of a date outside your range.
+
+That estimate comes from `placeUndatedByEra()`, which learns generation → median-birth-year **from the
+finished rows** rather than from a table. Its first version read `p.generation_from_thomas` when the real
+path is `p.classification.generation_from_thomas` — it placed 160 of 741 and reported success. A derived
+statistic that silently covers a fifth of its input looks exactly like one that covers all of it. Assert
+the count.
+
+### 45.7 A RESULT ROW IS A `.person-box`, NOT SOMETHING THAT RESEMBLES ONE
+
+The first list was, in Sam's words, "a boring Amazon Music song list", and the second — after a rebuild —
+got: *"it's like you just came in off the street and didn't review my design."* Both times the mistake
+was the same: I wrote a **bespoke row** that borrowed the palette instead of using the class the app
+already has.
+
+**The rule: a search result is literally `class="person-box hit …"`,** with the same `hooker-line` /
+`spouse-line` / `ee-line` / `founder-row` modifiers as everywhere else. It inherits the ground, the
+shadow, the hover shadow, the radius and the photo treatment for free, and — more importantly — it
+inherits every future change to them. A parallel implementation of an existing card is a promise to
+diverge.
+
+Two things follow from being a real card:
+
+- **The highlight is a SHADOW, never a fill.** The first version filled the hovered row's background,
+  which erased its line-status ground — the one piece of information the ground carries. `--chip-shadow-hover`
+  says "under the pointer" without saying anything about what kind of person this is. (Consistent with
+  §29's hover doctrine and with the year cards in §45.12.)
+- **The photo popout is the ladder's popout, unchanged** — beside the photo, at the same 33 px offset,
+  from `.hit .photo`. Sam asked for it to sit beside the photo rather than the panel, and the correct
+  implementation was to stop inventing and copy the geometry the ladder already ships.
+
+The row's height is definite (`54 px`, `flex: none`, photo `width: 54px`). It has to be: with no explicit
+width the photo resolved circularly against its intrinsic image size and John Talcott's 720×962 portrait
+made his row twice as tall as everyone else's. **And the fix's own first attempt had a bug of its own** —
+swapping `min-height` for `height` let flex shrink rows to 33 px. Caught only because the fix was
+verified rather than assumed.
+
+### 45.8 §29 EXTENDED: A COLOUR IS A PROPERTY OF (COLOUR, GROUND, **AREA**)
+
+§29 says read the Δ column, never the alpha. Search added the third term, and it cost three commits to
+learn: **the same colour at the same alpha on the same ground is a different colour at a different SIZE.**
+
+The bloodline stripe is `#827400`, the descent gold used everywhere else in the app, where it reads as
+gold leaf. At 1.5 px against the row's paper it read as **an olive scratch**. Sam: "ouch." Nothing about
+the token was wrong; 1.5 px was wrong. A large field averages a colour with itself; a hairline averages
+it with whatever it is drawn on, and a dark-yellow hairline on cream is a dirty line.
+
+The same effect, differently: the spouse and easter-egg stripes were taken from `--spouse-edge` (hue 172)
+and `--ee-edge` (hue 198) — teal and cyan as swatches, **aqua as 1.5 px stripes**, because a thin mark
+next to warm paper picks up the contrast and reads more saturated than the swatch does. The fix was to
+measure the **composite**, not the token: render it, read the pixels, adjust until the rendered stripe is
+the colour intended.
+
+**Doctrine:** before shipping a thin mark, look at the rendered pixels of the thin mark. A swatch is not
+a preview of a hairline.
+
+### 45.9 `--color-ascendmidnight` READS GREY WHEN IT IS THIN
+
+Three separate surfaces this session — the descent gold stripe, the in-law stripe, and the tag pills —
+arrived at the same rebuke: *"is the text and pill outlines really midnight blue? looks black or grey."*
+
+The measurable reason: `--color-ascendmidnight` has a **blue−red spread of 13**, where `--color-inkblue`
+has **24**. At a large area and full opacity that reads as midnight. At 1.5 px, or as 10 px type, or at
+65% opacity, 13 points of channel spread is below the threshold at which the eye calls something blue —
+so it lands as black or grey and the deliberate colour choice is invisible.
+
+**Doctrine: `--color-ascendmidnight` is a FIELD colour, not an INK colour.** For thin marks and small
+type that must read as blue, use `--color-inkblue`, or push the spread until the composite measures blue.
+The ascension's midnight is correct behind the ascension and wrong as a hairline.
+
+### 45.10 THE VEIL IS A PROPERTY OF THE GROUND BEHIND IT
+
+The modal's backdrop was tuned once, against parchment, and then the ascension shipped a midnight ground
+and the founder zone shipped a green one — and the same veil that read as marshmallow over parchment read
+as *nothing* over midnight. Sam: "the midnight blue background is too dark to create a good sense of
+contrast … even the search results themselves don't contrast with the big white blob in middle of screen."
+
+The first correction went too far the other way — "there's basically nothing visible beneath the backdrop"
+— and the answer was to stop treating the veil as one value. **The veil is per-ground**, measured against
+each: `0.74 / 0.78 / 0.82` for the three zones, chosen by decoding the rendered composite rather than by
+arithmetic, because **`backdrop-filter` cannot be reasoned about arithmetically at all** — the blur samples
+whatever is behind it, so the only honest way to pick a number is to render it and read the pixels.
+
+The scratchpad PNG reader written for this (zlib inflate + un-filter + mean-rect + luminance) is the
+general tool for that class of question and is worth rebuilding whenever a composite has to be judged.
+
+### 45.11 THE EXIT: THE CONTENT LEAVES FIRST, THE GROUND FOLLOWS
+
+Sam on the first version: *"a jarring disappearing effect … the instant disappearing of the search results
+view can be a little jarring."* He also said what he did NOT want: no sliding off either side. The
+dissolve from centre was right; it was just being done in one instant beat.
+
+The shape that worked, and generalises to any modal in this app:
+
+| | |
+|---|---|
+| panel out | **250 ms** |
+| veil out | **430 ms**, starting **90 ms** after the panel begins |
+
+The content goes first and the ground closes behind it. Reverse that and the room disappears while the
+furniture is still in it. (Then trimmed once more on Sam's "even a beat faster fade out" — the numbers
+above are the trimmed ones.)
+
+**And a Svelte trap worth writing down: a custom transition silently ignores any option it does not
+destructure.** `out:veil={{ delay }}` did nothing at all until `delay` was added to the transition
+function's signature. No warning, no error — the delay simply was not there, and the choreography above
+was invisible until it was found.
+
+### 45.12 THE YEARS ARE CARDS — AND THE THREE FAILURES BEFORE THAT
+
+The year range was **rejected three times**: as a transposed left rail (Sam does not want that rail
+duplicated), as a histogram (*"no to the bar graph"*), and as a tick scale (*"it looks like Minecraft
+1999"*).
+
+All three failed for one reason, and it took the third rejection to see it: **I kept building a WIDGET in
+an app that contains no widgets.** Every control in this app is a physical object. The Shuffle button is
+"an object at a height". The cards are "discrete baseball-card-like physical objects the user can track".
+A track with a knob on it belongs to a different application, and no amount of re-colouring reaches that.
+
+The version that shipped: **two small cards threaded on a hairline.** House paper, `--chip-shadow`, chip
+radius, Outfit 11 px, `--color-inkblue` — the same object as everything else in the modal, at the smallest
+size it can still be read at, sitting ON the line so the line runs behind them. Dragging a year is
+dragging a card, which is the one gesture the whole app is built out of. Ten unlabelled half-century
+ticks survive as the only scale; the cards carry the numbers, exactly rather than approximately.
+
+Two details worth keeping: the upper bound is `new Date().getFullYear()` so it becomes 2027 by itself,
+and `.scale { inset: 0 22px }` is an ELEMENT rather than padding, because absolute `left: %` resolves
+against the containing block — padding moves the box without moving the percentages, and before the inset
+a drag from the left edge moved the range two years and stopped.
+
+> **The tell:** three rejections of three different visual treatments is never a colour problem. It means
+> the OBJECT is wrong. Stop tuning and ask what species of thing this should be.
+
+### 45.13 ASSORTED TAGS — A WAY IN, NOT A FILTER
+
+Sam's framing, which is the whole design: *"i have something like 500 tags that are fun and delightful or
+insightful that users would never know to search for."* Tags are not a refinement control for a query the
+user already has — they are **an offer of a query the user would never have typed**.
+
+Which dictates everything about the surface. Nine at random per visit. Visible even while typing something
+unrelated, because the offer should not be conditional on failing. Above the results and below the years.
+Lower-case with underscores like real hashtags, `#` prefixed. Small — smaller than the category buttons,
+because they are a side door, not the main one. Centred, two or three rows. Capped at **two selected**,
+AND-ed not OR-ed (Sam: two tags should mean "people with both", not both lists concatenated), with a very
+small underlined **clear** beneath. `rollTags()` excludes the previous handful so a re-roll actually rolls.
+
+Three things learned making them legible, all of which are §29 in a new place:
+
+- **A pill cannot be transparent.** The first version let the blurred card behind show straight through:
+  *"it just shows right through to the card below the backdrop blur."* §29 already said a card cannot be
+  translucent; a pill is a small card. The fix is opaque interior ink — the descendants' own white at 60%.
+- **Too small plus too faint is not "subtle", it is broken.** *"not working, its all too faded too subtle.
+  the font now too small to read."* Legibility is not a place to be restrained.
+- **The ink is `--color-ascendmidnight` at 65% and that reads grey** — see §45.9. Third occurrence.
+
+And the layout rule: **no orphan on the last row.** `flex-wrap: balance` (Chrome 150+) with a `wrap`
+fallback plus a `trimOrphans()` pass, after Sam pointed out that a single tag stranded alone on a third
+row happens constantly with variable-length labels. Verified across 22 rolls: 0 orphans.
+
+### 45.14 THE VOCABULARY IS THE SCHEMA'S, NOT THE DATA'S
+
+The first tag row drew from the tags present in canonical, which produced: *"where are you getting these
+horrible tags? … these are garbage."* He was right and the number says why: **485 of the 642 tags in the
+data are not in the schema's §6 taxonomy at all.** They are typos, one-offs, abandoned experiments and
+working notes. Drawing "random tags" from the data means drawing mostly from debt.
+
+So the vocabulary is **parsed out of the schema at build time** — `docs/hooker_json_schema_v*.md`, newest
+by sort, section 6, the `tag — definition` lines — and the index ships the intersection of *canonical
+vocabulary* and *actually in use*: **172 tags**. The parser carries its own tripwire:
+
+```js
+if (tagVocab.length < 100) throw new Error(`${schemaFile}: parsed only ${tagVocab.length} canonical tags — parser is broken`);
+```
+
+**That assertion is the point of the section.** A regex over prose is a fragile thing, and its failure
+mode is not a crash — it is quietly returning eleven tags, or zero, and shipping a tag row that looks
+merely unlucky. Any parse-a-doc step needs a floor assertion, because "the parser broke" and "the data is
+thin" are indistinguishable downstream.
+
+Two of the 172 are canonical but not delightful — `has_discrepancy` and `outreach` are working state, not
+invitations. Noted for Stream A rather than special-cased here.
+
+### 45.15 THE TRIGGER RE-INKS ITSELF, AND THE CORNER IS A FLEX ROW
+
+Search takes the top-right corner and Shuffle moves inboard: reading right to left, the outermost control
+is the one that goes anywhere. The cluster is a **flex row with a gap**, never two independently-`fixed`
+controls with a hard-coded offset the width of the word "Search" — that magic number goes wrong the first
+time the font or the zoom changes, and it goes wrong silently, as an overlap.
+
+**The trigger is ground-aware, because five of the seven grounds are light.** A cream trigger tuned
+against midnight is invisible on the default sheet. It re-inks by `GROUNDS[groundState.idx]?.kind ===
+'dark'` and again by zone (`ascension.active` → cream at 0.82). The same bug bit the Shuffle glass, which
+was tuned at 0.6 against midnight and read muddy on the light sheet: **0.86**.
+
+**Shuffle yields the zone; Search does not.** Shuffle is a door OUT to a random notable and offering that
+mid-ascension undoes the descent. Search is how you get anywhere from anywhere — being stranded in the
+zone with only the X is a smaller app than this one.
+
+### 45.16 A PICK IS AN ARRIVAL, NOT A NAVIGATION
+
+Choosing a result does not route; it hands off to the machinery that already exists. `pick()` synthesises
+an anchor at the **featured card's rect** and dispatches through the same delegated `warmPersonLinks`
+handler every other link in the app uses — with `data-cc='true'`, and `data-orbit='true'` when the target
+carries `CAT.INFLUENCE`, so an orbit figure or a founder arrives by **descending into their zone** rather
+than by appearing.
+
+The doctrine underneath: **a new surface should terminate in an existing transition, not a new one.** The
+CC arrival, the orbit descent and the founder green were all built and tuned long before search existed;
+search's job was to feed them, not to invent a fourth way to arrive.
+
+### 45.17 WHAT SEARCH DOES NOT DO (deliberately, or not yet)
+
+- **Recently-viewed / recent searches** — `remember()` and `search.recent` are wired in the state module
+  and rendered nowhere. That is a live `--ring-live`: a mechanism whose presence implies behaviour that
+  does not exist. Either render it or remove it; do not leave it.
+- **"Connect X to anyone"** — the third modal. Explicitly halted; design belongs to a session that starts
+  with it, not to the tail of this one.
+- **The multi-select hint** — nothing on screen says two tags can be held at once.
+- **No fuzzy matching, no typos, no phonetics.** Null beats weak applies to results too: a wrong person
+  confidently ranked first is worse than an empty list.
