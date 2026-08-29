@@ -15,7 +15,7 @@
  * loaded. Parking a copy in this store would be a second source of truth for one fact, and it would go
  * stale the moment a navigation replaced the featured person underneath it.
  */
-export type ModalKind = 'connect-thomas' | 'search';
+export type ModalKind = 'connect-thomas' | 'connect-anyone' | 'search';
 
 let openKind = $state<ModalKind | null>(null);
 

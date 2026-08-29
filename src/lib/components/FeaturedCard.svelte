@@ -55,6 +55,17 @@
 	/** Round a base type size through the type step. Type is rounded to a tenth, not an integer: a
 	 *  half-pixel of font-size is a real, visible difference in weight where a half-pixel of box is not. */
 	const t = (px: number) => Math.round(px * k * 10) / 10;
+	/**
+	 * THE LABEL REGISTER, for type that is recognised rather than read (§33.2's third register).
+	 *
+	 * `t()` is the READING scale, and §33.2 fixes `k >= u` so that prose does not shrink as fast as its
+	 * frame. That is right for the narrative and wrong for a control: a button whose PADDING rides `u`
+	 * and whose TYPE rides `k` grows taller relative to its column at every rung down, which is the same
+	 * divergence that had the vitals overlapping their own button at 1100x720. A chip's name is pinned
+	 * to `u` for exactly this reason and this is the same kind of object — an uppercase, letterspaced,
+	 * six-word label on a 26px box. At u = 1 the two are identical and nothing moves.
+	 */
+	const tl = (px: number) => Math.round(px * u * 10) / 10;
 	/** The card's live frame, scaled. Integers — these feed a clip-path and a flight's measured rects. */
 	const cardW = $derived(Math.round(CARD_W * u));
 	const cardTopH = $derived(Math.round(CARD_TOP_H * u));
@@ -827,11 +838,16 @@
 			<!-- Content row: minmax(0, 1fr) + overflow-hidden allows NB body expansion
 			     without growing the row. Any overflow is clipped, keeping card height stable. -->
 			<div
-				class="content grid grid-cols-[23%_1fr_21%] overflow-hidden py-[calc(24px*var(--stage-u,1))] pr-[calc(12px*var(--stage-u,1))] pl-[calc(24px*var(--stage-u,1))]"
+				class="content grid grid-cols-[23%_1fr_21%] overflow-hidden py-(--card-pad-y) pr-[calc(12px*var(--stage-u,1))] pl-[calc(24px*var(--stage-u,1))]"
 			>
 				<!-- space-y: photo->vitals is the original 16 less 5% then a further 20% (15.2 -> 12.16);
-					     .vitals block spacing is the original 10 less 5% (9.5). -->
-				<div class="portrait-column relative space-y-[10.94px]">
+					     .vitals block spacing is the original 10 less 5% (9.5).
+
+					     THE PHOTO->VITALS GAP WENT 10.94 -> 6.2 to help pay for the second button, and this
+					     is where a saving is least felt: it is whitespace between two unlike things, where
+					     every other candidate was leading INSIDE a line of type. The whole budget, and the
+					     reason this column runs out of room at small sizes at all, is on `.vitals` below. -->
+				<div class="portrait-column relative flex h-full flex-col">
 					{#if photoUrl}
 						<img
 							src={portraitSrc}
@@ -849,7 +865,44 @@
 					{:else}
 						<div class="aspect-[3/4] w-full rounded-sm bg-stone-100"></div>
 					{/if}
-					<div class="vitals space-y-[7.6px] pl-1">
+					<!--
+						THE VITALS ARE UNTOUCHED, and that is the requirement rather than an accident (Sam, three
+						times: "you don't need to impact the birth and death section"). Every SIZE in §28.5,
+						every line-height and the 7.6px between the two blocks are exactly as they were
+						measured. The room for the second button was bought from the whitespace around them
+						and from the dead space under the buttons — see `.connect-stack`.
+
+						WHAT IS NEW IS THE ANCHOR: the block is TOP-ALIGNED at a constant 6.8px under the
+						photo, in a `flex: 1` box, so all the slack falls BELOW it.
+
+						IT WAS CENTRED FOR ONE ROUND AND THAT WAS WRONG. Centring divides the leftover space,
+						which makes the top edge a function of how tall the content happens to be — so on a
+						card with a birth and NO death the single block floated into the middle of the space,
+						nowhere near where BIRTH sits on every other card. Sam:
+
+						    "the six lines of birth and death (three each) should remain in the same spot even
+						     if there's a missing death section... the vertical top edge of the birth and death
+						     section needs to be consistent. its vertically 'centered' in this space only if
+						     there are a full birth and death content"
+
+						Top-aligned, BIRTH begins at the same y on every card in the corpus, a death-only card
+						shows its dates at the birth position, and a full birth+death still reads as centred
+						because it very nearly fills the space anyway. Verified at 6.8px on all three shapes.
+
+						THE DURABLE RULE, which this cost a round to learn: CENTRE A THING WHOSE SIZE IS
+						FIXED; TOP-ALIGN A THING WHOSE SIZE VARIES. Centring converts a variation in SIZE into
+						a variation in POSITION, and position is what the eye tracks from card to card.
+
+						KNOWN AND ACCEPTED: the portrait column's height rides `--stage-u` while these ride
+						`--type-k`, and §33.2 fixes `k >= u`, so the dates eat a growing share of a shrinking
+						column. At 1100x720 and below the tallest vitals in the corpus (Burr, whose death place
+						wraps to two lines) overflow the column and the button stack is clipped by `.content`.
+						That is pre-existing — measured at -11px with the SINGLE button before any of this —
+						and closing it means either these riding `u` or a shorter photo, both of which are
+						changes to this section that Sam has not asked for. `scripts/probe-connect-fit.mjs`
+						reports it every run rather than letting it pass quietly.
+					-->
+					<div class="vitals pl-1" class:tight={stage.tightVitals}>
 						{#snippet vital(
 							label: string,
 							date: string,
@@ -926,21 +979,51 @@
 					     of slack; Burr has 27px. Hung in flow, the control would wander half the column's
 					     height between two cards. -->
 					{#if pathsToThomas?.length}
-						<!-- PERSONALISED, and shrunk to fit rather than truncated — design §14.3 wanted the name
-						     on this button and the card's own `shrinkToFit` is how every other long string
-						     here survives. `[data-fit]` is the span the action measures; the button cannot
-						     grow to the text because it is positioned by left/right, so the measurement is
-						     honest. -->
-						<button
-							type="button"
-							class="connect-thomas"
-							onclick={() => settled && openModal('connect-thomas')}
-							use:shrinkToFit={{ max: t(10), min: t(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
-						>
-							<span data-fit class="inline-block whitespace-nowrap"
-								>Connect {firstName ? `${firstName} ` : ''}to Thomas</span
+						<!-- TWO BUTTONS, ONE GATE. `pathsToThomas`'s presence is the only test either of them
+						     takes, and that is deliberate: by construction the key is emitted for Thomas
+						     descendants who are a grandchild or deeper AND for married-in spouses who borrow a
+						     partner's chain (regenerate-data.js) — which is exactly the set Sam named for
+						     connect-to-anyone as well: descendants and spouses, never easter eggs, in-laws,
+						     Hartford founders or orbit influences. One predicate, so the pair cannot fall out
+						     of step with each other or with the bake.
+
+						     THE STACK IS WHAT IS ABSOLUTE, not the buttons. `.card-top` is exactly CARD_TOP_H
+						     for every person (§28.1) — the CC blade is carved to that height and DeckRiffle
+						     imports it — so an affordance taking part in the flow would make the card's one
+						     constant depend on whether a person happens to be a descendant. One out-of-flow
+						     wrapper costs zero height and holds both. -->
+						<div class="connect-stack">
+							<!-- PERSONALISED, and shrunk to fit rather than truncated — design §14.3 wanted the
+							     name on this button and the card's own `shrinkToFit` is how every other long
+							     string here survives. `[data-fit]` is the span the action measures; the button
+							     cannot grow to the text because the stack is positioned by left/right, so the
+							     measurement is honest.
+
+							     `.connect-thomas` KEEPS ITS CLASS even though `.connect-btn` now carries every
+							     style. Roughly fifty working scripts in scripts/probe-out/ open this modal by
+							     clicking that selector; renaming it would break them all silently, and they
+							     are exactly the throwaway instruments a future session reaches for first. -->
+							<button
+								type="button"
+								class="connect-btn connect-thomas"
+								onclick={() => settled && openModal('connect-thomas')}
+								use:shrinkToFit={{ max: tl(10), min: tl(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
 							>
-						</button>
+								<span data-fit class="inline-block whitespace-nowrap"
+									>Connect {firstName ? `${firstName} ` : ''}to Thomas</span
+								>
+							</button>
+							<button
+								type="button"
+								class="connect-btn connect-anyone"
+								onclick={() => settled && openModal('connect-anyone')}
+								use:shrinkToFit={{ max: tl(10), min: tl(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
+							>
+								<span data-fit class="inline-block whitespace-nowrap"
+									>Connect {firstName ? `${firstName} ` : ''}to anyone</span
+								>
+							</button>
+						</div>
 					{/if}
 				</div>
 
@@ -1108,11 +1191,125 @@
 	   THE ZERO-SIZE REST SHADOW is not a stray declaration: CSS cannot interpolate FROM `none`, so a
 	   shadow declared only on :hover pops into existence instead of growing.
 
-	   `margin-top: 0` because the column carries `space-y-[10.94px]`, whose selector reaches every child
-	   after the first — this one included. It cannot move a box positioned from `bottom`, but leaving it
-	   would hand a silent 11px to whoever next gives this button a `top`. That is the family the design
-	   doc keeps naming: a mechanism already claiming the property being edited. */
-	.connect-thomas {
+	   `margin-top: 0` because the column carries a `space-y-*`, whose selector reaches every child after
+	   the first — this one included. It cannot move a box positioned from `bottom`, but leaving it would
+	   hand a silent gap to whoever next gives this a `top`. That is the family the design doc keeps
+	   naming: a mechanism already claiming the property being edited.
+
+	   THE STACK IS WHAT IS POSITIONED, and the buttons inside it are ordinary flow items. Two absolutely
+	   positioned buttons with hand-computed `bottom` offsets would have put the second one's geometry in
+	   terms of the first one's HEIGHT — which `shrinkToFit` decides at runtime, per person, per stage
+	   size. A flex column asks nobody: it is as tall as what it holds and it hangs off the bottom. */
+	/**
+	 * THE CARD'S OWN VERTICAL PADDING, as a property rather than a literal — declared HERE, on the
+	 * ancestor, because `.content` spends it as padding and `.connect-stack` reads it to know how far it
+	 * may drop. A custom property inherits DOWN and not up, so a definition on the stack would have been
+	 * invisible to the very element that sets the padding.
+	 *
+	 * IT CHANGES NOTHING ABOUT THE CARD. `.content` resolves the identical value it always had, and
+	 * `CARD_TOP_H` — which the CC blade is carved to and DeckRiffle imports — is untouched. This is one
+	 * number given one owner, per §33.6.
+	 */
+	.content {
+		--card-pad-y: calc(24px * var(--stage-u, 1));
+	}
+
+	/**
+	 * THE VITALS HAVE A FIXED TOP EDGE — and this was CENTRED for one round, which was wrong.
+	 *
+	 * Centring divides the leftover space, so the top edge becomes a function of how tall the content
+	 * happens to be. Sam caught it on a card with a birth and NO death: the single block floated into the
+	 * middle of the space, sitting nowhere near where BIRTH sits on every other card. His rule:
+	 *
+	 *     "the six lines of birth and death (three each) should remain in the same spot even if there's
+	 *      a missing death section... i.e. the vertical top edge of the birth and death section needs to
+	 *      be consistent. its vertically 'centered' in this space only if there are a full birth and
+	 *      death content"
+	 *
+	 * So the block is TOP-ALIGNED at a constant offset and the slack falls BELOW it. BIRTH begins at the
+	 * same y on every card in the corpus; a card with only a death shows it at the birth position; a card
+	 * with both looks centred because a full birth+death very nearly fills the space anyway.
+	 *
+	 * THE GENERAL RULE, which this project has now paid for twice: CENTRE A THING WHOSE SIZE IS FIXED,
+	 * TOP-ALIGN A THING WHOSE SIZE VARIES. Centring is only stable when every instance is the same
+	 * height; where the content varies, it converts a variation in SIZE into a variation in POSITION,
+	 * and position is the thing the eye tracks between cards.
+	 *
+	 * The column is a flex column of three: the photo at its natural height, this at `flex: 1` holding
+	 * its content to the top, and the button stack. Nothing here can change the card's height — the
+	 * column is a grid row derived from `CARD_TOP_H`, so its children divide a fixed box, never set one.
+	 */
+	.vitals {
+		/* THE TWO GAPS, as tokens, because `.tight` halves exactly these and nothing else. Both are
+		   WHITESPACE — the space under the photo and the space between the two blocks. No size and no
+		   line-height appears here or in `.tight`. */
+		--vital-lead: 6.8px;
+		--vital-gap: 7.6px;
+
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		/* Top-aligned at a constant lead, so the slack falls BELOW and the top edge never varies. */
+		margin-top: var(--vital-lead);
+		gap: var(--vital-gap);
+	}
+	/**
+	 * AT OR BELOW 1100px WIDE, BOTH GAPS HALVE and the block rises into the space (Sam). Above it,
+	 * nothing changes at all — his words, and the reason this is a threshold rather than a curve: the
+	 * layout above 1100 was approved on pixels and must not move.
+	 *
+	 * The question is asked by `stage.svelte.ts`, which is the one module allowed to read the window
+	 * (§33.1); the ANSWER lives here, beside the boxes it spaces.
+	 */
+	.vitals.tight {
+		--vital-lead: 3.4px;
+		--vital-gap: 3.8px;
+	}
+
+	.connect-stack {
+		/* FULL COLUMN WIDTH, which a flex item in a column gets for free — it ran at 95% for a while,
+		   inset on the right so it stopped short of the photo's edge, and then long names needed the last
+		   5% back and a per-button latch was built to hand it over selectively. Sam's call is simpler and
+		   better: every button takes the whole width, so there is no exception to maintain, no threshold
+		   to tune, and no latch that could oscillate. `shrinkToFit` still handles the long names; it just
+		   does it against a wider box. */
+		/**
+		 * THE STACK DROPS 40% OF THE SPACE BELOW IT (Sam, after seeing 75% — "that gets too close to
+		 * bottom border").
+		 *
+		 * `.content` carries `--card-pad-y` of bottom padding, so the portrait column stops that far short
+		 * of the card's own bottom edge and the stack stopped there with it. That is dead space under a
+		 * control which is already the last thing in its column, and part of it is the cheapest room on
+		 * this card: it costs no type, no leading and no gap between two things anyone reads. Measured,
+		 * the space under the stack is exactly `--card-pad-y` — 24.0px at 1440x900, 22.1 at 1280x720 —
+		 * so the drop scales with the stage for free.
+		 *
+		 * The remaining 60% keeps the buttons off the card's bottom edge; a control flush against it reads
+		 * as falling out of the card, which is what 75% looked like.
+		 *
+		 * THE CARD DOES NOT MOVE OR GROW. A negative bottom margin pulls the box past the column's edge
+		 * without giving anything above it a reason to move, and the column is a fixed-height grid row
+		 * derived from `CARD_TOP_H` — so its children divide that box and can never set it. `.content`'s
+		 * padding is unchanged.
+		 *
+		 * IN FLOW, NOT ABSOLUTE, and that changed when the vitals started centring. An out-of-flow stack
+		 * is invisible to layout, so `flex: 1` on the vitals would have centred them between the photo and
+		 * the COLUMN's bottom rather than between the photo and the BUTTON — the buttons would then sit on
+		 * top of them, wrong by exactly the stack's height. The thing being centred against has to be in
+		 * the same conversation.
+		 */
+		margin-bottom: calc(-0.4 * var(--card-pad-y));
+		flex: none;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		/* Rides --stage-u with the boxes it separates, not --type-k: this is a gap between two objects,
+		   not leading inside a line. */
+		gap: calc(3.63px * var(--stage-u, 1));
+	}
+
+	.connect-btn {
 		/* The two heights as tokens, so nothing below repeats a literal. --press is always the SMALLER
 		   give-back: 60% of the lift returned, settling at 40% of --lift. */
 		--lift: -1.1px;
@@ -1120,21 +1317,20 @@
 		--press: -0.44px;
 		--press-shadow: 0 0.66px 1.32px rgba(30, 42, 71, 0.14);
 
-		position: absolute;
-		/* FULL COLUMN WIDTH. It ran at 95% for a while, inset on the right so it stopped short of the
-		   photo's edge — then long names needed the last 5% back and a per-button latch was built to hand
-		   it over selectively. Sam's call is simpler and better: every button takes the whole width, so
-		   there is no exception to maintain, no threshold to tune, and no latch that could oscillate.
-		   `shrinkToFit` still handles the long names; it just does it against a wider box. */
-		right: 0;
-		bottom: 0;
-		left: 0;
-		margin-top: 0;
+		/* `flex: none` — a flex item's default `1 1 auto` is SHRINKABLE, and design §44.16 records what
+		   that costs when someone else measures the box: the ladder's rungs were caught mid-squash and
+		   departed frozen at the wrong height. Here it is cheaper insurance than that — two buttons in a
+		   column that is never over-full — but it is the same rule and it costs one line. */
+		flex: none;
 		min-width: 0;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: calc(7px * var(--stage-u, 1)) calc(8px * var(--stage-u, 1));
+		/* 7px -> 5px, and the trim is deliberately HERE rather than in the vitals: the second button is
+		   the new thing on this card, so the new thing pays. At 5px the box is ~22px against the old
+		   26px and still a comfortable target — design §14.3's original spec was a pair of 32px buttons,
+		   written before the card's geometry was fixed. */
+		padding: calc(6.05px * var(--stage-u, 1)) calc(8px * var(--stage-u, 1));
 		/* Type rides --type-k and the box rides --stage-u — the vitals above already split them this
 		   way, because the two scales are not the same dial. */
 		font-family: var(--font-opensans, sans-serif);
@@ -1157,21 +1353,21 @@
 			box-shadow 160ms cubic-bezier(0.33, 1, 0.68, 1),
 			border-color 160ms ease-out;
 	}
-	.connect-thomas:hover {
+	.connect-btn:hover {
 		transform: translateY(var(--lift));
 		box-shadow: var(--lift-shadow);
 		border-color: rgba(30, 42, 71, 0.32);
 	}
-	.connect-thomas:active {
+	.connect-btn:active {
 		transform: translateY(var(--press));
 		box-shadow: var(--press-shadow);
 	}
-	.connect-thomas:focus-visible {
+	.connect-btn:focus-visible {
 		outline: 2px solid var(--color-inkblue);
 		outline-offset: 2px;
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.connect-thomas {
+		.connect-btn {
 			transition: none;
 		}
 	}

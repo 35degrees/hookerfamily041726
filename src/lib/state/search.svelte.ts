@@ -48,6 +48,26 @@ export type SearchRow = {
 	/** Portrait URL. 3,083 rows. Same field the card and the ladder read. */
 	ph?: string;
 	/**
+	 * PARENT EDGES — father / mother. Absent on the 6,466 with no recorded parent.
+	 *
+	 * Connect-to-anyone walks these in the browser, because an arbitrary PAIR cannot be baked (that is
+	 * N², where `pathsToThomas` is N against one fixed target). They ride HERE rather than in a file of
+	 * their own because this row already carries everything a rung paints, so one fetch serves the
+	 * picker and the ladder both — see `searchRow` in regenerate-data.js for the three options weighed.
+	 */
+	fa?: string;
+	mo?: string;
+	/** For a married-in person: the Hooker partner whose ancestry the walk actually climbs. */
+	hp?: string;
+	/** `bio.chip_first_name` — the name a person is actually called. Opt-in, ~240 rows. */
+	cf?: string;
+	/** `bio.first_name`. The casual name is `cf ?? fn ?? n`, which is the sibling chip's own rule. */
+	fn?: string;
+	/** Chip short name, present only when it differs from `n`. Read by the V's paired spouse card. */
+	sn?: string;
+	/** Generational suffix ("III"). Shown only where a married-in person is named alone. */
+	sf?: string;
+	/**
 	 * Estimated birth year — A SORT KEY ONLY, NEVER RENDERED. An era guess, not a fact; displaying
 	 * it as a date would be inventing data. Present on 781 of the 1,920 undated rows (680 placed by
 	 * generation, 101 by death year); the other 1,139 have no signal and still sort last.
@@ -109,6 +129,15 @@ const RECENT_MAX = 8;
  * `ready` is the single reactive bit that tells the derived it has arrived.
  */
 let index: Prepared[] = [];
+/**
+ * id -> row, built in the same pass as `index`.
+ *
+ * Connect-to-anyone walks the parent graph over `fa`/`mo`, which means thousands of lookups per path,
+ * and it renders each rung from the row it lands on. A `.find()` over 19,728 entries per hop would be
+ * the 2,238ms comparator bug in a second costume — the fix there was to compute once rather than
+ * per-comparison, and this is the same rule applied before the mistake instead of after it.
+ */
+let byId: Map<string, Prepared> = new Map();
 let ready = $state(false);
 /** The schema's §6 canonical tag names, spaced to match the folded form stored on each row. */
 let canonTags: Set<string> = new Set();
@@ -127,6 +156,22 @@ let recent = $state<string[]>([]);
 let tags = $state<string[]>([]);
 /** The handful offered this visit. Re-rolled by `rollTags()` when the modal opens. */
 let tagPool = $state<string[]>([]);
+
+/**
+ * WHO IS EVEN ELIGIBLE, set by the surface rather than by the user.
+ *
+ * Connect-to-anyone can only draw a path to someone the tree can actually reach: a Hooker descendant, or
+ * someone married to one (whose route runs through their partner). An orbit figure has no blood path by
+ * definition — that is what makes them orbit — so offering them would be offering a result that cannot
+ * be answered. Measured over the corpus, restricting both ends this way is what takes the answer rate
+ * from 66% to 99.9%.
+ *
+ * IT IS NOT `cats`, AND THAT DISTINCTION IS THE POINT. `cats` is the user's own filter, shown as the lit
+ * chip they clicked; writing this into it would light a chip nobody chose, and then clearing "All" would
+ * silently widen the picker to people it cannot serve. This is a floor the surface holds; that is a
+ * choice the reader makes. They AND together.
+ */
+let gate = $state(0);
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -177,6 +222,7 @@ export function load(): Promise<void> {
 				})()
 			}) as Prepared;
 		});
+		byId = new Map(index.map((r) => [r.id, r]));
 		ready = true;
 	})();
 	// Let it retry on the next open rather than latching a permanent failure.
@@ -318,10 +364,16 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 	// Empty box with a category selected BROWSES that category (Sam, 082726) — it makes the small
 	// categories genuinely explorable: 12 Hartford Founders, 96 Major Influences. Empty box with no
 	// category stays empty, because 60 arbitrary rows out of 19,728 mean nothing.
+	// THE GATE DOES NOT MAKE THE BOX NON-IDLE. An empty query still shows nothing, even with a floor set:
+	// 18,790 eligible people are no more browsable than 19,728, and a picker that opens full of arbitrary
+	// rows teaches the reader that the list is a list rather than an answer.
 	if (!terms.length && !cats && !tags.length) return { rows: [], total: 0 };
 
 	const hits: Prepared[] = [];
 	for (const r of index) {
+		// The SURFACE's floor first — a row the caller cannot serve should never reach the ranking, the
+		// count, or the "N matches" line. See `gate`.
+		if (gate && !(r.f & gate)) continue;
 		if (cats && !(r.f & cats)) continue;
 		/**
 		 * AND, NOT OR — and it is the opposite of the category chips deliberately. I built OR first, on
@@ -615,6 +667,14 @@ export function toggleTag(tag: string): void {
 	else tags = [...tags, tag].slice(-TAG_MAX);
 }
 
+/**
+ * Raise or drop the eligibility floor. The picker sets it on open and clears it on close — it is a
+ * property of the SURFACE, so it must not outlive the surface that wanted it.
+ */
+export function setGate(mask: number): void {
+	gate = mask;
+}
+
 export function toggleCategory(mask: number): void {
 	cats = cats & mask ? cats & ~mask : cats | mask;
 }
@@ -710,6 +770,14 @@ export const search = {
 	},
 	get recent() {
 		return recent;
+	},
+	/** One row by id, or undefined. The parent walk and the ladder's rungs both read through this. */
+	row(id: string): Prepared | undefined {
+		return byId.get(id);
+	},
+	/** The surface's eligibility floor, or 0. See setGate. */
+	get gate() {
+		return gate;
 	},
 	/** Nothing typed and no chip picked — the modal's resting state. */
 	get idle() {

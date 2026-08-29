@@ -670,6 +670,73 @@ function searchRow(p, slugMap, reg) {
 	// The portrait. 3,083 rows. Same field the card and the ladder read.
 	const ph = b.photo_url || (p.name || {}).photo_url;
 	if (ph) row.ph = ph;
+	/**
+	 * PARENT EDGES — `fa`/`mo` — and the reason they live HERE rather than in a file of their own.
+	 *
+	 * Connect-to-anyone walks the parent graph at RUNTIME, because an arbitrary PAIR cannot be baked
+	 * (that is N², where `pathsToThomas` is N against one fixed target). What a runtime walk needs is a
+	 * resident parent map, and there were three places to put one:
+	 *
+	 *   table-index.json   already has father_id/mother_id for all 19,728 — but it is 644 KB gzipped,
+	 *                      the person page never loads it, and it carries no photo, blurb or `sp`, so
+	 *                      it would be a second fetch that still could not DRAW a rung.
+	 *   a new triples file 470 KB raw / 76 KB gzipped, and a second round trip before the modal opens.
+	 *   HERE               +49 KB gzipped on a file this modal already fetches for its picker, and the
+	 *                      row already carries everything a rung paints — n, by/dy/pv, ph, bl, and
+	 *                      hd/sp/ee out of the `f` bitfield. One file, one fetch, picker and ladder both.
+	 *
+	 * SPARSE, like every other optional field here: 6,466 people have no recorded parent and their rows
+	 * are byte-identical to before.
+	 */
+	const par = p.parents || {};
+	if (par.father_id) row.fa = par.father_id;
+	if (par.mother_id) row.mo = par.mother_id;
+	/**
+	 * THE CASUAL NAME — `chip_first_name` when there is one, else the plain first name.
+	 *
+	 * Connect-to-anyone states its answer in a sentence, and a sentence wants the name a person is
+	 * CALLED: "Sam is the great-great-grand-nephew of Charles", not "Samuel Talcott Hooker is the
+	 * great-great-grand-nephew of Rev. Charles Chauncey Hooker". The display name is right on a card,
+	 * where it is a label under a portrait; in prose it is a mouthful and it buries the relationship,
+	 * which is the only thing that line exists to say.
+	 *
+	 * Same field and same precedence the sibling chips already use (`cf ?? fn`, see `compact`), so the
+	 * casual name here is the casual name there. Emitted only where it differs from nothing — 556 people
+	 * carry a middle name inside `first_name` (roadmap §44.4) and that debt shows up here too, which is
+	 * exactly why `cf` exists as the per-person escape hatch.
+	 */
+	if (b.chip_first_name) row.cf = b.chip_first_name;
+	if (b.first_name) row.fn = b.first_name;
+	/**
+	 * `sn`/`sf` — THE CHIP NAME AND ITS SUFFIX, for the one surface that names a married-in person ALONE.
+	 *
+	 * Connect-to-anyone's V hangs a spouse card off its partner's rung, and that card is the only place
+	 * the chosen person is named beside someone carrying the same surname — "John Rockefeller" next to
+	 * "Blanchette Ferry Hooker Rockefeller" loses the token that says WHICH John Rockefeller. The paired
+	 * card on the Thomas ladder solved this already (design §44.15) and reads `sn`/`sf` off the compact;
+	 * a V's far end comes from the index instead, so the index has to carry the same two fields.
+	 *
+	 * SPARSE, and `sn` only when it differs from the display name — most people's short name IS their
+	 * display name, and 19,728 duplicates of a string already on the row is pure weight.
+	 */
+	if (c.sn && c.sn !== c.n) row.sn = c.sn;
+	if (c.sf) row.sf = c.sf;
+	/**
+	 * `hp` — THE HOOKER PARTNER, on married-in people only (~5,900 rows).
+	 *
+	 * A connection between two people is walked over BLOOD edges, so a married-in END has no ancestors
+	 * the walk can climb toward the other person — their route to the line runs through whoever they
+	 * married. This is the id of that person, so the client can resolve either end to the bloodline
+	 * figure whose ancestry it actually has to walk, and then render the married-in person as the
+	 * overhanging card on that rung — which is exactly the shape the spouse ladder already ships
+	 * (design §44.11).
+	 *
+	 * Emitted only where it is true and only where it is needed: a descendant is their own answer.
+	 */
+	if (!c.hd && marriedIntoLine.has(p.id)) {
+		const hp = hookerPartnerOf(p, reg.byId);
+		if (hp) row.hp = hp;
+	}
 	// `eb` (era placement for the undated) is backfilled by placeUndatedByEra after the map exists.
 	return row;
 }
@@ -1472,6 +1539,28 @@ const THOMAS_ID = 'H00001';
 const PATHS_MAX_DEPTH = 26; // runaway guard; the deepest real chain measured is 14 rungs
 const PATHS_MAX_ROUTES = 8; // ditto; the measured ceiling is 3
 
+/**
+ * THE HOOKER PARTNER of a married-in person — the spouse this person rides the line through.
+ *
+ * FIRST HOOKER SPOUSE BY MARRIAGE ORDER, not by chain length or by id. `marriage_number` is what the
+ * card sorts spouses by, so every consumer names the same partner the chips show first; picking the
+ * shortest route or the lowest id instead would silently disagree with the card a foot above it.
+ *
+ * TWO CONSUMERS, ONE ANSWER, which is why it is a function rather than the inline walk it used to be.
+ * personPayload uses it to borrow a spouse's ladder (design §44.11); searchRow emits it as `hp` so the
+ * connect-to-anyone walk can resolve a married-in END to the bloodline person whose ancestors it has to
+ * climb. Two copies of this would be two answers to one question the moment either was edited.
+ */
+function hookerPartnerOf(p, byId) {
+	return (
+		(p.marriages || [])
+			.slice()
+			.sort((a, b) => (a?.marriage_number ?? 99) - (b?.marriage_number ?? 99))
+			.map((m) => m && m.spouse_id)
+			.find((q) => q && byId[q]?.classification?.is_thomas_descendant) ?? null
+	);
+}
+
 /** One rung: the person's compact plus their blurb. Hoisted out of pathsToThomasFor because the
  *  married-in case below needs to build the partner's own rung to put on the end of every route. */
 function rungOf(id, byId, slugMap) {
@@ -1899,11 +1988,7 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 		!p.classification?.is_easter_egg &&
 		!orbitIds.has(p.id)
 	) {
-		const partner = (p.marriages || [])
-			.slice()
-			.sort((a, b) => (a?.marriage_number ?? 99) - (b?.marriage_number ?? 99))
-			.map((m) => m && m.spouse_id)
-			.find((q) => q && byId[q]?.classification?.is_thomas_descendant);
+		const partner = hookerPartnerOf(p, byId);
 		if (partner) {
 			const inherited = pathsToThomasFor(byId[partner], byId, slugMap);
 			if (inherited) {
@@ -2004,7 +2089,9 @@ function main() {
 	const instById = Object.fromEntries((data.institutions || []).map((i) => [i.id, i]));
 	const landmarkById = Object.fromEntries((data.landmarks || []).map((x) => [x.id, x]));
 	const warById = Object.fromEntries((data.wars || []).map((w) => [w.id, w]));
-	const searchReg = { cemById, instById, lmById: landmarkById, warById };
+	// `byId` rides the bundle so searchRow can resolve a married-in person's Hooker partner (`hp`) —
+	// a graph question, not a registry lookup, but it needs the same one-argument shape.
+	const searchReg = { cemById, instById, lmById: landmarkById, warById, byId };
 
 	/**
 	 * THE CANONICAL TAG VOCABULARY, read from the SCHEMA rather than from the data.

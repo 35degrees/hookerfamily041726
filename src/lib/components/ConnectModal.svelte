@@ -931,11 +931,19 @@
 		     own build time, so it is right for a three-rung ladder and a fifteen-rung one alike.
 
 		     OUT is a plain fade, not the same wait in reverse: it used to be removed in the frame the
-		     modal closed, so the title and tabs blinked out while cards were still travelling. -->
+		     modal closed, so the title and tabs blinked out while cards were still travelling.
+
+		     `|global` IS WHAT MAKES THE EXIT FADE HAPPEN AT ALL, and it is design §44.5's finding in a
+		     third place: a `transition:` is LOCAL by default, so it plays only when its OWN block
+		     changes. This header sits two blocks inside the `{#if open}`, so on close its outro never
+		     ran — it simply survived until the block was torn down, which happens only after the LAST
+		     card has finished leaving. Sam saw exactly that: the title and the X "wait until cards have
+		     exited out left side of screen and then flash out". Global, at 220ms, the furniture goes
+		     the moment you ask to leave and the cards sweep out from under it. -->
 		<div
 			class="ladder-head"
-			in:fade={{ delay: buildMs, duration: 300 }}
-			out:fade={{ duration: CLOSE_MS }}
+			in:fade|global={{ delay: buildMs, duration: 300 }}
+			out:fade|global={{ duration: 220 }}
 		>
 			<!-- SINGULAR WHEN THERE IS ONE, and that is the common case rather than an edge: 91.3% of
 			     descendants have exactly one route. The tab strip is already hidden for them, so a plural

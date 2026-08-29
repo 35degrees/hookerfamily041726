@@ -339,6 +339,21 @@
 		remember(search.text);
 		leaving = true;
 		closeModal();
+		/**
+		 * A PICK ENDS THE SEARCH (Sam: "when someone is in search, finds the person they want, and clicks
+		 * ... the whole search function should be reset and cleared").
+		 *
+		 * This narrows the module's standing rule rather than contradicting it. That rule exists for
+		 * BROWSING — "pick Hartford Founders, click someone, come back, and the 12 are still on screen" —
+		 * and it is still what happens when the modal is dismissed with Escape or the X. But a pick is not
+		 * a dismissal: the reader asked a question, got an answer, and travelled to it. Re-opening onto
+		 * the query that produced the card you are now standing on is the search equivalent of a stale
+		 * far end, and `remember()` has already kept the query where it belongs.
+		 *
+		 * AFTER `closeModal()`, so the rows the exit choreography is still animating keep their data —
+		 * the same ordering connect-to-anyone had to learn the hard way.
+		 */
+		clear();
 
 		const stage = document.querySelector('.page-container') ?? document.body;
 		const card = document.querySelector('.featured-card');
@@ -1024,7 +1039,17 @@
 		align-items: center;
 		gap: 14px;
 	}
+	/**
+	 * PULLED IN OFF THE EDGE (Sam: "the 'SEARCH' text title on left side above search input box too far
+	 * left just pull it in").
+	 *
+	 * It sat flush with the panel's left edge, which is the BOX's edge and not the box's text — the
+	 * placeholder starts ~36px further in, past the padding and the magnifier — so the title read as
+	 * hanging off the side of everything below it. The X earns its 6px overhang optically (its glyph is
+	 * inset within a 34px target); the title has no such excuse, so it takes the same 6px inward.
+	 */
 	.head-title {
+		margin-left: 6px;
 		font-family: var(--font-opensans, 'Open Sans', sans-serif);
 		font-size: 14px;
 		font-weight: 600;

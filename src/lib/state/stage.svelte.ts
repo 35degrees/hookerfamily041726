@@ -354,6 +354,32 @@ function nbCapForWidth(w: number): number {
 }
 const effectiveNbCap = $derived(Math.min(rung.nbCap ?? 7, nbCapForWidth(vw)));
 
+/**
+ * THE VITALS' OWN WHITESPACE, HALVED BELOW 1100px WIDTH. Sam, after seeing it on pixels:
+ *
+ *     "for mobile sizing at browser width of 1100px or less the death location sits right on top of the
+ *      top button edge, while the birth section has a nice gap under photo and the gap between birth and
+ *      death sections is healthy too... can the margins between birth and photo, and the gap between
+ *      birth and death be reduced by 50% and everything moves up to fill this newly added space? above
+ *      1100px browser width everything works well so don't change that."
+ *
+ * WIDTH, and its own threshold, for the same two reasons `nbCapForWidth` above is: the width clamp means
+ * a rung does not predict the rendered width, and the thing that runs out here is a function of width
+ * specifically. The portrait column's HEIGHT rides `u` — the photo is `aspect-[3/4] w-full`, so it is a
+ * pure function of the column's width — while the dates inside it ride `k`, and §33.2 fixes `k >= u`. So
+ * the dates eat a growing share of a shrinking column, and 1100px is where the slack under them reaches
+ * zero on the tallest vitals in the corpus.
+ *
+ * IT SPENDS WHITESPACE, NEVER TYPE. The two values it halves are the gap under the photo and the gap
+ * between the two blocks; no size and no line-height moves, at any width. That distinction is the whole
+ * of Sam's instruction on this section and it has been got wrong twice already.
+ *
+ * A BOOLEAN, NOT THE TWO NUMBERS, because the numbers are geometry and belong beside the thing they
+ * space; this module owns only the QUESTION about the window. Nothing else may read the window (§33.1).
+ */
+const TIGHT_VITALS_W = 1100;
+const tightVitals = $derived(vw <= TIGHT_VITALS_W);
+
 export const stage = {
 	get vw() {
 		return vw;
@@ -387,6 +413,10 @@ export const stage = {
 	},
 	get siblingColumn(): boolean {
 		return rung.siblingColumn;
+	},
+	/** At or below 1100px wide, the vitals' two whitespace gaps halve. See tightVitals. */
+	get tightVitals(): boolean {
+		return tightVitals;
 	},
 	get coarse(): boolean {
 		return coarsePointer;

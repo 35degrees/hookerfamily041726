@@ -3,6 +3,7 @@
 	import PersonBox from '$lib/components/PersonBox.svelte';
 	import FeaturedCard from '$lib/components/FeaturedCard.svelte';
 	import ConnectModal from '$lib/components/ConnectModal.svelte';
+	import ConnectAnyoneModal from '$lib/components/ConnectAnyoneModal.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import TimelineRail from '$lib/components/TimelineRail.svelte';
 	import TopRightChrome from '$lib/components/TopRightChrome.svelte';
@@ -1673,7 +1674,12 @@
      (design §33.1). It gates itself on `ascension.active`, so on every ordinary card it renders nothing
      at all and the current UX is untouched. -->
 <Ascension onexit={descend} />
+<!-- THREE SEPARATE FEATURES, THREE SEPARATE COMPONENTS. They share the app's vocabulary — the
+     `.person-box` card, `warmPersonLinks`, the search index and its ranking — and nothing else.
+     Sam, after a `mode` flag inside ConnectModal let a tuning pass on one change the other:
+     "each of these functions have very different purposes and need to feel individualized". -->
 <ConnectModal />
+<ConnectAnyoneModal />
 <SearchModal />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
