@@ -60,6 +60,12 @@ __pycache__/
 *.log
 .env
 .env.*
+# ...but .env.example carries NO secrets and IS source: it is the only record of which
+# variables this app needs and where each one comes from. Added 082926 with auth (§50).
+# The negation works because the rules above match FILES, not a parent directory —
+# git cannot re-include a file whose parent directory is excluded (see the probe-out
+# note below, which is the same trap in its other form).
+!.env.example
 
 # entity image-gap worklist (regenerable side-output, not source)
 static/data/image-gaps.tsv
