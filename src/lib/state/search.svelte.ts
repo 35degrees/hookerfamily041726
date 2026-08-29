@@ -553,6 +553,28 @@ function titleCase(s: string): string {
  * right for the places, employers and schools this mostly surfaces (all proper nouns) and rough on a
  * prose blurb.
  */
+/**
+ * ONE PERSON, BY CANONICAL ID — the app's only id → name/slug resolver, and it is here because this
+ * is the only place that holds every person in the browser.
+ *
+ * WHY IT HAD TO GO SOMEWHERE: bookmarks and the hero card store the canonical ID and never a slug
+ * (§50.2, because slug churn is permanent). But the per-person payloads under `static/data/person/`
+ * are keyed BY SLUG, so an id cannot be turned into a name by fetching a file — there is no file to
+ * fetch. The search index is the one artefact carrying `id`, `slug` and `n` for all 19,728 people.
+ *
+ * SHARING THIS DOES NOT BREACH §46.2. That law forbids sharing anything that RENDERS, and its own
+ * table lists "the data — one search index, one parent map" as explicitly shared. This is a pure
+ * lookup over the loaded index with no DOM, no timing and no behaviour: the same category as
+ * `kin.ts`, which connect-to-anyone already reads.
+ *
+ * Returns null before the index has loaded, so callers must `await load()` first or handle the miss.
+ * A severed or merged id also returns null, which is the correct answer rather than an error.
+ */
+export function personById(id: string): { id: string; slug: string; n: string } | null {
+	const row = index.find((r) => r.id === id);
+	return row ? { id: row.id, slug: row.slug, n: row.n } : null;
+}
+
 export function reasonFor(
 	r: SearchRow,
 	term: string,

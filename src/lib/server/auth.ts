@@ -93,7 +93,14 @@ if (!DATABASE_URL) {
  * No ORM. Better Auth 1.7's built-in Kysely dialect takes a `pg` Pool directly and its CLI writes
  * the migration, which is why Drizzle left the stack (roadmap Phase 10, corrected 082926).
  */
-const pool = new Pool({ connectionString: DATABASE_URL });
+/**
+ * EXPORTED, so `/api/bookmarks` and `/api/hero` share this one pool rather than opening their own.
+ *
+ * A second `new Pool()` in a route file would be a second connection pool per serverless instance —
+ * which is the connection-exhaustion failure DEPLOYMENT §18.7 warns about, arriving by a different
+ * door than the one it names. One pool, one module, and the routes import it.
+ */
+export const pool = new Pool({ connectionString: DATABASE_URL });
 
 export const auth = betterAuth({
 	database: pool,
@@ -268,7 +275,23 @@ export const auth = betterAuth({
 	 */
 	user: {
 		additionalFields: {
-			heroPersonId: { type: 'string', required: false, input: false }
+			heroPersonId: { type: 'string', required: false, input: false },
+			/**
+			 * THE TWO LIST NAMES, NULLABLE — and null is a meaningful value, not a gap.
+			 *
+			 * Null means "never renamed", and the UI falls back to "List 1" / "List 2". Storing those
+			 * defaults as literal strings would make a renamed list indistinguishable from an
+			 * untouched one, and would mean shipping English into the database for a label that is
+			 * purely presentational.
+			 *
+			 * ONE SOURCE OF TRUTH FOR A NAME THE USER OWNS. The bookmark tooltip on the card ("Moved
+			 * to My Ancestors") and the column header in the bookmarks modal read the SAME field, so
+			 * a rename propagates everywhere without a sync step. Every time in this project that one
+			 * string has lived in two places, the two have drifted — design §45.4's stripe colours are
+			 * the same lesson one level down.
+			 */
+			list1Name: { type: 'string', required: false, input: false },
+			list2Name: { type: 'string', required: false, input: false }
 		}
 	},
 

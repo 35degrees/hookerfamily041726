@@ -31,7 +31,13 @@ type SessionUser = {
 	email: string;
 	image?: string | null;
 	heroPersonId?: string | null;
+	list1Name?: string | null;
+	list2Name?: string | null;
 };
+
+/** 1 = gold, 2 = powder blue, null = not bookmarked. The ribbon's three states, and the only
+ *  vocabulary the whole feature needs. */
+export type ListId = 1 | 2;
 
 /**
  * `isPending` STARTS TRUE, and that is load-bearing rather than tidy.
@@ -46,11 +52,54 @@ let snapshot = $state<{ user: SessionUser | null; isPending: boolean }>({
 	isPending: true
 });
 
+/**
+ * THE BOOKMARK SET, CLIENT-SIDE, AND THIS IS THE WHOLE REASON PERSON PAGES STAY STATIC.
+ *
+ * The obvious way to render a bookmark ribbon is to read the session in the page's `load` and hand
+ * the card its own state. That would convert 19,728 static CDN payloads into serverless invocations
+ * for an icon (§50.0, DEPLOYMENT §18.2), and nothing in the app would report that it had happened.
+ *
+ * So: the entire set is fetched ONCE per session, held here, and every card asks this Map rather
+ * than the server. A personal bookmark list is tens of rows — the whole thing is smaller than one
+ * person payload, and it makes the ribbon answer instantly on every card including ones the reader
+ * has not visited yet.
+ */
+let marks = $state<Map<string, ListId>>(new Map());
+let marksLoaded = $state(false);
+
+async function hydrateBookmarks() {
+	try {
+		const res = await fetch('/api/bookmarks');
+		if (!res.ok) return;
+		const data = (await res.json()) as { bookmarks: { personId: string; list: ListId }[] };
+		marks = new Map(data.bookmarks.map((b) => [b.personId, b.list]));
+		marksLoaded = true;
+	} catch {
+		/* A failed hydrate leaves the ribbons blank rather than wrong. The next sign-in retries. */
+	}
+}
+
 if (browser) {
 	// App-lifetime singleton, never torn down — the same shape every other state module here uses.
 	// Deliberately not unsubscribed: there is no point at which this app stops caring who is signed in.
+	let lastUserId: string | null = null;
 	authClient.useSession().subscribe((s) => {
-		snapshot = { user: (s.data?.user as SessionUser) ?? null, isPending: s.isPending };
+		const user = (s.data?.user as SessionUser) ?? null;
+		snapshot = { user, isPending: s.isPending };
+
+		/**
+		 * HYDRATE ON THE TRANSITION, NOT ON EVERY EMISSION. This store fires on refreshes and focus
+		 * events as well as on sign-in, and re-fetching the whole set each time would be a request
+		 * per tab focus — the same shape of waste as the previous project's write-per-session-read,
+		 * one layer up. Keyed on the user id changing, so a sign-out then sign-in as someone ELSE
+		 * correctly reloads rather than showing the previous person's saved ancestors.
+		 */
+		const id = user?.id ?? null;
+		if (id === lastUserId) return;
+		lastUserId = id;
+		marks = new Map();
+		marksLoaded = false;
+		if (id) void hydrateBookmarks();
 	});
 }
 /**
@@ -97,8 +146,88 @@ export const auth = {
 		if (!u) return '';
 		const first = (u.name ?? '').trim().split(/\s+/)[0];
 		return first || u.email.split('@')[0];
+	},
+
+	/** Which list a person is in, or null. The ribbon's entire question. */
+	listFor(personId: string): ListId | null {
+		return marks.get(personId) ?? null;
+	},
+	get marksLoaded(): boolean {
+		return marksLoaded;
+	},
+	/** Newest first — the hover menu's "last five added" reads straight off this. */
+	get bookmarkCount(): number {
+		return marks.size;
+	},
+	/**
+	 * THE LIST'S NAME, WITH THE FALLBACK IN ONE PLACE. Null in the database means "never renamed",
+	 * so the default lives here rather than being written into the row — which keeps a renamed list
+	 * distinguishable from an untouched one and keeps English out of the data.
+	 */
+	listName(list: ListId): string {
+		const u = snapshot.user;
+		const custom = list === 1 ? u?.list1Name : u?.list2Name;
+		return (custom ?? '').trim() || `List ${list}`;
+	},
+	get isHero(): (personId: string) => boolean {
+		return (personId: string) => !!snapshot.user?.heroPersonId && snapshot.user.heroPersonId === personId;
 	}
 };
+
+/**
+ * OPTIMISTIC, AND UN-AWAITED — because Neon sleeps.
+ *
+ * Scale-to-zero suspends the compute after 5 minutes idle, so the first write after a quiet spell
+ * pays ~0.5–1s to wake it. If the ribbon waited for the server, that click would feel broken. So the
+ * local Map changes first, the card re-renders immediately, and the request goes out behind it.
+ *
+ * ON FAILURE THE OPTIMISM IS ROLLED BACK, which is the half that makes this honest rather than
+ * merely fast: a ribbon that stays gold after the write failed is a lie the user will not discover
+ * until their list is short one ancestor.
+ */
+export async function setBookmark(personId: string, list: ListId | null): Promise<void> {
+	const previous = marks.get(personId) ?? null;
+	const next = new Map(marks);
+	if (list === null) next.delete(personId);
+	else next.set(personId, list);
+	marks = next;
+
+	try {
+		const res = await fetch('/api/bookmarks', {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ personId, list })
+		});
+		if (!res.ok) throw new Error(String(res.status));
+	} catch {
+		const rollback = new Map(marks);
+		if (previous === null) rollback.delete(personId);
+		else rollback.set(personId, previous);
+		marks = rollback;
+	}
+}
+
+/**
+ * SETTING A HERO IS NOT OPTIMISTIC, and that is deliberate.
+ *
+ * Unlike a bookmark, this DESTROYS the previous value — and the caller needs to know what it was in
+ * order to say so. Returning `previousPersonId` from the server is what lets the confirmation name
+ * the person being replaced rather than asking "Proceed?" about nothing in particular, and what lets
+ * a cancelled confirmation still leave the reader knowing what they had.
+ */
+export async function setHero(personId: string | null): Promise<{ previousPersonId: string | null }> {
+	const res = await fetch('/api/hero', {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ personId })
+	});
+	if (!res.ok) throw new Error(`hero update failed: ${res.status}`);
+	const data = (await res.json()) as { previousPersonId: string | null };
+	// The session store carries `heroPersonId`, so refresh it rather than patching a local copy —
+	// same rule as everywhere else here: one source of truth for one fact.
+	await authClient.getSession({ query: { disableCookieCache: true } });
+	return data;
+}
 
 /**
  * SIGN-IN RETURNS YOU WHERE YOU WERE, not to the site root.

@@ -9,6 +9,7 @@
 	import TopRightChrome from '$lib/components/TopRightChrome.svelte';
 	import SearchModal from '$lib/components/SearchModal.svelte';
 	import AuthModal from '$lib/components/AuthModal.svelte';
+	import CardMarks from '$lib/components/CardMarks.svelte';
 	import DeckRiffle from '$lib/components/DeckRiffle.svelte';
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
@@ -1974,6 +1975,31 @@
 					orbit={cur.orbit === true}
 					founderSpouse={ascension.founderSpouse}
 				/>
+				<!-- THE RIBBON AND THE HOUSE (roadmap §50). Mounted HERE, as a sibling of FeaturedCard
+				     inside `.featured-flight`, for one hard reason: the card's silhouette is a
+				     `clip-path`, and these circles sit MOSTLY OUTSIDE its top-left corner. As a child
+				     of the card, ~80% of each would be clipped away and it would read as a broken
+				     asset rather than as clipping. `.featured-flight` is already the positioning
+				     context for `.demote-chipface`, so it needs nothing new.
+
+				     GATED ON `settled`, the same signal FeaturedCard and SiblingPanel take: chrome
+				     that belongs to a card at REST must not ride a card in flight. A ribbon travelling
+				     with a demoting card would be an object that has no business being airborne.
+
+				     They render on EVERY card, orbit and founder zones included (Sam) — those are
+				     grounds, not different kinds of card, and a reader in the zone can still save
+				     someone. -->
+				{#if featuredLanded && cur.person.id === landedPersonId}
+					<!-- The same name resolution FeaturedCard itself uses (`bio.display_name` first,
+					     `name.display_name` second) — so the tooltip and the confirmation say exactly
+					     what the card says, rather than a second opinion about who this is. -->
+					<CardMarks
+						personId={cur.person.id}
+						personName={cur.person.bio?.display_name ??
+							cur.person.name?.display_name ??
+							'this person'}
+					/>
+				{/if}
 				<!-- Chip-face for the "flip early, land as a chip" relative demotion: a real PersonBox of
 				     THIS person (identical to the parent/child box it becomes), pre-scaled to fill the card
 				     and cross-faded in at the start of a demote, then shrunk with the card to land exactly
