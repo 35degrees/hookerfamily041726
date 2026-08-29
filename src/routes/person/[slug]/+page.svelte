@@ -8,6 +8,7 @@
 	import TimelineRail from '$lib/components/TimelineRail.svelte';
 	import TopRightChrome from '$lib/components/TopRightChrome.svelte';
 	import SearchModal from '$lib/components/SearchModal.svelte';
+	import AuthModal from '$lib/components/AuthModal.svelte';
 	import DeckRiffle from '$lib/components/DeckRiffle.svelte';
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
@@ -1681,6 +1682,11 @@
 <ConnectModal />
 <ConnectAnyoneModal />
 <SearchModal />
+<!-- FOUR NOW, and the rule above is unchanged by the fourth: AuthModal shares the veil's VALUES and
+     the single slot in `modal.svelte.ts`, and shares nothing that renders. It has no form at all —
+     Google-only removes every field — so it is one button, which is the species of object §45.12
+     says every control in this app has to be. -->
+<AuthModal />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
 <!-- The keep-alive test listens on the WINDOW, not on the stage. On .page-container it simply stopped

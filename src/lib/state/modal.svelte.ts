@@ -15,7 +15,9 @@
  * loaded. Parking a copy in this store would be a second source of truth for one fact, and it would go
  * stale the moment a navigation replaced the featured person underneath it.
  */
-export type ModalKind = 'connect-thomas' | 'connect-anyone' | 'search';
+/** 082926: `auth` joins as the FOURTH surface, and it is a fourth FILE — §46.2. It shares this slot
+ *  and the veil's values; it shares nothing that renders. `bookmarks` follows in slice 5. */
+export type ModalKind = 'connect-thomas' | 'connect-anyone' | 'search' | 'auth';
 
 let openKind = $state<ModalKind | null>(null);
 

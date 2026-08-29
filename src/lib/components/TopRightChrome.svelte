@@ -20,6 +20,7 @@
 	 */
 	import SearchTrigger from './SearchTrigger.svelte';
 	import ShuffleNotables from './ShuffleNotables.svelte';
+	import AuthTrigger from './AuthTrigger.svelte';
 	import { ascension } from '$lib/state/ascension.svelte';
 
 	let { settled = true }: { settled?: boolean } = $props();
@@ -35,6 +36,19 @@
 	     from anywhere, and being stranded in the zone with no way to leave except the X was a smaller
 	     app than the one this is. It re-inks itself for the dark ground; see SearchTrigger. -->
 	<SearchTrigger />
+	<!-- AUTH TAKES THE OUTERMOST SEAT (Sam, 082926: "i want Sign In in the right top corner, i don't
+	     care that Search gets moved over").
+
+	     RECORDED BECAUSE IT REVISES A WRITTEN RULE RATHER THAN FILLING A GAP. §45.15 gave Search this
+	     seat on a stated principle — "reading right to left, the outermost control is the one that goes
+	     anywhere in the tree" — and Sign In displaces it. Sam's call, made knowingly; noted here so a
+	     later reader finds a decision instead of a contradiction between the doc and the corner.
+
+	     IT DOES NOT YIELD THE ZONE, for Search's reason rather than Shuffle's: signing in is not an
+	     exit that skips the descent, and being stranded mid-ascension unable to reach your own account
+	     is the same smaller app §45.15 argued against. It renders NOTHING while the session resolves,
+	     so the cluster never reflows — see AuthTrigger. -->
+	<AuthTrigger />
 </div>
 
 <style>

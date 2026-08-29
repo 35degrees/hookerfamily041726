@@ -1,6 +1,9 @@
 <script lang="ts">
 	import './layout.css';
-	import { page } from '$app/stores';
+	// 082926: the dead `page` import from the deprecated `$app/stores` is gone — it was never
+	// referenced in this file, and it was the app's ONLY `$app/stores` reference. Recorded as a free
+	// fix in roadmap §38.6 on August 14 and carried on the open list ever since; taken here because
+	// auth is the arc that finally touches this file. One less thing for the SvelteKit 3 migration.
 	import { fade } from 'svelte/transition';
 
 	// Supports weights 100-900
