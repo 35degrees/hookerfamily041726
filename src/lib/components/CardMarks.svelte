@@ -24,6 +24,7 @@
 	 */
 	import { auth, setBookmark, setHero, type ListId } from '$lib/state/auth.svelte';
 	import { load, personById } from '$lib/state/search.svelte';
+	import { cubicOut } from 'svelte/easing';
 
 	/**
 	 * `personName` is the card's full display name — right for a tooltip, wrong for a button.
@@ -57,47 +58,68 @@
 	const list = $derived(auth.listFor(personId));
 	const isHero = $derived(auth.isHero(personId));
 
-	/** Transient, and it says what HAPPENED rather than what the control is — a confirmation, not a
-	 *  label. Cleared on a timer; re-firing resets the timer rather than stacking. */
-	let toast = $state('');
 	/**
-	 * A SEQUENCE NUMBER, PURELY TO RESTART THE ANIMATION.
+	 * A KEYED LIST, NOT A SINGLE SLOT — third attempt, and the previous two failed for the same
+	 * reason: they tried to REPLAY an effect on a node that already existed.
 	 *
-	 * Sam: "it only works the first time ... if i click to blue ribbon the toast should restart."
-	 * The node persists between messages when clicks come faster than the 1250ms life, so changing
-	 * the TEXT did not restart the CSS animation — and because it ends with `forwards`, the node was
-	 * sitting at opacity 0. The second message was rendered and invisible.
+	 *   1. one `toast` string + a CSS animation      -> the text changed, the animation did not replay
+	 *   2. the same + `{#key}` to force recreation   -> still unreliable
 	 *
-	 * `{#key toastSeq}` forces Svelte to destroy and recreate the element, which is the only reliable
-	 * way to replay a CSS animation. Incrementing on every call means every click gets its own fade,
-	 * including two clicks of the same message.
+	 * Each toast is now its own object with its own id, rendered by a keyed `{#each}`. Svelte's
+	 * guarantee there is unambiguous: a new key means a new element, `in:` runs on mount and `out:`
+	 * runs on removal, every time, with no shared node for a second message to inherit. Two rapid
+	 * clicks briefly overlap and each fades on its own clock, which is correct — they are two
+	 * separate things that happened.
 	 */
-	let toastSeq = $state(0);
-	let toastTimer: ReturnType<typeof setTimeout> | undefined;
+	let toasts = $state<{ id: number; msg: string }[]>([]);
+	let toastId = 0;
+
 	function say(msg: string) {
-		toast = msg;
-		toastSeq += 1;
-		clearTimeout(toastTimer);
-		// 2200 -> 1250, and the CSS animation fades it out inside that window rather than letting it
-		// sit at full strength and then vanish. Sam: "they really are barely on screen and are starting
-		// to fade away as soon as they appear ... not to dwell on it."
-		toastTimer = setTimeout(() => (toast = ''), 1250);
+		const id = ++toastId;
+		toasts = [...toasts, { id, msg }];
+		// HOW LONG IT IS HELD; the 420ms fade below runs after this, so the whole life is ~640ms and
+		// most of the visible half is already leaving. Sam: "it needs to fade out quickly each click."
+		setTimeout(() => {
+			toasts = toasts.filter((t) => t.id !== id);
+		}, 220);
 	}
 
 	/**
-	 * THE CYCLE: none → 1 → 2 → none.
+	 * SVELTE TRANSITIONS, NOT A CSS ANIMATION — and this is the second attempt at the same problem.
 	 *
-	 * The known cost, named rather than designed around: clearing a gold bookmark passes THROUGH
-	 * blue, so "remove" is two clicks and briefly files the person into List 2. With only two lists
-	 * the wrong state is visible and one click from right, and every alternative was worse — a
-	 * popover is a widget (§45.12), a shift-click is a hidden affordance, two ribbons double the
-	 * card's chrome for a rare action.
+	 * Sam, twice: "it only works the first time", then "you didn't fix toast on bookmarks it still
+	 * only runs once."
 	 *
-	 * WHAT MAKES IT HONEST IS THE WORDING. Gold → blue says "MOVED to", not "added to". Sam's
-	 * concern was that a user might think the entry had been filed into both lists at once; "moved"
-	 * is the one word that answers it, and the unique index on (user_id, person_id) means it is also
-	 * literally true.
+	 * The first fix was `{#key toastSeq}` to force the node to be recreated so a CSS `animation`
+	 * would replay. The markup was correct and it still did not work reliably — which is the tell
+	 * that CSS animation replay was the wrong mechanism to be depending on at all, not that the key
+	 * was missing. An `animation` with `forwards` leaves the element parked at its final frame, and
+	 * whether a fresh element replays it depends on details that are not worth being clever about.
+	 *
+	 * Svelte transitions have no such ambiguity: `in:` runs on mount and `out:` runs on unmount, every
+	 * time, by definition. The `{#key}` stays, so a click arriving mid-fade gets a genuinely new node
+	 * rather than interrupting the old one's exit.
+	 *
+	 * And per §45.11's trap, recorded there after it cost a session: a custom transition SILENTLY
+	 * IGNORES any option it does not destructure. Both of these take `duration` explicitly.
 	 */
+	function toastIn(_node: Element, { duration }: { duration: number }) {
+		return {
+			duration,
+			easing: cubicOut,
+			css: (t: number) => `opacity: ${t}; transform: translateY(${((1 - t) * 3).toFixed(2)}px);`
+		};
+	}
+	function toastOut(_node: Element, { duration }: { duration: number }) {
+		return {
+			duration,
+			easing: cubicOut,
+			// Fades in place — it is leaving, not travelling. Movement on the way out would read as a
+			// second event rather than the end of the first.
+			css: (t: number) => `opacity: ${t};`
+		};
+	}
+
 	function nextList(current: ListId | null): ListId | null {
 		if (current === null) return 1;
 		if (current === 1) return 2;
@@ -254,11 +276,11 @@
 		</button>
 		{/if}
 
-		{#key toastSeq}
-			{#if toast}
-				<span class="toast">{toast}</span>
-			{/if}
-		{/key}
+		{#each toasts as t (t.id)}
+			<span class="toast" in:toastIn={{ duration: 110 }} out:toastOut={{ duration: 420 }}>
+				{t.msg}
+			</span>
+		{/each}
 	</div>
 
 	{#if confirmReplacing !== null}
@@ -474,38 +496,6 @@
 		font: 500 10px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.01em;
 		box-shadow: 0 1.5px 4px rgba(20, 28, 46, 0.18);
-		/**
-		 * ONE ANIMATION FOR THE WHOLE LIFE, so it is ALREADY LEAVING almost as soon as it lands.
-		 * The old version faded in over 160ms, then sat at full opacity until a JS timer removed it —
-		 * so the only motion was an arrival, and the exit was a disappearance.
-		 *
-		 *   0%    invisible, 3px left
-		 *   10%   arrived, full  (125ms — fast enough to feel like feedback, not an entrance)
-		 *   30%   still full     (~375ms, the whole time it is asked to be read)
-		 *   100%  gone           (the remaining ~875ms is a fade, which is most of its life)
-		 *
-		 * `forwards` so it holds at zero rather than snapping back to full for the frame before the
-		 * JS timer removes the node — the timer and this duration are the same 1250ms deliberately.
-		 */
-		animation: toast-life 1250ms ease-out forwards;
-	}
-	@keyframes toast-life {
-		0% {
-			opacity: 0;
-			transform: translateY(3px);
-		}
-		10% {
-			opacity: 1;
-			transform: translateY(0);
-		}
-		30% {
-			opacity: 1;
-			transform: translateY(0);
-		}
-		100% {
-			opacity: 0;
-			transform: translateY(0);
-		}
 	}
 
 	/**
