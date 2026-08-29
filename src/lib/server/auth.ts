@@ -10,20 +10,59 @@
  * closer to a codemod than to a project. Do not spread `event.cookies` or `auth.api.*` through
  * routes; add a helper here instead.
  *
- * `process.env` AND NOT `$env/static/private`, DELIBERATELY. The Better Auth CLI loads this file
- * OUTSIDE Vite in order to read the schema and run migrations, and it *stubs* framework virtual
- * modules (`$env/*`, `$app/*`) rather than resolving them. A stubbed `$env/static/private` would
- * hand the CLI a placeholder instead of the real connection string and `migrate` would fail against
- * nothing. `process.env` is real in both contexts — SvelteKit's Node/Vercel runtime and the CLI.
- * (`$app/server` below is fine stubbed: `getRequestEvent` is passed by reference, never called at
- * module load, and it has no bearing on schema generation.)
+ * THIS FILE IS LOADED BY TWO DIFFERENT THINGS, AND THEY READ THE ENVIRONMENT DIFFERENTLY. That is
+ * the whole reason `readEnv` below exists, and getting it wrong cost a debugging round on 082926:
+ *
+ *   1. THE SVELTEKIT SERVER (dev and Vercel). Vite loads `.env` into its OWN store and exposes it
+ *      through `$env/*`. It does NOT populate `process.env`. So at dev runtime `process.env.
+ *      DATABASE_URL` is `undefined`, `new Pool({ connectionString: undefined })` silently falls back
+ *      to libpq defaults, and every auth call 500s with `ECONNREFUSED 127.0.0.1:5432` — a localhost
+ *      Postgres that was never running. The error names port 5432 and says nothing about `.env`,
+ *      which is what makes it slow to read.
+ *
+ *   2. THE BETTER AUTH CLI (`npx auth@latest migrate|generate`), which loads this file OUTSIDE Vite
+ *      to read the schema. It *stubs* framework virtual modules (`$env/*`, `$app/*`) rather than
+ *      resolving them — so `$env/dynamic/private` is EMPTY there. It does, however, load `.env` into
+ *      `process.env` itself (verified: the 082926 migration connected to Neon on that path alone).
+ *
+ * Neither source covers both. `readEnv` tries the SvelteKit one and falls back to `process.env`,
+ * which is correct in all three environments: dev, Vercel (where Vercel sets real env vars that
+ * `$env/dynamic/private` reads), and the CLI.
+ *
+ * `$env/DYNAMIC/private` and not `static`: static is inlined at build time and would need every
+ * variable present when the build runs, which turns a missing env var into a failed deploy rather
+ * than a clear runtime error. (`$app/server` is fine stubbed — `getRequestEvent` is passed by
+ * reference, never called at module load, and has no bearing on schema generation.)
  */
 import { betterAuth } from 'better-auth';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
+import { env as privateEnv } from '$env/dynamic/private';
 import { Pool } from 'pg';
 
-const dev = process.env.NODE_ENV === 'development';
+/** SvelteKit's env first, `process.env` second — see the header. Empty string, never `undefined`,
+ *  so a missing value fails loudly at the library rather than silently defaulting somewhere. */
+const readEnv = (key: string): string => privateEnv?.[key] ?? process.env[key] ?? '';
+
+const DATABASE_URL = readEnv('DATABASE_URL');
+const dev = (readEnv('NODE_ENV') || process.env.NODE_ENV) === 'development';
+
+/**
+ * FAIL LOUDLY AND IN THE RIGHT WORDS. Without this, a missing connection string surfaces as
+ * `ECONNREFUSED 127.0.0.1:5432` from deep inside `pg` — an error about a local Postgres nobody
+ * asked for and nobody installed, naming a port that appears nowhere in this project. It is the
+ * opposite of a signpost, and it is what an empty `DATABASE_URL` actually looked like on 082926.
+ *
+ * A warning and not a throw: the CLI legitimately loads this module to read the schema, and both
+ * paths do populate the variable in practice, so a hard failure here would be the more brittle
+ * choice for no gain.
+ */
+if (!DATABASE_URL) {
+	console.error(
+		'[auth] DATABASE_URL is empty — pg will fall back to localhost:5432 and every auth call will 500.' +
+			' Set it in .env (the POOLED Neon string; see docs/AUTH_SETUP.md §3).'
+	);
+}
 
 /**
  * ONE POOL, MODULE-SCOPED, AND IT MUST BE THE POOLED ENDPOINT.
@@ -38,10 +77,18 @@ const dev = process.env.NODE_ENV === 'development';
  * No ORM. Better Auth 1.7's built-in Kysely dialect takes a `pg` Pool directly and its CLI writes
  * the migration, which is why Drizzle left the stack (roadmap Phase 10, corrected 082926).
  */
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: DATABASE_URL });
 
 export const auth = betterAuth({
 	database: pool,
+
+	/**
+	 * PASSED EXPLICITLY, for the same reason as everything else here: Better Auth reads
+	 * `BETTER_AUTH_SECRET` off `process.env` internally, which is empty under Vite (see the header).
+	 * Left implicit, dev would run on a fallback secret and every session would be invalidated the
+	 * moment production set a real one.
+	 */
+	secret: readEnv('BETTER_AUTH_SECRET'),
 
 	/**
 	 * AN ALLOWLIST, NOT A STRING — and this is the single most expensive lesson carried in from Sam's
@@ -104,8 +151,8 @@ export const auth = betterAuth({
 	 */
 	socialProviders: {
 		google: {
-			clientId: process.env.GOOGLE_CLIENT_ID ?? '',
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? ''
+			clientId: readEnv('GOOGLE_CLIENT_ID'),
+			clientSecret: readEnv('GOOGLE_CLIENT_SECRET')
 		}
 	},
 
