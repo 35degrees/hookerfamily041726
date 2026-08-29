@@ -163,7 +163,7 @@
 		>
 			<!-- A ribbon/bookmark: fills rather than changes shape, so the three states differ only in
 			     ink. `currentColor` throughout, so one CSS rule sets both stroke and fill. -->
-			<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+			<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
 				<path
 					d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15.2a.6.6 0 0 1-.94.5L12 16.6l-5.56 4.1a.6.6 0 0 1-.94-.5V5A1.5 1.5 0 0 1 7 3.5z"
 					fill={list === null ? 'none' : 'currentColor'}
@@ -185,7 +185,7 @@
 				? `${personName} is your home card — click to clear`
 				: `Make ${personName} your home card`}
 		>
-			<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+			<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
 				<path
 					d="M4 10.4 12 4l8 6.4V19a1.2 1.2 0 0 1-1.2 1.2H5.2A1.2 1.2 0 0 1 4 19v-8.6z"
 					fill={isHero ? 'currentColor' : 'none'}
@@ -233,10 +233,18 @@
 		/* ANCHORED BY THE BOTTOM-RIGHT OF THE PAIR over the card's top-left corner, so most of each
 		   circle sits OUTSIDE the card (Sam). It reads as something attached to the card rather than
 		   printed on it, and it keeps the card's own face clear. */
-		top: -13px;
-		left: -13px;
+		top: -16px;
+		/* THE NUDGE, and the arithmetic is written down because it was overshot once.
+		   Sam asked for "off card a bit more"; 10% of the 33px circle (-16 -> -20) was too far. 2%
+		   is 0.66px, so -16 -> -16.7. Sub-pixel is deliberate and normal here — the Shuffle's own
+		   lift is -1.32px — and at this size a whole pixel is already a visible step. */
+		left: -16.7px;
+		/* A COLUMN — the house sits BENEATH the ribbon (Sam, 082926), not beside it. Stacked, the two
+		   run down the card's left edge instead of across its top, which keeps them clear of the
+		   name and out of the header's reading line. */
 		display: flex;
-		gap: 5px;
+		flex-direction: column;
+		gap: 6px;
 		z-index: 3;
 	}
 
@@ -250,8 +258,10 @@
 		--press: -0.44px;
 		display: grid;
 		place-items: center;
-		width: 26px;
-		height: 26px;
+		/* 26 -> 33: a quarter larger (Sam). At 26 they read as UI dropped on the card; at 33 they read
+		   as objects belonging to it, which is the difference the whole treatment depends on. */
+		width: 33px;
+		height: 33px;
 		padding: 0;
 		border: 0;
 		border-radius: 50%;
@@ -292,24 +302,53 @@
 		cursor: default;
 	}
 
-	/* THE TWO INKS. Gold is the Shuffle's own `--gold` family so the app has one gold rather than
-	   two that nearly match; powder blue is its counterpart at the same weight — chosen to be
-	   clearly a DIFFERENT list rather than a dimmer version of the first, since neither list ranks
-	   above the other. */
+	/**
+	 * THE TWO INKS — and these rules come LAST for a reason that cost a round of feedback.
+	 *
+	 * THE BUG SAM SAW: "the ribbon is never filled with black, its filled gold instantly". A gold
+	 * ribbon was turning dark on hover, and it was pure specificity — §30's CSS-property-outranking
+	 * trap, now the fifth time it has bitten in this project.
+	 *
+	 *   .mark:hover:not(:disabled)   0,3,0   <- the grey hover ink
+	 *   .ribbon.gold                 0,2,0   <- lost
+	 *
+	 * So the moment the pointer was over the thing you had just clicked, gold lost to grey. Worse,
+	 * the "fix" already in the file was `.ribbon.gold:hover { color: currentColor }`, which is
+	 * circular — `currentColor` on the element resolves to the INHERITED value, not to the rule
+	 * being written, so it silently resolved to the card's own dark ink. That is where the black
+	 * came from.
+	 *
+	 * The fix is to state the filled states explicitly for both rest and hover, after the base
+	 * rules, so a filled ribbon is its colour in every interaction state and never negotiates.
+	 * Hover brightens the SAME hue rather than switching hue — the object changes height on hover
+	 * (§45.12), not identity.
+	 *
+	 * Gold is the Shuffle's family so the app has one gold rather than two that nearly match. Powder
+	 * blue is a genuinely different hue rather than a dimmer gold, because neither list ranks above
+	 * the other and a dimmer version would say it did.
+	 */
 	.ribbon.gold {
 		color: #d8a838;
+	}
+	.ribbon.gold:hover:not(:disabled),
+	.ribbon.gold:active:not(:disabled) {
+		color: #e8bc55;
 	}
 	.ribbon.blue {
 		color: #7fa9c9;
 	}
-	.ribbon.gold:hover,
-	.ribbon.blue:hover {
-		color: currentColor;
+	.ribbon.blue:hover:not(:disabled),
+	.ribbon.blue:active:not(:disabled) {
+		color: #9cc2de;
 	}
-	/* The house fills with the house ink rather than a third hue — it is not a third list, and
-	   giving it a colour of its own would imply it belonged to the same family as the ribbon. */
+	/* The house fills with the house ink rather than a third hue — it is not a third list, and a
+	   colour of its own would imply it belonged to the ribbon's family. */
 	.house.on {
 		color: rgba(43, 38, 32, 0.82);
+	}
+	.house.on:hover:not(:disabled),
+	.house.on:active:not(:disabled) {
+		color: rgba(43, 38, 32, 1);
 	}
 
 	/**
@@ -319,7 +358,7 @@
 	 */
 	.toast {
 		position: absolute;
-		left: 62px;
+		left: 41px;
 		top: 4px;
 		white-space: nowrap;
 		pointer-events: none;

@@ -1982,24 +1982,33 @@
 				     asset rather than as clipping. `.featured-flight` is already the positioning
 				     context for `.demote-chipface`, so it needs nothing new.
 
-				     GATED ON `settled`, the same signal FeaturedCard and SiblingPanel take: chrome
-				     that belongs to a card at REST must not ride a card in flight. A ribbon travelling
-				     with a demoting card would be an object that has no business being airborne.
+				     NOT GATED ON `settled`, AND THAT REVERSES THE FIRST VERSION. It was gated, on the
+				     reasoning that chrome belonging to a card at rest should not ride a card in
+				     flight. Sam's verdict killed it: "I hate how the bookmark and home circles flash
+				     instantly into visibility once featured card is settled … like a blinking VCR
+				     clock blinking 12:00 that no one knows how to fix."
+
+				     He is right, and the reason is that the premise was wrong. These are NOT chrome.
+				     Chrome is fixed to the viewport — the corner cluster, the rail. These belong to
+				     the CARD, so they should behave like the portrait and the name: grow out of the
+				     demoted card and into the promoted one, as part of the same object. Inside
+				     `.featured-flight` and ungated, the growth transition carries them for free.
+
+				     The general rule, worth keeping: a pop-in is what you get when something is
+				     mounted by a state change instead of being part of a thing that was already
+				     moving. The fix is never a fade — it is putting the element inside the thing it
+				     belongs to.
 
 				     They render on EVERY card, orbit and founder zones included (Sam) — those are
 				     grounds, not different kinds of card, and a reader in the zone can still save
 				     someone. -->
-				{#if featuredLanded && cur.person.id === landedPersonId}
-					<!-- The same name resolution FeaturedCard itself uses (`bio.display_name` first,
-					     `name.display_name` second) — so the tooltip and the confirmation say exactly
-					     what the card says, rather than a second opinion about who this is. -->
-					<CardMarks
-						personId={cur.person.id}
-						personName={cur.person.bio?.display_name ??
-							cur.person.name?.display_name ??
-							'this person'}
-					/>
-				{/if}
+				<!-- The same name resolution FeaturedCard itself uses (`bio.display_name` first,
+				     `name.display_name` second) — so the tooltip and the confirmation say exactly what
+				     the card says, rather than a second opinion about who this is. -->
+				<CardMarks
+					personId={cur.person.id}
+					personName={cur.person.bio?.display_name ?? cur.person.name?.display_name ?? 'this person'}
+				/>
 				<!-- Chip-face for the "flip early, land as a chip" relative demotion: a real PersonBox of
 				     THIS person (identical to the parent/child box it becomes), pre-scaled to fill the card
 				     and cross-faded in at the start of a demote, then shrunk with the card to land exactly
