@@ -16,12 +16,46 @@ older ones, because this file will be read again months from now.
 |---|---|
 | Google Cloud project | **Hooker Genealogy** — id `hooker-genealogy`, number `228397122662` ✅ created |
 | Neon — legacy `hdo0427` | ✅ deleted |
-| Neon — new project for this site | ☐ **not yet created** |
-| Google OAuth client | ☐ **not yet created** |
-| `.env` | written, with `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` already filled |
-| code | slice 1 complete and committed (`7b5b7c11`) |
+| Neon — new project for this site | ✅ **created** — `ep-lively-smoke-arxkr9ty-pooler`, us-west-2, Postgres 18, pooled |
+| Google OAuth client | ✅ **created** — "Hooker Genealogy — localhost", test user added |
+| `.env` | ✅ all five values set |
+| migration | ✅ run — `user` / `session` / `account` / `verification` + `heroPersonId`, 10 indexes |
+| code | slice 1 complete and committed |
 
-**Nothing in the code is waiting on anything except these two credentials.**
+### ✅ SLICE 1 CLOSED — August 29, 2026, verified on a real Google round-trip
+
+Not "the endpoint returned 200" — an actual human clicking Google's consent screen,
+and the row it produced:
+
+| | |
+|---|---|
+| `user` | Sam Hooker · samhooker@gmail.com · `emailVerified: true` · image stored · `heroPersonId: null` |
+| `account` | `providerId: google`, issuer `accounts.google.com`, tokens stored, profile+email+openid |
+| `session` | expires 2026-09-28 — the 30 days configured in `auth.ts`, so config reached the database |
+
+`heroPersonId: null` is correct; nothing writes it until slice 4.
+
+**Two observations that are correct rather than broken**, recorded because they will
+look like faults to whoever reads this next: signing in produces **no visible change**
+(there is no UI until slice 2), and the callback lands on **"Welcome to SvelteKit"**
+(the stock `+page.svelte`, which §50.3 replaces with the intro-vs-hero branch).
+
+**One thing to know when re-testing by hand:** `/api/auth/sign-in/social` is **POST
+only**, so pasting it in the address bar 404s. The POST also sets an HttpOnly
+`better-auth.state` cookie AND stores that state in `verification`; the callback checks
+both. So a URL generated with `curl` cannot be completed in a browser — the state lives
+in the wrong client, and Google returns a state mismatch. **The browser must make the
+POST itself.** From the console on any page of the app:
+
+```js
+const r = await fetch('/api/auth/sign-in/social', {
+  method: 'POST', headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ provider: 'google', callbackURL: '/' })
+});
+location.href = (await r.json()).url;
+```
+
+Once slice 2 ships the Sign In control, this snippet is only a fallback for debugging.
 
 ---
 
