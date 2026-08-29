@@ -115,3 +115,14 @@ _exports/
 # alongside the Falkner children batch (068b3466).
 /*.html
 /Screenshot*
+
+# --- agent skills (added 082926 with the Better Auth skill pack) ---
+# The SKILLS themselves are versioned: .agents/skills/ holds the instruction files,
+# .claude/skills/ holds relative symlinks into it, and skills-lock.json pins the
+# source + hash. All three are source and belong in git — a teammate or a fresh
+# clone gets the same library conventions the agent was following here.
+#
+# settings.local.json is NOT. It is the machine-local variant by convention
+# (178 KB of accumulated permission grants on this laptop), the same category as
+# .vscode/ and .env above.
+.claude/settings.local.json

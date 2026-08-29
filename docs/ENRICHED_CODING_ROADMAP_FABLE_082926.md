@@ -3,6 +3,8 @@
 **Companion: ENRICHED_DESIGN_FABLE_082926.md (the what/why for every item below).**
 **AUGUST 29, 2026 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), THE SCOPING DECISION (§49.5), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right. **§49.5 records the scoping decision itself — 3c and the zoom-3/Card↔Table remainder of 9 RETIRED from the pre-launch path with their specs preserved unaltered, 9.5 (the phone) FLAGGED OPEN rather than cut, 11 still gating launch. Nothing deleted; the phase table is annotated, and a retired phase reopens by saying so.**
 
+**AUGUST 29, 2026 (§50): THE AUTH BUILD SPEC (proposed; nothing built).** Written after reading the Better Auth 1.7 docs directly rather than porting Sam's year-old templates, which cost the stack a layer: **Drizzle is out** — 1.7's built-in Kysely dialect takes a `pg` Pool and its CLI runs the migration, so the "BetterAuth/Neon/Drizzle" shorthand this document has carried since July was one layer out of date. **Neon stays**, after being ruled out on a ~$10/month charge that turned out to belong to a year-old unrelated project and reinstated the same session; the deciding factor was never price but idle *behaviour* — Supabase's free tier pauses a project after a week of inactivity and needs a manual restore, which is fatal for a site whose logins are rare by design (DEPLOYMENT §18.7). **Google OAuth only**, which eliminates the entire transactional-email subsystem; Microsoft and email/password stay architecturally open behind a config entry. The spec's governing law is one line and it is a delivery-model rule, not a feature rule: **`/` is the only route that may ever be dynamic — everything under `/person/` stays static CDN payloads**, defended by the arithmetic that a full-corpus crawl is 19,728 static requests and exactly one hit on `/`. Server surface held to **three files** per §49.2, with `hooks.server.ts` at five lines because the equivalent file on Sam's previous project grew four jobs and cost weeks. **Bookmarks store the person ID, never the slug** — which is also why permanent slug churn does not block shipping this. Deployment-only concerns (host posture, provider, rate limiting, reader-data privacy) live in `docs/DEPLOYMENT_STRATEGY.md` §18 and are deliberately not duplicated.
+
 **AUGUST 28 (§48): CONNECT X TO ANYONE SHIPPED END TO END — the picker, the V, and three features that no longer touch (design §46).** Committed as `44917f22`, plus a cleanup pass. The answer to "how are these two related" is a V rather than a ladder because the measurement says so: median 15 cards, longest arm 12 rungs, so 7 + apex + 7 fits where 15 in a column cannot. The apex is a couple bar whose partner is the OTHER PARENT of the rung below, never `marriage_number`; a lineal pair gets one single-width card and no bar. The session cost a day to §46.2 — I wired the three modals together, leaked a fade into shipped Paths-to-Thomas behaviour, and Sam had to say it twice. §48.3 is the ten things that went wrong in order, headed by that and by breaking the main search from inside this component. §48.6 is the cleanup: −171 lines of path-switch machinery the copy brought with it, which was not clutter but a false claim about what this ladder can do. The swap control is specced and unbuilt.
 
 **AUGUST 27, LATER (§47): THE LADDER AGAIN — TYPE, THE SMOOSH, AND TWO DEAD BEATS (design §44.15–44.17).** The spouse card stops being sized from its partner and takes the ladder's one ceiling; it gains a `III` from a new opt-in `sf` field built by the same helper the slug uses. The vertical collapse Sam filmed on every path switch was `.rung` inheriting `flex: 0 1 auto`: the column holds both paths for one frame, and that is the frame Svelte measures an outgoing box in — leavers were departing frozen at 39–59px against a true 65.4, and only cards with no photo showed it because an `<img>` gives a flex item a min-content floor. Then two speed complaints answered by deleting waits rather than shortening anything: a stagger that counted list positions instead of leavers (255ms of dead air), and a `FLIP_MS` charged for a gap that equal-length paths never open (460ms). `OUT_STAGGER` deliberately untouched.
@@ -95,7 +97,7 @@ UX_ROADMAP §1 and DESIGN.md still say raw IDs are pending. First move for Code:
 | 8 | Silver-bar glimmer — **CSS-only** (Threlte ruled out for the card) | Hardened. **082926: small enough to stay opportunistic; not on the critical path either way (§49.5)** |
 | 9 | Zoom 2 (grouped grand-tiers) → Zoom 3 (the literal table) **+ pinch detents** | Explicit now. (Zoom 2 itself was CUT July 12 — see §9.) **082926: the REMAINDER — zoom 3 proper, pinch detents, and the Card↔Table "signature gesture" — RETIRED from the pre-launch path (§49.5). `/table` stands as the shipped v1 (pan only). Spec PRESERVED in §2 "Phase 9"** |
 | 9.5 | **Tier C — the phone composition** | NEW — after zoom work settles the stage. **082926: FLAGGED OPEN, NOT RETIRED (§49.5). The one large phase argued against cutting: logins invite shared links and OG unfurls, which land on a phone first, and Tier C is today a documented placeholder setting 3.9px type. Awaiting Sam's call** |
-| 10 | Auth + bookmarks (BetterAuth/Neon/Drizzle) | Was Phase 9. **082926: PULLED FORWARD TO NEXT by Sam (§49) — ahead of 2.4, 2.5, 2.75, 3a, 3b. Sam: "the final large scale Stream B work I have left to do"** |
+| 10 | Auth + bookmarks (~~BetterAuth/Neon/Drizzle~~ → **BetterAuth 1.7 / Neon / Kysely**) | Was Phase 9. **082926: PULLED FORWARD TO NEXT by Sam (§49) — ahead of 2.4, 2.5, 2.75, 3a, 3b. Sam: "the final large scale Stream B work I have left to do". BUILD SPEC now at §50 (proposed; nothing built). Stack corrected same day: DRIZZLE IS OUT — Better Auth 1.7's built-in Kysely dialect takes a `pg` Pool directly and its CLI runs the migration, so the ORM layer this row assumed since July is no longer required. Neon retained after being ruled out and reinstated in one session (DEPLOYMENT §18.7). Google OAuth only; Microsoft and email/password stay architecturally open** |
 | 11 | **Credibility apparatus**: sources UI, landing/about, analytics | NEW — gates public launch. **082926: still gates launch and is NOT retired (§49.5); it moves up behind auth as the phases above it come off the path** |
 
 > **READING THE DATED ANNOTATIONS (convention added 082926).** Bold `MMDDYY:` notes are APPENDED to a
@@ -4891,3 +4893,305 @@ narrowing a V that runs past 9 rungs; `canonical.json` at 55.47 MB warning on ev
 not taking on Fraunces Variable; the CC blade drawing while the card is too far to see it; the stripe's
 sub-pixel disappearance during flights; the coloured flash on demote; 13 orbit→orbit CCs awaiting review;
 and the free deletion of the unused `$app/stores` import at `+layout.svelte:3` (§38.6).
+
+---
+
+## 50. AUTH + BOOKMARKS — BUILD SPEC (PROPOSED, August 29, 2026; nothing built)
+
+**Status: a target, not a record.** Same standing as §40's ascension spec — Sam approves before anything
+moves, and this is rewritten as an AS-BUILT in the design doc once it ships. §49 is the decision to build
+it; `docs/DEPLOYMENT_STRATEGY.md` §18 owns everything that only becomes true on a real deployment (the
+host posture, the provider, the rate limit, reader-data privacy) and is deliberately **not** duplicated
+here. Better Auth **1.7.2**; the official skill pack is installed at `.agents/skills/` (symlinked into
+`.claude/skills/`) and is the check against writing 1.1-era patterns from memory.
+
+### 50.0 The one idea
+
+**Signing in changes where you land and what you can come back to. Nothing else.** Sam: *"the benefits of
+logging in will be solid but minimal."*
+
+Which gives the feature exactly two verbs and one hard boundary:
+
+| | |
+|---|---|
+| **bookmark** a person | a list you can return to |
+| **set your hero** | where `/` puts you instead of Thomas Hooker |
+| **the boundary** | signing in must never change how a *person page* is built or delivered |
+
+That third row is the spec's governing law and it is stated as a rule in DEPLOYMENT §18.2: **`/` is the
+only route that may be dynamic; everything under `/person/` stays static CDN payloads.** The pressure to
+break it will come from the bookmark star — the obvious implementation is "read the session in the page
+load," and it would convert 19,728 static payloads into serverless invocations for an icon. The star
+reads a client-side rune store instead. §49.3 states the same rule from the data side.
+
+### 50.1 The whole feature, as a file list
+
+Nothing here is a partial. If a file is not on this list it does not change.
+
+**New — server (three files, and the count is the point; §49.2):**
+
+    src/lib/server/auth.ts                    the Better Auth instance
+    src/routes/api/auth/[...all]/+server.ts   the handler mount
+    src/hooks.server.ts                       the Better Auth handle, and nothing else
+
+**New — client:**
+
+    src/lib/auth-client.ts                    createAuthClient from 'better-auth/svelte'
+    src/lib/state/auth.svelte.ts              session + bookmarks, thin (50.4)
+    src/lib/components/AuthModal.svelte       the FOURTH surface (50.6)
+    src/lib/components/AuthTrigger.svelte     ONE slot, two labels: "Sign In" / "Hi, <name>!" (50.5)
+    src/lib/components/BookmarksTrigger.svelte  "My Bookmarks" + the 10-card hover (50.7); signed-in only
+    src/lib/components/BookmarksModal.svelte  the list — the FIFTH surface, its own file (50.7)
+    src/routes/api/bookmarks/+server.ts       GET/POST/DELETE, session-authorised
+    src/routes/api/hero/+server.ts            PUT
+
+**Changed — and this is the entire blast radius on existing code:**
+
+    src/lib/state/modal.svelte.ts     ModalKind gains 'auth' | 'bookmarks'  (one line each)
+    src/lib/components/TopRightChrome.svelte   the corner gains a control  (50.5)
+    src/routes/+layout.svelte         session hydration; ALSO delete the dead $app/stores import (§38.6)
+    src/routes/+page.svelte           currently the stock SvelteKit welcome page; becomes 50.3
+    src/routes/+page.server.ts        NEW, and the only server-side page load in the app
+
+**Not changed, and deliberately:** `navigate.ts`, `featured.svelte.ts`, `search.svelte.ts`, `stage.svelte.ts`,
+`FeaturedCard.svelte`'s transition machinery, every existing modal, `regenerate-data.js`, `canonical.json`.
+**If a diff touches the flight system, something has gone wrong** — auth has no business in the motion
+code, and §38.2's warning about changing *when the framework runs code* underneath capture-time
+settlement is exactly why `hooks.server.ts` stays five lines.
+
+### 50.2 The data — one column and one table
+
+    user.heroPersonId          Better Auth `additionalFields`, type string, optional
+                               typed through to the client session automatically
+    bookmark(user_id, person_id, created_at, last_opened_at)
+
+Better Auth's CLI generates `user` / `session` / `account` / `verification` and runs the migration
+(`npx @better-auth/cli migrate`) against a `pg` Pool. **Drizzle is NOT in this stack** — the Phase 10 row's
+"BetterAuth/Neon/Drizzle" predates 1.7's built-in Kysely dialect, which takes the Pool directly.
+
+> **THE RULE THAT OUTLIVES EVERYTHING ELSE HERE: store the person ID, never the slug.** The URL is
+> derived at render.
+
+§8 of the deployment doc measured slug churn as permanent — 510 → 673 redirects in five days — §4's
+896-record slug repair has not run, and Sam intends to flatten `/person/x` to `/x`. Every one of those
+would silently orphan slug-keyed bookmarks, and a user who loses their saved ancestors has no way to
+report a cause. It is also **why slug churn does not block shipping auth**, which is what made this
+buildable now rather than after the data settles (which it never will).
+
+`last_opened_at` fires **only when an already-bookmarked person is opened** — one un-awaited POST, nothing
+in the UI depends on it. The old project's `customSession` wrote to the database on *every* session
+resolution, which keeps a scale-to-zero database permanently awake; that is the shape being avoided.
+
+### 50.3 `/` — the intro, and the branch
+
+`src/routes/+page.svelte` is today two lines of stock SvelteKit boilerplate. It becomes the front door:
+
+1. **`+page.server.ts` reads the session from the signed cookie cache** — no DB round trip — and branches
+   before a pixel is painted.
+2. **Signed out:** the ~3-second intro (image + title, in and out), then hand off to `thomas-hooker-1586`.
+3. **Signed in:** `redirect(302, '/person/' + slugFor(heroPersonId))`. **No intro, ever.**
+
+**It redirects; it does not render.** One canonical URL per person, sane back/forward, and `/` keeps no
+rendering responsibility — it is a router with an intro attached.
+
+Three things that will be got wrong:
+
+- **The hero's slug may have changed since it was saved.** The ID resolves; the redirect must land on the
+  *current* slug. This is 50.2's rule paying for itself on day one, and it is a probe case, not a hope.
+- **The hero may have been severed** (`classification.hidden` — 1,264 people today) or deleted. Falling
+  back to Thomas is correct; falling back to a 404 on the site's front door is not.
+- **`302`, not `301`.** A permanent redirect from `/` would be cached by the browser and would then send a
+  *signed-out* visitor to someone's hero. The branch is per-session and must never be cached as permanent.
+
+The intro itself is a design surface Sam has described but not designed; it is **not specced here.** What
+is specced is that it lives behind the signed-out branch and nowhere else.
+
+### 50.4 `auth.svelte.ts` — thin, and what does not survive the port
+
+Sam's previous `AuthManager.svelte.ts` was ~400 lines and he rates the architecture as sound. **The
+pattern is right and matches the house** — `search.svelte.ts`, `ascension.svelte.ts` and `stage.svelte.ts`
+are all a single class-based rune store. The file is wrong for *this* app because it does three jobs:
+
+| in the old file | here |
+|---|---|
+| session state | **survives, thin** |
+| form fields (`_email`, `_password`, `_confirmPassword`, …) | **dies.** Google-only means there is no form. Even if there were, fields are local `$state` in the component |
+| `showAuthModal`, `showResetPassword`, `formType` | **already exists.** `modal.svelte.ts` is the app's ONE overlay slot; auth is a `ModalKind`, not a parallel boolean |
+
+And one subtraction the house doctrine already demands: **Better Auth's `useSession()` nanostore IS the
+session state.** Mirroring it into a manager is a second source of truth — which `modal.svelte.ts`'s own
+header comment forbids in exactly those words, for exactly that reason. So the module wraps `useSession`,
+exposes `user` and `heroPersonId`, and owns the bookmark Set. **Target: under 100 lines.**
+
+Two things flagged rather than ported:
+
+- `setAdminStatus = (email) => email === 'samhooker@gmail.com'` — a client-side check on a hardcoded
+  string. Fine as a UI hint, never a boundary. Server-owned field with `input: false` if it ever matters.
+- `preventDarkModeFlash()`, which injected a `<style>` tag into `document.head` and removed it a second
+  later. In THIS app that fights the transition system directly — §30's CSS-property-outranking bug has
+  bitten four times. Whatever caused the flash gets fixed at the source or not at all.
+
+### 50.5 The corner — and the one place this spec argues with a shipped rule
+
+Sam: *"login is in the top right corner. 'Sign in'."* `TopRightChrome.svelte` is a flex row with a gap and
+absorbs a third child with no arithmetic — which is precisely why §45.15 built it that way.
+
+**The tension, stated once so the decision is deliberate.** §45.15 gave Search the corner on a stated rule:
+*"reading right to left, the outermost control is the one that goes anywhere in the tree."* Putting Sign in
+outboard of Search demotes Search from the position that rule assigned it. Sam has said what he wants and
+it is his call; recorded here so that a later reader finds a decision rather than a contradiction.
+
+Three things fall out that the spec does commit to:
+
+- **It re-inks like its neighbours.** Five of the seven grounds are light, and the zone outranks the
+  ground. `SearchTrigger` already solves this exactly; copy its `on-dark` / `in-zone` treatment rather
+  than approximating it.
+- **It does NOT yield the zone**, for Search's reason: being stranded mid-ascension with no way to sign in
+  is a smaller app. Shuffle still yields.
+- **Signed in, the corner must not keep growing.** Shuffle + Search + Sign in + My Bookmarks is four
+  fixed controls in a 16px corner already measured at 3.9px type on a phone (§49.5). **The point where
+  "Sign in" becomes an avatar disc is the point where the corner stops growing**, and it is a real design
+  question — a disc is a different species of object from a word, which is the §45.12 question, not a
+  styling choice. ~~**OPEN — Sam's.**~~
+
+  > **✅ DECIDED August 29, 2026 — it stays a WORD, and the word changes.** Sam: *"word is fine, I can say
+  > 'Hi, Sam!' where 'Sign In' would live for a non-logged in user."*
+  >
+  > **One slot, two labels.** Signed out it reads `Sign In`; signed in it reads `Hi, <name>!`. That is a
+  > better answer than the disc I proposed, and for a house reason: §45.15 built the corner so that a
+  > control **changes state, not costume** — the Shuffle's own rule. Swapping a word for a disc on sign-in
+  > would be a costume change in the one place the app has been most careful about not making them. A
+  > label that re-reads is the same object saying something new.
+  >
+  > It also answers the growth worry without a new species: the corner gains **one** control (My
+  > Bookmarks) rather than two, because the sign-in slot is reused rather than added to.
+  >
+  > **Two details this needs, neither specced:**
+  > - **Which name.** Google returns a full name and a `given_name`; `Hi, Sam!` wants the latter. Better
+  >   Auth's `mapProfileToUser` can take it at sign-up so the greeting never has to parse a string at
+  >   render. A one-word given name is not guaranteed for every user — the label must not break on a long
+  >   one, and the corner is a flex row, so it will reflow rather than overlap.
+  > - **What clicking it does.** Assumed here: opens `AuthModal` in its signed-in state (the account, and
+  >   Sign out) — the same slot doing the same job, which is what makes it one control. **Flagged for
+  >   Sam** rather than assumed silently.
+
+### 50.6 AuthModal — the fourth surface
+
+Design §46.2 is the law and it is Sam's own: *"Each of these functions have very different purposes and
+need to feel individualized, not just some pabulum functionality."* Three modals are three files. **Auth
+makes four, and it is a fourth FILE.**
+
+- **Shared:** the marshmallow veil's *values* (copied, as ConnectModal and SearchModal already copy each
+  other — the TODO at `SearchModal.svelte:630` proposing extraction stays undone), `modal.svelte.ts`'s
+  single slot, the exit choreography's shape from §45.11 (content out at 250ms, ground following at 430
+  after a 90ms hold).
+- **Not shared:** anything that renders.
+
+**What is actually in it:** a title, an X, one button — *Continue with Google* — and, when signed in, the
+account and a sign-out. Google-only (§18.1) means **there is no form**, which deletes most of the old
+`AuthForm.svelte` and lands on the right side of §45.12: *this app contains no widgets.* A login form with
+fields and a confirm-password is the year-slider mistake in a new place. **A single button is an object you
+press**, which is the species every other control here already is.
+
+### 50.7 "My Bookmarks" — and the widget problem, named early
+
+Sam's sketch: a top-right item appearing when signed in, hover to drop the recent five or ten, click for a
+full modal. **The modal half is right. The hover-dropdown half is the year slider again**, and it is worth
+losing the argument here rather than after it is built:
+
+- §45.12: *"I kept building a WIDGET in an app that contains no widgets."* A menu that drops a list of text
+  rows is the most widget-shaped object available.
+- **It does not exist on touch.** §49.5 flagged Tier C open *specifically because logins create shared
+  links that land on a phone first.* A hover affordance is the first thing that costs.
+
+**The proposal:** hovering deals out the recent five as **small person cards** — the `.person-box` species
+at chip scale, which the app already has and which §45.7 established for search rows. Same gesture as
+everything else here. Click opens the full list.
+
+`created_at` (recently *added*) is free. `last_opened_at` (recently *accessed*, which is what Sam said)
+costs the ping in 50.2. ~~**Sam to pick;**~~ the schema carries both so the choice is not load-bearing.
+
+> **✅ RULED August 29, 2026 — the hover menu ships, and the objection above is OVERRULED.** Sam: *"I think
+> its fine to have a 'My Bookmarks' menu item, on hover it shows the 10 most recently accessed or added
+> bookmarks, and clicking 'My Bookmarks' opens a modal similar to search modal with a list of user
+> bookmarks. this doesn't violate the widget rules for me."*
+>
+> **Ten on hover, not five.** Recency source stays either/or, so the schema carrying both (50.2) is what
+> makes that a late decision rather than a migration.
+>
+> **The argument above is kept, not deleted, because it is the record of a call being made rather than
+> missed** — and because half of it was never about taste. §45.12 is Sam's own doctrine and he is the one
+> who gets to say where its edge is; *"this doesn't violate the widget rules for me"* is the ruling, and
+> the ruling is his. **What survives the overrule is the mechanical half: a hover affordance does not
+> exist on touch.** That is not a style objection and it does not go away by being overruled — so:
+>
+> - **The click path must be complete on its own.** Everything reachable by hovering must be reachable by
+>   clicking through to the modal. The hover is an accelerator, never the only door. On a phone the item
+>   opens the modal directly, and nothing is lost.
+> - **The rows are `.person-box` cards regardless**, per §45.7 — that part of the proposal is not in
+>   conflict with the ruling and is the reason the drop-down will read as this app rather than as a menu.
+>
+> **"Similar to the search modal" means the SPECIES, not the body.** Design §46.2 is explicit and it is
+> the rule Sam had to state twice: three modals are three files. `BookmarksModal.svelte` may take the
+> search modal's veil values, its panel geometry, its row treatment and its exit choreography — and it
+> takes them by **copying**, exactly as ConnectModal and SearchModal already copy each other. It must not
+> import a shared results component or grow a mode flag on SearchModal, because the failure that produced
+> §46.2 was a fade written for one surface silently changing a shipped transition on another.
+
+### 50.8 The slices — and the order is a risk order
+
+Each slice ends somewhere Sam can look at it. Nothing merges without his pixels.
+
+1. **Server skeleton, localhost.** Neon project, three server files, Google OAuth against
+   `http://localhost:5173` (Google permits localhost; no domain needed). Verify `GET /api/auth/ok`.
+   **Nothing visible in the UI.** This slice is where the unknowns are.
+2. **Sign in, sign out.** AuthTrigger + AuthModal + `auth.svelte.ts`. The corner and the modal, judged on
+   pixels. Still no bookmarks.
+3. **Bookmarks.** Table, endpoints, the star on the card, the client store. **Slice 3 is where the §50.0
+   boundary gets tested** — a probe asserting a person page still makes no function call.
+4. **The hero, and `/`.** `+page.server.ts`, the branch, the redirect. The intro is a separate design pass
+   and can land after; the branch works with or without it.
+5. **The bookmarks surface.** 50.7, once there is something to list.
+
+**Build order rationale:** slice 1 carries every unknown (provider, pooling, OAuth, cookies) and produces
+nothing to look at; slice 4 touches the front door and is best done when the machinery beneath it is
+boring. Doing 4 early would mean debugging the intro and the session in the same breath.
+
+### 50.9 The risks, named before they are paid for
+
+- **The static contract breaks by accident, not on purpose.** Somebody adds a session read to a person
+  page for a good local reason. Nothing in the app would notice. **The probe in slice 3 is not optional**
+  — it is the only instrument that can see it, and DEPLOYMENT checklist item 15 is its permanent home.
+- **`hooks.server.ts` grows.** It has done this before, on Sam's previous project, and cost weeks. Every
+  job added to it is a job the SvelteKit 3 migration pays for twice (§49.2). Five lines.
+- **A second source of truth for the session.** The old manager mirrored it; this spec forbids it; the
+  temptation returns the first time something needs the session synchronously.
+- **The intro on a slow connection.** A 3-second animation is a floor, not a duration, if the image is
+  not preloaded — and it is the first thing any visitor sees. Not specced; flagged.
+- **Cookie-cache staleness.** A revoked session survives on another device until `maxAge`. Irrelevant for
+  bookmarks. It would not be for anything sensitive, and nothing sensitive should be added without
+  revisiting it.
+- **Instruments lie here too.** §36.4, §37.3, §39.4, §44.3 — five instruments in this project have
+  confidently reported what they could not see. A green auth probe against localhost is not a deployment.
+
+### 50.10 Carried, not blocking
+
+- ~~The **avatar-vs-word** question at signed-in state (50.5)~~ **✅ CLOSED August 29 — a word, and the
+  word changes: `Sign In` → `Hi, <name>!` in the same slot. Two new sub-items opened in 50.5: which name
+  (`given_name` via `mapProfileToUser`), and what clicking the greeting does (assumed: AuthModal in its
+  signed-in state — flagged, not assumed silently).**
+- ~~**Recently-added vs recently-opened** (50.7) — Sam's; schema carries both.~~ **Still either/or, but no
+  longer blocking: the count is 10, the schema carries both columns, and the choice can be made after the
+  list is on screen.**
+- ~~The **hover dropdown**~~ **✅ RULED August 29 — it ships. The widget objection is overruled and kept on
+  the record (50.7). The touch half of it survives as a build constraint: the click path must be complete
+  without hover.**
+- The **intro's design** — described, not designed.
+- **Microsoft OAuth and email/password** stay architecturally open per §18.1. Adding a provider later is
+  config plus a button; account linking merges by verified email. The trigger is a real person who is
+  blocked, not a hypothesis.
+- **Stripe** is a first-party plugin and needs *nothing* built now to stay possible. Scaffolding erected
+  today to "prepare" for it would be a `--ring-live` (§33).
+- **`search.recent` / `remember()`** in `search.svelte.ts` are still wired and rendered nowhere (design
+  §45.17) — a live `--ring-live` that predates this work. Bookmarks are adjacent enough that it should be
+  either rendered or removed while the surrounding code is open, but it is **not** part of this spec.
