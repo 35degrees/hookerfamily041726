@@ -255,8 +255,14 @@ Microsoft user is locked out, and the failure arrives on a date nobody is thinki
 here when you do:
 
 ```
-Secret created:  __________        Expires: __________        Reminder set: ☐
+Secret created:  2026-08-29        Expires: 2028-08-28        Reminder set: ☑ (Sam, 082926)
 ```
+
+> **THIS IS NOT HYPOTHETICAL AND THE PROOF WAS ON SCREEN WHEN IT WAS WRITTEN.** Sam's App
+> registrations list on 082926 showed the previous project's app — **"My HDO Portfolio", created
+> 4/28/2025 — with `Expired` under Certificates & secrets.** Microsoft sign-in on that site had been
+> dead for some unknown period: no error surfaced, no email arrived, no deploy was involved. The
+> credential simply stopped and the app kept serving. That is the entire argument for the line above.
 
 The mitigation if it does lapse before you get to it: **`PUBLIC_AUTH_MICROSOFT=0`** hides the button
 in one env change, so readers see one working door instead of two doors of which one is dead. Then
