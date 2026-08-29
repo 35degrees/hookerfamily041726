@@ -1188,15 +1188,31 @@
 			// 1975 and the end of the war — the full-size circle every other anchor gets, with a start
 			// year that is still a fact about him.
 			//
-			// THE ONLY PORTRAIT ON THE RAIL NOT SERVED FROM CLOUDINARY. This is his own record's
-			// photo_url, on honorstates.org. If that host hotlink-blocks, this is the anchor that
-			// breaks; the sampled border ink will fall back to the default either way, since a
-			// third-party host is the least likely to answer with the CORS header.
+			// WAS THE ONLY PORTRAIT ON THE RAIL NOT SERVED FROM CLOUDINARY, and the risk this comment
+			// recorded on 081226 came true on 082926 exactly as written:
+			//
+			//   "If that host hotlink-blocks, this is the anchor that breaks; the sampled border ink
+			//    will fall back to the default either way, since a third-party host is the least
+			//    likely to answer with the CORS header."
+			//
+			// What actually happened was the CORS half, and on EVERY page rather than his own —
+			// because the rail is chrome, so its anchor portraits load whatever card you are looking
+			// at. Sam saw it in the console on Thomas Hooker's page and asked where it came from.
+			//
+			// Re-hosted on Cloudinary 082926. Every anchor on the rail is now first-party, which also
+			// restores `sampleInk()` for this one: the sampler reads pixels off a canvas, so a
+			// cross-origin image without the CORS header taints it and the border ink silently falls
+			// back to the default. That was the second, quieter half of the same bug.
+			//
+			// THE URL WAS IN TWO PLACES, which is the reason worth keeping: here, and HD0901's
+			// `bio.photo_url` in canonical.json. This list is BAKED (§3.6 — "curation is DATA, owned
+			// by Sam" — records that anchors want their own canonical home and do not yet have one),
+			// so a data-side fix alone would have left the rail still pointing at the dead host.
 			slug: 'gridley-strong-1947',
 			name: 'PFC Gridley Strong',
 			from: 1967,
 			years: 9,
-			src: 'https://www.honorstates.org/images/profiles/301000/300548.jpg',
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1788034068/Strong_Gridley_Barstow_DOB_1947_2_robdkl.webp',
 			t: { x: 4988, y: 1947 },
 			headshotBlurb: 'Killed at Khe Sanh',
 			lifespan: '1947–1968'
