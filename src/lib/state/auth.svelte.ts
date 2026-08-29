@@ -127,9 +127,16 @@ export const auth = {
 	get isPending(): boolean {
 		return snapshot.isPending;
 	},
-	/** Set in slice 4. Null means "no hero chosen" — `/` sends those readers to Thomas Hooker. */
+	/**
+	 * Null means "no hero chosen", and that is a MEANINGFUL value rather than a gap: `/` sends those
+	 * readers to Thomas Hooker, the line's own root (§50.3). Clearing your home does not leave you
+	 * homeless — it puts the founder back.
+	 *
+	 * Reads the optimistic override first, so the house fills on the click rather than two round
+	 * trips later. See `heroOverride`.
+	 */
 	get heroPersonId(): string | null {
-		return snapshot.user?.heroPersonId ?? null;
+		return heroOverride !== undefined ? heroOverride : (snapshot.user?.heroPersonId ?? null);
 	},
 	/**
 	 * THE GREETING'S NAME. Google returns a full name in `name` ("Sam Hooker") and the corner wants
@@ -170,9 +177,24 @@ export const auth = {
 		return (custom ?? '').trim() || `List ${list}`;
 	},
 	get isHero(): (personId: string) => boolean {
-		return (personId: string) => !!snapshot.user?.heroPersonId && snapshot.user.heroPersonId === personId;
+		return (personId: string) => this.heroPersonId === personId;
 	}
 };
+
+/**
+ * THE OPTIMISTIC HERO — because the session store is not ours to write.
+ *
+ * Sam: "the home fills in on commodore when i made him home, but not right away." Two round trips
+ * stood between the click and the fill: the PUT, and then a full `getSession` to refresh the store
+ * that `heroPersonId` actually lives in. On a Neon instance waking from idle that is most of a
+ * second of a house that has been clicked and has not changed.
+ *
+ * Bookmarks did not have this problem because their state is OURS — a Map in this module. The hero
+ * lives on the session user, so the same trick needs a shadow: this override is read in preference
+ * to the session's value while a write is in flight, and cleared once the refreshed session has
+ * caught up and agrees. `undefined` means "no override"; `null` is a real value meaning "no hero".
+ */
+let heroOverride = $state<string | null | undefined>(undefined);
 
 /**
  * OPTIMISTIC, AND UN-AWAITED — because Neon sleeps.
@@ -216,16 +238,38 @@ export async function setBookmark(personId: string, list: ListId | null): Promis
  * a cancelled confirmation still leave the reader knowing what they had.
  */
 export async function setHero(personId: string | null): Promise<{ previousPersonId: string | null }> {
-	const res = await fetch('/api/hero', {
-		method: 'PUT',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ personId })
-	});
-	if (!res.ok) throw new Error(`hero update failed: ${res.status}`);
-	const data = (await res.json()) as { previousPersonId: string | null };
-	// The session store carries `heroPersonId`, so refresh it rather than patching a local copy —
-	// same rule as everywhere else here: one source of truth for one fact.
-	await authClient.getSession({ query: { disableCookieCache: true } });
+	// OPTIMISTIC FIRST — the house fills on the click, not two round trips later.
+	const before = auth.heroPersonId;
+	heroOverride = personId;
+
+	let data: { previousPersonId: string | null };
+	try {
+		const res = await fetch('/api/hero', {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ personId })
+		});
+		if (!res.ok) throw new Error(`hero update failed: ${res.status}`);
+		data = (await res.json()) as { previousPersonId: string | null };
+	} catch (err) {
+		// Roll the house back rather than leaving it lit on a write that never landed.
+		heroOverride = before;
+		throw err;
+	}
+
+	/**
+	 * REFRESH THE SESSION, THEN DROP THE OVERRIDE — in that order, and not before.
+	 *
+	 * `heroPersonId` genuinely lives on the session user; this module only shadows it. Clearing the
+	 * override before the refreshed session carries the new value would flash the OLD hero back for
+	 * however long the round trip takes, which is the very stutter the override exists to remove.
+	 * `disableCookieCache` because the cached session is exactly the stale copy we are replacing.
+	 */
+	try {
+		await authClient.getSession({ query: { disableCookieCache: true } });
+	} finally {
+		heroOverride = undefined;
+	}
 	return data;
 }
 

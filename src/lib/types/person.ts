@@ -8,6 +8,17 @@ export interface Name {
 	married_names: string[];
 	nickname: string | null;
 	display_name: string;
+	/**
+	 * Curated short first name for small surfaces — "Lent", "Cettie Mathews". Present on 377 of
+	 * 20,992 people; absent everywhere else, which is why every consumer needs a fallback.
+	 *
+	 * ALREADY IN THE DATA AND ALREADY CONSUMED — `regenerate-data.js` emits it as `cf` (alone, for
+	 * sibling chips) and `nk` (with a surname, for other chips), and PersonBox reads both. It was
+	 * simply missing from this interface, so anything reading it off the full record rather than off
+	 * a compact hit a type error. Added 082926 when the home-card confirmation needed a name short
+	 * enough not to wrap a button.
+	 */
+	chip_first_name?: string | null;
 	/** Some records carry gender HERE instead of at the top level — see genderOf() in generation.ts. */
 	gender?: string | null;
 	bio_blurb?: string | null;

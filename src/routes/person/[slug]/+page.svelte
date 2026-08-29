@@ -10,6 +10,33 @@
 	import SearchModal from '$lib/components/SearchModal.svelte';
 	import AuthModal from '$lib/components/AuthModal.svelte';
 	import CardMarks from '$lib/components/CardMarks.svelte';
+
+	/**
+	 * THE SHORT NAME, for the home-card confirmation's BUTTON (roadmap §50).
+	 *
+	 * Sam: "the names are long and Commodore Vanderbilt wraps … you can default to chip.firstname
+	 * for this confirmation modal and fall back to firstname + lastname + suffix."
+	 *
+	 * `chip_first_name` is the field the app already uses when a chip has room for one short label —
+	 * it is the house's existing answer to "what do you call this person in a small space", so
+	 * reusing it means the button and the sibling chips agree rather than inventing a second rule.
+	 *
+	 * The full display name still goes to the tooltip and to the confirmation SENTENCE, where the
+	 * extra precision is worth the length. Only the button, which cannot wrap, takes the short form.
+	 *
+	 * The final fallback matters: H00001 has NO first/last/suffix at all — only
+	 * `bio.display_name: "Rev. Thomas Hooker"` — so a chain that ends at the parts would return an
+	 * empty string on the single most important person in the corpus.
+	 */
+	function shortNameFor(p: (typeof f)['person']): string {
+		const chip = p.bio?.chip_first_name?.trim();
+		if (chip) return chip;
+		const parts = [p.name?.first_name, p.name?.last_name, p.name?.suffix]
+			.map((x) => x?.trim())
+			.filter(Boolean);
+		if (parts.length) return parts.join(' ');
+		return p.bio?.display_name ?? p.name?.display_name ?? 'this person';
+	}
 	import DeckRiffle from '$lib/components/DeckRiffle.svelte';
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
@@ -2008,6 +2035,7 @@
 				<CardMarks
 					personId={cur.person.id}
 					personName={cur.person.bio?.display_name ?? cur.person.name?.display_name ?? 'this person'}
+					shortName={shortNameFor(cur.person)}
 				/>
 				<!-- Chip-face for the "flip early, land as a chip" relative demotion: a real PersonBox of
 				     THIS person (identical to the parent/child box it becomes), pre-scaled to fill the card

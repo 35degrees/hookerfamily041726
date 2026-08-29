@@ -25,7 +25,17 @@
 	import { auth, setBookmark, setHero, type ListId } from '$lib/state/auth.svelte';
 	import { load, personById } from '$lib/state/search.svelte';
 
-	let { personId, personName }: { personId: string; personName: string } = $props();
+	/**
+	 * `personName` is the card's full display name — right for a tooltip, wrong for a button.
+	 * `shortName` is the compact form (Sam: "the names wrap inside the button"), resolved by the
+	 * page from chip_first_name → first+last+suffix → display name. Two props rather than one
+	 * because the confirmation SENTENCE wants the full name and the BUTTON wants the short one.
+	 */
+	let {
+		personId,
+		personName,
+		shortName
+	}: { personId: string; personName: string; shortName: string } = $props();
 
 	const list = $derived(auth.listFor(personId));
 	const isHero = $derived(auth.isHero(personId));
@@ -94,7 +104,11 @@
 			heroBusy = true;
 			try {
 				await setHero(null);
-				say('No longer your home card');
+				// SAY WHAT IT GOES BACK TO, not just what was removed (Sam: "it should default back
+				// to H00001"). Clearing your home does not leave you homeless — `/` returns you to
+				// Thomas Hooker, the line's own root (§50.3), and a message that only says "removed"
+				// leaves the reader to wonder where they will land instead.
+				say('Home cleared — back to Thomas Hooker');
 			} catch {
 				say('Could not save — try again');
 			} finally {
@@ -220,7 +234,7 @@
 					Cancel
 				</button>
 				<button type="button" class="confirm-btn go" onclick={commitHero} disabled={heroBusy}>
-					{heroBusy ? 'Saving…' : `Make ${personName} my home`}
+					{heroBusy ? 'Saving…' : `Make ${shortName} my home`}
 				</button>
 			</div>
 		</div>
@@ -274,10 +288,26 @@
 			0 0.6px 1.6px rgba(20, 28, 46, 0.22),
 			0 0 0 0.5px rgba(43, 38, 32, 0.08);
 		transform: translateY(0);
+		/**
+		 * COLOUR IS NOT TRANSITIONED, AND THAT IS THE FIX FOR THE BLACK FLASH.
+		 *
+		 * Sam: "for a few milliseconds a small beat the ribbon is black filled but instantly changes
+		 * to gold." The specificity fix landed, but a second cause was hiding behind it: the ribbon's
+		 * `fill` is `currentColor`, and `color` was on a 160ms transition. So on the first click the
+		 * fill switched on INSTANTLY while the colour was still travelling from the resting grey —
+		 * and for those 160ms you were watching a dark ribbon fade to gold. The ink was mid-animation,
+		 * not wrong.
+		 *
+		 * Removing `color` from the transition makes every ink change instantaneous, so the ribbon is
+		 * only ever grey, gold or blue — never anything in between, which is what Sam asked for.
+		 *
+		 * It costs nothing, because the feel was never in the colour: §45.12 and ShuffleNotables both
+		 * say a real button changes HEIGHT, not colour, when you approach it. The transform and the
+		 * shadow still carry the whole gesture.
+		 */
 		transition:
 			transform 190ms cubic-bezier(0.34, 1.36, 0.64, 1),
-			box-shadow 190ms ease-out,
-			color 160ms ease-out;
+			box-shadow 190ms ease-out;
 	}
 	.mark:hover:not(:disabled) {
 		transform: translateY(var(--lift));
@@ -328,11 +358,11 @@
 	 * the other and a dimmer version would say it did.
 	 */
 	.ribbon.gold {
-		color: #d8a838;
+		color: #dcb130;
 	}
 	.ribbon.gold:hover:not(:disabled),
 	.ribbon.gold:active:not(:disabled) {
-		color: #e8bc55;
+		color: #ecc44e;
 	}
 	.ribbon.blue {
 		color: #7fa9c9;
@@ -344,11 +374,16 @@
 	/* The house fills with the house ink rather than a third hue — it is not a third list, and a
 	   colour of its own would imply it belonged to the ribbon's family. */
 	.house.on {
-		color: rgba(43, 38, 32, 0.82);
+		/* MIDNIGHT BLUE (Sam), and it is the app's own token rather than a new hue — the
+		   ascension's ground colour, which is the darkest ink this app already owns. A home card
+		   is the one entry the reader has claimed, so it takes the heaviest ink available and is
+		   unmistakably NOT a third bookmark colour. */
+		color: var(--color-ascendmidnight, #1c2b4a);
 	}
 	.house.on:hover:not(:disabled),
 	.house.on:active:not(:disabled) {
-		color: rgba(43, 38, 32, 1);
+		color: var(--color-ascendmidnight, #1c2b4a);
+		filter: brightness(1.35);
 	}
 
 	/**
@@ -404,9 +439,13 @@
 	.confirm {
 		position: fixed;
 		z-index: 45;
-		top: 50%;
+		/* HIGHER THAN CENTRE (Sam: "its too low vs where the home button is clicked"). A gate that
+		   appears far from the control that opened it reads as a page-level event rather than as an
+		   answer to the thing just pressed. 28% puts it near the card's upper third, which is where
+		   the house sits. */
+		top: 28%;
 		left: 50%;
-		transform: translate(-50%, -50%);
+		transform: translate(-50%, 0);
 		width: min(340px, 90vw);
 		display: flex;
 		flex-direction: column;
@@ -434,6 +473,10 @@
 		gap: 8px;
 	}
 	.confirm-btn {
+		/* NEVER WRAP. A two-line button reads as a paragraph with a border, and the name inside it
+		   is variable-length by nature — "Commodore Vanderbilt" wrapped where "Sam" would not. The
+		   short name keeps it inside one line; this keeps it there even when it does not. */
+		white-space: nowrap;
 		padding: 8px 13px;
 		border: 0;
 		border-radius: 6px;
