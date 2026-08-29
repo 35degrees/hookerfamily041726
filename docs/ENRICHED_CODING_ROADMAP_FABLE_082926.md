@@ -1,7 +1,7 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_082926.md (the what/why for every item below).**
-**AUGUST 29 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right.
+**AUGUST 29, 2026 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), THE SCOPING DECISION (§49.5), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right. **§49.5 records the scoping decision itself — 3c and the zoom-3/Card↔Table remainder of 9 RETIRED from the pre-launch path with their specs preserved unaltered, 9.5 (the phone) FLAGGED OPEN rather than cut, 11 still gating launch. Nothing deleted; the phase table is annotated, and a retired phase reopens by saying so.**
 
 **AUGUST 28 (§48): CONNECT X TO ANYONE SHIPPED END TO END — the picker, the V, and three features that no longer touch (design §46).** Committed as `44917f22`, plus a cleanup pass. The answer to "how are these two related" is a V rather than a ladder because the measurement says so: median 15 cards, longest arm 12 rungs, so 7 + apex + 7 fits where 15 in a column cannot. The apex is a couple bar whose partner is the OTHER PARENT of the rung below, never `marriage_number`; a lineal pair gets one single-width card and no bar. The session cost a day to §46.2 — I wired the three modals together, leaked a fade into shipped Paths-to-Thomas behaviour, and Sam had to say it twice. §48.3 is the ten things that went wrong in order, headed by that and by breaking the main search from inside this component. §48.6 is the cleanup: −171 lines of path-switch machinery the copy brought with it, which was not clutter but a false claim about what this ladder can do. The swap control is specced and unbuilt.
 
@@ -80,23 +80,29 @@ UX_ROADMAP §1 and DESIGN.md still say raw IDs are pending. First move for Code:
 | 1 | RightColumn close-out (overflow, polish) | Was Phase 1; likely part-done |
 | 1.5 | **Card-grid refinement** (design doc §14) | ~70% DONE 7/11: grid gutters, measure cap, stacked vitals, shrinkToFit name/labels, line-per-lineage generation labels, header heights, RightColumn narrowed. REMAINING: CC display cap 6, RightColumn row budget, Connect buttons (ride with Phase 6) |
 | 2 | Role-color + midnight background **+ stub state design + off-line ambient tint (design doc §15.1)** | Extended |
-| 2.4 | **SvelteKit 3 migration** (§38) | NEW 8/14 — ASSESSED, NOT STARTED. Gated on `3.0.0` stable (preview is at `next.23` and still moving its own type surface). MUST land before 2.5 and long before 10 |
-| 2.5 | **SEO build-out** | NEW — pulled forward from "pre-Vercel" |
+| 2.4 | **SvelteKit 3 migration** (§38) | NEW 8/14 — ASSESSED, NOT STARTED. Gated on `3.0.0` stable (preview is at `next.23` and still moving its own type surface). MUST land before 2.5 and long before 10. **082926: gate STILL CLOSED — `latest` 2.70.3, `next` 3.0.0-next.25. The "before 10" clause is now UNMET by events, not by choice; see §49.1–49.2** |
+| 2.5 | **SEO build-out** | NEW — pulled forward from "pre-Vercel". **082926: measured at ZERO (no `<title>`, description, canonical, OG or JSON-LD on ~19,700 pages). Sam parks it with the deploy/build work, behind a Stream A slug session — see §4's 896 records and §49.5** |
 | 2.75 | **Layout-tier foundation + VIEWPORT LOCK** (tier store, stage-fit densities, overflow: clip shell) | Interim scrollbar hygiene SHIPPED 7/11 (scrollbar-gutter: stable + overflow-x clip — arc-wobble dead). Full lock/tiers still pending |
 | 3a | **Table coordinates + camera store** (data + plumbing, no visuals) | NEW — split from substrate |
 | 3b | Substrate (the FIELD) + left timeline **+ anchor figures** | Was Phase 3; extended |
-| 3c | **Flyover layer** (near mode first) | NEW |
+| 3c | **Flyover layer** (near mode first) | NEW. **082926: RETIRED from the pre-launch path (§49.5). Spec PRESERVED unaltered in §2 "Phase 3c" — this is a scoping call, not a deletion, and it reopens by saying so** |
 | 4 | Search modal | unchanged |
 | 5 | Shuffle-notable camera fly | unchanged (trivial once 3a exists) |
 | 6 | Connect modals (to-Thomas, to-anyone) | unchanged |
 | 7 | Sibling bubbles | unchanged order; data prereq flagged |
 | 7.5 | **Spouse carousel (4+ spouses)** | ✅ DONE 7/11 (pulled forward): existence-gated strip, pure-pitch travel 420ms, bookend carets, no-blink fades, pivot-aware offset at capture time, hover lift. Overhang cue REJECTED on pixels (peek removed; right caret is the sole more-cue) — supersedes design §6's overhang |
 | 7.6 | **Card-transition maintenance** (UNPLANNED — opened 7/11 by the carousel's ghost hunt, closed same day) | ✅ DONE + PUSHED: demotion baseball-card model (flip-early chip-face, counter-scaled undistorted, atomic swap, rides above rows, finishes before hero), velocity ceiling 1.6 px/ms, orphan sweep + prod janitor tripwire, floater fix, six-ghost taxonomy dispositioned. Settle REVERTED (waits for 3a's vector — design §17.2) |
-| 8 | Silver-bar glimmer — **CSS-only** (Threlte ruled out for the card) | Hardened |
-| 9 | Zoom 2 (grouped grand-tiers) → Zoom 3 (the literal table) **+ pinch detents** | Explicit now |
-| 9.5 | **Tier C — the phone composition** | NEW — after zoom work settles the stage |
-| 10 | Auth + bookmarks (BetterAuth/Neon/Drizzle) | Was Phase 9 |
-| 11 | **Credibility apparatus**: sources UI, landing/about, analytics | NEW — gates public launch |
+| 8 | Silver-bar glimmer — **CSS-only** (Threlte ruled out for the card) | Hardened. **082926: small enough to stay opportunistic; not on the critical path either way (§49.5)** |
+| 9 | Zoom 2 (grouped grand-tiers) → Zoom 3 (the literal table) **+ pinch detents** | Explicit now. (Zoom 2 itself was CUT July 12 — see §9.) **082926: the REMAINDER — zoom 3 proper, pinch detents, and the Card↔Table "signature gesture" — RETIRED from the pre-launch path (§49.5). `/table` stands as the shipped v1 (pan only). Spec PRESERVED in §2 "Phase 9"** |
+| 9.5 | **Tier C — the phone composition** | NEW — after zoom work settles the stage. **082926: FLAGGED OPEN, NOT RETIRED (§49.5). The one large phase argued against cutting: logins invite shared links and OG unfurls, which land on a phone first, and Tier C is today a documented placeholder setting 3.9px type. Awaiting Sam's call** |
+| 10 | Auth + bookmarks (BetterAuth/Neon/Drizzle) | Was Phase 9. **082926: PULLED FORWARD TO NEXT by Sam (§49) — ahead of 2.4, 2.5, 2.75, 3a, 3b. Sam: "the final large scale Stream B work I have left to do"** |
+| 11 | **Credibility apparatus**: sources UI, landing/about, analytics | NEW — gates public launch. **082926: still gates launch and is NOT retired (§49.5); it moves up behind auth as the phases above it come off the path** |
+
+> **READING THE DATED ANNOTATIONS (convention added 082926).** Bold `MMDDYY:` notes are APPENDED to a
+> Status cell; the phase name and every earlier word in that cell are left exactly as written. A phase
+> marked **RETIRED** has been taken off the pre-launch path — **its build spec in §2 and its design
+> rationale are preserved unaltered** and it reopens by saying so. Nothing in this document is removed
+> when scope changes; the record of what was planned, and why, is the point of it.
 
 Rationale for the two big moves:
 
@@ -4571,7 +4577,7 @@ unless marked:
 
 ---
 
-## 48. AUGUST 28 — CONNECT X TO ANYONE, END TO END (design §46)
+## 48. AUGUST 28, 2026 — CONNECT X TO ANYONE, END TO END (design §46)
 
 The third modal, and the last piece of Phase 6. Design §46 carries the durable half — including §46.2,
 which is the one thing from this session that governs how the next one is built.
@@ -4768,7 +4774,7 @@ read it — including me — has to prove it cannot before they can change anyth
 
 ---
 
-## 49. AUGUST 29 — AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built)
+## 49. AUGUST 29, 2026 — AUTH PULLED FORWARD TO NEXT, AND THE SCOPING DECISION (Sam's call; nothing built)
 
 Sam, after the Phase 6 close-out: *"i think I'd like to set up better-auth next and have log ins."*
 Recorded here because it moves Phase 10 ahead of 2.4, 2.5, 2.75, 3a and 3b, and because §38 wrote down
@@ -4830,3 +4836,58 @@ them turns "a project" back into something closer to "a codemod."
 The Phase 6 items from §48.7 (the swap control, narrowing a tall V), the SEO surface measured at zero on
 August 29 (no `<title>`, description, canonical, OG or JSON-LD on ~19,700 person pages), and the 896
 records in §4. None is blocked by auth; all are now behind it.
+
+### 49.5 THE SCOPING DECISION (August 29, 2026)
+
+Sam, after reading the inventory above: *"i think that login better-auth is the final large scale Stream B
+work I have left to do … besides deployment and build, which will wait for another Stream A session to
+repair slugs etc."*
+
+**NOTHING IS DELETED BY THIS SECTION.** Every retired phase keeps its full build spec in §2, its design
+rationale in the design doc, and its history wherever it was recorded. The phase table above is
+*annotated*, never rewritten. A retired phase reopens by saying so — the cost of reopening is one
+sentence, because the spec was never thrown away. That is deliberate: the value of this document is that
+a decision made in July can still be read in full in a year, alongside what replaced it.
+
+**Three columns, because they are three different things, and conflating them is how a scope decision
+turns into a silent deletion:**
+
+| | phase | status as of 082926 |
+|---|---|---|
+| **DECIDED by Sam, in his words** | 10 — auth + bookmarks | **NEXT.** Ahead of 2.4, 2.5, 2.75, 3a, 3b. Sam's stated last large Stream B piece |
+| | 2.5 — SEO build-out | **PARKED with deploy/build**, behind a Stream A slug session (§4's 896 records). Not abandoned — sequenced |
+| **IMPLIED by that statement, recorded so it is not assumed silently** | 3c — flyover, near mode | **RETIRED from the pre-launch path.** The roadmap called it *"the tree-familiarity feature, not polish"* and said it ships first; it does not ship at all under this scope |
+| | 9 — zoom 3, pinch detents, Card↔Table | **RETIRED from the pre-launch path.** `/table` stands as the shipped v1 (pan only). The Card↔Table landing was specced as *"the signature gesture"* and is not being built |
+| **FLAGGED OPEN — Sam has not ruled** | 9.5 — Tier C, the phone | **NOT retired.** Argued against cutting; see below. Needs an explicit yes or no |
+| **UNCHANGED — still gates launch** | 11 — credibility apparatus | sources UI, landing/about, analytics. Moves up behind auth as the phases above come off the path |
+| **UNCHANGED — blocked by a third party** | 2.4 — SvelteKit 3 | Gate still closed at `3.0.0-next.25`. See §49.1 |
+
+**WHY 9.5 IS THE ONE HELD OPEN.** It is the only retirement candidate whose cost is paid by the traffic
+auth itself creates. Logins mean accounts, shared links and OG unfurls, and those land on a phone first —
+while Tier C is today a **documented placeholder**, not an unfinished design: `stage.svelte.ts` says in its
+own comment that at a 393px iPhone the clamp lands near `u = 0.40`, *"i.e. a 367px card setting 5px body
+text … not a failure of tuning, it is the PROOF that a phone cannot be reached by scaling a 925px card."*
+Measured August 29: **3.9px type on the connect buttons, 59 of 61 tap targets under 44px.** Sam's own prior
+ruling stands on the record and is not overturned here — *an iPad mini is the smallest he cares about
+getting really right; a phone is a bone thrown to attract attention* (Aug 8, §35) — and under that ruling
+retiring 9.5 is coherent. The flag exists because **the premise changed when logins entered the plan**, not
+because the earlier ruling was wrong.
+
+**WHAT THIS MAKES THE REMAINING STREAM B PATH:**
+
+1. **Phase 10 — auth + bookmarks** (next; build it per §49.2's file-concentration rule so the eventual
+   SvelteKit 3 migration stays bounded)
+2. **Phase 9.5 — Tier C** *(if Sam rules it in)*
+3. **Phase 11 — credibility apparatus** (gates public launch)
+4. **Phase 2.5 — SEO** (with deploy/build, after the Stream A slug session)
+5. **Phase 2.4 — SvelteKit 3** (whenever `3.0.0` goes stable; after auth now, unavoidably)
+
+Everything else on the phase table is either shipped, cut earlier (Zoom 2, July 12, §9), dormant by
+choice (the field, §12), or retired above with its spec intact.
+
+**STILL OPEN AND NOT COVERED BY ANY OF THIS** — the small items that survive every rescope, carried
+forward from §43.7 and §48.7 so they are not lost in a scope change: the connect-to-anyone swap control;
+narrowing a V that runs past 9 rungs; `canonical.json` at 55.47 MB warning on every push; `tabular-nums`
+not taking on Fraunces Variable; the CC blade drawing while the card is too far to see it; the stripe's
+sub-pixel disappearance during flights; the coloured flash on demote; 13 orbit→orbit CCs awaiting review;
+and the free deletion of the unused `$app/stores` import at `+layout.svelte:3` (§38.6).
