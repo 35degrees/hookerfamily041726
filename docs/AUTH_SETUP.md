@@ -272,9 +272,34 @@ variable rather than being derived.
 ### 6.6 Test it
 
 Sign out, open the modal, and the second button should be there beneath Google. The verification
-that matters is a **personal** Microsoft account (an outlook.com or hotmail.com address) rather than
-a work one — a work account will succeed even if §6.1 step 2 was set too narrowly, so testing with
-one proves nothing about the case this provider was added for.
+that matters is a **personal** Microsoft account rather than a work one — a work account will
+succeed even if §6.1 step 2 was set too narrowly, so testing with one proves nothing about the case
+this provider was added for.
+
+> **✅ VERIFIED August 29, 2026 — and the earlier wording of this section was too narrow.**
+>
+> It said to test with "an outlook.com or hotmail.com address." **A personal Microsoft account can
+> use ANY email address as its sign-in name**, including a Gmail one, so requiring a Microsoft-domain
+> address was wrong and would have sent someone off to create an account they did not need.
+>
+> **How to tell what you actually signed in with, definitively:** read the `issuer` on the `account`
+> row. Sam's reads
+>
+> ```
+> https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0
+> ```
+>
+> `9188040d-6c67-4c5b-b112-36a304b66dad` is Microsoft's **well-known consumer tenant**, the one every
+> personal Microsoft account authenticates through. A work or school account carries that
+> organisation's own tenant GUID instead. So the issuer is the proof, not the email domain — and by
+> that measure §6.1 step 2 is confirmed correct.
+>
+> Result: **1 user, 2 accounts** (`google` + `microsoft`), linked on the matching verified email.
+>
+> **The profile stays with whichever provider created the user.** Sam signed in with Microsoft and
+> still saw his Google name and avatar; that is deliberate, not a stale cache. A later linked
+> provider does not overwrite the `user` row's name, email or image — a second provider silently
+> changing someone's display name would be the wrong default.
 
 **One behaviour to expect and not misread:** signing in with Microsoft on an email that already has
 a Google account **links to the same account** — same bookmarks, same hero. Signing in on a
