@@ -1,6 +1,8 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_082726.md (the what/why for every item below).**
+**Companion: ENRICHED_DESIGN_FABLE_082826.md (the what/why for every item below).**
+**AUGUST 28 (§48): CONNECT X TO ANYONE SHIPPED END TO END — the picker, the V, and three features that no longer touch (design §46).** Committed as `44917f22`, plus a cleanup pass. The answer to "how are these two related" is a V rather than a ladder because the measurement says so: median 15 cards, longest arm 12 rungs, so 7 + apex + 7 fits where 15 in a column cannot. The apex is a couple bar whose partner is the OTHER PARENT of the rung below, never `marriage_number`; a lineal pair gets one single-width card and no bar. The session cost a day to §46.2 — I wired the three modals together, leaked a fade into shipped Paths-to-Thomas behaviour, and Sam had to say it twice. §48.3 is the ten things that went wrong in order, headed by that and by breaking the main search from inside this component. §48.6 is the cleanup: −171 lines of path-switch machinery the copy brought with it, which was not clutter but a false claim about what this ladder can do. The swap control is specced and unbuilt.
+
 **AUGUST 27, LATER (§47): THE LADDER AGAIN — TYPE, THE SMOOSH, AND TWO DEAD BEATS (design §44.15–44.17).** The spouse card stops being sized from its partner and takes the ladder's one ceiling; it gains a `III` from a new opt-in `sf` field built by the same helper the slug uses. The vertical collapse Sam filmed on every path switch was `.rung` inheriting `flex: 0 1 auto`: the column holds both paths for one frame, and that is the frame Svelte measures an outgoing box in — leavers were departing frozen at 39–59px against a true 65.4, and only cards with no photo showed it because an `<img>` gives a flex item a min-content floor. Then two speed complaints answered by deleting waits rather than shortening anything: a stagger that counted list positions instead of leavers (255ms of dead air), and a `FLIP_MS` charged for a gap that equal-length paths never open (460ms). `OUT_STAGGER` deliberately untouched.
 
 **AUGUST 27 (§46): SEARCH SHIPPED END TO END — the index, the ranking, the modal, the years, the tags (design §45).** 43 commits from `7f449da9` to `6e9726aa`. A 19,728-row index (1,191 KB gzipped) with every fact folded and field-tagged; a ranking module that took typing `t` from 2,238 ms to 11.7 ms; result rows that are real `.person-box` cards; a year range that is two little cards on a hairline after three rejected widgets; nine assorted tags drawn from the SCHEMA's vocabulary rather than the data's. §46.2 is the file map — six files, `search.svelte.ts` first. §46.3 is the honest list of twenty-two things that went wrong in order. Two pre-existing ConnectModal defects fixed along the way (§46.5); `remember()` is still wired to nothing (§46.6).
@@ -4333,8 +4335,8 @@ The whole feature is six files. If you are picking this up cold, read them in th
 
 | file | lines | what lives there |
 |---|---|---|
-| **`src/lib/state/search.svelte.ts`** | 718 | **THE BRAIN.** The scan, `tier()`, `cohesion()`, the sort, the year filter, `load()`, the derived `corpus` / `counts` / `yearBounds` / `vocab`, `rollTags()` / `toggleTag()`. Start here — nothing else will make sense first. |
-| **`src/lib/components/SearchModal.svelte`** | 1,470 | **THE VIEW.** Rows as `.person-box`, the stripe tokens, the veil-per-ground, the scroll edge mask, keyboard, `pick()`, `trimOrphans()`, the exit choreography. |
+| **[`src/lib/state/search.svelte.ts`](../src/lib/state/search.svelte.ts)** | 788 | **THE BRAIN. Start here — nothing else will make sense first.** [`load()`](../src/lib/state/search.svelte.ts#L192) 192 · [`tier()`](../src/lib/state/search.svelte.ts#L247) 247 · [`result`](../src/lib/state/search.svelte.ts#L364) **364 — the scan, the sort, and the one place the `gate` is applied** · [`cohesion()`](../src/lib/state/search.svelte.ts#L500) 500 · [`setText()`](../src/lib/state/search.svelte.ts#L614) 614 · [`rollTags()`](../src/lib/state/search.svelte.ts#L636) 636 · [`setGate()`](../src/lib/state/search.svelte.ts#L676) 676 · [`clear()`](../src/lib/state/search.svelte.ts#L695) 695. Derived: `corpus` 279, `yearBounds` 285, `vocab` 314, `counts` 321. |
+| **[`src/lib/components/SearchModal.svelte`](../src/lib/components/SearchModal.svelte)** | 1,495 | **THE VIEW.** Rows as `.person-box`, the stripe tokens, the veil-per-ground, the scroll edge mask, keyboard, the exit choreography. [`pick()`](../src/lib/components/SearchModal.svelte#L336) at 336 — and note it calls `clear()`, because a PICK ends a search while Escape and the X keep it (the browsing rule). |
 | **`regenerate-data.js`** | — | `searchRow()` and `factSegments()` — the row shape and the field-tagged blob. Also `placeUndatedByEra()`, `CAT`, and the schema tag-vocabulary parser (written at the `search-index.json` write site). |
 | **`src/lib/search/fold.js`** | 58 | The one definition of the fold. Change it and you must rebuild the index in the same breath. |
 | **`src/lib/components/SearchYears.svelte`** | 289 | The year cards. Its header comment records the three rejected versions and why. |
@@ -4343,6 +4345,19 @@ The whole feature is six files. If you are picking this up cold, read them in th
 
 Generated: `static/data/search-index.json` and `static/data/tag-vocab.json` (both gitignored — they
 rebuild from canonical, like everything else in `static/data/`).
+
+**A SECOND SURFACE NOW DEPENDS ON THIS MODULE (added August 28, §48).** `ConnectAnyoneModal`'s picker
+renders `search.rows` through completely separate markup. Three things were added to the module for it,
+and all three are the module's own concern rather than a leak: the eligibility floor `gate` — declared at
+line 174, applied inside [`result`](../src/lib/state/search.svelte.ts#L364) and set by
+[`setGate()`](../src/lib/state/search.svelte.ts#L676), deliberately NOT `search.cats`, which belongs to
+the user;
+`search.row(id)` (an id → row lookup over a `byId` Map built at load); and the row fields `fa`/`mo`/`hp`
+(parent edges and Hooker partner) and `cf`/`fn`/`sn`/`sf` (casual and short names).
+
+**Before changing anything here, read design §46.2.** What the two surfaces share is this module and the
+index. They share no markup, no timing, and no transitions, and that is deliberate — a change made for
+one of them must not be a change to the other's behaviour.
 
 ### 46.3 THE ORDER THINGS WENT WRONG
 
@@ -4509,3 +4524,200 @@ unless marked:
   (X03481) still cannot read as a husband because neither wife descends from Thomas.
 - **`sf` is on every compact but read by one surface.** That is deliberate, not an oversight — but if a
   second surface ever wants it, it is there and needs no regenerate.
+
+---
+
+## 48. AUGUST 28 — CONNECT X TO ANYONE, END TO END (design §46)
+
+The third modal, and the last piece of Phase 6. Design §46 carries the durable half — including §46.2,
+which is the one thing from this session that governs how the next one is built.
+
+Committed as **`44917f22`** ("Connect to anyone: the third modal, and three features that no longer
+touch"), plus a cleanup pass the following morning (§48.6).
+
+### 48.1 WHAT SHIPPED
+
+| | |
+|---|---|
+| **A second button on the featured card** | `.connect-stack`, both buttons full width, gated on the same `settled` check so they cannot fall out of step |
+| **The vitals diet that paid for it** | ~32px from gaps and position; type and leading untouched, `stage.tightVitals` halving two gaps at ≤1100px |
+| **`kin.ts`** | 303 lines, pure, no DOM — `ancestorDepths`, `connect`, `describe`, `sentence` |
+| **Parent edges on the search row** | `fa`/`mo`/`hp`, plus `cf`/`fn` casual names and sparse `sn`/`sf`; index 1,191 → **1,396 KB gz** |
+| **`ConnectAnyoneModal.svelte`** | its own file, its own picker, its own V, its own schedule — see §46.2 |
+| **The V** | two columns, a full-width couple bar at the apex, mirrored left column, real spouse cards overhanging outward |
+| **Three features that no longer touch** | `SearchPanel.svelte` created and deleted; `ConnectModal` back to `HEAD` plus one sanctioned fade |
+
+### 48.2 WHERE THE MEAT IS
+
+**Every row is a live link to the exact line.** If any of these has drifted, the symbol name is the
+durable half — grep for it rather than trusting the number.
+
+**THE WALK AND THE WORDS** — [`src/lib/search/kin.ts`](../src/lib/search/kin.ts), 304 lines, pure, no
+DOM, no import from the search module (it takes a `Lookup` function, so it is testable from a probe and
+has no opinion about where rows come from):
+
+| symbol | line | what it decides |
+|---|---|---|
+| [`KinRow`](../src/lib/search/kin.ts#L23) / [`Lookup`](../src/lib/search/kin.ts#L33) | 23 / 33 | the ONLY shape this module needs — `id`, `fa`, `mo`, `hp`, `sx`. The search row satisfies it structurally, which is why there is no dependency |
+| [`MAX_UP`](../src/lib/search/kin.ts#L43) | 43 | 14, and the comment says why not the build's 10 |
+| [`ancestorDepths()`](../src/lib/search/kin.ts#L68) | 68 | the BFS; first depth recorded wins, because a cousin marriage reaches the same ancestor twice |
+| [`KinCache`](../src/lib/search/kin.ts#L142) | 142 | caller-owned memo, and why it is deliberately not module-level |
+| [`connect()`](../src/lib/search/kin.ts#L161) | 161 | **the LCA and the tiebreak** — ends resolve through `hp`, ties break fewest-total → most-balanced → paternal-first |
+| [`describe()`](../src/lib/search/kin.ts#L250) | 250 | degree and removal into English; lineal / avuncular / cousin |
+| [`End`](../src/lib/search/kin.ts#L274) / [`sentence()`](../src/lib/search/kin.ts#L313) | 274 / 313 | **the married-in possessive** (§46.7) — `name` is always the bloodline person, `of` is the chooser |
+
+**THE FEATURE** — [`src/lib/components/ConnectAnyoneModal.svelte`](../src/lib/components/ConnectAnyoneModal.svelte),
+2,768 lines of which 825 are code:
+
+| symbol | line | what to read it for |
+|---|---|---|
+| the header comment | 48 | **read this first** — why it is its own file, and the test to apply before sharing anything |
+| [`conn`](../src/lib/components/ConnectAnyoneModal.svelte#L142) | 141–147 | the one call into `kin.ts`, and the component-owned `kinCache` |
+| [`rungOfRow()`](../src/lib/components/ConnectAnyoneModal.svelte#L160) | 160 | why a rung is built from the INDEX and not the payload |
+| [`leftRungs`](../src/lib/components/ConnectAnyoneModal.svelte#L186) / `rightRungs` | 186–187 | the two columns |
+| [`casual()`](../src/lib/components/ConnectAnyoneModal.svelte#L209) | 209 | `chip_first_name ?? first_name` — the sentence's register |
+| [`isLineal`](../src/lib/components/ConnectAnyoneModal.svelte#L283) | 283 | **the no-couple-bar case** (§46.5) |
+| [`atRow()`](../src/lib/components/ConnectAnyoneModal.svelte#L315) | 315 | **the exit rank is the ROW** (§46.9) — one line, and the whole of it |
+| [`apexSpouse`](../src/lib/components/ConnectAnyoneModal.svelte#L328) | 328 | **the other parent of the rung below** (§46.4), never `marriage_number` |
+| [`snapshotSeats()`](../src/lib/components/ConnectAnyoneModal.svelte#L367) | 367 | the seat map a leaver departs from |
+| [`scheduleWipe()`](../src/lib/components/ConnectAnyoneModal.svelte#L496) | 496 | **a close is an event** (§46.10) — never an `$effect` |
+| [`arrive()`](../src/lib/components/ConnectAnyoneModal.svelte#L696) / [`depart()`](../src/lib/components/ConnectAnyoneModal.svelte#L760) | 696 / 760 | one deal direction, one exit direction, and why there is only one of each |
+| [`veil()`](../src/lib/components/ConnectAnyoneModal.svelte#L846) | 846 | the blur in and out, `\|global` inside `{#key}` |
+| [`requestClose()`](../src/lib/components/ConnectAnyoneModal.svelte#L875) | 875 | the close, and the reopen-runs-the-pending-wipe rule |
+| [`rungNav()`](../src/lib/components/ConnectAnyoneModal.svelte#L1095) | 1095 | the click handoff to `warmPersonLinks` |
+| the `.picker` block | ~1470 markup | the picker: no chips, no slider, no tags, no blurb (§46.6) |
+| the `.v-cols` block | ~1680 markup | the V, the mirrored column, the overhanging spouse |
+
+**THE SHARED DATA** (the only thing the three modals hold in common):
+
+| what | where |
+|---|---|
+| the eligibility floor | [`setGate()`](../src/lib/state/search.svelte.ts#L676) at line 676 and its one use inside `result`; the modal calls `setGate(CAT.HD \| CAT.SPOUSE)` and clears it on close |
+| the category bits | [`CAT`](../src/lib/state/search.svelte.ts#L83) at line 83 |
+| the row lookup | `search.row(id)` — the `byId` Map built at load |
+| the pipeline fields | [`searchRow()`](../regenerate-data.js#L631) at line 631 (`fa`/`mo`/`hp`/`cf`/`fn`/`sn`/`sf`) and the shared [`hookerPartnerOf()`](../regenerate-data.js#L1554) at 1554, which `personPayload` also calls |
+| the build's own answer, for cross-checking | [`kinDistance()`](../regenerate-data.js#L1810) at 1810 and [`ancestorDepths()`](../regenerate-data.js#L1764) at 1764 — `scripts/probe-kin.mjs` replays the client against these |
+
+**THE BUTTON AND THE VITALS** — `.connect-stack` in
+[`FeaturedCard.svelte`](../src/lib/components/FeaturedCard.svelte) (both buttons, one `settled` gate),
+and [`TIGHT_VITALS_W`](../src/lib/state/stage.svelte.ts#L380) at line 380 of `stage.svelte.ts` feeding
+`stage.tightVitals`.
+
+### 48.3 THE ORDER THINGS WENT WRONG
+
+1. **I wired the three modals together, and Sam had to say so twice.** The plan said share; the first
+   build shared a panel component, a mode flag, and — worst — a fade written for the new feature that
+   changed a shipped Paths-to-Thomas transition. *"You aren't seeing the bigger picture… a rehashed Disney
+   sequel."* The split cost a day and is the section's whole doctrine (§46.2). The leaked fade was
+   reverted, proved at 0.009% pixel difference, and only then adopted by explicit instruction.
+2. **The vitals were smooshed four times.** Every time room was needed I took it out of the type, which is
+   the one place Sam had said not to take it from. *"NOOOOO jeez… you don't need to impact the birth and
+   death section."* Then: *"yeah you are doing a terrible job."* Both were fair. §46.11 has the rule.
+3. **Then Sam reversed himself, correctly.** "Centre the vitals" broke birth-only cards; he spotted it and
+   said so. The durable rule — centre what is fixed, top-align what varies — is worth more than either
+   instruction and came out of the reversal.
+4. **The sentence asserted a blood tie the person did not have.** "Christine's husband Joseph is the 5th
+   cousin" — impossible, and shipped. §46.7.
+5. **I broke the main search.** An `$effect` reading `search.text` re-ran on every keystroke on a surface
+   this feature has nothing to do with, wiping the query after 2–3 characters. §46.10, and the widest
+   blast radius of anything this session.
+6. **Two edit scripts died on a later assertion after earlier hunks had applied** — so those changes
+   silently never wrote, and `.ladder` kept a `justify-content` I had reported as removed. A third
+   automated pass mangled a selector into `.ladder-head, .ladder-head, .ladder-v {}` and turned the header
+   into a flex column. **Every scripted edit is now verified to have landed before it is reported.**
+7. **The couple bar came out at 9.42px against a stated 72.8** — `flex: none` missing, §44.16 for the
+   third time. An explicit `height` on a flex item is a request, not a floor, and I have now paid for
+   that sentence three times.
+8. **`duration must be non-negative`.** `requestClose` cleared `target`, which destroyed the leavers' data
+   mid-outro. Fixed by clamping the delays and moving the wipe after the departure.
+9. **The X did not work, then worked but did not respond.** First `pointer-events: none` made
+   `elementFromPoint` return the veil, whose click handler closed the modal — the right outcome by the
+   wrong mechanism, which is worse than broken because it tests clean. Then no cursor and no darken.
+10. **Result rows were "irregularly shaped blobs"** — no radius, and a photo with no definite height, so
+    Thomas Hooker's statue made a 93px row. Search's John Talcott bug rotated 90°.
+
+### 48.4 WHAT WAS MEASURED
+
+| | |
+|---|---|
+| coverage under the gate | 18,790 eligible ends, **99.9% answered**; unrestricted, 66% |
+| the arms | longest single arm 12 rungs, median answer 15 cards — 7 + apex + 7 |
+| agreement with the build | `probe-kin` matches `kin_distance` on **60 of 61** sampled pairs; the 61st is a father-in-law marriage bridge, deliberately excluded |
+| index cost | 1,191 → **1,396 KB gz** for `fa`/`mo`/`hp`/`cf`/`fn`/`sn`/`sf` |
+| the couple bar | 9.42px → **72.8px**, and 0 cards squashed anywhere in the V |
+| the fade leak | 0.009% pixel difference on Paths to Thomas — measured, not argued |
+| the button budget | 32px at 1440, 34px at 1280, ~43px at 1100×720 (where the *existing* button already overlapped by 11px — a pre-existing defect this closed) |
+
+### 48.5 THE PROBES
+
+`scripts/probe-kin.mjs` (the walk against the build's own answers), `scripts/probe-connect-fit.mjs` (the
+geometry), and `scripts/probe-postclean.mjs` (the regression harness below). One instrument lesson:
+**`.person-box` is the page's own card class** — 18 of them sit in the neighbourhood behind the modal —
+so an unscoped count reported the modal as never closing. A selector that matches outside the thing you
+are measuring reports a defect that is not there, which is §47.3's null-case lesson wearing a new hat.
+
+### 48.6 THE CLEANUP PASS
+
+`ConnectAnyoneModal` was created by copying `ConnectModal` and stripping the Thomas half, and the copy
+brought machinery for a path switch this feature does not have. Removed, **−171 lines**:
+
+- **Never referenced at all:** `flipDelay`, `switchTimer`, `FOLLOW_LAP`, `IN_OVERLAP`, `UNLOCK_EARLY`,
+  `RUNG_Y_EM` (referenced only from inside a comment).
+- **Referenced only from a branch that could not execute:** `switching` (never set true once `choosePath`
+  was gone), `switchDir`, `switchInDelay`, `SWITCH_STAGGER`, `OUT_STAGGER`, `OUT_MS`, and an `outRank`
+  Map that was never populated. Each ternary collapsed to the branch it always took, and the comment
+  above it now says *why* there is only one — deal direction, exit direction, and rank.
+- **`animate:flip`** and its import: the directives went with the tabs, so the flip-cancellation in
+  `depart` had nothing left to cancel.
+- Four comments and two CSS rules (`.ladder-tab`, `.ladder-rows`) that described the Thomas ladder's
+  behaviour inside a file that does not have it.
+
+`ConnectModal`, `SearchModal`, `search.svelte.ts` and `kin.ts` came back clean — zero unused declarations.
+
+**A second pass, prompted by checking that every pointer in this section resolves, found four more — and
+all four were the same species: a comment or a signature making a claim the code no longer honours.**
+
+- **The component's own header comment still described the rejected architecture.** It opened *"TWO
+  LADDERS, ONE COMPONENT — and a skin rather than a second modal"* and said the shell, the veil, the rung
+  and the transitions were *"shared verbatim."* None of that had been true since the split. It is now the
+  §46.2 statement plus the test to apply before sharing anything, which is the first thing anyone opening
+  this file should read.
+- **`search.svelte.ts` promised a component that will never exist** — *"connect-to-anyone will reuse it
+  with a different pick handler (see `SearchResults`' injected `onpick`)"*. `SearchResults` was the plan's
+  shared-row component; it was never built and, after §46.2, never will be. Replaced with what actually
+  happened: two surfaces, no shared markup, and why.
+- **`ancestorDepths` took a `cache` parameter that nothing ever passed.** A memo that is never supplied is
+  a performance claim the code does not make — the same defect as an inert mechanism, one layer down. Now
+  threaded through `connect()` as an exported `KinCache` and owned by the component, so a connect session
+  walks the subject's ancestry once instead of once per pick. Deliberately not module-level: the index is
+  immutable so a module cache would be *correct*, but it would outlive every surface using it, which is the
+  line `search.svelte.ts` already draws.
+- **`if (false || !target || …)`** — a leftover disjunct from a removed condition, in the guard on the one
+  call into `kin.ts`.
+
+Four of two thousand lines, and none of them would fail a test. That is the point: the compiler cannot
+check a comment, so a stale one survives every green run and is read as true by the next person. **The
+cheapest time to catch it is while verifying that the documentation's pointers resolve**, which is how all
+four surfaced.
+
+Verified after: `svelte-check` at 2 errors / **0 warnings** (both errors the pre-existing `@fontsource`
+declaration ones in `+layout.svelte`); SSR 200 on five routes; and an end-to-end drive of all three modals
+— Paths to Thomas opens/switches/closes, the picker opens and picks, the V draws 7 rungs with a 72.8px
+couple bar and the sentence "Aaron is the 2nd cousin of Sarah", it closes clean, reopening is empty, and
+the main search still types.
+
+**Why this is worth a section:** dead machinery in a file copied from another file is not clutter, it is
+a claim. `switching` in this component asserts that this ladder can switch paths, and the next person to
+read it — including me — has to prove it cannot before they can change anything nearby. Same doctrine as
+`--ring-live` (§33) and the same as §46.2, one level down.
+
+### 48.7 STILL OPEN
+
+- **The swap control** (plan Slice 6) — the stacked left/right arrow that trades the columns and re-reads
+  the sentence from the other subject. Specced, never built. See §46.12.
+- **A tall V is not narrowed.** At 9+ rungs an arm reaches the bottom of the window; the rung-height
+  ceiling that would fix it does not exist.
+- **The mirrored column's name is not pulled over to hug its number.** Flagged to Sam; not ruled on.
+- **`pp` (photo-position override) is not on the search row**, so a handful of rungs crop as the default
+  does. Flagged rather than absorbed, same as at the plan stage.
+- Nothing here is pushed. `44917f22` and the cleanup are local commits.

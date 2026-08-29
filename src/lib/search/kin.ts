@@ -127,6 +127,21 @@ export interface Connection {
 }
 
 /**
+ * A CALLER-OWNED MEMO for `ancestorDepths`, threaded through `connect`.
+ *
+ * Deliberately NOT module-level. The index is immutable for the session, so a module cache would be
+ * correct — and it would also outlive every surface that used it, which is the pattern `search.svelte.ts`
+ * draws a line against: what dies with the view is owned by the view. A connect session re-walks the
+ * SUBJECT's ancestry on every pick and that walk is identical every time, which is the whole saving; the
+ * far end's walk is new each pick and caches nothing useful.
+ *
+ * Lifetime is the COMPONENT's, not the open modal's: entries are keyed by person id over an index that
+ * is immutable for the session, so a stale entry is merely unused and never wrong, and the map is bounded
+ * by how many people the reader picks.
+ */
+export type KinCache = Map<string, Map<string, number>>;
+
+/**
  * THE CONNECTION between two people, or null when there is no shared ancestor inside `MAX_UP`.
  *
  * BOTH ENDS RESOLVE TO A BLOODLINE PERSON FIRST. A married-in person has no ancestors that lead anywhere
@@ -143,7 +158,7 @@ export interface Connection {
  *                                         also the shorter pair of columns, which is what has to fit
  *   3. then paternal-first on A's side, then on B's — via `chainTo`, above
  */
-export function connect(aId: string, bId: string, at: Lookup): Connection | null {
+export function connect(aId: string, bId: string, at: Lookup, cache?: KinCache): Connection | null {
 	const ra = at(aId);
 	const rb = at(bId);
 	if (!ra || !rb) return null;
@@ -153,8 +168,8 @@ export function connect(aId: string, bId: string, at: Lookup): Connection | null
 	// asked to connect to their own spouse. There is no V to draw; the caller says so in words.
 	if (rootA === rootB) return null;
 
-	const A = ancestorDepths(rootA, at);
-	const B = ancestorDepths(rootB, at);
+	const A = ancestorDepths(rootA, at, cache);
+	const B = ancestorDepths(rootB, at, cache);
 	let best: { lca: string; a: number; b: number } | null = null;
 	for (const [id, da] of A) {
 		const db = B.get(id);

@@ -1,9 +1,11 @@
 /**
  * search.svelte.ts — THE SEARCH SUBJECT, and the only thing that knows how to search.
  *
- * Pure logic, no DOM. The search modal renders it; connect-to-anyone will reuse it with a different
- * pick handler (see SearchResults' injected `onpick`) — which is the whole reason the scan lives
- * here and not inside a component.
+ * Pure logic, no DOM — which is the whole reason the scan lives here and not inside a component.
+ * TWO surfaces render it, and they do not share a line of markup: `SearchModal` (the full instrument —
+ * chips, year range, tags, blurbs) and `ConnectAnyoneModal`'s picker (name, years, star, and a `gate`).
+ * That separation is deliberate and load-bearing; see design §46.2. What is shared is this module and
+ * the index it holds, never a component.
  *
  * THE LINE THIS MODULE DRAWS: what survives the modal closing lives here (the index, the query, the
  * categories, the year range, the recent searches); what dies with the view lives in the component

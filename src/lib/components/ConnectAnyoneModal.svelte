@@ -30,7 +30,6 @@
 	import { tick } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { linear, cubicOut } from 'svelte/easing';
-	import { flip } from 'svelte/animate';
 	import { modal, closeModal } from '$lib/state/modal.svelte';
 	import { featured } from '$lib/state/featured.svelte';
 	import type { PersonCompact } from '$lib/types/neighborhood';
@@ -45,22 +44,34 @@
 		clear as clearSearch,
 		CAT
 	} from '$lib/state/search.svelte';
-	import { connect, sentence } from '$lib/search/kin';
+	import { connect, sentence, type KinCache } from '$lib/search/kin';
 
 	/**
-	 * TWO LADDERS, ONE COMPONENT — and a skin rather than a second modal, for the same reason the
-	 * founder zone is a skin on the Ascension (design §43.1): a parallel mechanism has to be kept in
-	 * step by hand and silently diverges. `modal.svelte.ts` already said these three overlays share one
-	 * slot.
+	 * ITS OWN FILE, DELIBERATELY. Read design §46.2 before moving anything out of here.
+	 *
+	 * This began as a second MODE inside `ConnectModal` — a skin, the way the founder zone is a skin on
+	 * the Ascension (§43.1) — on the reasoning that a parallel mechanism silently diverges. That was the
+	 * wrong trade for this surface, and Sam named it: *"each of these functions have very different
+	 * purposes and need to feel individualized, not just some pabulum functionality … like a rehashed
+	 * Disney sequel."* Sharing a body meant a fade written for THIS feature silently changed a shipped
+	 * Paths-to-Thomas transition, which is the coupling stated as a bug.
 	 *
 	 *   connect-thomas   ONE end is fixed. Every route is baked into the payload; the ladder is one
-	 *                    column of ancestors and the only choice is WHICH route.
+	 *                    column of ancestors and the only choice is WHICH route. Tabs, a switch, a
+	 *                    schedule built around survivors moving between paths.
 	 *   connect-anyone   BOTH ends are chosen. There is no bake — an arbitrary pair is N² — so the far
 	 *                    end is picked from the search index and the path is walked in the browser.
+	 *                    One path, no tabs, no switch; a V rather than a line, and a sentence.
 	 *
-	 * The shell, the veil, the rung, the arrive/depart transitions and the click handoff are shared
-	 * verbatim. What differs is the shape of the answer: a LINE up to Thomas, or a V that rises to a
-	 * shared ancestor and comes back down.
+	 * WHAT IS SHARED, AND THE TEST FOR IT: the DATA (`search.svelte.ts`, `kin.ts`, the `CAT` bits, the
+	 * parent edges) and the CARD SPECIES (`.person-box`, the paper, the shadow, the star). Nothing that
+	 * renders, and nothing that schedules. Before sharing anything with `ConnectModal` or `SearchModal`,
+	 * ask whether a change made for one surface would be a change to the OTHER surface's behaviour — if
+	 * yes, it is not shared code, it is a coupling, and duplication is the cheaper of the two.
+	 *
+	 * The duplication is therefore intentional and is not a cleanup target. The machinery this file
+	 * inherited that it does NOT use — the path switch — was removed on 082826 precisely because a
+	 * mechanism sitting inert is a claim about what this ladder can do (§33's `--ring-live` doctrine).
 	 */
 	const open = $derived(modal.kind === 'connect-anyone');
 	const focus = $derived(featured.current?.neighborhood?.focus ?? null);
@@ -74,15 +85,15 @@
 	/**
 	 * THE PICKER COMES FIRST (Sam: "of course the search must come first").
 	 *
-	 * Connect-to-anyone opens on the search panel inside this same shell — same veil, same blur, same
-	 * arrival — and only becomes a ladder once a second person exists. The two phases are one overlay
-	 * rather than two, so the ground never blinks between choosing and seeing.
+	 * The modal cannot open on a diagram, because half the diagram has not been chosen yet. So it opens
+	 * on the picker INSIDE THIS SAME SHELL — same veil, same blur, same arrival — and becomes a V once a
+	 * second person exists. The two phases are one overlay rather than two, so the ground never blinks
+	 * between choosing and seeing.
 	 */
 	let target = $state<string | null>(null);
 	/**
-	 * THE PICKER COMES FIRST (Sam: "of course the search must come first"), and "which half are we in" is
-	 * simply whether a far end has been chosen. It was briefly a `phase` union, which bought nothing but
-	 * a narrowing argument with the compiler — the boolean IS the state.
+	 * WHICH HALF ARE WE IN: simply whether a far end has been chosen. It was briefly a `phase` union,
+	 * which bought nothing but a narrowing argument with the compiler — the boolean IS the state.
 	 */
 	const chosen = $derived(target !== null);
 
@@ -121,10 +132,16 @@
 		}
 	}
 
-	/** The far end's row, and the walk between the two. Null until a pick, and null again on a new card. */
+	/**
+	 * THE WALK BETWEEN THE TWO ENDS. Null until a pick, and null again on a new card.
+	 *
+	 * The memo is owned HERE and dies with the modal (see `KinCache`): every pick re-walks the subject's
+	 * ancestry and that walk never changes while this card is featured, so the second pick onward is free.
+	 */
+	const kinCache: KinCache = new Map();
 	const conn = $derived.by(() => {
-		if (false || !target || !focus?.id || !search.ready) return null;
-		return connect(focus.id, target, (id) => search.row(id));
+		if (!target || !focus?.id || !search.ready) return null;
+		return connect(focus.id, target, (id) => search.row(id), kinCache);
 	});
 
 	/**
@@ -328,9 +345,14 @@
 	 * single frame.
 	 *
 	 * Keyed by `id` ALONE, a person who appears in both paths is the SAME element to Svelte, so they are
-	 * neither removed nor added — they stay put, or they `animate:flip` to a new seat. Which is the whole
-	 * value of the gesture: "its value is in seeing who stays and having the timing to differentiate who
-	 * stays and who goes."
+	 * neither removed nor added — they stay put, or they flip to a new seat. Which is the whole value of
+	 * the gesture: "its value is in seeing who stays and having the timing to differentiate who stays and
+	 * who goes."
+	 *
+	 * HERE THERE IS NO SWITCH — this feature draws one path and has no tabs, so a column mounts once and
+	 * unmounts once, and no card is ever asked to move between seats. The keying is kept identical anyway:
+	 * the two ladders are read side by side, and a gratuitous difference between them is a question a
+	 * future reader has to answer before they can trust either.
 	 */
 	/**
 	 * WHERE EACH RUNG WAS SITTING, captured just BEFORE a change that removes any of them.
@@ -355,65 +377,10 @@
 		}
 	}
 
-	/** Bottom-first rank AMONG THE LEAVERS of the switch being scheduled — 0 is the lowest card that is
-	 *  actually going. Filled by `choosePath`, read by `depart`. Empty on a CLOSE, where every card
-	 *  leaves and the rank is its list position anyway. */
-	const outRank = new Map<string, number>();
 
-	let switching = $state(false);
-	/**
-	 * WHEN THE ARRIVALS ARE ALLOWED TO START — computed per switch, not a constant.
-	 *
-	 * Sam: "have the new cards coming from right edge start just after exiting cards are no longer
-	 * visible at left edge of screen." That instant depends on WHICH rows are leaving: a leaver near the
-	 * bottom goes first (the stagger is bottom-first) and one near the top waits longest, so a switch
-	 * that only replaces the last two rungs clears far sooner than one that replaces nine. A fixed delay
-	 * would either overlap the tail of the exit or leave the ladder sitting empty.
-	 *
-	 * So it is the largest departure delay actually in play, plus the run itself, plus a short beat.
-	 */
-	/**
-	 * WHICH SIDE THE CARDS COME FROM — +1 from the right, −1 from the left.
-	 *
-	 * The ladder used to deal from the right and sweep to the left on every switch, whichever path you
-	 * went to. Sam: "if i click path 1 again, then the new cards enter from the left side of the browser,
-	 * as if they were waiting there, not just constantly coming in from the left."
-	 *
-	 * So the paths are laid out in a ROW and the tabs move you along it. Going FORWARD (1→2, 2→3, 1→3)
-	 * the next path arrives from the right and the old one leaves to the left; going BACK it reverses,
-	 * and the path you left is still where you left it. Which is why path 3 always arrives from the right
-	 * — there is nothing beyond it to come back from — while path 2 depends on whether you reached it
-	 * from 1 or from 3, exactly as Sam described.
-	 *
-	 * §17.2 makes this more than a sign flip: the overshoot is "a few px past its destination IN ITS
-	 * DIRECTION OF TRAVEL", so it has to turn round with the travel or a card coming from the left would
-	 * overshoot back towards the side it came from.
-	 */
-	let switchDir = $state(1);
-	/**
-	 * THE THREE BEATS OF A SWITCH, IN ORDER — and the order is the fix.
-	 *
-	 * `animate:flip` fires on the frame the list changes, while the LEAVERS are still sitting in their
-	 * seats waiting out their stagger. So a survivor closed the gap into space that was still occupied:
-	 * Sam, on Sarah Knutti, "#9 still covers up #8 aurelia card before she departs and does it in a very
-	 * jerky instant way." It was not a curve problem — it was two things happening at once that have to
-	 * happen in sequence.
-	 *
-	 *     1. the leavers go, staggered, out the side
-	 *     2. THEN the gap closes, on flip's own clock
-	 *     3. THEN the replacements arrive
-	 *
-	 * Each beat waits for the one before, so nothing is ever moving into a seat something else is still
-	 * in. It costs time, and Sam asked for that explicitly here — "wait for departures to happen and
-	 * slowly close the space with a gradual transition" — which reverses the overlap he asked for when
-	 * the two halves were merely queued rather than colliding.
-	 */
-	let flipDelay = $state(0);
-	let switchInDelay = $state(0);
 	/** True from the moment a close is requested — `depart` reads it to pick the close cascade over the
 	 *  switch stagger. Reset when the modal is next opened. */
 	let closing = false;
-	let switchTimer: ReturnType<typeof setTimeout> | null = null;
 	// A different person means a different ladder; without this, arriving at a 1-path card while
 	// index 2 was selected would render nothing. The far end goes with it: a path is between TWO
 	// people, so changing one of them invalidates the answer rather than re-anchoring it.
@@ -570,10 +537,10 @@
 	/**
 	 * SIZED FOR THE LONGEST PATH, NOT THE CURRENT ONE — so a switch never resizes anything.
 	 *
-	 * THE STAGE MUST NOT MOVE WHILE ANYTHING IS FLYING (design §30). Sizing to the current path meant
-	 * that switching between routes of different length changed the fit, which changed every rung's
-	 * height, which moved the layout under cards that `animate:flip` was already transforming. Measured
-	 * on Sarah Knutti, whose two routes are 10 and 11 rows:
+	 * THE STAGE MUST NOT MOVE WHILE ANYTHING IS FLYING (design §30). On the Thomas ladder, sizing to the
+	 * current path meant that switching between routes of different length changed the fit, which changed
+	 * every rung's height, which moved the layout under cards mid-flight. Measured on Sarah Knutti, whose
+	 * two routes are 10 and 11 rows:
 	 *
 	 *     t=23    flip translateY −40.5   layout top 805
 	 *     t=203   flip translateY −10.5   layout top 754
@@ -623,9 +590,6 @@
 	const STAGGER = 85; // between neighbours (was 55) — separation is what stops it reading as a blur
 	const TRAVEL_VW = 62; // starts off the right edge; a SHARE of the window, not px (design §42.6)
 	const OVERSHOOT = 14; // px PAST the seat, to the left — the weight carrying through (was 7)
-	// ── THE PATH SWITCH ─────────────────────────────────────────────────────────────────────────────
-	const OUT_MS = 440; // a leaver's run to the left edge
-	const OUT_STAGGER = 85; // on a PATH SWITCH: the same spacing as the entry
 	/**
 	 * CLOSING IS NOT A SWITCH, and it must not borrow the switch's schedule.
 	 *
@@ -691,31 +655,6 @@
 	 *  waits this out; the veil deliberately does not (a room may be lit before it is furnished). */
 	const buildMs = $derived(seqTotal ? (seqTotal - 1) * STAGGER + ROW_MS : ROW_MS);
 	const VEIL_OUT_MS = 260;
-	const FLIP_MS = 460; // survivors closing or opening a gap — same clock as the leavers, on purpose
-	const SWITCH_STAGGER = 70;
-	/**
-	 * THE ARRIVALS OVERLAP THE DEPARTURES — a negative beat, not a positive one.
-	 *
-	 * It used to be a 60ms PAUSE measured from the moment the last leaver finished its run, so the screen
-	 * emptied, held, and only then refilled. Sam: "now the exiting cards leave screen, there's a couple of
-	 * beats, and the replacement cards enter. its those beat or two we can remove… there should be a sense
-	 * they are following them in."
-	 *
-	 * So the replacements now launch 240ms BEFORE the last leaver's run ends — by which point that card is
-	 * most of the way to the edge and nothing is standing still. Nothing else moved: the cards travel at
-	 * the same speed and the stagger is untouched (Sam: "you don't need to speed anything up"). Only the
-	 * silence between the two halves is gone, which is what was actually being felt.
-	 */
-	// HOW FAR THE ARRIVALS LAP INTO THE GAP CLOSING. Raised from 240 (Sam: "can the entering cards after
-	// clicking a different path enter the screen a beat or two sooner") — two beats of the exit stagger.
-	// An arrival takes ROW_MS to travel, so even launching this early it lands well after the flip has
-	// finished; what moves is the start of its run, not the moment it settles.
-	const FOLLOW_LAP = 485;
-	/** How far the arrivals may cross INTO the tail of the exit — one beat of the exit stagger. See the
-	 *  note in `choosePath`: opposite directions from opposite edges, so a beat of overlap costs nothing
-	 *  visually and is the only place a faster entry was left to come from. */
-	const IN_OVERLAP = OUT_STAGGER;
-	const UNLOCK_EARLY = 300; // the buttons come back while the last card is still settling
 	/**
 	 * THE VEIL HAS ITS OWN SHORT CLOCK AGAIN — and this REPLACES the rule it used to follow.
 	 *
@@ -758,7 +697,10 @@
 		// Measured for the same reason `depart` is: the card must START fully off the right edge.
 		const r = (node as HTMLElement).getBoundingClientRect();
 		// On the first open the ladder always deals from the right; on a switch it follows the tabs.
-		const dir = switching ? switchDir : 1;
+		// ALWAYS FROM THE RIGHT. The Thomas ladder deals from either side because its tabs move you
+		// along a ROW of paths; this feature shows one path and has no tabs, so there is no second
+		// direction to come from.
+		const dir = 1;
 		const off =
 			dir > 0
 				? Math.max((TRAVEL_VW / 100) * window.innerWidth, window.innerWidth - r.left + 24)
@@ -777,10 +719,10 @@
 			// position rather than a row index, so an off-by-one in that arithmetic reaches this line
 			// instead of being absorbed. Clamping here makes the whole family safe rather than the one
 			// caller that exposed it.
-			delay: Math.max(
-				0,
-				switching ? switchInDelay + (n - 1 - i) * SWITCH_STAGGER : (n - 1 - i) * STAGGER
-			),
+			// NEVER NEGATIVE: a negative delay tells Svelte the intro is already part-elapsed, so `t`
+			// starts above 0 — and if the element is then removed, the outro's remaining time comes out
+			// below zero and WAAPI rejects it outright.
+			delay: Math.max(0, (n - 1 - i) * STAGGER),
 			duration: ROW_MS,
 			easing: linear,
 			css: (t: number) => {
@@ -846,17 +788,6 @@
 			 * and the seat is the one measurement taken before anything moved at all.
 			 */
 			el.style.height = `${seat.height}px`;
-			/**
-			 * AND CANCEL THE FLIP. `animate:flip` writes an inline `transform` on EVERY keyed element the
-			 * update touched — including one that is on its way out — to carry it from where it used to be
-			 * to where the new list puts it. A leaver's "new" place is the end of the list, so it was
-			 * handed a translateY of +703px and sat there for the whole of its stagger delay: measured on
-			 * Anne's path 2, eight cards were parked BELOW her own rung, which is the ladder appearing to
-			 * double in length that Sam saw. The transform is inline and no animation is running yet
-			 * (`animationName: none` during the delay), so clearing it is enough — and it costs nothing
-			 * once this card's own transition starts, because an animation outranks an inline declaration.
-			 */
-			el.style.transform = 'none';
 		}
 		// MEASURED, NOT A FRACTION OF THE WINDOW. `0.62 * innerWidth` was 893px at 1440 while the card's
 		// own right edge sits at 970 — so every leaver stopped 77px short and vanished still on screen.
@@ -864,22 +795,21 @@
 		// design §42.6 records about the sprite field being sized in pixels.
 		// A CLOSE always sweeps left. A SWITCH leaves the way the incoming set is NOT coming from, so the
 		// two sets never cross and the ladder reads as one row of paths sliding past a window.
-		const outDir = closing ? -1 : -switchDir;
+		// ALWAYS LEFT. On the Thomas ladder a card can leave because a path SWITCH replaced it, and then
+		// it exits away from the side the replacements are arriving from. Here the only thing that
+		// removes a card is the close, so the whole diagram always sweeps the same way.
+		const outDir = -1;
 		const box = el.getBoundingClientRect();
 		const travel = outDir < 0 ? box.right + 24 : window.innerWidth - box.left + 24;
 		return {
 			// ON A SWITCH, staggered to match the entry — bottom-first on the same 85ms spacing. They used
 			// to leave as one block, which read as the list being wiped rather than as objects departing.
 			// ON A CLOSE, the tight cascade above.
-			// On a SWITCH the rank comes from `outRank` (leavers only); on a CLOSE everything is leaving,
-			// so its position in the list already IS its rank. The fallback covers a card that somehow
-			// departs without having been scheduled — it keeps the old spacing rather than going at 0.
-			delay: Math.max(
-				0,
-				(closing ? n - 1 - i : (outRank.get(el.dataset.rid ?? '') ?? n - 1 - i)) *
-					(closing ? CLOSE_STAGGER : OUT_STAGGER)
-			),
-			duration: closing ? CLOSE_MS : OUT_MS,
+			// EVERYTHING IS LEAVING, so a card's position in the order already IS its rank — and here that
+			// order is the ROW rather than the arrival sequence, so a left card and its right-hand partner
+			// go together (see `atRow`).
+			delay: Math.max(0, (n - 1 - i) * CLOSE_STAGGER),
+			duration: CLOSE_MS,
 			easing: linear,
 			css: (t: number, u: number) => {
 				const k = u * u * u; // cubic-IN on the way out
@@ -1241,9 +1171,6 @@
 	 */
 	const tt = (px: number) => px * stage.k * fit;
 
-	/** `.rung-y`'s own `font-size: 0.846em`, in JS so the spouse card's year CEILING can be expressed
-	 *  in the same unit the rungs are. Keep the two in step if either moves. */
-	const RUNG_Y_EM = 0.846;
 
 	/**
 	 * THE SPOUSE CARD IS SET AT THE ORDINARY RUNG SIZE — `tt(14.3)`, the same ceiling every other card
@@ -1895,10 +1822,10 @@
 		-webkit-backdrop-filter: blur(10px);
 	}
 	.ladder {
-		/* THE FIT EASES, IT DOES NOT STEP. See the @property note in layout.css: a stepped change made
-		   `animate:flip` scale every surviving card ~10% and spring back, because flip interpolates size
-		   as well as position. Eased, its two measurements land at the same size and it translates only.
-		   The clock is the survivors' own (FLIP_MS), so the resize and the reshuffle finish together. */
+		/* THE FIT EASES, IT DOES NOT STEP. Inherited from the Thomas ladder, where a stepped change made
+		   every surviving card scale ~10% and spring back. Nothing re-fits mid-life here — one path, one
+		   `maxRows` — but the easing is what makes the value safe to read at any moment, and a stepped
+		   custom property is a trap laid for whoever gives this feature a second path. */
 		transition: --ladder-fit 460ms cubic-bezier(0.33, 1, 0.68, 1);
 		position: fixed;
 		inset: 0;
@@ -2296,23 +2223,6 @@
 		color: var(--color-inkblue);
 		opacity: 0.83;
 	}
-	.ladder-tab {
-		width: 22px;
-		height: 22px;
-		padding: 0;
-		font-family: var(--font-opensans, sans-serif);
-		font-size: calc(11px * var(--type-k, 1));
-		font-weight: 600;
-		color: var(--color-inkblue);
-		background: none;
-		border: 1px solid rgba(30, 42, 71, 0.3);
-		border-radius: 3px;
-		opacity: 0.6;
-		cursor: pointer;
-		transition:
-			opacity 160ms ease-out,
-			border-color 160ms ease-out;
-	}
 	.ladder-x {
 		margin-left: auto;
 		/* THE GLYPH IS FLUSH, NOT THE BOX. The hit area is 34px around a 22px icon, so a box aligned to
@@ -2335,25 +2245,6 @@
 	.ladder-x:hover,
 	.ladder-x:focus-visible {
 		opacity: 1;
-	}
-	.ladder-rows {
-		position: relative;
-		display: flex;
-		/* Centred inside its own reserved height: on the longest path the rows fill it exactly, on a
-		   shorter one they sit centred in a box that has not changed size. */
-		justify-content: center;
-		flex-direction: column;
-		/* A REAL GAP, because these are separate objects. The first build butted the lines together and
-		   ruled between them, which is a table; discrete cards need air, the way every chip row on the
-		   stage does.
-		   
-		   WIDENED WITH THE CARDS, and that half is mine rather than asked for: Sam's 4% was about the
-		   cards, but the REASON given was "to make hover drop shadow more clear", and a shadow is only
-		   visible in the space beside the object casting it. Six pixels was less than the shadow's own
-		   9.6px blur, so most of it was landing under the next card. Say the word and this returns to 6
-		   independently of the card height. */
-		gap: calc(9px * var(--stage-u, 1) * var(--ladder-fit, 1));
-		width: min(440px, 84vw);
 	}
 
 	/* THE RUNG'S GEOMETRY, and ONLY its geometry. Paper, shadow, line-status fill and the `--line-edge`
@@ -2405,17 +2296,12 @@
 		/**
 		 * A RUNG MAY NOT SHRINK — and this one line is the whole of the smoosh Sam filmed.
 		 *
-		 * `.ladder-rows` is a flex COLUMN with a reserved height, and a flex item's default is
-		 * `flex: 0 1 auto` — SHRINKABLE. For one frame during a switch the column holds BOTH paths
-		 * (the arrivals are in flow from the frame they mount; the leavers have not been pulled out
-		 * yet), so the column is over-full and the flex algorithm squashes every item to fit.
-		 *
-		 * That frame is where the damage is done, because it is the frame Svelte MEASURES IN. A keyed
-		 * each with `animate:` freezes an outgoing element's box by reading its computed size and
-		 * writing it back inline — so each leaver was frozen at its SQUASHED height (measured: 39.2,
-		 * 44.4, 48.5, 53.2, 58.8 against a true 65.4) and then departed at that size. The gradient is
-		 * the tell: each leaver Svelte pulls out makes the column less over-full, so the next one
-		 * measures a little taller.
+		 * A column is a flex COLUMN with a reserved height, and a flex item's default is `flex: 0 1 auto`
+		 * — SHRINKABLE, which means an explicit `height` is a REQUEST and not a floor. On the Thomas
+		 * ladder the over-full frame came from a path switch holding both paths at once; here it comes
+		 * from the reserved height of the taller arm being handed to a column that also carries an
+		 * overhanging spouse. Either way the flex algorithm squashes every item to fit, and that frame
+		 * is the frame a measurement lands in: the couple bar came out at 9.42px against a stated 72.8.
 		 *
 		 * ONLY CARDS WITHOUT A PHOTO SHOWED IT (Sam saw this before I did), because `min-height: auto`
 		 * floors a flex item at its min-content height and an `<img>` supplies one — text alone

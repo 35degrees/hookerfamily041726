@@ -41,12 +41,15 @@ AS BUILT — THE DECK PUSH: the shipping CC transition is two solid cards tradin
 
 **The 082726 edition (August 27) adds §45 — SEARCH, THE THIRD SURFACE (as built). The second of the three modals, inheriting §44's shell and adding the two things the ladder never needed: a corpus and an opinion about it.** §45.2 is the architecture — one flat 19,728-row array, scanned, with every fact folded into a field-tagged blob; §45.3 the single-definition fold rule; §45.4–§45.6 the ranking (six tiers, cohesion, and tiebreaks that encode who this app thinks matters), including the 2,238 ms → 11.7 ms lesson that a comparator is not a place to compute anything. §45.7 is the rebuke that a result row must literally BE a `.person-box`. §45.8 extends §29 with AREA as a third term — the same colour at the same alpha is a different colour at 1.5 px — and §45.9 names `--color-ascendmidnight` a FIELD colour rather than an INK colour, after it read grey on three separate surfaces. §45.10–§45.11 are the per-ground veil and the exit that dissolves content-first. §45.12 is the year range and the three widgets rejected before it, which is really the rule that three failed treatments means the OBJECT is wrong. §45.13–§45.14 are the assorted tags and the discovery that 485 of 642 in-use tags are not canonical.
 
+**The 082826 edition (August 28) adds §46 — CONNECT X TO ANYONE, THE THIRD SURFACE (as built). The last of the three modals and the close of Phase 6.** §46.2 is the section — and the session's — governing law, and it is Sam's, twice: the three modals must not share a body. The first build shared a panel component, a mode flag, and a fade written for the new feature that silently changed a shipped Paths-to-Thomas transition — *"a rehashed Disney sequel."* They are three files now and they stay three files; what is shared is DATA and the card species, never anything that renders. §46.3 is why the answer is a V rather than a ladder: measured before a pixel was drawn, the median answer is 15 cards and the longest arm 12 rungs, so the fold is not a visual idea that happened to fit but the only shape the measurement permits — and Sam's eligibility gate and the 99.9% coverage are one decision seen from two ends. §46.4 is the apex couple, whose partner is read off the OTHER PARENT of the rung below rather than off `marriage_number`, because a shared ancestor's spouse is not a property of the ancestor. §46.7 is the sentence that asserted a blood tie the person did not have. §46.10 is the widest-blast-radius bug of the arc — an `$effect` reading `search.text` broke typing in the MAIN search — and the law it earned: **a close is an event, not a state.** §46.11 is the vitals, four smooshes, and the rule that outlived them: centre a thing whose size is fixed, top-align a thing whose size varies.
+
+
 **A family of three, completed in this edition:** `box-shadow` is one property, `transition` is one property, and a filled animation outranks ordinary declarations. All three are the same shape — a mechanism silently outranking the declaration being edited — and all three present as "my change did nothing". When a CSS edit appears inert, look for what else already claims that property.
 
 **Correction carried in the same edition:** §22.2b's "Deferred" is stale — the §19.4 LCA/kin-distance bake SHIPPED August 3 and closed it (roadmap §17). The defect it describes is fixed; the section is kept for the reasoning and the repro.
 
 This doc follows the house convention: it holds _what and why_ (durable design).
-Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_082726.md. Where a section
+Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_082826.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
@@ -6027,3 +6030,251 @@ search's job was to feed them, not to invent a fourth way to arrive.
 - **The multi-select hint** — nothing on screen says two tags can be held at once.
 - **No fuzzy matching, no typos, no phonetics.** Null beats weak applies to results too: a wrong person
   confidently ranked first is worse than an empty list.
+
+---
+
+## 46. CONNECT X TO ANYONE — THE THIRD SURFACE (AS BUILT, August 28)
+
+_(The last of the three modals, and the one that closes Phase 6. It looks like §44's ladder pointed at a
+second person, and it is emphatically not that — see §46.2, which is the most important thing in this
+section and the only one Sam had to say twice. Roadmap §48 is the session record; this is the doctrine.)_
+
+**WHERE IT LIVES:** [`src/lib/search/kin.ts`](../src/lib/search/kin.ts) (the walk and the words) and
+[`src/lib/components/ConnectAnyoneModal.svelte`](../src/lib/components/ConnectAnyoneModal.svelte) (all of
+the rest), plus `setGate`/`row` in `search.svelte.ts` and `fa`/`mo`/`hp`/`cf`/`fn`/`sn`/`sf` in
+`regenerate-data.js`. **Roadmap §48.2 is the line-anchored map of every symbol named below** — it is
+maintained there and deliberately not duplicated here, so that one of them cannot go stale against the
+other. Read the header comment at the top of `ConnectAnyoneModal.svelte` before moving anything out of it.
+
+### 46.1 WHAT IT IS FOR
+
+Paths to Thomas answers a question the app poses: *how does this person reach the founder?* Everyone in
+the tree has the same destination, so the answer is a ladder and the interest is in the route.
+
+Connect-to-anyone answers a question the **reader** poses: *how are these two people related?* The
+destination is chosen, the answer is a relationship rather than a route, and the shape of the answer is
+therefore not a ladder but a **V** — two lines of descent rising to the ancestor they share, and a
+sentence at the top naming what that makes them.
+
+The two features consume the same parent edges and paint the same species of card. They have almost
+nothing else in common, and the version of this feature that pretended otherwise was the version Sam
+rejected.
+
+### 46.2 THREE SURFACES THAT MUST NOT SHARE A BODY
+
+This is the governing law of the whole section, in Sam's words:
+
+> "Paths to Thomas, Search and Connect to Anyone are all dependent on each other like you are trying to be
+> code efficient and minimalize things. That is the wrong approach. Do not do that. Each of these
+> functions have very different purposes and need to feel individualized, not just some pabulum
+> functionality that no one cares about and has a dull effect like a rehashed Disney sequel."
+
+The plan this feature was built from said the opposite — grow `ConnectModal` a second mode, extract the
+result rows into a shared `SearchResults`, one component serving both pickers. That is the instinct of
+somebody optimising for lines of code, and it is the wrong optimisation for a surface whose entire value
+is that it feels like its own thing. Halfway through, `SearchPanel.svelte` existed, `ConnectModal` had a
+mode flag, and a fade written for connect-to-anyone had silently changed a shipped Paths-to-Thomas
+transition. Sam saw the leak before I did.
+
+**What was done instead: the three modals are three files, and they stay three files.**
+
+| shared | not shared |
+|---|---|
+| the **data** — one search index, one parent map, one `CAT` bitfield | the picker, the panel, the rows, the veil timing, the header, the schedule |
+| the **card species** — `.person-box`, the paper, the shadow, the star | how a card enters, how it leaves, how many there are, what the number means |
+| pure **modules** with no DOM — `kin.ts`, `search.svelte.ts` | anything that renders |
+
+**The test to apply before sharing anything between them:** would a change made for one surface be a
+change to the *other* surface's behaviour? If yes, it is not shared code, it is a coupling — and the cost
+of duplication is far below the cost of a feature that cannot be tuned without breaking its neighbour.
+The one exception proves it: the fade `ConnectModal` now carries was reviewed on its own, on the Thomas
+ladder's own pixels, and adopted by explicit instruction — *"split and keep that fade paths to thomas."*
+A shared improvement is a decision, not a side effect.
+
+This is §33's `--ring-live` doctrine one level up. There, a mechanism whose presence implied behaviour
+that did not exist was a lie to the next reader. Here, a component whose presence implies two features are
+the same thing is a lie to the user.
+
+### 46.3 THE FOLD IS WHAT MAKES THE ANSWER DRAWABLE
+
+Measured against the live index under the live gate, before any of it was drawn:
+
+| | |
+|---|---|
+| eligible ends (descendant ∪ married-in) | **18,790** of 19,728 |
+| picks with a blood path between them | **99.9%** |
+| longest single arm | **12 rungs** |
+| median answer | **15 cards** |
+
+A 15-card answer in one column cannot be drawn — the ladder already runs out of window at 15 with nothing
+above it. Folded, 15 is 7 + apex + 7, which is shorter than a ladder that ships. **The V is not a visual
+idea that happened to fit; it is the only shape the measurement permits**, and the sentence at the top is
+what the fold buys you room for.
+
+The gate is what buys the coverage. Unrestricted — easter eggs, orbit figures, Hartford founders, in-laws
+— the same walk answers **66%** of pairs, because those people have no blood tie by definition. Sam's
+eligibility rule and the 99.9% are the same decision seen from two ends.
+
+### 46.4 THE APEX IS A COUPLE, AND THE COUPLE IS DEFINED BY THE RUNG BELOW IT
+
+The shared ancestor is one person, but a shared ancestor is only interesting as a **pair** — you and your
+second cousin descend from a couple, not from a man. So the apex renders as a single bar spanning the full
+width of both columns, carrying both halves of the couple.
+
+**Which spouse, though, is a real question with a wrong answer that looks right.** The obvious rule —
+"their first wife," or `marriage_number === 1` — is wrong, and wrong in a way that quietly breaks the
+diagram: a man who married twice may have fathered the left column with one wife and you are shown the
+other. The apex's partner is not a property of the apex at all.
+
+**The rule: the apex's partner is the OTHER PARENT OF THE FIRST RUNG BELOW.** It is read off the child's
+own `fa`/`mo` edges — the same edges the walk used to get there. It is therefore always the person through
+whom this particular descent actually passed, and for a two-marriage apex the couple bar changes with the
+column, which is correct.
+
+### 46.5 A LINEAL PAIR HAS NO COUPLE BAR
+
+When the chosen person *is* a direct ancestor (or descendant) of the subject, one arm has length zero.
+There is no second column, no meeting point, and no couple: there is one line, and the apex is simply the
+top of it.
+
+So the lineal case renders **one single-width card in one column** — not a couple bar with an empty half,
+and not a two-column layout with one side blank. A shape that means "two lines met here" must not be drawn
+when only one line exists. It is 0.3% of pairs and it is the case a reader is most likely to already know
+the answer to, which makes drawing it wrong especially expensive.
+
+### 46.6 THE PICKER COMES FIRST, AND IT IS NOT THE SEARCH MODAL
+
+The button cannot open a diagram, because half the diagram has not been chosen yet. So the modal opens on
+a picker, and the picker is a **third thing** — not search, not the ladder.
+
+What it takes from search: the veil, the fold rule, the row-as-card rule, the ranking. What it deliberately
+does **not** take:
+
+- **No category chips.** The set is already gated to descendants and spouses; a filter that could only
+  narrow that would imply the other categories exist here.
+- **No year slider, no assorted tags.** Search's tags are a way *in* for a reader with no target (§45.13).
+  This reader has a target — they came here to name a person.
+- **No blurb on the row.** Search's row sells you a stranger. This row confirms a person you already have
+  in mind, so it carries photo, name, years, star, and stops.
+- **A box two-thirds the width of the main search bar, pinned to the same top edge.** Narrower, because
+  what gets typed here is a name and not a phrase. Fixed, because the box must not move as results arrive
+  — the reader is aiming at it.
+
+The eligibility floor is a module-level `gate` bitmask in `search.svelte.ts`, set to `CAT.HD | CAT.SPOUSE`
+while this picker is open and cleared on close. It is deliberately **not** `search.cats` — those are the
+user's own chips on their own surface, and writing to them would leak this feature's rules into theirs.
+
+### 46.7 THE SENTENCE: THE CHOOSER POSSESSES, THE BLOODLINE PERSON IS RELATED
+
+A married-in person has no blood relationship to anyone in the tree. Their partner does. So a sentence
+about a married-in end has to attribute the relationship to the partner while keeping the person the
+reader actually chose as the subject of the phrase.
+
+The version that shipped first got this exactly backwards:
+
+```
+WRONG   Christine's husband Joseph is the 5th cousin four times removed of Isaac.
+RIGHT   Joseph's wife Christine is the 5th cousin four times removed of Isaac.
+```
+
+Sam: *"that's impossible, it's Joseph's wife Christine that is the fifth cousin."* He is right in the only
+way that matters — the first sentence asserts a blood tie for the person who does not have one. The rule
+is therefore: **the person you chose owns the possessive; the bloodline person carries the relation.** In
+`kin.ts` an `End` holds `name` (always the bloodline person), `sx`, and `of` (the married-in chooser), and
+`subject()` renders the possessive form only when `of` is set.
+
+Everything in the sentence is a casual name — `chip_first_name ?? first_name`, no surname, no suffix.
+"Aaron is the 2nd cousin of Sarah" is a sentence a person says. "Aaron Burr Jr. is the 2nd cousin of Sarah
+Pierpont Edwards" is a database row.
+
+Gendered words route through one resolver that **returns the neutral form rather than guessing**, per
+§25.6 — the `genderOf` lesson that once labelled nine women "Father-in-law."
+
+### 46.8 THE MIRRORED COLUMN IS MIRRORED, NOT COPIED
+
+The two arms rise to the same apex from opposite sides, so the left column is laid out **outward**: photo
+on the outer edge, number between photo and text, text ranged toward the centre. The right column is its
+reflection.
+
+Two things this cost, both of which are the same mistake:
+
+- **The photo's corner radius must invert with the column.** A rounded outer edge and a square inner one
+  is what makes the card read as belonging to its side; carrying the left column's radius across produces
+  a card that is rounded on the wrong two corners and looks broken without looking obviously wrong.
+- **The gap between the number and the photo is not the same lever as the gap between the number and the
+  text.** Halving the number's *column* pinned the digits to the photos; the gap that wanted closing was
+  the body's leading padding. The identity that solved it is `m = p` — the number sits centred between
+  photo and content when its own margin equals the body's padding, and neither can be tuned alone.
+
+A married-in end renders as a real card on its partner's row, hanging off the **outside** edge, and enters
+**with** its partner rather than after it. It is one person's presence on that rung, not a second event.
+
+### 46.9 THE EXIT LEAVES BY ROW, NOT BY COLUMN
+
+On the Thomas ladder the exit order is the arrival order reversed — one column, so row order and arrival
+order are the same thing. In a V they are not, and reversing arrival order sends the left column out ahead
+of the right, which reads as the diagram falling apart rather than leaving.
+
+**The rank is the row.** A left card and its right-hand partner go together, and the V sweeps left as a
+set of horizontal bars collapsing toward the edge. The header text does not participate — it fades on the
+click, immediately, because it is the only element that is *about* the diagram rather than part of it.
+
+### 46.10 A CLOSE IS AN EVENT, NOT A STATE
+
+The single worst regression of this session was that typing in the **main search** erased itself after two
+or three characters. The cause: this modal's reset logic lived in an `$effect` that read `search.text`,
+which made the text a dependency — so every keystroke anywhere re-ran it and scheduled a wipe of the
+shared query.
+
+The fix is small and the law is not: **"the modal closed" is a thing that happens once, not a value
+something can observe.** It belongs in the close handler (`requestClose()` → `scheduleWipe()`), never in a
+reactive block. An `$effect` that performs a side effect on *transitions* rather than on *state* will fire
+for reasons that have nothing to do with it, and the blast radius is whatever it touches — here, another
+feature entirely.
+
+Two corollaries the same bug produced:
+
+- **Reopening inside the close window must RUN the pending wipe, not cancel it.** Cancelling it left the
+  previous session's cards in the picker — Thomas ghosting behind a fresh search.
+- **`{#key visit}` discards the previous session's outroing cards,** which is what makes "everything resets
+  on reopen" true rather than approximately true. But `{#key}` also makes every transition inside it
+  **local**, which silently disarmed the veil's blur and cut it off instantly. Anything that must still
+  play inside a keyed block needs `|global` (§44.5, third occurrence).
+
+### 46.11 THE SECOND BUTTON, AND THE 32px THAT PAID FOR IT
+
+The button stacks under "Connect to Thomas" and the height comes out of `.vitals`. What Sam repeated four
+times, and what I kept doing anyway, is the durable part:
+
+> "It's all padding in that area — it's like you are making the content so tiny to ensure tons of white
+> space. Please use whitespace."
+
+**The room comes from gaps and position, never from the type.** Birth and death sizes and leading are
+untouched; the 32px came off the button drop, the buttons' own padding, and two block gaps. Shrinking the
+content to make room is the move that always looks available and is always wrong — it buys pixels by
+destroying the thing the pixels were for.
+
+And the layout rule that came out of Sam reversing his own instruction, which is worth more than the
+feature it appeared in:
+
+> **Centre a thing whose size is fixed. Top-align a thing whose size varies.**
+
+"Centre the vitals between the photo and the buttons" is right for a person with birth *and* death and
+wrong for a person with birth only — the block shrinks, so centring floats it, and the top edge moves from
+card to card. The vitals are top-aligned at a fixed offset instead, which makes a birth-only card sit a
+little high and every card start on the same line. Below 1100px (`stage.tightVitals`) the two gaps halve;
+above it nothing changes, because above it nothing was wrong.
+
+### 46.12 WHAT IT DOES NOT DO
+
+- **One path, the shortest.** No tabs, no alternates. Ties break fewest-total, then most-balanced, then
+  paternal-first — the same rule and the same reason as `paternalKey` in the build (§44.7's tiebreak; an
+  id-sequence tiebreak is stable and not explainable).
+- **No marriage bridges inside the path.** Marriage appears only at the two ends. A bridge mid-path makes
+  the relationship sentence unspeakable, which is why the client and the build's `kin_distance` agree on
+  60 of 61 sampled pairs and the 61st is a father-in-law bridge — a deliberate exclusion, not a defect.
+- **The swap control is not built.** The stacked left/right arrow that trades the columns and re-reads the
+  sentence from the other subject was specced and deferred. For a cousin relation it changes only the
+  names; for the lineal and avuncular 1.3% the word itself flips, which is the real content of the gesture.
+- **A tall V is not narrowed.** At 9+ rungs an arm reaches the bottom of the window. The fit apparatus is
+  in place; the rung-height ceiling it would need is not.
