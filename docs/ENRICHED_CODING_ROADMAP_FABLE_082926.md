@@ -1,6 +1,8 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_082826.md (the what/why for every item below).**
+**Companion: ENRICHED_DESIGN_FABLE_082926.md (the what/why for every item below).**
+**AUGUST 29 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right.
+
 **AUGUST 28 (§48): CONNECT X TO ANYONE SHIPPED END TO END — the picker, the V, and three features that no longer touch (design §46).** Committed as `44917f22`, plus a cleanup pass. The answer to "how are these two related" is a V rather than a ladder because the measurement says so: median 15 cards, longest arm 12 rungs, so 7 + apex + 7 fits where 15 in a column cannot. The apex is a couple bar whose partner is the OTHER PARENT of the rung below, never `marriage_number`; a lineal pair gets one single-width card and no bar. The session cost a day to §46.2 — I wired the three modals together, leaked a fade into shipped Paths-to-Thomas behaviour, and Sam had to say it twice. §48.3 is the ten things that went wrong in order, headed by that and by breaking the main search from inside this component. §48.6 is the cleanup: −171 lines of path-switch machinery the copy brought with it, which was not clutter but a false claim about what this ladder can do. The swap control is specced and unbuilt.
 
 **AUGUST 27, LATER (§47): THE LADDER AGAIN — TYPE, THE SMOOSH, AND TWO DEAD BEATS (design §44.15–44.17).** The spouse card stops being sized from its partner and takes the ladder's one ceiling; it gains a `III` from a new opt-in `sf` field built by the same helper the slug uses. The vertical collapse Sam filmed on every path switch was `.rung` inheriting `flex: 0 1 auto`: the column holds both paths for one frame, and that is the frame Svelte measures an outgoing box in — leavers were departing frozen at 39–59px against a true 65.4, and only cards with no photo showed it because an `<img>` gives a flex item a min-content floor. Then two speed complaints answered by deleting waits rather than shortening anything: a stagger that counted list positions instead of leavers (255ms of dead air), and a `FLIP_MS` charged for a gap that equal-length paths never open (460ms). `OUT_STAGGER` deliberately untouched.
@@ -363,6 +365,48 @@ view, not this card.
   content sweep first (one pastorate line, degrees collapsed, education
   notes shortened). CC display ORDER curated per person (best wormholes
   first) since the render cap shows the first 6.
+- **THE 896 MULTI-TOKEN `first_name` RECORDS — measured August 29, not started.** 896 people (all
+  searchable) carry the middle name inside `bio.first_name` — `Susan Jane` / `Frost`,
+  `Almira Elinera` / `Phelps`. It leaks into two places, and **the important finding is that neither
+  leak requires editing `first_name` at all**, so the review pile is ~60 rows rather than 896.
+
+  | bucket | n | disposition |
+  |---|---|---|
+  | plain two-token (`Susan Jane`, `Anna Celia`) | 747 | mechanical |
+  | second token is an initial (`Anson F`) | 101 | mechanical |
+  | three or more tokens (`Nancy Sarah Marie`) | 39 | needs eyes |
+  | **`middle_name` ALREADY set** (`Almira Elinera` + mid `Lincoln`) | 4 | **needs eyes — a move here would OVERWRITE, which the no-delete law forbids without Sam naming each** |
+  | quoted nickname inside the field (`Elizabeth Lillian "Lillie" Pierpont`) | 3 | needs eyes |
+  | particle / compound given (`William St. John`, `Cornelius Van Schaack`) | 2 | needs eyes |
+
+  **Leak 1 — the slug.** `firstName(p)` slugifies the field whole, so 896 URLs follow a second rule:
+  `almira-elinera-phelps-1836`, and `william-st-john-st-john-ii-1763` stutters. **Fix is one line in
+  `regenerate-data.js` — take the first token — with no canonical edit and no review.** 785 slugs move
+  onto the rule the other 20,096 already follow; collisions were checked exhaustively and there are
+  **exactly two**, `mary-jane-hooker-1833` (H02540) and `mary-ann-brown-1796` (I00297), both hand-resolved.
+  The old slug appends to `former_ids`; the 301 resolver is already wired. Search is unaffected because
+  the index's `fn` does not change, so "Elinera" still finds her, and `display_name` is untouched so the
+  card still reads *Almira Elinera Lincoln Phelps*. Nothing is lost — the data fault simply stops leaking
+  into URLs. **This must land before Phase 2.5 emits a sitemap**, or ~785 wrong canonical URLs freeze into
+  Google's index and are paid for in redirects forever.
+
+  **Leak 2 — the casual register, new with Phase 6.** `casual()` in `ConnectAnyoneModal` reads
+  `chip_first_name ?? first_name`, so **779 people** with no `cf` read as a middle name in the
+  connect-to-anyone sentence and on the V's cards: *"Almira Elinera is the 3rd cousin of…"*. Fix is
+  `bio.chip_first_name` (the field already exists for exactly this; 377 people use it) set via
+  `field_set`, which is append/set-only and covered by the diff guard.
+
+  **THE ONLY REVIEW, and the reason this is not fully mechanical: for a compound given name the current
+  output is already CORRECT.** *"Mary Ann is the 3rd cousin of…"* is right; *"Almira Elinera"* is not.
+  **62** of the 896 have a classic compound partner as the second token — Mary Ann, Sarah Jane, Eliza
+  Jane, Alice Lee, Betty Jane, Ella May — and those want no change at all. So the work is: generate a
+  62-row yes/no sheet, and everything else runs without Sam. A scan, not a study.
+
+  **Deferred deliberately:** actually moving the middle names into `middle_name`. Once the two leaks are
+  closed nothing user-facing depends on it, and it is the pass that carries all 110 of the needs-eyes
+  rows. Hygiene, not a blocker. If it is ever done, capture slugs before/after and append the old one to
+  `former_ids`.
+
 - **Source capture doctrine (design doc §9):** standing rule — every distill/
   paste ingestion auto-records its source into `research_sources` in the same
   pass; add a `source_add` op to the tasks grammar; run a sources lint
@@ -4721,3 +4765,68 @@ read it — including me — has to prove it cannot before they can change anyth
 - **`pp` (photo-position override) is not on the search row**, so a handful of rungs crop as the default
   does. Flagged rather than absorbed, same as at the plan stage.
 - Nothing here is pushed. `44917f22` and the cleanup are local commits.
+
+---
+
+## 49. AUGUST 29 — AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built)
+
+Sam, after the Phase 6 close-out: *"i think I'd like to set up better-auth next and have log ins."*
+Recorded here because it moves Phase 10 ahead of 2.4, 2.5, 2.75, 3a and 3b, and because §38 wrote down
+the exact tradeoff that move makes. **This is not an argument against it — it is the thing to have read
+before the first session, so the cost is chosen rather than discovered.**
+
+### 49.1 THE COLLISION, STATED PLAINLY
+
+§38.5's second argument was:
+
+> **The cost only rises, and it rises steepest at Phase 10.** Auth + bookmarks (BetterAuth/Neon/Drizzle)
+> is where this app finally grows hooks, cookies, server modules and form actions — which is exactly the
+> deep end of SK3's breaking changes. Migrating a zero-server app is a codemod and three config files;
+> migrating an auth'd one is a project. **The window is now-ish, not later.**
+
+The window did not open. **SvelteKit 3 is still not stable** — checked August 29: `latest` is `2.70.3`,
+`next` is `3.0.0-next.25`, and §38.5's first argument (the preview keeps relocating its own type surface,
+`#lib` having already moved once mid-preview) still holds. So the sequence §38 wanted — migrate on a
+zero-server app, *then* build auth — is not available, because the thing to migrate to does not exist yet.
+
+That leaves a genuine bind rather than a mistake, and three honest options:
+
+| | |
+|---|---|
+| **build auth on SK2 now** | what Sam chose. The eventual migration becomes "a project" rather than "a codemod" — §38's own words |
+| build auth minimising SK3 surface | the same, but with the blast radius deliberately concentrated (below). **This is the cheap insurance and costs nothing to adopt** |
+| wait for `3.0.0` | blocks auth on a third party's release date, with no committed one |
+
+### 49.2 WHAT AUTH ADDS THAT SK3 BREAKS — build these in as few files as possible
+
+§38.1 measured this codebase's SK3 surface as **five things, only one of which thinks**, precisely
+because the app has *no* `.server.ts`, no form actions, no cookies, no `$env`, no hooks. Auth creates
+every one of those. The specific breaks it will hand the migration:
+
+- **`RequestEvent` / `Cookies` moved to `$app/server`** — every server module and hook touches these.
+- **Always-on CSRF and `csrf.trustedOrigins`; cookie v2.** §38.5 dismissed this as *"nothing to protect
+  yet."* **Logins retire that premise** — this becomes live security surface, not a config note.
+- **Hooks and `$env` type relocations** — `next.19`→`next.21` moved these three times.
+- **Form `dirty()` / `touched()`** — §38.6 already tagged this "Phase 10 only." Now it is Phase next.
+
+**The mitigation, and it is the whole practical content of this section:** keep the server surface
+narrow and in known files — one `hooks.server.ts`, one `src/lib/server/auth.ts`, session reads behind
+one helper rather than `event.cookies` scattered through routes. The migration cost is roughly linear in
+*how many files import SvelteKit server primitives*, not in how much auth logic exists. Concentrating
+them turns "a project" back into something closer to "a codemod."
+
+### 49.3 TWO THINGS THAT DO NOT CHANGE
+
+- **The static-payload architecture (§6.1) is not up for renegotiation by auth.** Person pages stay
+  prerendered/CDN-served static JSON. Auth adds a session and a bookmarks table; it does not make the
+  genealogy dynamic, and any design that starts serving person data through a server route has quietly
+  swapped the app's delivery model for a login feature.
+- **`robots.txt` is still `Disallow: /`.** Whatever auth ships, nothing is indexed until that is a
+  deliberate decision — see §2.5 and the 896-slug prerequisite in §4, which now sits *behind* auth in the
+  order and must still land before any sitemap is emitted.
+
+### 49.4 STILL OPEN, UNCHANGED BY THIS
+
+The Phase 6 items from §48.7 (the swap control, narrowing a tall V), the SEO surface measured at zero on
+August 29 (no `<title>`, description, canonical, OG or JSON-LD on ~19,700 person pages), and the 896
+records in §4. None is blocked by auth; all are now behind it.
