@@ -88,6 +88,21 @@ if (browser) {
 		snapshot = { user, isPending: s.isPending };
 
 		/**
+		 * RETIRE THE OPTIMISTIC HERO ONLY WHEN THE STORE AGREES WITH IT.
+		 *
+		 * This is the half that makes the override safe rather than merely fast. `setHero` writes the
+		 * override and never clears it; this clears it on the frame the real session carries the same
+		 * value. Until then the override is authoritative, so nothing can hand the UI back a stale
+		 * `heroPersonId` — which is exactly what unfilled the house and silently disabled the
+		 * replace-confirmation on 082926.
+		 *
+		 * A sign-out clears it too (both sides become null), so the next user does not inherit it.
+		 */
+		if (heroOverride !== undefined && (user?.heroPersonId ?? null) === heroOverride) {
+			heroOverride = undefined;
+		}
+
+		/**
 		 * HYDRATE ON THE TRANSITION, NOT ON EVERY EMISSION. This store fires on refreshes and focus
 		 * events as well as on sign-in, and re-fetching the whole set each time would be a request
 		 * per tab focus — the same shape of waste as the previous project's write-per-session-read,
@@ -258,18 +273,28 @@ export async function setHero(personId: string | null): Promise<{ previousPerson
 	}
 
 	/**
-	 * REFRESH THE SESSION, THEN DROP THE OVERRIDE — in that order, and not before.
+	 * NUDGE A REFRESH, BUT DO NOT CLEAR THE OVERRIDE HERE. THE FIRST VERSION DID, AND IT BROKE TWO
+	 * THINGS AT ONCE — worth writing out, because both symptoms pointed away from the cause.
 	 *
-	 * `heroPersonId` genuinely lives on the session user; this module only shadows it. Clearing the
-	 * override before the refreshed session carries the new value would flash the OLD hero back for
-	 * however long the round trip takes, which is the very stutter the override exists to remove.
-	 * `disableCookieCache` because the cached session is exactly the stale copy we are replacing.
+	 * Sam: "the home card is broken i never said remove the confirmation modal and i set someone to
+	 * home and it didn't stay filled in."
+	 *
+	 * `authClient.getSession()` RESOLVES WITH the session; it does not reliably push the new value
+	 * into the reactive `useSession` store this module subscribes to. So the store's
+	 * `heroPersonId` stayed at its old value, and clearing the override in a `finally` handed the
+	 * UI straight back to that stale truth:
+	 *
+	 *   the house UNFILLED    — `isHero` fell back to the stale session value
+	 *   the gate STOPPED      — `previous` was read off the same stale value, so it was forever
+	 *                           null, and "no previous hero" means "no confirmation needed"
+	 *
+	 * One stale read, two features, and neither symptom named it. The fix is to let the OVERRIDE be
+	 * authoritative until the store genuinely agrees — see the subscribe handler, which clears it on
+	 * the frame the two match. Self-healing: if the refresh never lands, the override simply stands
+	 * until the next natural session load, which is the correct-looking outcome rather than a wrong
+	 * one.
 	 */
-	try {
-		await authClient.getSession({ query: { disableCookieCache: true } });
-	} finally {
-		heroOverride = undefined;
-	}
+	void authClient.getSession({ query: { disableCookieCache: true } }).catch(() => {});
 	return data;
 }
 

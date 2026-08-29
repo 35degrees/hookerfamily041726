@@ -47,7 +47,10 @@
 	function say(msg: string) {
 		toast = msg;
 		clearTimeout(toastTimer);
-		toastTimer = setTimeout(() => (toast = ''), 2200);
+		// 2200 -> 1250, and the CSS animation fades it out inside that window rather than letting it
+		// sit at full strength and then vanish. Sam: "they really are barely on screen and are starting
+		// to fade away as soon as they appear ... not to dwell on it."
+		toastTimer = setTimeout(() => (toast = ''), 1250);
 	}
 
 	/**
@@ -117,7 +120,15 @@
 			return;
 		}
 
-		const previous = auth.user?.heroPersonId ?? null;
+		/**
+		 * READ `auth.heroPersonId`, NOT `auth.user?.heroPersonId`.
+		 *
+		 * The first reads through the optimistic override; the second goes straight to the session
+		 * store, which lags a write. Using the raw session value meant `previous` was null right
+		 * after setting a hero, so setting a SECOND one skipped the confirmation entirely — the gate
+		 * appeared to have been removed when it had only been asked the wrong question.
+		 */
+		const previous = auth.heroPersonId;
 
 		// FIRST HERO: purely additive, nothing to destroy, no gate. Taxing this gesture would be
 		// taxing the one the feature wants to encourage.
@@ -399,20 +410,44 @@
 		pointer-events: none;
 		padding: 4px 9px;
 		border-radius: 5px;
-		background: rgba(43, 38, 32, 0.9);
+		/* MIDNIGHT BLUE AT 70%, NOT NEAR-BLACK AT 90%. A receipt, not an announcement — it says what
+		   you just did and gets out of the way. The old ink was the heaviest thing on screen for two
+		   full seconds, which reads as the app asking you to admire the action. */
+		background: color-mix(in srgb, var(--color-ascendmidnight, #1c2b4a) 70%, transparent);
 		color: #fbf8f1;
 		font: 500 11px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.01em;
-		box-shadow: 0 1.5px 4px rgba(20, 28, 46, 0.25);
-		animation: toast-in 160ms ease-out;
+		box-shadow: 0 1.5px 4px rgba(20, 28, 46, 0.18);
+		/**
+		 * ONE ANIMATION FOR THE WHOLE LIFE, so it is ALREADY LEAVING almost as soon as it lands.
+		 * The old version faded in over 160ms, then sat at full opacity until a JS timer removed it —
+		 * so the only motion was an arrival, and the exit was a disappearance.
+		 *
+		 *   0%    invisible, 3px left
+		 *   10%   arrived, full  (125ms — fast enough to feel like feedback, not an entrance)
+		 *   30%   still full     (~375ms, the whole time it is asked to be read)
+		 *   100%  gone           (the remaining ~875ms is a fade, which is most of its life)
+		 *
+		 * `forwards` so it holds at zero rather than snapping back to full for the frame before the
+		 * JS timer removes the node — the timer and this duration are the same 1250ms deliberately.
+		 */
+		animation: toast-life 1250ms ease-out forwards;
 	}
-	@keyframes toast-in {
-		from {
+	@keyframes toast-life {
+		0% {
 			opacity: 0;
 			transform: translateX(-3px);
 		}
-		to {
+		10% {
 			opacity: 1;
+			transform: translateX(0);
+		}
+		30% {
+			opacity: 1;
+			transform: translateX(0);
+		}
+		100% {
+			opacity: 0;
 			transform: translateX(0);
 		}
 	}
