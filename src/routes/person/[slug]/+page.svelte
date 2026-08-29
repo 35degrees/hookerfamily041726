@@ -28,6 +28,29 @@
 	 * `bio.display_name: "Rev. Thomas Hooker"` — so a chain that ends at the parts would return an
 	 * empty string on the single most important person in the corpus.
 	 */
+	/**
+	 * MAY THIS PERSON BE A HOME CARD? (Sam, 082926: "not allowed to make orbit entries the Hooker
+	 * influences or the Hartford founders default home cards with the exception of H00001".)
+	 *
+	 * A home card is where the reader LIVES in this tree. An orbit figure is somebody the tree
+	 * reaches sideways by cross-connection, and a Hartford founder is a neighbour of the line rather
+	 * than part of it — landing on either every single visit would quietly make the orbit the centre.
+	 * The RIBBON still works on them; only the house is withheld, because saving someone and living
+	 * with them are different claims.
+	 *
+	 * THE FOUNDER HALF REUSES A RULE THIS APP ALREADY WROTE. `ascension.svelte.ts` computes
+	 * `isFounder` as "carries `hartford_founder` AND is not H00001", with its own comment explaining
+	 * the exclusion: Thomas Hooker holds the tag but is the line's ROOT rather than a founder the
+	 * tree merely touches. That is exactly the exception Sam asked for, already reasoned out once, so
+	 * this restates the predicate rather than inventing a second one that could drift from it.
+	 */
+	const HARTFORD_FOUNDER = 'hartford_founder';
+	function canBeHomeCard(d: typeof f): boolean {
+		if (d.person.id === 'H00001') return true; // the root is always allowed
+		if (d.orbit === true) return false;
+		return !(Array.isArray(d.person.tags) && d.person.tags.includes(HARTFORD_FOUNDER));
+	}
+
 	function shortNameFor(p: (typeof f)['person']): string {
 		const chip = p.bio?.chip_first_name?.trim();
 		if (chip) return chip;
@@ -2036,6 +2059,7 @@
 					personId={cur.person.id}
 					personName={cur.person.bio?.display_name ?? cur.person.name?.display_name ?? 'this person'}
 					shortName={shortNameFor(cur.person)}
+					canBeHome={canBeHomeCard(cur)}
 				/>
 				<!-- Chip-face for the "flip early, land as a chip" relative demotion: a real PersonBox of
 				     THIS person (identical to the parent/child box it becomes), pre-scaled to fill the card

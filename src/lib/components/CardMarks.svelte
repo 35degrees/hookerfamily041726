@@ -34,8 +34,25 @@
 	let {
 		personId,
 		personName,
-		shortName
-	}: { personId: string; personName: string; shortName: string } = $props();
+		shortName,
+		canBeHome = true
+	}: {
+		personId: string;
+		personName: string;
+		shortName: string;
+		/**
+		 * ORBIT FIGURES AND HARTFORD FOUNDERS CANNOT BE A HOME CARD (Sam, 082926) — the ribbon still
+		 * works on them, only the house is withheld. A home card is where the reader LIVES in this
+		 * tree, and an influence or a founder is somebody the tree reaches sideways; landing there on
+		 * every visit would make the orbit the centre.
+		 *
+		 * H00001 IS THE EXCEPTION, and the app had already made this exact call once:
+		 * `ascension.svelte.ts` excludes Thomas Hooker from `isFounder` BY ID for the same reason —
+		 * he carries `hartford_founder` and is the line's root rather than a founder the tree merely
+		 * touches. The predicate is computed in the page from that same rule, so the two cannot drift.
+		 */
+		canBeHome?: boolean;
+	} = $props();
 
 	const list = $derived(auth.listFor(personId));
 	const isHero = $derived(auth.isHero(personId));
@@ -43,9 +60,23 @@
 	/** Transient, and it says what HAPPENED rather than what the control is — a confirmation, not a
 	 *  label. Cleared on a timer; re-firing resets the timer rather than stacking. */
 	let toast = $state('');
+	/**
+	 * A SEQUENCE NUMBER, PURELY TO RESTART THE ANIMATION.
+	 *
+	 * Sam: "it only works the first time ... if i click to blue ribbon the toast should restart."
+	 * The node persists between messages when clicks come faster than the 1250ms life, so changing
+	 * the TEXT did not restart the CSS animation — and because it ends with `forwards`, the node was
+	 * sitting at opacity 0. The second message was rendered and invisible.
+	 *
+	 * `{#key toastSeq}` forces Svelte to destroy and recreate the element, which is the only reliable
+	 * way to replay a CSS animation. Incrementing on every call means every click gets its own fade,
+	 * including two clicks of the same message.
+	 */
+	let toastSeq = $state(0);
 	let toastTimer: ReturnType<typeof setTimeout> | undefined;
 	function say(msg: string) {
 		toast = msg;
+		toastSeq += 1;
 		clearTimeout(toastTimer);
 		// 2200 -> 1250, and the CSS animation fades it out inside that window rather than letting it
 		// sit at full strength and then vanish. Sam: "they really are barely on screen and are starting
@@ -199,6 +230,7 @@
 			</svg>
 		</button>
 
+		{#if canBeHome}
 		<button
 			type="button"
 			class="mark house"
@@ -210,7 +242,7 @@
 				? `${personName} is your home card — click to clear`
 				: `Make ${personName} your home card`}
 		>
-			<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
+			<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
 				<path
 					d="M4 10.4 12 4l8 6.4V19a1.2 1.2 0 0 1-1.2 1.2H5.2A1.2 1.2 0 0 1 4 19v-8.6z"
 					fill={isHero ? 'currentColor' : 'none'}
@@ -220,10 +252,13 @@
 				/>
 			</svg>
 		</button>
-
-		{#if toast}
-			<span class="toast">{toast}</span>
 		{/if}
+
+		{#key toastSeq}
+			{#if toast}
+				<span class="toast">{toast}</span>
+			{/if}
+		{/key}
 	</div>
 
 	{#if confirmReplacing !== null}
@@ -258,17 +293,23 @@
 		/* ANCHORED BY THE BOTTOM-RIGHT OF THE PAIR over the card's top-left corner, so most of each
 		   circle sits OUTSIDE the card (Sam). It reads as something attached to the card rather than
 		   printed on it, and it keeps the card's own face clear. */
-		top: -16px;
+		/* -16 -> -17.65 (Sam: "move up 5%"). 5% of the 33px ribbon is 1.65px, so more of both circles
+		   clears the card's top border and they read as resting ON the edge rather than straddling it. */
+		top: -17.65px;
 		/* THE NUDGE, and the arithmetic is written down because it was overshot once.
 		   Sam asked for "off card a bit more"; 10% of the 33px circle (-16 -> -20) was too far. 2%
 		   is 0.66px, so -16 -> -16.7. Sub-pixel is deliberate and normal here — the Shuffle's own
 		   lift is -1.32px — and at this size a whole pixel is already a visible step. */
 		left: -16.7px;
-		/* A COLUMN — the house sits BENEATH the ribbon (Sam, 082926), not beside it. Stacked, the two
-		   run down the card's left edge instead of across its top, which keeps them clear of the
-		   name and out of the header's reading line. */
+		/* A ROW — the house sits to the RIGHT of the ribbon, both riding the card's top border.
+		   Tried as a column first (082926) and reverted the same session on Sam's eye: stacked, the
+		   pair ran down the card's left edge and read as a toolbar growing off the side. Along the
+		   top border they read as two objects resting on the card's edge, which is what they are. */
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
+		/* CENTRES ALIGNED, not tops — the two circles are different sizes now, and what should line up
+		   is the line they sit on, not their upper edges. */
+		align-items: center;
 		gap: 6px;
 		z-index: 3;
 	}
@@ -384,6 +425,17 @@
 	}
 	/* The house fills with the house ink rather than a third hue — it is not a third list, and a
 	   colour of its own would imply it belonged to the ribbon's family. */
+	/**
+	 * THE HOUSE IS 10% SMALLER THAN THE RIBBON — 33px -> 30px (Sam).
+	 *
+	 * Not arbitrary once it is there: the ribbon is the frequent gesture and the house is the rare
+	 * one, so the pair now has an ORDER to read rather than two equal controls competing. Same
+	 * reasoning §45.15 used to seat the corner cluster — the sizes say which one you reach for.
+	 */
+	.house {
+		width: 30px;
+		height: 30px;
+	}
 	.house.on {
 		/* MIDNIGHT BLUE (Sam), and it is the app's own token rather than a new hue — the
 		   ascension's ground colour, which is the darkest ink this app already owns. A home card
@@ -404,18 +456,22 @@
 	 */
 	.toast {
 		position: absolute;
-		left: 41px;
-		top: 4px;
+		/* ABOVE THE RIBBON, not along the card's top edge (Sam: "i don't like its placement along top
+		   edge of card, it should be smaller above bookmark itself"). Anchored over the FIRST circle
+		   rather than centred on the pair, so it sits above the control that produced it — and so its
+		   position does not shift when the house is absent on orbit and founder cards. */
+		bottom: calc(100% + 5px);
+		left: 0;
 		white-space: nowrap;
 		pointer-events: none;
-		padding: 4px 9px;
-		border-radius: 5px;
+		padding: 3px 7px;
+		border-radius: 4px;
 		/* MIDNIGHT BLUE AT 70%, NOT NEAR-BLACK AT 90%. A receipt, not an announcement — it says what
 		   you just did and gets out of the way. The old ink was the heaviest thing on screen for two
 		   full seconds, which reads as the app asking you to admire the action. */
 		background: color-mix(in srgb, var(--color-ascendmidnight, #1c2b4a) 70%, transparent);
 		color: #fbf8f1;
-		font: 500 11px/1 var(--font-inter, sans-serif);
+		font: 500 10px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.01em;
 		box-shadow: 0 1.5px 4px rgba(20, 28, 46, 0.18);
 		/**
@@ -436,19 +492,19 @@
 	@keyframes toast-life {
 		0% {
 			opacity: 0;
-			transform: translateX(-3px);
+			transform: translateY(3px);
 		}
 		10% {
 			opacity: 1;
-			transform: translateX(0);
+			transform: translateY(0);
 		}
 		30% {
 			opacity: 1;
-			transform: translateX(0);
+			transform: translateY(0);
 		}
 		100% {
 			opacity: 0;
-			transform: translateX(0);
+			transform: translateY(0);
 		}
 	}
 
