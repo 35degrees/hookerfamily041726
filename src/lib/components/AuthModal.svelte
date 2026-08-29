@@ -26,8 +26,25 @@
 	 */
 	import { modal, closeModal } from '$lib/state/modal.svelte';
 	import { ascension } from '$lib/state/ascension.svelte';
-	import { auth, signInWithGoogle, signOut } from '$lib/state/auth.svelte';
+	import { auth, signInWithGoogle, signInWithMicrosoft, signOut } from '$lib/state/auth.svelte';
+	import { env as publicEnv } from '$env/dynamic/public';
 	import { linear, cubicOut } from 'svelte/easing';
+
+	/**
+	 * THE MICROSOFT BUTTON IS GATED, and the gate is not ceremony.
+	 *
+	 * The client cannot read `MICROSOFT_CLIENT_ID` — it is private, and correctly so — so the server
+	 * decides whether the PROVIDER exists (from the credentials themselves, in `auth.ts`) and this
+	 * flag decides whether the BUTTON does. They are set in the same step of docs/AUTH_SETUP.md §6,
+	 * which is what keeps them from drifting.
+	 *
+	 * It earns its place twice over. It lets this code ship before the Azure registration exists —
+	 * no dead button in the meantime — and it is the kill switch for the failure this provider
+	 * uniquely has: AZURE CLIENT SECRETS EXPIRE, 24 months at most, where Google's never do. On the
+	 * day one lapses, Microsoft sign-in breaks with no deploy and no warning. Flipping one env var
+	 * hides the button in seconds; without it, the only remedy is a code change under pressure.
+	 */
+	const microsoftEnabled = $derived(publicEnv.PUBLIC_AUTH_MICROSOFT === '1');
 
 	/**
 	 * §45.11'S NUMBERS, TAKEN RATHER THAN RE-DERIVED. The content leaves first and the ground closes
@@ -56,15 +73,21 @@
 		closeModal();
 	}
 
-	async function onSignIn() {
+	/** Which button was pressed — so only that one says "Opening…" rather than both going busy and
+	 *  the reader losing track of which door they chose. */
+	let pending = $state<'google' | 'microsoft' | null>(null);
+
+	async function onSignIn(provider: 'google' | 'microsoft') {
 		if (busy) return;
 		busy = true;
+		pending = provider;
 		try {
-			// Navigates away to Google; nothing after this runs on success. `busy` stays true so the
-			// button cannot be double-fired during the beat before the browser leaves.
-			await signInWithGoogle();
+			// Navigates away to the provider; nothing after this runs on success. `busy` stays true so
+			// neither button can be double-fired during the beat before the browser leaves.
+			await (provider === 'google' ? signInWithGoogle() : signInWithMicrosoft());
 		} catch {
 			busy = false;
+			pending = null;
 		}
 	}
 
@@ -168,7 +191,12 @@
 					Save entries you want to come back to, and choose whose card greets you instead of
 					Thomas Hooker.
 				</p>
-				<button type="button" class="act google" onclick={onSignIn} disabled={busy}>
+				<button
+					type="button"
+					class="act google"
+					onclick={() => onSignIn('google')}
+					disabled={busy}
+				>
 					<svg viewBox="0 0 18 18" width="17" height="17" aria-hidden="true">
 						<path
 							fill="#4285F4"
@@ -187,8 +215,28 @@
 							d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"
 						/>
 					</svg>
-					{busy ? 'Opening Google…' : 'Continue with Google'}
+					{pending === 'google' ? 'Opening Google…' : 'Continue with Google'}
 				</button>
+				{#if microsoftEnabled}
+					<!-- SECOND, NOT EQUAL. Google is first because it is the one most readers already
+					     have; Microsoft sits beneath it for the outlook.com and hotmail.com relatives
+					     this app is actually for. Both take the same object treatment — the difference
+					     is order, not weight, because a visibly lesser option reads as a warning. -->
+					<button
+						type="button"
+						class="act microsoft"
+						onclick={() => onSignIn('microsoft')}
+						disabled={busy}
+					>
+						<svg viewBox="0 0 18 18" width="16" height="16" aria-hidden="true">
+							<path fill="#F25022" d="M0 0h8.5v8.5H0z" />
+							<path fill="#7FBA00" d="M9.5 0H18v8.5H9.5z" />
+							<path fill="#00A4EF" d="M0 9.5h8.5V18H0z" />
+							<path fill="#FFB900" d="M9.5 9.5H18V18H9.5z" />
+						</svg>
+						{pending === 'microsoft' ? 'Opening Microsoft…' : 'Continue with Microsoft'}
+					</button>
+				{/if}
 				<p class="fine">
 					We store your name and email, and the entries you save. Nothing else.
 				</p>
@@ -360,8 +408,12 @@
 		outline-offset: 2px;
 	}
 	/* Google's own surface: their mark is only licensed on white or their blue, and white is the one
-	   that sits on marshmallow without becoming the loudest thing in the room. */
-	.act.google {
+	   that sits on marshmallow without becoming the loudest thing in the room. Microsoft's brand
+	   guidance says the same about their four squares, so BOTH sign-in buttons are white — which is
+	   also the right answer typographically: two buttons in different colours would read as a ranked
+	   choice, and they are not ranked, only ordered. */
+	.act.google,
+	.act.microsoft {
 		background: #fff;
 		color: rgba(43, 38, 32, 0.9);
 	}

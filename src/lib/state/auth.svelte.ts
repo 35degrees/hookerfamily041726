@@ -100,10 +100,31 @@ export const auth = {
 	}
 };
 
-/** Google is the only provider (§18.1). Microsoft is a second entry in `auth.ts` plus a second
- *  button here; the trigger for adding it is a real person who is blocked, not a hypothesis. */
+/**
+ * SIGN-IN RETURNS YOU WHERE YOU WERE, not to the site root.
+ *
+ * `callbackURL` is the CURRENT path, so a reader who signs in while looking at a card comes back to
+ * that card. Sending them to `/` would be a navigation they did not ask for, and once slice 4 lands
+ * it would be worse than that: `/` will branch to a hero, so signing in from a person page would
+ * silently move you to a different person.
+ *
+ * TWO PROVIDERS, ONE FUNCTION. Adding a third is a third entry in `auth.ts` and a third button — the
+ * shape does not change. (§18.1 originally ruled Google-only, with the trigger for a second provider
+ * being "a real person who is blocked"; Sam overturned it on 082926 on audience grounds, which is
+ * the better argument — see `auth.ts`.)
+ */
+type Provider = 'google' | 'microsoft';
+
+async function signInWith(provider: Provider): Promise<void> {
+	await authClient.signIn.social({ provider, callbackURL: window.location.pathname });
+}
+
 export async function signInWithGoogle(): Promise<void> {
-	await authClient.signIn.social({ provider: 'google', callbackURL: window.location.pathname });
+	await signInWith('google');
+}
+
+export async function signInWithMicrosoft(): Promise<void> {
+	await signInWith('microsoft');
 }
 
 export async function signOut(): Promise<void> {

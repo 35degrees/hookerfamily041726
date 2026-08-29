@@ -173,6 +173,110 @@ code is committed.
 
 ---
 
+## §6. MICROSOFT OAUTH (Azure Entra ID) — the second button
+
+*(Added August 29, 2026. §18.1 originally ruled Google-only, with the trigger for a second provider
+being "a real person who is blocked, not a hypothesis." Sam overturned it the same day on a better
+argument: **this is a family genealogy, the users are relatives skewing older, and outlook.com /
+hotmail.com are common in exactly that group.** For them a second button is coverage, not parity.)*
+
+**THE CODE IS ALREADY SHIPPED AND IS INERT UNTIL THIS IS DONE.** `auth.ts` registers the provider
+only if both credentials are present, and the button renders only if `PUBLIC_AUTH_MICROSOFT=1`.
+Verified 082926 with the vars blank: `sign-in/social` for microsoft returns `PROVIDER_NOT_FOUND`,
+and the button is absent from the markup. Nothing is broken while this sits undone.
+
+### 6.1 Register the app
+
+**portal.azure.com → Microsoft Entra ID → App registrations → New registration.**
+
+1. **Name:** `Hooker Genealogy` (user-facing — it appears on the Microsoft consent screen, same as
+   the Google one).
+2. **Supported account types — THIS IS THE ONE TO GET RIGHT:**
+
+   > **"Accounts in any organizational directory (Any Microsoft Entra ID tenant — Multitenant) and
+   > personal Microsoft accounts (e.g. Skype, Xbox)"**
+
+   This is the option that pairs with `tenantId: 'common'` in `auth.ts`. Any narrower choice
+   **silently excludes personal outlook.com and hotmail.com accounts** — which are the entire reason
+   this provider exists. It fails as "that account can't be used here" for the exact relatives you
+   added it for, and it is not obvious from the error that the registration is the cause.
+
+3. **Redirect URI:** platform **Web**, value exactly:
+
+```
+http://localhost:5173/api/auth/callback/microsoft
+```
+
+   Note `/microsoft`, not `/google`. Azure permits `http` for localhost, same loopback exception
+   Google makes.
+
+4. **Register.**
+
+### 6.2 The client ID
+
+**Overview** → copy **Application (client) ID** → `.env` as `MICROSOFT_CLIENT_ID`.
+
+(Not "Directory (tenant) ID", which sits directly beneath it and is a different value. We do not
+need a tenant id at all — `auth.ts` uses the literal `'common'`.)
+
+### 6.3 The secret — and its expiry date
+
+**Certificates & secrets → Client secrets → New client secret.**
+
+- **Description:** anything; `hooker-genealogy localhost` is useful when a second one for production
+  joins it.
+- **Expires: choose the LONGEST offered (24 months).** See the warning below.
+- **Add**, then copy the **Value** column.
+
+> **COPY THE VALUE, NOT THE SECRET ID.** They sit side by side, they look equally like credentials,
+> and the **Value is displayed once only** — navigate away and it cannot be retrieved, only replaced.
+> Everyone takes the wrong one at least once.
+
+Into `.env` as `MICROSOFT_CLIENT_SECRET`.
+
+### 6.4 Turn the button on
+
+```
+PUBLIC_AUTH_MICROSOFT=1
+```
+
+Set in the **same step** as the two values above. The server decides whether the PROVIDER exists,
+from the credentials themselves; this flag only decides whether the BUTTON does. Setting them
+together is what keeps them from drifting.
+
+### 6.5 ⚠ THE CALENDAR REMINDER — the one ongoing cost Google does not have
+
+**Azure client secrets expire. Google's never do.** 24 months is the maximum Azure offers.
+
+When it lapses, Microsoft sign-in breaks with **no deploy, no code change and no warning** — every
+Microsoft user is locked out, and the failure arrives on a date nobody is thinking about auth.
+
+**Set a calendar reminder for ~22 months from the day you create the secret.** Write the expiry date
+here when you do:
+
+```
+Secret created:  __________        Expires: __________        Reminder set: ☐
+```
+
+The mitigation if it does lapse before you get to it: **`PUBLIC_AUTH_MICROSOFT=0`** hides the button
+in one env change, so readers see one working door instead of two doors of which one is dead. Then
+generate a new secret at leisure. That kill switch is the reason the flag exists as a separate
+variable rather than being derived.
+
+### 6.6 Test it
+
+Sign out, open the modal, and the second button should be there beneath Google. The verification
+that matters is a **personal** Microsoft account (an outlook.com or hotmail.com address) rather than
+a work one — a work account will succeed even if §6.1 step 2 was set too narrowly, so testing with
+one proves nothing about the case this provider was added for.
+
+**One behaviour to expect and not misread:** signing in with Microsoft on an email that already has
+a Google account **links to the same account** — same bookmarks, same hero. Signing in on a
+*different* email creates a **separate** account with its own bookmarks. That is `allowDifferentEmails:
+false` working as intended, not a bug; see the comment in `auth.ts`.
+
+---
+
 ## §5. LATER — production, and the one line that differs
 
 When a domain exists (DEPLOYMENT §16-K, still undecided):
@@ -186,5 +290,9 @@ When a domain exists (DEPLOYMENT §16-K, still undecided):
 - Add the canonical host to `allowedHosts` in `src/lib/server/auth.ts`.
 - Set `BETTER_AUTH_SECRET` (a **fresh** one — `openssl rand -base64 32`), `DATABASE_URL`,
   `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in Vercel's project env vars.
+- **And the Microsoft pair plus `PUBLIC_AUTH_MICROSOFT=1`** (§6), with the production redirect URI
+  added to the **same Azure app registration** — `https://<canonical-host>/api/auth/callback/microsoft`.
+  Azure permits several redirect URIs on one registration, so production and localhost coexist; the
+  canonical-host-only rule from §18.4 applies here exactly as it does to Google.
 - Publishing the consent screen (§2.2) becomes necessary once people other than the test
   users need to sign in.

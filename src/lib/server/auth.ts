@@ -48,6 +48,22 @@ const DATABASE_URL = readEnv('DATABASE_URL');
 const dev = (readEnv('NODE_ENV') || process.env.NODE_ENV) === 'development';
 
 /**
+ * MICROSOFT REGISTERS ONLY IF IT IS ACTUALLY CONFIGURED — derived from the credentials themselves,
+ * never from a separate "enabled" switch. A boolean that can disagree with the thing it describes is
+ * §33's `--ring-live` in miniature: a mechanism whose presence implies behaviour that may not exist.
+ *
+ * This is what lets the provider ship BEFORE the Azure registration exists. With the vars blank, the
+ * provider is simply absent rather than registered-and-broken.
+ *
+ * The BUTTON is gated separately, on `PUBLIC_AUTH_MICROSOFT` (see AuthModal), because the client
+ * cannot read a private var. Those two are set in the same step of docs/AUTH_SETUP.md §6 so they
+ * cannot drift — and the public one doubles as a kill switch, which matters here specifically:
+ * Azure client secrets EXPIRE (24 months maximum, where Google's never do), and on the day one
+ * lapses, flipping one env var hides the button instead of leaving a dead option in the modal.
+ */
+const microsoftEnabled = Boolean(readEnv('MICROSOFT_CLIENT_ID') && readEnv('MICROSOFT_CLIENT_SECRET'));
+
+/**
  * FAIL LOUDLY AND IN THE RIGHT WORDS. Without this, a missing connection string surfaces as
  * `ECONNREFUSED 127.0.0.1:5432` from deep inside `pg` — an error about a local Postgres nobody
  * asked for and nobody installed, naming a port that appears nowhere in this project. It is the
@@ -153,7 +169,35 @@ export const auth = betterAuth({
 		google: {
 			clientId: readEnv('GOOGLE_CLIENT_ID'),
 			clientSecret: readEnv('GOOGLE_CLIENT_SECRET')
-		}
+		},
+		/**
+		 * MICROSOFT — added 082926, and the reason is the AUDIENCE rather than parity.
+		 *
+		 * The original ruling (§18.1) was Google-only, with the trigger for a second provider being
+		 * "a real person who is blocked, not a hypothesis." Sam overturned it on a better argument
+		 * than the one it replaced: this is a FAMILY genealogy, the users are relatives skewing
+		 * older, and outlook.com / hotmail.com are common in exactly that group. For them a second
+		 * button is coverage, not a nicety.
+		 *
+		 * `tenantId: 'common'` IS THE WHOLE POINT AND IS EASY TO GET WRONG. It accepts both personal
+		 * Microsoft accounts and work/school ones. The Azure registration has to agree — "Accounts in
+		 * any organizational directory AND personal Microsoft accounts" — and picking a narrower
+		 * option there excludes the outlook.com relatives this exists to reach, silently.
+		 *
+		 * `prompt: 'select_account'` because a household or a shared machine may have more than one
+		 * Microsoft account signed in, and silently reusing whichever is first is how someone
+		 * bookmarks a great-grandmother into a sibling's account.
+		 */
+		...(microsoftEnabled
+			? {
+					microsoft: {
+						clientId: readEnv('MICROSOFT_CLIENT_ID'),
+						clientSecret: readEnv('MICROSOFT_CLIENT_SECRET'),
+						tenantId: 'common',
+						prompt: 'select_account' as const
+					}
+				}
+			: {})
 	},
 
 	/**
@@ -162,10 +206,24 @@ export const auth = betterAuth({
 	 * up with two accounts and two bookmark lists. `allowDifferentEmails: false` is the conservative
 	 * half — a provider may only link to an account whose email it actually matches.
 	 */
+	/**
+	 * TWO PROVIDERS, ONE ACCOUNT — when the email matches.
+	 *
+	 * Both Google and Microsoft return verified emails, so linking a later sign-in to an existing
+	 * account by email is safe and stops one person ending up with two accounts and two bookmark
+	 * lists.
+	 *
+	 * `allowDifferentEmails: false` IS THE CONSERVATIVE HALF AND HAS A CONSEQUENCE WORTH KNOWING:
+	 * a relative who signs in with Google as `aunt@gmail.com` and later with Microsoft as
+	 * `aunt@outlook.com` becomes TWO people here, with two separate sets of bookmarks. That is
+	 * inherent to email-based linking rather than a defect — the alternative, trusting a provider's
+	 * claim about an address it did not verify, is a real account-takeover path. Flagged so that
+	 * "where did my saved entries go?" is a question with a known answer.
+	 */
 	account: {
 		accountLinking: {
 			enabled: true,
-			trustedProviders: ['google'],
+			trustedProviders: ['google', 'microsoft'],
 			allowDifferentEmails: false
 		}
 	},
