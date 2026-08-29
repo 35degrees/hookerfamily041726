@@ -53,6 +53,20 @@ let snapshot = $state<{ user: SessionUser | null; isPending: boolean }>({
 });
 
 /**
+ * DECLARED HERE, ABOVE THE SUBSCRIBER THAT READS IT, AND THAT POSITION IS LOAD-BEARING.
+ *
+ * It lived below `auth` at first and threw on every page load: "Cannot access 'heroOverride'
+ * before initialization". The session store emits its current value SYNCHRONOUSLY at subscribe
+ * time, so the callback below runs during this module's own evaluation — before a `let` further
+ * down the file has been initialised. Temporal dead zone, and it surfaced as a 500 on every
+ * person page after the content had already flashed up, because the throw came from module init
+ * rather than from anything the page did.
+ *
+ * If this ever needs to move, it moves UP, never down.
+ */
+let heroOverride = $state<string | null | undefined>(undefined);
+
+/**
  * THE BOOKMARK SET, CLIENT-SIDE, AND THIS IS THE WHOLE REASON PERSON PAGES STAY STATIC.
  *
  * The obvious way to render a bookmark ribbon is to read the session in the page's `load` and hand
@@ -195,21 +209,6 @@ export const auth = {
 		return (personId: string) => this.heroPersonId === personId;
 	}
 };
-
-/**
- * THE OPTIMISTIC HERO — because the session store is not ours to write.
- *
- * Sam: "the home fills in on commodore when i made him home, but not right away." Two round trips
- * stood between the click and the fill: the PUT, and then a full `getSession` to refresh the store
- * that `heroPersonId` actually lives in. On a Neon instance waking from idle that is most of a
- * second of a house that has been clicked and has not changed.
- *
- * Bookmarks did not have this problem because their state is OURS — a Map in this module. The hero
- * lives on the session user, so the same trick needs a shadow: this override is read in preference
- * to the session's value while a write is in flight, and cleared once the refreshed session has
- * caught up and agrees. `undefined` means "no override"; `null` is a real value meaning "no hero".
- */
-let heroOverride = $state<string | null | undefined>(undefined);
 
 /**
  * OPTIMISTIC, AND UN-AWAITED — because Neon sleeps.
