@@ -94,7 +94,8 @@
 		 *   2200ms hold, no fade at all   "dark black ink ... takes up all their attention"
 		 *   220 hold / 420 out            "a little too aggressive ... the off and on"
 		 *   350 hold / 840 out            "rapid fire"
-		 *   420 hold / 1010 out           here — +20%, ~1.7s total
+		 *   420 hold / 1010 out           faded well, but gone before it was read
+		 *   300 in / 820 hold / 780 out    here — it RISES, sits a couple of beats, then fades
 		 *
 		 * And there IS prior art rather than taste — Sam asked. Material's snackbar motion is ~200ms
 		 * in and ~150ms out; iOS-style transient toasts run a couple of seconds end to end. The
@@ -107,7 +108,7 @@
 		 */
 		setTimeout(() => {
 			toasts = toasts.filter((t) => t.id !== id);
-		}, 420);
+		}, 820);
 	}
 
 	/**
@@ -133,15 +134,42 @@
 		return {
 			duration,
 			easing: cubicOut,
-			css: (t: number) => `opacity: ${t}; transform: translateY(${((1 - t) * 3).toFixed(2)}px);`
+			/**
+			 * IT RISES OUT FROM BEHIND THE CIRCLE (Sam: "move up more deliberately out from behind the
+			 * circle but not from the center of the circle just from the top half").
+			 *
+			 * 18px is the travel, and it is derived rather than picked: the circles are 33px, so
+			 * starting 18px low puts the toast's resting bottom edge just past their vertical middle —
+			 * inside the TOP HALF, which is what Sam described. Lower and it emerges from the centre;
+			 * higher and it never reads as having come from behind them at all.
+			 *
+			 * The z-index in the stylesheet is the other half of this: without the toast sitting BEHIND
+			 * the buttons, a rise is just a slide.
+			 */
+			/**
+			 * THE `-50%` HAS TO BE REPEATED HERE, and leaving it out is a trap worth naming: the
+			 * stylesheet centres this with `transform: translateX(-50%)`, and a transition's `css`
+			 * sets `transform` WHOLESALE. Animating translateY alone would silently discard the
+			 * centring for the length of the rise, so the toast would jump left, travel up, and snap
+			 * back into place on the last frame — three motions where one was intended.
+			 *
+			 * Same family as §45.11's note that a custom transition ignores any option it does not
+			 * destructure: what a transition does not restate, it removes.
+			 */
+			css: (t: number) =>
+				`opacity: ${t}; transform: translate(-50%, ${((1 - t) * 18).toFixed(2)}px);`
 		};
 	}
 	function toastOut(_node: Element, { duration }: { duration: number }) {
 		return {
 			duration,
 			easing: cubicOut,
-			// Fades in place — it is leaving, not travelling. Movement on the way out would read as a
-			// second event rather than the end of the first.
+			// "and then just fades out" (Sam) — no travel. It arrived from somewhere; it leaves from
+			// where it is. Movement on the way out would read as a second event.
+			//
+			// This one sets NO transform at all, which is correct rather than an oversight: with the
+			// property untouched the element keeps the stylesheet's `translateX(-50%)` and simply
+			// fades in place. Restating it would work too; omitting it is the smaller statement.
 			css: (t: number) => `opacity: ${t};`
 		};
 	}
@@ -305,7 +333,7 @@
 		{/if}
 
 		{#each toasts as t (t.id)}
-			<span class="toast" in:toastIn={{ duration: 265 }} out:toastOut={{ duration: 1010 }}>
+			<span class="toast" in:toastIn={{ duration: 300 }} out:toastOut={{ duration: 780 }}>
 				{t.msg}
 			</span>
 		{/each}
@@ -370,6 +398,10 @@
 	 * ShuffleNotables' own comment: a real button changes HEIGHT, not colour, when you approach it).
 	 */
 	.mark {
+		/* ABOVE THE TOAST — this is what makes the rise read as emerging from BEHIND the circle
+		   rather than sliding up beside it. Without it the motion is the same and the effect is not. */
+		position: relative;
+		z-index: 2;
 		--lift: -1.1px;
 		--press: -0.44px;
 		display: grid;
@@ -504,26 +536,49 @@
 	 * It sits to the RIGHT of the pair and outside the card, so it never covers the portrait, and it
 	 * is `pointer-events: none` so it cannot swallow the next click while it fades.
 	 */
+	/**
+	 * THE TOAST IS MARSHMALLOW, NOT A BLACK CHIP (Sam: "the black doesn't work at all it clashes with
+	 * the rest of the UX ... maybe even marshmallow with backdrop blur midnight blue a little bit").
+	 *
+	 * He is right, and the reason is §45.10: the veil over every modal in this app is marshmallow with
+	 * a backdrop blur, so that pairing IS the house's language for "a temporary surface over the
+	 * tree". A near-black chip was a material from somewhere else, sitting on top of a card that had
+	 * been carefully lit.
+	 *
+	 * So it is the veil's material at a chip's scale — marshmallow, blurred, with midnight ink — and
+	 * the backdrop-filter is what keeps it legible over both a portrait and bare paper without
+	 * needing two colours.
+	 *
+	 * ONE BACKGROUND FOR ALL THREE MESSAGES, deliberately. Sam: "you can't do different colored
+	 * backgrounds like gold and light blue its confusing, needs consistency." The ribbon already
+	 * carries the list's colour; a toast that changed colour too would be saying the same thing twice
+	 * in a place where the reader is trying to read words.
+	 */
 	.toast {
 		position: absolute;
-		/* ABOVE THE RIBBON, not along the card's top edge (Sam: "i don't like its placement along top
-		   edge of card, it should be smaller above bookmark itself"). Anchored over the FIRST circle
-		   rather than centred on the pair, so it sits above the control that produced it — and so its
-		   position does not shift when the house is absent on orbit and founder cards. */
-		bottom: calc(100% + 5px);
-		left: 0;
+		/* CENTRED ON THE CIRCLES (Sam), not anchored to the left edge. Centring on the container means
+		   it stays centred when the house is absent on orbit and founder cards and the container is
+		   one circle wide. */
+		bottom: calc(100% + 4px);
+		left: 50%;
+		transform: translateX(-50%);
+		/* BEHIND the buttons — see `.mark`'s z-index. */
+		z-index: 1;
 		white-space: nowrap;
 		pointer-events: none;
-		padding: 3px 7px;
-		border-radius: 4px;
-		/* MIDNIGHT BLUE AT 70%, NOT NEAR-BLACK AT 90%. A receipt, not an announcement — it says what
-		   you just did and gets out of the way. The old ink was the heaviest thing on screen for two
-		   full seconds, which reads as the app asking you to admire the action. */
-		background: color-mix(in srgb, var(--color-ascendmidnight, #1c2b4a) 70%, transparent);
-		color: #fbf8f1;
-		font: 500 10px/1 var(--font-inter, sans-serif);
+		padding: 5px 10px;
+		border-radius: 6px;
+		background: rgba(233, 231, 223, 0.86);
+		backdrop-filter: blur(9px);
+		-webkit-backdrop-filter: blur(9px);
+		color: var(--color-ascendmidnight, #0f1626);
+		font: 500 11px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.01em;
-		box-shadow: 0 1.5px 4px rgba(20, 28, 46, 0.18);
+		/* A hairline ring plus a soft drop — the chip's own two-part shadow, so it reads as an object
+		   resting above the card rather than a label printed on it. */
+		box-shadow:
+			0 0 0 0.5px rgba(43, 38, 32, 0.1),
+			0 2px 7px rgba(20, 28, 46, 0.16);
 	}
 
 	/**
