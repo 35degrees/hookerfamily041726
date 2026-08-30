@@ -51,7 +51,7 @@
 		closeTimer = setTimeout(() => (open = false), 220);
 	}
 
-	type Row = { personId: string; list: ListId; name: string; slug: string; orbit: boolean };
+	type Row = NonNullable<ReturnType<typeof personById>> & { personId: string; list: ListId };
 
 	/**
 	 * Resolved through the search index, so a row shows the person's CURRENT name and CURRENT slug.
@@ -68,13 +68,7 @@
 			for (const { personId } of auth.recent(list, PER_LIST)) {
 				const p = personById(personId);
 				if (!p) continue;
-				out.push({
-					personId,
-					list,
-					name: p.n,
-					slug: p.slug,
-					orbit: ((p as unknown as { f?: number }).f ?? 0) === CAT.INFLUENCE
-				});
+				out.push({ ...p, personId, list });
 			}
 		}
 		return out;
@@ -87,7 +81,14 @@
 
 	function go(r: Row) {
 		open = false;
-		arriveAtPerson(r.slug, r.orbit);
+		arriveAtPerson(r.slug, (r.f & CAT.INFLUENCE) !== 0);
+	}
+
+	/** Same rule as everywhere else: a private-dates row shows "Living", never a range. */
+	function years(r: { by: number | null; dy: number | null; pv?: boolean }): string {
+		if (r.pv) return 'Living';
+		if (r.by == null && r.dy == null) return '';
+		return `${r.by ?? '?'}–${r.dy ?? ''}`;
 	}
 </script>
 
@@ -127,28 +128,48 @@
 
 		{#if open && rows.length}
 			<div class="menu">
+				<!-- SAM ASKED FOR THIS TITLE, and it earns its place: without it a bare stack of five
+				     people is ambiguous between "your bookmarks" and "your most recent". It says which. -->
+				<div class="menu-title">Recently Added Bookmarks</div>
 				{#each [1, 2] as const as list}
 					{#if byList[list].length}
 						<div class="menu-head">{auth.listName(list)}</div>
 						{#each byList[list] as r (r.personId)}
-							<button type="button" class="menu-row" onclick={() => go(r)}>
-								<svg
-									viewBox="0 0 24 24"
-									width="11"
-									height="11"
-									aria-hidden="true"
-									class={r.list === 1 ? 'gold' : 'blue'}
-								>
-									<path
-										d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15.2a.6.6 0 0 1-.94.5L12 16.6l-5.56 4.1a.6.6 0 0 1-.94-.5V5A1.5 1.5 0 0 1 7 3.5z"
-										fill="currentColor"
-										stroke="currentColor"
-										stroke-width="1.5"
-										stroke-linejoin="round"
-									/>
-								</svg>
-								<span class="menu-name">{r.name}</span>
-							</button>
+							{@const isFounder = (r.f & CAT.FOUNDER) !== 0 && r.id !== 'H00001'}
+							{@const isOrbit = (r.f & CAT.INFLUENCE) !== 0 && !isFounder}
+							<!-- NO RIBBON ICON HERE (Sam): the list is already named by the heading above, so a
+							     colour chip beside every name would be restating it once per row. The photo takes
+							     the space instead, which is the thing that actually identifies a person. -->
+							<a
+								class="person-box menu-hit flex overflow-hidden rounded-lg"
+								class:hooker-line={(r.f & CAT.HD) !== 0}
+								class:spouse-line={(r.f & CAT.SPOUSE) !== 0}
+								class:ee-line={(r.f & CAT.INLAW) !== 0}
+								class:founder-row={isFounder}
+								class:orbit-row={isOrbit}
+								href="/person/{r.slug}"
+								onclick={(e) => {
+									if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+									e.preventDefault();
+									go(r);
+								}}
+							>
+								<div class="photo aspect-square shrink-0 bg-stone-100">
+									{#if r.ph}
+										<img
+											src={r.ph}
+											alt={r.n}
+											class="h-full w-full object-cover object-top"
+											loading="lazy"
+											onerror={(e) => ((e.currentTarget as HTMLImageElement).style.display = 'none')}
+										/>
+									{/if}
+								</div>
+								<div class="text-area flex min-w-0 flex-col justify-center">
+									<span class="line1"><span class="nm">{r.n}</span></span>
+									<span class="line2">{years(r)}</span>
+								</div>
+							</a>
 						{/each}
 					{/if}
 				{/each}
@@ -208,8 +229,8 @@
 		position: absolute;
 		top: calc(100% + 6px);
 		right: 0;
-		min-width: 210px;
-		max-width: 280px;
+		min-width: 244px;
+		max-width: 300px;
 		padding: 6px;
 		border-radius: 7px;
 		background: #fbf8f1;
@@ -218,8 +239,22 @@
 			0 0 0 0.5px rgba(43, 38, 32, 0.1);
 		display: flex;
 		flex-direction: column;
-		gap: 1px;
+		gap: 4px;
 		z-index: 20;
+	}
+	/* The title names the whole stack; the per-list heads name each group under it. Two levels, so
+	   the smaller one is quieter rather than the same size in a different weight. */
+	.menu-title {
+		padding: 4px 6px 5px;
+		border-bottom: 1px solid rgba(43, 38, 32, 0.1);
+		margin-bottom: 2px;
+		font-family: var(--font-opensans, 'Open Sans', sans-serif);
+		font-size: 10px;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-inkblue);
+		opacity: 0.7;
 	}
 	.menu-head {
 		padding: 5px 8px 3px;
@@ -231,37 +266,40 @@
 		color: var(--color-inkblue);
 		opacity: 0.5;
 	}
-	.menu-row {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		width: 100%;
-		padding: 6px 8px;
-		border: 0;
-		border-radius: 5px;
-		background: transparent;
-		text-align: left;
+	/**
+	 * THE MENU ROW IS A CARD — `.person-box`, the same object the tree is built from, at its smallest
+	 * legible size. Sam: "we don't do lists with transparent backgrounds that look like songlists at
+	 * amazon prime music." Only the height and the photo width are stated; the paper, the shadow, the
+	 * radius and the line-status shading all come from the house.
+	 */
+	.menu-hit {
+		height: 42px;
+		flex: none;
+		text-decoration: none;
 		cursor: pointer;
-		transition: background 140ms ease-out;
 	}
-	.menu-row:hover,
-	.menu-row:focus-visible {
-		background: rgba(43, 38, 32, 0.07);
-		outline: none;
+	/* Sized, never inferred — SearchModal's scar: `aspect-square` against a stretched row height is
+	   circular, and the tie-break is the image's intrinsic size, which is how one tall portrait grew
+	   its own row. */
+	.menu-hit .photo {
+		width: 42px;
 	}
-	.menu-name {
-		font: 400 12px/1.25 var(--font-inter, sans-serif);
-		color: var(--color-inkblue);
+	.menu-hit .line1 {
+		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
-	/* The same two inks as the card's ribbon, so a gold row here and a gold ribbon there are
-	   recognisably the same fact. */
-	.menu-row svg.gold {
-		color: #dcb130;
+	/* The years sit UNDER the name (Sam), on the card's own second line — smaller here than in the
+	   modal because this row has no blurb to balance against. */
+	.menu-hit .line2 {
+		font-size: 10px;
+		opacity: 0.62;
 	}
-	.menu-row svg.blue {
-		color: #7fa9c9;
+	/* The zone's grounds, so the room a click leads to is legible before the click. */
+	.menu-hit.orbit-row {
+		--card-bg: var(--color-ascendmidnight);
+	}
+	.menu-hit.founder-row {
+		--card-bg: var(--color-foundergreen);
 	}
 </style>

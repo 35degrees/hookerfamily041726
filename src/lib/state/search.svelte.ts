@@ -567,12 +567,21 @@ function titleCase(s: string): string {
  * lookup over the loaded index with no DOM, no timing and no behaviour: the same category as
  * `kin.ts`, which connect-to-anyone already reads.
  *
+ * RETURNS THE WHOLE ROW, not a name and a slug. It was narrowed at first and had to be widened the
+ * same session, which is the usual outcome of guessing at what a caller will want: the bookmarks
+ * surfaces need `ph`, `by`, `dy`, `bl`, `f` and `nb` to paint a `.person-box` — the photo, the years,
+ * the blurb, the line-status shading and the notable star. A row is already the shape every one of
+ * those reads; handing back a subset just meant a second trip.
+ *
  * Returns null before the index has loaded, so callers must `await load()` first or handle the miss.
  * A severed or merged id also returns null, which is the correct answer rather than an error.
  */
-export function personById(id: string): { id: string; slug: string; n: string } | null {
-	const row = index.find((r) => r.id === id);
-	return row ? { id: row.id, slug: row.slug, n: row.n } : null;
+export function personById(id: string): SearchRow | null {
+	// `byId`, NOT `index.find()`. The map is built in the same pass as the index precisely so callers
+	// stop scanning 19,728 rows per lookup — its own comment calls a `.find()` here "the 2,238ms
+	// comparator bug in a second costume". The bookmarks modal resolves one row PER BOOKMARK, so the
+	// linear version was that mistake made a third time, on a list that grows.
+	return byId.get(id) ?? null;
 }
 
 export function reasonFor(

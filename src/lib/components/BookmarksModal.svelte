@@ -42,27 +42,42 @@
 		if (open) void load().catch(() => {});
 	});
 
-	type Row = { personId: string; name: string; slug: string; orbit: boolean; years: string };
+	/**
+	 * THE ROW IS A `.person-box`, NOT SOMETHING THAT RESEMBLES ONE — design §45.7, and SearchModal
+	 * carries the scar that produced it. Its first result row was "a bespoke card with its own paper,
+	 * its own shadow and an inset rounded thumbnail — a generic search-result avatar, which is exactly
+	 * what it looked like", and Sam's verdict was "it's like you just came in off the street and
+	 * didn't review my design."
+	 *
+	 * MY FIRST VERSION OF THIS MODAL MADE THE SAME MISTAKE IN THE SAME PLACE: transparent rows with a
+	 * hover tint. Sam again: "each card being a discrete baseball card feel with heft. we don't do
+	 * lists with transparent backgrounds that look like songlists at amazon prime music."
+	 *
+	 * So the row carries the whole card vocabulary — house paper, line-status shading, the notable
+	 * star in its own gutter, the photo at a definite width, the blurb — and the only thing stated
+	 * locally is the SIZE. Everything else is the house.
+	 */
+	type Row = NonNullable<ReturnType<typeof personById>> & { personId: string };
 
 	function rowsFor(list: ListId): Row[] {
 		void search.ready;
 		const out: Row[] = [];
 		for (const { personId } of auth.all(list)) {
-			const p = personById(personId) as
-				| (ReturnType<typeof personById> & { f?: number; by?: number | null; dy?: number | null })
-				| null;
+			const p = personById(personId);
 			// A severed or merged id resolves to nothing. Dropped rather than rendered blank — the
 			// bookmark row survives in the database, so re-sewing the person brings it back.
 			if (!p) continue;
-			out.push({
-				personId,
-				name: p.n,
-				slug: p.slug,
-				orbit: (p.f ?? 0) === CAT.INFLUENCE,
-				years: p.by || p.dy ? `${p.by ?? '?'}–${p.dy ?? ''}` : ''
-			});
+			out.push({ ...p, personId });
 		}
 		return out;
+	}
+
+	/** The card's own rule for years, copied from SearchModal: a private-dates row shows "Living"
+	 *  rather than a range — the same gate every render site in the app reads. */
+	function years(r: { by: number | null; dy: number | null; pv?: boolean }): string {
+		if (r.pv) return 'Living';
+		if (r.by == null && r.dy == null) return '';
+		return `${r.by ?? '?'}–${r.dy ?? ''}`;
 	}
 
 	const list1 = $derived(rowsFor(1));
@@ -96,7 +111,9 @@
 
 	function go(r: Row) {
 		leaving = true;
-		arriveAtPerson(r.slug, r.orbit);
+		// An orbit figure descends into the zone on arrival; a founder's green is derived from their
+		// own tags by the room itself and needs nothing from here (§43.1).
+		arriveAtPerson(r.slug, (r.f & CAT.INFLUENCE) !== 0);
 	}
 
 	/** §45.11's trap: a custom transition SILENTLY ignores any option it does not destructure. */
@@ -220,31 +237,54 @@
 								</p>
 							{/if}
 							{#each rows as r (r.personId)}
-								<div class="row">
-									<button type="button" class="row-go" onclick={() => go(r)}>
-										<svg
-											viewBox="0 0 24 24"
-											width="12"
-											height="12"
-											aria-hidden="true"
-											class={list === 1 ? 'gold' : 'blue'}
-										>
-											<path
-												d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15.2a.6.6 0 0 1-.94.5L12 16.6l-5.56 4.1a.6.6 0 0 1-.94-.5V5A1.5 1.5 0 0 1 7 3.5z"
-												fill="currentColor"
-												stroke="currentColor"
-												stroke-width="1.5"
-												stroke-linejoin="round"
-											/>
-										</svg>
-										<span class="row-name">{r.name}</span>
-										{#if r.years}<span class="row-years">{r.years}</span>{/if}
-									</button>
+								<!-- A founder who is ALSO orbit takes the GREEN — the founder skin overrides the
+								     plain ascension, exactly as SearchModal derives it, so this list and the room
+								     agree on one precedence. -->
+								{@const isFounder = (r.f & CAT.FOUNDER) !== 0 && r.id !== 'H00001'}
+								{@const isOrbit = (r.f & CAT.INFLUENCE) !== 0 && !isFounder}
+								<div class="row-wrap">
+									<a
+										class="person-box bm-hit flex overflow-hidden rounded-lg"
+										class:hooker-line={(r.f & CAT.HD) !== 0}
+										class:spouse-line={(r.f & CAT.SPOUSE) !== 0}
+										class:ee-line={(r.f & CAT.INLAW) !== 0}
+										class:founder-row={isFounder}
+										class:orbit-row={isOrbit}
+										href="/person/{r.slug}"
+										onclick={(e) => {
+											if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+											e.preventDefault();
+											go(r);
+										}}
+									>
+										<div class="photo aspect-square shrink-0 bg-stone-100">
+											{#if r.ph}
+												<img
+													src={r.ph}
+													alt={r.n}
+													class="h-full w-full object-cover object-top"
+													loading="lazy"
+													onerror={(e) =>
+														((e.currentTarget as HTMLImageElement).style.display = 'none')}
+												/>
+											{/if}
+										</div>
+										<!-- The star is a GUTTER, not a prefix — reserved whether or not it is filled, so
+										     every name starts at the same x and the column stays scannable. -->
+										<span class="star" class:has={r.nb} aria-hidden={!r.nb}>{r.nb ? '★' : ''}</span>
+										<div class="text-area flex min-w-0 flex-col justify-center">
+											<span class="line1">
+												<span class="nm">{r.n}</span>
+												<span class="yr">{years(r)}</span>
+											</span>
+											<span class="line2">{r.bl ?? ''}</span>
+										</div>
+									</a>
 									<button
 										type="button"
 										class="row-x"
 										onclick={() => setBookmark(r.personId, null)}
-										aria-label={`Remove ${r.name}`}
+										aria-label={`Remove ${r.n}`}
 									>
 										<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
 											<path
@@ -465,54 +505,56 @@
 		opacity: 0.55;
 	}
 
-	.row {
-		display: flex;
-		align-items: center;
-		border-radius: 5px;
-		transition: background 140ms ease-out;
-	}
-	.row:hover {
-		background: rgba(43, 38, 32, 0.06);
-	}
-	.row-go {
-		display: flex;
-		align-items: baseline;
-		gap: 8px;
+	/**
+	 * THE ROW IS A CARD, AND ONLY ITS SIZE IS STATED HERE.
+	 *
+	 * `.person-box` brings the paper, the shadow, the radius, the line-status shading and the star
+	 * gutter — the same object the tree is built out of. Sam: "each card being a discrete baseball
+	 * card feel with heft. we don't do lists with transparent backgrounds that look like songlists at
+	 * amazon prime music." The first version of this modal was exactly that songlist.
+	 *
+	 * 62px rather than search's 54: this row carries a blurb under the name, where a search hit often
+	 * carries a one-line reason. Everything else is deliberately unstated so it cannot drift from the
+	 * house.
+	 */
+	.bm-hit {
+		height: 62px;
+		/* `flex: none` IS LOAD-BEARING — SearchModal's own scar. `.col-rows` is an overflowing column
+		   flex container, and a flex item's default `flex-shrink: 1` applies to a definite height just
+		   as it does to a basis, so without this the browser is free to compress every card. It did:
+		   54px became 33px at three viewports. */
+		flex: none;
 		flex: 1;
 		min-width: 0;
-		padding: 7px 8px;
-		border: 0;
-		background: none;
-		text-align: left;
+		text-decoration: none;
 		cursor: pointer;
 	}
-	.row-go:focus-visible {
-		outline: 2px solid var(--color-inkblue);
-		outline-offset: -2px;
-		border-radius: 5px;
+	/* THE PHOTO IS SIZED, NOT INFERRED. Leaving it to `aspect-square` plus the stretched row height is
+	   circular — the row's height depends on its content, the photo IS content — and the tie-break is
+	   the image's INTRINSIC size, which is why one 720x962 portrait once grew its own row. */
+	.bm-hit .photo {
+		width: 62px;
 	}
-	.row-name {
-		font: 400 13px/1.25 var(--font-inter, sans-serif);
-		color: var(--color-inkblue);
+	/* Neither line may grow the row: a long name was the other way in. */
+	.bm-hit .line1,
+	.bm-hit .line2 {
+		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
-	.row-years {
-		font: 400 11px/1 var(--font-inter, sans-serif);
-		color: var(--color-inkblue);
-		opacity: 0.45;
-		white-space: nowrap;
+	/* The zone's own grounds, so the room a click leads to is legible before the click — the same two
+	   tokens search reads, taken by name so this list cannot drift from the room it names. */
+	.bm-hit.orbit-row {
+		--card-bg: var(--color-ascendmidnight);
 	}
-	.row-go svg.gold {
-		color: #dcb130;
-		flex: none;
-		align-self: center;
+	.bm-hit.founder-row {
+		--card-bg: var(--color-foundergreen);
 	}
-	.row-go svg.blue {
-		color: #7fa9c9;
-		flex: none;
-		align-self: center;
+
+	.row-wrap {
+		display: flex;
+		align-items: center;
+		gap: 2px;
 	}
 	/* The remove control stays quiet until the row is hovered — a column of X's reads as a list of
 	   things to delete rather than a list of people. */
@@ -521,7 +563,7 @@
 		place-items: center;
 		width: 26px;
 		height: 26px;
-		margin-right: 4px;
+		flex: none;
 		padding: 0;
 		border: 0;
 		background: none;
@@ -530,7 +572,7 @@
 		cursor: pointer;
 		transition: opacity 160ms ease-out;
 	}
-	.row:hover .row-x,
+	.row-wrap:hover .row-x,
 	.row-x:focus-visible {
 		opacity: 0.5;
 		outline: none;
