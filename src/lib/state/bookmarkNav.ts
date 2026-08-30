@@ -47,14 +47,25 @@ export function arriveAtPerson(slug: string, orbit: boolean): void {
 	 */
 	if (orbit) a.dataset.orbit = 'true';
 
-	a.style.position = 'fixed';
-	a.style.left = `${r.left}px`;
-	a.style.top = `${r.top}px`;
-	a.style.width = `${r.width}px`;
-	a.style.height = `${r.height}px`;
-	a.style.pointerEvents = 'none';
-	a.style.opacity = '0';
-	document.body.appendChild(a);
+	a.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;opacity:0;pointer-events:none;`;
+
+	/**
+	 * APPEND TO THE STAGE, NOT TO `document.body` — AND THIS ONE LINE IS THE WHOLE TRANSITION.
+	 *
+	 * `warmPersonLinks` is an ACTION on the stage element: it listens for clicks on that node and
+	 * resolves `event.target.closest('a')`. An anchor parented to `document.body` bubbles to body and
+	 * never passes through the stage, so the handler never runs — and everything it does at
+	 * capture time never happens: no origin rect, no flight kind, no `data-cc` read, no lock.
+	 *
+	 * The navigation still WORKED, because the href is real. It just arrived with no flight attached,
+	 * which is exactly what Sam saw: "the old card needs to exit and right now it just awkwardly gets
+	 * covered up." A silent downgrade from a choreographed handover to a page swap.
+	 *
+	 * I lifted this helper from `SearchModal.pick()` and changed this line while porting it, which is
+	 * precisely what CLAUDE.md warns against — extend the existing pattern, do not invent a parallel
+	 * one. `stage.appendChild` looked incidental and was load-bearing.
+	 */
+	stage.appendChild(a);
 	a.click();
 	a.remove();
 }

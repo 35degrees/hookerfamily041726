@@ -315,7 +315,6 @@
 		text-align: center;
 		padding: 4px 6px 5px;
 		border-bottom: 1px solid rgba(43, 38, 32, 0.1);
-		margin-bottom: 2px;
 		font-family: var(--font-opensans, 'Open Sans', sans-serif);
 		font-size: 10px;
 		font-weight: 600;
@@ -329,7 +328,11 @@
 		align-items: center;
 		justify-content: center;
 		gap: 6px;
-		padding: 8px 8px 5px;
+		/* TIGHT UNDER THE TITLE (Sam: "so much space between"). The gap was four things stacking —
+		   the title's 5px bottom padding, a 2px margin, the menu's own 4px flex gap and 8px of
+		   padding here — which read as a blank band rather than as a heading belonging to the list
+		   beneath it. A heading sits close to what it names. */
+		padding: 2px 8px 5px;
 		font-family: var(--font-opensans, 'Open Sans', sans-serif);
 		/* 9 -> 11.25px (Sam, "25% bigger"). At 9px an uppercase tracked label was smaller than the
 		   years on the cards beneath it, so the thing NAMING the group was quieter than the group. */
