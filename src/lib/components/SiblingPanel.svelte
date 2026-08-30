@@ -68,7 +68,15 @@
 	type Item = SibItem;
 	let items = $derived(buildItems(siblings));
 
-	const SHADOW_PAD = 6; // clip overshoot so no chip's drop shadow is cut
+	// Clip overshoot so no chip's drop shadow is cut. SIZED TO THE HOVER SHADOW, NOT THE RESTING ONE
+	// (083026): this was 6, which is just enough for --chip-shadow (9.6px blur ⇒ ~4.8px of visible
+	// spread each side) and NOT enough for --chip-shadow-hover (14px blur ⇒ ~7px). So the shadow was
+	// clean until you pointed at a chip, and then it hit the clip edge. Sam: "the drop shadow gets cut
+	// off. it doesn't gradually fade out like a shadow does but its like an invisible element is over
+	// the shadow giving it a hard ledge on both right and left sides." That ledge was this number.
+	// 10 clears the hover shadow with room, and the pad only ever reveals shadow — no content lives
+	// out there — so widening it cannot uncover anything the mask is meant to hide.
+	const SHADOW_PAD = 10;
 
 	// ── Cumulative layout (the CUT-CHIP fix) ───────────────────────────────────────────────────────────
 	// The old window was a fixed 474px = 7·54 + 6·16, budgeted for CHIPS ONLY. A header is a list item that

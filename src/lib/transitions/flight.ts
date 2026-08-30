@@ -1296,9 +1296,21 @@ const DEMOTE_SETTLE_PARENT_FACTOR = 0.6;
 // well above the floor — a real dial, not floor-clamped). At 1.57px the child read too imperceptible (Sam);
 // its ~3× travel + dramatic shrink want MORE overshoot than the parent to read equally. Being bracketed.
 const DEMOTE_SETTLE_CHILD_FACTOR = 1.6;
-// SIBLING seat (§21.3): factor 1 → the solver floors at DEMOTE_SETTLE_FLOOR_PX, a ~2.2px carry at chip
-// scale. Deliberately the smallest of the three — "not dramatic theatrical overshoot" (Sam).
-const DEMOTE_SETTLE_SIBLING_FACTOR = 1;
+// SIBLING seat (§21.3). WAS 1, WHICH MEANT THE DIAL WAS NOT CONNECTED (083026). At factor 1 the ratio
+// term is 0.45·131·0.035 = 2.06px, just UNDER DEMOTE_SETTLE_FLOOR_PX — so the floor won and the sibling
+// carried a flat 2.2px no matter what this number said. It was set smallest on Sam's earlier note ("not
+// dramatic theatrical overshoot"), and that correction overshot: 2.2px is too small to read as motion and
+// too large to read as nothing, which is the definition of a tic. Sam: "the small overshoot like maybe 1
+// or 2px makes it feel like a tic, or some defect in the UX, not like the 'discrete baseball card'
+// physical object heft and velocity ... should overshoot from the source a little more like a rubber band."
+//
+// 2.5 IS NOT A TASTE PICK, it is the value that makes the two halves of one exchange agree. A sibling
+// promotion runs a demote and a promote side by side, and the arriving card was measured carrying 5.2px
+// against this chip's 2.1px — a 2.5× disagreement between two objects trading places in the same gesture.
+// 2.5 puts the demote at 5.11px (measured, ±0.03 across all three panel geometries), so the pair reads as
+// one physical event. Paired with SHAPE_AT — see its comment; a carry this size REQUIRES the footprint to
+// be finished earlier, or the chip emerges from behind the hero still shrinking.
+const DEMOTE_SETTLE_SIBLING_FACTOR = 2.5;
 // Solve easeOutBack's overshoot parameter s so the carry hits targetPx (footprint-scaled), same Newton
 // solve as settleBackFor. distance = the element's own travel; footprint = the destination box's diagonal;
 // factor trims the amplitude per-direction (1 = full; parent-seat landings pass DEMOTE_SETTLE_PARENT_FACTOR).
@@ -1746,7 +1758,28 @@ export function growFrom(node: Element) {
 			// other promotion is plain cubicOut. Endpoints frozen: e(0)=0, e(1)=1.
 			const e = settleActive ? easeOutBack(t, settleS) : cubicOut(t);
 			const u = 1 - e;
-			return `z-index: 2; opacity: 1; transform-origin: top left; transform: translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)});`;
+			// ── THE SAME COUNTER-SCALE THE DEMOTE GETS, BECAUSE THIS IS THE SAME BUG (083026) ────
+			// Sam reported square corners and a missing shadow on the DEMOTING chip, and the fix went
+			// into shrinkTo's tick. A probe written to verify it came back red — because it had latched
+			// onto the OTHER flight node on screen: this one. A sibling promotion runs both gestures at
+			// once, and growFrom starts where shrinkTo ends (Sx ≈ 0.129, chip scale), so the arriving
+			// card opens its journey with a 1px corner radius and a 1.5px shadow blur for exactly the
+			// same reason — an absolute length authored in the card's coordinate space, rendered inside
+			// a scaled box. Fixing only the departure would have left the two halves of one exchange
+			// disagreeing about what a card's corner looks like.
+			//
+			// Ratios, not lengths, so CORNER_R stays sole property of FeaturedCard (see --flat-shape).
+			// easeOutBack drives Sx slightly ABOVE 1 at the overshoot, which correctly yields a ratio
+			// just under 1: the card is momentarily larger than its final size, so a marginally smaller
+			// authored radius is what keeps the RENDERED corner at 8px.
+			const gx = 1 - u * (1 - sx);
+			const gy = 1 - u * (1 - sy);
+			return (
+				`z-index: 2; opacity: 1; transform-origin: top left; ` +
+				`--r-kx: ${1 / Math.max(gx, 1e-4)}; --r-ky: ${1 / Math.max(gy, 1e-4)}; ` +
+				`--shadow-k: ${1 / Math.max(Math.sqrt(gx * gy), 1e-4)}; ` +
+				`transform: translate(${u * dx}px, ${u * dy}px) scale(${gx}, ${gy});`
+			);
 		}
 	};
 }
@@ -1765,6 +1798,33 @@ const RELATIVE_EXIT_MS = 542;
  * found by data-flight-id), so it lands exactly on the box instead of overshooting.
  * Stays opaque while travelling, fades over the last fifth as it docks.
  */
+/**
+ * `--chip-shadow`, authored so that it RENDERS at true size inside a box scaled by `s` (083026).
+ *
+ * The landing chip wears `--chip-shadow` (0 3.2px 9.6px / 0 0.8px 2.4px). For the flight to arrive
+ * on that shadow rather than cut to it, the flying face has to be wearing the same one — which
+ * means dividing every length by the face's own on-screen scale, so `s · (9.6/s) = 9.6` on every
+ * frame and, at landing where s = 1, the authored values ARE the token's. Continuity by
+ * construction rather than by matching two numbers and hoping.
+ *
+ * A FILTER, NOT A BOX-SHADOW, and that is what makes it work. The faces are counter-scaled to a
+ * UNIFORM composite (U for the chip-face, V for the seat clone), so a filter applied there is
+ * isotropic — whereas the wrap is scaled non-uniformly (Sx ≠ Sy), and a single blur radius inside
+ * an anisotropic box cannot be true on both axes at once. That is the bug this replaces: the wrap's
+ * counter-scaled shadow rendered 14.1px wide against 10.2px tall, so the swap to the seated chip's
+ * isotropic 9.6px dropped the horizontal spread by a third in one frame. Sam: "after the overshoot
+ * is completed and it settles back into position, the drop shadow on the right instantly gets cut
+ * in half ... it doesn't sync with the settling and overshoot physics that just happened."
+ */
+function chipShadowAt(s: number): string {
+	const k = 1 / Math.max(s, 1e-4);
+	const px = (n: number) => (n * k).toFixed(2);
+	return (
+		`drop-shadow(0 ${px(3.2)}px ${px(9.6)}px hsl(var(--shadow-ink) / var(--shadow-a1))) ` +
+		`drop-shadow(0 ${px(0.8)}px ${px(2.4)}px hsl(var(--shadow-ink) / var(--shadow-a2)))`
+	);
+}
+
 export function shrinkTo(node: Element, params: { id: string }) {
 	if (prefersReducedMotion.current) return { duration: 0 };
 	const el = node as HTMLElement;
@@ -2035,7 +2095,17 @@ export function shrinkTo(node: Element, params: { id: string }) {
 	// behind the arriving card already finished, which is exactly what Sam asked for: "when it emerges
 	// into view from below the incoming transitioning Featured Card it should be in its final form
 	// already for a long time."
-	const SHAPE_AT = 0.55; // travel fraction by which the footprint is final
+	// 0.55 → 0.48 (083026), FORCED BY THE SIBLING CARRY AND AN IMPROVEMENT ON ITS OWN TERMS. The paragraph
+	// above is the whole argument for this constant and none of it changes: the shape change belongs inside
+	// the occlusion window (t≈200–470), and 0.48 sits earlier in that same window rather than outside it.
+	// What moved is the settle. A 5.11px carry reaches the emergence point sooner than a 2.2px one, and at
+	// 0.55 the chip was arriving there mid-shrink — probe-sibling-seat caught it as "emerges at 127px wide,
+	// not its final 119px ... reads as descending, not sliding", the exact §19 fault this constant exists to
+	// prevent. At 0.48 all three panel geometries emerge at 119px on the nose, which is better than the 0.55
+	// build ever managed (it measured 121–125px), and it is a closer reading of what Sam asked for in the
+	// first place: "it should be in its final form already for a long time." The overshoot is then a
+	// chip-sized object sliding past its seat and back — a rubber band, not something still collapsing.
+	const SHAPE_AT = 0.48; // travel fraction by which the footprint is final
 	// The demote lands BEFORE the hero — Sam: "they should land at the same time, even the sibling chip in
 	// final position 50ms before the Featured Card is in position." It measured at 0ms, and not by design:
 	// a sibling demote was clocked by `spouseHeroDurationMs`, a formula from the spouse regime, while the
@@ -2349,6 +2419,27 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// seat: the seat is re-queried live, in the post-collapse frame, and the two cancel.
 			el.style.transform =
 				`translate(${uu * dx}px, ${uu * dy + pendingCollapse()}px) scale(${Sx}, ${Sy})`;
+			// ── UNDOING THE SCALE FOR THE THINGS THAT MUST NOT SCALE (083026) ─────────────────
+			// The line above is a SCALE, not a resize, so every absolute length authored inside this
+			// shell is multiplied by it — including two that are supposed to be properties of the
+			// object rather than of its size: the card's CORNER RADIUS and its DROP SHADOW. At the
+			// sibling tier the shell ends at Sx ≈ 0.129 (a 119px chip out of a 925px card), which
+			// renders an 8px corner as 1px and a 12px shadow blur as 1.5px. Both therefore vanished
+			// mid-flight and both "came back" on landing — not because anything restored them, but
+			// because the landed chip is a real PersonBox carrying its own. Sam saw exactly that:
+			// square corners in flight, and a shadow that only appears once the chip is seated.
+			//
+			// These three ratios are the inverse of the scale, so the RENDERED corner and shadow hold
+			// still while the shell shrinks underneath them. They are consumed by FeaturedCard's
+			// --flat-shape and by the wrap's filter, both of which default to 1 — so this is the only
+			// thing in the codebase that ever moves them, and nothing that does not fly is affected.
+			//
+			// The shadow gets ONE scalar because a drop-shadow has one blur and cannot be elliptical;
+			// the geometric mean is exact while the morph stays proportional and unnoticeable when it
+			// does not. `Math.max(…, 1e-4)` only guards a division, never a real frame.
+			el.style.setProperty('--r-kx', String(1 / Math.max(Sx, 1e-4)));
+			el.style.setProperty('--r-ky', String(1 / Math.max(Sy, 1e-4)));
+			el.style.setProperty('--shadow-k', String(1 / Math.max(Math.sqrt(Sx * Sy), 1e-4)));
 			// GEOMETRY-KEYED CROSSFADE (replaces the time-based CSS fades AND any gated reveal): both the
 			// card's own face and the chip-face key their opacity to the shell's natural scale uNat, in
 			// OVERLAPPING bands — so something is always visible (no empty-shell blink) and the chip-face is
@@ -2390,7 +2481,19 @@ export function shrinkTo(node: Element, params: { id: string }) {
 			// shellWidth/FACE_W; at landing Sx=box.w/card.w so U→1 and the face lands at natural box size.
 			// How far the hand-over to the SEAT's own face has got (0 = none, 1 = complete). Zero for every
 			// flight that is not a §19 sibling mutation, so nothing below changes for anyone else.
-			const seatBand = sibPlan ? clamp01((REVEAL_HI - uNat) / (REVEAL_HI - REVEAL_LO)) : 0;
+			// ONE REVEAL CURVE, NAMED ONCE (083026). The seat clone and the ordinary chip-face always
+			// used the identical band written out twice; it is now a value, because the shadow hand-off
+			// below has to ride the SAME curve as the face it belongs to or it becomes a third thing
+			// crossfading on its own clock.
+			const faceReveal = clamp01((REVEAL_HI - uNat) / (REVEAL_HI - REVEAL_LO));
+			const seatBand = sibPlan ? faceReveal : 0;
+			// THE OBJECT'S SHADOW MOVES FROM THE WRAP TO THE FACE, on the face's own reveal. Both are
+			// drawn from the same token at the same rendered size, so the hand-over is invisible; what
+			// it buys is the LANDING, where the face's shadow is already the seated chip's to the pixel
+			// (see chipShadowAt). The wrap keeps the shadow for the opening of the flight, when the
+			// object still is a card and its face has not arrived — and lets go of it exactly as the
+			// face takes over, so the two are never both drawing.
+			el.style.setProperty('--shadow-fade', String(1 - faceReveal));
 			if (face) {
 				// Chip-face fades IN over [REVEAL_LO, REVEAL_HI]× — the other half of the geometry crossfade,
 				// overlapping the outgoing fade so there's no gap and no billboard (invisible above REVEAL_HI).
@@ -2399,9 +2502,12 @@ export function shrinkTo(node: Element, params: { id: string }) {
 				// band, so this one would only ever be the way-station Sam does not want seen. Its geometry
 				// below still runs (the counter-scale is what the seat clone is registered against); only
 				// its opacity is held at 0.
-				face.style.opacity = sibPlan
-					? '0'
-					: String(clamp01((REVEAL_HI - uNat) / (REVEAL_HI - REVEAL_LO)));
+				face.style.opacity = sibPlan ? '0' : String(faceReveal);
+				// uNat IS this face's uniform composite scale U, so the shadow it wears renders at the
+				// token's true size every frame and reaches the landing already equal to the box it is
+				// swapped for. Skipped on a §19 mutation, where this face is held at 0 and the seat
+				// clone below is the one being seen — a shadow under an invisible face is just paint.
+				if (!sibPlan) face.style.filter = chipShadowAt(uNat);
 				// Uniform on-screen scale U, capped at FACE_SCALE_MAX (see above). afx=U/Sx, afy=U/Sy give
 				// Sx·afx=Sy·afy=U (uniform → aspect preserved at every frame); the face is centered in the
 				// shell. Below the cap the face spans the shell (tx≈0); above it, it holds cap-size, centered.
@@ -2455,6 +2561,12 @@ export function shrinkTo(node: Element, params: { id: string }) {
 				seatFace.style.transform =
 					`translate(${card.width / 2 - (V * SEAT_FACE_W) / (2 * Sx)}px, ` +
 					`${card.height / 2 - (V * SEAT_FACE_H) / (2 * Sy)}px) scale(${V / Sx}, ${V / Sy})`;
+				// THE SHADOW THE SIBLING DEMOTE ACTUALLY LANDS ON. V is this clone's uniform composite
+				// scale and reaches exactly 1.0 as the shell arrives, so chipShadowAt(V) is authored
+				// straight onto --chip-shadow's own numbers at the moment of the swap — the flying
+				// object and the seated chip carry the same shadow, and the overshoot settles without
+				// the shadow changing size underneath it.
+				seatFace.style.filter = chipShadowAt(V);
 			}
 			// The pivot box is revealed by the outro-END callback (onOutgoingEnd) — the atomic swap fires
 			// the frame the card leaves. The card's outer shell/opacity here are unchanged.

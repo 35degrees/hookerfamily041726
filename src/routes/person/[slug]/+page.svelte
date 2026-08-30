@@ -2358,7 +2358,16 @@
 	   opacity here anymore, so the two never blink and the chip name never paints billboard. The tick sets
 	   inline opacity + transition:none on all three, so no CSS rule is needed (and none may conflict). */
 	/* the wrap's drop-shadow is the object's shadow throughout; drop the chip-face's own shadow so a
-	   scaled-up shadow-sm doesn't double it mid-flight. */
+	   scaled-up shadow-sm doesn't double it mid-flight.
+	   THIS RULE WAS ALWAYS RIGHT AND ITS PREMISE WAS NOT (083026). "The wrap's drop-shadow is the
+	   object's shadow throughout" described the DESIGN, and for the length of the flight it was not
+	   true of the pixels: the wrap's filter is authored in the card's coordinate space and the demote
+	   SCALES that space to ~0.129, so the shadow this rule defers to had shrunk to ~1.5px of blur —
+	   invisible. Stripping the face's shadow was then handing the job to nothing at all. The wrap's
+	   shadow is now counter-scaled per frame (--shadow-k, published by shrinkTo's tick), which makes
+	   the sentence above literally true, and this rule goes back to preventing the doubling it was
+	   written to prevent. Do not restore the face's shadow to "fix" a missing one — that reintroduces
+	   the double, and the shadow it would be doubling is the correct one. */
 	.demote-chipface :global(.person-box) {
 		box-shadow: none;
 	}

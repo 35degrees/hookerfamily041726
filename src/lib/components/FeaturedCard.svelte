@@ -545,16 +545,42 @@
 	// make the growing/shrinking cards animate around a corner cutout and read as a blur. The
 	// page swaps to it via a .flat class during the transition (see +page.svelte). 8px rounding
 	// is preserved, so the cards never square off mid-flight.
+	//
+	// ── WHY THE RADII ARE VARIABLES AND NOT THE CONSTANT (083026) ────────────────────────────
+	// "8px rounding is preserved" was true of the VALUE and false of the PIXELS, and the gap
+	// between those two is the whole bug. The demote does not resize the card — shrinkTo's tick
+	// SCALES the shell, `scale(Sx, Sy)`, and a sibling chip is 119×54 against a 925px card, so Sx
+	// lands at ~0.129. This clip-path is authored in the card's own coordinate space, so an 8px
+	// radius is rendered at 8 × 0.129 ≈ 1px. Sam: "when the transitioning sibling chip is in
+	// flight, all of its corners are squared off." They were: a 1px radius on a 119px chip IS a
+	// square, and it snapped back to 8px the instant the chip became a real PersonBox at settle.
+	//
+	// So the radius has to be counter-scaled per frame — `CORNER_R / Sx` — which is what shrinkTo's
+	// tick now drives. Two ratios, not one, because the shell's morph is NON-uniform (Sx ≠ Sy): a
+	// single radius under a squashed shell renders as an ellipse. Same reasoning as the chip-face's
+	// counter-scale twenty lines into the tick, applied to the silhouette instead of the face.
+	//
+	// WHAT THE TICK PUBLISHES IS A PURE RATIO (--r-kx = 1/Sx), NOT A LENGTH, and that is deliberate:
+	// CORNER_R would otherwise have to exist in flight.ts too, which means importing a component
+	// into the transitions module to obtain an `8`, and a second copy of a constant that must never
+	// drift. The multiplication happens here, where CORNER_R already lives; flight.ts only ever says
+	// "render the corner 1/Sx times larger than authored" and never learns what it is scaling.
+	//
+	// THE FALLBACKS ARE THE CONTRACT. Nothing sets these at rest, so every existing use — the
+	// resting no-chip shape, every card that never flies — multiplies by 1 and is exactly what it
+	// was. No clamp guards the upper end because none can fire: the ratio peaks at CORNER_R/sx,
+	// which for the smallest tier (the 119×54 sibling chip) is 62px on a 925px box — nowhere near
+	// the half-dimension at which a rounded rect would invert.
 	const flatShape = `shape(
-            from ${CORNER_R}px 0,
-            line to calc(100% - ${CORNER_R}px) 0,
-            curve to 100% ${CORNER_R}px with 100% 0,
-            line to 100% calc(100% - ${CORNER_R}px),
-            curve to calc(100% - ${CORNER_R}px) 100% with 100% 100%,
-            line to ${CORNER_R}px 100%,
-            curve to 0 calc(100% - ${CORNER_R}px) with 0 100%,
-            line to 0 ${CORNER_R}px,
-            curve to ${CORNER_R}px 0 with 0 0
+            from calc(${CORNER_R}px * var(--r-kx, 1)) 0,
+            line to calc(100% - ${CORNER_R}px * var(--r-kx, 1)) 0,
+            curve to 100% calc(${CORNER_R}px * var(--r-ky, 1)) with 100% 0,
+            line to 100% calc(100% - ${CORNER_R}px * var(--r-ky, 1)),
+            curve to calc(100% - ${CORNER_R}px * var(--r-kx, 1)) 100% with 100% 100%,
+            line to calc(${CORNER_R}px * var(--r-kx, 1)) 100%,
+            curve to 0 calc(100% - ${CORNER_R}px * var(--r-ky, 1)) with 0 100%,
+            line to 0 calc(${CORNER_R}px * var(--r-ky, 1)),
+            curve to calc(${CORNER_R}px * var(--r-kx, 1)) 0 with 0 0
         )`;
 
 	/**
@@ -697,15 +723,39 @@
 </script>
 
 <!-- Wrapper provides positioning context for chips as siblings of carved card.
-     min-height keeps the card at CARD_TOP_H when there's no footer to extend it. -->
+     min-height keeps the card at CARD_TOP_H when there's no footer to extend it.
+
+     --shadow-k IS THE SAME COUNTER-SCALE THE RADII GET, FOR THE SAME REASON (083026). This
+     drop-shadow is the flying object's shadow for the whole journey — that was always the design,
+     and the rule stripping the chip-face's own box-shadow in +page.svelte exists to stop the two
+     doubling. But a `filter` is rendered in the element's local space and then scaled with it, so
+     under the demote's terminal Sx ≈ 0.129 a 12px blur at 4px offset paints as 1.5px at 0.5px:
+     gone. Sam: "when the sibling chip is demoted and transitioning into its place ... it doesn't
+     have a drop-shadow during flight, but then when it is settled into final position, the
+     drop-shadow appears." Nothing was turning the shadow off; it was being scaled into nothing,
+     and it "reappeared" only because the landed chip is a real PersonBox with a shadow of its own.
+
+     One scalar rather than a pair, because a shadow has ONE blur and cannot be elliptical. That is
+     a real limitation and NOT a harmless one, which the first version of this comment got wrong: it
+     claimed the morph stays near-proportional ("119:54 and 925:cardH are both ≈2.2") and the mean
+     is therefore exact. Measured, the card is ~574px tall, so it is 1.61 against the chip's 2.20 —
+     and the mean rendered this shadow 14.1px wide against 10.2px tall, where the chip it lands on
+     wears an isotropic 9.6px. Sam saw the horizontal spread lose a third of itself in one frame.
+
+     SO THE WRAP NO LONGER CARRIES THE SHADOW TO THE LANDING — it hands it to the flying FACE, which
+     is counter-scaled to a UNIFORM composite and can therefore wear --chip-shadow's own numbers at
+     true size (see chipShadowAt in flight.ts). --shadow-fade is the hand-over, driven by the face's
+     own reveal band so exactly one shadow is drawn at a time. What is left here is the opening of
+     the flight, while the object still IS a card, where Sx is near 1 and the anisotropy is nil.
+     Both variables default to a no-op, so a card that never flies is unchanged. -->
 <div
 	class="featured-card-wrap relative"
 	style="
         width: {cardW}px;
         min-height: {cardTopH}px;
         filter:
-            drop-shadow(0 4px 12px hsl(var(--shadow-ink) / var(--shadow-a1)))
-            drop-shadow(0 1px 3px hsl(var(--shadow-ink) / var(--shadow-a2)));
+            drop-shadow(0 calc(4px * var(--shadow-k, 1)) calc(12px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a1) * var(--shadow-fade, 1))))
+            drop-shadow(0 calc(1px * var(--shadow-k, 1)) calc(3px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a2) * var(--shadow-fade, 1))));
     "
 >
 	<!-- The CARVED CARD: clip-path creates the notch silhouette.
