@@ -3,6 +3,8 @@
 **Companion: ENRICHED_DESIGN_FABLE_082926.md (the what/why for every item below).**
 **AUGUST 29, 2026 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), THE SCOPING DECISION (§49.5), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right. **§49.5 records the scoping decision itself — 3c and the zoom-3/Card↔Table remainder of 9 RETIRED from the pre-launch path with their specs preserved unaltered, 9.5 (the phone) FLAGGED OPEN rather than cut, 11 still gating launch. Nothing deleted; the phase table is annotated, and a retired phase reopens by saying so.**
 
+**AUGUST 29, 2026 (§51): AUTH, BOOKMARKS AND THE HOME CARD BUILT (design §47).** 26 commits. Better Auth 1.7 + Neon + `pg`, no ORM; three server files per §49.2; Google AND Microsoft, both verified on real consent round-trips in the database rather than by a green endpoint. Bookmarks in two renameable lists, the ribbon/house pair on every card, the corner item with its hover menu, and a two-column modal. **The static-contract probe (`scripts/probe-static-contract.mjs`) is the piece to know about** — it guards §50.0's rule that `/` is the only route that may ever be dynamic, it was proved RED first per §13.2, and it has already caught one route being added. **§51.2 is the section worth reading**: twelve failures, of which SEVEN were instruments or patches reporting success while being wrong — including two string replacements that matched nothing and printed success, and a home-card confirmation reported missing four times that was an unrequested optimisation of mine rather than a bug. The recurring shape, which Sam named before I did, is porting a house pattern and dropping the part that made it work: `stage.appendChild` became `document.body.appendChild` and the whole CC flight silently stopped attaching. **`/` REMAINS UNBUILT** and is the last piece of the arc. Nothing deployed; every measurement is localhost.
+
 **AUGUST 29, 2026 (§50): THE AUTH BUILD SPEC (proposed; nothing built).** Written after reading the Better Auth 1.7 docs directly rather than porting Sam's year-old templates, which cost the stack a layer: **Drizzle is out** — 1.7's built-in Kysely dialect takes a `pg` Pool and its CLI runs the migration, so the "BetterAuth/Neon/Drizzle" shorthand this document has carried since July was one layer out of date. **Neon stays**, after being ruled out on a ~$10/month charge that turned out to belong to a year-old unrelated project and reinstated the same session; the deciding factor was never price but idle *behaviour* — Supabase's free tier pauses a project after a week of inactivity and needs a manual restore, which is fatal for a site whose logins are rare by design (DEPLOYMENT §18.7). **Google OAuth only**, which eliminates the entire transactional-email subsystem; Microsoft and email/password stay architecturally open behind a config entry. The spec's governing law is one line and it is a delivery-model rule, not a feature rule: **`/` is the only route that may ever be dynamic — everything under `/person/` stays static CDN payloads**, defended by the arithmetic that a full-corpus crawl is 19,728 static requests and exactly one hit on `/`. Server surface held to **three files** per §49.2, with `hooks.server.ts` at five lines because the equivalent file on Sam's previous project grew four jobs and cost weeks. **Bookmarks store the person ID, never the slug** — which is also why permanent slug churn does not block shipping this. Deployment-only concerns (host posture, provider, rate limiting, reader-data privacy) live in `docs/DEPLOYMENT_STRATEGY.md` §18 and are deliberately not duplicated.
 
 **AUGUST 28 (§48): CONNECT X TO ANYONE SHIPPED END TO END — the picker, the V, and three features that no longer touch (design §46).** Committed as `44917f22`, plus a cleanup pass. The answer to "how are these two related" is a V rather than a ladder because the measurement says so: median 15 cards, longest arm 12 rungs, so 7 + apex + 7 fits where 15 in a column cannot. The apex is a couple bar whose partner is the OTHER PARENT of the rung below, never `marriage_number`; a lineal pair gets one single-width card and no bar. The session cost a day to §46.2 — I wired the three modals together, leaked a fade into shipped Paths-to-Thomas behaviour, and Sam had to say it twice. §48.3 is the ten things that went wrong in order, headed by that and by breaking the main search from inside this component. §48.6 is the cleanup: −171 lines of path-switch machinery the copy brought with it, which was not clutter but a false claim about what this ladder can do. The swap control is specced and unbuilt.
@@ -97,7 +99,7 @@ UX_ROADMAP §1 and DESIGN.md still say raw IDs are pending. First move for Code:
 | 8 | Silver-bar glimmer — **CSS-only** (Threlte ruled out for the card) | Hardened. **082926: small enough to stay opportunistic; not on the critical path either way (§49.5)** |
 | 9 | Zoom 2 (grouped grand-tiers) → Zoom 3 (the literal table) **+ pinch detents** | Explicit now. (Zoom 2 itself was CUT July 12 — see §9.) **082926: the REMAINDER — zoom 3 proper, pinch detents, and the Card↔Table "signature gesture" — RETIRED from the pre-launch path (§49.5). `/table` stands as the shipped v1 (pan only). Spec PRESERVED in §2 "Phase 9"** |
 | 9.5 | **Tier C — the phone composition** | NEW — after zoom work settles the stage. **082926: FLAGGED OPEN, NOT RETIRED (§49.5). The one large phase argued against cutting: logins invite shared links and OG unfurls, which land on a phone first, and Tier C is today a documented placeholder setting 3.9px type. Awaiting Sam's call** |
-| 10 | Auth + bookmarks (~~BetterAuth/Neon/Drizzle~~ → **BetterAuth 1.7 / Neon / Kysely**) | Was Phase 9. **082926: PULLED FORWARD TO NEXT by Sam (§49) — ahead of 2.4, 2.5, 2.75, 3a, 3b. Sam: "the final large scale Stream B work I have left to do". BUILD SPEC now at §50 (proposed; nothing built). Stack corrected same day: DRIZZLE IS OUT — Better Auth 1.7's built-in Kysely dialect takes a `pg` Pool directly and its CLI runs the migration, so the ORM layer this row assumed since July is no longer required. Neon retained after being ruled out and reinstated in one session (DEPLOYMENT §18.7). Google OAuth only; Microsoft and email/password stay architecturally open** |
+| 10 | Auth + bookmarks (~~BetterAuth/Neon/Drizzle~~ → **BetterAuth 1.7 / Neon / Kysely**) | Was Phase 9. **082926: PULLED FORWARD (§49), SPECCED (§50), and BUILT (§51) — bar one piece.** Sign-in (Google + Microsoft), bookmarks in two renameable lists, the home card, and the static-contract probe are all shipped and pushed. **`/` IS NOT BUILT** — the intro and the hero redirect are slice 4, and until they exist a home card is stored and honoured by nothing. Doctrine in design §47 |
 | 11 | **Credibility apparatus**: sources UI, landing/about, analytics | NEW — gates public launch. **082926: still gates launch and is NOT retired (§49.5); it moves up behind auth as the phases above it come off the path** |
 
 > **READING THE DATED ANNOTATIONS (convention added 082926).** Bold `MMDDYY:` notes are APPENDED to a
@@ -5195,3 +5197,157 @@ boring. Doing 4 early would mean debugging the intro and the session in the same
 - **`search.recent` / `remember()`** in `search.svelte.ts` are still wired and rendered nowhere (design
   §45.17) — a live `--ring-live` that predates this work. Bookmarks are adjacent enough that it should be
   either rendered or removed while the surrounding code is open, but it is **not** part of this spec.
+
+---
+
+## 51. AUGUST 29, 2026 — AUTH, BOOKMARKS AND THE HOME CARD, END TO END (design §47)
+
+**§50 above is the spec and is left exactly as written**, including the parts that turned out wrong —
+it is the record of what was planned, and the diff against this section is the useful artefact.
+Doctrine in design §47. Deployment-only concerns in `docs/DEPLOYMENT_STRATEGY.md` §18.
+
+26 commits. Everything committed and pushed; `/` is NOT built, which is the one piece of the arc
+still outstanding.
+
+### 51.1 WHAT SHIPPED, IN ORDER
+
+1. **Slice 1 — the server.** Better Auth 1.7.2 + `pg` 8.23, no ORM. Three server files as §49.2
+   demanded. Neon project, migration, Google OAuth. Verified on a real consent round-trip: a `user`
+   row, a linked `account`, a live `session` with the 30-day expiry the config asked for.
+2. **Microsoft**, added mid-session on Sam's call — audience, not parity. Registered, verified,
+   linked to the same account by verified email.
+3. **Slice 2 — the corner and the modal.** `AuthTrigger` (one slot, two labels), `AuthModal` (the
+   fourth surface), `auth.svelte.ts` at under 100 lines against the previous project's ~400.
+4. **Slice 3 — bookmarks and the home card.** One table, two columns on `user`, four endpoints,
+   `CardMarks`, and `scripts/probe-static-contract.mjs`.
+5. **The bookmarks surface.** Corner item, hover menu, two-column modal with renameable headers.
+6. **Two fixes taken in passing:** Gridley Strong's portrait to Cloudinary (§51.5), and §38.6's dead
+   `$app/stores` import, on the open list since August 14.
+
+### 51.2 THE ORDER THINGS WENT WRONG — the useful part
+
+Twelve, and they cluster into three kinds. **Seven of the twelve were mine reporting success while
+being wrong**, which is the number worth carrying rather than any individual bug.
+
+**KIND ONE — I PORTED A HOUSE PATTERN AND DROPPED THE PART THAT MADE IT WORK.** Four times, and Sam
+named the pattern before I did: *"your work is fine but it's just off, doesn't fit into rest of the
+project."*
+
+- **`stage.appendChild` → `document.body.appendChild`** in the bookmark arrival. `warmPersonLinks` is
+  an action ON THE STAGE; an anchor parented to body never bubbles through it, so the handler never
+  ran. The navigation still worked — the href is real — so it downgraded silently from a
+  choreographed handover to a page swap. One character of DOM scope was the entire transition.
+- **The row typography.** `.nm` / `.yr` / `.line2` are styled LOCALLY inside SearchModal. Borrowing
+  the class names inherited nothing and the browser's defaults showed through. Copying a pattern by
+  its class names copies the markup and none of the design.
+- **The row itself.** Both bookmark surfaces shipped as transparent rows with a hover tint — the
+  exact mistake §45.7 exists to prevent, in the same words Sam used the first time.
+- **`personById` used `index.find()`** over 19,728 rows. `byId` already existed in that file, built
+  in the same pass, with a comment saying a `.find()` here *"would be the 2,238ms comparator bug in a
+  second costume."* Third occurrence of a documented mistake, on a list that grows.
+
+**KIND TWO — AN INSTRUMENT, OR A PATCH, REPORTED SUCCESS WITHOUT BEING RIGHT.**
+
+- **The SSR grep** counting `auth-trigger` returned 10 before a fix and 9 after, so the fix looked
+  inert. It was counting SCOPED CSS, which ships whether or not a component renders. Stripping
+  `<style>` first: 0 elements.
+- **The static-contract probe's own check 3** stayed GREEN while the contract was deliberately
+  broken — the fake cookie is not a valid session, so the broken load resolved null for both requests
+  and rendered identical bytes. Kept, but relabelled `[WEAK]` in its own output: checks 1 and 4 are
+  the guarantee.
+- **TWO STRING-REPLACEMENT PATCHES MATCHED NOTHING AND PRINTED SUCCESS.** The hover menu's ribbon
+  colours were "fixed" twice and never landed, because the anchors had drifted. Sam reported the
+  same missing gold ribbon after being told twice it was there. **A patch that matches nothing is
+  indistinguishable from one that worked — verify the FILE, not the script's exit code.**
+- **A Playwright probe written to chase the toast** mocked `/api/auth/get-session`, and the mock
+  never fired: an anonymous browser makes no `/api/` calls at all. Deleted the same session. Sam:
+  *"you are losing the thread."*
+
+**KIND THREE — ORDINARY BUGS, EACH WITH A GENERAL FORM.**
+
+- **`process.env` is undefined at SvelteKit runtime.** Vite loads `.env` into its own store and
+  exposes it through `$env/*`. The Pool got `undefined`, fell back to libpq defaults, and every auth
+  call 500'd with `ECONNREFUSED 127.0.0.1:5432` — an error naming a port that appears nowhere in this
+  project. The CLI needs `process.env`; the runtime needs `$env`; `readEnv()` reads both.
+- **`heroOverride` in the temporal dead zone.** Declared below the subscriber that read it, and the
+  session store emits synchronously at subscribe time, so it threw during module init. Every person
+  page 500'd AFTER the content had flashed up. Declaration order is cosmetic until a subscriber fires
+  during init.
+- **CSS specificity, twice.** `.mark:hover:not(:disabled)` (0,3,0) beat `.ribbon.gold` (0,2,0), so a
+  gold ribbon went grey the instant the pointer sat on the thing just clicked — and the rule written
+  to prevent it, `color: currentColor`, is circular and resolved to the card's dark ink. Separately,
+  `opacity: 1.6` on a child cannot undo a parent's 0.5: opacity COMPOUNDS.
+- **The toast fired once, twice.** Both fixes tried to replay an effect on a reused node. If two
+  fixes fail the same way, the mechanism is wrong rather than the tuning.
+
+**AND THE ONE THAT WAS NOT A BUG AT ALL:** the home-card confirmation, reported missing four times.
+I had added an unrequested asymmetry — skip the gate when there is no previous hero — and with
+`heroPersonId` null, every set is a first set. The code did exactly what I told it to. **An
+unrequested optimisation that removes a step the user asked for cannot be told apart, from outside,
+from a defect** — and I looked at the mechanism three times before looking at the condition I wrote.
+
+### 51.3 WHAT WAS MEASURED
+
+- **Google and Microsoft round-trips**, verified in the database rather than by a green endpoint:
+  1 user, 2 linked `account` rows, sign-out genuinely REVOKING the session server-side rather than
+  clearing a cookie. The Microsoft issuer carried
+  `9188040d-6c67-4c5b-b112-36a304b66dad` — Microsoft's well-known CONSUMER tenant — which is the
+  proof the personal-account path works, and corrected §6.6's assumption that it needed an
+  outlook.com address.
+- **`allowedHosts` proven on localhost before any deployment**: listed host 200, unlisted 500,
+  `Host: evil.example.com` 403 from Vite's own layer, and `x-forwarded-host: *.vercel.app` 200 —
+  the Vercel PREVIEW path, working without deploying anything.
+- **The static-contract probe proved RED first**, per §13.2: a `+page.server.ts` added to the person
+  route took 3 of 5 checks red. It later caught `/api/lists` the moment that route was added.
+- **canonical.json**: minifying saves 15.7 MB, `research_notes` only 5.7 MB — and notes are already
+  stripped from every client payload, so stripping them buys ZERO on the CDN.
+- **svelte-check throughout**: 2 errors, 0 warnings, both pre-existing fontsource imports.
+
+### 51.4 WHAT THE DOCS GAINED
+
+- **DEPLOYMENT_STRATEGY.md** re-audited sixteen days on: §5.3 had become actively false (it called
+  `search-index.json` "presumably unread"; search had shipped two days earlier). **§16-I closed** —
+  nothing reads `people.json`, 31 MB per deployment for no reader. **§16-E closed by a number** —
+  2,048 routes per deployment, which disqualifies generated `vercel.json` redirects on SHAPE rather
+  than arithmetic: an unbounded map inside a fixed budget. **§16-N closed on Neon**, after being ruled
+  out and reinstated in one session on a bill that belonged to a different project.
+- **§18** opened for auth; **AUTH_SETUP.md** written as a runbook and left as a record.
+
+### 51.5 GRIDLEY STRONG'S PORTRAIT — a comment that predicted its own failure
+
+Sam saw a CORS error on Thomas Hooker's page and asked where it came from. The timeline rail is
+CHROME, so its anchor portraits load on every card, and PFC Gridley Strong (HD0901) is the Vietnam
+anchor. Both his `research_notes` and the `ANCHORS` comment had said on 081226:
+
+> *"If that host hotlink-blocks, this is the anchor that breaks; the sampled border ink will fall back
+> to the default either way, since a third-party host is the least likely to answer with the CORS
+> header."*
+
+Measured: honorstates.org served HTTP 200 with **no** `access-control-allow-origin`; Cloudinary
+answers `*`. It was the CORS half, and it was two bugs — the visible console error, and `sampleInk()`
+silently falling back because a cross-origin image taints the canvas it samples.
+
+**The URL lived in two places across both streams** — `bio.photo_url` in canonical AND the baked
+`ANCHORS` list — so a data-side fix alone would have left the rail on the dead host. canonical was
+edited surgically: **one line changed in 55 MB**, verified by `git diff --numstat`, because a
+`json.load`/`dump` round-trip would have reformatted the file and blinded the silent-loss detector.
+
+### 51.6 STILL OPEN
+
+- **`/` IS NOT BUILT** — still the stock SvelteKit welcome page. Slice 4 (§50.3, §50.8) is the last
+  piece: the intro for signed-out readers, the hero redirect for signed-in ones. **Until it exists a
+  home card is stored and honoured by nothing**, which is the one place this feature currently
+  promises something it does not deliver.
+- **One design question it needs answered:** should signing in MOVE you to your hero, or leave you
+  where you were? Sam's original spec implies the former; the cleaner split is `/` takes you home
+  while signing in mid-browse keeps your place. One line either way, not yet ruled.
+- **Nothing has been deployed.** Every claim in §51.3 is localhost. The `allowedHosts` posture, the
+  pooled connection and `x-forwarded-host` are all deployment-only surfaces (DEPLOYMENT §18.9).
+- **`fade` is still an unused import** in `+layout.svelte`, beside the `$app/stores` one that was
+  removed. Flagged rather than swept, since §38.6 named only the other.
+- **The hover menu does not exist on touch.** The click path is complete without it by design, but
+  §49.5's Tier C question is now carrying more weight than it was this morning.
+- Carried unchanged from §48.7 and §49.5: the connect-to-anyone swap control, narrowing a tall V,
+  `canonical.json` at 55.47 MB warning on every push, `tabular-nums` on Fraunces, the CC blade
+  drawing too far out, the stripe's sub-pixel disappearance, the coloured flash on demote, and 13
+  orbit→orbit CCs awaiting review.

@@ -6278,3 +6278,280 @@ above it nothing changes, because above it nothing was wrong.
   names; for the lineal and avuncular 1.3% the word itself flips, which is the real content of the gesture.
 - **A tall V is not narrowed.** At 9+ rungs an arm reaches the bottom of the window. The fit apparatus is
   in place; the rung-height ceiling it would need is not.
+
+---
+
+## 47. SIGNING IN — THE FOURTH AND FIFTH SURFACES (AS BUILT, August 29)
+
+_(Roadmap §50 is the build spec and §51 is the session record; `docs/DEPLOYMENT_STRATEGY.md` §18
+owns everything that only becomes true on a real deployment. This is the doctrine — what was
+decided, what was tried and reverted, and the rules that outlive the code.)_
+
+**WHERE IT LIVES:** `src/lib/server/auth.ts`, `src/hooks.server.ts`,
+`src/routes/api/{auth,bookmarks,hero,lists}`, `src/lib/state/auth.svelte.ts`,
+`src/lib/state/bookmarkNav.ts`, and four components — `AuthTrigger`, `AuthModal`, `CardMarks`,
+`BookmarksTrigger`, `BookmarksModal`.
+
+### 47.1 WHAT SIGNING IN IS FOR, AND THE SCOPE THAT BOUNDS IT
+
+Sam: *"the benefits of logging in will be solid but minimal."* Two verbs, and the boundary matters
+more than either:
+
+| | |
+|---|---|
+| **bookmark** a person | into one of two lists |
+| **set a home card** | where `/` puts you instead of Thomas Hooker |
+| **the boundary** | signing in must never change how a PERSON PAGE is built or delivered |
+
+That third row is the governing law and it is defended by an instrument rather than by care —
+`scripts/probe-static-contract.mjs`, because breaking it does not look like breaking anything. The
+obvious way to render a bookmark ribbon is to read the session in the page's load, and that would
+convert 19,728 static CDN payloads into serverless invocations for an icon. Everything still
+renders; the delivery model is simply gone.
+
+**GOOGLE, THEN MICROSOFT — and the second one is about the AUDIENCE, not parity.** The original
+ruling was Google-only, with the trigger for a second provider being *"a real person who is blocked,
+not a hypothesis."* Sam overturned it within the session on a better argument: this is a FAMILY
+genealogy, its users are relatives skewing older, and outlook.com and hotmail.com are common in
+exactly that group. Email-and-password stays out, and that is the largest single thing keeping this
+build small — any email-based method drags in a transactional provider, SPF/DKIM and deliverability.
+
+**THE HEART THAT WAS NOT BUILT.** Sam floated a third bucket — heart, List 1, List 2 — and withdrew
+it: *"this is for serious people not facebook."* The argument that settled it is worth keeping,
+because it is about the CONTROL rather than the feature: a cycling ribbon at three buckets makes
+"remove" a three-click journey through two states you did not want. **A cycle is only honest while
+it is short.** If a third list is ever wanted, it is a separate toggle, not a fourth state.
+
+### 47.2 §46.2 EXTENDED — FIVE SURFACES NOW, AND STILL FIVE FILES
+
+The law is unchanged and was applied twice more: `AuthModal` is the fourth surface, `BookmarksModal`
+the fifth, and both are their own files. They take SearchModal's veil VALUES, its panel geometry and
+§45.11's exit choreography **by copying**, exactly as ConnectModal and SearchModal already copy each
+other. What none of them do is share a component that renders.
+
+**"SIMILAR TO THE SEARCH MODAL" MEANS THE SPECIES, NOT THE BODY** (Sam, asking for the bookmarks
+modal). That sentence is the whole test, and it survives being asked for a *resemblance*.
+
+### 47.3 A LOGIN FORM IS A WIDGET; A BUTTON IS AN OBJECT
+
+`AuthModal` has **no form at all**, and that is the design rather than an omission. Google-only
+removes every field — no email, no password, no confirm, no reset — which lands it on the right side
+of §45.12: *this app contains no widgets, every control is a physical object.* A login form with two
+fields and a confirm-password would be the year-slider mistake in a new place. One button is a thing
+you press.
+
+The buttons borrow the Shuffle's physics rather than inventing any: hover raises, the press returns
+a FRACTION of that height and never crosses below the surface. A real button changes HEIGHT, not
+colour, when you approach it.
+
+### 47.4 THE CARD MARKS — TWO OBJECTS, AND SAM FOUND THE REASON HIMSELF
+
+The ribbon and the house sit on the featured card's top-left corner, mostly OFF the card, anchored
+by their bottom-right — attached to it rather than printed on it.
+
+Sam proposed one circle cycling gold → blue → home → blank, then killed it in the same message: *"no
+that won't work, we don't want a user to lose their existing home page ... but if someone is just
+casually clicking around i don't want to punish them."* That is the whole doctrine in one sentence.
+
+> **A CHEAP FREQUENT ACT AND A RARE DESTRUCTIVE ONE MAY NOT SHARE A CONTROL.** Bookmarking is cheap
+> and reversible in a way you can see. Setting a home DESTROYS the previous one, silently, and the
+> reader may not remember what it was. Conflating them makes the cheap gesture dangerous.
+
+They are also deliberately **different shapes rather than two colours of one shape** — a ribbon and
+a house read as two jobs at a glance, where two ribbons in different colours read as one job in two
+states.
+
+**ORBIT FIGURES AND HARTFORD FOUNDERS CANNOT BE A HOME CARD** (Sam), with H00001 exempt. A home is
+where the reader LIVES in this tree; an orbit figure is somebody it reaches sideways and a founder
+is a neighbour of the line. Landing on either every visit would quietly make the orbit the centre.
+The ribbon still works on them — saving someone and living with them are different claims. The
+exception was already written: `ascension.svelte.ts` excludes Thomas Hooker from `isFounder` BY ID,
+for the same reason, and the predicate restates that rule rather than inventing a second one.
+
+### 47.5 A GATE MUST NAME WHAT IT COSTS — AND I DESIGNED IT AWAY FOUR TIMES
+
+The home-card confirmation says **"This will replace Alice Gwynne as the first card you see when you
+sign in."** Not "Proceed?".
+
+> **"Proceed?" protects the action without telling you what it costs.** Naming the person is the
+> entire content of the warning — and it is what lets a CANCELLED confirmation still leave the reader
+> knowing what they had.
+
+**THE MISTAKE UNDER IT IS THE DURABLE PART.** Sam's spec asked for a confirmation, full stop. I added
+an asymmetry nobody requested — skip the gate when there is no previous hero, since a first set
+destroys nothing. The reasoning was sound and the decision was not mine to make. And it failed in
+the worst available way: with `heroPersonId` null, EVERY set is a first set, so the gate never
+appeared at all, and Sam reported it missing four separate times while the code did exactly what I
+had told it to.
+
+> **AN UNREQUESTED OPTIMISATION THAT REMOVES A STEP THE USER ASKED FOR IS INDISTINGUISHABLE, FROM
+> OUTSIDE, FROM A BUG.** The user cannot tell which it is — and neither can the person debugging it,
+> which is why I went looking at the mechanism three times before looking at the condition I wrote.
+
+### 47.6 AN OPTIMISTIC OVERRIDE MUST OUTLIVE ITS WRITE
+
+Neon suspends after five minutes idle, so the first write after a quiet spell pays ~0.5–1s to wake
+it. A ribbon that waited for the server would feel broken. So every write here is optimistic: the
+local state changes first, the request goes out behind it, and a failure rolls the colour back —
+that last half being what makes it honest rather than merely fast.
+
+The hero needed the same treatment and could not have it directly, because `heroPersonId` lives on
+the SESSION user rather than in our own store. The shadow that fixed it then broke two features at
+once, and the rule that came out of it is general:
+
+> **CLEAR AN OPTIMISTIC OVERRIDE WHEN THE TRUTH AGREES WITH IT — never on a timer, never in a
+> `finally`.** `authClient.getSession()` resolves WITH the session but does not reliably push it into
+> the reactive store; clearing the override on completion handed the UI straight back to a stale
+> value. The house unfilled, and the replace-confirmation silently stopped firing because it read the
+> same stale field. One stale read, two features, and neither symptom named the cause.
+
+### 47.7 A POP-IN MEANS THE ELEMENT IS OUTSIDE THE THING IT BELONGS TO
+
+The card marks first appeared when the card SETTLED, gated on the same `settled` signal FeaturedCard
+and SiblingPanel take. Sam: *"I hate how the bookmark and home circles flash instantly into
+visibility ... like a blinking VCR clock blinking 12:00 that no one knows how to fix."*
+
+The gate was deliberate and the premise was wrong. I had treated them as CHROME — and chrome should
+not ride a card in flight. But **chrome is fixed to the VIEWPORT**: the corner cluster, the rail.
+These belong to the CARD, so they should behave like the portrait and the name and grow out of the
+demoted card into the promoted one.
+
+> **A pop-in is what you get when something is mounted by a state change instead of being part of a
+> thing that was already moving. The fix is never a fade — it is putting the element inside the thing
+> it belongs to.**
+
+Removing the gate was the entire change: inside `.featured-flight`, the existing growth transition
+carries them for free. No new animation, no timing to tune.
+
+Related, and it is why they are mounted as a SIBLING of the card rather than a child: the card's
+silhouette is a `clip-path`, and these circles sit mostly outside its corner. As a child, ~80% of
+each would be erased — and it would read as a broken asset rather than as clipping.
+
+### 47.8 A ROW IS A CARD — §45.7, RESTATED BECAUSE I BROKE IT
+
+Both bookmark surfaces shipped first as transparent rows with a hover tint. Sam: *"each card being a
+discrete baseball card feel with heft. we don't do lists with transparent backgrounds that look like
+songlists at amazon prime music."*
+
+§45.7 already said this, in the same words, about the same mistake — SearchModal's first result row
+was *"a generic search-result avatar, which is exactly what it looked like"*, and the verdict then
+was *"it's like you just came in off the street and didn't review my design."* The rule exists
+BECAUSE of that, and I wrote the resembling version anyway.
+
+Both rows now carry the whole card vocabulary — house paper, line-status shading, the zone grounds
+so an orbit row is midnight and a founder's is green BEFORE the click, the notable star in a
+reserved gutter — and the only thing stated locally is the SIZE.
+
+**THE TRAP THAT MADE IT LOOK RIGHT AND RENDER WRONG:** `.nm`, `.yr`, `.line2` and `.text-area` are
+styled LOCALLY inside SearchModal, not globally. Borrowing the class names inherited **nothing**, so
+the browser's defaults showed through as a huge unstyled name with no padding over tiny years.
+
+> **Copying a pattern by its class names copies the markup and none of the design.**
+
+The faces are the house's, taken for stated reasons rather than picked: **Outfit** for the name,
+because FeaturedCard's `<h1>` is Outfit and a row is the same person named the same way at a smaller
+size; **Open Sans** at 80% inkblue for years and blurb, so a row is one ink at two strengths.
+
+### 47.9 A NEW SURFACE TERMINATES IN AN EXISTING TRANSITION
+
+§45.16's doctrine, and this feature is its second application: a bookmark row hands off to the CC
+arrival — synthesising an anchor at the featured card's rect and dispatching through the same
+delegated handler every link in the app uses — rather than inventing a sixth way to travel.
+
+**AND THE ONE LINE THAT MADE IT SILENTLY NOT WORK, which is the durable half.** `warmPersonLinks` is
+an ACTION ON THE STAGE ELEMENT: it listens for clicks on that node and resolves
+`event.target.closest('a')`. The helper was lifted from `SearchModal.pick()` and, in the porting, its
+`stage.appendChild(a)` became `document.body.appendChild(a)`. The click then bubbled to body, never
+passed through the stage, and the handler never ran — so no origin rect, no flight kind, no lock.
+
+The navigation still WORKED, because the href is real. It arrived with **no flight attached**: a
+silent downgrade from a choreographed handover to a page swap. Sam: *"the old card needs to exit and
+right now it just awkwardly gets covered up."*
+
+> **When you port a pattern, the part that looks incidental is the part to keep.** CLAUDE.md already
+> says extend the existing pattern rather than inventing a parallel one; a port IS an invention, and
+> one character of DOM scope was the whole transition.
+
+### 47.10 THE TOAST — A RECEIPT, NOT AN ANNOUNCEMENT
+
+Tuned three times, in both directions, and the numbers are recorded next to what each was corrected
+FROM because that is what makes them re-tunable:
+
+| | |
+|---|---|
+| 2200ms hold, no fade at all | *"dark black ink … takes up all their attention"* |
+| 220 hold / 420 out | *"a little too aggressive … the off and on"* |
+| **420 hold / 1010 out, 265 in** | here — ~1.7s total |
+
+Sam asked whether there are standards. There are, and they agree on a shape rather than on numbers:
+Material's snackbar motion is ~200ms in and ~150ms out, iOS-style transient toasts run a couple of
+seconds end to end, and both have the **exit slower than the enter** with the total under two
+seconds for something purely informational. The exit being three to four times the enter is what
+reads as gentle rather than as a switch being flipped.
+
+**AND THE MECHANISM TOOK THREE ATTEMPTS, all failing the same way:** a single `toast` string with a
+CSS `animation`, then the same plus `{#key}` to force a fresh node. Both tried to REPLAY an effect on
+an element that already existed, and an `animation` with `forwards` leaves that element parked at
+opacity 0 — so the second message rendered, invisibly. The third version is a keyed `{#each}` of
+`{id, msg}` objects, where Svelte's guarantee is unambiguous: new key, new element, `in:` on mount
+and `out:` on removal, every time.
+
+> **If two fixes fail the same way, the mechanism is wrong, not the tuning.** That is §45.12's
+> three-rejections rule — *"stop tuning and ask what species of thing this should be"* — applied to
+> an effect instead of an object.
+
+### 47.11 THE CORNER, AND THE RULE IT NOW BREAKS
+
+The cluster is `My Bookmarks · Shuffle · Search · Hi, Sam!`, and the last two entries revise §45.15
+knowingly rather than by drift.
+
+§45.15 seated Search outermost on a stated rule: *"reading right to left, the outermost control is
+the one that goes anywhere in the tree."* Sam displaced it — *"i want Sign In in the right top
+corner, i don't care that Search gets moved over"* — and My Bookmarks took the innermost seat. Read
+left to right the corner now runs narrow to broad: your own saved people, a random notable, the
+whole tree, your account.
+
+**ONE SLOT, TWO LABELS.** Signed out it reads `Sign In`; signed in, `Hi, <name>!`. I had proposed
+collapsing to an avatar disc to stop the corner growing; Sam's answer was better and for a house
+reason — §45.15 built this corner so a control **changes state, not costume**, which is the
+Shuffle's own rule. A label that re-reads is the same object saying something new; a word swapped for
+a disc is a costume change in the one place this app has been most careful about them. It also
+answers the crowding without a new species, because the corner gains one control rather than two.
+
+**IT RENDERS NOTHING WHILE THE SESSION IS PENDING**, on both server and client. Rendering the
+signed-out shape during SSR was measured and reverted: a signed-in reader got three states in a row —
+"Sign In" from the server, NOTHING on hydration, then "Hi, Sam!". A word that appears, vanishes and
+returns as a different word is worse than one arriving a beat late. §30, the stage must not move,
+applied to two words.
+
+### 47.12 WHAT THE BOOKMARK LISTS ARE, AND THE ONE RULE THAT OUTLIVES EVERYTHING
+
+Two lists, renameable to 25 characters, unlimited members, ordered newest first.
+
+> **BOOKMARKS AND THE HOME CARD STORE THE PERSON ID, NEVER THE SLUG.** The URL is derived at render.
+
+Slug churn is permanent — 510 → 673 redirects in five days, §4's 896-record repair still pending, and
+the `/person/x` → `/x` flatten still intended. Any of those would silently orphan slug-keyed saves,
+and a reader whose ancestors quietly vanished has no way to report a cause. It is also why slug churn
+does not block this feature at all, which is what made it buildable now rather than after the data
+settles — which it never will.
+
+The names and slugs shown are resolved through the search index at RENDER time, never stored, so a
+bookmark saved before a rename still shows the current name and still lands. **A list name lives in
+exactly one place** (`user.list1Name` / `list2Name`, null meaning "never renamed"), so the card's
+toast, the hover menu's heading and the modal's column header cannot disagree about what a list is
+called.
+
+**FIVE PER LIST IN THE HOVER MENU, NOT FIVE OVERALL** (Sam). A single pooled cap would let a busy
+List 1 crowd List 2 off the menu entirely, and the second list would look broken to somebody who had
+just used it.
+
+### 47.13 STILL OPEN
+
+- **`/` is not built.** It remains the stock SvelteKit welcome page; the intro and the hero redirect
+  are the last piece of this arc (roadmap §50.3, §50.8 slice 4). Until it exists, a home card is
+  stored and honoured by nothing.
+- **The hover menu is a hover menu**, and on touch it does not exist. The click path is deliberately
+  complete without it, which is the mitigation rather than the fix. §49.5's Tier C question is still
+  open and this adds to it.
+- **Nothing here has been seen on a deployment.** Every claim above is localhost.
