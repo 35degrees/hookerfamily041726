@@ -1,7 +1,9 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_082926.md (the what/why for every item below).**
+**Companion: ENRICHED_DESIGN_FABLE_083026.md (the what/why for every item below).**
 **AUGUST 29, 2026 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), THE SCOPING DECISION (§49.5), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right. **§49.5 records the scoping decision itself — 3c and the zoom-3/Card↔Table remainder of 9 RETIRED from the pre-launch path with their specs preserved unaltered, 9.5 (the phone) FLAGGED OPEN rather than cut, 11 still gating launch. Nothing deleted; the phase table is annotated, and a retired phase reopens by saying so.**
+
+**AUGUST 30, 2026 (§53): THE SIBLING FLIGHT'S SKIN.** Four faults Sam reported on the sibling chip demote; two of them were one bug, and a fifth was found by accident. Corners and shadow were being scaled away by the shell's own 0.129 morph; the overshoot dial had been pinned to its floor since it was written, so it read as a tic and could not be tuned. Doctrine in design §48. Includes the two things I got wrong in front of Sam — a premise asserted without measuring (the card is 1.61, not the 2.20 my comment claimed, which stretched the flight shadow 14.1px wide against the chip's 9.6px), and a probe that selected by behaviour instead of identity and reported RED against a working fix. That second accident is what found `growFrom` carrying the identical bug in reverse.
 
 **AUGUST 30, 2026 (§52): AUTH — THE OPERATOR'S MAP.** Written to be read COLD, months from now, by someone upgrading Better Auth or debugging it: the version and why (**1.7.2**, and reading its docs before porting Sam's year-old templates is what removed Drizzle from the stack and turned the apex-vs-`www` problem that once cost weeks into a config array), the file map with what each piece is responsible for, the sign-in flow end to end, **what to look at when upgrading — in this codebase specifically**, the complete list for adding a third provider, and §52.7, the things that break SILENTLY (the Azure secret expiring 2028-08-28, `process.env` being undefined at SvelteKit runtime, the pooled Neon string, and the fact that `SettleVeil` is not an auth component even though auth is why it exists). §52.8 records the decisions that will look arbitrary later and are not.
 
@@ -5554,3 +5556,94 @@ curl -s -o /dev/null -w '%{http_code}' localhost:5173/api/bookmarks   # 401 unau
 Then the half no command can do: **sign in, bookmark someone, sign out, sign back in, and check the
 gold is still there.** Every failure this feature had that mattered was found that way and not by a
 green check.
+
+---
+
+## 53. THE SIBLING FLIGHT'S SKIN — SESSION RECORD (August 30, 2026)
+
+Sam opened with four faults on the sibling chip demote, in one message, immediately after the auth
+arc closed. Design doctrine is §48; this is what happened, in the order it happened.
+
+### 53.1 WHAT SHIPPED
+
+Commit `52d8d230`, on top of the auth work. Five fixes, four of them asked for.
+
+| # | fault | cause | fix |
+| --- | --- | --- | --- |
+| 1 | overshoot reads as a tic | `DEMOTE_SETTLE_SIBLING_FACTOR` pinned to its floor — an inert dial | factor 1 → **2.5** (5.11px), plus `SHAPE_AT` 0.55 → **0.48** |
+| 2 | corners square in flight | 8px radius × 0.129 shell scale = 1.03px | counter-scale ratios `--r-kx` / `--r-ky` |
+| 3 | no shadow in flight | 12px blur × 0.129 = 1.55px | `--shadow-k`, then moved to the face (§48.3) |
+| 4 | shadow ledge in the panel | `SHADOW_PAD` 6 sized for the resting shadow, not the hover one | `SHADOW_PAD` → **10** |
+| 5 | *(unreported)* promote had 2 and 3 in reverse | `growFrom` never counter-scaled | same three ratios in its CSS string |
+
+**Files:** `src/lib/transitions/flight.ts`, `src/lib/components/FeaturedCard.svelte`,
+`src/lib/components/SiblingPanel.svelte`, `src/routes/person/[slug]/+page.svelte`, and a new
+`scripts/probe-sibling-skin.mjs`.
+
+### 53.2 THE ORDER THINGS WENT WRONG
+
+**I asserted a premise instead of measuring it, and Sam caught the result.** The shadow counter-scale
+used the geometric mean of the two axis scales, and I wrote a comment justifying it: *"the morph
+stays close to proportional (it does: 119:54 and 925:cardH are both ≈2.2)."* I never measured
+`cardH`. It is ~574px, making the card **1.61**, not 2.20 — so the mean rendered the flight shadow
+14.1px wide against 10.2px tall, and the swap to the seated chip's isotropic 9.6px cut horizontal
+spread by a third in one frame.
+
+Sam, who could not screenshot it: *"when the sibling chips stops or overshoots, its drop shadow has a
+decent spread especially to the right, but after the overshoot is completed and it settles back into
+position, the drop shadow on the right instantly gets cut in half."* The word that mattered was
+**right** — an asymmetry, which a symmetric blur change cannot produce, and which pointed straight at
+the anisotropy. **The fault was introduced by my own fix**: before it, there was no flight shadow at
+all, so there was nothing to mismatch.
+
+**A probe selected by behaviour instead of identity and lied about a working fix.** The first
+`probe-sibling-skin` picked "the `.featured-flight` with the smallest scale" and reported RED — nine
+failures, against code that was already correct. It had latched onto the *other* flight node. Two
+minutes were spent doubting the fix before checking whether the instrument was pointed at the right
+object; the tell was `--r-kx` reading back as its fallback `1`, which is impossible on the element
+the tick writes to.
+
+**That accident was worth more than the probe.** The node it had wrongly selected was `growFrom` —
+the sibling chip growing into the hero card — carrying the identical bug in reverse, unreported only
+because Sam was describing the chip he was watching rather than the card arriving beside it.
+
+**The carry broke a signed-off rule, and the probe caught it before Sam did.** `2.5` alone turned
+`probe-sibling-seat` RED on the header-first geometry: *"emerges at 127px wide, not its final
+119px."* Isolated by reverting the factor with the skin fixes still in — which proved the skin work
+innocent in one run. The ceiling that kept §19 intact without touching anything else was 2.0
+(~4.0px); `SHAPE_AT` 0.48 got 2.5 *and* an emergence width better than the old build's (§48.6).
+
+### 53.3 HOW TO VERIFY IT STILL WORKS
+
+```bash
+node scripts/probe-sibling-skin.mjs     # NEW — rendered radius + landing shadow, both lanes
+node scripts/probe-sibling-seat.mjs     # §19 in-place mutation; the §48.6 guard
+node scripts/probe-demote-settle.mjs    # parent/child demote — unaffected, asserted byte-stable
+npx svelte-check --tsconfig ./tsconfig.json
+```
+
+Expected on the current build:
+
+```
+demote   radius 8.00px · faceShadow 9.59-9.61px · overshoot 5.09-5.12px
+promote  radius 8.04-8.08px · overshoot 5.10-5.22px
+```
+
+`svelte-check` reports **2 pre-existing errors**, both `@fontsource/*` side-effect import
+declarations in `+layout.svelte`. They are not from this work and were there before it.
+
+**By eye at `localhost:5173`:** click a sibling chip. The demoting chip should keep rounded corners
+and a constant-size shadow the whole way down, overshoot with weight, and settle **without the shadow
+changing size at the moment it lands**. Hover a resting chip in the strip to check the ledge.
+
+### 53.4 STILL OPEN
+
+- **`SHADOW_PAD` has no probe.** 6 → 10 is arithmetic, not measurement. It is the one fix of the five
+  that rests on Sam's eye alone.
+- **`growFrom`'s opening frames** keep the geometric-mean shadow (§48.8) — no per-frame JS and no
+  face to hand to.
+- **`SHAPE_AT` was one constant beyond the brief.** It was necessary for 2.5 and measured strictly
+  better on the rule it might have broken, but it was not asked for. The fallback, if the emergence
+  ever reads wrong: factor **2.0** (~4.0px) with `SHAPE_AT` back at **0.55**.
+- Everything from §51.6 and §47.14 remains open — `/` is still the stock SvelteKit welcome page, and
+  a home card is still stored and honoured by nothing.

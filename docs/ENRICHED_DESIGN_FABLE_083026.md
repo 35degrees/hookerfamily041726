@@ -53,6 +53,8 @@ Sequencing lives in ENRICHED_CODING_ROADMAP_FABLE_082926.md. Where a section
 extends an existing DESIGN.md section, it names it, so approved items can be
 folded back without conflict.
 
+**The 083026 edition (August 30) adds §48 — SCALE IS NOT SIZE: WHAT A FLIGHT DOES TO EVERY ABSOLUTE LENGTH.** A flight SCALES the shell rather than resizing it, so every absolute length authored inside it is multiplied by that scale — at the sibling tier, 0.129, which rendered an 8px corner as 1.03px and a 12px shadow blur as 1.55px. Both vanished mid-flight and both reappeared on landing, because the landed chip is a real PersonBox carrying its own. §48.2 is the remedy and the rule about where a constant lives (publish RATIOS, never lengths, so `CORNER_R` keeps one home). §48.3 is the harder half: a single blur radius inside an anisotropically scaled box cannot be true on both axes, so the shadow moves to the FACE, whose composite scale is uniform — and lands equal to the seated chip's by construction rather than by two numbers agreeing. §48.4 on a dial pinned to its own floor, §48.5 on symmetry as an argument where taste is not, §48.6 on the geometry cost of a bigger carry, §48.7 on asserting the PRODUCT (the authored value was a constant 8 on the broken build too).
+
 ---
 
 ## 1. THESIS — the product is connection, not biography
@@ -6620,3 +6622,159 @@ taken.
   is correct and already working for real CCs; what is missing is two baked fields on the search
   index. Sam has not ruled on which of the three options to take.
 - **Nothing here has been seen on a deployment.** Every claim above is localhost.
+
+---
+
+## 48. SCALE IS NOT SIZE — WHAT A FLIGHT DOES TO EVERY ABSOLUTE LENGTH (written August 30, 2026)
+
+Sam reported four faults on the sibling chip demote in one message. Two of them were one bug, a third
+was the fix for that bug seen through, and the fourth was a number sized against the wrong shadow.
+The doctrine below is the part that outlives the four fixes.
+
+### 48.1 A FLIGHT SCALES; IT DOES NOT RESIZE — AND EVERY LENGTH INSIDE PAYS
+
+`shrinkTo` does not shrink the card by changing its width and height. It applies `scale(Sx, Sy)` to
+the shell and leaves the card's own coordinate space at full size underneath. That is the right
+design — it is why the face crossfade can be keyed to geometry, and why the whole composition moves
+as one object — but it has a consequence that is easy to state and was invisible for months:
+
+> **Any absolute length authored inside a scaled shell is multiplied by that scale.**
+
+A sibling chip is 119×54 against a 925px card, so `Sx` ends at **0.129**. What that did:
+
+| authored | rendered at landing | what it looked like |
+| --- | --- | --- |
+| `CORNER_R` 8px | **1.03px** | square corners for the whole flight |
+| shadow blur 12px | **1.55px** at 0.5px offset | no shadow at all |
+
+Both "came back" the instant the chip landed — not because anything restored them, but because the
+landed chip is a real `PersonBox` carrying its own. Sam read that exactly right: *"when the
+transitioning sibling chip is in flight, all of its corners are squared off"*, and *"it doesn't have
+a drop-shadow during flight, but then when it is settled into final position, the drop-shadow
+appears."*
+
+**THE RULE.** A length that is a property of the OBJECT — its corner radius, its shadow, a border
+width — must be counter-scaled per frame so its RENDERED size holds still. A length that is a
+property of its SIZE may scale freely. Deciding which is which is a design question, not a
+mechanical one, and it has to be asked of every new absolute length that goes inside a flight.
+
+### 48.2 PUBLISH RATIOS, NOT LENGTHS — SO THE CONSTANT KEEPS ONE HOME
+
+The transitions publish `--r-kx`, `--r-ky` and `--shadow-k`: **pure inverse-scale ratios**, never
+lengths. `FeaturedCard` does the multiplication, because `CORNER_R` already lives there.
+
+The alternative was to compute `CORNER_R / Sx` in `flight.ts` — which means importing a component
+into the transitions module to obtain an `8`, and keeping a second copy of a constant that must never
+drift. The ratio form means **flight.ts never learns what it is scaling.** It says only "render this
+1/Sx times larger," and any future length that wants the same protection subscribes to the same
+variable without the transitions module knowing it exists.
+
+Every ratio defaults to a no-op (`var(--r-kx, 1)`). A card that never flies is byte-for-byte what it
+was, and the flight is the only thing in the codebase that ever moves them.
+
+### 48.3 A SHADOW CANNOT BE ANISOTROPIC, SO IT LIVES ON THE FACE
+
+The corner fix worked; the same treatment on the shadow did not, and Sam caught the residue
+immediately: *"after the overshoot is completed and it settles back into position, the drop shadow on
+the right instantly gets cut in half ... it doesn't sync with the settling and overshoot physics that
+just happened."*
+
+The cause was a premise asserted without measuring. The counter-scale used the **geometric mean** of
+the two axes, justified in a comment claiming the morph stays near-proportional. Measured, it does
+not: the card is ~574px tall, so it is **1.61 against the chip's 2.20**.
+
+```
+rendered blur X = 12 · k · Sx = 14.06px      k = 1/√(Sx·Sy) = 9.08
+rendered blur Y = 12 · k · Sy = 10.25px
+seated chip     = 9.6px, isotropic
+```
+
+Horizontal spread lost a third of itself in a single frame at the swap. And this is not tunable: **a
+single blur radius inside an anisotropically scaled box cannot be true on both axes at once.**
+
+So the shadow moved to the **face**. The chip-face and the seat clone are counter-scaled to a
+*uniform* composite (`afx·Sx = afy·Sy = U`), which makes a filter applied there isotropic — and lets
+one scalar be exactly right. It is authored from `--chip-shadow`'s own numbers divided by that scale,
+so at landing, where the scale is 1, **the flying object and the seated chip carry the same shadow by
+construction** rather than by two numbers happening to agree. Measured 9.59–9.61px against 9.6.
+
+**THE DOCTRINE.** When a property cannot be made correct on the element you first reach for, the
+answer is usually a different element, not a better number. Ask which surface in the flight is
+already uniform, already lands at natural size, already IS the thing being become — and put the
+property there. The wrap keeps the shadow only for the opening of the flight, while the object still
+is a card; `--shadow-fade` hands it over on the face's own reveal band, so exactly one shadow is
+drawn at any moment.
+
+### 48.4 A DIAL PINNED TO ITS FLOOR IS NOT A DIAL
+
+`DEMOTE_SETTLE_SIBLING_FACTOR` was 1. The ratio term it feeds computes `0.45 · 131 · 0.035 = 2.06px`
+— **just under** `DEMOTE_SETTLE_FLOOR_PX` (2.2). So the floor won every time and the constant did
+nothing at all; changing it between 0.1 and 1.0 would have produced identical motion.
+
+It had been set smallest on Sam's own earlier note — *"not dramatic theatrical overshoot"* — and that
+correction overshot. **2.2px is too small to read as motion and too large to read as nothing, which
+is the definition of a tic.** Sam: *"the small overshoot like maybe 1 or 2px makes it feel like a
+tic, or some defect in the UX, not like the 'discrete baseball card' physical object heft."*
+
+**A constant sitting within a few percent of its own clamp should be treated as a bug report.** The
+value looks deliberate and behaves as inert, which is the worst combination available: the next
+person to tune it will change the number, see nothing, and conclude the mechanism is broken.
+
+### 48.5 SYMMETRY IS AN ARGUMENT; TASTE IS NOT
+
+A sibling promotion runs **two** flights side by side — a demote and a promote, one exchange. Measured
+before any change:
+
+| lane | travel | overshoot |
+| --- | --- | --- |
+| demote | ~960px | **2.1px** |
+| promote | ~968px | **5.2px** |
+
+Two objects trading places in the same gesture, disagreeing about their own physics by 2.5×. That is
+almost certainly what read as a defect: not the demote's absolute value, but the fact that the card
+arriving beside it visibly had more weight.
+
+So `2.5` (measured 5.11px, ±0.03 across all three panel geometries) is **not a taste pick** — it is
+the value at which the pair reads as one physical event. Where a gesture has two halves, the halves
+agreeing is a design argument that survives re-tuning; "it felt better" is not.
+
+### 48.6 A CARRY HAS A GEOMETRY COST — `SHAPE_AT` 0.55 → 0.48
+
+Raising the carry alone broke §19. A 5.11px overshoot reaches the emergence point **sooner** than a
+2.2px one, so the chip came out from behind the arriving hero **still shrinking** — `probe-sibling-
+seat` caught it as *"emerges at 127px wide, not its final 119px ... reads as descending, not
+sliding."*
+
+The fix is not a smaller carry but an earlier footprint. `SHAPE_AT` 0.48 sits earlier inside the same
+occlusion window (t≈200–470) that 0.55 was chosen for, so the original argument is strengthened
+rather than violated — and it is a closer reading of what Sam asked for when that constant was
+created: *"it should be in its final form already for a long time."* All three geometries now emerge
+at **119px exactly**, against 121–125px on the 0.55 build.
+
+**The overshoot then means what it should:** a chip-sized object sliding past its seat and back — a
+rubber band — rather than something still collapsing as it arrives.
+
+### 48.7 ASSERT THE PRODUCT, NOT THE VALUE
+
+`probe-sibling-skin.mjs` asserts `authored × counter-scale × shell scale`, never the authored number.
+This is the whole point: **the authored radius was a constant 8 on the broken build too.** A probe
+watching the value would have been green throughout the entire period the corners were square.
+
+Two further rules the probe earned the hard way:
+
+- **Select by identity, not by behaviour.** Its first version picked "the `.featured-flight` with the
+  smallest scale" and came back RED against a fix that was already working — it had latched onto the
+  *other* flight node. Selecting by the `.demoting` class is what made the result mean anything.
+- **Watch both lanes.** That accident found a real bug: `growFrom` had the identical defect in
+  reverse, and nobody had reported it because Sam was describing the chip he was watching, not the
+  card arriving beside it. **A gesture with two halves needs both asserted, or one half drifts.**
+
+### 48.8 STILL OPEN
+
+- **The promote's opening frames still use the geometric mean** on the wrap, so the arriving card
+  starts with a slightly wide shadow. `growFrom` is a CSS-string transition with no per-frame JS and
+  no face to hand off to, so the §48.3 remedy does not port directly. It is growing rather than
+  settling, so there is no snap — but it is the same approximation, unfixed.
+- **`SHADOW_PAD` is reasoned, not measured.** 6 → 10 is arithmetic against `--chip-shadow-hover`'s
+  14px blur (~7px of spread, where the pad allowed 6). No probe asserts it.
+- **Nothing here has been seen on a deployment.** Every measurement above is localhost at 1600×1000.
