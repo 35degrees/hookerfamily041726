@@ -97,32 +97,60 @@
 
 	let toasts = $state<{ id: number; msg: string; x: number }[]>([]);
 	let toastId = 0;
+	let toastTimer: ReturnType<typeof setTimeout> | undefined;
+	/**
+	 * True only for the frame in which an outgoing toast is being REPLACED, so its exit runs at zero
+	 * duration. See `say`.
+	 */
+	let superseding = $state(false);
 
+	/**
+	 * A TRANSIENT STATUS IS A SLOT, NOT A QUEUE — and this is the general answer to Sam's question,
+	 * "whats a good general principal for that action?"
+	 *
+	 * Rapid clicking used to stack toasts on top of each other, each on its own clock, so the screen
+	 * filled with a history nobody asked for. The instinct is to queue them; that is worse. A queue
+	 * makes the reader WAIT to find out what their most recent click did, which is exactly backwards
+	 * for a receipt — the older message is not just less interesting, it is stale, and on a ribbon it
+	 * may already contradict what the ribbon now shows.
+	 *
+	 * So: **there is only ever one current status, and a new action supersedes the previous one
+	 * instantly.** The outgoing toast is not faded out — it is killed. A fade would put stale
+	 * information on screen competing with fresh information, in the same spot, for most of a second.
+	 *
+	 * (This is what Material's snackbar does too, and for the same reason: one at a time, newest
+	 * wins. It is not a notification centre.)
+	 *
+	 * MECHANICALLY: `superseding` is raised before the replacement and lowered on the next microtask,
+	 * so the out-transition — whose params are read during the flush that removes the node — sees 0.
+	 * The next NATURAL expiry, where nothing is replacing it, reads the full 780ms fade.
+	 */
 	function say(msg: string, from: keyof typeof TOAST_X = 'ribbon') {
+		if (toasts.length) {
+			superseding = true;
+			queueMicrotask(() => (superseding = false));
+		}
 		const id = ++toastId;
-		toasts = [...toasts, { id, msg, x: TOAST_X[from] }];
+		toasts = [{ id, msg, x: TOAST_X[from] }];
+		clearTimeout(toastTimer);
 		/**
 		 * THE HOLD. The fade-out runs AFTER this, so the total life is hold + out.
 		 *
-		 * TUNED TWICE, IN BOTH DIRECTIONS, WHICH IS WHY THE NUMBERS ARE WRITTEN DOWN:
+		 * TUNED FIVE TIMES, IN BOTH DIRECTIONS, WHICH IS WHY THE NUMBERS ARE WRITTEN DOWN:
 		 *
-		 *   2200ms hold, no fade at all   "dark black ink ... takes up all their attention"
-		 *   220 hold / 420 out            "a little too aggressive ... the off and on"
-		 *   350 hold / 840 out            "rapid fire"
-		 *   420 hold / 1010 out           faded well, but gone before it was read
+		 *   2200 hold, no fade at all      "dark black ink ... takes up all their attention"
+		 *   220 hold / 420 out             "a little too aggressive ... the off and on"
+		 *   350 hold / 840 out             "rapid fire"
+		 *   420 hold / 1010 out            faded well, but gone before it was read
 		 *   300 in / 820 hold / 780 out    the rise happened while it was invisible
-		 *   430 in / 820 hold / 780 out    here — the climb is watchable, ~1px overshoot
+		 *   345 in / 820 hold / 780 out    here
 		 *
-		 * And there IS prior art rather than taste — Sam asked. Material's snackbar motion is ~200ms
-		 * in and ~150ms out; iOS-style transient toasts run a couple of seconds end to end. The
-		 * common shape across both: the ENTER is quick enough to feel like a response to the click,
-		 * the EXIT is slower than the enter, and the total is under two seconds for something purely
-		 * informational. 265 in / 420 hold / 1010 out is ~1.7s total and sits inside that.
-		 *
-		 * The exit being three to four times the enter is the part that reads as "gentle" rather than
-		 * "blinking" — an abrupt disappearance is what made the first version feel like a switch.
+		 * There IS prior art rather than taste — Sam asked. Material's snackbar motion is ~200ms in and
+		 * ~150ms out; iOS-style transient toasts run a couple of seconds end to end. The shape common
+		 * to both: the ENTER is quick enough to read as a response to the click, the EXIT is SLOWER
+		 * than the enter, and the total is under two seconds for something purely informational.
 		 */
-		setTimeout(() => {
+		toastTimer = setTimeout(() => {
 			toasts = toasts.filter((t) => t.id !== id);
 		}, 820);
 	}
@@ -173,8 +201,10 @@
 	 *     0.75     -0.94        1.00     <- ~1px past, per Sam
 	 *     1.0       0.00        1.00
 	 *
-	 * OPACITY leads now rather than lagging: `min(1, t * 1.9)` reaches full by t=0.53, so the toast is
-	 * legible for most of the climb instead of appearing at the top of it.
+	 * OPACITY: `min(1, t * 1.45)^1.6`. Retuned once more — the first correction over-shot the other way
+	 * and Sam called it "still too solid to start". It now leaves the source almost transparent (0.05
+	 * at t=0.1) and reaches full at t=0.69, so it is faint exactly while it is behind the circle and
+	 * solid only once it has cleared it.
 	 *
 	 * TRAVEL is the back-out curve fed a SLOWED input (`t^1.7`) rather than raw `t`. Cubic back-out on
 	 * its own is heavily front-loaded — 80% of the distance is gone by t=0.3 — which is what put the
@@ -211,7 +241,7 @@
 			 */
 			css: (t: number) => {
 				const y = (1 - riseEase(t)) * RISE_PX;
-				const o = Math.pow(Math.min(1, t * 1.9), 1.15);
+				const o = Math.pow(Math.min(1, t * 1.45), 1.6);
 				return `opacity: ${o.toFixed(3)}; transform: translate(-50%, ${y.toFixed(2)}px);`;
 			}
 		};
@@ -393,8 +423,8 @@
 			<span
 				class="toast"
 				style="left: {t.x}px"
-				in:toastIn={{ duration: 430 }}
-				out:toastOut={{ duration: 780 }}
+				in:toastIn={{ duration: 345 }}
+				out:toastOut={{ duration: superseding ? 0 : 780 }}
 			>
 				{t.msg}
 			</span>
