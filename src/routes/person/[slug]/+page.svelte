@@ -52,14 +52,54 @@
 		return !(Array.isArray(d.person.tags) && d.person.tags.includes(HARTFORD_FOUNDER));
 	}
 
+	/** Leading honorifics, stripped before picking a given name — otherwise "Rev. Thomas Hooker"
+	 *  shortens to "Rev. Hooker", which is a title and a surname rather than a name. */
+	const TITLES =
+		/^(rev|dr|capt|col|maj|gen|adm|lt|sgt|gov|sen|hon|sir|prof|mr|mrs|ms|miss|elder|deacon|judge)\.?$/i;
+	/** Trailing generational suffixes. Kept, but moved to the END of the shortened form, because
+	 *  "James Pierpont IV" distinguishes a person where "James IV" names nobody. */
+	const SUFFIXES = /^(jr|sr|i{1,3}|iv|v|vi{1,3}|ix|x)\.?$/i;
+
 	function shortNameFor(p: (typeof f)['person']): string {
+		// 1. The curated short name, when a record has one. 377 people do.
 		const chip = p.bio?.chip_first_name?.trim();
 		if (chip) return chip;
+
+		// 2. The structured parts, when they exist.
 		const parts = [p.name?.first_name, p.name?.last_name, p.name?.suffix]
 			.map((x) => x?.trim())
-			.filter(Boolean);
+			.filter(Boolean) as string[];
 		if (parts.length) return parts.join(' ');
-		return p.bio?.display_name ?? p.name?.display_name ?? 'this person';
+
+		/**
+		 * 3. DERIVED FROM THE DISPLAY NAME — and this is the branch that actually runs.
+		 *
+		 * The chain above was written assuming `first_name` / `last_name` were populated. Measured
+		 * 082926 on the records that exposed the bug: they are NULL. Alice Claypoole Gwynne
+		 * Vanderbilt, Richard Hooker and Rev. Thomas Hooker all carry `bio.display_name` and nothing
+		 * else, so every one of them fell through to the FULL name — which is what pushed
+		 * "Make Alice Claypoole Gwynne Vanderbilt my home" past the edge of its own button.
+		 *
+		 * So the parts are recovered from the display name instead: drop a leading honorific, lift a
+		 * trailing generational suffix aside, take the FIRST and LAST of what remains, and put the
+		 * suffix back.
+		 *
+		 *   "Alice Claypoole Gwynne Vanderbilt"  -> Alice Vanderbilt
+		 *   "Rev. Thomas Hooker"                 -> Thomas Hooker
+		 *   "James Morris Pierpont IV"           -> James Pierpont IV
+		 *   "Richard Hooker"                     -> Richard Hooker  (unchanged)
+		 *
+		 * A one-word display name returns itself rather than being mangled into halves.
+		 */
+		const full = (p.bio?.display_name ?? p.name?.display_name ?? '').trim();
+		if (!full) return 'this person';
+
+		const tokens = full.split(/\s+/);
+		if (tokens[0] && TITLES.test(tokens[0])) tokens.shift();
+		const suffix = tokens.length > 1 && SUFFIXES.test(tokens[tokens.length - 1]) ? tokens.pop() : '';
+		if (!tokens.length) return full;
+		if (tokens.length === 1) return [tokens[0], suffix].filter(Boolean).join(' ');
+		return [tokens[0], tokens[tokens.length - 1], suffix].filter(Boolean).join(' ');
 	}
 	import DeckRiffle from '$lib/components/DeckRiffle.svelte';
 	import { untrack, tick } from 'svelte';

@@ -582,10 +582,18 @@
 		gap: 8px;
 	}
 	.confirm-btn {
-		/* NEVER WRAP. A two-line button reads as a paragraph with a border, and the name inside it
-		   is variable-length by nature — "Commodore Vanderbilt" wrapped where "Sam" would not. The
-		   short name keeps it inside one line; this keeps it there even when it does not. */
+		/**
+		 * NEVER WRAP, AND NEVER OVERFLOW EITHER — the second half was missing and it is what Sam saw:
+		 * "you can see it pushes content over edge of modal button."
+		 *
+		 * `nowrap` alone converts a wrap into an overflow, which is worse: a wrapped button is ugly, a
+		 * button whose text runs past the panel is broken. The short name is the real fix (see
+		 * `shortNameFor`); this is the backstop for whatever it cannot shorten.
+		 */
 		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100%;
 		padding: 8px 13px;
 		border: 0;
 		border-radius: 6px;

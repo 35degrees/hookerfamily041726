@@ -328,11 +328,19 @@
 		align-items: center;
 		justify-content: center;
 		gap: 6px;
-		/* TIGHT UNDER THE TITLE (Sam: "so much space between"). The gap was four things stacking —
-		   the title's 5px bottom padding, a 2px margin, the menu's own 4px flex gap and 8px of
-		   padding here — which read as a blank band rather than as a heading belonging to the list
-		   beneath it. A heading sits close to what it names. */
-		padding: 2px 8px 5px;
+		/**
+		 * A HEADING SITS CLOSE TO WHAT IT NAMES AND FAR FROM WHAT IT DOES NOT — and the two headings
+		 * in this menu are in opposite situations, which the first fix missed.
+		 *
+		 * The SECOND heading follows a card from the list ABOVE it. At 2px it read as belonging to
+		 * that card (Sam: "too close"). The FIRST heading follows the title, where the same 2px is
+		 * correct — tightening it was the fix for "so much space between", and I applied it to both.
+		 *
+		 * So the separation is the default and the first one is the exception, expressed as an
+		 * adjacency rather than a class: a heading immediately after the title is tight; any other is
+		 * pushed off the list it is leaving.
+		 */
+		padding: 13px 8px 5px;
 		font-family: var(--font-opensans, 'Open Sans', sans-serif);
 		/* 9 -> 11.25px (Sam, "25% bigger"). At 9px an uppercase tracked label was smaller than the
 		   years on the cards beneath it, so the thing NAMING the group was quieter than the group. */
@@ -353,6 +361,10 @@
 	 * being told it had one. A patch that reports success without matching anything is worse than a
 	 * failed one; verify the file, not the script's exit code.
 	 */
+	/* The one that follows the TITLE, not a card — see above. */
+	.menu-title + .menu-head {
+		padding-top: 2px;
+	}
 	.menu-head-label {
 		opacity: 0.5;
 	}
