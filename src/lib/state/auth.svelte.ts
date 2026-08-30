@@ -67,6 +67,16 @@ let snapshot = $state<{ user: SessionUser | null; isPending: boolean }>({
 let heroOverride = $state<string | null | undefined>(undefined);
 
 /**
+ * THE LIST NAMES' OPTIMISTIC SHADOW — same pattern as `heroOverride`, same reason, same trap avoided.
+ *
+ * `list1Name` / `list2Name` live on the session user, which lags a write by a full session refresh.
+ * A rename that takes a second to appear in the header you just typed it into would read as the edit
+ * having failed. These are read in preference to the session's values until the session agrees, and
+ * are retired by the subscriber below rather than on a timer.
+ */
+let nameOverride = $state<Partial<Record<ListId, string | null>>>({});
+
+/**
  * THE BOOKMARK SET, CLIENT-SIDE, AND THIS IS THE WHOLE REASON PERSON PAGES STAY STATIC.
  *
  * The obvious way to render a bookmark ribbon is to read the session in the page's `load` and hand
@@ -78,15 +88,18 @@ let heroOverride = $state<string | null | undefined>(undefined);
  * person payload, and it makes the ribbon answer instantly on every card including ones the reader
  * has not visited yet.
  */
-let marks = $state<Map<string, ListId>>(new Map());
+type Mark = { list: ListId; createdAt: string };
+let marks = $state<Map<string, Mark>>(new Map());
 let marksLoaded = $state(false);
 
 async function hydrateBookmarks() {
 	try {
 		const res = await fetch('/api/bookmarks');
 		if (!res.ok) return;
-		const data = (await res.json()) as { bookmarks: { personId: string; list: ListId }[] };
-		marks = new Map(data.bookmarks.map((b) => [b.personId, b.list]));
+		const data = (await res.json()) as {
+			bookmarks: { personId: string; list: ListId; createdAt: string }[];
+		};
+		marks = new Map(data.bookmarks.map((b) => [b.personId, { list: b.list, createdAt: b.createdAt }]));
 		marksLoaded = true;
 	} catch {
 		/* A failed hydrate leaves the ribbons blank rather than wrong. The next sign-in retries. */
@@ -114,6 +127,10 @@ if (browser) {
 		 */
 		if (heroOverride !== undefined && (user?.heroPersonId ?? null) === heroOverride) {
 			heroOverride = undefined;
+		}
+		for (const l of [1, 2] as ListId[]) {
+			const settled = (l === 1 ? user?.list1Name : user?.list2Name) ?? null;
+			if (l in nameOverride && nameOverride[l] === settled) delete nameOverride[l];
 		}
 
 		/**
@@ -186,7 +203,33 @@ export const auth = {
 
 	/** Which list a person is in, or null. The ribbon's entire question. */
 	listFor(personId: string): ListId | null {
-		return marks.get(personId) ?? null;
+		return marks.get(personId)?.list ?? null;
+	},
+
+	/**
+	 * THE MOST RECENT `n` IN ONE LIST, newest first.
+	 *
+	 * Sam's rule for the hover menu, and it is per-list rather than overall: "if they saved 5 list 1
+	 * and 2 list 2 all 7 will appear. if they saved 8 list 1 and 1 list 2 then only the most recent 5
+	 * from list 1 will appear". So each list is capped independently and the menu is up to 2n rows,
+	 * not n. A single pooled cap would let a busy List 1 crowd List 2 off the menu entirely, which
+	 * would make the second list look broken to someone who had just used it.
+	 *
+	 * Sorted on `created_at` — "5 latest SAVED", which is the free column. Recently-OPENED would need
+	 * a write on navigation, and that is the shape that keeps a scale-to-zero database awake.
+	 */
+	recent(list: ListId, n: number): { personId: string; createdAt: string }[] {
+		return [...marks.entries()]
+			.filter(([, m]) => m.list === list)
+			.sort((a, b) => (a[1].createdAt < b[1].createdAt ? 1 : -1))
+			.slice(0, n)
+			.map(([personId, m]) => ({ personId, createdAt: m.createdAt }));
+	},
+
+	/** Everything in one list, newest first — the modal's column. Uncapped: Sam's rule is "as many
+	 *  bookmarks in each list as they want", and the column scrolls. */
+	all(list: ListId): { personId: string; createdAt: string }[] {
+		return this.recent(list, Number.MAX_SAFE_INTEGER);
 	},
 	get marksLoaded(): boolean {
 		return marksLoaded;
@@ -202,8 +245,15 @@ export const auth = {
 	 */
 	listName(list: ListId): string {
 		const u = snapshot.user;
-		const custom = list === 1 ? u?.list1Name : u?.list2Name;
+		const custom = list in nameOverride ? nameOverride[list] : list === 1 ? u?.list1Name : u?.list2Name;
 		return (custom ?? '').trim() || `List ${list}`;
+	},
+	/** The stored value, or '' — what the edit box opens with. Distinct from `listName`, which is
+	 *  what the world SEES and never comes back empty. */
+	listNameRaw(list: ListId): string {
+		const u = snapshot.user;
+		const custom = list in nameOverride ? nameOverride[list] : list === 1 ? u?.list1Name : u?.list2Name;
+		return (custom ?? '').trim();
 	},
 	get isHero(): (personId: string) => boolean {
 		return (personId: string) => this.heroPersonId === personId;
@@ -225,7 +275,11 @@ export async function setBookmark(personId: string, list: ListId | null): Promis
 	const previous = marks.get(personId) ?? null;
 	const next = new Map(marks);
 	if (list === null) next.delete(personId);
-	else next.set(personId, list);
+	else
+		// A MOVE keeps its original timestamp; a NEW save stamps now. Re-stamping on a move would
+		// shuffle an ancestor to the top of the hover menu for changing which list they are in, which
+		// is not something the reader did to them.
+		next.set(personId, { list, createdAt: previous?.createdAt ?? new Date().toISOString() });
 	marks = next;
 
 	try {
@@ -251,6 +305,34 @@ export async function setBookmark(personId: string, list: ListId | null): Promis
  * the person being replaced rather than asking "Proceed?" about nothing in particular, and what lets
  * a cancelled confirmation still leave the reader knowing what they had.
  */
+/** 25 characters, matching the server's own cap. The input's `maxlength` is a courtesy; the server
+ *  is the constraint (see /api/lists). */
+export const LIST_NAME_MAX = 25;
+
+/**
+ * RENAME A LIST. Empty string clears it back to "List 1" / "List 2" rather than storing the default.
+ *
+ * Optimistic like the bookmark ribbon, and rolled back on failure for the same reason: a header that
+ * keeps a name the server rejected is a lie the reader only discovers on their next visit.
+ */
+export async function setListName(list: ListId, name: string): Promise<void> {
+	const before = auth.listNameRaw(list);
+	const trimmed = name.trim().slice(0, LIST_NAME_MAX);
+	nameOverride[list] = trimmed || null;
+	try {
+		const res = await fetch('/api/lists', {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ list, name: trimmed || null })
+		});
+		if (!res.ok) throw new Error(String(res.status));
+		void authClient.getSession({ query: { disableCookieCache: true } }).catch(() => {});
+	} catch (err) {
+		nameOverride[list] = before || null;
+		throw err;
+	}
+}
+
 export async function setHero(personId: string | null): Promise<{ previousPersonId: string | null }> {
 	// OPTIMISTIC FIRST — the house fills on the click, not two round trips later.
 	const before = auth.heroPersonId;

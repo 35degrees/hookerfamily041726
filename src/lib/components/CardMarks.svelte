@@ -93,20 +93,21 @@
 		 *
 		 *   2200ms hold, no fade at all   "dark black ink ... takes up all their attention"
 		 *   220 hold / 420 out            "a little too aggressive ... the off and on"
-		 *   350 hold / 840 out            here
+		 *   350 hold / 840 out            "rapid fire"
+		 *   420 hold / 1010 out           here — +20%, ~1.7s total
 		 *
 		 * And there IS prior art rather than taste — Sam asked. Material's snackbar motion is ~200ms
 		 * in and ~150ms out; iOS-style transient toasts run a couple of seconds end to end. The
 		 * common shape across both: the ENTER is quick enough to feel like a response to the click,
 		 * the EXIT is slower than the enter, and the total is under two seconds for something purely
-		 * informational. 220 in / 350 hold / 840 out is ~1.4s total and sits inside that.
+		 * informational. 265 in / 420 hold / 1010 out is ~1.7s total and sits inside that.
 		 *
 		 * The exit being three to four times the enter is the part that reads as "gentle" rather than
 		 * "blinking" — an abrupt disappearance is what made the first version feel like a switch.
 		 */
 		setTimeout(() => {
 			toasts = toasts.filter((t) => t.id !== id);
-		}, 350);
+		}, 420);
 	}
 
 	/**
@@ -304,7 +305,7 @@
 		{/if}
 
 		{#each toasts as t (t.id)}
-			<span class="toast" in:toastIn={{ duration: 220 }} out:toastOut={{ duration: 840 }}>
+			<span class="toast" in:toastIn={{ duration: 265 }} out:toastOut={{ duration: 1010 }}>
 				{t.msg}
 			</span>
 		{/each}

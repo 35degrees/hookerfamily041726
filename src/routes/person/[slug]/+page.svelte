@@ -10,6 +10,7 @@
 	import SearchModal from '$lib/components/SearchModal.svelte';
 	import AuthModal from '$lib/components/AuthModal.svelte';
 	import CardMarks from '$lib/components/CardMarks.svelte';
+	import BookmarksModal from '$lib/components/BookmarksModal.svelte';
 
 	/**
 	 * THE SHORT NAME, for the home-card confirmation's BUTTON (roadmap §50).
@@ -1738,6 +1739,10 @@
      Google-only removes every field — so it is one button, which is the species of object §45.12
      says every control in this app has to be. -->
 <AuthModal />
+<!-- FIVE NOW. Same rule, unchanged by the fifth: it shares the veil's VALUES and the single slot in
+     `modal.svelte.ts`, and shares nothing that renders. Two columns, editable headers, and rows that
+     terminate in the app's EXISTING arrival rather than a sixth way to travel (§45.16). -->
+<BookmarksModal />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
 <!-- The keep-alive test listens on the WINDOW, not on the stage. On .page-container it simply stopped

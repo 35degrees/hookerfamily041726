@@ -21,12 +21,21 @@
 	import SearchTrigger from './SearchTrigger.svelte';
 	import ShuffleNotables from './ShuffleNotables.svelte';
 	import AuthTrigger from './AuthTrigger.svelte';
+	import BookmarksTrigger from './BookmarksTrigger.svelte';
 	import { ascension } from '$lib/state/ascension.svelte';
 
 	let { settled = true }: { settled?: boolean } = $props();
 </script>
 
 <div class="top-right-chrome">
+	<!-- MY BOOKMARKS TAKES THE INNERMOST SEAT (Sam: "to left of Shuffle Notable button"), and it is
+	     the only control here that renders ONLY when signed in — so a signed-out corner is the three
+	     it has always been, and nothing shifts position when the session resolves.
+
+	     Reading left to right the corner now runs narrow-to-broad: your own saved people, a random
+	     notable, the whole tree, your account. §45.15's original rule seated Search outermost on the
+	     opposite reading; Sam overturned that for Sign In and this follows the same call. -->
+	<BookmarksTrigger />
 	<!-- SHUFFLE STILL YIELDS THE ZONE (roadmap §40, its own reasoning): it is a door OUT to a random
 	     notable, and offering an exit that skips the descent undoes the whole gesture. -->
 	{#if !ascension.active}

@@ -127,7 +127,13 @@ async function checkPageIgnoresSession() {
 
 /** CHECK 4 — the routes that ARE allowed to be dynamic, so the contract is stated positively too. */
 async function checkDynamicSurfaceIsSmall() {
-	const allowed = ['/', '/api/auth', '/api/bookmarks', '/api/hero'];
+	/**
+	 * THE ALLOWLIST IS THE POINT, and it is meant to be edited deliberately rather than kept in step.
+	 * It went red on 082926 the moment `/api/lists` was added — which is the check doing its job:
+	 * every new server route has to be argued for and written down here, so the dynamic surface can
+	 * never grow by accident.
+	 */
+	const allowed = ['/', '/api/auth', '/api/bookmarks', '/api/hero', '/api/lists'];
 	const serverRoutes = [];
 	const walk = (dir) => {
 		for (const e of readdirSync(dir, { withFileTypes: true })) {

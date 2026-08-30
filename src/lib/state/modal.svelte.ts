@@ -17,7 +17,7 @@
  */
 /** 082926: `auth` joins as the FOURTH surface, and it is a fourth FILE — §46.2. It shares this slot
  *  and the veil's values; it shares nothing that renders. `bookmarks` follows in slice 5. */
-export type ModalKind = 'connect-thomas' | 'connect-anyone' | 'search' | 'auth';
+export type ModalKind = 'connect-thomas' | 'connect-anyone' | 'search' | 'auth' | 'bookmarks';
 
 let openKind = $state<ModalKind | null>(null);
 
