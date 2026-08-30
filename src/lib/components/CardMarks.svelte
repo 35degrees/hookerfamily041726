@@ -16,7 +16,16 @@
 	 * is that an unfilled ribbon nobody can use is a control that lies about being available. The
 	 * cost is that the feature is undiscoverable until you have an account; that is a known trade.
 	 *
-	 * A SIBLING OF THE CLIPPED CARD, NEVER A CHILD. The featured card's silhouette is a `clip-path`,
+	 * NO `title` ATTRIBUTES (Sam: "lets get rid of your sub bottom tooltip. i think its clear what the
+ * bookmark is for"). The browser's native tooltip is a second, slower, differently-styled label
+ * arriving under the cursor while this component already has a toast of its own saying what
+ * happened — two explanations for one control, in two visual languages, one of which the app has no
+ * say over.
+ *
+ * The strings survive as `aria-label`, so a screen reader still gets them. Dropping them entirely
+ * would have traded a visual annoyance for an accessibility regression, which is not a trade.
+ *
+ * A SIBLING OF THE CLIPPED CARD, NEVER A CHILD. The featured card's silhouette is a `clip-path`,
 	 * so anything inside it is cut at the boundary — and these circles sit MOSTLY OUTSIDE the card,
 	 * anchored by their bottom-right corner over the top-left corner (Sam: "largely off the card").
 	 * Mounted as a child, ~80% of each circle would simply vanish, and it would read as a broken
@@ -253,7 +262,7 @@
 			class:blue={list === 2}
 			onclick={onRibbon}
 			aria-pressed={list !== null}
-			title={list === null
+			aria-label={list === null
 				? `Save ${personName}`
 				: `In ${auth.listName(list)} — click to ${list === 1 ? 'move' : 'remove'}`}
 		>
@@ -278,7 +287,7 @@
 			onclick={onHouse}
 			disabled={heroBusy}
 			aria-pressed={isHero}
-			title={isHero
+			aria-label={isHero
 				? `${personName} is your home card — click to clear`
 				: `Make ${personName} your home card`}
 		>
