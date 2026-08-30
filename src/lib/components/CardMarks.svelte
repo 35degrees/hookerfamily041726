@@ -77,11 +77,27 @@
 	function say(msg: string) {
 		const id = ++toastId;
 		toasts = [...toasts, { id, msg }];
-		// HOW LONG IT IS HELD; the 420ms fade below runs after this, so the whole life is ~640ms and
-		// most of the visible half is already leaving. Sam: "it needs to fade out quickly each click."
+		/**
+		 * THE HOLD. The fade-out runs AFTER this, so the total life is hold + out.
+		 *
+		 * TUNED TWICE, IN BOTH DIRECTIONS, WHICH IS WHY THE NUMBERS ARE WRITTEN DOWN:
+		 *
+		 *   2200ms hold, no fade at all   "dark black ink ... takes up all their attention"
+		 *   220 hold / 420 out            "a little too aggressive ... the off and on"
+		 *   350 hold / 840 out            here
+		 *
+		 * And there IS prior art rather than taste — Sam asked. Material's snackbar motion is ~200ms
+		 * in and ~150ms out; iOS-style transient toasts run a couple of seconds end to end. The
+		 * common shape across both: the ENTER is quick enough to feel like a response to the click,
+		 * the EXIT is slower than the enter, and the total is under two seconds for something purely
+		 * informational. 220 in / 350 hold / 840 out is ~1.4s total and sits inside that.
+		 *
+		 * The exit being three to four times the enter is the part that reads as "gentle" rather than
+		 * "blinking" — an abrupt disappearance is what made the first version feel like a switch.
+		 */
 		setTimeout(() => {
 			toasts = toasts.filter((t) => t.id !== id);
-		}, 220);
+		}, 350);
 	}
 
 	/**
@@ -174,37 +190,39 @@
 		}
 
 		/**
-		 * READ `auth.heroPersonId`, NOT `auth.user?.heroPersonId`.
+		 * THE CONFIRMATION IS NOT OPTIONAL, AND MY MAKING IT SO IS WHY THIS LOOKED BROKEN.
 		 *
-		 * The first reads through the optimistic override; the second goes straight to the session
-		 * store, which lags a write. Using the raw session value meant `previous` was null right
-		 * after setting a hero, so setting a SECOND one skipped the confirmation entirely — the gate
-		 * appeared to have been removed when it had only been asked the wrong question.
+		 * Sam asked for it plainly at the start: "a modal confirmation can occur, saying something
+		 * like by clicking this, James will be the first card you see when you log in. Proceed? and
+		 * then there's a OK or cancel button. so its an extra step to confirm."
+		 *
+		 * I then added an asymmetry nobody requested — skip the gate when there is no PREVIOUS hero,
+		 * on the reasoning that a first set destroys nothing. The reasoning was fine and the decision
+		 * was not mine to make. Worse, it made the feature look broken rather than opinionated: with
+		 * `heroPersonId` null, EVERY set is a first set, so the gate never appeared at all, and Sam
+		 * reported the modal missing four separate times while the code did exactly what I had told
+		 * it to.
+		 *
+		 * It always gates now. The only thing that varies is the WORDING — replacing names the person
+		 * being lost, because that is the fact worth carrying and it is what a cancelled confirmation
+		 * should leave you knowing.
+		 *
+		 * The lesson is not about modals: an unrequested optimisation that removes a step the user
+		 * asked for is indistinguishable, from outside, from a bug.
 		 */
 		const previous = auth.heroPersonId;
-
-		// FIRST HERO: purely additive, nothing to destroy, no gate. Taxing this gesture would be
-		// taxing the one the feature wants to encourage.
-		if (!previous || previous === personId) {
-			await commitHero();
-			return;
-		}
-
-		/**
-		 * REPLACING: name the person being lost.
-		 *
-		 * `load()` is the search index, idempotent and usually already warm because SearchTrigger
-		 * fetches it on hover. It is the app's only id → name resolver (see `personById`) — the
-		 * payloads are keyed by SLUG, and a hero is stored by ID, so there is no file to fetch.
-		 *
-		 * If it cannot be resolved — index still loading, or the person since severed — the
-		 * confirmation still appears, worded without a name. A gate that silently disappears when a
-		 * lookup fails would be the dangerous failure; a vaguer gate is the safe one.
-		 */
 		heroBusy = true;
 		try {
-			await load();
-			confirmReplacing = personById(previous)?.n ?? '';
+			// Resolve the outgoing hero's NAME if there is one. The search index is the app's only
+			// id -> name resolver (payloads are keyed by slug, heroes are stored by id), idempotent,
+			// and usually already warm from SearchTrigger's hover.
+			if (previous && previous !== personId) {
+				await load();
+				confirmReplacing = personById(previous)?.n ?? '';
+			} else {
+				// No previous hero: still gated, just with nothing to name.
+				confirmReplacing = '';
+			}
 		} catch {
 			confirmReplacing = '';
 		} finally {
@@ -277,7 +295,7 @@
 		{/if}
 
 		{#each toasts as t (t.id)}
-			<span class="toast" in:toastIn={{ duration: 110 }} out:toastOut={{ duration: 420 }}>
+			<span class="toast" in:toastIn={{ duration: 220 }} out:toastOut={{ duration: 840 }}>
 				{t.msg}
 			</span>
 		{/each}
@@ -294,7 +312,7 @@
 					This will replace <strong>{confirmReplacing}</strong> as the first card you see when you
 					sign in.
 				{:else}
-					This will replace your current home card — the first card you see when you sign in.
+					<strong>{personName}</strong> will be the first card you see when you sign in.
 				{/if}
 			</p>
 			<div class="confirm-acts">
