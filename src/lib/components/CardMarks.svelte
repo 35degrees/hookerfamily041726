@@ -442,7 +442,12 @@
 					This will replace <strong>{confirmReplacing}</strong> as the first card you see when you
 					sign in.
 				{:else}
-					<strong>{personName}</strong> will be the first card you see when you sign in.
+					<!-- NAMES THE ROLE BEFORE THE CONSEQUENCE (Sam). "Will be the first card you see" is
+					     only the EFFECT; "will be your home card" is the thing being set, and a reader who
+					     has just clicked a house they may not have used before is owed the noun as well as
+					     what it does. -->
+					<strong>{personName}</strong> will be your home card, and the first card you see when you
+					sign in.
 				{/if}
 			</p>
 			<div class="confirm-acts">
@@ -718,6 +723,9 @@
 	}
 	.confirm-text {
 		margin: 0;
+		/* CENTRED (Sam). The panel is one sentence and two buttons; a left-aligned line over a
+		   centred-ish control row read as a fragment of a longer document rather than as a question. */
+		text-align: center;
 		font-family: var(--font-opensans, 'Open Sans', sans-serif);
 		font-size: 13px;
 		line-height: 1.5;
@@ -728,7 +736,9 @@
 	}
 	.confirm-acts {
 		display: flex;
-		justify-content: flex-end;
+		/* Centred to match the sentence above it — a centred question with right-aligned answers puts
+		   its two halves on different axes. */
+		justify-content: center;
 		gap: 8px;
 	}
 	.confirm-btn {
