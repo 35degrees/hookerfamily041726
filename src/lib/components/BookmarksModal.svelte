@@ -551,6 +551,89 @@
 		--card-bg: var(--color-foundergreen);
 	}
 
+
+	/**
+	 * THE CARD'S TYPOGRAPHY, AND IT HAS TO BE STATED HERE — this is what was wrong.
+	 *
+	 * `.nm` / `.yr` / `.line2` / `.text-area` are styled LOCALLY inside SearchModal, not globally, so
+	 * borrowing the class names inherited nothing and the browser's defaults showed through: a huge
+	 * unstyled name with no padding over tiny years. Sam: "the giant font for the names with no
+	 * padding and the little tiny years font."
+	 *
+	 * THE FACES ARE THE HOUSE'S, taken for the reasons SearchModal records rather than picked:
+	 *   NAME — Outfit at 400, in inkblue. FeaturedCard's <h1> is `font-outfit` + `font-medium` +
+	 *          `text-inkblue`, and a bookmark row is the same person named the same way at a smaller
+	 *          size, so it takes the same face and the same ink rather than a near-miss of both.
+	 *   REST — Open Sans, inkblue at 80%, so a row is ONE ink at two strengths rather than a blue
+	 *          name sitting on a line of warm brown.
+	 */
+	.text-area {
+		padding: 7px 12px;
+		gap: 3px;
+	}
+	.line1 {
+		display: flex;
+		align-items: baseline;
+		gap: 7px;
+		min-width: 0;
+	}
+	.nm {
+		font-family: var(--font-outfit, 'Outfit Variable', sans-serif);
+		font-size: 15px;
+		font-weight: 400;
+		line-height: 1.2;
+		color: var(--color-inkblue);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.yr {
+		font: 400 12px/1.2 var(--font-open-sans, 'Open Sans', sans-serif);
+		color: color-mix(in srgb, var(--color-inkblue) 80%, transparent);
+		white-space: nowrap;
+		flex: none;
+	}
+	.line2 {
+		font: 400 12px/1.3 var(--font-open-sans, 'Open Sans', sans-serif);
+		color: color-mix(in srgb, var(--color-inkblue) 80%, transparent);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	/* The dark grounds take cream ink — §41.3: cream is defined entirely by the dark behind it. */
+	.orbit-row .nm,
+	.founder-row .nm,
+	.orbit-row .yr,
+	.founder-row .yr,
+	.orbit-row .line2,
+	.founder-row .line2 {
+		color: rgba(247, 241, 230, 0.94);
+	}
+
+	/* The star is a GUTTER: fixed width, reserved whether filled or not, so every name starts at the
+	   same x and the column stays scannable. In the NAME's own ink rather than gold — a gold mark on
+	   a navy name reads as a separate object stacked down its own column. */
+	.star {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 13px;
+		margin-left: 10px;
+		font-size: 10px;
+		line-height: 1;
+		color: color-mix(in srgb, var(--color-inkblue) 55%, transparent);
+	}
+	.star:not(.has) {
+		visibility: hidden;
+	}
+	.bm-hit .text-area {
+		padding-left: 8px;
+	}
+	.orbit-row .star,
+	.founder-row .star {
+		color: rgba(247, 241, 230, 0.7);
+	}
+
 	.row-wrap {
 		display: flex;
 		align-items: center;

@@ -79,6 +79,39 @@
 		2: rows.filter((r) => r.list === 2)
 	});
 
+	/**
+	 * WARM THE PORTRAITS BEFORE THE MENU EXISTS.
+	 *
+	 * Sam: "i watched all of them pop in over the course of a couple of seconds." They were fetched
+	 * when the <img> mounted — i.e. on hover — so ten requests started at the moment the reader was
+	 * already looking at the gaps they would fill.
+	 *
+	 * SAM ASKED WHETHER THE NEIGHBOURHOOD PRELOAD COULD DO THIS. It cannot, and the reason is worth
+	 * writing down: that mechanism preloads the cards AROUND the current person — a set derived from
+	 * where you are standing. Bookmarks are an arbitrary set derived from what you once saved, and the
+	 * two overlap only by accident. Right mechanism, wrong set.
+	 *
+	 * So this warms them directly, and it is small enough not to need cleverness: at most ten
+	 * portraits, already sized by Cloudinary, fetched once and then served from the browser's cache
+	 * for the rest of the session. It runs as soon as the ROWS resolve — which is when the session and
+	 * the search index have both landed — rather than waiting for the pointer, so by the time anyone
+	 * hovers the images are already there.
+	 *
+	 * `new Image()` rather than a <link rel=preload>: no markup, no cleanup, and the browser cache is
+	 * the thing being populated either way. `decoding = 'async'` keeps the decode off the main thread,
+	 * which matters because this fires while the tree may still be animating.
+	 */
+	const warmed = new Set<string>();
+	$effect(() => {
+		for (const r of rows) {
+			if (!r.ph || warmed.has(r.ph)) continue;
+			warmed.add(r.ph);
+			const im = new Image();
+			im.decoding = 'async';
+			im.src = r.ph;
+		}
+	});
+
 	function go(r: Row) {
 		open = false;
 		arriveAtPerson(r.slug, (r.f & CAT.INFLUENCE) !== 0);
@@ -272,6 +305,57 @@
 	 * amazon prime music." Only the height and the photo width are stated; the paper, the shadow, the
 	 * radius and the line-status shading all come from the house.
 	 */
+
+	/**
+	 * THE CARD'S TYPOGRAPHY, AND IT HAS TO BE STATED HERE — this is what was wrong.
+	 *
+	 * `.nm` / `.yr` / `.line2` / `.text-area` are styled LOCALLY inside SearchModal, not globally, so
+	 * borrowing the class names inherited nothing and the browser's defaults showed through: a huge
+	 * unstyled name with no padding over tiny years. Sam: "the giant font for the names with no
+	 * padding and the little tiny years font."
+	 *
+	 * THE FACES ARE THE HOUSE'S, taken for the reasons SearchModal records rather than picked:
+	 *   NAME — Outfit at 400, in inkblue. FeaturedCard's <h1> is `font-outfit` + `font-medium` +
+	 *          `text-inkblue`, and a bookmark row is the same person named the same way at a smaller
+	 *          size, so it takes the same face and the same ink rather than a near-miss of both.
+	 *   REST — Open Sans, inkblue at 80%, so a row is ONE ink at two strengths rather than a blue
+	 *          name sitting on a line of warm brown.
+	 */
+	.text-area {
+		padding: 5px 10px;
+		gap: 1px;
+	}
+	.line1 {
+		display: flex;
+		align-items: baseline;
+		gap: 7px;
+		min-width: 0;
+	}
+	.nm {
+		font-family: var(--font-outfit, 'Outfit Variable', sans-serif);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.2;
+		color: var(--color-inkblue);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.line2 {
+		font: 400 10.5px/1.3 var(--font-open-sans, 'Open Sans', sans-serif);
+		color: color-mix(in srgb, var(--color-inkblue) 80%, transparent);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	/* The dark grounds take cream ink — §41.3: cream is defined entirely by the dark behind it. */
+	.orbit-row .nm,
+	.founder-row .nm,
+	.orbit-row .line2,
+	.founder-row .line2 {
+		color: rgba(247, 241, 230, 0.94);
+	}
+
 	.menu-hit {
 		height: 42px;
 		flex: none;
