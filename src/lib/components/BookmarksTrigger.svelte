@@ -147,12 +147,16 @@
 				}
 			}}
 		>
-			<svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+			<!-- FILLED, AND IN THE HOUSE GOLD rather than `currentColor` (Sam). The word stays
+			     ground-aware — cream on midnight, ink on the sheet — while the ribbon holds one colour
+			     throughout, because it is the same object as a gold ribbon on a card and should be
+			     recognisable as that from across the screen. -->
+			<svg class="bm-mark" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
 				<path
 					d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15.2a.6.6 0 0 1-.94.5L12 16.6l-5.56 4.1a.6.6 0 0 1-.94-.5V5A1.5 1.5 0 0 1 7 3.5z"
-					fill="none"
+					fill="currentColor"
 					stroke="currentColor"
-					stroke-width="1.6"
+					stroke-width="1.5"
 					stroke-linejoin="round"
 				/>
 			</svg>
@@ -166,7 +170,28 @@
 				<div class="menu-title">Recently Added Bookmarks</div>
 				{#each [1, 2] as const as list}
 					{#if byList[list].length}
-						<div class="menu-head">{auth.listName(list)}</div>
+						<!-- THE RIBBON REJOINS THE HEADING (Sam) — and this is where it belongs rather than
+						     on every row: stated once per group it IDENTIFIES the list, where stated per row it
+						     restated the heading five times. Gold for List 1, blue for List 2, the same two
+						     inks the card's ribbon cycles through. -->
+						<div class="menu-head">
+							<svg
+								viewBox="0 0 24 24"
+								width="10"
+								height="10"
+								aria-hidden="true"
+								class={list === 1 ? 'gold' : 'blue'}
+							>
+								<path
+									d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15.2a.6.6 0 0 1-.94.5L12 16.6l-5.56 4.1a.6.6 0 0 1-.94-.5V5A1.5 1.5 0 0 1 7 3.5z"
+									fill="currentColor"
+									stroke="currentColor"
+									stroke-width="1.5"
+									stroke-linejoin="round"
+								/>
+							</svg>
+							<span class="menu-head-label">{auth.listName(list)}</span>
+						</div>
 						{#each byList[list] as r (r.personId)}
 							{@const isFounder = (r.f & CAT.FOUNDER) !== 0 && r.id !== 'H00001'}
 							{@const isOrbit = (r.f & CAT.INFLUENCE) !== 0 && !isFounder}
@@ -222,7 +247,10 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 5px;
-		font: 500 12px/1 var(--font-inter, sans-serif);
+		/* 12 -> 13 (Sam). A shade larger than Search and Sign In beside it, which is right: this is
+		   the only control in the corner that is a place of the reader's OWN rather than a door into
+		   the tree. */
+		font: 500 13px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.02em;
 		color: rgba(43, 38, 32, 0.7);
 		cursor: pointer;
@@ -230,6 +258,12 @@
 		padding: 6px 2px;
 		white-space: nowrap;
 		transition: color 180ms ease-out;
+	}
+	/* The gold does not answer the ground — it is the ribbon's own colour on a card and stays that
+	   colour here, so the two read as one object. */
+	.bm-mark {
+		color: #dcb130;
+		flex: none;
 	}
 	.bm-word:hover,
 	.bm-word:focus-visible {
@@ -278,6 +312,7 @@
 	/* The title names the whole stack; the per-list heads name each group under it. Two levels, so
 	   the smaller one is quieter rather than the same size in a different weight. */
 	.menu-title {
+		text-align: center;
 		padding: 4px 6px 5px;
 		border-bottom: 1px solid rgba(43, 38, 32, 0.1);
 		margin-bottom: 2px;
@@ -290,7 +325,11 @@
 		opacity: 0.7;
 	}
 	.menu-head {
-		padding: 5px 8px 3px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 5px;
+		padding: 7px 8px 4px;
 		font-family: var(--font-opensans, 'Open Sans', sans-serif);
 		font-size: 9px;
 		font-weight: 600;
