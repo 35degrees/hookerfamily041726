@@ -90,7 +90,6 @@ let nameOverride = $state<Partial<Record<ListId, string | null>>>({});
  */
 type Mark = { list: ListId; createdAt: string };
 let marks = $state<Map<string, Mark>>(new Map());
-let marksLoaded = $state(false);
 
 async function hydrateBookmarks() {
 	try {
@@ -100,7 +99,6 @@ async function hydrateBookmarks() {
 			bookmarks: { personId: string; list: ListId; createdAt: string }[];
 		};
 		marks = new Map(data.bookmarks.map((b) => [b.personId, { list: b.list, createdAt: b.createdAt }]));
-		marksLoaded = true;
 	} catch {
 		/* A failed hydrate leaves the ribbons blank rather than wrong. The next sign-in retries. */
 	}
@@ -144,7 +142,6 @@ if (browser) {
 		if (id === lastUserId) return;
 		lastUserId = id;
 		marks = new Map();
-		marksLoaded = false;
 		if (id) void hydrateBookmarks();
 	});
 }
@@ -230,13 +227,6 @@ export const auth = {
 	 *  bookmarks in each list as they want", and the column scrolls. */
 	all(list: ListId): { personId: string; createdAt: string }[] {
 		return this.recent(list, Number.MAX_SAFE_INTEGER);
-	},
-	get marksLoaded(): boolean {
-		return marksLoaded;
-	},
-	/** Newest first — the hover menu's "last five added" reads straight off this. */
-	get bookmarkCount(): number {
-		return marks.size;
 	},
 	/**
 	 * THE LIST'S NAME, WITH THE FALLBACK IN ONE PLACE. Null in the database means "never renamed",

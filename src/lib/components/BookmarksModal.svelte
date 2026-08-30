@@ -16,6 +16,7 @@
 	 * text box, 25 characters, and the new name propagates everywhere immediately because every
 	 * surface reads `auth.listName()` rather than holding its own copy (§50.2).
 	 */
+	import { listYears as years } from '$lib/utils/dates';
 	import { modal, closeModal } from '$lib/state/modal.svelte';
 	import { ascension } from '$lib/state/ascension.svelte';
 	import { auth, setListName, setBookmark, LIST_NAME_MAX, type ListId } from '$lib/state/auth.svelte';
@@ -72,13 +73,6 @@
 		return out;
 	}
 
-	/** The card's own rule for years, copied from SearchModal: a private-dates row shows "Living"
-	 *  rather than a range — the same gate every render site in the app reads. */
-	function years(r: { by: number | null; dy: number | null; pv?: boolean }): string {
-		if (r.pv) return 'Living';
-		if (r.by == null && r.dy == null) return '';
-		return `${r.by ?? '?'}–${r.dy ?? ''}`;
-	}
 
 	const list1 = $derived(rowsFor(1));
 	const list2 = $derived(rowsFor(2));

@@ -337,3 +337,34 @@ export function possessive(name: string): string {
 	const lastChar = name[name.length - 1].toLowerCase();
 	return lastChar === 's' ? `${name}'` : `${name}'s`;
 }
+
+/**
+ * THE YEARS A LIST ROW PRINTS — "1802–1866", "Living", or nothing.
+ *
+ * EXTRACTED 083026, and the reason is PRIVACY rather than tidiness. This encodes the presumed-living
+ * rule (DEPLOYMENT §6, schema): 241 people have `pv` set — living and not notable — and their DATES
+ * ARE WITHHELD everywhere in the app. Three byte-identical copies of a privacy rule had accumulated
+ * across SearchModal, BookmarksModal and BookmarksTrigger, and the failure mode of that is not
+ * duplication, it is a future edit landing in two of the three and leaking a living person's birth
+ * year from the one that was missed.
+ *
+ * SHARING THIS DOES NOT BREACH design §46.2. That law forbids sharing anything that RENDERS — a
+ * panel, a row, a veil, a schedule. This is a pure string function with no DOM, no timing and no
+ * behaviour: the same category as `kin.ts`, which two surfaces already share.
+ *
+ * WHY THE SLOT SAYS "Living" RATHER THAN NOTHING, carried verbatim from SearchModal where it was
+ * reasoned out: everywhere else in the app a blank date line has ONE meaning, because you are looking
+ * at one person and their card. A LIST puts 241 living people and 1,920 with no recorded birth year
+ * in the same column showing the same blank, and those are completely different facts — one is
+ * withheld, the other is missing. "Living" separates them, and discloses nothing a withheld death
+ * date did not already imply.
+ *
+ * This remains a LIST convention. The chips and the featured card still print nothing, and if that
+ * inconsistency should be closed it is a change to PersonBox and FeaturedCard — not a second rule
+ * invented at a call site.
+ */
+export function listYears(r: { by: number | null; dy: number | null; pv?: boolean }): string {
+	if (r.pv) return 'Living';
+	if (r.by == null && r.dy == null) return '';
+	return `${r.by ?? '?'}–${r.dy ?? ''}`;
+}

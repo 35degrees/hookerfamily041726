@@ -17,6 +17,7 @@
 	 * list that re-sorts six times while you type "thomas" has no time to have any. The motion budget
 	 * goes where it still means something — the veil coming in, and the exit into the card's flight.
 	 */
+	import { listYears as years } from '$lib/utils/dates';
 	import { modal, closeModal } from '$lib/state/modal.svelte';
 	import { ascension } from '$lib/state/ascension.svelte';
 	import {
@@ -384,27 +385,6 @@
 		a.remove();
 	}
 
-	/**
-	 * Years — or "Living", or nothing.
-	 *
-	 * `pv` (presumed living, not notable) still withholds the DATES, which is the app-wide rule and is
-	 * not being relaxed: no year is printed for these 241 people anywhere, here included.
-	 *
-	 * WHAT CHANGES IS THAT THE SLOT NO LONGER LIES BY OMISSION. Everywhere else in the app a blank date
-	 * line has one meaning, because you are looking at one person and their card. A RESULT LIST puts
-	 * 241 living people and 1,920 people with no recorded birth year in the same column showing the
-	 * same blank, and those are completely different facts — one is withheld, the other is missing.
-	 * "Living" separates them, and it discloses nothing a withheld death date did not already imply.
-	 *
-	 * This is a search-only convention today. The chips and the card still print nothing, and if that
-	 * inconsistency should be closed it is a change to PersonBox and FeaturedCard, not a second rule
-	 * invented here.
-	 */
-	function years(r: { by: number | null; dy: number | null; pv?: boolean }): string {
-		if (r.pv) return 'Living';
-		if (r.by == null && r.dy == null) return '';
-		return `${r.by ?? '?'}–${r.dy ?? ''}`;
-	}
 </script>
 
 {#if open}

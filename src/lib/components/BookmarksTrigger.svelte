@@ -21,6 +21,7 @@
 	 * SearchTrigger's own hover; this warms it too, so the menu is populated before the pointer
 	 * arrives rather than after.
 	 */
+	import { listYears as years } from '$lib/utils/dates';
 	import { auth, type ListId } from '$lib/state/auth.svelte';
 	import { openModal } from '$lib/state/modal.svelte';
 	import { load, personById, search, CAT } from '$lib/state/search.svelte';
@@ -117,12 +118,6 @@
 		arriveAtPerson(r.slug, (r.f & CAT.INFLUENCE) !== 0);
 	}
 
-	/** Same rule as everywhere else: a private-dates row shows "Living", never a range. */
-	function years(r: { by: number | null; dy: number | null; pv?: boolean }): string {
-		if (r.pv) return 'Living';
-		if (r.by == null && r.dy == null) return '';
-		return `${r.by ?? '?'}–${r.dy ?? ''}`;
-	}
 </script>
 
 {#if auth.signedIn}
