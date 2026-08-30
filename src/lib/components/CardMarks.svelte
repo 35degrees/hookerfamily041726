@@ -33,7 +33,7 @@
 	 */
 	import { auth, setBookmark, setHero, type ListId } from '$lib/state/auth.svelte';
 	import { load, personById } from '$lib/state/search.svelte';
-	import { cubicOut } from 'svelte/easing';
+	import { cubicOut, linear } from 'svelte/easing';
 
 	/**
 	 * `personName` is the card's full display name — right for a tooltip, wrong for a button.
@@ -80,12 +80,27 @@
 	 * clicks briefly overlap and each fades on its own clock, which is correct — they are two
 	 * separate things that happened.
 	 */
-	let toasts = $state<{ id: number; msg: string }[]>([]);
+	/**
+	 * EACH TOAST REMEMBERS WHICH CIRCLE FIRED IT.
+	 *
+	 * Centring on the container was not what Sam meant by "centered on the circles" — the container is
+	 * the PAIR, so a ribbon click put its toast ~19px right of the ribbon, over the gap. A message
+	 * belongs above the control that produced it.
+	 *
+	 * The offsets are the circles' own centres, derived from their sizes rather than measured:
+	 *   ribbon  33 / 2                   = 16.5px
+	 *   house   33 + 6 (gap) + 30 / 2    = 54px
+	 * If either size changes, these are the two lines that change with it — which is why the
+	 * arithmetic is written out rather than left as literals.
+	 */
+	const TOAST_X = { ribbon: 16.5, house: 54 } as const;
+
+	let toasts = $state<{ id: number; msg: string; x: number }[]>([]);
 	let toastId = 0;
 
-	function say(msg: string) {
+	function say(msg: string, from: keyof typeof TOAST_X = 'ribbon') {
 		const id = ++toastId;
-		toasts = [...toasts, { id, msg }];
+		toasts = [...toasts, { id, msg, x: TOAST_X[from] }];
 		/**
 		 * THE HOLD. The fade-out runs AFTER this, so the total life is hold + out.
 		 *
@@ -95,7 +110,8 @@
 		 *   220 hold / 420 out            "a little too aggressive ... the off and on"
 		 *   350 hold / 840 out            "rapid fire"
 		 *   420 hold / 1010 out           faded well, but gone before it was read
-		 *   300 in / 820 hold / 780 out    here — it RISES, sits a couple of beats, then fades
+		 *   300 in / 820 hold / 780 out    the rise happened while it was invisible
+		 *   430 in / 820 hold / 780 out    here — the climb is watchable, ~1px overshoot
 		 *
 		 * And there IS prior art rather than taste — Sam asked. Material's snackbar motion is ~200ms
 		 * in and ~150ms out; iOS-style transient toasts run a couple of seconds end to end. The
@@ -130,36 +146,77 @@
 	 * And per §45.11's trap, recorded there after it cost a session: a custom transition SILENTLY
 	 * IGNORES any option it does not destructure. Both of these take `duration` explicitly.
 	 */
+	/**
+	 * THE RISE, SHAPED BY HAND — because opacity and travel want DIFFERENT curves and a transition
+	 * carries only one `easing`. So the easing is `linear` and both are computed from raw `t`.
+	 *
+	 * THE FIRST VERSION FAILED IN A WAY WORTH RECORDING. Sam: "it still needs to feel like it came
+	 * from the top part of the circle, now it just fades up a little from a source above circle."
+	 * Measured, and the geometry was fine — the fault was that the two curves disagreed:
+	 *
+	 *     t      y (px low)   opacity
+	 *     0.1      11.74        0.02
+	 *     0.3       3.66        0.13
+	 *     0.5       0.11        0.31
+	 *
+	 * By the time it was visible at all it had already ARRIVED. The whole travel happened behind an
+	 * alpha of near zero, so what you saw was a fade at the destination — the motion was correct and
+	 * unwatchable. **A movement nobody can see is not a movement.**
+	 *
+	 * Now:
+	 *
+	 *     t      y (px low)   opacity
+	 *     0.15     15.15        0.24     <- visibly low, still tucked behind the circle
+	 *     0.3       9.77        0.52     <- half up, half there
+	 *     0.45      4.31        0.84
+	 *     0.6       0.47        1.00     <- arrives
+	 *     0.75     -0.94        1.00     <- ~1px past, per Sam
+	 *     1.0       0.00        1.00
+	 *
+	 * OPACITY leads now rather than lagging: `min(1, t * 1.9)` reaches full by t=0.53, so the toast is
+	 * legible for most of the climb instead of appearing at the top of it.
+	 *
+	 * TRAVEL is the back-out curve fed a SLOWED input (`t^1.7`) rather than raw `t`. Cubic back-out on
+	 * its own is heavily front-loaded — 80% of the distance is gone by t=0.3 — which is what put the
+	 * arrival before the visibility. Feeding it a slower ramp spreads the climb across the duration
+	 * without changing where it ends.
+	 *
+	 * THE OVERSHOOT CONSTANT IS MEASURED, and the first attempt at documenting it was not: a table of
+	 * values was written into this comment BEFORE the sweep was run and did not match it. Swept for
+	 * real, against this curve, 18px of travel:
+	 *
+	 *     0.95 -> 0.75px     1.20 -> 0.95px     1.40 -> 1.12px     1.70 -> 1.35px
+	 *
+	 * 1.2 is the value that lands on the ~1px Sam asked for. Re-sweep if the travel changes; the
+	 * relationship is not linear and the constant does not carry the intent on its own.
+	 */
+	const OVERSHOOT = 1.2;
+	const RISE_PX = 18;
+	function riseEase(t: number): number {
+		const u = Math.pow(t, 1.7) - 1;
+		return 1 + (OVERSHOOT + 1) * u * u * u + OVERSHOOT * u * u;
+	}
+
 	function toastIn(_node: Element, { duration }: { duration: number }) {
 		return {
 			duration,
-			easing: cubicOut,
+			easing: linear,
 			/**
-			 * IT RISES OUT FROM BEHIND THE CIRCLE (Sam: "move up more deliberately out from behind the
-			 * circle but not from the center of the circle just from the top half").
-			 *
-			 * 18px is the travel, and it is derived rather than picked: the circles are 33px, so
-			 * starting 18px low puts the toast's resting bottom edge just past their vertical middle —
-			 * inside the TOP HALF, which is what Sam described. Lower and it emerges from the centre;
-			 * higher and it never reads as having come from behind them at all.
-			 *
-			 * The z-index in the stylesheet is the other half of this: without the toast sitting BEHIND
-			 * the buttons, a rise is just a slide.
+			 * THE `-50%` HAS TO BE REPEATED HERE. The stylesheet centres this with
+			 * `transform: translateX(-50%)`, and a transition's `css` sets `transform` WHOLESALE —
+			 * animating translateY alone would silently discard the centring for the length of the
+			 * rise: jump left, travel up, snap back on the last frame. Same family as §45.11's note
+			 * that a transition ignores any option it does not destructure. What it does not restate,
+			 * it removes.
 			 */
-			/**
-			 * THE `-50%` HAS TO BE REPEATED HERE, and leaving it out is a trap worth naming: the
-			 * stylesheet centres this with `transform: translateX(-50%)`, and a transition's `css`
-			 * sets `transform` WHOLESALE. Animating translateY alone would silently discard the
-			 * centring for the length of the rise, so the toast would jump left, travel up, and snap
-			 * back into place on the last frame — three motions where one was intended.
-			 *
-			 * Same family as §45.11's note that a custom transition ignores any option it does not
-			 * destructure: what a transition does not restate, it removes.
-			 */
-			css: (t: number) =>
-				`opacity: ${t}; transform: translate(-50%, ${((1 - t) * 18).toFixed(2)}px);`
+			css: (t: number) => {
+				const y = (1 - riseEase(t)) * RISE_PX;
+				const o = Math.pow(Math.min(1, t * 1.9), 1.15);
+				return `opacity: ${o.toFixed(3)}; transform: translate(-50%, ${y.toFixed(2)}px);`;
+			}
 		};
 	}
+
 	function toastOut(_node: Element, { duration }: { duration: number }) {
 		return {
 			duration,
@@ -218,9 +275,9 @@
 				// to H00001"). Clearing your home does not leave you homeless — `/` returns you to
 				// Thomas Hooker, the line's own root (§50.3), and a message that only says "removed"
 				// leaves the reader to wonder where they will land instead.
-				say('Home cleared — back to Thomas Hooker');
+				say('Home cleared — back to Thomas Hooker', 'house');
 			} catch {
-				say('Could not save — try again');
+				say('Could not save — try again', 'house');
 			} finally {
 				heroBusy = false;
 			}
@@ -272,9 +329,9 @@
 		heroBusy = true;
 		try {
 			await setHero(personId);
-			say(`${personName} is now your home card`);
+			say(`${personName} is now your home card`, 'house');
 		} catch {
-			say('Could not save — try again');
+			say('Could not save — try again', 'house');
 		} finally {
 			heroBusy = false;
 			confirmReplacing = null;
@@ -333,7 +390,12 @@
 		{/if}
 
 		{#each toasts as t (t.id)}
-			<span class="toast" in:toastIn={{ duration: 300 }} out:toastOut={{ duration: 780 }}>
+			<span
+				class="toast"
+				style="left: {t.x}px"
+				in:toastIn={{ duration: 430 }}
+				out:toastOut={{ duration: 780 }}
+			>
 				{t.msg}
 			</span>
 		{/each}
@@ -559,8 +621,11 @@
 		/* CENTRED ON THE CIRCLES (Sam), not anchored to the left edge. Centring on the container means
 		   it stays centred when the house is absent on orbit and founder cards and the container is
 		   one circle wide. */
-		bottom: calc(100% + 4px);
-		left: 50%;
+		/* 4 -> 9px. At 4 the circle's own shadow and its top edge clipped the toast's underside in its
+		   RESTING position (Sam: "the circle covers a little bit of it"). The rise still starts from
+		   behind them — that is the 18px of travel, not this gap. */
+		bottom: calc(100% + 9px);
+		/* `left` is set INLINE per toast, at the centre of the circle that fired it — see TOAST_X. */
 		transform: translateX(-50%);
 		/* BEHIND the buttons — see `.mark`'s z-index. */
 		z-index: 1;
