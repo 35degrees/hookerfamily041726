@@ -408,7 +408,17 @@
 		align-items: center;
 		gap: 6px;
 		padding: 0 4px 4px;
-		border-bottom: 1px solid rgba(43, 38, 32, 0.12);
+		/**
+		 * THE UNDERLINE ENDS WHERE THE CARDS END (Sam).
+		 *
+		 * The rule is the header's own border-bottom, so it spanned the full COLUMN — but the cards
+		 * below do not: each sits in a `.row-wrap` beside a 26px remove button with a 2px gap, so they
+		 * stop 28px short. The line ran past them and the column read as two different widths stacked.
+		 *
+		 * Derived from those two numbers rather than eyeballed, so if the button ever changes size the
+		 * arithmetic is written down next to it.
+		 */
+		margin-right: 28px;
 	}
 	.col-name {
 		font-family: var(--font-opensans, 'Open Sans', sans-serif);
@@ -447,8 +457,13 @@
 		opacity: 0.45;
 	}
 	.rename {
-		flex: 1;
-		min-width: 0;
+		/* SIZED TO ITS CONTENT, NOT TO THE COLUMN. It was `flex: 1`, so a box that can only ever hold
+		   25 characters stretched across the whole column and read as a search field. `ch` is the
+		   width of a "0" in the current font, which is the unit that actually answers "how wide is 25
+		   characters" — a px guess would drift the moment the face or size changed. */
+		flex: none;
+		width: 25ch;
+		max-width: 100%;
 		padding: 3px 6px;
 		border: 1px solid rgba(43, 38, 32, 0.28);
 		border-radius: 4px;
