@@ -3,6 +3,8 @@
 **Companion: ENRICHED_DESIGN_FABLE_082926.md (the what/why for every item below).**
 **AUGUST 29, 2026 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), THE SCOPING DECISION (§49.5), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right. **§49.5 records the scoping decision itself — 3c and the zoom-3/Card↔Table remainder of 9 RETIRED from the pre-launch path with their specs preserved unaltered, 9.5 (the phone) FLAGGED OPEN rather than cut, 11 still gating launch. Nothing deleted; the phase table is annotated, and a retired phase reopens by saying so.**
 
+**AUGUST 30, 2026 (§52): AUTH — THE OPERATOR'S MAP.** Written to be read COLD, months from now, by someone upgrading Better Auth or debugging it: the version and why (**1.7.2**, and reading its docs before porting Sam's year-old templates is what removed Drizzle from the stack and turned the apex-vs-`www` problem that once cost weeks into a config array), the file map with what each piece is responsible for, the sign-in flow end to end, **what to look at when upgrading — in this codebase specifically**, the complete list for adding a third provider, and §52.7, the things that break SILENTLY (the Azure secret expiring 2028-08-28, `process.env` being undefined at SvelteKit runtime, the pooled Neon string, and the fact that `SettleVeil` is not an auth component even though auth is why it exists). §52.8 records the decisions that will look arbitrary later and are not.
+
 **AUGUST 29, 2026 (§51): AUTH, BOOKMARKS AND THE HOME CARD BUILT (design §47).** 26 commits. Better Auth 1.7 + Neon + `pg`, no ORM; three server files per §49.2; Google AND Microsoft, both verified on real consent round-trips in the database rather than by a green endpoint. Bookmarks in two renameable lists, the ribbon/house pair on every card, the corner item with its hover menu, and a two-column modal. **The static-contract probe (`scripts/probe-static-contract.mjs`) is the piece to know about** — it guards §50.0's rule that `/` is the only route that may ever be dynamic, it was proved RED first per §13.2, and it has already caught one route being added. **§51.2 is the section worth reading**: twelve failures, of which SEVEN were instruments or patches reporting success while being wrong — including two string replacements that matched nothing and printed success, and a home-card confirmation reported missing four times that was an unrequested optimisation of mine rather than a bug. The recurring shape, which Sam named before I did, is porting a house pattern and dropping the part that made it work: `stage.appendChild` became `document.body.appendChild` and the whole CC flight silently stopped attaching. **`/` REMAINS UNBUILT** and is the last piece of the arc. Nothing deployed; every measurement is localhost.
 
 **AUGUST 29, 2026 (§50): THE AUTH BUILD SPEC (proposed; nothing built).** Written after reading the Better Auth 1.7 docs directly rather than porting Sam's year-old templates, which cost the stack a layer: **Drizzle is out** — 1.7's built-in Kysely dialect takes a `pg` Pool and its CLI runs the migration, so the "BetterAuth/Neon/Drizzle" shorthand this document has carried since July was one layer out of date. **Neon stays**, after being ruled out on a ~$10/month charge that turned out to belong to a year-old unrelated project and reinstated the same session; the deciding factor was never price but idle *behaviour* — Supabase's free tier pauses a project after a week of inactivity and needs a manual restore, which is fatal for a site whose logins are rare by design (DEPLOYMENT §18.7). **Google OAuth only**, which eliminates the entire transactional-email subsystem; Microsoft and email/password stay architecturally open behind a config entry. The spec's governing law is one line and it is a delivery-model rule, not a feature rule: **`/` is the only route that may ever be dynamic — everything under `/person/` stays static CDN payloads**, defended by the arithmetic that a full-corpus crawl is 19,728 static requests and exactly one hit on `/`. Server surface held to **three files** per §49.2, with `hooks.server.ts` at five lines because the equivalent file on Sam's previous project grew four jobs and cost weeks. **Bookmarks store the person ID, never the slug** — which is also why permanent slug churn does not block shipping this. Deployment-only concerns (host posture, provider, rate limiting, reader-data privacy) live in `docs/DEPLOYMENT_STRATEGY.md` §18 and are deliberately not duplicated.
@@ -5351,3 +5353,204 @@ edited surgically: **one line changed in 55 MB**, verified by `git diff --numsta
   `canonical.json` at 55.47 MB warning on every push, `tabular-nums` on Fraunces, the CC blade
   drawing too far out, the stripe's sub-pixel disappearance, the coloured flash on demote, and 13
   orbit→orbit CCs awaiting review.
+
+---
+
+## 52. AUTH — THE OPERATOR'S MAP (written August 30, 2026; as-built)
+
+*(§50 is the SPEC — what was planned. §51 is the SESSION RECORD — what went wrong on the way. Design
+§47 is the DOCTRINE — the rules that outlive the code. **This section is none of those.** It is the
+map you want in front of you six months from now when Better Auth is at 2.x, or when something breaks
+and you have forgotten how the pieces fit. It assumes nothing.)*
+
+### 52.1 THE VERSION, AND WHY THIS ONE
+
+**`better-auth@1.7.2`** (published 2026-08-26; installed 2026-08-29 — three days old at the time)
+with **`pg@8.23.0`**. No ORM.
+
+**THE VERSION MATTERED MORE THAN USUAL, and this is the first thing to know.** Sam had working auth
+templates from a project roughly a year old, and the plan was to port them. Reading the 1.7 docs
+first changed three decisions before a line was written:
+
+| the year-old template did | 1.7 does | consequence |
+|---|---|---|
+| `drizzleAdapter(db, …)` | a plain `pg.Pool` handed straight to `betterAuth({ database })` via the built-in Kysely dialect | **Drizzle left the stack entirely.** One fewer dependency, one fewer config file, one fewer thing to keep in step. Its CLI writes the migration too |
+| `baseURL: <one string>` | `baseURL: { allowedHosts: [...] }`, and those entries are added to `trustedOrigins` automatically | **The apex-vs-`www` problem that cost Sam weeks on the previous project is a config array now.** The old project's hand-written CORS block existed to work around the missing feature; it is not simplified here, it is absent |
+| email + password + reset + verification | Google (and later Microsoft) only | **The entire transactional-email subsystem never entered the project** — no provider, no SPF/DKIM, no deliverability to monitor |
+
+**The lesson to carry into the next upgrade: read the current docs BEFORE porting your own working
+code.** A year-old template is a year of API drift wearing the disguise of something that already
+works.
+
+### 52.2 THE ARCHITECTURE, AND THE ONE RULE IT IS BUILT AROUND
+
+> **`/` is the only route that may ever be dynamic. Everything under `/person/` stays static CDN
+> payloads.**
+
+Everything below is downstream of that. It is not an auth preference — it is the app's delivery
+model (DEPLOYMENT §3 Option A, §11.0's budget rule), and auth was the first thing capable of
+breaking it by accident.
+
+**Three consequences, and each explains a decision that would otherwise look odd:**
+
+1. **The session is never read in a page load.** The bookmark ribbon on a card asks a client-side
+   `Map`, not the server. Reading `locals.getSession()` in `/person/[slug]` would convert 19,728
+   static files into serverless invocations for an icon, and **nothing in the app would report it** —
+   which is why `scripts/probe-static-contract.mjs` exists and why it is the one thing here that must
+   never be deleted.
+2. **The server surface is three files, deliberately** (§49.2): the migration cost of SvelteKit 3 is
+   roughly linear in how many files import server primitives, not in how much auth logic exists.
+3. **Bookmarks and the home card store the person ID, never the slug** (§50.2). Slug churn is
+   permanent — 510→673 redirects in five days — and a slug-keyed save would silently orphan.
+
+### 52.3 THE FILE MAP — what each thing is responsible for
+
+**SERVER (3 files — the whole SvelteKit-primitive surface):**
+
+| file | responsibility | touch it when |
+|---|---|---|
+| `src/lib/server/auth.ts` (319) | **the single source of truth.** Providers, session config, `additionalFields`, rate limit, `allowedHosts`, and the exported `pool` every API route shares | upgrading; adding a provider; changing the schema |
+| `src/hooks.server.ts` (47) | the Better Auth handle, and a LAZY `locals.getSession()`. **Body is ~6 lines and stays that way** | almost never — every job added here is paid for twice at the SK3 migration |
+| `src/routes/api/auth/[...all]/+server.ts` (23) | mounts the handler. `export const prerender = false` | almost never |
+
+**OUR OWN API (4 routes — the only other places a session may be read):**
+
+`api/bookmarks` GET the whole set / PUT `{personId, list: 1|2|null}` (one endpoint for the whole
+ribbon cycle) · `api/hero` PUT, returns `previousPersonId` so the confirmation can name who it
+replaces · `api/lists` PUT, renames a list, 25-char cap enforced server-side · all three 401 without
+a session.
+
+**CLIENT STATE (the API surface everything else uses):**
+
+`src/lib/auth-client.ts` (29) — `createAuthClient` from `better-auth/svelte`, **no `baseURL`** so it
+calls relative to wherever the page is served, plus `inferAdditionalFields` which is what makes
+`heroPersonId` a typed string on the client.
+
+`src/lib/state/auth.svelte.ts` (411) — **the one module anything UI should import.** Its exports are
+the whole contract:
+
+```
+auth.signedIn / user / isPending / greetingName
+auth.listFor(id) / recent(list, n) / all(list) / listName(list) / isHero(id) / heroPersonId
+setBookmark(personId, list|null)      optimistic, rolls back on failure
+setHero(personId|null)                optimistic via heroOverride; returns previousPersonId
+setListName(list, name)               optimistic via nameOverride
+signInWithGoogle() / signInWithMicrosoft() / signOut()
+```
+
+**COMPONENTS:** `AuthTrigger` (one corner slot, two labels) · `AuthModal` (4th surface) · `CardMarks`
+(the ribbon + house on the card) · `HomeTrigger` (corner house) · `BookmarksTrigger` (corner word +
+hover menu) · `BookmarksModal` (5th surface) · `SettleVeil` (**not auth** — see §52.7).
+
+**DATA:** `migrations/001-bookmarks.sql` — the ONE table Better Auth's CLI does not own. Everything
+else (`user`/`session`/`account`/`verification` + `heroPersonId`/`list1Name`/`list2Name`) is
+generated from `auth.ts` by the CLI.
+
+### 52.4 THE FLOW, END TO END
+
+```
+CLICK "Sign In"  -> openModal('auth')  -> AuthModal -> signInWithGoogle()
+  -> authClient.signIn.social({ provider, callbackURL: window.location.pathname })
+  -> POST /api/auth/sign-in/social      (POST ONLY — a GET 404s)
+       sets an HttpOnly `better-auth.state` cookie AND writes the state to `verification`;
+       the callback checks BOTH, which is why a URL made with curl cannot be completed in a browser
+  -> browser -> accounts.google.com -> consent
+  -> GET /api/auth/callback/google      (the exact-match redirect URI)
+       verifies state -> upserts user + account -> issues session -> sets the session cookie
+  -> FULL PAGE LOAD back to callbackURL   <- this is what makes SettleVeil necessary (§52.7)
+  -> useSession() resolves -> auth.svelte.ts's subscriber fires
+       -> hydrates bookmarks ONCE (keyed on the user id CHANGING, not on every emission)
+       -> AuthTrigger swaps "Sign In" -> "Hi, <name>!"; CardMarks and the corner controls appear
+```
+
+**Reading a session server-side** is only ever `await locals.getSession()`, lazy and memoised, and
+only from the four API routes.
+
+### 52.5 UPGRADING BETTER AUTH — what to look at, in this codebase specifically
+
+**Run `npx auth@latest migrate --config src/lib/server/auth.ts` after any upgrade** — it is idempotent
+and prints "schema is already up to date" when there is nothing to do.
+
+Then check these, in order of how likely they are to have moved:
+
+1. **`baseURL` as an object.** New in 1.7 and the single most valuable thing here. If it changes
+   shape, `allowedHosts` and the automatic `trustedOrigins` behaviour are what to re-verify — the
+   apex/`www` posture depends on both.
+2. **`sveltekitCookies(getRequestEvent)` and `svelteKitHandler`** from `better-auth/svelte-kit`.
+   `getRequestEvent` comes from `$app/server`, which is **already where SvelteKit 3 puts it** — a
+   dividend, not a debt (§49.2's largest break item is one the library already writes in the new form).
+3. **`user.additionalFields`** — `heroPersonId`, `list1Name`, `list2Name`, all `input: false`. If the
+   `additionalFields` contract changes, those three columns and the `/api/hero` + `/api/lists` routes
+   that write them are what to re-check. **`input: false` is load-bearing**: it is what makes those
+   routes necessary rather than decorative.
+4. **`session.cookieCache`** — `{ enabled: true, maxAge: 5*60 }`, `compact` strategy. This is what
+   makes the future `/` branch free; if the option moves, that plan moves with it.
+5. **`account.accountLinking`** — `trustedProviders: ['google','microsoft']`,
+   `allowDifferentEmails: false`. The conservative half is deliberate; see §52.8.
+6. **The CLI itself.** The 1.7 docs describe `migrate plan` / `migrate apply`; the published 1.7.2
+   binary has **neither** — only a bare `migrate`. Check `--help` before trusting the docs.
+
+**Version floors this project already meets** (§38.1): Node 24.5, TypeScript ^6, Vite ^8, Svelte
+^5.55, SvelteKit 2.57 — and `sveltekitCookies` needs SvelteKit ≥ 2.20.
+
+### 52.6 ADDING A THIRD PROVIDER — the complete list
+
+1. `auth.ts`: a `socialProviders` entry + the provider in `trustedProviders`.
+2. `.env` + `.env.example`: the id/secret pair.
+3. `auth.svelte.ts`: a `signInWith<X>()` beside the other two (they share one private `signInWith`).
+4. `AuthModal`: a button.
+5. The provider's console: redirect URI `<origin>/api/auth/callback/<provider>`, **canonical host
+   only**.
+
+Microsoft additionally carries `tenantId: 'common'` (personal + work accounts) and is gated on
+`PUBLIC_AUTH_MICROSOFT` — see §52.8.
+
+### 52.7 THINGS THAT WILL BREAK SILENTLY — the list to read first when something is wrong
+
+- **`AZURE CLIENT SECRETS EXPIRE.`** Ours: created 2026-08-29, **EXPIRES 2028-08-28**. Google's never
+  do. When it lapses, Microsoft sign-in breaks with no deploy, no error and no email. `PUBLIC_AUTH_MICROSOFT=0`
+  hides the button in one env change while a new secret is generated — that is why the flag is a
+  separate variable rather than derived. Sam's PREVIOUS project's registration was already showing
+  `Expired` when we looked.
+- **`process.env` is undefined at SvelteKit runtime.** Vite loads `.env` into its own store. `readEnv()`
+  in `auth.ts` reads `$env/dynamic/private` first and falls back to `process.env` — the CLI needs the
+  latter, the runtime needs the former. Symptom if broken: `ECONNREFUSED 127.0.0.1:5432`, an error
+  naming a port that appears nowhere in this project.
+- **The pooled Neon string.** The host must contain `-pooler`. Works identically on localhost either
+  way; fails only under serverless load.
+- **`/api/auth/sign-in/social` is POST only.** A GET 404s.
+- **`SettleVeil` is NOT an auth component**, though auth is why it exists. `--stage-u` is published by
+  an effect, so the first paint of ANY cold load renders at the fallback of 1 and then shrinks. OAuth
+  guarantees a cold load on every sign-in, which is how a months-old flaw finally became reproducible.
+  If layout flashes return, look at the stage dials, not at auth.
+- **The static contract.** `node scripts/probe-static-contract.mjs`. It has already caught one route
+  being added. Its check 3 is labelled `[WEAK]` in its own output and means it.
+
+### 52.8 DECISIONS THAT WILL LOOK ARBITRARY LATER, AND ARE NOT
+
+- **Two lists, not three, and no "favourite".** A cycling ribbon at three buckets makes *remove* a
+  three-click journey through two states you did not want. The lists are renameable, so "Favorites"
+  is what naming List 1 gets you. Sam: *"this is for serious people not facebook."*
+- **`allowDifferentEmails: false`.** `aunt@gmail.com` and `aunt@outlook.com` are two accounts with two
+  bookmark lists. That is inherent to email-based linking; the alternative is an account-takeover path.
+- **Orbit figures and Hartford founders cannot be a home card**, H00001 excepted — and that exception
+  was already written in `ascension.svelte.ts`'s `isFounder`, by ID, for the same reason.
+- **Optimistic writes are cleared by AGREEMENT, never by a timer.** `heroOverride` is retired in the
+  session subscriber on the frame the real session matches it. Clearing it on completion handed the UI
+  back a stale value and broke two features at once (§51.2).
+- **The corner is `Home · My Bookmarks · Shuffle · Search · Hi, Sam!`** — most personal to most
+  general. This knowingly revises §45.15, which had seated Search outermost.
+
+### 52.9 HOW TO VERIFY IT ALL STILL WORKS
+
+```bash
+npx auth@latest migrate --config src/lib/server/auth.ts   # idempotent; "already up to date"
+node scripts/probe-static-contract.mjs                     # 5/5
+npx svelte-check --tsconfig ./tsconfig.json                # 2 pre-existing fontsource errors
+curl -s localhost:5173/api/auth/ok                         # {"ok":true}
+curl -s -o /dev/null -w '%{http_code}' localhost:5173/api/bookmarks   # 401 unauthenticated
+```
+
+Then the half no command can do: **sign in, bookmark someone, sign out, sign back in, and check the
+gold is still there.** Every failure this feature had that mattered was found that way and not by a
+green check.
