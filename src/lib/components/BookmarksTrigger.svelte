@@ -177,8 +177,8 @@
 						<div class="menu-head">
 							<svg
 								viewBox="0 0 24 24"
-								width="10"
-								height="10"
+								width="13"
+								height="13"
 								aria-hidden="true"
 								class={list === 1 ? 'gold' : 'blue'}
 							>
@@ -328,15 +328,40 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 5px;
-		padding: 7px 8px 4px;
+		gap: 6px;
+		padding: 8px 8px 5px;
 		font-family: var(--font-opensans, 'Open Sans', sans-serif);
-		font-size: 9px;
+		/* 9 -> 11.25px (Sam, "25% bigger"). At 9px an uppercase tracked label was smaller than the
+		   years on the cards beneath it, so the thing NAMING the group was quieter than the group. */
+		font-size: 11.25px;
 		font-weight: 600;
 		letter-spacing: 0.13em;
 		text-transform: uppercase;
 		color: var(--color-inkblue);
+	}
+	/**
+	 * THE FADE SITS ON THE LABEL, NOT ON THE ROW — because opacity COMPOUNDS and a child can only ever
+	 * be a fraction of its parent's alpha, never a multiple.
+	 *
+	 * This is the second time this exact block has been wrong, and the first fix silently did not
+	 * apply: the search anchors had drifted, both replacements missed, and NEITHER the colour rules
+	 * below nor this label span ever landed. So the ribbon inherited `--color-inkblue` at 0.5 and
+	 * rendered as a faded blue-grey — which is why Sam reported List 1 "needed a gold ribbon" after
+	 * being told it had one. A patch that reports success without matching anything is worse than a
+	 * failed one; verify the file, not the script's exit code.
+	 */
+	.menu-head-label {
 		opacity: 0.5;
+	}
+	/* THE RIBBONS ARE THE CARD'S OWN TWO INKS, at full strength — the same gold and powder blue the
+	   ribbon on a featured card cycles through, so the colour means one thing in all three places. */
+	.menu-head svg.gold {
+		color: #dcb130;
+		flex: none;
+	}
+	.menu-head svg.blue {
+		color: #7fa9c9;
+		flex: none;
 	}
 	/**
 	 * THE MENU ROW IS A CARD — `.person-box`, the same object the tree is built from, at its smallest
