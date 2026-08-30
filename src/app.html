@@ -5,6 +5,29 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
 		%sveltekit.head%
+		<!--
+			NO JS, NO SETTLE VEIL.
+
+			`SettleVeil` is in the SSR'd HTML so it can cover the FIRST paint, and it is removed by a
+			Svelte effect once the stage has measured the window. With scripting off nothing ever
+			removes it, and a crawler or a reader without JS would get a permanently defocused page —
+			which is precisely the cold path DEPLOYMENT §13.2's probe exists to check.
+
+			THIS LIVES HERE RATHER THAN IN THE COMPONENT, and the first attempt taught why: a <style>
+			inside <noscript> in a .svelte file is HOISTED OUT by the compiler and the wrapper dropped,
+			so the rule became unconditional and hid the veil for everyone. Verified by reading the
+			shipped CSS, not by trusting the markup.
+
+			`!important` is load-bearing too: Svelte scopes the component's own rule to
+			`.settle-veil.svelte-xxxxxx` (0,2,0), which outranks a bare class selector.
+		-->
+		<noscript>
+			<style>
+				.settle-veil {
+					display: none !important;
+				}
+			</style>
+		</noscript>
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>

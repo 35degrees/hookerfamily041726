@@ -28,9 +28,15 @@
 	// Variable, so the 500 Sam asked for is a real weight rather than a synthesised one.
 	import '@fontsource-variable/fraunces/wght.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import SettleVeil from '$lib/components/SettleVeil.svelte';
 
 	let { children } = $props();
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<!-- IN THE LAYOUT, NOT THE PAGE, and not negotiable: it has to be in the SSR'd HTML to cover the
+     FIRST paint, and it has to outlive a client-side navigation between person pages without
+     remounting. A page-level veil would arrive after hydration — which is the exact moment it exists
+     to cover — and would re-fire on every card change. -->
+<SettleVeil />
 {@render children()}

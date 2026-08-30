@@ -381,6 +381,28 @@ const TIGHT_VITALS_W = 1100;
 const tightVitals = $derived(vw <= TIGHT_VITALS_W);
 
 export const stage = {
+	/**
+	 * HAS THE WINDOW BEEN READ YET? False during SSR and for the first client tick; true forever after.
+	 *
+	 * This module already knew the answer — `innerWidth.current` is `undefined` until the browser has
+	 * one — and the fact was simply never published. Exposing it costs nothing and is not a new
+	 * mechanism: it is the same question the SSR_W fallback three hundred lines up is already asking.
+	 *
+	 * WHAT IT IS FOR. The comment on that fallback says the first paint "settles once on hydrate", and
+	 * on any window smaller than 1440x900 that settle is visible: `--stage-u` is published by an
+	 * `$effect`, so until it runs every `var(--stage-u, 1)` resolves to the FALLBACK OF 1 — full,
+	 * unscaled size — and the whole composition then shrinks into place. Sam, after signing in: "a lot
+	 * of the existing UX ... take about 500ms to do weird things before finally settling into position
+	 * ... the text in the Paths to Thomas and Connect to Anyone gets too large."
+	 *
+	 * Auth did not cause that. It made it REPRODUCIBLE, because an OAuth round trip is a full page load
+	 * and every sign-in now guarantees a cold paint where before you had to refresh to get one.
+	 *
+	 * `SettleVeil` reads this and holds a blur over the first paint until it flips.
+	 */
+	get measured(): boolean {
+		return innerWidth.current !== undefined;
+	},
 	get vw() {
 		return vw;
 	},
