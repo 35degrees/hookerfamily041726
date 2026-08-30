@@ -455,7 +455,7 @@
 					Cancel
 				</button>
 				<button type="button" class="confirm-btn go" onclick={commitHero} disabled={heroBusy}>
-					{heroBusy ? 'Saving…' : `Make ${shortName} my home`}
+					{heroBusy ? 'Saving…' : `Make ${shortName} my home card`}
 				</button>
 			</div>
 		</div>
