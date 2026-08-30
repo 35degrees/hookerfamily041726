@@ -22,12 +22,22 @@
 	import ShuffleNotables from './ShuffleNotables.svelte';
 	import AuthTrigger from './AuthTrigger.svelte';
 	import BookmarksTrigger from './BookmarksTrigger.svelte';
+	import HomeTrigger from './HomeTrigger.svelte';
 	import { ascension } from '$lib/state/ascension.svelte';
 
 	let { settled = true }: { settled?: boolean } = $props();
 </script>
 
 <div class="top-right-chrome">
+	<!-- HOME TAKES THE INNERMOST SEAT OF ALL (Sam), left of My Bookmarks — and the ordering that
+	     results is coherent rather than accidental. Reading left to right the corner now runs from
+	     the most PERSONAL to the most GENERAL: your one chosen card, your saved people, a random
+	     notable, the whole tree, your account.
+
+	     It is icon-only where the rest are words: a fifth word would widen the cluster enough to
+	     matter, and the house glyph already means "home" on every card, so it needs no label. It
+	     renders nothing until a home has been chosen. -->
+	<HomeTrigger />
 	<!-- MY BOOKMARKS TAKES THE INNERMOST SEAT (Sam: "to left of Shuffle Notable button"), and it is
 	     the only control here that renders ONLY when signed in — so a signed-out corner is the three
 	     it has always been, and nothing shifts position when the session resolves.
