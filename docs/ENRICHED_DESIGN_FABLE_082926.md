@@ -6546,7 +6546,69 @@ called.
 List 1 crowd List 2 off the menu entirely, and the second list would look broken to somebody who had
 just used it.
 
-### 47.13 STILL OPEN
+### 47.13 THE ARRIVAL'S AXIS IS BAKED, AND A BOOKMARK HAS NOTHING TO BAKE
+
+*(Measured August 29, 2026, after Sam asked why a bookmark always arrives laterally: "a lot of CCs
+are vertical if they are in the same direct lineage like grandparents uncles nieces etc." He is
+right, and the reason is not a missing rule — it is a missing INPUT. **Nothing was changed; this
+records the finding so the next person does not re-derive it.**)*
+
+**THE RULE ITSELF IS FINE AND ALREADY WORKS.** `isVerticalMove` in `flight.ts` is the one vertical
+test, read by both `deckDirFor` (which axis the convoy flies) and `resolveLateralDir` (whether the
+ping-pong memory survives):
+
+```
+if (gen_delta == null || gen_delta === 0) return false;    // the gate
+if (relation_class === 'direct')          return true;     // your literal ancestor/descendant
+return kin_distance != null && kin_distance <= KIN_NEAR;   // KIN_NEAR = 5
+```
+
+A CC anchor carries all three, **baked per row** by `regenerate-data.js` and forwarded by the blade
+as `data-gen-delta` / `data-relation-class` / `data-kin-distance`. That is the working model, and it
+is not in question.
+
+**WHAT A SYNTHESISED ANCHOR CARRIES IS `data-cc` AND `data-orbit`, AND NOTHING ELSE** — so
+`gen_delta` is null, the gate returns false, and every arrival rides lateral. This is true of
+`SearchModal.pick()` exactly as much as of bookmarks; search has always behaved this way and nobody
+noticed, because a search result rarely feels like it *should* be a climb. A saved grandparent does.
+
+**THE THREE INPUTS, MEASURED against the build's own baked values over ~2,500 payloads:**
+
+| | can the browser answer it? |
+|---|---|
+| `relation_class` | **yes** — a blood-ancestor test over `kin.ts`'s `ancestorDepths` matched **427/433 (98.6%)** |
+| `gen_delta` | **no** — the index's own `g` matched only **163/347**. The build uses `effectiveGen`, which falls back to a spouse's generation and then, for easter eggs, to one tier above a child-in-law. Neither fallback is in the index |
+| `kin_distance` | **no** — the build charges `KIN_MARRIAGE_COST` per marriage hop and needs every person's `marriages` array. `kin.connect()` climbs a spouse's line through `hp` WITHOUT charging, so it ran systematically 2 low per marriage edge — 43 of 156 disagreed |
+
+Using only resident data, **110 of 132 vertical moves flatten to lateral** (0 wrongly tipped).
+
+**AND `kin.ts` IS NOT THE ANSWER, THOUGH ITS DOCSTRING SUGGESTS IT MIGHT BE.** That module says it is
+"checked against the build's own `kinDistance` … the only other thing in this project that answers
+this question." It answers a DIFFERENT question, correctly and on purpose: it exists for the
+connect-to-anyone V, where a married-in person HANGS OFF their partner's rung, so climbing `hp` for
+free is right there and wrong here. Two functions that look interchangeable and are not.
+
+> **THE GENERAL SHAPE:** a baked value is not a cached computation. `gen_delta` and `kin_distance`
+> are answerable at build time because the build holds the whole corpus with its marriages and
+> classifications; the browser holds a search index that was deliberately trimmed. Reaching for a
+> resident function that returns the same TYPE is how you get a plausible wrong answer.
+
+**WHAT WOULD ACTUALLY FIX IT, in order of size:**
+
+1. **Emit `effectiveGen` onto the search-index row** — one line in `regenerate-data.js` beside the
+   existing `g`, using a function that is already written there. That makes `gen_delta` exact, and
+   with the blood-derived `relation_class` it turns on vertical for ALL DIRECT LINEAGE: grandparents,
+   great-grandparents, descendants. It is the cheap 80%.
+2. **Also emit spouse ids per row**, so the build's `kinDistance` can be ported verbatim. That is what
+   uncles, nieces and in-laws need, since they are COLLATERAL and depend on the `kin_distance <= 5`
+   branch. Bigger payload, full fidelity.
+3. Do nothing. Bookmarks and search picks both stay lateral, which is what has shipped all along.
+
+Either of the first two is a Stream A pipeline change touching an artefact every surface reads, and
+needs a full regenerate — so it is a decision rather than a fix, and it is recorded here rather than
+taken.
+
+### 47.14 STILL OPEN
 
 - **`/` is not built.** It remains the stock SvelteKit welcome page; the intro and the hero redirect
   are the last piece of this arc (roadmap §50.3, §50.8 slice 4). Until it exists, a home card is
@@ -6554,4 +6616,7 @@ just used it.
 - **The hover menu is a hover menu**, and on touch it does not exist. The click path is deliberately
   complete without it, which is the mitigation rather than the fix. §49.5's Tier C question is still
   open and this adds to it.
+- **Bookmark and search arrivals ride LATERAL regardless of lineage** — §47.13. The transition rule
+  is correct and already working for real CCs; what is missing is two baked fields on the search
+  index. Sam has not ruled on which of the three options to take.
 - **Nothing here has been seen on a deployment.** Every claim above is localhost.
