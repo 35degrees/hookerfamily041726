@@ -593,7 +593,9 @@
 						<div class="text-area flex min-w-0 flex-col justify-center">
 							<span class="line1">
 								<span class="nm">{r.n}</span>
-								<span class="yr">{years(r)}</span>
+								<span class="yr"
+									>{years(r)}{#if diedYoungRow(r)}{' '}(died young){/if}</span
+								>
 							</span>
 							<span class="line2">
 								{#if reason}
@@ -1442,6 +1444,22 @@
 	 * The dark rows override both to cream and still do: those rules are (0,3,0) against this (0,1,0),
 	 * so specificity settles it whatever the source order.
 	 */
+	/**
+	 * A LITTLE FURTHER DOWN THAN A CARD'S, AND ONLY HERE (083126). Sam: "just for search lets fade the
+	 * text lower another 8%."
+	 *
+	 * The shared token stays where it is — `--died-young-text-opacity` is 0.85 and every chip on every
+	 * card still reads at that. This overrides the OPACITY alone for a search row: 0.85 x 0.92 = 0.78.
+	 * The INK is untouched, so the colour is still --died-young-ink and the two surfaces cannot drift
+	 * apart on hue; only the strength differs, which is the difference between a row you are scanning
+	 * past and a chip you are reading.
+	 *
+	 * Scoped, so it cannot reach the cards: Svelte appends its hash to this selector, which puts it a
+	 * class above layout.css's global `.person-box.died-young .text-area` and wins without !important.
+	 */
+	.hit.died-young .text-area {
+		opacity: 0.78;
+	}
 	.yr {
 		font: 400 12px/1.2 var(--font-open-sans, 'Open Sans', sans-serif);
 		color: color-mix(in srgb, var(--color-inkblue) 80%, transparent);
