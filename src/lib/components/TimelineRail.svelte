@@ -1537,19 +1537,32 @@
 	let hoverSuppressed = $state<string | null>(null);
 
 	/**
-	 * NO PORTRAIT EXPANDS WHILE A FLIGHT IS RUNNING. Sam: "let's also make the hover headshot expansion
-	 * transition not possible during transitions. If someone hovers over a new headshot but a transition
-	 * is happening there's no response, but if they leave the mouse there, right at the point the
-	 * transition is complete and the new featured card settles, [it expands]."
+	 * PORTRAITS DO EXPAND WHILE A FLIGHT IS RUNNING — REVERSED 083026, and the earlier rule is kept here
+	 * because it was Sam's too and the reasoning behind it is still sound.
 	 *
-	 * That second half is why this is a CLASS on the element and not a guard in a handler: the expansion
-	 * is CSS `:hover`, so the moment the class comes off, a pointer that never moved is still hovering and
-	 * the portrait grows on its own. Nothing has to detect that the mouse is there — it already is.
+	 * IT USED TO SAY: "no portrait expands while a flight is running." Sam, in August: "let's also make
+	 * the hover headshot expansion transition not possible during transitions. If someone hovers over a
+	 * new headshot but a transition is happening there's no response, but if they leave the mouse there,
+	 * right at the point the transition is complete and the new featured card settles, [it expands]."
+	 * That was implemented as a CLASS rather than a handler guard for a good reason: the expansion is
+	 * CSS `:hover`, so the moment the class comes off, a pointer that never moved is still hovering and
+	 * the portrait grows on its own — nothing has to detect that the mouse is there, it already is.
+	 *
+	 * IT NOW SAYS, same person, 083026: "i think the user should still be able to hover on headshots to
+	 * see them bigger even during featured card transition, but cannot click on one until transition is
+	 * completed." So the two halves are separated — LOOKING is always allowed, ACTING is not — and the
+	 * click half is unchanged, still tested by isFlightLocked() in onAnchorClick.
+	 *
+	 * WHAT CHANGED UNDERNEATH TO MAKE THIS SAFE. The August rule was partly protecting against a
+	 * portrait ballooning under a cursor that had not moved, while the world slid around beneath it.
+	 * `hoverIntent` now refuses that case everywhere by construction — an element arriving under a still
+	 * pointer is not a hover — so the blanket suppression was paying for a problem that had been solved
+	 * somewhere better.
+	 *
+	 * The subscription stays: it still brings the rail's z-lift back down, which was never about hover.
 	 */
-	let flightLocked = $state(false);
 	onMount(() =>
 		subscribeFlightLock((v) => {
-			flightLocked = v;
 			// AND THE RAIL COMES BACK DOWN HERE, not on a timer — see the lift below.
 			if (!v) overFlight = false;
 		})
@@ -1573,6 +1586,26 @@
 		// and hover still expands the portrait (Sam: "the cursor can stay the same even when click events
 		// none"). The click simply does not land.
 		if (isFlightLocked()) {
+			e.preventDefault();
+			return;
+		}
+		// ── ALREADY THE FEATURED CARD: DO NOTHING, AND DO IT FOR FREE (083026) ────────────────────
+		// Sam: "lets say Jared Ingersoll Jr. is the current hero featured card, and he's also a timeline
+		// headshot. I'll click on his headshot but there's no transition because he's already the
+		// featured card, however the click and hover events none in the timeline trigger anyway, so I'm
+		// forced to wait the 4 or so seconds anyway that the transitions would have taken."
+		//
+		// WHY IT COST FOUR SECONDS. `ccFlyTo` calls `lockFlight()` as its first statement, before it has
+		// looked at where it is going. The lock is normally released by the LANDING — +page's effect
+		// calls unlockFlight() when the incoming card settles with its chips out — but navigating to the
+		// person who is already featured produces no landing, so nothing ever released it and the page
+		// sat locked until `lockFlight`'s 2600ms safety net expired. The delay was never a duration
+		// anybody chose; it was a timeout designed never to be reached, being reached.
+		//
+		// The guard belongs HERE rather than in ccFlyTo: this is the only caller that can be pointed at
+		// the current person (a chip for the featured card does not exist), and +page.svelte:195 already
+		// uses this exact test — `featured.current?.person.slug === slug` — for the same reason.
+		if (featured.current?.person.slug === a.slug) {
 			e.preventDefault();
 			return;
 		}
@@ -1692,7 +1725,7 @@
 			       --anchor-scale: {ANCHOR_HOVER_SCALE};
 			       {anchorInk[a.slug] ? `--anchor-ink: ${anchorInk[a.slug]};` : ''}"
 			aria-label="Go to {a.name}"
-			class:no-hover={hoverSuppressed === a.slug || flightLocked}
+			class:no-hover={hoverSuppressed === a.slug}
 			onclick={(e) => onAnchorClick(e, a)}
 			onpointerleave={() => {
 				if (hoverSuppressed === a.slug) hoverSuppressed = null;
