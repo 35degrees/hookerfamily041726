@@ -50,8 +50,15 @@
 	--color-cream: #f7f1e6;
 	/* THE RAIL'S INK. Dark olive from the ground's own hue family — the rail went pale and cream on it
 	   measures 1.23:1, i.e. nothing. Ink and ground are ONE decision here; moving either alone has cost
-	   legibility every time. */
-	--color-rail-ink: #ab7a42;
+	   legibility every time.
+	   #ab7a42 -> #6a5334 (083026). Sam: "i dislike the color ... it's just kind of clunky and ugly and
+	   doesn't have the elegance of the rest of the app." Kept inside the ground's own hue family for
+	   exactly the reason above — a slate or midnight ink would read cold against a warm ground and is
+	   the change that has cost legibility before — but taken DARKER and less saturated, so the ruler
+	   recedes into the page instead of announcing itself in mid-tan. Contrast against the cream ground
+	   goes from about 3.2:1 to about 6.5:1, which is what lets the rules get thinner without going
+	   faint. THINNER AND DARKER ARE ONE CHANGE; do not undo half of it. */
+	--color-rail-ink: #6a5334;
 	/* ORBIT — the paper an out-of-line figure's card is printed on, so a card in the Ascension zone
 	   reads as different STOCK rather than as a different tint of the same page.
 	   Walked: hsl(30,18%,87%) "almost too red" -> hsl(30,38%,92%) cream -> hsl(236,100%,87%), which Sam

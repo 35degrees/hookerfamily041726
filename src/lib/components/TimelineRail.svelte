@@ -1704,7 +1704,15 @@
 	     anchor is interactive on its own and role="img" on one is a contradiction (it carried that role
 	     as a <div>, when only its pointer handlers made it interactive). The label rides the anchor, so
 	     a linked bar announces as "link: Alice, 1845–1934", which is now what it is. -->
-	{#each bars as b (b.lane)}
+	<!-- HIDDEN BELOW 900px, and the gate is the STAGE's answer rather than a media query here (§33.1 —
+	     nothing but that module reads the window). Sam: "at <900px browser width the vertical lines are a
+	     liability and will never work so hide the vertical lines at that point." At 850 the container is
+	     835px and a card plus this column's 114px cannot both fit, so every layout below 900 was picking
+	     which one to spoil. The YEAR RULES above stay — they are horizontal, they bleed off the left edge,
+	     and a card passing over a thin rule reads as depth rather than as collision. `bars` is still
+	     COMPUTED either way, so nothing about lane identity or the flight's clock changes; only the
+	     painting stops, and it comes back the moment the window is wide enough to hold it. -->
+	{#each stage.timelineBars ? bars : [] as b (b.lane)}
 		{@const link = barLink(b)}
 		<a
 			class="bar"
@@ -1760,6 +1768,24 @@
 		top: 0;
 		bottom: 0;
 		width: var(--rail-w);
+		/* ── THE RULES' GEOMETRY, IN ONE PLACE (083026) ───────────────────────────────────────────
+		   Three numbers the ticks and the years both read, so a rule and the year riding it cannot
+		   drift apart — previously the rule's `left`, its `width` and the year's `left` were three
+		   independent constants that a comment had to keep describing as "ONE measurement".
+
+		   --tick-x IS NEGATIVE ON PURPOSE. Sam: "extend left beyond the browser edge so we don't see
+		   a gap." The rules used to start at +5, which left a sliver of ground between the window's
+		   edge and the start of every line — the eye reads that as the instrument floating loose
+		   rather than running off the page. Bleeding past 0 makes the scale continue beyond the frame,
+		   which is what a ruler does.
+
+		   --tick-long is where the half and quarter rules END, and it is also where the YEAR's right
+		   edge sits, because the year is now right-aligned into this same box. It stops just short of
+		   the first lifespan lane (laneX(0) = LABEL_W + 7 = 91), so the rules reach as far right as
+		   they can without running under the bars. */
+		--tick-x: -12px;
+		--tick-long: 88px;
+		--tick-short: 58px;
 		/* ── ABOVE THE FIELD AND THE VEIL, BEHIND THE STAGE — AND NEVER CONDITIONALLY ────────────────
 		   1, not 0, and the change is one number with a long reason.
 		   THE DOCTRINE IS UNCHANGED: the cards and rows own the foreground unconditionally, and where
@@ -2209,17 +2235,17 @@
 	/* THE 25 NOW MATCHES THE 50's LENGTH (Sam: "keep 25 year marker lines same width at 50 years"), so
 	   the two long marks make one column and the ONLY thing separating them is weight and the year. */
 	.tick.quarter {
-		left: 5px;
-		width: 38px; /* = .tick.half */
-		height: 2.86px; /* 2.6 +10% (Sam) */
+		left: var(--tick-x);
+		width: calc(var(--tick-long) - var(--tick-x));
+		height: 2.2px; /* was 2.86 — the whole set thinned with .half, so the tier order holds */
 	}
 	/* AND THE 12.5 IS THE ONLY TIER THAT SAYS ITS RANK IN LENGTH — "20% less wide horizontally", the one
 	   place Sam qualified the axis. With the two long marks now equal, the short mark is what gives the
 	   scale its rhythm: long, short, long, short, and every second long one carries a number. */
 	.tick.eighth {
-		left: 5px;
-		width: 26.32px; /* 32.9 −20% (Sam) */
-		height: 2.1px;
+		left: var(--tick-x);
+		width: calc(var(--tick-short) - var(--tick-x));
+		height: 1.6px; /* was 2.1 — thinned in step with the other two */
 	}
 	/* The half-century rule is the one that shares its row with a year, so it alone is inset — and now
 	   SHORTER, ending at 84px rather than running the full width of the instrument. Staying inside the
@@ -2232,15 +2258,15 @@
 	   38 against the stubs' 32.9 — a little LONGER, because the half-century is the major tier and the
 	   two rules now sit in one column where length is the only thing distinguishing them. */
 	.tick.half {
-		left: 5px;
-		width: 38px;
+		left: var(--tick-x);
+		width: calc(var(--tick-long) - var(--tick-x));
 		/* +20%, then +15% again (Sam): 3 -> 3.6 -> 4.14. THICKNESS IS THE ONLY LEVER ON "make rounded
 		   ends more pronounced" — the radius is already 999px, so each cap is a true semicircle and
 		   cannot be made rounder; what it CAN be is bigger, and a cap's radius is half the thickness.
 		   3.6 gave a 1.8px cap, 4.14 gives 2.07. If Sam wants them rounder still, this is the number.
 		   NOTE THE AXIS: "wider" here is thickness, not length. Sam qualified exactly one of the four
 		   instructions in this pass with "horizontally" (the 12.5s), which is what distinguishes them. */
-		height: 4.14px;
+		height: 2.9px;
 	}
 	.tick-year {
 		position: absolute;
@@ -2259,9 +2285,13 @@
 		   what he asked for and is why the arithmetic is spelled out rather than reverted.
 		   Deliberately NOT the +15% the rule itself took: the rule grew in thickness, not in length, so
 		   the gap is the only thing this moves. */
-		left: 45.9px;
-		width: 40px;
-		text-align: left;
+		left: var(--tick-x);
+		/* +2px past the rule's end, which is what makes the digits LOOK flush with it: a numeral
+		   carries right side bearing inside its advance width, so a box aligned exactly to 88 renders
+		   the ink a pixel or two short. Sam: "put the years at the far right end of the lines, you
+		   have it left a bit." */
+		width: calc(var(--tick-long) - var(--tick-x) + 2px);
+		text-align: right;
 		/* CENTRED ON THE RULE (Sam: "center align the year text to the center of the horizontal 50 year
 		   lines"). Bottom-aligning was the previous pass and it sat the digits ON the line, which put
 		   their whole mass above it.
@@ -2276,16 +2306,16 @@
 		   while dropping only 0.22 below. Re-measure this if the size or the face changes — it is a
 		   property of Fraunces' digits at this size, not a constant. (Probe: compare a .tick-year's
 		   canvas actualBoundingBoxAscent/Descent midpoint against its rule's midpoint.) */
-		transform: translateY(calc(-50% + var(--year-optical, -2.15px)));
+		transform: translateY(calc(-100% + var(--year-optical, -5px)));
 		line-height: 1;
 		/* +25% (Sam), then +20% again (Sam): 9 -> 11.25 -> 13.5. The rail is read at a glance from the
 		   corner of the eye, and each step was Sam saying it was still asking too much of one. */
-		font-size: 14.85px;
+		font-size: 13px;
 		/* FRAUNCES 500, Sam's pick, and the one place in the app that uses it. The rail's other type is
 		   Inter; a high-contrast serif says the years are a SCALE rather than more labelling. 500 is a
 		   real weight here because the variable face is imported — it replaces the 600 the years used to
 		   carry, which existed to stop 11px Inter from reading thin and is not needed by a serif at 13.5. */
-		font-family: var(--font-fraunces, Georgia, serif);
+		font-family: var(--font-outfit, Outfit, system-ui, sans-serif);
 		font-weight: 500;
 		font-variant-numeric: tabular-nums;
 		/* ONE CREAM FOR EVERY YEAR (Sam: "you don't need to rotate lighter and darker year text, they can
@@ -2303,16 +2333,25 @@
 	   the widths above should all be equal and they span 32.9 to 40.4, so Fraunces Variable's wght axis
 	   is shipping without a tnum feature. Flagged rather than fixed: making the column truly tabular is
 	   a different change from nudging one label, and it would move all nine. */
-	.tick-year.millennium {
-		left: 43.6px; /* 45.9 −5% (Sam) — ends at 89.0, clear of the lane by 2px */
-	}
-	/* A century is 5% larger and nothing else — the one place a difference is still worth drawing. */
-	.tick-year.century {
-		font-size: 15.59px;
-		/* No font-weight here. It used to restate 500, which — being later in source order — quietly
-		   undid the 600 set on .tick-year above, so every century label stayed light while the rest
-		   went bold. Size is the only difference a century needs. */
-	}
+	/* THE MILLENNIUM'S OWN `left` IS GONE (083026). It was 43.6px — a nudge measured against the OLD
+	   label column, when each year was positioned individually to the right of its rule. The years
+	   now share the rule's box and right-align into it, so an absolute left here did not nudge 2000,
+	   it moved it out of the shared box entirely and pushed it right of every other year. Sam saw it
+	   immediately. Nothing replaces it: 2000 is a year like any other now. */
+	/* A CENTURY NO LONGER LOOKS DIFFERENT, and the ruleset that made it so is gone (083026).
+	   IT SET font-size 15.59 against every other year's 13. Sam: "all the same size. no reason to have
+	   1750 be smaller than 1700." He is right — the RULE beside each year already says which interval
+	   it is, and saying it a second time in type size made the column read as two kinds of label when
+	   it is one kind at two intervals. That is the same argument that flattened their COLOUR a pass
+	   earlier, so this is the second channel to go rather than a new decision.
+
+	   THE FONT-WEIGHT NOTE, PRESERVED because it is a live trap and not history: this ruleset must never
+	   restate font-weight. It used to set 500, which — being later in source order — quietly undid the
+	   600 on .tick-year above, so every century label stayed light while the rest went bold.
+
+	   `class:century` STAYS ON THE SPAN. It is a true statement about the year, it costs nothing, and it
+	   is the hook anything future would want. Nothing styles it today; the empty ruleset that said so
+	   tripped svelte-check's no-empty-rulesets warning, so the reasoning lives here as prose instead. */
 
 	/* The era marks sit at x=28, well inside the solid pine, so their old dark rust would have gone
 	   invisible the moment the ground changed. Warmed and lightened to read against it. */

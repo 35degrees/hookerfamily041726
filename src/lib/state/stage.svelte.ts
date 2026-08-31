@@ -210,7 +210,17 @@ export const LADDER: StageRung[] = [
 		// sibling menu "can be the first to vanish when the screen gets narrower"). Dropping it returns
 		// ~150px at u=1, which is most of why this rung can hold a 0.82 frame instead of a 0.72 one —
 		// the card is BIGGER at this rung than it would have been with the column kept.
-		minW: 900,
+		// minW 900 -> 820 (083026), TO STOP TWO UNRELATED THINGS FIRING ON THE SAME PIXEL. The lifespan
+		// bars stop being painted at 900, and this floor ALSO sat at 900 — so crossing it changed the
+		// tier (to the tablet-PORTRAIT composition) in the same frame the bars vanished, and the card
+		// stepped 759 -> 718 while sliding 40px sideways. Sam: "just don't jump the main content around
+		// when vertical bars leave." Neither change was wrong on its own; landing them together is what
+		// made it read as a lurch.
+		//
+		// 820 KEEPS 768 IN TIER B, which is the width that rung is actually for (iPad portrait is
+		// 768x1024). What this opens up is 820-899 — landscape-ish windows that were only getting the
+		// portrait composition because this floor happened to be the nearest thing to them.
+		minW: 820,
 		minH: 640,
 		tier: 'A',
 		density: 'compact',
@@ -282,6 +292,28 @@ const SIBLING_COL_BASE = 149;
  * exists (see shiftX) and can never cost a single pixel of card.
  */
 const TIMELINE_BARS_W = 114;
+/**
+ * BELOW THIS THE LIFESPAN BARS ARE NOT DRAWN AT ALL. Sam: "it's clear that at <900px browser width the
+ * vertical lines are a liability and will never work so hide the vertical lines at that point."
+ *
+ * It is the honest reading of the arithmetic. At 850 the container is 835px and a card plus the bars'
+ * 114px column cannot both fit; every arrangement below 900 was choosing which one to spoil. Removing
+ * the bars there is not a degradation, it is the same call §12 already makes for Tier C — "anchor
+ * figures as small dots", a RECOMPOSITION rather than a squeeze — taken one rung earlier.
+ *
+ * THE YEAR RULES STAY. They are horizontal, they bleed off the left edge, and a card passing over a
+ * thin rule reads as depth rather than as collision. What could not survive was the vertical column.
+ */
+const TIMELINE_BARS_MIN_W = 900;
+/**
+ * ABOVE THIS THE COMPOSITION STAYS CENTRED IN THE WINDOW, full stop. Sam gave the permission with its
+ * own boundary attached — "you don't have to 'Center' the main content BELOW 1100px in the browser
+ * window, the center line can cheat to the right" — and the first version of the cheat ignored the
+ * second half of that sentence and fired everywhere, which moved a 1440 laptop and a 1600 desktop 57px
+ * right of where they have been signed off. Those layouts have slack on BOTH sides and nothing to
+ * avoid; the cheat exists for windows that are running out of room, not for windows that are not.
+ */
+const CHEAT_MAX_W = 1100;
 /** `.page-container`'s left + right padding at u = 1. */
 const STAGE_PAD_BASE = 64;
 /**
@@ -411,7 +443,26 @@ const layoutW = $derived.by(() => {
  * A RUNG WITH A COLUMN IS UNTOUCHED — it keeps `widthClamp` exactly as it was, because there the
  * column is what the right-hand width is for.
  */
-const uFloor = $derived(widthClamp(rung.u, vw, rung.siblingColumn));
+/** Are the lifespan bars drawn at all? See TIMELINE_BARS_MIN_W. The stage owns this because it is a
+ *  question about the WINDOW, and §33.1 says nothing else may ask one. */
+const timelineBars = $derived(vw >= TIMELINE_BARS_MIN_W);
+/**
+ * A COLUMN-LESS RUNG IS CLAMPED AGAINST THE REAL BOX, NOT THE WINDOW (083026).
+ *
+ * `innerWidth` counts the vertical scrollbar; `.page-container` does not get it. Measured, that is 15px,
+ * and it is the difference between fitting and not: at 820 the clamp allowed 0.82 on a 820px window, and
+ * the 759px card plus its two 26px pads came to 811 inside an 805px box — a 6px overflow, which is the
+ * one rule Sam has called inviolable. It is also the source of the 13px the phone has been overflowing
+ * by all along, which the baseline recorded and nobody had chased.
+ *
+ * ONLY the column-less rungs move to `layoutW`. Feeding it to the rungs that CARRY the sibling column
+ * would re-tune every value from 1050 up — it was tried, and it took 1100 from 0.853 to 0.841 and
+ * inverted the continuity there — and those rungs have never overflowed, because the column's own
+ * doubled budget leaves them slack. So the law is enforced where it is actually being broken.
+ */
+const uFloor = $derived(
+	widthClamp(rung.u, rung.siblingColumn ? vw : layoutW, rung.siblingColumn)
+);
 const uBars = $derived(
 	rung.siblingColumn ? uFloor : (layoutW - TIMELINE_BARS_W - 2) / (CARD_W_BASE + STAGE_PAD_BASE)
 );
@@ -450,10 +501,34 @@ const clampedU = $derived(Math.min(rung.uMax ?? rung.u, Math.max(uFloor, uBars))
  *  costs an overflow, and only one of those is allowed to happen. */
 const colW = $derived(rung.siblingColumn ? SIBLING_COL_BASE : 0);
 const shiftX = $derived.by(() => {
+	// THE BARS LEAVING MUST NOT MOVE THE CARD. This used to return 0 as soon as the lifespan column
+	// stopped being painted, which snapped the composition back to dead centre in the same frame the
+	// bars disappeared — a visible jump left at 900 for no reason the reader could see. Sam: "you don't
+	// have to actively shift the main content left to cover the space opened by removing vertical bars
+	// ... that's just ping ponging main content to cover newly open space, no that only happens for
+	// sibling menu disappearing. just don't jump the main content around when vertical bars leave."
+	//
+	// He is drawing a distinction worth keeping straight. The cheat is a response to the SIBLING COLUMN
+	// leaving, which is a change in what the composition contains; the bars are an instrument painted
+	// underneath it, and whether they are drawn is not a layout fact. So this is now a function of the
+	// window's width alone and `timelineBars` has no say in it — hiding the bars changes what you see
+	// and nothing about where anything sits.
+	if (vw >= CHEAT_MAX_W) return 0;
 	const cardW = CARD_W_BASE * clampedU;
 	const padSide = (STAGE_PAD_BASE / 2) * clampedU;
 	const naturalLeft = (layoutW - cardW) / 2;
-	const want = Math.max(0, TIMELINE_BARS_W - naturalLeft);
+	// RE-CENTRE IN THE SPACE THAT IS LEFT — not "move the minimum distance that clears the bars", which
+	// is what this was and what Sam kept having to report. Clearing the bars pinned the card HARD AGAINST
+	// them and left the whole freed sibling column sitting empty on the right: measured at 1024, card at
+	// L=114 with a 106px gutter. Sam: "the main content never takes advantage of the sibling menu being
+	// removed after 1050px and smaller."
+	//
+	// Centring the card in [BARS_W, layoutW] instead of [0, layoutW] resolves to a constant — the two
+	// halves of the arithmetic cancel to exactly half the reserve — which is the literal form of what he
+	// asked for: "the center line can cheat to the right to use new open space." The centre line moves
+	// right by half the timeline's width, and the space ends up split evenly either side of the card
+	// rather than banked on one side of it.
+	const want = TIMELINE_BARS_W / 2;
 	const room = layoutW - padSide - (naturalLeft + cardW + colW);
 	// FLOORED AT ZERO ALWAYS — the cheat only ever moves RIGHT (083026). It was briefly allowed to go
 	// negative, so a rung whose column was tight could pull the group left to make room on the right;
@@ -577,6 +652,11 @@ export const stage = {
 	 *  bars); negative is left (making room on the right for the sibling column). See shiftX. */
 	get shiftX(): number {
 		return shiftX;
+	},
+	/** Are the timeline's LIFESPAN BARS drawn? False below 900px, where a card and the bars' column
+	 *  cannot both fit and every arrangement was choosing which to spoil. See TIMELINE_BARS_MIN_W. */
+	get timelineBars(): boolean {
+		return timelineBars;
 	},
 	/** At or below 1100px wide, the vitals' two whitespace gaps halve. See tightVitals. */
 	get tightVitals(): boolean {
