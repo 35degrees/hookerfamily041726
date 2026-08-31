@@ -18,6 +18,7 @@
 	 * goes where it still means something — the veil coming in, and the exit into the card's flight.
 	 */
 	import { listYears as years } from '$lib/utils/dates';
+	import { hoverIntent } from '$lib/state/hoverIntent';
 	import { modal, closeModal } from '$lib/state/modal.svelte';
 	import { ascension } from '$lib/state/ascension.svelte';
 	import {
@@ -112,8 +113,11 @@
 		dy: number;
 	} | null>(null);
 
-	function trackZoom(e: MouseEvent) {
-		const img = e.currentTarget as HTMLImageElement;
+	/* THE NODE ARRIVES AS AN ARGUMENT (083026). `use:hoverIntent` arms this from a SAMPLER rather
+	   than from the event dispatch, so `e.currentTarget` is null by the time it runs — and it fails
+	   silently inside a listener nobody is watching. Same change in all five popout surfaces. */
+	function trackZoom(e: PointerEvent, node: HTMLElement) {
+		const img = node as HTMLImageElement;
 		if (!img?.src) return;
 		const r = img.getBoundingClientRect();
 		const ar = img.naturalWidth ? img.naturalHeight / img.naturalWidth : 1;
@@ -560,9 +564,11 @@
 									class="h-full w-full object-cover object-top"
 									loading="lazy"
 									onerror={(e) => ((e.currentTarget as HTMLImageElement).style.display = 'none')}
-									onmouseenter={trackZoom}
-									onmousemove={trackZoom}
-									onmouseleave={closeZoom}
+									use:hoverIntent={{
+										onArm: trackZoom,
+										onMove: trackZoom,
+										onDisarm: closeZoom
+									}}
 								/>
 							{/if}
 						</div>

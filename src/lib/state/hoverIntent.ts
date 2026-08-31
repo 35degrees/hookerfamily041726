@@ -49,9 +49,13 @@ import { subscribeFlightLock } from './flightLock';
  * SAMPLE_MS is the sampling interval, deliberately shorter than the dwell so the dwell is measured
  * rather than approximated by "one tick happened".
  */
-const DWELL_MS = 140;
+// 140 -> 120 (Sam, 083026: "not 140ms its a little slow. snappier").
+const DWELL_MS = 120;
 const SLOP_PX = 6;
-const SAMPLE_MS = 70;
+// 70 -> 60 IN STEP WITH THE DWELL, because the sampler is what actually decides when arming happens:
+// the dwell is only tested on a tick, so the real delay is DWELL_MS..DWELL_MS+SAMPLE_MS. Leaving the
+// interval at 70 would have made a 120ms dwell arm as late as 190 and quietly undone half the change.
+const SAMPLE_MS = 60;
 /** How far the pointer must travel after entering before ARRIVAL is ruled out. Small enough that any
  *  real hand movement clears it, large enough that a trackpad's idle jitter does not. */
 const WAKE_PX = 3;

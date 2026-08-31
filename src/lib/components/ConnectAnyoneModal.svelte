@@ -28,6 +28,7 @@
 -->
 <script lang="ts">
 	import { tick } from 'svelte';
+	import { hoverIntent } from '$lib/state/hoverIntent';
 	import { fade } from 'svelte/transition';
 	import { linear, cubicOut } from 'svelte/easing';
 	import { modal, closeModal } from '$lib/state/modal.svelte';
@@ -975,8 +976,11 @@
 	/** FeaturedCard follows the cursor 1:1; this is that plus the 20% Sam asked for. */
 	const AMPLIFY = 1.2;
 
-	function trackZoom(e: MouseEvent) {
-		const img = e.currentTarget as HTMLImageElement;
+	/* THE NODE ARRIVES AS AN ARGUMENT (083026). `use:hoverIntent` arms this from a SAMPLER rather
+	   than from the event dispatch, so `e.currentTarget` is null by the time it runs — and it fails
+	   silently inside a listener nobody is watching. Same change in all five popout surfaces. */
+	function trackZoom(e: PointerEvent, node: HTMLElement) {
+		const img = node as HTMLImageElement;
 		if (!img?.src) return;
 		const r = img.getBoundingClientRect();
 		const ar = img.naturalWidth ? img.naturalHeight / img.naturalWidth : 1;
@@ -1236,9 +1240,11 @@
 					alt=""
 					class="object-top"
 					loading="eager"
-					onmouseenter={trackZoom}
-					onmousemove={trackZoom}
-					onmouseleave={closeZoom}
+					use:hoverIntent={{
+						onArm: trackZoom,
+						onMove: trackZoom,
+						onDisarm: closeZoom
+					}}
 				/>{/if}
 		</div>
 		<!-- THE APEX IS NOT NUMBERED. Every other rung's number is its DEPTH BELOW THE SHARED ANCESTOR
@@ -1307,9 +1313,11 @@
 						alt=""
 						class="object-top"
 						loading="eager"
-						onmouseenter={trackZoom}
-						onmousemove={trackZoom}
-						onmouseleave={closeZoom}
+						use:hoverIntent={{
+							onArm: trackZoom,
+							onMove: trackZoom,
+							onDisarm: closeZoom
+						}}
 					/>{/if}
 			</div>
 		{/if}
@@ -1346,9 +1354,11 @@
 						alt=""
 						class="object-top"
 						loading="eager"
-						onmouseenter={trackZoom}
-						onmousemove={trackZoom}
-						onmouseleave={closeZoom}
+						use:hoverIntent={{
+							onArm: trackZoom,
+							onMove: trackZoom,
+							onDisarm: closeZoom
+						}}
 					/>{/if}
 			</div>
 		{/if}
@@ -1392,9 +1402,11 @@
 						alt=""
 						class="object-top"
 						loading="eager"
-						onmouseenter={trackZoom}
-						onmousemove={trackZoom}
-						onmouseleave={closeZoom}
+						use:hoverIntent={{
+							onArm: trackZoom,
+							onMove: trackZoom,
+							onDisarm: closeZoom
+						}}
 					/>
 				</div>
 			{/if}

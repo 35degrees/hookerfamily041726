@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Person, Education, Career, MediaRow } from '$lib/types/person';
+	import { hoverIntent } from '$lib/state/hoverIntent';
 	import type { Institution } from '$lib/types/institution';
 	import type { Cemetery } from '$lib/types/cemetery';
 	import { buildMapUrl, formatLocationShort } from '$lib/utils/dates';
@@ -182,9 +183,12 @@
 	<div
 		class="relative mt-0.5 h-[34px] w-[34px] shrink-0 overflow-hidden rounded"
 		role="presentation"
-		onmouseenter={row.thumbUrl ? (e) => trackPopout(e, row) : undefined}
-		onmousemove={row.thumbUrl ? (e) => trackPopout(e, row) : undefined}
-		onmouseleave={closePopout}
+		use:hoverIntent={{
+			onArm: (e) => trackPopout(e, row),
+			onMove: (e) => trackPopout(e, row),
+			onDisarm: closePopout,
+			enabled: () => !!row.thumbUrl
+		}}
 	>
 		{#if row.thumbUrl}
 			<img
