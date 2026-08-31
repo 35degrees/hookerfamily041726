@@ -592,6 +592,23 @@ const effectiveNbCap = $derived(Math.min(rung.nbCap ?? 7, nbCapForWidth(vw)));
 const TIGHT_VITALS_W = 1100;
 const tightVitals = $derived(vw <= TIGHT_VITALS_W);
 
+/**
+ * THE RAIL'S RULES SHORTEN BY A QUARTER at or below 780px. Sam: "at <780px and below browser width, we
+ * can shrink the width of each line in the timeline by 25%, including pushing the year text left, still
+ * in same end of line position but line is shorter."
+ *
+ * A BOOLEAN HERE, THE LENGTHS THERE, for the same reason tightVitals above is a boolean: this module
+ * owns the QUESTION about the window and nothing else may ask one, but the geometry belongs beside the
+ * thing it measures. The rail derives its three tiers and its year box from one --tick-len, so a single
+ * class swap moves all four together and the year keeps sitting at its rule's right end for free.
+ *
+ * NOT the frame unit. The rail's own header forbids scaling it with --stage-u — "a ruler at the
+ * window's edge is the one thing that should keep its size when the stage shrinks" — and this does not
+ * break that rule: it is one deliberate step at one width, not a continuous scale.
+ */
+const TIGHT_RAIL_W = 780;
+const tightRail = $derived(vw <= TIGHT_RAIL_W);
+
 export const stage = {
 	/**
 	 * HAS THE WINDOW BEEN READ YET? False during SSR and for the first client tick; true forever after.
@@ -661,6 +678,10 @@ export const stage = {
 	/** At or below 1100px wide, the vitals' two whitespace gaps halve. See tightVitals. */
 	get tightVitals(): boolean {
 		return tightVitals;
+	},
+	/** At or below 780px wide, the timeline's rules shorten by 25% and the years follow them left. */
+	get tightRail(): boolean {
+		return tightRail;
 	},
 	get coarse(): boolean {
 		return coarsePointer;

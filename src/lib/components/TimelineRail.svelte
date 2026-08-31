@@ -1687,6 +1687,7 @@
 	class:ascended={ascension.active}
 	class:founder={ascension.founder}
 	class:over-flight={overFlight}
+	class:tight-rail={stage.tightRail}
 	style="--rail-w: {RAIL_W}px; --move-ms: {moveMs}ms; --tip-ms: {barFadeMs}ms;
 	       --bar-ease: {barEase}"
 	aria-hidden="true"
@@ -1844,6 +1845,15 @@
 		   one scale rather than three sets of marks. The half's right end (-12 + 100 = 88) is also where
 		   the year sits. */
 		--tick-len: 100px;
+	}
+	/* 25% SHORTER AT OR BELOW 780px (083026, Sam). One number, because every other length in the scale
+	   is derived from it: the quarter and eighth are ratios of --tick-len, and the year's box is
+	   calc(--tick-len - 1px). So the rules shorten, their tiers stay in proportion, and the years move
+	   left with the ends they are aligned to — "still in same end of line position but line is shorter"
+	   — without a second rule anywhere. The stage decides WHEN (see stage.tightRail); this decides by
+	   how much. */
+	.rail.tight-rail {
+		--tick-len: 75px;
 		/* ── ABOVE THE FIELD AND THE VEIL, BEHIND THE STAGE — AND NEVER CONDITIONALLY ────────────────
 		   1, not 0, and the change is one number with a long reason.
 		   THE DOCTRINE IS UNCHANGED: the cards and rows own the foreground unconditionally, and where
