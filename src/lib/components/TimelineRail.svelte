@@ -1779,13 +1779,21 @@
 		   rather than running off the page. Bleeding past 0 makes the scale continue beyond the frame,
 		   which is what a ruler does.
 
-		   --tick-long is where the half and quarter rules END, and it is also where the YEAR's right
-		   edge sits, because the year is now right-aligned into this same box. It stops just short of
-		   the first lifespan lane (laneX(0) = LABEL_W + 7 = 91), so the rules reach as far right as
-		   they can without running under the bars. */
+		   THE HALF-CENTURY'S right end is where the YEAR's right edge sits too, because the year is
+		   right-aligned into that same box. It stops just short of the first lifespan lane
+		   (laneX(0) = LABEL_W + 7 = 91), so the rules reach as far right as they can without running
+		   under the bars. The quarter and eighth end progressively shorter — see --tick-len. */
 		--tick-x: -12px;
-		--tick-long: 88px;
-		--tick-short: 58px;
+		/* THE HALF-CENTURY'S FULL LENGTH — the ONE number the other two tiers are derived from (083026).
+		   They were three independent widths, which is how the quarter came to share the half's exactly:
+		   both read --tick-long, so a 25-year mark was indistinguishable from a 50-year one and the ruler
+		   had no hierarchy left to read. Sam set the ratios — the 25s at 75%, the 12.5s at 50%. Written as
+		   multiples so they stay in proportion if this length is ever tuned again, instead of three
+		   numbers that drift apart. Every tier starts at the shared --tick-x and bleeds off the same left
+		   edge, so they differ only in how far RIGHT they reach, which is what makes the cascade read as
+		   one scale rather than three sets of marks. The half's right end (-12 + 100 = 88) is also where
+		   the year sits. */
+		--tick-len: 100px;
 		/* ── ABOVE THE FIELD AND THE VEIL, BEHIND THE STAGE — AND NEVER CONDITIONALLY ────────────────
 		   1, not 0, and the change is one number with a long reason.
 		   THE DOCTRINE IS UNCHANGED: the cards and rows own the foreground unconditionally, and where
@@ -2233,19 +2241,22 @@
 	   "1px thinner" for the 25, "0.5px thinner than the 25" for the 12.5. Change the top and the other
 	   two follow. */
 	/* THE 25 NOW MATCHES THE 50's LENGTH (Sam: "keep 25 year marker lines same width at 50 years"), so
-	   the two long marks make one column and the ONLY thing separating them is weight and the year. */
+	   the tiers are NO LONGER the same length — see --tick-len. Weight and the year still separate
+	   them, but length does the first and loudest part of the work now. */
 	.tick.quarter {
 		left: var(--tick-x);
-		width: calc(var(--tick-long) - var(--tick-x));
-		height: 2.2px; /* was 2.86 — the whole set thinned with .half, so the tier order holds */
+		width: calc(var(--tick-len) * 0.75); /* Sam: 75% of the 50-year mark */
+		height: 2.2px;
 	}
 	/* AND THE 12.5 IS THE ONLY TIER THAT SAYS ITS RANK IN LENGTH — "20% less wide horizontally", the one
-	   place Sam qualified the axis. With the two long marks now equal, the short mark is what gives the
-	   scale its rhythm: long, short, long, short, and every second long one carries a number. */
+	   place Sam qualified the axis. All three tiers now say their rank in length, 100 / 75 / 50, so
+	   the scale reads as a ruler: every second long mark carries a number. */
 	.tick.eighth {
 		left: var(--tick-x);
-		width: calc(var(--tick-short) - var(--tick-x));
-		height: 1.6px; /* was 2.1 — thinned in step with the other two */
+		width: calc(var(--tick-len) * 0.5); /* Sam: 50% of the 50-year mark */
+		/* 0.5px thinner than the QUARTER above, per Sam — measured off that rule rather than off the
+		   half, so the three step 2.9 / 2.2 / 1.7 instead of bunching at the bottom. */
+		height: 1.7px;
 	}
 	/* The half-century rule is the one that shares its row with a year, so it alone is inset — and now
 	   SHORTER, ending at 84px rather than running the full width of the instrument. Staying inside the
@@ -2259,7 +2270,7 @@
 	   two rules now sit in one column where length is the only thing distinguishing them. */
 	.tick.half {
 		left: var(--tick-x);
-		width: calc(var(--tick-long) - var(--tick-x));
+		width: var(--tick-len);
 		/* +20%, then +15% again (Sam): 3 -> 3.6 -> 4.14. THICKNESS IS THE ONLY LEVER ON "make rounded
 		   ends more pronounced" — the radius is already 999px, so each cap is a true semicircle and
 		   cannot be made rounder; what it CAN be is bigger, and a cap's radius is half the thickness.
@@ -2285,12 +2296,17 @@
 		   what he asked for and is why the arithmetic is spelled out rather than reverted.
 		   Deliberately NOT the +15% the rule itself took: the rule grew in thickness, not in length, so
 		   the gap is the only thing this moves. */
-		left: var(--tick-x);
+		/* ZERO, NOT --tick-x, AND THAT WAS A REAL BUG (083026). The year is a CHILD of its rule, so it
+		   is already positioned inside a box that starts at --tick-x — repeating the bleed here applied
+		   it twice and put the year's right edge at 78 against the rule's own 88, i.e. 10px short of
+		   the end Sam asked it to sit at. Measured, not spotted by eye: the rule and the year are the
+		   same box now, so the only correct left is the parent's own origin. */
+		left: 0;
 		/* +2px past the rule's end, which is what makes the digits LOOK flush with it: a numeral
 		   carries right side bearing inside its advance width, so a box aligned exactly to 88 renders
 		   the ink a pixel or two short. Sam: "put the years at the far right end of the lines, you
 		   have it left a bit." */
-		width: calc(var(--tick-long) - var(--tick-x) + 2px);
+		width: calc(var(--tick-len) + 2px);
 		text-align: right;
 		/* CENTRED ON THE RULE (Sam: "center align the year text to the center of the horizontal 50 year
 		   lines"). Bottom-aligning was the previous pass and it sat the digits ON the line, which put
