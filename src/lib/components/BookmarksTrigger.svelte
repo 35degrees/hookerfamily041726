@@ -22,6 +22,7 @@
 	 * arrives rather than after.
 	 */
 	import { listYears as years } from '$lib/utils/dates';
+	import { hoverIntent } from '$lib/state/hoverIntent';
 	import { auth, type ListId } from '$lib/state/auth.svelte';
 	import { openModal } from '$lib/state/modal.svelte';
 	import { load, personById, search, CAT } from '$lib/state/search.svelte';
@@ -40,11 +41,20 @@
 	function warm() {
 		void load().catch(() => {});
 	}
-	/** A SMALL GRACE ON LEAVING. The pointer has to cross a gap between the word and the menu below
-	 *  it, and a menu that vanishes in that gap cannot be reached at all. */
-	function enter() {
+	/**
+	 * OPENED ON INTENT, NOT ON ENTRY (083126). This used to set `open = true` from `onmouseenter`, so
+	 * the menu dealt itself out the instant the pointer touched the words. Sam: "just like the photo
+	 * enlargement, the menu for Recently added bookmarks appears instantly when hovered, even if I'm
+	 * moving my mouse from the home icon to search."
+	 *
+	 * THE CORNER MAKES THIS UNAVOIDABLE RATHER THAN OCCASIONAL. Home, My Bookmarks and Search sit in a
+	 * row, so every trip between the outer two crosses this control — the menu was not popping open on
+	 * an unlucky path, it was popping open on the ONLY path. `use:hoverIntent` applies the same 120ms
+	 * dwell and 6px velocity gate the five photo popouts use (design §49.3); a pointer travelling to
+	 * Search never produces a slow sample inside the words, so it never arms.
+	 */
+	function openMenu() {
 		clearTimeout(closeTimer);
-		warm();
 		open = true;
 	}
 	function leave() {
@@ -122,7 +132,12 @@
 
 {#if auth.signedIn}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="bm" onmouseenter={enter} onmouseleave={leave}>
+	<!-- WARMING STAYS ON THE RAW ENTER, and only the OPENING waits for intent. Fetching the index and
+	     the row photos is invisible and idempotent, so doing it the moment the pointer arrives means the
+	     menu is already populated by the time intent is confirmed 120ms later — the guard costs nothing
+	     in perceived speed. `leave` keeps its own 220ms grace so the gap between the words and the menu
+	     below them is still crossable. -->
+	<div class="bm" onmouseenter={warm} use:hoverIntent={{ onArm: openMenu, onDisarm: leave }}>
 		<span
 			class="bm-word"
 			class:on-dark={onDark}
