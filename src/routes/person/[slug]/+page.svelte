@@ -1993,16 +1993,26 @@
 			<!-- Bookend carets — ALWAYS mounted (same DOM node, never remounted → no flicker AND no
 			     fresh-mount opacity flash: base opacity 0, .visible only ADDS 1 via a transition, so the
 			     stale featuredLanded frame at flight start can never paint them at 1). Visibility is a
-			     pure READ of hasCarousel + featuredLanded + canPage: they fade in with the chips on
+			     pure READ of hasCarousel + familyLanded + canPage: they fade in with the chips on
 			     landing, fade out on offset changes (last-window right caret fades out and stays out).
+			     familyLanded, NOT featuredLanded (083026). Sam: "the right arrow for the spouse carousel
+			     shows up immediately after CC is clicked from a different entry and just sits there while
+			     promoted featured card transitions." That is the one-frame stale-data window described at
+			     `landedPersonId` — on nav, `f` and everything derived from it switch to the INCOMING
+			     person in the same reactive flush, but featuredLanded does not go false until introstart
+			     fires a frame later. So `hasCarousel` became true for the arriving four-spouse person
+			     while featuredLanded was still true for the outgoing one, and the carets painted on a card
+			     that had not started moving. The remedy was already written down and already had a name;
+			     these two were simply not using it. The chips themselves never showed the fault because
+			     markPending holds each new chip at opacity 0 on mount. -->
 			     pointer-events:none while invisible; the paging lockout is enforced by pageStep's guard,
 			     NOT by CSS, so the cursor stays pointer throughout the 420ms. -->
 			<span class="caret-slot" style="right: {leftCaretRight}px">
 				<Caret
 					char="‹"
 					class="caret-left"
-					visible={hasCarousel && featuredLanded && canPageLeft}
-					disabled={pagingLock || !(hasCarousel && featuredLanded && canPageLeft)}
+					visible={hasCarousel && familyLanded && canPageLeft}
+					disabled={pagingLock || !(hasCarousel && familyLanded && canPageLeft)}
 					onclick={pageBack}
 					ariaLabel="Previous spouses"
 				/>
@@ -2011,8 +2021,8 @@
 				<Caret
 					char="›"
 					class="caret-right"
-					visible={hasCarousel && featuredLanded && canPageRight}
-					disabled={pagingLock || !(hasCarousel && featuredLanded && canPageRight)}
+					visible={hasCarousel && familyLanded && canPageRight}
+					disabled={pagingLock || !(hasCarousel && familyLanded && canPageRight)}
 					onclick={pageAdvance}
 					ariaLabel="More spouses"
 				/>
