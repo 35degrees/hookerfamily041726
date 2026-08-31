@@ -1398,7 +1398,10 @@
 		for (const a of ANCHORS) sampleInk(a.slug, a.src);
 	});
 
-	const ANCHOR_INSET = 8;
+	/* 8 -> 12 (083026, Sam: "move all headshots 4px to the right"). anchorOrigin reads this too, so a
+	   portrait near the window edge still picks the corner it grows from off the distance it really
+	   has — moving the inset without that would have made the hover expansion pick the wrong corner. */
+	const ANCHOR_INSET = 12;
 	/** Hover growth: +200%, then 10% more on Sam's word — three and a third times the resting size. */
 	const ANCHOR_HOVER_SCALE = 3.3;
 	const EDGE_MARGIN = 4;
