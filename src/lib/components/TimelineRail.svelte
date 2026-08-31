@@ -1402,6 +1402,11 @@
 	   portrait near the window edge still picks the corner it grows from off the distance it really
 	   has — moving the inset without that would have made the hover expansion pick the wrong corner. */
 	const ANCHOR_INSET = 12;
+	/* 2.5px FURTHER LEFT once the rules shorten (083026, Sam) — the portraits close up with the scale
+	   they sit beside rather than staying put while it narrows. A derived and not a second constant,
+	   because anchorOrigin reads this too: it picks which corner a portrait grows from off the room it
+	   has to the window edge, and that room just changed. */
+	const anchorInset = $derived(stage.tightRail ? ANCHOR_INSET - 2.5 : ANCHOR_INSET);
 	/** Hover growth: +200%, then 10% more on Sam's word — three and a third times the resting size. */
 	const ANCHOR_HOVER_SCALE = 3.3;
 	const EDGE_MARGIN = 4;
@@ -1423,7 +1428,7 @@
 		const d = anchorD(yearsTall);
 		const grow = (d * (ANCHOR_HOVER_SCALE - 1)) / 2; // overhang each side with a centre origin
 		const top = yFor(fromYear);
-		const ox = ANCHOR_INSET - grow < EDGE_MARGIN ? 'left' : 'center';
+		const ox = anchorInset - grow < EDGE_MARGIN ? 'left' : 'center';
 		const oy =
 			top - grow < EDGE_MARGIN
 				? 'top'
@@ -1721,7 +1726,7 @@
 			class="anchor"
 			type="button"
 			class:tip-below={tipBelow(a.from)}
-			style="top: {yFor(a.from)}px; left: {ANCHOR_INSET}px; width: {anchorD(a.years)}px;
+			style="top: {yFor(a.from)}px; left: {anchorInset}px; width: {anchorD(a.years)}px;
 			       height: {anchorD(a.years)}px; --anchor-origin: {anchorOrigin(a.from, a.years)};
 			       --anchor-scale: {ANCHOR_HOVER_SCALE};
 			       {anchorInk[a.slug] ? `--anchor-ink: ${anchorInk[a.slug]};` : ''}"
@@ -1845,15 +1850,10 @@
 		   one scale rather than three sets of marks. The half's right end (-12 + 100 = 88) is also where
 		   the year sits. */
 		--tick-len: 100px;
-	}
-	/* 25% SHORTER AT OR BELOW 780px (083026, Sam). One number, because every other length in the scale
-	   is derived from it: the quarter and eighth are ratios of --tick-len, and the year's box is
-	   calc(--tick-len - 1px). So the rules shorten, their tiers stay in proportion, and the years move
-	   left with the ends they are aligned to — "still in same end of line position but line is shorter"
-	   — without a second rule anywhere. The stage decides WHEN (see stage.tightRail); this decides by
-	   how much. */
-	.rail.tight-rail {
-		--tick-len: 75px;
+		/* THE YEAR'S SIZE IS A VARIABLE FOR THE SAME REASON --tick-len IS: it changes with the rules, so
+		   it should change in ONE place. Sam: "when the year timeline lines get reduced, also reduce the
+		   font size of the year text by 20% smaller." */
+		--year-size: 13px;
 		/* ── ABOVE THE FIELD AND THE VEIL, BEHIND THE STAGE — AND NEVER CONDITIONALLY ────────────────
 		   1, not 0, and the change is one number with a long reason.
 		   THE DOCTRINE IS UNCHANGED: the cards and rows own the foreground unconditionally, and where
@@ -1907,6 +1907,22 @@
 		   36 stops, ~3.5px apart — every stop is a kink, and a kink reads as a line. Generated: change
 		   the span, anchors or exponents and re-run rather than editing stops by hand. */
 		/* THE GROUND ITSELF IS ON ::before — see below. */
+	}
+
+	/* ── THE TIGHT STEP, AT OR BELOW 780px (083026) ────────────────────────────────────────────────
+	   Sam, in two passes: rules 25% shorter, year text 20% smaller, headshots 2.5px further left. All
+	   three are one variable each, because the scale was built to derive from --tick-len — the quarter
+	   and eighth are ratios of it and the year's box is calc(--tick-len - 1px), so they follow with no
+	   second rule existing. The stage decides WHEN (stage.tightRail); this decides by how much.
+
+	   A SEPARATE RULE AFTER `.rail`, NOT DECLARATIONS INSIDE IT. The first attempt opened
+	   `.rail.tight-rail` in the MIDDLE of `.rail`, which left every declaration below --tick-len —
+	   z-index among them — inside the tight rule, so the rail lost its stacking context at every width
+	   ABOVE 780. svelte-check has nothing to say about a valid selector holding the wrong declarations,
+	   and the measurement I ran only read tick lengths, so it passed twice. */
+	.rail.tight-rail {
+		--tick-len: 75px;
+		--year-size: 10.4px; /* 13 − 20% */
 	}
 	/* THE PARCHMENT GRAIN, over the gold. Sam: "the background color and fade of gold timeline background
 	   looking a little like a pee stain... can you add the texture of the background you added to the
@@ -2389,7 +2405,7 @@
 		line-height: 1;
 		/* +25% (Sam), then +20% again (Sam): 9 -> 11.25 -> 13.5. The rail is read at a glance from the
 		   corner of the eye, and each step was Sam saying it was still asking too much of one. */
-		font-size: 13px;
+		font-size: var(--year-size, 13px);
 		/* FRAUNCES 500, Sam's pick, and the one place in the app that uses it. The rail's other type is
 		   Inter; a high-contrast serif says the years are a SCALE rather than more labelling. 500 is a
 		   real weight here because the variable face is imported — it replaces the 600 the years used to
