@@ -137,7 +137,23 @@
 	     menu is already populated by the time intent is confirmed 120ms later — the guard costs nothing
 	     in perceived speed. `leave` keeps its own 220ms grace so the gap between the words and the menu
 	     below them is still crossable. -->
-	<div class="bm" onmouseenter={warm} use:hoverIntent={{ onArm: openMenu, onDisarm: leave }}>
+	<!-- INTENT GATES OPENING, NOT STAYING OPEN (083126). `onmouseenter` cancels the pending close
+	     whenever the menu is ALREADY open, and that is the fix for Sam's "i'll move my mouse down to
+	     someone in list 1 and the menu will disappear... maybe like 33% of the time."
+	     MY BUG, FROM THE INTENT CHANGE. Crossing the gap between the words and the menu leaves `.bm`'s
+	     subtree, which starts `leave`'s 220ms close. Re-entering used to call `enter()` and cancel it
+	     instantly; under `use:hoverIntent` re-entry restarts the intent test instead, and the thing that
+	     cancels the timer only runs once dwell AND the velocity gate pass. A pointer travelling down a
+	     list is precisely what the velocity gate rejects — so whether it survived came down to whether
+	     you happened to slow down inside 220ms, which is exactly the ~1-in-3 Sam measured by feel. -->
+	<div
+		class="bm"
+		onmouseenter={() => {
+			warm();
+			if (open) clearTimeout(closeTimer);
+		}}
+		use:hoverIntent={{ onArm: openMenu, onDisarm: leave }}
+	>
 		<span
 			class="bm-word"
 			class:on-dark={onDark}
@@ -305,7 +321,16 @@
 	.menu {
 		position: absolute;
 		top: calc(100% + 6px);
-		right: 0;
+		/* CENTRED UNDER THE WORDS (083126, Sam: "the menu is not perfectly centered under my bookmarks
+		   text, its right aligned for some reason"). translateX(-50%) is relative to the menu's OWN
+		   width, so it centres whatever the row content makes it between its 244 and 300 bounds.
+		   IT CANNOT OVERFLOW THE VIEWPORT, and that is structural rather than lucky: Search and Auth
+		   always sit between this control and the right edge, which measured is 66 + 45 + two 14px gaps
+		   + a 31px margin, i.e. ~170px minimum — against a half-width of at most 150. A longer greeting
+		   name in AuthTrigger widens the corner and pushes this LEFT, so the varying element moves it
+		   away from the edge rather than toward it. */
+		left: 50%;
+		transform: translateX(-50%);
 		min-width: 244px;
 		max-width: 300px;
 		padding: 6px;
@@ -318,6 +343,20 @@
 		flex-direction: column;
 		gap: 4px;
 		z-index: 20;
+	}
+	/* THE 6px GAP IS VISUAL ONLY — this bridges it for the POINTER. `top: calc(100% + 6px)` puts a dead
+	   strip between the words and the menu, and crossing it leaves `.bm`'s subtree and starts the close.
+	   The 220ms grace exists to survive that crossing and is kept, but a gap that is never left is
+	   better than a race that is usually won: with this, travelling from the words to a row never fires
+	   pointerleave at all. Belt and braces with the re-entry cancel above — they fix the same symptom at
+	   different levels, and the cheap one should not be the only one. */
+	.menu::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: -6px;
+		height: 6px;
 	}
 	/* The title names the whole stack; the per-list heads name each group under it. Two levels, so
 	   the smaller one is quieter rather than the same size in a different weight. */
