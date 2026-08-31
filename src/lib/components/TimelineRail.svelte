@@ -1078,7 +1078,7 @@
 		{
 			slug: 'john-morgan-1837',
 			name: 'J.P. Morgan',
-			from: 1892,
+			from: 1887, // ends 1895 (Sam), clearing 1896 for TR
 			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786376861/jpmhead_iwtuke.png',
 			t: { x: 6200.75, y: 1837 },
@@ -1123,7 +1123,7 @@
 		{
 			slug: 'theodore-roosevelt-1858',
 			name: 'Theodore Roosevelt',
-			from: 1902,
+			from: 1896, // starts exactly 1896 (Sam)
 			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786377021/teddhead_zruxvf.png',
 			t: { x: 7460.525, y: 1858 },
@@ -1139,12 +1139,25 @@
 			// 1910, not 1909. Sam moved him +2 originally to accept a slight overlap with Teddy; the
 			// short-viewport portrait boost then grew BOTH circles and pushed it to 2.00 years, past his
 			// own one-year rule. One year later brings it back inside.
-			from: 1910,
+			from: 1904, // immediately after TR, who ends 1904 (Sam)
 			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786377115/tafthead_pmouha.png',
 			t: { x: 1942.25, y: 1857 },
 			headshotBlurb: '27th US President',
 			lifespan: '1857–1930'
+		},
+		{
+			// ADDED 083026. Sam gave the image and the person; the rest is measured. He sits at the end of
+			// a deliberately CONTIGUOUS run — Morgan ends 1895, Roosevelt 1896-1904, Taft 1904-1912, House
+			// 1912-1920 — which is the one place on this scale where the portraits are meant to touch
+			// rather than merely avoid each other. Do not "fix" the lack of gaps here.
+			slug: 'edward-house-1858',
+			name: 'Col. Edward Mandell House',
+			headshotBlurb: "Wilson's closest adviser",
+			from: 1912,
+			years: 8,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1788148408/house_qptpka.png',
+			t: { x: 3433.3, y: 1858 }
 		},
 		{
 			// THE FIRST OF TWO THAT CLOSE THE 1919-2012 HOLE. Eight years, not the four this first
