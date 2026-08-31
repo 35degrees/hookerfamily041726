@@ -55,6 +55,8 @@ folded back without conflict.
 
 **The 083026 edition (August 30) adds §48 — SCALE IS NOT SIZE: WHAT A FLIGHT DOES TO EVERY ABSOLUTE LENGTH.** A flight SCALES the shell rather than resizing it, so every absolute length authored inside it is multiplied by that scale — at the sibling tier, 0.129, which rendered an 8px corner as 1.03px and a 12px shadow blur as 1.55px. Both vanished mid-flight and both reappeared on landing, because the landed chip is a real PersonBox carrying its own. §48.2 is the remedy and the rule about where a constant lives (publish RATIOS, never lengths, so `CORNER_R` keeps one home). §48.3 is the harder half: a single blur radius inside an anisotropically scaled box cannot be true on both axes, so the shadow moves to the FACE, whose composite scale is uniform — and lands equal to the seated chip's by construction rather than by two numbers agreeing. §48.4 on a dial pinned to its own floor, §48.5 on symmetry as an argument where taste is not, §48.6 on the geometry cost of a bigger carry, §48.7 on asserting the PRODUCT (the authored value was a constant 8 on the broken build too).
 
+**The 083126 edition (August 30–31) adds §49 — THE FRAME UNIT'S UNFINISHED BUSINESS, AND WHAT A HOVER MEANS.** §33 introduced the frame unit and §48 covered what a FLIGHT does to an absolute length; this is what the STAGE does to one. §49.1 spend slack, never shrink — an instrument may not cost the cards their size, and hiding the sibling column has to actually BUY something. §49.2 a model that describes scaled geometry must itself scale, which is why the sibling flight went wobbly below 1250 and why the spouse carousel had the identical bug a fortnight earlier; with the exception that proves it (lengths scale, RATIOS do not). §49.3 hover intent — TRANSIT and ARRIVAL are two faults, and an element arriving under a still pointer is not a hover, a question asked of the document rather than the element. §49.4 the rail is a ruler: it steps, it does not scale. §49.5 gate on the signal that means what you mean, and take a lock AFTER the decision rather than before.
+
 ---
 
 ## 1. THESIS — the product is connection, not biography
@@ -6778,3 +6780,176 @@ Two further rules the probe earned the hard way:
 - **`SHADOW_PAD` is reasoned, not measured.** 6 → 10 is arithmetic against `--chip-shadow-hover`'s
   14px blur (~7px of spread, where the pad allowed 6). No probe asserts it.
 - **Nothing here has been seen on a deployment.** Every measurement above is localhost at 1600×1000.
+
+---
+
+## 49. THE FRAME UNIT'S UNFINISHED BUSINESS, AND WHAT A HOVER MEANS (written August 30–31, 2026)
+
+Design §33 introduced the frame unit and §48 covered what a *flight* does to an absolute length. This
+section is the other half of the same subject — what the *stage* does to one — plus the pointer
+doctrine that came out of the same session. It is deliberately written to be read cold by someone
+debugging, so each doctrine states the symptom first.
+
+### 49.1 SPEND SLACK, NEVER SHRINK — an instrument may not cost the cards their size
+
+**Symptom shape:** the composition gets smaller when a window narrows past some threshold, even though
+nothing has actually run out of room.
+
+Sam gave the permission that unlocked this in one sentence: *"you don't have to 'Center' the main
+content below 1100px in the browser window, the center line can cheat to the right to use new open
+space and not impinge on vertical bars and timeline so early."* The lever had been written down in
+`widthClamp`'s own comment for weeks — *"stop centring the card in the VIEWPORT and centre it in the
+viewport minus its chrome... that is a design call, not an arithmetic one"* — and was waiting on
+exactly that ruling.
+
+**THE RULE THAT CAME OUT OF IT.** The timeline's 114px is paid for out of margin that already exists,
+never out of the card:
+
+```
+shift = min( NEED, ROOM )        NEED = how far short of the bars the card sits
+                                 ROOM = what the right side can give up
+```
+
+floored at zero. A viewport with nothing to give gets nothing **by arithmetic**, which is what makes a
+phone safe here without a hand-written exception. The first attempt subtracted the bars inside
+`widthClamp` instead, so the instrument's needs shrank every card at every width and cost a 393px
+phone a third of its size. That version was reverted.
+
+**The companion rule, and Sam had to ask for it three times before I built it right:** when the
+sibling column is dropped, the freed ~150px must actually be *spent*. `u` on a column-less rung is a
+FLOOR with a `uMax` ceiling, not a fixed size — otherwise hiding the menu buys nothing and the reader
+watches 140px of gutter sit empty. **"Deleting the sibling menu is an intentional choice to open up
+space to move main content right."**
+
+And a corollary learned by getting it wrong: **re-centre, do not merely clear.** Moving the minimum
+distance that clears an obstacle pins the composition against it and banks all the freed width on one
+side. The card ended up at x=114 with a 106px gutter — technically clear, visibly wrong.
+
+### 49.2 A MODEL THAT DESCRIBES SCALED GEOMETRY MUST ITSELF SCALE
+
+**Symptom shape:** a flight lands slightly off and snaps into place; the error grows the further down
+a list you go, and vanishes entirely at one particular window width.
+
+`siblingLayout.ts` held `CHIP_H 54`, `GAP 16`, `PITCH 70`, `WINDOW_H 404` — a complete, correct
+cumulative layout model, with **zero references to the frame unit**. The chips it described are
+`PersonBox`es and shrink on `--stage-u`. Measured on Taft:
+
+| vw | u | chip | gap | real pitch | model | drift/chip |
+|---|---|---|---|---|---|---|
+| 1300 | 1.000 | 54.00 | 16 | 70.00 | 70 | 0 |
+| 1250 | 0.970 | 52.36 | 16 | 68.36 | 70 | 1.64 |
+| 1100 | 0.853 | 46.06 | 16 | 62.06 | 70 | 7.94 |
+
+The flight computes every seat from the model, so below `u = 1` it aimed lower than the DOM and the
+atomic swap snapped it up — 13px eight chips down. **Worst on a card with a sibling carousel, because
+the deeper the chip, the larger the accumulated lie.** It looked perfect at 1300 for a real reason:
+the width clamp does not bite until ~1289, so `u` is exactly 1 there.
+
+**THE GAP WAS THE ANOMALY, NOT THE CHIP.** §33.2's register table lists *"card width/height, chip
+boxes, photo boxes, padding, **gaps**"* as frame-register. The CSS `gap: 1rem` and this whole model
+were simply never converted when Phase 2.75 landed — and the **spouse carousel had the identical bug
+and was already fixed the same way**, its comment reading *"Both of those numbers started scaling with
+the stage and these did not."* Twice is a pattern.
+
+> **When adding anything that measures the world, ask which register it belongs to (§33.2) and whether
+> its MODEL is in the same one as the thing it models.** A comment saying "must match X" is not a
+> mechanism; §28.1's phrase has now been the answer four times.
+
+**And the exception that proves it.** `solveBackS(SIBLING_SETTLE_PX / PITCH)` is fed a **ratio**, and a
+ratio of two lengths is already correct at every size — the same reasoning §33.3 uses to keep the
+blade's `SLANT_TAN` unscaled. Scaling one term would have grown the overshoot as the window narrowed;
+scaling both computes the identical number more slowly. **Lengths scale, ratios do not.**
+
+### 49.3 HOVER INTENT — two faults that look identical and are not
+
+**Symptom shape:** a photo enlarges when the reader did not ask it to.
+
+Sam described two, and conflating them is why a naive fix fails:
+
+- **TRANSIT** — *"my mouse will cross over the photo in the current hero card. just for a beat or
+  less. but when that happens the photo instantly expands."*
+- **ARRIVAL** — *"more frustratingly when a user mouse is stable and not moving and a photo crosses
+  under the mouse position as cards transition."*
+
+TRANSIT is old and settled: **hover intent**, after Cherne's 2007 plugin. Do not trust `mouseenter` —
+sample the pointer and fire only once it has *slowed down inside* the target. 120ms dwell, 6px
+velocity gate. **The gate does the work, which is why the delay can stay short**; a long delay with no
+velocity test punishes the deliberate hover exactly as hard as the accidental one.
+
+ARRIVAL is the one hoverIntent does not cover, because it predates animated layouts. When a flight
+slides a photo under a parked cursor the browser *synthesises* the enter, and every dwell timer in the
+world confirms it happily — the pointer really is sitting still on the target.
+
+> **AN ELEMENT ARRIVING UNDER A STILL POINTER IS NOT A HOVER.** And the test for it is asked of the
+> **document**, not the element: *was the pointer moving when the enter fired?* A reader crossing in
+> has been generating moves milliseconds earlier; a photo arriving under a parked cursor has not.
+
+The first version asked "did it move ≥3px *after* entering", which sounds equivalent and is not — a
+fast flick that lands on the photo and stops enters at its final position, produces no movement
+afterwards, and would never arm. A probe caught it.
+
+**One action, five surfaces.** The same popout was implemented independently in `FeaturedCard`,
+`RightColumn`, `SearchModal`, `ConnectModal` and `ConnectAnyoneModal` — nine sites. §17.x's one-clock
+rule applies exactly: five separately-tuned dwell timers would disagree about what a hover is, and the
+frame they disagree on is the one the reader is looking at.
+
+**What it deliberately does NOT gate:** keyboard-selection handlers (`onmouseenter={() => (cursor =
+i)}`). Moving a list highlight is not a popout; it should be instant, and gating it makes the list
+feel dead.
+
+### 49.4 THE RAIL IS A RULER — it steps, it does not scale
+
+The rail's own header forbids scaling it with `--stage-u`: *"a ruler at the window's edge is the one
+thing that should keep its size when the stage shrinks."* That rule stands, and it is the reason a
+tempting "just make it a frame-register citizen" fix is wrong here.
+
+**What is allowed is a STEP.** At ≤780px the rules shorten 25% and the year type drops 20% — one
+deliberate change at one width, the same shape as every other threshold in `stage.svelte.ts`, not a
+continuous scale. The stage owns the *question* (`stage.tightRail`, following `tightVitals`); the rail
+owns *how much*, because geometry belongs beside the thing it measures.
+
+**THE SCALE DERIVES FROM ONE NUMBER.** `--tick-len` is the half-century's length; the quarter is
+`× 0.75`, the eighth `× 0.5`, and the year's box is `calc(--tick-len - 1px)`. Before this, three
+independent widths meant the quarter had silently come to share the half's exactly — a 25-year mark
+indistinguishable from a 50-year one, rationalised in a comment as *"the two long marks make one
+column."* **That was a description of a bug written up as a decision.** One number and two ratios
+cannot drift apart.
+
+**The year rides its rule** rather than following it. `LABEL_W`'s 84px existed to hold years in their
+own column — *"the rule's right end + an 8px gap + a 33px four-digit number"* — and putting the year
+ON the rule makes them parallel instead of serial. Sam's aesthetic ask and the mobile width constraint
+wanted the identical change.
+
+### 49.5 GATE ON THE SIGNAL THAT MEANS WHAT YOU MEAN
+
+Two failures this session were the *right* mechanism read at the *wrong* moment.
+
+**`featuredLanded` vs `familyLanded`.** On navigation, `f` and everything derived from it switch to the
+incoming person in the same reactive flush, but `featuredLanded` does not go false until `introstart`
+fires a frame later. Anything gated on `featuredLanded` alone paints the incoming person's data on the
+outgoing card for that frame. The spouse carousel's carets did exactly this — appearing *before* the
+transition rather than during it. `familyLanded` (`featuredLanded && f.person.id === landedPersonId`)
+goes false the instant `f` changes, atomically with the new data.
+
+**A lock must be taken AFTER the decision, not before.** `ccFlyTo` calls `lockFlight()` as its first
+statement, before looking at where it is going. Clicking the headshot of the person already featured
+therefore locked the page, started no flight, produced no landing to unlock it, and ran the full
+2600ms safety timeout — a timeout designed never to be reached, being reached. **A safety net firing
+routinely is a bug report about something upstream.**
+
+**And the rule Sam set on top of it:** looking is always allowed, acting is not. Hover survives a
+flight; clicks do not. This *reverses* an August rule of his own, and it is safe now only because
+§49.3 refuses the arrival case everywhere by construction — the blanket suppression had been paying
+for a problem since solved somewhere better.
+
+### 49.6 STILL OPEN
+
+- **The anchor re-jigger.** Portraits are sized by a near-constant `years` (8 or 9) regardless of how
+  dense that era is. 1775–1800 has three tangent by construction, and seven pairs overlap outright on
+  any window under 1070px tall, where `anchorBoost` inflates them 1.25×. Sam has not chosen between
+  uniform sizing, significance sizing, or fit-the-gap.
+- **900px keeps a 14px nick** — the one width where the bars are drawn and the room genuinely runs out.
+- **Tier C is a scaled desktop, not a phone.** It now fits and no longer covers the timeline, but §12's
+  vertical recomposition (Phase 9.5) is untouched.
+- **`growFrom`'s opening frames** keep the geometric-mean shadow approximation (§48.8).
+- **The year face** is Outfit, the second guess after Fraunces and Open Sans were rejected.

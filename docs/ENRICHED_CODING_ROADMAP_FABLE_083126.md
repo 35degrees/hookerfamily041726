@@ -1,7 +1,9 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_083026.md (the what/why for every item below).**
+**Companion: ENRICHED_DESIGN_FABLE_083126.md (the what/why for every item below).**
 **AUGUST 29, 2026 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), THE SCOPING DECISION (§49.5), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right. **§49.5 records the scoping decision itself — 3c and the zoom-3/Card↔Table remainder of 9 RETIRED from the pre-launch path with their specs preserved unaltered, 9.5 (the phone) FLAGGED OPEN rather than cut, 11 still gating launch. Nothing deleted; the phase table is annotated, and a retired phase reopens by saying so.**
+
+**AUGUST 30–31, 2026 (§54): WIDTHS, THE RAIL, HOVER INTENT.** Nineteen commits in one session. §54.1 is the troubleshooting entry point — the seven probes and their known-good readings, including the two that are only meaningful as diffs (probe-widths against its baseline, probe-fit's standing RED at exactly 10). §54.3 is the part worth reading: three reverted attempts at the widths work, three separate misreadings of one repeated complaint, a premise asserted instead of measured, and two self-inflicted regressions that passed svelte-check because it cannot see structural damage. §54.4 maps where every constant now lives. Doctrine in design §48–§49.
 
 **AUGUST 30, 2026 (§53): THE SIBLING FLIGHT'S SKIN.** Four faults Sam reported on the sibling chip demote; two of them were one bug, and a fifth was found by accident. Corners and shadow were being scaled away by the shell's own 0.129 morph; the overshoot dial had been pinned to its floor since it was written, so it read as a tic and could not be tuned. Doctrine in design §48. Includes the two things I got wrong in front of Sam — a premise asserted without measuring (the card is 1.61, not the 2.20 my comment claimed, which stretched the flight shadow 14.1px wide against the chip's 9.6px), and a probe that selected by behaviour instead of identity and reported RED against a working fix. That second accident is what found `growFrom` carrying the identical bug in reverse.
 
@@ -5647,3 +5649,125 @@ changing size at the moment it lands**. Hover a resting chip in the strip to che
   ever reads wrong: factor **2.0** (~4.0px) with `SHAPE_AT` back at **0.55**.
 - Everything from §51.6 and §47.14 remains open — `/` is still the stock SvelteKit welcome page, and
   a home card is still stored and honoured by nothing.
+
+---
+
+## 54. AUGUST 30–31, 2026 — WIDTHS, THE RAIL, HOVER INTENT (session record; design §48–§49)
+
+Nineteen commits across two calendar days and one continuous session. Doctrine is design §48–§49; this
+is what shipped, what went wrong on the way, and how to check any of it again.
+
+### 54.1 THE TROUBLESHOOTING ENTRY POINT — run these first
+
+```bash
+node scripts/probe-widths.mjs        # 18 sizes, 393 → 1600; diffs against a saved baseline
+node scripts/probe-sibling-seat.mjs  # §19 in-place mutation; the demoted card lands ON its seat
+node scripts/probe-sibling-skin.mjs  # corner radius + drop shadow hold rendered size, BOTH lanes
+node scripts/probe-demote-settle.mjs # parent/child demote + CC departure, byte-stable
+node scripts/probe-hover-intent.mjs  # transit rejected, intent accepted, arrival rejected
+node scripts/probe-fit.mjs           # stage fits the viewport (standing RED at 10 — see below)
+npx svelte-check --tsconfig ./tsconfig.json
+```
+
+**Known-good readings as of this session:**
+
+- `probe-widths` **GREEN** — no horizontal scrollbar and no container overflow at any of 18 sizes. It
+  had never been green before: the phone had been overflowing its container by 13px in every build up
+  to this one, recorded in the baseline and unchased.
+- `probe-fit` **RED at exactly 10 cases**, all vertical height, all pre-existing standing debt.
+  **Ten is the passing number.** Eleven means something regressed.
+- `probe-demote-settle` — card 276px travel / 1.92px overshoot, spouse 150.8px / 3.6px, CC departure
+  88.1° / 564.6px. **These are byte-stable and are the canary for "did I touch a transition I did not
+  mean to touch."**
+
+`probe-widths` takes a baseline (`--save`) so a global lever can be pulled and diffed rather than
+argued about. **Do not change the rung ladder or the width clamp without it.**
+
+### 54.2 WHAT SHIPPED
+
+**Widths** (`a0dcba73`) — the off-centre cheat below 1100; siblings survive to 1050 rather than 1100;
+`u` becomes a floor with a `uMax` ceiling on column-less rungs so the freed column width is actually
+spent; column-less rungs clamp against the container rather than the window.
+
+**The rail** (`8112d174`, `996c8094`, `8b9715a6`, `fc14613a`, `a2e1ba77`, `7758420c`, `3a047b92`,
+`bb113369`) — years ride their rules instead of following them; three tiers at 100/75/50 derived from
+one `--tick-len`; ink `#ab7a42` → `#6a5334`; face → Outfit; bars hidden below 900; Edward Mandell
+House added and a contiguous Morgan→House run; headshots 4px right; a 25%/20%/2.5px step at 780.
+
+**Hover intent** (`413a4c66`, `4b33d8e3`) — one action, nine popout sites across five components.
+
+**Sibling layout joins the frame register** (`248fd128`) — the fix for "wobbly below 1250".
+
+**Two gating fixes** (`a20f2ae1`, `eac7d7a9`) — clicking the card you are already on costs nothing;
+carousel carets wait for `familyLanded`.
+
+### 54.3 WHAT WENT WRONG, IN ORDER — the part worth reading
+
+**Three reverted attempts at the widths work.** Sam asked for one boundary to move. I reached for the
+rung ladder and the width clamp — global levers every viewport depends on — and judged each attempt
+against a five-row table spanning 900–1400. Each fixed the width he named and broke widths nobody was
+looking at, ending with *"the phone size is wrecked"* and *"i'm just baffled. should i delete my app?"*
+All three were reverted with `git checkout`.
+
+> **The lesson is not "be careful with the ladder", it is BUILD THE HARNESS FIRST.** `probe-widths`
+> exists because of this and the fourth attempt held. A regression at 393 now shows up in the same
+> breath as a gain at 1050.
+
+**Three separate misreadings of the same request.** Sam said the main content should use the space the
+sibling menu leaves. I (1) capped `u` at the rung value so hiding the menu bought nothing, (2) moved
+the card the *minimum* distance to clear the bars, which pinned it against them and banked 106px on the
+far side, and (3) zeroed the shift when the bars stopped painting, which made the card jump. Three
+distinct bugs, one repeated complaint. **When the same report arrives three times, the fault is
+probably not where it was the first two times.**
+
+**A premise asserted instead of measured.** The counter-scale shadow used the geometric mean of two
+axes, justified in a comment claiming the morph stays near-proportional. It does not — the card is 1.61
+against the chip's 2.20 — so the flight shadow rendered 14.1px wide against 10.2px tall and the swap
+to the chip's isotropic 9.6px cut horizontal spread by a third. Sam caught it on pixels.
+
+**Two self-inflicted regressions that passed every check.**
+
+1. `3835efb3` — rewriting a comment, I ended my new text with `-->` without noticing the original
+   block continued two lines further. Those lines became a live text node and rendered across the top
+   of every person page. **`svelte-check` passes on it** — a stray text node is valid Svelte.
+2. `bb113369` fixing `3a047b92` — I opened `.rail.tight-rail` in the *middle* of the `.rail` rule, so
+   every declaration below `--tick-len`, `z-index: 1` among them, ended up inside the tight rule. The
+   rail lost its stacking context at every width **above** 780 for an hour. It passed `svelte-check`
+   (a valid selector holding the wrong declarations is still valid CSS) and passed my own measurement,
+   which only read tick lengths.
+
+> **Both were structural edits to a region, verified with a tool that cannot see structural damage.**
+> After a comment rewrite, read `document.body.innerText`. After a CSS edit near a brace, measure a
+> property from a *different* declaration in that rule.
+
+**A probe that lied, and then earned its keep.** `probe-sibling-skin`'s first version selected "the
+`.featured-flight` with the smallest scale" and reported RED against a fix that was already working —
+it had latched onto the other flight node. Selecting by identity (`.demoting`) fixed it, **and the
+accident found a real bug**: `growFrom` carried the identical defect in reverse, unreported because
+Sam was describing the chip he was watching rather than the card arriving beside it.
+
+### 54.4 WHERE THINGS LIVE, for the next change
+
+| what | where |
+|---|---|
+| rung ladder, width clamp, `u`/`k`, thresholds | `src/lib/state/stage.svelte.ts` |
+| the off-centre cheat (`shiftX`) | same, `--stage-shift-l` / `-r` on `.page-container` |
+| sibling layout model (bases + `chipW/chipH/pitch/windowH`) | `src/lib/state/siblingLayout.ts` |
+| the seat a demote flies into | `src/lib/state/siblingNav.ts` |
+| rail geometry (`--tick-x`, `--tick-len`, `--year-size`) | `src/lib/components/TimelineRail.svelte` |
+| rail ink | `--color-rail-ink`, `src/routes/layout.css` |
+| hover dwell / slop / grace | `src/lib/state/hoverIntent.ts` |
+| flight lock + its 2600ms safety net | `src/lib/state/flightLock.ts` |
+
+**Two rules that will save a session.** A length scales with `u`; a **ratio** does not (§49.2). And a
+model that describes scaled geometry must live in the same register as the thing it models — twice now
+the bug has been a correct model in the wrong register.
+
+### 54.5 STILL OPEN
+
+- **The anchor re-jigger** — seven pairs of portraits overlap on windows under 1070px tall. Sam has not
+  chosen between uniform / significance / fit-the-gap sizing.
+- **900px keeps a 14px nick** where the bars are drawn and the room runs out.
+- **Tier C** is a scaled desktop; §12's phone recomposition is untouched (Phase 9.5).
+- **`probe-fit`'s 10** — the standing vertical-overflow debt, unaddressed all session.
+- **Nothing here has been seen on a deployment.** Every measurement is localhost.
