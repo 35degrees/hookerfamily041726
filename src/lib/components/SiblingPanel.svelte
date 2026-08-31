@@ -16,6 +16,8 @@
 		PITCH,
 		WINDOW_CHIPS,
 		WINDOW_H,
+		windowH,
+		pitch,
 		buildItems,
 		cumTops,
 		chipIndices,
@@ -157,12 +159,18 @@
 	const STAGGER_IN = 38;
 	const DUR_IN = 150;
 	const SIBLING_SETTLE_PX = 2.5; // dial — the incoming overshoot in px
+	/* RAW CONSTANTS ON PURPOSE, and this is the one place in the file that must NOT scale (083026).
+	   solveBackS is fed a RATIO — overshoot over drop distance — and a ratio of two lengths is already
+	   correct at every size (§33.3: "angles ... are a ratio of two lengths, so already correct at every
+	   size"). Scaling PITCH here without scaling SIBLING_SETTLE_PX would grow the overshoot as the window
+	   narrowed; scaling both would cancel and compute the identical number more slowly. The DROP DISTANCE
+	   in flyIn does scale — that is a length, not a ratio. */
 	const settleS = solveBackS(SIBLING_SETTLE_PX / PITCH); // reuse the settle solver, tiny target
 	const settleEase = (t: number) => easeOutBack(t, settleS);
 	function flyIn(i: number) {
 		return prefersReducedMotion.current
 			? { duration: 0 }
-			: { y: -PITCH, duration: DUR_IN, delay: i * STAGGER_IN, easing: settleEase };
+			: { y: -pitch(), duration: DUR_IN, delay: i * STAGGER_IN, easing: settleEase };
 	}
 	let flipMs = $derived(prefersReducedMotion.current ? 0 : 300);
 
@@ -362,7 +370,7 @@
 			     data-spouse-offset. §19's plan is computed OUTSIDE the component (before the swap, while
 			     this panel still shows the outgoing list), and the minimal-scroll rule needs to know where
 			     the strip actually is to work out how little it can move. -->
-			<div class="sibling-window" style="height: {WINDOW_H}px" data-sib-offset={offset}>
+			<div class="sibling-window" style="height: {windowH()}px" data-sib-offset={offset}>
 				<!-- The STRIP holds all items and translates by the cumulative offset on a page (transition only
 				     while .paging). clip-path (not overflow) so drop shadows escape the sides. -->
 				<div class="sibling-mask" class:paging style="height: {maskH}px; clip-path: {maskClip}">
@@ -459,7 +467,7 @@
 	   (≈325 on Anson — where sibling #1's top used to sit before the anchor fix). padding-bottom raises it off
 	   the chip column (whose top is the card-edge resume, ≈340). */
 	.top-slot {
-		width: 119px; /* = sibling chip width → button/arrow centre over the column */
+		width: calc(119px * var(--stage-u, 1)); /* = CHIP_W rendered → caret centres over the column */
 		display: flex;
 		align-items: flex-end;
 		justify-content: center;
@@ -591,7 +599,11 @@
 	.sibling-strip {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem; /* 16px = GAP */
+		/* 1rem -> 16px x u (083026). This was the DOM half of the drift Sam reported: the chips shrink on
+		   the frame unit and this gap did not, so the rendered pitch fell below the model's 70 the moment
+		   u < 1 and every seat below the first was computed too low. Both halves scale now, so real pitch
+		   is 54u + 16u = 70u and the model's PITCH * u agrees with it exactly. */
+		gap: calc(16px * var(--stage-u, 1)); /* = GAP, rendered */
 	}
 	/* Transition applies ONLY while paging — never on the offset reset, so the strip SNAPS on close/nav.
 	   ~420ms easeOutBack (a touch of overshoot) so a page reads as travel-and-stop. With the accumulating

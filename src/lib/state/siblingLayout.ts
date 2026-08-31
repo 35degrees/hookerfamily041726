@@ -24,6 +24,35 @@ export type SiblingTiers = {
 export type SibItem = { kind: 'header'; label: string } | { kind: 'chip'; chip: PersonCompact };
 
 // ── Geometry constants (the CSS matches these — keep the two in sync) ───────────────────────────────
+/**
+ * ── THESE ARE BASES AT u = 1, NOT RENDERED PIXELS (083026) ────────────────────────────────────────
+ *
+ * Sam: "at around browser width <1250px and lower the sibling card transition doesn't work right
+ * anymore ... the sibling chip transition into sibling menu gets wobbly and lands below its final
+ * position and shifts up into it."
+ *
+ * THE CHIPS SCALE AND THIS MODEL DID NOT. A sibling chip is a PersonBox, so it shrinks on --stage-u
+ * like everything else in the frame register; every number below stayed frozen. Measured on Taft:
+ *
+ *     vw 1300   u 1.000   chip 54.00   gap 16   real pitch 70.00   model 70   drift 0
+ *     vw 1250   u 0.970   chip 52.36   gap 16   real pitch 68.36   model 70   drift 1.64/chip
+ *     vw 1100   u 0.853   chip 46.06   gap 16   real pitch 62.06   model 70   drift 7.94/chip
+ *
+ * The flight computes each seat from this model, so at u < 1 it aimed BELOW where the chip actually
+ * renders and the atomic swap snapped it up — 13px of error eight chips down at 1250, which is why a
+ * card with a sibling CAROUSEL showed it worst: the deeper the chip, the bigger the accumulated lie.
+ * 1300 looked perfect because the clamp does not bite until ~1289, so u is exactly 1 there.
+ *
+ * THE GAP WAS THE ANOMALY, NOT THE CHIP. Design §33.2's register table lists "card width/height, chip
+ * boxes, photo boxes, padding, gaps" as frame-register — everything that multiplies by u. The CSS
+ * `gap: 1rem` and this whole model were simply never converted when Phase 2.75 landed. The spouse
+ * carousel hit the identical bug and was already fixed the same way (+page.svelte: "Both of those
+ * numbers started scaling with the stage and these did not").
+ *
+ * SO THE CONSTANTS STAY AS AUTHORED and the accessors below apply u — the same idiom flight.ts uses
+ * for its own px constants. Reading a raw constant where a RENDERED length is wanted is now the bug;
+ * reach for the accessor.
+ */
 export const CHIP_W = 119;
 export const CHIP_H = 54;
 export const GAP = 16;
@@ -41,6 +70,13 @@ export const HEADER_GAP_BELOW = GAP * 0.2; // 3.2px
 // same two numbers seen from that side. Derived rather than restated so the pair cannot drift.
 export const HEADER_MARGIN_TOP = GAP - HEADER_GAP_ABOVE; // 6.4px — matches margin-top: -6.4px
 export const HEADER_MARGIN_BOTTOM = GAP - HEADER_GAP_BELOW; // 12.8px — matches margin-bottom: -12.8px
+
+/** RENDERED lengths — the bases above times the frame unit. Anything that has to agree with a real DOM
+ *  rect goes through these. Functions, not values, so nothing captures u at import time. */
+export const chipW = () => CHIP_W * stage.u;
+export const chipH = () => CHIP_H * stage.u;
+export const pitch = () => PITCH * stage.u;
+export const windowH = () => WINDOW_H * stage.u;
 
 /**
  * §21.1's RENDER GATE — does this person get a sibling panel at all? One home for it: the page asks it to
@@ -129,14 +165,14 @@ export function buildItems(siblings: SiblingTiers): SibItem[] {
 }
 
 export function itemH(it: SibItem): number {
-	return it.kind === 'header' ? HEADER_H : CHIP_H;
+	return (it.kind === 'header' ? HEADER_H : CHIP_H) * stage.u;
 }
 
 /** The gap BELOW item `i` — asymmetric around a header (see the constants above). */
 export function gapAfter(items: SibItem[], i: number): number {
-	if (items[i + 1]?.kind === 'header') return HEADER_GAP_ABOVE; // this item → the header below it
-	if (items[i]?.kind === 'header') return HEADER_GAP_BELOW; // a header → the chip below it
-	return GAP;
+	if (items[i + 1]?.kind === 'header') return HEADER_GAP_ABOVE * stage.u; // this item → the header below
+	if (items[i]?.kind === 'header') return HEADER_GAP_BELOW * stage.u; // a header → the chip below it
+	return GAP * stage.u;
 }
 
 /**
@@ -158,7 +194,7 @@ export function gapAfter(items: SibItem[], i: number): number {
  */
 export function cumTops(items: SibItem[]): number[] {
 	const tops: number[] = [];
-	let y = items[0]?.kind === 'header' ? -HEADER_MARGIN_TOP : 0;
+	let y = items[0]?.kind === 'header' ? -HEADER_MARGIN_TOP * stage.u : 0;
 	for (let i = 0; i < items.length; i++) {
 		tops.push(y);
 		y += itemH(items[i]!) + gapAfter(items, i);

@@ -30,8 +30,8 @@
 import type { Neighborhood } from '$lib/types/neighborhood';
 import { peekFlightOrigin } from '$lib/transitions/flight';
 import {
-	CHIP_W,
-	CHIP_H,
+	chipW,
+	chipH,
 	anchorOffsetFor,
 	buildItems,
 	chipIndices,
@@ -138,8 +138,8 @@ export function planSiblingNav(
 		seat: {
 			left: zr.left,
 			top: maskTop + (tops[k] ?? 0) + stripY,
-			width: CHIP_W,
-			height: CHIP_H
+			width: chipW(),
+			height: chipH()
 		}
 	};
 	return plan;
