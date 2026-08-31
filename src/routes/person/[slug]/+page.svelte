@@ -2004,7 +2004,7 @@
 			     while featuredLanded was still true for the outgoing one, and the carets painted on a card
 			     that had not started moving. The remedy was already written down and already had a name;
 			     these two were simply not using it. The chips themselves never showed the fault because
-			     markPending holds each new chip at opacity 0 on mount. -->
+			     markPending holds each new chip at opacity 0 on mount.
 			     pointer-events:none while invisible; the paging lockout is enforced by pageStep's guard,
 			     NOT by CSS, so the cursor stays pointer throughout the 420ms. -->
 			<span class="caret-slot" style="right: {leftCaretRight}px">
