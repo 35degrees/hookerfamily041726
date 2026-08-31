@@ -2302,11 +2302,14 @@
 		   the end Sam asked it to sit at. Measured, not spotted by eye: the rule and the year are the
 		   same box now, so the only correct left is the parent's own origin. */
 		left: 0;
-		/* +2px past the rule's end, which is what makes the digits LOOK flush with it: a numeral
-		   carries right side bearing inside its advance width, so a box aligned exactly to 88 renders
-		   the ink a pixel or two short. Sam: "put the years at the far right end of the lines, you
-		   have it left a bit." */
-		width: calc(var(--tick-len) + 2px);
+		/* PULLED 1px INSIDE the rule's end, not pushed past it (083026). This was +2px on the theory
+		   that a numeral carries enough right side bearing to render the ink short of its box — true of
+		   many faces and NOT of Outfit at this size, whose digits sit close to the advance edge. So the
+		   compensation became an overhang: Sam, on the render, "the year text is too far right, it hangs
+		   over line by 2 or 3px, move end of text left that much." −1 against the rule's 88 puts the box
+		   at 87 and the ink just inside the cap, which is what reads as flush. Re-measure this if the
+		   face or the size changes — it is a property of Outfit's digits, not a constant. */
+		width: calc(var(--tick-len) - 1px);
 		text-align: right;
 		/* CENTRED ON THE RULE (Sam: "center align the year text to the center of the horizontal 50 year
 		   lines"). Bottom-aligning was the previous pass and it sat the digits ON the line, which put
