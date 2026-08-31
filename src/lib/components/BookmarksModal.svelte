@@ -21,7 +21,6 @@
 	import { ascension } from '$lib/state/ascension.svelte';
 	import { auth, setListName, setBookmark, LIST_NAME_MAX, type ListId } from '$lib/state/auth.svelte';
 	import { flip } from 'svelte/animate';
-	import { prefersReducedMotion } from 'svelte/motion';
 	import { load, personById, search, CAT } from '$lib/state/search.svelte';
 	import { arriveAtPerson } from '$lib/state/bookmarkNav';
 	import { linear, cubicOut } from 'svelte/easing';
@@ -63,75 +62,47 @@
 	type Row = NonNullable<ReturnType<typeof personById>> & { personId: string };
 
 	/**
-	 * ── REMOVING A BOOKMARK IS A DEPARTURE, NOT A DISAPPEARANCE (083126) ──────────────────────────
+	 * ── REMOVING A BOOKMARK: THE GAP CLOSES, THE CARD DOES NOT TOUR THE WINDOW (083126) ───────────
 	 *
-	 * Sam: "when an 'X' is clicked to delete a bookmark, it just instantly disappears which is not
-	 * consistent with my discrete baseball card styling everywhere else ... steal the transitions from
-	 * Paths to Thomas, esp when there are 2 paths to thomas but a different number of ancestors on each
-	 * path like Sarah Knutti's paths, the cards open and close to allow cards to enter and exit
-	 * smoothly."
+	 * Sam asked for Paths to Thomas's feel — "the cards open and close to allow cards to enter and exit
+	 * smoothly" — and the FIRST attempt took that too literally, flying the row out the left edge the
+	 * way ConnectModal's leavers do. His verdict: "this isn't working at all ... it takes too long."
 	 *
-	 * THE BORROWED PART IS THE ORDER, NOT THE NUMBERS. ConnectModal's hard-won lesson is that a leaver
-	 * and a gap-close cannot run at once — `animate:flip` fires on the frame the list changes, while the
-	 * leaver is still sitting in its seat, so a survivor closes into occupied space. Sam saw it there as
-	 * "#9 still covers up #8 aurelia card before she departs and does it in a very jerky instant way."
-	 * Its three beats collapse to two here, because a deletion has no arrivals:
+	 * The two surfaces are not the same gesture, and that is the lesson worth keeping. ConnectModal is
+	 * SWAPPING one path for another, so departure is half the story — cards have to be seen leaving
+	 * because others are about to take their seats. A deletion has no arrival. Nothing is coming, so a
+	 * 440px journey is pure waiting, and it puts the motion on the object the reader has just finished
+	 * with rather than on the list they are still reading.
 	 *
-	 *     1. the card goes, out the left edge
-	 *     2. THEN the gap closes, on flip's own clock
-	 *
-	 * PINNING IS WHAT MAKES BEAT 2 POSSIBLE. Svelte keeps an outroing element in the DOM — and in the
-	 * FLOW — until its transition ends, so without pinning, the survivors cannot move until the card is
-	 * already gone and then they jump. `position: fixed` at the seat takes it out of flow on frame one,
-	 * which is also what lets it escape `.col-rows`' own `overflow-y: auto` and actually reach the
-	 * window's edge rather than being clipped at the panel.
-	 *
-	 * VIEWPORT COORDINATES, from a snapshot taken BEFORE the list changes — ConnectModal's scar. A seat
-	 * recorded as an offset into a container that is itself about to re-lay-out pins the card to a place
-	 * that no longer exists.
+	 * SO WHAT IS BORROWED IS THE SURVIVORS' HALF ONLY — beat 2 of ConnectModal's three, the part Sam
+	 * actually pointed at ("replicate the slide up to close the open space"). The row goes at once and
+	 * `animate:flip` carries everything below it up into the space, on the same 460ms clock. No delay,
+	 * because with nothing departing there is nothing to wait for — the delay only existed there to stop
+	 * survivors closing into an occupied seat.
 	 */
-	const OUT_MS = 440; // a leaver's run to the left edge — ConnectModal's own
-	const FLIP_MS = 460; // survivors closing the gap, same clock as the leaver, on purpose
-	const seats = new Map<string, { top: number; left: number; width: number; height: number }>();
+	const FLIP_MS = 460; // survivors closing the gap — ConnectModal's own clock
 
-	function snapshotSeats() {
-		for (const el of document.querySelectorAll<HTMLElement>('.row-wrap[data-rid]')) {
-			const id = el.dataset.rid;
-			if (!id) continue;
-			const r = el.getBoundingClientRect();
-			seats.set(id, { top: r.top, left: r.left, width: r.width, height: r.height });
-		}
-	}
-
-	/** Snapshot first, THEN mutate — the seat must be measured while the row is still in its seat. */
+	/**
+	 * AND THE SCROLLBAR THAT FLASHED. Sam: "when i delete a bookmark the scrollbar for the column
+	 * appears and then disappears. confusing."
+	 *
+	 * It is the flip itself. `animate:flip` holds each survivor at its OLD seat and animates to the new
+	 * one, so for the length of the animation every card below the deleted row carries a DOWNWARD
+	 * translate — and a transform that moves content down extends a scroll container's overflow. The
+	 * column briefly believed it had more content than it does, showed a scrollbar for 460ms, and hid it
+	 * again. Nothing was wrong with the list; the scrollbar was reporting on a transform.
+	 *
+	 * Clipping for the duration is safe here in a way it would not be generally: the content is SHRINKING
+	 * by exactly one row, so anything that fitted before still fits after, and a column that was already
+	 * scrolling gets its scrollbar back when the class comes off.
+	 */
+	let settling = $state(false);
+	let settleTimer: ReturnType<typeof setTimeout> | null = null;
 	function removeBookmark(personId: string) {
-		snapshotSeats();
+		settling = true;
+		if (settleTimer) clearTimeout(settleTimer);
+		settleTimer = setTimeout(() => (settling = false), FLIP_MS);
 		void setBookmark(personId, null);
-	}
-
-	function depart(node: Element, { id }: { id: string }) {
-		if (prefersReducedMotion.current) return { duration: 0 };
-		const el = node as HTMLElement;
-		const seat = seats.get(id);
-		if (seat) {
-			el.style.position = 'fixed';
-			el.style.top = `${seat.top}px`;
-			el.style.left = `${seat.left}px`;
-			el.style.width = `${seat.width}px`;
-			el.style.height = `${seat.height}px`;
-			// CANCEL THE FLIP. `animate:flip` writes an inline transform on every keyed element the update
-			// touched, including one on its way out, carrying it toward a seat it will never occupy.
-			el.style.transform = 'none';
-		}
-		// MEASURED, NOT A FRACTION OF THE WINDOW — the card must clear the edge at any width.
-		const travel = el.getBoundingClientRect().right + 24;
-		return {
-			duration: OUT_MS,
-			css: (t: number, u: number) => {
-				const k = u * u * u; // cubic-IN on the way out: it gathers speed as it leaves
-				return `transform: translateX(${(-travel * k).toFixed(2)}px); opacity: ${Math.min(1, t / 0.25)};`;
-			}
-		};
 	}
 
 	function rowsFor(list: ListId): Row[] {
@@ -294,7 +265,7 @@
 							{/if}
 						</div>
 
-						<div class="col-rows">
+						<div class="col-rows" class:settling>
 							{#if !rows.length}
 								<!-- AN EMPTY COLUMN THAT EXPLAINS ITSELF rather than a hole. Two columns with one
 								     blank looks broken; a line saying what the list is for teaches the two-list
@@ -312,9 +283,7 @@
 								{@const isOrbit = (r.f & CAT.INFLUENCE) !== 0 && !isFounder}
 								<div
 									class="row-wrap"
-									data-rid={r.personId}
-									out:depart={{ id: r.personId }}
-									animate:flip={{ delay: OUT_MS, duration: FLIP_MS, easing: cubicOut }}
+									animate:flip={{ duration: FLIP_MS, easing: cubicOut }}
 								>
 									<a
 										class="person-box bm-hit flex overflow-hidden rounded-lg"
@@ -566,6 +535,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1px;
+	}
+	/* See `settling` in the script — the flip's downward transforms briefly extend this column's
+	   overflow, which showed a scrollbar for the length of the animation and then hid it. */
+	.col-rows.settling {
+		overflow-y: hidden;
 	}
 	.col-rows::-webkit-scrollbar {
 		width: 8px;
