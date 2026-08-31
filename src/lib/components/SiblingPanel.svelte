@@ -11,13 +11,13 @@
 	// The layout model lives in siblingLayout.ts (§19): the flight has to know where a seat in this list
 	// will come to REST, and that question is only answerable with this arithmetic. One home for it.
 	import {
-		CHIP_H,
-		GAP,
 		PITCH,
 		WINDOW_CHIPS,
-		WINDOW_H,
 		windowH,
 		pitch,
+		gapPx,
+		headerMarginTopPx,
+		headerMarginBottomPx,
 		buildItems,
 		cumTops,
 		chipIndices,
@@ -374,7 +374,14 @@
 				<!-- The STRIP holds all items and translates by the cumulative offset on a page (transition only
 				     while .paging). clip-path (not overflow) so drop shadows escape the sides. -->
 				<div class="sibling-mask" class:paging style="height: {maskH}px; clip-path: {maskClip}">
-					<div class="sibling-strip" class:paging style:transform="translateY({stripY}px)">
+					<div
+					class="sibling-strip"
+					class:paging
+					style:transform="translateY({stripY}px)"
+					style:--sib-gap="{gapPx()}px"
+					style:--sib-head-mt="{headerMarginTopPx()}px"
+					style:--sib-head-mb="{headerMarginBottomPx()}px"
+				>
 						{#each items as item, i (item.kind === 'chip' ? item.chip.id : item.label)}
 							<!-- in: only, |global for the ancestor-mount reveal. NO per-chip out: — the container
 							     collapse (above) handles close; a |global outro is what stranded the old card as a ghost. -->
@@ -603,7 +610,8 @@
 		   the frame unit and this gap did not, so the rendered pitch fell below the model's 70 the moment
 		   u < 1 and every seat below the first was computed too low. Both halves scale now, so real pitch
 		   is 54u + 16u = 70u and the model's PITCH * u agrees with it exactly. */
-		gap: calc(16px * var(--stage-u, 1)); /* = GAP, rendered */
+		/* PUBLISHED BY THE MODEL, not restated here — see gapPx() in siblingLayout. */
+		gap: var(--sib-gap);
 	}
 	/* Transition applies ONLY while paging — never on the offset reset, so the strip SNAPS on close/nav.
 	   ~420ms easeOutBack (a touch of overshoot) so a page reads as travel-and-stop. With the accumulating
@@ -620,12 +628,15 @@
 	.sib-item {
 		flex: 0 0 auto;
 	}
-	/* Asymmetric header gaps via negative margins that trim the 16px flex gap (matches gapAfter() in the
-	   script — keep in sync). Above a header: 16 − 6.4 = 9.6px (−40%). Below: 16 − 12.8 = 3.2px (−80%). The
-	   header sits nearer the chips it labels than the content above it (proximity grouping). */
+	/* Asymmetric header gaps via negative margins that trim the flex gap. Above a header: 16 − 6.4 =
+	   9.6px (−40%). Below: 16 − 12.8 = 3.2px (−80%). The header sits nearer the chips it labels than the
+	   content above it (proximity grouping).
+	   THE NUMBERS COME FROM THE MODEL NOW (083126). They were literals here with a comment reading
+	   "matches gapAfter() in the script — keep in sync", and once the model started scaling on u and this
+	   did not, they stopped matching for exactly the lists cumTops was written to get right. */
 	.sib-item.is-header {
-		margin-top: -6.4px;
-		margin-bottom: -12.8px;
+		margin-top: var(--sib-head-mt);
+		margin-bottom: var(--sib-head-mb);
 	}
 	/* FIXED height (= HEADER_H) so the cumulative window math is exact. Centred, roomier than before. */
 	.sibling-header {

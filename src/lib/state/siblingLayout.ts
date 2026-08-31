@@ -77,6 +77,21 @@ export const chipW = () => CHIP_W * stage.u;
 export const chipH = () => CHIP_H * stage.u;
 export const pitch = () => PITCH * stage.u;
 export const windowH = () => WINDOW_H * stage.u;
+/**
+ * THE THREE THE STYLESHEET NEEDS (083126). `.sibling-strip`'s flex gap and the header's two trimming
+ * margins were LITERALS in the CSS — 16px, −6.4px, −12.8px — with comments claiming they matched these
+ * constants and one that said "keep in sync" outright. A comment is not a mechanism (§28.1), and this
+ * pair had already drifted: the model scales its gaps on u and the stylesheet did not, so a list whose
+ * first item is a tier header was mis-modelled by ~1px below u = 1. That is the Emily Vanderbilt fault
+ * cumTops was written to fix, coming back through the other side of the same seam.
+ *
+ * Published as custom properties instead, so the model is the one source and the CSS reads it. The two
+ * margins are emitted ALREADY NEGATIVE, because their sign is part of what they mean — they trim the
+ * flex gap rather than adding to it.
+ */
+export const gapPx = () => GAP * stage.u;
+export const headerMarginTopPx = () => -HEADER_MARGIN_TOP * stage.u;
+export const headerMarginBottomPx = () => -HEADER_MARGIN_BOTTOM * stage.u;
 
 /**
  * §21.1's RENDER GATE — does this person get a sibling panel at all? One home for it: the page asks it to

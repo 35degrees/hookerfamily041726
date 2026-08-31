@@ -53,6 +53,10 @@
 	 * dwell and 6px velocity gate the five photo popouts use (design §49.3); a pointer travelling to
 	 * Search never produces a slow sample inside the words, so it never arms.
 	 */
+	/** Same teardown as the modal's, and for the same reason: this control unmounts on sign-out, and a
+	 *  pending close would outlive it. Pre-existing rather than introduced here, but it is the same one
+	 *  line and the audit is the moment to spend it. */
+	$effect(() => () => clearTimeout(closeTimer));
 	function openMenu() {
 		clearTimeout(closeTimer);
 		open = true;

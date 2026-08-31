@@ -98,6 +98,13 @@
 	 */
 	let settling = $state(false);
 	let settleTimer: ReturnType<typeof setTimeout> | null = null;
+	/** The modal is `{#if}`-mounted, so closing it mid-animation DESTROYS this component with the
+	 *  timer still pending — delete a row, press Escape, and the callback outlives its component. Harmless
+	 *  in Svelte 5 (a write to dead state is a no-op) but it is a dangling timer either way, and the
+	 *  teardown costs one line. */
+	$effect(() => () => {
+		if (settleTimer) clearTimeout(settleTimer);
+	});
 	function removeBookmark(personId: string) {
 		settling = true;
 		if (settleTimer) clearTimeout(settleTimer);
