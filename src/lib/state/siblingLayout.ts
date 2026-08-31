@@ -128,6 +128,37 @@ export function showsSiblingPanel(nb: Neighborhood | null | undefined): boolean 
 	const f = nb?.focus;
 	if (!nb || !f) return false;
 	if (nb.siblings_count > 0 && (f.hd || f.td) && !f.ee) return true;
+	/**
+	 * ── NON-HOOKER SIBLINGS, FOR SPOUSES AND EASTER EGGS (083126) ─────────────────────────────────
+	 *
+	 * Sam: "how possible is it to add exceptions for a sibling menu for non-hooker siblings. Ie. Harriet
+	 * Beecher Stowe and Henry Ward Beecher with Hooker line Isabella Beecher Hooker... this is not a
+	 * refactor request for existing sibling menu which works perfectly. this is a surgical exception for
+	 * a handful of notable people." Then, on the rule: "easter_egg = true and spouse ok."
+	 *
+	 * IT IS ONE CLAUSE BECAUSE EVERYTHING ELSE WAS ALREADY TRUE. The sibling arithmetic in
+	 * regenerate-data.js is pure set math on the two parents' `children_ids` and has never had a
+	 * classification filter — Isabella's payload ALREADY carries `half: [Harriet, Henry]`, computed and
+	 * shipped, with `siblings_count: 2`. She shares a father with them and not a mother, so the tier is
+	 * right without anyone deciding it. The only thing suppressing the panel was the test below, which
+	 * asks for Hooker blood on the focus or on a sibling.
+	 *
+	 * PURELY ADDITIVE, and that is the property that makes it surgical: this can only ever turn a panel
+	 * ON where one was previously hidden. No existing clause is touched, so nothing that shows today can
+	 * stop showing, and the transitions are untouched because they never consulted classification at all
+	 * — they only ever asked whether there is a seat.
+	 *
+	 * AND IT REACHES THE FLIGHT FOR FREE. planSiblingNav asks this same function of the INCOMING person
+	 * to decide whether there is a seat to fly into (see the note above), so the render and the flight
+	 * planner opt in together rather than one of them being taught about a new case.
+	 *
+	 * THE COLOUR NEEDS NO CODE. PersonBox skins itself from each chip's own flags — `ee-line`,
+	 * `spouse-line`, `hooker-line`, in that precedence — so Harriet and Henry arrive in `--ee-bg` blue
+	 * because they are eggs who never married in, which is exactly the distinction layout.css's ordering
+	 * comment already draws. Sam wanted "light blue so the user is aware these aren't all hookers"; the
+	 * app was already saying it everywhere else.
+	 */
+	if (nb.siblings_count > 0 && (f.sp || f.ee)) return true;
 	const t = nb.siblings;
 	if (!t) return false;
 	return [...t.full, ...t.half, ...t.step].some((s) => s.hd || s.td);
