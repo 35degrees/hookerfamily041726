@@ -3,6 +3,8 @@
 **Companion: ENRICHED_DESIGN_FABLE_083126.md (the what/why for every item below).**
 **AUGUST 29, 2026 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), THE SCOPING DECISION (§49.5), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right. **§49.5 records the scoping decision itself — 3c and the zoom-3/Card↔Table remainder of 9 RETIRED from the pre-launch path with their specs preserved unaltered, 9.5 (the phone) FLAGGED OPEN rather than cut, 11 still gating launch. Nothing deleted; the phase table is annotated, and a retired phase reopens by saying so.**
 
+**AUGUST 31, 2026 (§55): BOOKMARKS, THE AUDIT, SIBLING EXCEPTIONS, SEARCH.** Eight commits after §54's docs pass. §55.1 is the one to read first: `tsconfig` sets `strict` but NOT `noUnusedLocals`, so dead imports are invisible to the only gate that runs — with a table of the three defect classes that passed svelte-check and reached the screen this session, and what would have caught each. §55.4 says what the likely next moves actually require (more non-Hooker sibling menus are now a DATA job, not a code one). §55.5 is a five-step 'if something is wrong, start here'. Doctrine in design §50.
+
 **AUGUST 30–31, 2026 (§54): WIDTHS, THE RAIL, HOVER INTENT.** Nineteen commits in one session. §54.1 is the troubleshooting entry point — the seven probes and their known-good readings, including the two that are only meaningful as diffs (probe-widths against its baseline, probe-fit's standing RED at exactly 10). §54.3 is the part worth reading: three reverted attempts at the widths work, three separate misreadings of one repeated complaint, a premise asserted instead of measured, and two self-inflicted regressions that passed svelte-check because it cannot see structural damage. §54.4 maps where every constant now lives. Doctrine in design §48–§49.
 
 **AUGUST 30, 2026 (§53): THE SIBLING FLIGHT'S SKIN.** Four faults Sam reported on the sibling chip demote; two of them were one bug, and a fifth was found by accident. Corners and shadow were being scaled away by the shell's own 0.129 morph; the overshoot dial had been pinned to its floor since it was written, so it read as a tic and could not be tuned. Doctrine in design §48. Includes the two things I got wrong in front of Sam — a premise asserted without measuring (the card is 1.61, not the 2.20 my comment claimed, which stretched the flight shadow 14.1px wide against the chip's 9.6px), and a probe that selected by behaviour instead of identity and reported RED against a working fix. That second accident is what found `growFrom` carrying the identical bug in reverse.
@@ -5771,3 +5773,85 @@ the bug has been a correct model in the wrong register.
 - **Tier C** is a scaled desktop; §12's phone recomposition is untouched (Phase 9.5).
 - **`probe-fit`'s 10** — the standing vertical-overflow debt, unaddressed all session.
 - **Nothing here has been seen on a deployment.** Every measurement is localhost.
+
+---
+
+## 55. AUGUST 31, 2026 — BOOKMARKS, THE AUDIT, SIBLING EXCEPTIONS, SEARCH (session record; design §50)
+
+Eight commits after §54's docs pass. Doctrine is design §50; this is what shipped, the tooling gap that
+let three defects through, and where to look next.
+
+### 55.1 A GAP IN THE ONLY GATE THAT RUNS — read this before trusting a green check
+
+**`tsconfig.json` sets `strict` but NOT `noUnusedLocals` or `noUnusedParameters`.** An unused import or
+a dead local is therefore invisible to `svelte-check`, which is the only thing that runs on every
+change. The audit found three orphaned imports in `SiblingPanel` — all created hours earlier when raw
+constants were swapped for scaled accessors — and every check had passed on them.
+
+**Two more classes of defect this session passed `svelte-check` and reached the screen:**
+
+| what | why the check missed it | what would have caught it |
+|---|---|---|
+| a comment terminator left mid-block, so two lines rendered as text across the page | a stray text node is valid Svelte | read `document.body.innerText` for the leaked phrase |
+| `.rail.tight-rail` opened *inside* `.rail`, stranding `z-index: 1` in it for an hour | a valid selector holding the wrong declarations is valid CSS | measure a property from a *different* declaration in that rule |
+
+> **After a structural edit — a comment rewrite, a CSS brace, an import list — verify with something
+> that can see structure.** A type checker cannot. Turning `noUnusedLocals` on is an open, cheap
+> improvement nobody has taken.
+
+The orphan sweep that found them is reproducible: for each touched file, strip comments, then check
+every imported identifier and every `export const/function` for a non-comment use.
+
+### 55.2 WHAT SHIPPED
+
+**Bookmarks** (`c751e45c`, `6b58df29`, `02a4a955`, `f91af9ad`) — the hover menu on `hoverIntent`; the
+re-entry cancel and gap bridge when that broke the walk-down to a row (§50.1); the menu centred and
+pushed 14px clear of the Notable button; deletion reworked from an instant vanish to a gap-close
+(§50.2), and the scrollbar flash that was the flip's own transform (§50.3).
+
+**The audit** (`10116d88`) — three orphaned imports, two missing timer teardowns, and the header-margin
+register bug (§50.4).
+
+**Non-Hooker siblings** (`08f23ddc`) — one additive clause (§50.6).
+
+**Search died-young** (`1c758ad5`, `26754b90`) — the faded ink, the child chip's `(died young)`
+parenthetical, and `diedYoungRow()` (§50.5). **The SORT already existed** from Sam's earlier report of
+this same person; its comment names her.
+
+### 55.3 WHERE THINGS LIVE — additions to §54.4's table
+
+| what | where |
+|---|---|
+| hover dwell / slop / grace, and the document-level pointer clock | `src/lib/state/hoverIntent.ts` |
+| every popout that consumes it | FeaturedCard, RightColumn, SearchModal, ConnectModal, ConnectAnyoneModal, BookmarksTrigger — **nine sites** |
+| the sibling panel's visibility rule (and the flight's seat test) | `showsSiblingPanel` in `src/lib/state/siblingLayout.ts` |
+| sibling lengths the stylesheet reads | `gapPx` / `headerMarginTopPx` / `headerMarginBottomPx`, same file |
+| died-young, one predicate | `diedYoungRow` in `src/lib/state/search.svelte.ts`; `diedYoung()` in `buildFeatured.ts`; `dy_young` baked by `regenerate-data.js` |
+| bookmark deletion beats | `FLIP_MS` + `settling` in `BookmarksModal.svelte` |
+
+### 55.4 LIKELY NEXT MOVES, and what each actually requires
+
+- **More non-Hooker sibling menus.** Now a DATA job, not a code one. The clause covers anyone with
+  `sp` (married into the line) or `ee` (easter egg). J.D. Rockefeller III correctly shows nothing today
+  because his father lists one child across two marriages — add the siblings in Stream A and the menu
+  appears with no code change. Same for any new Beecher-shaped case.
+- **The anchor re-jigger** (§49.6) is still unchosen: seven pairs of timeline portraits overlap on
+  windows under 1070px tall, because `years` is near-constant regardless of era density. Sam has not
+  picked between uniform / significance / fit-the-gap sizing.
+- **Tier C.** The phone now fits and no longer covers the timeline, but it is a scaled desktop.
+  §12's vertical recomposition is Phase 9.5 and untouched.
+- **900px keeps a 14px nick** — the one width where the bars are drawn and the room runs out.
+- **`probe-fit`'s standing 10** — the vertical-overflow debt, untouched all session.
+- **`noUnusedLocals`** — see §55.1.
+
+### 55.5 IF SOMETHING IS WRONG, START HERE
+
+1. Run §54.1's probe list. `probe-widths` GREEN, `probe-fit` **exactly 10**, `probe-demote-settle`
+   byte-stable at card 276px/1.9px — that last one is the canary for an unintended transition change.
+2. **A hover surface opening or closing wrongly** → `hoverIntent.ts`. Opening is dwell + slop;
+   closing is the host's own timer. §50.1 if it vanishes on approach.
+3. **A flight landing off by a little, worse further down a list** → a model out of register (§49.2,
+   §50.4). Compare the model's arithmetic against a measured DOM rect at `u < 1`, never at 1440.
+4. **A scrollbar that flashes** → §50.3, look for a transform before you look at the content.
+5. **A panel that will not appear** → `showsSiblingPanel`, and check the PAYLOAD first: the data
+   frequently already contains what you are about to build.

@@ -57,6 +57,8 @@ folded back without conflict.
 
 **The 083126 edition (August 30–31) adds §49 — THE FRAME UNIT'S UNFINISHED BUSINESS, AND WHAT A HOVER MEANS.** §33 introduced the frame unit and §48 covered what a FLIGHT does to an absolute length; this is what the STAGE does to one. §49.1 spend slack, never shrink — an instrument may not cost the cards their size, and hiding the sibling column has to actually BUY something. §49.2 a model that describes scaled geometry must itself scale, which is why the sibling flight went wobbly below 1250 and why the spouse carousel had the identical bug a fortnight earlier; with the exception that proves it (lengths scale, RATIOS do not). §49.3 hover intent — TRANSIT and ARRIVAL are two faults, and an element arriving under a still pointer is not a hover, a question asked of the document rather than the element. §49.4 the rail is a ruler: it steps, it does not scale. §49.5 gate on the signal that means what you mean, and take a lock AFTER the decision rather than before.
 
+**The 083126 edition also adds §50 — SURFACES, GESTURES AND EXCEPTIONS.** §50.1 intent gates OPENING, not staying open — once a surface is open, re-entering it is not a new request, which is why the bookmarks menu began vanishing on the way down to a row. §50.2 two surfaces can share a feel without sharing a gesture: a deletion has no arrival, so only the gap-close transfers from Paths to Thomas, not the departure. §50.3 a transform can create scroll overflow — the scrollbar was reporting on `animate:flip`, not on the list. §50.4 a model and its stylesheet must be in the SAME register, which is where "a comment is not a mechanism" landed for the fifth time. §50.5 a predicate read in three places gets a name. §50.6 the shape of a narrow exception, and the finding that made it one clause: sibling generation has never had a classification filter, so the Beecher half-siblings were already computed and shipping, merely never allowed to render.
+
 ---
 
 ## 1. THESIS — the product is connection, not biography
@@ -6953,3 +6955,140 @@ for a problem since solved somewhere better.
   vertical recomposition (Phase 9.5) is untouched.
 - **`growFrom`'s opening frames** keep the geometric-mean shadow approximation (§48.8).
 - **The year face** is Outfit, the second guess after Fraunces and Open Sans were rejected.
+
+---
+
+## 50. SURFACES, GESTURES AND EXCEPTIONS (written August 31, 2026)
+
+§49 covered what the stage does to a length and what a hover means. This is the doctrine that came out
+of applying both to the bookmarks surfaces and the search list — plus the shape a *narrow exception*
+should take, which is the question Sam asked directly and the answer generalises.
+
+### 50.1 INTENT GATES OPENING, NOT STAYING OPEN
+
+**Symptom shape:** a hover surface opens correctly, then vanishes while you are moving *into* it —
+intermittently, maybe a third of the time.
+
+`use:hoverIntent` (§49.3) was applied to the "My Bookmarks" menu, and the menu began closing on the way
+down to a row. The mechanism is worth stating because it will recur on any hover surface with a gap:
+
+- The menu sits at `top: calc(100% + 14px)`, so there is a strip of dead space beneath the words.
+- Crossing it leaves the container's subtree and starts the close timer.
+- Re-entering used to cancel that timer instantly. Under `hoverIntent` it restarts the **intent test**,
+  and the thing that cancels the timer only runs once dwell *and* the velocity gate pass.
+- A pointer travelling down a list is exactly what the velocity gate is built to reject.
+
+So survival came down to whether the reader happened to slow inside the grace window — a genuine
+~1-in-3, and it read as random because it was.
+
+> **Once a surface is open, re-entering it is not a new request.** Gate the OPENING on intent; cancel a
+> pending close on plain re-entry.
+
+Fixed at both levels, and both are worth keeping: the re-entry cancel, **and** a `::before` that bridges
+the visual gap so the pointer never leaves the subtree at all. A gap that is never crossed beats a race
+that is usually won — but the cheap fix should not be the only one.
+
+**And if the gap ever moves, the bridge must move with it.** The two are one measurement; they are
+commented as such in `BookmarksTrigger`.
+
+### 50.2 TWO SURFACES CAN SHARE A FEEL WITHOUT SHARING A GESTURE
+
+Sam asked for bookmark deletion to feel like Paths to Thomas, naming the case precisely: *"the cards
+open and close to allow cards to enter and exit smoothly."* The first attempt copied ConnectModal's
+whole gesture — including flying the row out the left edge — and his verdict was *"this isn't working at
+all... it takes too long."*
+
+**The two are not the same gesture, and the difference is structural rather than aesthetic.**
+ConnectModal is *swapping* one path for another: departure is half the story, because cards must be seen
+leaving while others take their seats, and its three-beat schedule exists to stop those colliding. **A
+deletion has no arrival.** Nothing is coming, so the journey is pure waiting — and it puts the motion on
+the object the reader has just finished with rather than on the list they are still reading.
+
+What transfers is beat 2 alone: the row goes at once and `animate:flip` carries everything below it up
+into the space, with **no delay**, because the delay only ever existed to stop survivors closing into an
+occupied seat.
+
+> **When borrowing a transition, borrow the beat that answers your question, not the schedule that
+> answered someone else's.**
+
+**The pinning trap, if the exit ever does come back.** Svelte keeps an outroing element in the *flow*
+until its transition ends. Without `position: fixed` on the leaver, survivors cannot move until it is
+gone and then they jump — the instant vanish, merely deferred. ConnectModal pins in **viewport**
+coordinates for a second reason worth remembering: a seat recorded against a container that is itself
+re-laying-out pins the card to a place that no longer exists.
+
+### 50.3 A TRANSFORM CAN CREATE SCROLL OVERFLOW
+
+**Symptom shape:** a scrollbar appears for the length of an animation and then goes.
+
+`animate:flip` holds each survivor at its **old** seat and animates to the new one, so for the duration
+every element below a deleted row carries a downward translate — and a transform that moves content down
+extends a scroll container's overflow. The column briefly believed it had more content than it does.
+Nothing was wrong with the list; **the scrollbar was reporting on a transform.**
+
+Clipping for the duration is the fix, and it is safe *here* for a stated reason rather than in general:
+the content is **shrinking** by exactly one row, so anything that fitted before still fits after, and a
+column that was genuinely scrolling gets its scrollbar back when the class comes off. Do not copy the
+clip to a case where content grows.
+
+### 50.4 A MODEL AND ITS STYLESHEET MUST BE IN THE SAME REGISTER
+
+§49.2 said a model describing scaled geometry must itself scale. The audit found the other half of that
+seam, and it is subtler: **`siblingLayout` scaled and the stylesheet did not.**
+
+`.sib-item.is-header` carried `margin-top: -6.4px; margin-bottom: -12.8px` as literals, under a comment
+reading *"matches gapAfter() in the script — keep in sync."* Once the model started multiplying those
+same numbers by `u`, a list whose first item is a tier header was mis-modelled by ~1px below full size —
+which is precisely the Emily Vanderbilt fault `cumTops` exists to fix, re-entering through the other
+side of the same seam. `.sibling-strip`'s `gap: calc(16px * var(--stage-u, 1))` was the same trap one
+line away, with a comment claiming *"= GAP, rendered."*
+
+Both are published by the model now (`gapPx()`, `headerMarginTopPx()`, `headerMarginBottomPx()`) and
+read as custom properties.
+
+> **"A comment is not a mechanism" has now been the answer five times in this codebase.** A literal in a
+> stylesheet asserting equality with a constant it cannot see is the single most repeated defect here.
+> When a number appears in both a `.ts` model and a `.css` rule, publish it — do not annotate it.
+
+### 50.5 A PREDICATE READ IN THREE PLACES GETS A NAME
+
+"Died young" is `by && dy && dy - by <= 15`. It lives in `diedYoung()` (buildFeatured), is baked as
+`dy_young` into every sibling compact, and was inline in the search sort under a comment describing
+itself as *"a third reader of the same rule."* Adding the faded styling would have made a fourth.
+
+It is `diedYoungRow()` now, so **the row that sinks and the row that greys are one predicate by
+construction and cannot answer differently.**
+
+The general rule: a duplicated *constant* is a drift risk; a duplicated *predicate* is a correctness
+risk, because the copies can disagree about the same person. Name it at the third reader, not the fifth.
+
+### 50.6 THE SHAPE OF A NARROW EXCEPTION
+
+Sam asked whether non-Hooker sibling menus — Harriet Beecher Stowe and Henry Ward Beecher beside
+Isabella Beecher Hooker — could fit the existing architecture, explicitly *not* as a refactor.
+
+**The investigation was most of the answer, and it is the transferable part.** The sibling arithmetic in
+`regenerate-data.js` is pure set math on the two parents' `children_ids` and **has never had a
+classification filter.** Isabella's payload already shipped `half: [Harriet, Henry]` with
+`siblings_count: 2` — computed, correctly tiered, and invisible. The *only* thing suppressing the panel
+was one predicate in `showsSiblingPanel`.
+
+So the exception is one clause: `if (nb.siblings_count > 0 && (f.sp || f.ee)) return true;`
+
+Three properties made it safe, and they are the checklist for the next exception of this kind:
+
+1. **Additive only.** It can turn a panel ON where one was hidden; it cannot turn one off. Nothing that
+   works today can break.
+2. **It reaches every consumer for free**, because `showsSiblingPanel` is the one rule with two callers
+   — the render and `planSiblingNav`'s seat test. That was designed for exactly this ("one rule, one
+   home, both callers") and it paid off.
+3. **The transitions never had to be told.** They only ever asked whether there is a seat, never whose.
+
+**And the colour was free**, which is a design property rather than luck: `PersonBox` skins from each
+chip's own flags in a documented precedence (`ee-line` < `spouse-line` < `hooker-line`). Harriet and
+Henry arrive `--ee-bg` blue *because* they are eggs who never married in — the distinction layout.css's
+ordering comment already draws. Henry's own panel shows it best: his sister is blue and his
+sister-in-law is green.
+
+> **Before writing an exception, find out what the data already says.** Here the answer was that four
+> fifths of the feature already existed and had simply never been allowed to render.
