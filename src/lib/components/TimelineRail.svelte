@@ -1125,7 +1125,7 @@
 			name: 'Theodore Roosevelt',
 			from: 1896, // starts exactly 1896 (Sam)
 			years: 8,
-			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786377021/teddhead_zruxvf.png',
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1788148776/tr_ohlcjh.png',
 			t: { x: 7460.525, y: 1858 },
 			headshotBlurb: '26th US President',
 			lifespan: '1858–1919'
@@ -1152,8 +1152,9 @@
 			// 1912-1920 — which is the one place on this scale where the portraits are meant to touch
 			// rather than merely avoid each other. Do not "fix" the lack of gaps here.
 			slug: 'edward-house-1858',
-			name: 'Col. Edward Mandell House',
+			name: 'Col. Edward House',
 			headshotBlurb: "Wilson's closest adviser",
+			lifespan: '1858–1938',
 			from: 1912,
 			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1788148408/house_qptpka.png',
