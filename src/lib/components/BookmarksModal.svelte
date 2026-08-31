@@ -20,6 +20,8 @@
 	import { modal, closeModal } from '$lib/state/modal.svelte';
 	import { ascension } from '$lib/state/ascension.svelte';
 	import { auth, setListName, setBookmark, LIST_NAME_MAX, type ListId } from '$lib/state/auth.svelte';
+	import { flip } from 'svelte/animate';
+	import { prefersReducedMotion } from 'svelte/motion';
 	import { load, personById, search, CAT } from '$lib/state/search.svelte';
 	import { arriveAtPerson } from '$lib/state/bookmarkNav';
 	import { linear, cubicOut } from 'svelte/easing';
@@ -59,6 +61,78 @@
 	 * locally is the SIZE. Everything else is the house.
 	 */
 	type Row = NonNullable<ReturnType<typeof personById>> & { personId: string };
+
+	/**
+	 * ── REMOVING A BOOKMARK IS A DEPARTURE, NOT A DISAPPEARANCE (083126) ──────────────────────────
+	 *
+	 * Sam: "when an 'X' is clicked to delete a bookmark, it just instantly disappears which is not
+	 * consistent with my discrete baseball card styling everywhere else ... steal the transitions from
+	 * Paths to Thomas, esp when there are 2 paths to thomas but a different number of ancestors on each
+	 * path like Sarah Knutti's paths, the cards open and close to allow cards to enter and exit
+	 * smoothly."
+	 *
+	 * THE BORROWED PART IS THE ORDER, NOT THE NUMBERS. ConnectModal's hard-won lesson is that a leaver
+	 * and a gap-close cannot run at once — `animate:flip` fires on the frame the list changes, while the
+	 * leaver is still sitting in its seat, so a survivor closes into occupied space. Sam saw it there as
+	 * "#9 still covers up #8 aurelia card before she departs and does it in a very jerky instant way."
+	 * Its three beats collapse to two here, because a deletion has no arrivals:
+	 *
+	 *     1. the card goes, out the left edge
+	 *     2. THEN the gap closes, on flip's own clock
+	 *
+	 * PINNING IS WHAT MAKES BEAT 2 POSSIBLE. Svelte keeps an outroing element in the DOM — and in the
+	 * FLOW — until its transition ends, so without pinning, the survivors cannot move until the card is
+	 * already gone and then they jump. `position: fixed` at the seat takes it out of flow on frame one,
+	 * which is also what lets it escape `.col-rows`' own `overflow-y: auto` and actually reach the
+	 * window's edge rather than being clipped at the panel.
+	 *
+	 * VIEWPORT COORDINATES, from a snapshot taken BEFORE the list changes — ConnectModal's scar. A seat
+	 * recorded as an offset into a container that is itself about to re-lay-out pins the card to a place
+	 * that no longer exists.
+	 */
+	const OUT_MS = 440; // a leaver's run to the left edge — ConnectModal's own
+	const FLIP_MS = 460; // survivors closing the gap, same clock as the leaver, on purpose
+	const seats = new Map<string, { top: number; left: number; width: number; height: number }>();
+
+	function snapshotSeats() {
+		for (const el of document.querySelectorAll<HTMLElement>('.row-wrap[data-rid]')) {
+			const id = el.dataset.rid;
+			if (!id) continue;
+			const r = el.getBoundingClientRect();
+			seats.set(id, { top: r.top, left: r.left, width: r.width, height: r.height });
+		}
+	}
+
+	/** Snapshot first, THEN mutate — the seat must be measured while the row is still in its seat. */
+	function removeBookmark(personId: string) {
+		snapshotSeats();
+		void setBookmark(personId, null);
+	}
+
+	function depart(node: Element, { id }: { id: string }) {
+		if (prefersReducedMotion.current) return { duration: 0 };
+		const el = node as HTMLElement;
+		const seat = seats.get(id);
+		if (seat) {
+			el.style.position = 'fixed';
+			el.style.top = `${seat.top}px`;
+			el.style.left = `${seat.left}px`;
+			el.style.width = `${seat.width}px`;
+			el.style.height = `${seat.height}px`;
+			// CANCEL THE FLIP. `animate:flip` writes an inline transform on every keyed element the update
+			// touched, including one on its way out, carrying it toward a seat it will never occupy.
+			el.style.transform = 'none';
+		}
+		// MEASURED, NOT A FRACTION OF THE WINDOW — the card must clear the edge at any width.
+		const travel = el.getBoundingClientRect().right + 24;
+		return {
+			duration: OUT_MS,
+			css: (t: number, u: number) => {
+				const k = u * u * u; // cubic-IN on the way out: it gathers speed as it leaves
+				return `transform: translateX(${(-travel * k).toFixed(2)}px); opacity: ${Math.min(1, t / 0.25)};`;
+			}
+		};
+	}
 
 	function rowsFor(list: ListId): Row[] {
 		void search.ready;
@@ -236,7 +310,12 @@
 								     agree on one precedence. -->
 								{@const isFounder = (r.f & CAT.FOUNDER) !== 0 && r.id !== 'H00001'}
 								{@const isOrbit = (r.f & CAT.INFLUENCE) !== 0 && !isFounder}
-								<div class="row-wrap">
+								<div
+									class="row-wrap"
+									data-rid={r.personId}
+									out:depart={{ id: r.personId }}
+									animate:flip={{ delay: OUT_MS, duration: FLIP_MS, easing: cubicOut }}
+								>
 									<a
 										class="person-box bm-hit flex overflow-hidden rounded-lg"
 										class:hooker-line={(r.f & CAT.HD) !== 0}
@@ -277,7 +356,7 @@
 									<button
 										type="button"
 										class="row-x"
-										onclick={() => setBookmark(r.personId, null)}
+										onclick={() => removeBookmark(r.personId)}
 										aria-label={`Remove ${r.n}`}
 									>
 										<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">

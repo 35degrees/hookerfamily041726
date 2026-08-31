@@ -320,7 +320,9 @@
 	 */
 	.menu {
 		position: absolute;
-		top: calc(100% + 6px);
+		/* 6 -> 14 (083126, Sam: "push down the top border of the hovered popup bookmarks menu by 8px
+		   since it borders right up on the Notable people button"). The bridge below tracks it. */
+		top: calc(100% + 14px);
 		/* CENTRED UNDER THE WORDS (083126, Sam: "the menu is not perfectly centered under my bookmarks
 		   text, its right aligned for some reason"). translateX(-50%) is relative to the menu's OWN
 		   width, so it centres whatever the row content makes it between its 244 and 300 bounds.
@@ -355,8 +357,11 @@
 		position: absolute;
 		left: 0;
 		right: 0;
-		top: -6px;
-		height: 6px;
+		/* MUST EQUAL THE GAP ABOVE. This bridges the dead strip for the pointer, so if the two ever
+		   disagree the menu starts closing again on the way down — the exact ~33% fault it was added to
+		   fix. Moved 6 -> 14 with it. */
+		top: -14px;
+		height: 14px;
 	}
 	/* The title names the whole stack; the per-list heads name each group under it. Two levels, so
 	   the smaller one is quieter rather than the same size in a different weight. */
