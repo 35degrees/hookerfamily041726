@@ -14,6 +14,7 @@
 	// "gently rounded" on a 925px card and on a 660px one alike, where 6.6px reads as very slightly less
 	// rounded and nobody can tell you which card they are looking at. Leaving it fixed also keeps the
 	// blade's carve arithmetically exact — the blade imports this same constant and mitres against it,
+	import { hoverIntent } from '$lib/state/hoverIntent';
 	// and two independently-rounded numbers is how a seam appears at one size and not another. Radii,
 	// hairlines and border widths are the class of constant that should stay put while the frame moves.
 	export const CORNER_R = 8;
@@ -256,14 +257,21 @@
 	// the midriff the way the object-cover card thumbnail is. Capped to the viewport, and never
 	// narrower than the on-card photo.
 	const ZOFFSET = 33; // fixed horizontal nudge right of the photo's edge, toward page centre (~2rem)
-	function trackZoom(e: MouseEvent) {
+	function trackZoom(e: PointerEvent, img: HTMLElement) {
 		// Don't enlarge until the card has finished flying into FeaturedCard space. During the
 		// promotion morph the img is transform-scaled (getBoundingClientRect would be wrong anyway),
 		// and a stationary cursor over the landing spot would otherwise flash the zoom in and out.
+		// STILL CHECKED HERE even though `use:hoverIntent` is also passed `settled` as its veto: the
+		// action decides whether to ARM, this decides whether the geometry it would read is true, and
+		// they are not the same question.
 		if (!photoUrl || !settled) return;
-		const img = e.currentTarget as HTMLImageElement;
+		// THE NODE IS PASSED IN, not read off the event. The zoom is now armed from a SAMPLER rather
+		// than from the dispatch, so `e.currentTarget` is null by the time this runs — reading it was
+		// the first thing to break when the intent gate went in, and it fails silently (null.getBounding
+		// ClientRect throws inside a listener nobody is watching).
 		const r = img.getBoundingClientRect();
-		const ar = img.naturalWidth ? img.naturalHeight / img.naturalWidth : r.height / r.width;
+		const pic = img as HTMLImageElement;
+		const ar = pic.naturalWidth ? pic.naturalHeight / pic.naturalWidth : r.height / r.width;
 		let w = r.width * 2; // 200% of the displayed width
 		let h = w * ar; // full-height at the image's own aspect → nothing cropped
 		const s = Math.min(1, (window.innerWidth * 0.6) / w, (window.innerHeight * 0.9) / h);
@@ -908,9 +916,12 @@
 							style={photoPosition ? `object-position: ${photoPosition}` : undefined}
 							loading="eager"
 							fetchpriority="high"
-							onmouseenter={trackZoom}
-							onmousemove={trackZoom}
-							onmouseleave={closeZoom}
+							use:hoverIntent={{
+								onArm: trackZoom,
+								onMove: trackZoom,
+								onDisarm: closeZoom,
+								enabled: () => !!settled
+							}}
 						/>
 					{:else}
 						<div class="aspect-[3/4] w-full rounded-sm bg-stone-100"></div>
