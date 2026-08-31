@@ -162,7 +162,7 @@
 	// not resolve for it — the ghost would inherit the fallback and fly at full size through a scaled
 	// stage. The document root is the one element every ghost is guaranteed to descend from.
 	$effect(() => {
-		applyStageVars(document.documentElement, stage.u, stage.k);
+		applyStageVars(document.documentElement, stage.u, stage.k, stage.shiftX);
 		return () => clearStageVars(document.documentElement);
 	});
 
@@ -2262,8 +2262,20 @@
 		   the core boxes and rows are front and center and we'll adjust the timeline to work around
 		   that." The stage is the project; the rail is an instrument laid beside it. The rail overlaps
 		   where it must and sits BEHIND the stage when it does. */
-		padding-left: calc(32px * var(--stage-u, 1));
-		padding-right: calc(32px * var(--stage-u, 1));
+		/* THE OFF-CENTRE CHEAT RIDES ON THESE TWO PADS (083026), and it must be folded INTO them rather
+		   than declared beside them — an earlier attempt added its own `padding-left` a few lines above
+		   and this pair silently outranked it (§30, property outranking), which measured as the shift
+		   doing nothing at all.
+		   A centred child moves by half the DIFFERENCE between the pads, so the container's content box
+		   becomes [padL, W − padR] whose centre is W/2 + (padL − padR)/2 — hence 2x. Sam: "you don't have
+		   to 'Center' the main content below 1100px, the center line can cheat to the right to use new
+		   open space and not impinge on vertical bars and timeline so early."
+		   Padding rather than a transform, because a transform here would create a containing block and
+		   change what `position: fixed` means for the rail — and every flight in the app measures these
+		   rects. Both variables default to 0px, so this is exactly the old centred rule until the stage
+		   says otherwise. */
+		padding-left: calc(32px * var(--stage-u, 1) + 2 * var(--stage-shift-l, 0px));
+		padding-right: calc(32px * var(--stage-u, 1) + 2 * var(--stage-shift-r, 0px));
 		/* The (later) spouse-carousel overhang + carets sit past the card's right edge; at narrow
 		   viewports they'd extend the document and raise a horizontal scrollbar. Clip horizontally
 		   at the stage so they never can (vertical scroll is unaffected by overflow-x). */

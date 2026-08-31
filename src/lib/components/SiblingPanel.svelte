@@ -68,15 +68,30 @@
 	type Item = SibItem;
 	let items = $derived(buildItems(siblings));
 
-	// Clip overshoot so no chip's drop shadow is cut. SIZED TO THE HOVER SHADOW, NOT THE RESTING ONE
-	// (083026): this was 6, which is just enough for --chip-shadow (9.6px blur ⇒ ~4.8px of visible
-	// spread each side) and NOT enough for --chip-shadow-hover (14px blur ⇒ ~7px). So the shadow was
-	// clean until you pointed at a chip, and then it hit the clip edge. Sam: "the drop shadow gets cut
-	// off. it doesn't gradually fade out like a shadow does but its like an invisible element is over
-	// the shadow giving it a hard ledge on both right and left sides." That ledge was this number.
-	// 10 clears the hover shadow with room, and the pad only ever reveals shadow — no content lives
-	// out there — so widening it cannot uncover anything the mask is meant to hide.
-	const SHADOW_PAD = 10;
+	// ── CLIP OVERSHOOT, PER SIDE, MEASURED (083026) ───────────────────────────────────────────────
+	// This was a single SHADOW_PAD of 6, which was enough for --chip-shadow and not for
+	// --chip-shadow-hover, so the shadow was clean until you pointed at a chip. Sam: "the drop shadow
+	// gets cut off. it doesn't gradually fade out like a shadow does but its like an invisible element
+	// is over the shadow giving it a hard ledge on both right and left sides."
+	//
+	// ONE NUMBER CANNOT BE RIGHT ON FOUR SIDES, because the shadow is not centred: it is offset DOWN,
+	// so it reaches much further below than above. The children row reached this conclusion first and
+	// its arithmetic is reproduced there in full (+page.svelte, the .kids-mask comment) — the same
+	// tokens, so the same reaches:
+	//     resting  sideways 4.8px   above 1.6px   below 8px
+	//     hover    sideways 7px     above 2px     below 12px
+	// Raising the uniform value to 10 (the first pass at this) cleared the flanks Sam reported and
+	// still cut the BOTTOM, which needs 12. Hence three named values rather than one.
+	//
+	// THE SIDES AND TOP ARE FREE: nothing lives beside or above the strip inside the mask, so pad
+	// there can only ever reveal a chip's own shadow. THE BOTTOM IS THE CONSTRAINED SIDE — it is what
+	// hides the straddling chip that starts a full GAP below the last complete item — but there is no
+	// conflict to resolve here, because GAP is 16 and the hover shadow needs 12, so the pad stops 4px
+	// short of the thing it must not reveal. (The children row's right flank had no such slack and had
+	// to choose; this one does not.)
+	const SHADOW_SIDE = 8; // hover reaches 7
+	const SHADOW_TOP = 4; // hover reaches 2 — the 5px downward offset eats most of the 7px blur
+	const SHADOW_BELOW = 12; // hover reaches 5 + 7; safe while GAP (16) is the clear space below
 
 	// ── Cumulative layout (the CUT-CHIP fix) ───────────────────────────────────────────────────────────
 	// The old window was a fixed 474px = 7·54 + 6·16, budgeted for CHIPS ONLY. A header is a list item that
@@ -107,8 +122,10 @@
 		items.length ? (cumTop[winEndItem] ?? 0) + itemH(items[winEndItem]!) - (cumTop[winStartItem] ?? 0) : 0
 	);
 	// Bottom clip trims the mask exactly at the last complete item + its shadow, hiding the straddler that
-	// starts a full GAP below; sides/top keep the shadow pad. maskH ≤ WINDOW_H, so this inset is ≥ −SHADOW_PAD.
-	let maskClip = $derived(`inset(-4px -${SHADOW_PAD}px -${SHADOW_PAD}px -${SHADOW_PAD}px)`);
+	// starts a full GAP below; sides/top keep the shadow pad. maskH ≤ WINDOW_H, so this inset is ≥ −SHADOW_BELOW.
+	let maskClip = $derived(
+		`inset(-${SHADOW_TOP}px -${SHADOW_SIDE}px -${SHADOW_BELOW}px -${SHADOW_SIDE}px)`
+	);
 	function pageStep(dir: 1 | -1) {
 		if (!landed) return; // GONDOLA GUARD stays: inert during a card flight
 		const next = Math.min(maxOffset, Math.max(0, offset + dir));
@@ -397,7 +414,15 @@
 	.sibling-zone {
 		position: absolute;
 		top: 0;
-		left: calc(100% + 30px); /* 30px off the card's right edge */
+		/* 30px off the card's right edge.
+		   IT DOES NOT SCALE WITH u, AND THAT IS A KNOWN DEFECT RATHER THAN A DECISION (083026). Every
+		   other length in the composition shrinks with the frame unit; this one holds, so it is
+		   proportionally widest exactly where width is scarcest — Sam at 1100px: "there actually is a
+		   decent gap between the siblings menu and the right side of the featured card", sitting there
+		   while the menu was about to be dropped for want of room. A `--sib-gap` published by the stage
+		   was built and REVERTED with the rest of that attempt; the observation stands and is recorded
+		   here so the next attempt starts from it. See roadmap §53 for why the attempt came out. */
+		left: calc(100% + 30px);
 		/* z-index 0, not 2 (§19). The demoting card now lands ON a chip in this panel, and it has to be
 		   SEEN doing it while still passing BEHIND the arriving card — the two-baseball-cards read, with
 		   the arriving one in front (§21.2 bug D). The hero is z 2 and the demote is z 1, so the panel has
@@ -605,7 +630,8 @@
 		color: rgb(120, 113, 108);
 	}
 	/* 2b: real breathing room below the window — the caret sits OUTSIDE the carousel's bounds, clear of the
-	   7th chip's shadow (SHADOW_PAD 6px). 20px margin ≈ 14px below the shadow edge. */
+	   7th chip's shadow (SHADOW_BELOW 12px, was 6 when this was written). 20px margin ≈ 8px below the
+	   shadow edge — still clear, and the caret is the one thing that must not sit inside it. */
 	.down-caret {
 		display: flex;
 		justify-content: center;

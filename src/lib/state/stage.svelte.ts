@@ -124,6 +124,22 @@ export interface StageRung {
 	nbCap: number | null;
 	/** is the persistent sibling column on stage? It needs ~150px to the right of the card. */
 	siblingColumn: boolean;
+	/**
+	 * THE CEILING THE CARD MAY RISE TO ONCE THE COLUMN IS GONE (083026, optional — a rung without one
+	 * behaves exactly as it always has).
+	 *
+	 * `u` above is a FLOOR on these rungs now, not a fixed size. Dropping the sibling column frees
+	 * ~150px, and the ladder was declining to spend a pixel of it: at 1024 the clamp would allow 1.03
+	 * and the rung held the card at 0.82 with 140px of measured gutter sitting empty on the right.
+	 * Sam: "so you aren't going to take advantage of the open sibling menu space below 1050px?"
+	 *
+	 * So a column-less rung is sized by whatever fits BESIDE THE TIMELINE'S BARS, floored at what it
+	 * renders today and capped here. The floor is what protects the phone — at 393px the bars-aware
+	 * width wants 0.265 and the floor holds it at 0.395, so nothing shrinks anywhere, ever. The cap is
+	 * 0.853, the size the 1100 rung delivers, so a NARROWER window can never show a BIGGER card than a
+	 * wide one.
+	 */
+	uMax?: number;
 	label: string;
 }
 
@@ -169,7 +185,15 @@ export const LADDER: StageRung[] = [
 	},
 	{
 		// iPad Pro 11-13" landscape, and any laptop below the roomy rung.
-		minW: 1100,
+		//
+		// minW 1100 -> 1050 (083026). Sam, looking at 1100: the sibling menu vanishes there while "there
+		// actually is a decent gap between the siblings menu and the right side of the featured card" —
+		// i.e. the column was being dropped with room still on the stage. Measured on the baseline, the
+		// stage at 1050 leaves a 153px gutter to the right of the card and the column needs ~140 of it.
+		// The clamp takes u to 0.814 here rather than this rung's declared 0.92, so the card is a little
+		// smaller than at 1100 and the column fits in what that frees — which is the ladder working as
+		// designed rather than a special case.
+		minW: 1050,
 		minH: 720,
 		tier: 'A',
 		density: 'normal',
@@ -191,6 +215,10 @@ export const LADDER: StageRung[] = [
 		tier: 'A',
 		density: 'compact',
 		u: 0.82,
+		// The column is gone at this rung, so 0.82 is a FLOOR and this is the ceiling the freed ~150px
+		// may lift the card to. 0.853 is what the 1100 rung actually delivers, so the card can grow into
+		// the space the siblings vacated without ever exceeding what a wider window shows.
+		uMax: 0.853,
 		k: 0.9,
 		childCap: 6,
 		nbCap: 4,
@@ -204,6 +232,11 @@ export const LADDER: StageRung[] = [
 		tier: 'B',
 		density: 'compact',
 		u: 0.7,
+		// Same floor-and-ceiling as the rung above, and it is what answers Sam's "the reduction in main
+		// content width at <900px is extreme, its too small too soon": at 850 the bars-aware width comes
+		// out at 0.727 against this rung's declared 0.7, so the card grows rather than stepping down.
+		// At 768 it comes out BELOW 0.7 and the floor takes over, so a real iPad portrait is unchanged.
+		uMax: 0.853,
 		k: 0.87,
 		childCap: 6,
 		nbCap: 3,
@@ -237,6 +270,18 @@ export const LADDER: StageRung[] = [
 export const CARD_W_BASE = 925;
 /** The persistent sibling column: chip width 119 + the gap it sits off the card. */
 const SIBLING_COL_BASE = 149;
+/**
+ * HOW FAR THE TIMELINE'S BARS REACH from the viewport's left edge, measured: the rail is
+ * `position: fixed; left: 0` with RAIL_W 170, but the BARS — the part that must stay legible — end at
+ * x = 114. Reserving the bars rather than the whole rail keeps the concession as small as possible.
+ *
+ * THIS DOES NOT ENTER widthClamp, AND THAT IS THE WHOLE DESIGN. An earlier attempt subtracted it there,
+ * which made an instrument's needs SHRINK THE CARDS at every width and cost the phone a third of its
+ * size; it was reverted. Sam's Aug 8 rule stands — "the core boxes and rows are front and center and
+ * we'll adjust the timeline to work around that" — so the bars are paid for out of margin that already
+ * exists (see shiftX) and can never cost a single pixel of card.
+ */
+const TIMELINE_BARS_W = 114;
 /** `.page-container`'s left + right padding at u = 1. */
 const STAGE_PAD_BASE = 64;
 /**
@@ -327,7 +372,99 @@ const vw = $derived(innerWidth.current ?? SSR_W);
 const vh = $derived(innerHeight.current ?? SSR_H);
 const rung = $derived(rungFor(vw, vh));
 /** The rung's intent, capped by what the viewport's WIDTH can actually hold. See widthClamp. */
-const clampedU = $derived(widthClamp(rung.u, vw, rung.siblingColumn));
+/**
+ * THE WIDTH THE LAYOUT ACTUALLY GETS, WHICH IS NOT THE WINDOW'S — DECLARED ABOVE ITS FIRST READER,
+ * deliberately. A `$derived` referenced before its declaration is a temporal dead zone, and this
+ * module's subscribers run synchronously during init; that exact mistake cost a 500 on every person
+ * page during the auth build.
+ *
+ * `innerWidth` includes the vertical scrollbar; the box `.page-container` gets does not. Measured at a
+ * 900px window, body reads 885 while documentElement still says 900 — and 885 is what the card centres
+ * in. ONLY GEOMETRY USES THIS: every THRESHOLD below keeps using `vw`, because those are numbers Sam
+ * reads off a browser window and checks by resizing one.
+ */
+const layoutW = $derived.by(() => {
+	void vw; // `vw` is the dependency that makes this re-measure on resize
+	if (typeof document === 'undefined') return vw;
+	return document.body?.clientWidth || document.documentElement.clientWidth || vw;
+});
+
+/**
+ * ── SPENDING THE SPACE THE SIBLING COLUMN LEFT BEHIND (083026) ──────────────────────────────────
+ *
+ * Sam: "deleting the sibling menu is an intentional choice to open up space to move main content
+ * right." It was not being spent. `widthClamp` returns the rung's declared u untouched whenever it
+ * fits, and on a column-less rung it always fits — so the card sat at 0.82 while the clamp would have
+ * allowed 1.03, with 140px of measured gutter doing nothing.
+ *
+ * So a column-less rung now takes the LARGER of two numbers and caps it:
+ *
+ *   FLOOR  exactly what it renders today. Nothing anywhere gets smaller than the build Sam approved —
+ *          which is what keeps the phone identical, where the bars-aware term wants 0.265 and today's
+ *          ladder gives 0.395.
+ *   BARS   the largest card that still fits BESIDE the timeline's bars. This is where the freed width
+ *          goes, and it is self-limiting: as the window narrows it falls back through the floor on its
+ *          own and the rung takes over again, with no threshold to pick.
+ *   CAP    `uMax`, the size the 1100 rung delivers, so a narrower window never shows a bigger card
+ *          than a wide one.
+ *
+ * A RUNG WITH A COLUMN IS UNTOUCHED — it keeps `widthClamp` exactly as it was, because there the
+ * column is what the right-hand width is for.
+ */
+const uFloor = $derived(widthClamp(rung.u, vw, rung.siblingColumn));
+const uBars = $derived(
+	rung.siblingColumn ? uFloor : (layoutW - TIMELINE_BARS_W - 2) / (CARD_W_BASE + STAGE_PAD_BASE)
+);
+const clampedU = $derived(Math.min(rung.uMax ?? rung.u, Math.max(uFloor, uBars)));
+
+/**
+ * ── THE OFF-CENTRE CHEAT (083026) ───────────────────────────────────────────────────────────────
+ *
+ * Sam: "you don't have to 'Center' the main content below 1100px in the browser window, the center
+ * line can cheat to the right to use new open space and not impinge on vertical bars and timeline so
+ * early." That is the permission this needs and it is the ONLY thing it does — no `u` changes here,
+ * no clamp changes, nothing that can alter how big anything is. It moves the composition sideways
+ * inside width the layout already has, or it does nothing at all.
+ *
+ * Measured on the baseline (probe-widths), the space is real and badly distributed: at 1024-1099 the
+ * stage leaves 140-178px unused on the right while the bars sit clear, and at 900 the bars are buried
+ * under 51px of card with 78px going spare on the same right-hand side.
+ *
+ * THREE TERMS, and the third is the one that makes 1050 possible:
+ *
+ *   WANT   how far right the group must move for the card's left edge to clear the bars. Zero once it
+ *          already does.
+ *   ROOM   how far it CAN move before the group's right edge hits the container's padding. This goes
+ *          NEGATIVE when the group is already too wide — which is exactly the sibling column's case at
+ *          1050 — and a negative cheat is a cheat LEFT, toward the bars, to make room on the right.
+ *   FLOOR  zero, unless the column is present. Without a column there is nothing on the right that
+ *          needs room, so moving left could only ever cover more of the timeline for no gain.
+ *
+ * THE FLOOR IS WHAT PROTECTS THE PHONE, and it does it by arithmetic rather than by a hand-written
+ * tier exception — which is precisely how the previous attempt broke. At 393px WANT is 108 and ROOM is
+ * about −20, so the cheat resolves to zero and the phone renders exactly as it does today. It is not
+ * excluded; it simply has nothing to give, and the formula knows.
+ */
+/** The column's on-screen width, measured off the baseline: 149 at u=1 and 140 at u=0.853. Held FLAT
+ *  at its largest rather than modelled, because over-reserving costs ~9px of cheat and under-reserving
+ *  costs an overflow, and only one of those is allowed to happen. */
+const colW = $derived(rung.siblingColumn ? SIBLING_COL_BASE : 0);
+const shiftX = $derived.by(() => {
+	const cardW = CARD_W_BASE * clampedU;
+	const padSide = (STAGE_PAD_BASE / 2) * clampedU;
+	const naturalLeft = (layoutW - cardW) / 2;
+	const want = Math.max(0, TIMELINE_BARS_W - naturalLeft);
+	const room = layoutW - padSide - (naturalLeft + cardW + colW);
+	// FLOORED AT ZERO ALWAYS — the cheat only ever moves RIGHT (083026). It was briefly allowed to go
+	// negative, so a rung whose column was tight could pull the group left to make room on the right;
+	// measured, that fired at 1100-1280 where nothing needed it and dragged the composition 29px left of
+	// where Sam has approved it. The cause was `colW` below being held flat at its u=1 value: the column
+	// really measures 140 at u=0.853, so `room` read −29 when there were 7px to spare. Rather than model
+	// the column's width precisely — an empirical curve that would rot the moment a chip's padding
+	// changed — the cheat simply never moves left, which makes an over-estimate of `colW` SAFE in the
+	// only direction that matters: it can withhold some rightward cheat, never invent a leftward one.
+	return Math.max(0, Math.min(want, room));
+});
 
 /**
  * THE NARRATIVE-BLOCK BUDGET, BY WIDTH. Sam, Aug 8: "once we get below a certain screen size you can
@@ -436,6 +573,11 @@ export const stage = {
 	get siblingColumn(): boolean {
 		return rung.siblingColumn;
 	},
+	/** How far the composition cheats off centre, in CSS px. Positive is right (clearing the timeline's
+	 *  bars); negative is left (making room on the right for the sibling column). See shiftX. */
+	get shiftX(): number {
+		return shiftX;
+	},
 	/** At or below 1100px wide, the vitals' two whitespace gaps halve. See tightVitals. */
 	get tightVitals(): boolean {
 		return tightVitals;
@@ -509,9 +651,15 @@ export function mergeChipUnion(): boolean {
  * `calc(925px * var(--stage-u))` and reads at the call site what the base number is. A pre-multiplied
  * length would hide the design constant, and every one of those constants is documented somewhere.
  */
-export function applyStageVars(el: HTMLElement, u: number, k: number): void {
+export function applyStageVars(el: HTMLElement, u: number, k: number, shiftX = 0): void {
 	el.style.setProperty('--stage-u', String(u));
 	el.style.setProperty('--type-k', String(k));
+	// TWO NON-NEGATIVE VARIABLES RATHER THAN ONE SIGNED ONE, because the consumer is `padding`, which
+	// cannot go negative. A cheat right is left-padding, a cheat left is right-padding, and exactly one
+	// of them is non-zero at a time. Both default to 0px, so a caller that passes only u and k — /table,
+	// a test harness — gets precisely today's centred geometry.
+	el.style.setProperty('--stage-shift-l', `${Math.max(0, shiftX)}px`);
+	el.style.setProperty('--stage-shift-r', `${Math.max(0, -shiftX)}px`);
 	// LABELS SCALE, READING TEXT STEPS. See the note at the top of this file — chips are recognised,
 	// not read, and their box is shrinking on u, so their type must too or it outgrows the box.
 	el.style.setProperty('--chip-k', String(u));
