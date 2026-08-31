@@ -35,7 +35,8 @@
 		reasonFor,
 		CAT,
 		CATEGORIES,
-		RESULT_CAP
+		RESULT_CAP,
+		diedYoungRow
 	} from '$lib/state/search.svelte';
 	import SearchYears from './SearchYears.svelte';
 	import { linear, cubicOut } from 'svelte/easing';
@@ -544,6 +545,11 @@
 					     orbit. Deriving both here keeps search and the room agreeing on one precedence. -->
 					{@const isFounder = (r.f & CAT.FOUNDER) !== 0 && r.id !== 'H00001'}
 					{@const isOrbit = (r.f & CAT.INFLUENCE) !== 0 && !isFounder}
+					<!-- DIED YOUNG READS AS IT DOES ON A CARD, with no new CSS (083126, Sam). A result row is
+					     already a `.person-box` wrapping a `.text-area`, which is exactly what layout.css's global
+					     `.person-box.died-young .text-area` rule targets — grey ink at --died-young-ink plus
+					     --died-young-text-opacity. So it is one class, and the search list picks up the treatment
+					     the child chips have carried all along rather than a second definition of "faded". -->
 					<a
 						class="person-box hit flex overflow-hidden rounded-lg"
 						class:on={i === cursor}
@@ -552,6 +558,7 @@
 						class:ee-line={(r.f & CAT.INLAW) !== 0}
 						class:founder-row={isFounder}
 						class:orbit-row={isOrbit}
+						class:died-young={diedYoungRow(r)}
 						href="/person/{r.slug}"
 						onclick={(e) => pick(e, r.slug, r.f)}
 						onmouseenter={() => (cursor = i)}

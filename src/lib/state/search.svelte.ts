@@ -92,6 +92,24 @@ export const CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8, FOUNDER: 16 } as 
  * downstream re-derives. Counts now come from `search.counts`, computed from the index that was
  * actually loaded.
  */
+/**
+ * DIED YOUNG, for a search row — the fourth reader of one rule, and the first to be given a name.
+ *
+ * The computation is the house's: `by && dy && dy - by <= 15`, matching diedYoung() in buildFeatured.ts
+ * and the `dy_young` that regenerate-data.js bakes into every sibling compact. It was already inline in
+ * the relevance sort below, whose own comment described itself as "a third reader of the same rule" and
+ * copied it exactly rather than picking a number that looked similar. Giving died-young rows the FADED
+ * INK would have made a fourth reader, so it becomes a function instead: the row that sinks and the row
+ * that greys are now the same predicate by construction and cannot answer differently.
+ *
+ * YEARS ONLY, and that is not a shortcut. The search index carries no month or day — but neither does
+ * buildFeatured's diedYoung(), which is year subtraction too. This is the same arithmetic, not a looser
+ * approximation of it.
+ */
+export function diedYoungRow(r: SearchRow): boolean {
+	return r.by != null && r.dy != null && r.dy - r.by <= 15;
+}
+
 export const CATEGORIES = [
 	{ mask: CAT.HD, key: 'hd', label: 'Hooker descendants' },
 	{ mask: CAT.SPOUSE, key: 'spouse', label: 'Spouses' },
@@ -446,7 +464,7 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 		 *
 		 * They are demoted, never dropped: they stay in `total` and reachable, just never leading.
 		 */
-		dyoung: r.by != null && r.dy != null && r.dy - r.by <= 15 ? 1 : 0,
+		dyoung: diedYoungRow(r) ? 1 : 0,
 		t: q ? tier(r, q, terms) : 5,
 		// Cohesion outranks notability on purpose: a notable whose terms are scattered across
 		// unrelated fields is still not what was asked for, and putting fame ahead of relevance is
