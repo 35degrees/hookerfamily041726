@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '/export function growFrom/,0' src/lib/transitions/flight.ts)",
+      "Bash(grep -nE \"^#{1,3} \" docs/ENRICHED_DESIGN_FABLE_082926.md)",
+      "Bash(grep -nE \"^#{1,3} \" docs/ENRICHED_CODING_ROADMAP_FABLE_082926.md)",
+      "Bash(node -p \"require\\('./node_modules/svelte/package.json'\\).version\")",
+      "Bash(awk '/^\\\\t\\\\.page-container \\\\{/,/^\\\\t\\\\}/' \"src/routes/person/[slug]/+page.svelte\")",
+      "Bash(node -e ' *)",
+      "Bash(node scripts/_widths-tmp.mjs)",
+      "Bash(node scripts/_w2.mjs)"
+    ]
+  }
+}
