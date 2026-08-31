@@ -254,3 +254,15 @@ pow
 prisoner_of_war
 distinguished_service_cross
 chaplain_of_senate
+
+# --- military decorations approved 083126 (Sam directive). Each is documented in
+# entry prose already; the tag vocabulary was simply missing. NOTE: the DFC is
+# `flying_cross`, which was already canonical — do not add distinguished_flying_cross.
+croix_de_guerre
+george_medal
+legion_of_honour
+legion_of_merit
+navy_cross
+purple_heart
+distinguished_service_order
+mentioned_in_despatches
