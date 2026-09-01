@@ -84,9 +84,7 @@ connecticut_migration
 new_hampshire_migration
 missouri_migration
 oklahoma_migration
-v17
 iowa_migration
-v20
 vermont_migration
 ohio_migration
 canada_migration
@@ -122,9 +120,7 @@ shaker
 episcopal
 freemason
 catholic
-v18
 universalist
-v20
 
 # --- academic / institutional ---
 yale_connection
@@ -138,14 +134,12 @@ harvard_founder
 academic
 educator
 librarian
-v21
 
 # --- social / political ---
 governor
 senator
 congressman
 mayor
-v17
 president
 vice_president
 continental_congress
@@ -171,7 +165,6 @@ author
 journalist
 artist
 painter
-v19
 architect
 musician
 engineer
@@ -183,9 +176,7 @@ psychiatrist
 banker
 merchant
 publisher
-v18
 rancher
-v17
 postmaster
 city_planner
 diarist
