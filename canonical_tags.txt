@@ -266,3 +266,9 @@ navy_cross
 purple_heart
 distinguished_service_order
 mentioned_in_despatches
+
+# --- DAR approved 083126 (Sam directive). TWO different things:
+#   dar_member  = joined the society (a woman on the rolls, chapter or national office)
+#   dar_patriot = a Revolutionary ancestor whose service the DAR recognises (already drifting, 3 uses)
+dar_member
+dar_patriot
