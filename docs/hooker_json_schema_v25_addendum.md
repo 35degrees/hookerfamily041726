@@ -64,8 +64,7 @@ Same idea as the per-person `artwork_blurb`.
 **Documents:** top line = `document_title ?? registry.title`; subtitle = person-side `blurb`;
 url = `source_url ?? url`; **never a thumbnail**. The subtitle ellipsizes in the right column
 past roughly 34 characters — Sam's rule is a short **"City, ST (year)"**, not prose. If it
-deserves a paragraph it deserves an NB. *(45 existing person-document refs exceed the limit
-and will be truncating today — unswept.)*
+deserves a paragraph it deserves an NB. **See §6.2 — 42 of 75 refs truncate today.**
 
 **Landmarks:** name = `primary_name` (never `name`); subtitle = **"City, ST (year)" built from
 the REGISTRY**, which is why person-side `landmark_blurb` never renders; url =
@@ -90,8 +89,7 @@ the `C4_cc_label_over_70` counter; that counter is no longer a pure error signal
 
 ## 3. Dead fields — stored, validating clean, rendering NOWHERE
 
-- **`quotes[]`** (on people). Zero render paths. `H00001` and `X02039` both carry real content
-  that no user can see. Either give it a home on the card or stop writing to it.
+- **`quotes[]`** (on people). Zero render paths. **See §6.1 — 29 people, 35 quotes, all invisible.**
 - `research_notes` — already known dead; listed here so the v25 sweep catches both together.
 
 ---
@@ -115,3 +113,69 @@ the `C4_cc_label_over_70` counter; that counter is no longer a pure error signal
 - Still **not** canonical, recurring in submissions: `presidential_medal_of_freedom`,
   `pulitzer_prize`, a Colonial Dames tag, a party tag (`democrat`/`republican` are drift),
   `actor`.
+
+---
+
+## 6. Open — needs a decision before v25
+
+### 6.1 `quotes[]` — 35 quotes on 29 people, none of them visible
+*Raised 5 Sep 2026.*
+
+Zero render paths anywhere: not in `regenerate-data.js`, not in the card components, not in
+`card.py`. Every quote ever written to this field has been invisible from the day it was
+written. It is not a stub used twice — it is a populated, curated field:
+
+| holder | n |
+|---|---|
+| `H00001` Rev. Thomas Hooker | 4 |
+| `H00597` Emma Hart Willard, `H00434` Samuel Cowles, `TD0114` Thomas Page, `HD4679` George Magoffin Humphrey | 2 each |
+| 24 others (incl. `X02039` Twain, `TD0141` Adm. Dewey, `X02833` John Owen Dominis, `X03450` Roxana Foote Beecher) | 1 each |
+
+The shape in use is `{text, attribution, category}`. **The progenitor holds four of them** —
+whatever is decided here lands on the most-visited card in the project.
+
+Three ways out, in Sam's court:
+
+1. **Render it.** Needs a place on the card and a length rule. A quote is not an NB (no header,
+   no category taxonomy of its own) and not a blurb (not a label). Nearest existing furniture is
+   the document/landmark media row. Cheapest honest version: one quote, under the blurb.
+2. **Mine and retire.** Fold the good ones into NB bodies where they already have a home, then
+   delete the field in v25. Costs nothing structurally; loses `attribution` as a distinct datum.
+3. **Leave dormant and stop writing to it.** The status quo, but written down — so no future
+   session spends effort authoring into a field that renders nowhere.
+
+Until this is settled: **do not author new quotes** expecting them to appear. A quote that
+must be seen goes in a CC label or an NB body today. (Precedent, 5 Sep 2026: the Twain/Hooker
+pair carries its two Hartford quotations in the CC labels, not in `quotes[]`, for exactly
+this reason — and that is why those two labels break the 70-char cap.)
+
+### 6.2 Document subtitles truncate — 42 of 75 refs affected
+*Raised 5 Sep 2026 by Sam, from the rendered card: "Livy writes to her from Buffalo, J…"*
+
+The document row's second line is the person-side `blurb`, and the right column ellipsizes it
+at roughly 30–34 characters (it varies with column width, so treat ~30 as the safe budget).
+Current corpus:
+
+- **75** person-document references total
+- **42** carry a subtitle over 34 chars — **56%, the majority, truncating right now**
+- median length **43** chars; longest **165** ("1838 letter from former Dover neighbor Mott
+  Titus describing his Ohio migration, the canal boom, frontier economics, and the Whig sweep
+  of New York's 1838 elections.")
+
+Sam's ruling on the shape: **"i just want it to say Buffalo, NY (1871) … i don't need a
+description. if its worth an NB then add it, but the user can just click through without some
+paragraph they can only read the first 5 words of."** The row is a door, not a summary.
+
+Two ways to land it, and they compose:
+
+1. **Sweep the data** — rewrite all 42 to `"City, ST (year)"`. Done by hand, one batch.
+2. **Make the registry own it** (preferred, and what Sam gestured at with "can you create a new
+   DOC desc field?"): add `place` to the document registry and have `resolveDocuments` fall
+   back to `"City, ST (year)"` built from `place` + `date_year` whenever the person-side blurb
+   is absent — **exactly what `resolveLandmarks` already does**. Then the 42 long blurbs are
+   simply *deleted* rather than rewritten, and no future ref can regress: writing nothing gives
+   the correct short subtitle automatically.
+
+Option 2 makes the person-side `blurb` what it should be — a rare per-person override — and
+leaves one obvious pattern instead of 75 hand-written strings. Blocked only on Sam's go-ahead,
+since it deletes 42 existing blurbs (a named, authorised removal is required per the One Law).
