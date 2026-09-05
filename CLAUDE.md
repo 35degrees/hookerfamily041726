@@ -205,6 +205,7 @@ docs/
   WORKFLOW.md                             <- data editorial contract
   pipeline-gotchas.md                     <- mechanical pipeline facts (read before first batch)
   hooker_json_schema_v24.md               <- THE structural law (read the v24 delta record)
+  hooker_json_schema_v25_addendum.md      <- running tally of schema changes since v24; folds into v25
   ENRICHED_DESIGN_FABLE_<date>.md         <- frontend design (what/why) -- TAKE THE NEWEST
   ENRICHED_CODING_ROADMAP_FABLE_<date>.md <- frontend sequencing + session record -- TAKE THE NEWEST
   HANDOFF_content_<date>.md               <- Stream A content session record -- TAKE THE NEWEST
