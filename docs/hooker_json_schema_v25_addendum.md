@@ -81,8 +81,11 @@ regardless of the flag. What the flag actually gates is the **notables.json shuf
 (`is_notable === true && is_searchable === true && !orbit`). Turning it off removes a person
 from the random-notable door; it does not touch search, and it does not change the card blurb.
 
-**CC `display_label` 70-char cap now has sanctioned exceptions.** Two labels (X02039↔H00001)
-deliberately exceed it to carry a quotation, by Sam's explicit leave. They sit permanently in
+**CC `display_label` 70-char cap now has sanctioned exceptions.** Three labels so far: the
+X02039↔H00001 pair carrying the two Hartford quotations, and X02039→X02045, where naming
+Charles Dudley Warner AND identifying him as the Gilded Age co-author will not fit in 70
+(Sam: "otherwise no one knows that"). The cap yields when a label would otherwise name a
+person the reader cannot place. They sit permanently in
 the `C4_cc_label_over_70` counter; that counter is no longer a pure error signal.
 
 ---
