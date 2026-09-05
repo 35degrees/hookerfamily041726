@@ -1943,6 +1943,30 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 			// Emitted only when TRUE, like kin_distance, so the non-orbit majority costs nothing.
 			if (orbitIds.has(cc.related_id)) out.orbit = true;
 			if (talcottOnly) out.hidden_by_default = true;
+			// CO-LINK (Sam, 5 Sep 2026) — ONE row, TWO linked names sharing one predicate:
+			// "John and Isabella Beecher Hooker founded Nook Farm, and rented him the Forest
+			// Street house in 1871". Two separate rows said the same sentence twice.
+			// The second name is a full navigation target, and the blade reads a link's ENTIRE
+			// flight off its own data attributes — so the co-link carries its own slug, seat,
+			// relation_class, gen_delta, kin_distance and orbit. Reusing the primary's would fly
+			// the camera to the wrong seat. Dropped when the co-target is hidden (severance),
+			// exactly as the primary is filtered above.
+			const co = cc.co_link;
+			if (co && co.related_id && !hiddenIds.has(co.related_id)) {
+				const coOut = {
+					related_id: co.related_id,
+					link_text: co.link_text,
+					joiner: co.joiner ?? ' and ',
+					slug: slugMap.get(co.related_id) ?? null,
+					t: tableCoords.get(co.related_id) ?? null,
+					relation_class: ccLateral(cc) ? 'collateral' : relationClass(p.id, co.related_id, byId),
+					gen_delta: ccLateral(cc) ? 0 : genDelta(p.id, co.related_id, byId)
+				};
+				const ckd = kinDistance(p.id, co.related_id, byId);
+				if (ckd != null) coOut.kin_distance = ckd;
+				if (orbitIds.has(co.related_id)) coOut.orbit = true;
+				out.co = coOut;
+			}
 			return out;
 		});
 

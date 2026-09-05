@@ -287,8 +287,21 @@ def validate(path, baseline_path=None):
             elif len(dl) > CC_LABEL_MAX:
                 debt['C4_cc_label_over_70'] += 1
                 warnings.append(f"{who}: CC display_label {len(dl)} chars (max {CC_LABEL_MAX})")
+            # CO-LINK (Sam, 5 Sep 2026): one CC row may carry a SECOND linked name sharing the
+            # predicate ("John and Isabella Beecher Hooker founded Nook Farm…"). It is a real
+            # navigable edge, so it validates like one and COUNTS as the reciprocal of the
+            # co-target's own CC back — otherwise merging two rows into one would report the
+            # surviving partner as one-directional.
+            co = c.get('co_link') or {}
+            co_id = co.get('related_id')
+            if co_id:
+                if co_id not in tp:
+                    errors.append(f"{who}: CC co_link related_id={co_id} is a dangling reference")
+                elif not co.get('link_text'):
+                    errors.append(f"{who}: CC co_link to {co_id} missing link_text")
             # reciprocity (the C5 debt)
-            if not any(cc.get('related_id') == pid for cc in (tp[other].get('cross_connections') or [])):
+            if not any(pid in (cc.get('related_id'), ((cc.get('co_link') or {}).get('related_id')))
+                       for cc in (tp[other].get('cross_connections') or [])):
                 debt['C5_cc_one_directional'] += 1
                 warnings.append(f"{who}: CC to {other} is one-directional (no reciprocal)")
             # the WORKFLOW rule: a searchable person must not show a CC to a non-searchable person

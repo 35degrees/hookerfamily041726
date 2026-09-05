@@ -100,6 +100,9 @@
 		link_text: string;
 		display_label: string;
 		slug: string | null;
+		// CO-LINK: an optional SECOND linked name sharing this row's predicate. Carries its own
+		// slug/seat/relation data because the anchor reads its whole flight off data attributes.
+		co?: Record<string, any> | null;
 		t?: { x: number; y: number | null; e?: boolean } | null;
 		relation_class?: 'direct' | 'collateral' | null;
 		gen_delta?: number | null;
@@ -260,17 +263,21 @@
 	const row0Inset = $derived(Math.round(rowRight(1) - rowRight(0))); // "Cross" pulls back by the run
 </script>
 
-{#snippet entry(cc: CC)}{#if cc.slug}<a
-			href="/person/{cc.slug}"
+{#snippet ccAnchor(l: Record<string, any>)}{#if l.slug}<a
+			href="/person/{l.slug}"
 			data-cc="true"
-			data-tx={cc.t?.x ?? undefined}
-			data-ty={cc.t?.y ?? undefined}
-			data-relation-class={cc.relation_class ?? undefined}
-			data-gen-delta={cc.gen_delta ?? undefined}
-			data-kin-distance={cc.kin_distance ?? undefined}
-			data-orbit={cc.orbit ? 'true' : undefined}
-			class="cc-link">{bindName(cc.link_text)}</a
-		>{:else}<span class="cc-name">{bindName(cc.link_text)}</span>{/if}{#if cc.display_label}<span
+			data-tx={l.t?.x ?? undefined}
+			data-ty={l.t?.y ?? undefined}
+			data-relation-class={l.relation_class ?? undefined}
+			data-gen-delta={l.gen_delta ?? undefined}
+			data-kin-distance={l.kin_distance ?? undefined}
+			data-orbit={l.orbit ? 'true' : undefined}
+			class="cc-link">{bindName(l.link_text)}</a
+		>{:else}<span class="cc-name">{bindName(l.link_text)}</span>{/if}{/snippet}
+
+{#snippet entry(cc: CC)}{@render ccAnchor(cc)}{#if cc.co}<span class="cc-label-text"
+			>{cc.co.joiner ?? ' and '}</span
+		>{@render ccAnchor(cc.co)}{/if}{#if cc.display_label}<span
 			class="cc-label-text">{ccTail(cc.display_label)}</span
 		>{/if}{/snippet}
 
@@ -316,7 +323,9 @@
 				maxWidth: Math.round((CARD_W - BLADE_RIGHT_INSET) * bu),
 				// `key` carries the dials so a resize RE-FITS. fitBlade caches on this string; without
 				// them a narrowed window kept the width and font size solved for the wide card.
-				key: `${crossConnections.map((c) => c.link_text + c.display_label).join('|')}|${bu}|${bk}`
+				key: `${crossConnections
+					.map((c) => c.link_text + (c.co?.link_text ?? '') + c.display_label)
+					.join('|')}|${bu}|${bk}`
 			}}
 		>
 			<div class="cc-body" style="height: {bladeH}px;">
