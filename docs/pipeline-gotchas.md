@@ -106,6 +106,13 @@ and re-read before trusting the link.
 ```bash
 python3 batch.py tasks.csv                    # sheet: commit -> process -> validate delta -> regen -> verify
 python3 batch.py --ids X03821,HD8480          # same checks after a HAND edit to canonical
+
+**`--ids` is COMMA-separated, and a space silently truncates the list.** `--ids HD1578 X00804`
+parses as the single id `HD1578`; the rest is dropped with no warning and no error. Nothing is
+lost from canonical -- but the un-regenerated person keeps a STALE payload, so the far end of a
+new reciprocal CC is stored, validates clean, and does not render. `card.py` on the id you did
+pass looks perfect. Always card BOTH ends of a reciprocal CC. (Hit 090526 on the Hazard/Woodward
+pair.)
 python3 batch.py tasks.csv --commit "message" # commit only if the delta was clean
 python3 card.py X03821                        # what the card SHOWS (read-only, any time)
 ```
