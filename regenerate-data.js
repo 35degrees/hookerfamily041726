@@ -1130,8 +1130,13 @@ function resolveDocuments(p, byId) {
 		if (!r) return null;
 		// person-side ref carries the per-person note under `blurb` (older rows used `document_blurb`)
 		const blurb = bl && typeof bl === 'object' ? (bl.blurb ?? bl.document_blurb ?? null) : null;
+		// Sam, 5 Sep 2026: a document's registry title is written from ONE side ("Letter to Alice
+		// Hooker") and reads as nonsense on the other party's own card. `document_title` on the
+		// person-side ref is a VERBATIM per-person override of the top line, same idea as the
+		// per-person artwork_blurb. Absent → the registry title, unchanged.
+		const title = bl && typeof bl === 'object' ? (bl.document_title ?? null) : null;
 		return mediaRow({
-			name: r.title,
+			name: title ?? r.title,
 			typeLabel: null,
 			blurb,
 			subtitle: blurb,
