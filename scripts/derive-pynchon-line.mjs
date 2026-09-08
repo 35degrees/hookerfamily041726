@@ -105,7 +105,8 @@ const LITERAL_LABEL = {
 };
 
 const TITLE_ONLY = [
-	'X03226' // Rev. Thomas Ruggles Pynchon — off the direct line, title only
+	'X03226', // Rev. Thomas Ruggles Pynchon — off the direct line, title only
+	'X03112' // Sarah Pynchon Dwight — Col. William's daughter; title only, no rainbow (Sam, 8 Sep 2026)
 	// Y00003 Mary Pynchon Holyoke was here until 10 Aug 2026, when Sam deleted her outright
 	// along with the Holyokes (Y00002, X01778, Y00005) to finish the Talcott severance.
 ];

@@ -16,6 +16,7 @@ export const PYNCHON_LINE: ReadonlyArray<readonly [string, number | null, boolea
 	['X01014', 2, false], // Mary Smith Lord Hooker
 	['X03298', 2, true], // Lt. Col. John C. Pynchon
 	['X03300', 3, true], // Col. William Pynchon
+	['X03112', 4, false], // Sarah Pynchon Dwight
 	['X03220', 4, true], // Joseph Pynchon
 	['X03221', 5, true], // Dr. Thomas Ruggles Pynchon
 	['X03223', 6, true], // William Henry Ruggles Pynchon
@@ -29,8 +30,8 @@ export const PYNCHON_LINE: ReadonlyArray<readonly [string, number | null, boolea
 	['X03219', null, true], // Sarah Ruggles Pynchon
 	['X03222', null, true], // Rebecca Tomlinson Pynchon
 	['X03224', null, true], // Mary Murdoch Pynchon
-	['X03227', null, true], // Anna Payne Cogswell Pynchon
-	['X03229', null, true], // Caroline Moyses Pynchon
+	['X03227', null, true], // Annie Payne Cogswell Pynchon
+	['X03229', null, true], // Carrie Susan Moyses Pynchon
 	['X03231', null, true], // Catherine Frances Bennett Pynchon
 	['X03299', null, true], // Margaret Hubbard Pynchon
 	['X03301', null, true], // Katherine Brewer Pynchon
