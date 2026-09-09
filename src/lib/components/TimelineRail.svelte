@@ -952,6 +952,26 @@
 			lifespan: '1703–1758'
 		},
 		{
+			// 1842–1850, AND THIS IS A PLACEMENT OF AVAILABLE YEARS RATHER THAN HER BEST ONES — better
+			// to say so here than to let the rail imply an argument it cannot make. Her peak is
+			// 1857–1866: matron of the Columbia Institution from 30 May 1857 to 1 Aug 1866, and the
+			// lobbying she did in person — a deaf woman working congressmen — for the deaf college
+			// Lincoln chartered in 1864. That window is wholly occupied: Vanderbilt holds 1851–1859 and
+			// Terry 1861–1868, so the only clear space anywhere near her life is the fifteen years
+			// between Emma Willard (ends 1835) and Vanderbilt (begins 1851). 1842 sits in the Hartford
+			// household decade — her husband ran the school she had entered in 1817 and died in 1851 —
+			// and closes exactly where Vanderbilt opens, with no overlap anywhere. Move her to 1857 the
+			// day Vanderbilt can shift.
+			slug: 'sophia-fowler-1798',
+			name: 'Sophia Fowler Gallaudet',
+			from: 1842,
+			years: 8,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1788929325/flowel_vxhrzh.png',
+			t: { x: 6178.5875, y: 1798 },
+			headshotBlurb: 'Mother of the American Deaf',
+			lifespan: '1798–1877'
+		},
+		{
 			// 1849-1858, and the span is an argument rather than a guess. 1849 is the pivot — the gold
 			// rush is what moved him off regional steamboats and onto ocean-going steamships — and the
 			// arc closes in 1857-58 with a monopoly on the California steamship business and the Collins
