@@ -965,7 +965,12 @@
 			slug: 'sophia-fowler-1798',
 			name: 'Sophia Fowler Gallaudet',
 			from: 1842,
-			years: 8,
+			// NINE, NOT EIGHT (Sam: "seems a little smaller than his") — matched to Vanderbilt's circle
+			// so the two neighbours read as the same size. It grows DOWNWARD into 1851, which touches
+			// the first year of his window; that is the one-year kiss Sam's own founding-era rule
+			// already allows, and the alternative (1841-1850) would have kept them apart at the cost of
+			// moving her off the year he chose.
+			years: 9,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1788929325/flowel_vxhrzh.png',
 			t: { x: 6178.5875, y: 1798 },
 			headshotBlurb: 'Mother of the American Deaf',
@@ -2129,6 +2134,26 @@
 	   RAIL_OVER_FLIGHT for why this cannot be the resting z-index. */
 	.rail.over-flight {
 		z-index: 3;
+	}
+	/* THE HOVERED PORTRAIT'S TOOLTIP HAS TO CLEAR THE HERO CARD, AND THE LIFT BELONGS TO THE RAIL.
+	   `.anchor:hover { z-index: 20 }` below sorts the portrait among the BARS and nothing further —
+	   every one of those numbers lives inside `.rail`'s own stacking context, and the rail rests at
+	   z 1 UNDER `.page-container` (also z 1, later in the document, so the tie goes to the card by
+	   source order — see the note above `.rail`'s z-index, which chose that on purpose). A 190px
+	   label at z 20 inside a context at z 1 still paints beneath the card, which is what Sam saw.
+	   Raising the tooltip further can never work; the CONTEXT is what has to move.
+
+	   TRANSIENT, like `.over-flight`, and for the same reason: a rail permanently above the card
+	   would put every portrait in front of it at rest, which is the resting order this component
+	   deliberately does not have. z 4 rather than 3 so a hover during a CC flight still wins.
+
+	   `.no-hover` IS EXCLUDED because it is the just-clicked suppression — that rule sits the
+	   portrait back down at z 1 and hides its tooltip, and lifting the whole rail underneath it
+	   would put a shrinking face over the card for the 160ms of the drop with no label to justify
+	   it. Keyboard focus is not excluded, matching the same decision made there. */
+	.rail:has(.anchor:not(.no-hover):hover),
+	.rail:has(.anchor:focus-visible) {
+		z-index: 4;
 	}
 
 	/* A TICK CROSSES BOTH GROUNDS — pine on the left, bare parchment on the right — so one colour cannot
