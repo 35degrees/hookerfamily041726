@@ -182,3 +182,21 @@ Two ways to land it, and they compose:
 Option 2 makes the person-side `blurb` what it should be — a rare per-person override — and
 leaves one obvious pattern instead of 75 hand-written strings. Blocked only on Sam's go-ahead,
 since it deletes 42 existing blurbs (a named, authorised removal is required per the One Law).
+
+---
+
+## §7 New canonical tag: `photographer`
+*Added 10 Sep 2026 by Sam, on Charles DeForest Fredricks (HD11266).*
+
+`canonical_tags.txt` carried `artist`, `painter` and `musician` but no `photographer`, so the
+first professional photographer in the corpus could only be tagged with the generic `artist`.
+Sam's ruling: **"add a canonical photographer tag to him. if not canonical add to schema v25
+addendum for future addition and add now."**
+
+- **Added to `canonical_tags.txt` now**, so `validate.py` accepts it immediately.
+- Folds into v25 as a permanent member of the occupation-tag family alongside
+  `artist` / `painter` / `musician` / `physician` / `lawyer`.
+- First bearer: HD11266 Charles DeForest Fredricks (1823–1894), carried together with `artist`.
+
+Scope: anyone whose trade was the camera — studio proprietors, operators, war photographers.
+Not for sitters, and not for people who merely owned photographs.

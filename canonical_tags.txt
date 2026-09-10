@@ -263,3 +263,4 @@ mentioned_in_despatches
 #   dar_patriot = a Revolutionary ancestor whose service the DAR recognises (already drifting, 3 uses)
 dar_member
 dar_patriot
+photographer
