@@ -227,7 +227,11 @@ export function formatLocationShort(
 
 	// Full address
 	if (city && state && isUS) return `${city}, ${abbreviateState(state)}`;
-	if (city && state && !isUS) return `${city}, ${state}, ${abbreviateCountry(country)}`;
+	// Two items already name the place: with a city AND a state/province, the country is
+	// redundant on the card ("Westchester Valley, Nova Scotia", not "..., Canada") — the
+	// same treatment US places have always had. buildMapUrl() is a separate function and
+	// still queries city+state+country, so the Map link keeps its full precision.
+	if (city && state && !isUS) return `${city}, ${state}`;
 	if (city && country && !isUS) return `${city}, ${abbreviateCountry(country)}`;
 	if (city) return city;
 
