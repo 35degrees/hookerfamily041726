@@ -907,26 +907,27 @@
 	 */
 	const ANCHORS = [
 		{
-			// 1636 — the year he led his congregation overland to found Hartford, the act this whole tree
-			// descends from. Nine years carries it to 1645, two before his death.
+			// PUSHED BACK TO 1633 (Sam) so Hooker and Shepard are the SAME SIZE and still touch: eight
+			// years each, Hooker 1633–1641 and Shepard 1641–1649. 1633 is the September he came ashore
+			// off the Griffin, and the span carries him through the 1636 overland march to Hartford and
+			// the settled ministry after it. The circle is the span, so equal spans are the only way to
+			// get equal portraits.
 			slug: 'thomas-hooker-1586',
 			name: 'Rev. Thomas Hooker',
-			from: 1636,
-			years: 9,
+			from: 1633,
+			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786380011/thomas_ugzawj.png',
 			t: { x: 4400, y: 1586 },
 			headshotBlurb: 'Founder of Hartford',
 			lifespan: '1586–1647'
 		},
 		{
-			// BACK TO BACK WITH HOOKER, NOT OVERLAPPING (Sam). Hooker's circle closes at 1645; Shepard's
-			// opens there and runs to 1649, the year he died at forty-three. Four years is a smaller
-			// circle than the rest of the set — the span IS the size — and that is the cost of keeping
-			// the two of them touching rather than stacked. He married Hooker's daughter Joanna.
+			// BACK TO BACK WITH HOOKER, SAME SIZE. Hooker closes at 1641 and Shepard opens there, running
+			// the eight years to 1649, when he died at forty-three. He married Hooker's daughter Joanna.
 			slug: 'thomas-shepard-1605',
 			name: 'Rev. Thomas Shepard',
-			from: 1645,
-			years: 4,
+			from: 1641,
+			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789241690/Screenshot_2026-09-12_at_12.34.36_PM_uimpp8.png',
 			t: { x: 1.4, y: 1605 },
 			headshotBlurb: 'Harvard co-founder',
