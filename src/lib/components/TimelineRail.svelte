@@ -919,6 +919,20 @@
 			lifespan: '1586–1647'
 		},
 		{
+			// BACK TO BACK WITH HOOKER, NOT OVERLAPPING (Sam). Hooker's circle closes at 1645; Shepard's
+			// opens there and runs to 1649, the year he died at forty-three. Four years is a smaller
+			// circle than the rest of the set — the span IS the size — and that is the cost of keeping
+			// the two of them touching rather than stacked. He married Hooker's daughter Joanna.
+			slug: 'thomas-shepard-1605',
+			name: 'Rev. Thomas Shepard',
+			from: 1645,
+			years: 4,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789241690/Screenshot_2026-09-12_at_12.34.36_PM_uimpp8.png',
+			t: { x: 1.4, y: 1605 },
+			headshotBlurb: 'Harvard co-founder',
+			lifespan: '1605–1649'
+		},
+		{
 			// Yale is chartered in 1701; the span runs from the founding through the years he spent
 			// building it.
 			slug: 'james-pierpont-1659',
