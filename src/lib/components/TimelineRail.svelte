@@ -1124,6 +1124,21 @@
 			lifespan: '1827–1890'
 		},
 		{
+			// 1869–1877 — HER decade, and every year of it is hers: the Connecticut Woman Suffrage
+			// Association founded in 1869, the national convention she paid for herself at Washington in
+			// 1871, and the married women's property bill she put before the legislature every year from
+			// 1870 until it passed in 1877. Placing her in the 1880s would put the portrait after the
+			// thing she won. Shares 1869 with Terry's last year, the same way Whitney and Burr share 1800.
+			slug: 'isabella-beecher-1822',
+			name: 'Isabella Beecher Hooker',
+			from: 1869,
+			years: 8,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789238586/HD_hookerIBc_wdl9ox.jpg',
+			t: { x: 5048.4, y: 1822 },
+			headshotBlurb: 'Connecticut suffrage leader',
+			lifespan: '1822–1907'
+		},
+		{
 			// 1872–1880, and Sam's hunch was right — the peak is the 1870s. Standard Oil was founded in
 			// January 1870, but the DOMINANCE is this window: "The Cleveland Conquest" of 1872 absorbed 22
 			// of 26 local competitors in under four months; Pratt and Rogers, his last serious opponents,
@@ -1138,7 +1153,11 @@
 			// space — Terry ends 1869 and Morgan begins 1892, so there are 3 clear years above and 12 below.
 			slug: 'john-rockefeller-sr-1839',
 			name: 'John D. Rockefeller',
-			from: 1872,
+			// MOVED OFF 1872 (Sam, Sept 2026): "rockefeller can move back to the 1880s, he was dominant
+			// that whole long era." 1880–1888 now covers the Standard Oil Trust of 1882 — the landmark
+			// the 1872 placement deliberately left outside — and clears 1869–1877 for Isabella, whose
+			// own decade it is. Overlaps Morgan's first year by one, which the rail already does at 1800.
+			from: 1880,
 			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786386955/rockhead_ay85jm.png',
 			t: { x: 4226.8, y: 1839 },
