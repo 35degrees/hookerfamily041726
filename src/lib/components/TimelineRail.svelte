@@ -1227,6 +1227,29 @@
 			// honest span was 1941-1945, exactly America's war; the legible one starts at 1937 and
 			// still ends on the June 1945 brigadier's star. Circle size wins: an anchor nobody can see
 			// is worse than a start year three years early.
+			slug: 'george-strong-1880',
+			name: 'Gen. George V. Strong',
+			from: 1928,
+			years: 8,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789343408/Strong_George_Veazey_npeim8.jpg',
+			t: { x: 6993, y: 1880 },
+			headshotBlurb: 'Army intelligence chief',
+			lifespan: '1880–1946'
+		},
+		{
+			// EIGHT YEARS, the historical cohort's size — Munson, Jackson, House, Taft and everyone
+			// back to Hooker are 8; only Pierpont, Sophia, Vanderbilt and the five modern anchors are 9.
+			// Strong at 8 keeps him the same diameter as the two men he now sits between.
+			//
+			// 1928-1936 is his GENEVA decade, not his famous one. The G-2 years (1942-1944) are the
+			// reason anyone knows his name, but Munson already holds 1937-1945 and Jackson 1946-1954,
+			// and there is no honest way to move either: Munson's span is already stretched three years
+			// early to keep his face legible, and Jackson's 1946 is the year Nuremberg closed. What
+			// 1928-1936 buys is a real span nobody else wants — he was chief of the American military
+			// mission to the preparatory disarmament conference in 1928 and military adviser to the
+			// delegation at Geneva until 1935 — and it closes the rail's one remaining hole: House ends
+			// 1920 and nothing stood between there and Munson. It butt-joins 1936/1937 the way
+			// Hooker/Shepard and North/Foster do.
 			slug: 'edward-munson-jr-1904',
 			name: 'Gen. Edward Munson Jr.',
 			from: 1937,
