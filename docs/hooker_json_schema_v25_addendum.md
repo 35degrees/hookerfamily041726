@@ -268,3 +268,21 @@ had already spent the card's intrigue budget.
 Unchanged from v24: **≤8 words AND ≤50 characters**, gloss every proper noun a general reader
 will not know, and **null beats weak** — a header that can only be made concrete by lying is a
 block that should not exist.
+
+---
+
+## §9 New canonical tag: `actor`
+*Added 13 Sep 2026 during the Foster sweep, on the `photographer` precedent (§7).*
+
+`actor` had been sitting in §5 as "still **not** canonical, recurring in submissions" for a
+fortnight. The Foster line settled it: **four siblings in one household are all screen
+performers** — HD12157 Lucinda "Cindy", HD12158 Constance "Connie", HD12159 Lucius "Buddy"
+and HD12160 Alicia "Jodie" Foster — and the tree already held Janet Fairbank the soprano,
+Percy Lee Atherton, and a scatter of others with no way to mark the trade.
+
+- **Added to `canonical_tags.txt` now**, exactly as `photographer` was added on Fredricks.
+- Folds into v25 beside `artist` / `painter` / `musician` / `photographer`.
+- Scope: people who performed on stage or screen as a trade. Not for a single childhood
+  commercial, and not for producers or directors who never acted — `arts` as a
+  `notable_category` still covers those.
+- Remove `actor` from the §5 "not canonical" list when v25 is written.

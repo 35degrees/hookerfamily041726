@@ -1328,6 +1328,22 @@
 			lifespan: '1943–'
 		},
 		{
+			// SAME DIAMETER AS OLIVER NORTH, which was Sam's condition: nine years each, so the two
+			// portraits read as equals. She opens at 1990 exactly where North closes, the same
+			// back-to-back join Hooker and Shepard use — the span is 1990-1999, bracketing the
+			// Silence of the Lambs Oscar in 1991 and the four features she directed from Little Man
+			// Tate onward. t is her own table seat, so the camera vector is real.
+			slug: 'alicia-foster-1962',
+			name: 'Jodie Foster',
+			from: 1990,
+			years: 9,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789338716/fohe_tjagsm.png',
+			t: { x: 849, y: 1962 },
+			headshotBlurb: 'Actor and director',
+			// No death year — she is alive.
+			lifespan: '1962–'
+		},
+		{
 			slug: 'anderson-cooper-1967',
 			name: 'Anderson Cooper',
 			from: 2013,
