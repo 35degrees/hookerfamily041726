@@ -74,12 +74,14 @@ I01606	Dorothy Howe Bass Spencer	true-orphan	no blood/egg flag, no marriage anch
 I01608	Mabel Williams Spencer	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I01914	Hannah Pope Putnam	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I01915	Deborah Lothrop Putnam	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
+I03013	[Wife] Ingersoll Peck	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I03341	Giles Edwin Dawson	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I03342	Margaret Williams Dawson	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I03419	Huldah Coe Harris	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I03420	William Harris	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I03421	Mary Bidwell Harris	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I03667	Evelyn Green Newhall	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
+I04111	Michael Peck	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00001	Thomas Hooker I	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00002	Susannah Hooker	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00003	Richard Garbrand	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -359,4 +361,5 @@ X02838	Lucy Huston Sturdevant	no-y-basis	no birth year and no dated relative/par
 I01606	Dorothy Howe Bass Spencer	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X03286	Abel Smith	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X03582	Duncan S. Magee	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
+I03013	[Wife] Ingersoll Peck	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X04062	Michael Hollander	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
