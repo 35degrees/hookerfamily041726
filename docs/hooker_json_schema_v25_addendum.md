@@ -200,3 +200,71 @@ addendum for future addition and add now."**
 
 Scope: anyone whose trade was the camera — studio proprietors, operators, war photographers.
 Not for sitters, and not for people who merely owned photographs.
+
+---
+
+## §8 The NB header scan rule — concreteness is the floor, intrigue is the seasoning
+*Added 13 Sep 2026 by Sam, on the Armour line (X04107 Andrew Watson Armour as the negative example).*
+
+This **extends and sharpens `hooker_json_schema_v24.md` §v24-6.2**, which already said a header
+must "name a real thing AND leave a question." That rule was being read as a licence to withhold.
+It is not. Sam:
+
+> "i feel like the last Claude made the NB headers too riddle like and obscure… they don't all
+> have to be wiki-like but they have to have a little bit of concreteness for a user who just is
+> scanning headers, but maybe one or two can be intriguing never tabloidy."
+
+### 8.1 What an NB actually is — the sampler, not the encyclopedia
+
+> "its important the NBs are at an angle focused on the person, telling small slices of
+> narrative, not just dumping bio data, this is NOT wikipedia. we provide a sampler and engage
+> the user with the entry but they can go and do more research once engaged."
+
+An NB is a **small slice of narrative told at an angle on the person**. It is not a summary of
+their life, not a paragraph of a biography, and not a fact table in prose. The card's job is to
+make a reader want to know more — the research they do afterwards is theirs, not ours. **Dumping
+bio data is the failure mode this rule exists to name**, and it fails in both directions: a
+header that summarises is wiki, a header that withholds everything is a riddle.
+
+### 8.2 The ratio — most headers concrete, at most one or two withholding
+
+**Per card, not per header.** Scanning the header list with nothing expanded must teach the
+reader who this person was.
+
+- **The floor: every header carries at least one concrete anchor** — a trade, a place, a number,
+  a named thing, an age, a date. A header whose every noun is abstract or pronominal fails.
+- **The ceiling: one, at most two headers per card may be primarily intriguing** — withholding
+  the payoff, leaning on the question. They earn that slot only because the others around them
+  are carrying the facts.
+- **Never tabloid.** Intrigue is dry understatement, not a tease. "His first wife died four days
+  past thirty-one" is intrigue; "The secret his family never spoke of" is a tabloid.
+
+### 8.3 The worked example — X04107 Andrew Watson Armour, five headers, three failures
+
+The card that prompted the rule. Read the five in order, expanding nothing:
+
+| # | header | verdict |
+|---|---|---|
+| 1 | *He left the plough at forty-nine* | **passes** — a trade and an age; you learn he was a farmer who changed course late |
+| 2 | *He founded a bank in a bank panic* | **passes, and is the model** — concrete (a bank, a panic) and withholding (how? why him?) in eight words |
+| 3 | *A packer second of the Armour brothers* | **fails** — "second" is doing work the reader cannot decode; it reads as a rank, a birth order and a typo at once |
+| 4 | *His wife asked him not to walk on* | **fails** — zero anchors. Walk on from where? It is pure riddle, and the body's real content (he died on a bench beside a mineral spring) is nowhere in it |
+| 5 | *Books and money bags never held him* | **fails, and misleads** — abstract, and it reads as a man indifferent to wealth when the body is about a farmer who missed open country |
+
+Three of five withholding is inverted. The rule is **three or four of five carrying facts, one
+or two withholding** — and #4 and #5 are the two that should have been rewritten, because #2
+had already spent the card's intrigue budget.
+
+### 8.4 The test, in order
+
+1. **Scan test (v24-6.2, unchanged):** read only the headers. Do you know roughly who this was?
+2. **Anchor test (new):** does *each* header contain a concrete noun — trade, place, number,
+   named thing? If not, it is riddle, not intrigue.
+3. **Ratio test (new):** count the withholding headers. More than two on a card → rewrite the
+   weakest ones into their bodies' actual content.
+4. **Angle test (new):** is this a slice of narrative, or a compressed encyclopedia entry? If the
+   body would sit unchanged in a Wikipedia article, it is a data dump and needs an angle.
+
+Unchanged from v24: **≤8 words AND ≤50 characters**, gloss every proper noun a general reader
+will not know, and **null beats weak** — a header that can only be made concrete by lying is a
+block that should not exist.
