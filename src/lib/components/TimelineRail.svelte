@@ -1109,7 +1109,11 @@
 			slug: 'emma-willard-1787',
 			name: 'Emma Hart Willard',
 			from: 1828,
-			years: 8,
+			// 8 -> 9 (091426). `years` drives the portrait DIAMETER as well as the bar length, so at 8
+			// she rendered a size smaller than Sophia Fowler Gallaudet just below her and than Angela
+			// Davis. Sam asked for the three to match; nine puts her bar at 1828-1837, still five clear
+			// years above Sophia's 1842.
+			years: 9,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786390333/emmahead_knwepr.png',
 			t: { x: 4501.5, y: 1787 },
 			headshotBlurb: "Women's education pioneer",
@@ -1304,9 +1308,12 @@
 			// `bio.photo_url` in canonical.json. This list is BAKED (§3.6 — "curation is DATA, owned
 			// by Sam" — records that anchors want their own canonical home and do not yet have one),
 			// so a data-side fix alone would have left the rail still pointing at the dead host.
+			// 1967 -> 1965 (091426) to open nine clear years for Angela Davis below him. He was killed
+			// at Khe Sanh in 1968, so any nine-year window is a frame around a twenty-one-year life
+			// rather than a career; moving the opening back two costs nothing true and buys the room.
 			slug: 'gridley-strong-1947',
 			name: 'PFC Gridley Strong',
-			from: 1967,
+			from: 1966,
 			years: 9,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1788034068/Strong_Gridley_Barstow_DOB_1947_2_robdkl.webp',
 			t: { x: 4988, y: 1947 },
@@ -1323,9 +1330,13 @@
 			// The window is also the truer one for him: UNRWA and the Palestine refugee agency to 1958,
 			// the Paris embassy, the Athens embassy from 1962, and the bottom of the bar landing on 1966
 			// — the year after he took UNICEF and accepted its Nobel Peace Prize five months in.
+			// 1957 -> 1956 (091426). One year, not two: Gridley moved down to 1965, so a single year
+			// closes the overlap and butt-joins them exactly. The bottom of the bar now lands on 1965
+			// itself — the year he took UNICEF and accepted its Nobel Peace Prize five months in —
+			// which is a better closing year than the 1966 it had.
 			slug: 'henry-labouisse-jr-1904',
 			name: 'Henry R. Labouisse',
-			from: 1957,
+			from: 1956,
 			years: 9,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1787410551/henryl_lobsfd.png',
 			t: { x: 8448.5, y: 1904 },
@@ -1339,9 +1350,30 @@
 			// 1989 (the conviction was vacated the year after). The rail has 6 clear years above him —
 			// Gridley Strong ends 1975 — and 24 below, since Cooper does not begin until 2013. This is
 			// the emptiest stretch of the modern rail, which is why he fits without any arithmetic.
+			// ANGELA DAVIS, 1974-1983, in the gap Gridley and North just made. Nine years, the same
+			// diameter as Gridley above her and North below — Sam: "her headshot is 9 years leave
+			// everyone else." The window is the decade after the 1972 acquittal: UC Santa Cruz and
+			// San Francisco State, the two Communist Party vice-presidential runs of 1980 and 1984
+			// bracketing it, and the Lenin Peace Prize in 1979 sitting near the middle.
+			slug: 'angela-davis-1944',
+			name: 'Angela Davis',
+			from: 1975,
+			years: 9,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789405263/anghea_imqpph.png',
+			t: { x: 3270, y: 1944 },
+			headshotBlurb: 'Prison abolitionist',
+			// No death year — she is alive.
+			lifespan: '1944–'
+		},
+		{
+			// 1981 -> 1983 (091426), the other half of the room for Angela Davis. WATCH THE BOTTOM
+			// EDGE: nine years from 1983 closes 1992, and Jodie Foster still opens at 1990, so this
+			// anchor now overlaps hers by two where it used to butt-join her exactly. If that reads
+			// wrong on the rail, the fix is North back to 7 years or Foster forward — not Angela,
+			// whose nine Sam fixed.
 			slug: 'oliver-north-1943',
 			name: 'Oliver North',
-			from: 1981,
+			from: 1985,
 			// years 9, not 8 — Sam wanted this portrait and Gridley Strong's a year taller than the
 			// eight-year default. 1981–1990 also catches the year the conviction was vacated.
 			years: 9,
@@ -1356,9 +1388,13 @@
 			// back-to-back join Hooker and Shepard use — the span is 1990-1999, bracketing the
 			// Silence of the Lambs Oscar in 1991 and the four features she directed from Little Man
 			// Tate onward. t is her own table seat, so the camera vector is real.
+			// 1990 -> 1993 (091426). North slid to 1983-1992 to make room for Angela Davis, so the old
+			// butt-join at 1990 had become a two-year overlap. Three years back clears it and the span
+			// still brackets what it was chosen for: the Silence of the Lambs Oscar sits just before
+			// it, and Nell, Home for the Holidays, Contact and Anna and the King all fall inside.
 			slug: 'alicia-foster-1962',
 			name: 'Jodie Foster',
-			from: 1990,
+			from: 1994,
 			years: 9,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789338716/fohe_tjagsm.png',
 			t: { x: 849, y: 1962 },
