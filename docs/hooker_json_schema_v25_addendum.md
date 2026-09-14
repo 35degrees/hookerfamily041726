@@ -286,3 +286,62 @@ Percy Lee Atherton, and a scatter of others with no way to mark the trade.
   commercial, and not for producers or directors who never acted — `arts` as a
   `notable_category` still covers those.
 - Remove `actor` from the §5 "not canonical" list when v25 is written.
+
+---
+
+## §10 The NB overflow budget is the TALLEST BODY in CHARACTERS — not cumulative words
+
+*Added 13 Sep 2026. **This supersedes §v24-6.1's "~250–260 cumulative body words"**, which
+predicts the wrong cards. Keep the 7-block ceiling; replace the length test.*
+
+### 10.1 Why cumulative is the wrong ruler
+
+`NarrativeBlocks.svelte` holds a **single `openKey`** — exactly one body is expanded at any
+moment, and the first block is open on arrival. So the card must hold:
+
+```
+7 headers  +  ONE body        <- constant, whichever block is open
+```
+
+Cumulative length never reaches the screen. Four cards measured this session:
+
+| person | cumulative | longest body | overflowed? |
+|---|---|---|---|
+| Nelson Rockefeller X03991 | ~250 words | 276 ch | **yes** |
+| Rev. J.W.C. Pennington X02151 | 273 words | 267 ch | **yes** |
+| Maj. Gen. G. V. Strong HD4700 | 298 words | 264 ch | **yes** |
+| Talcott Stanley TD0074 | 349 words | 349 ch | **yes**, on arrival |
+
+Rockefeller sat **inside** the documented 250–260 word ceiling and still spilled. Stanley's
+NB1 — the default-open block — was 270 ch, which is why *his NB7 header* fell off the bottom
+before the user touched anything. The failure always clips at the BOTTOM, so an open block low
+in the list eats its own text and an open block high in the list eats the last headers.
+
+### 10.2 Why characters, not words
+
+Strong's NB7 (43 words / **264 ch**) clipped while his NB4 (44 words / **242 ch**) did not.
+Long compounds — `China-Burma-India`, `Michigan Military Academy`, `Army Ground Forces` — cost
+lines a word count cannot see. The measure is the line, and the line is characters.
+
+### 10.3 The rule
+
+**No single NB body over 240 characters on a 6–7 block card.** Under that, every card measured
+fits at every rung. Cumulative stops mattering: Strong and Pennington both landed at 263 words
+after the trim and both fit, because no single body exceeded 240.
+
+```python
+assert max(len(b['body']) for b in p['narrative_blocks']) <= 240
+```
+
+Put that assert in the build script. Word-count asserts pass cards that clip.
+
+### 10.4 `stage.svelte.ts` — `rung.nbCap` was hiding 734 blocks
+
+The tablet-landscape rung (1050–1240 px wide, or wider under 800 px tall) declared
+`nbCap: 5`. Canonical, the payload and `card.py` all report 7; the card rendered 5. **559
+people — 7.9% of every NB-bearing entry — were silently truncated**, 734 blocks in all (386
+people at 6 losing one, 171 at 7 losing two). Raised to 7 on 13 Sep 2026.
+
+This is the §v24-1 render-contract trap in a new place: *stored ≠ emitted ≠ rendered*, and
+`card.py` proves only the first two. **A disagreement between `card.py` and Sam's screen is a
+render-layer cap, not a data problem** — check `stage.svelte.ts` before touching prose.
