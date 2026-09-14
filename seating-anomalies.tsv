@@ -130,7 +130,6 @@ X01311	Walter Horace Babcock	true-orphan	no blood/egg flag, no marriage anchor, 
 X01364	James Elias Bailey	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01411	James Freeland	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01412	George H	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01424	Strong	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01458	Isabella Thompson	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01459	Eliza E	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01598	Caroline Beckley	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -340,7 +339,6 @@ X01254	Florence Anna Whitney	no-y-basis	no birth year and no dated relative/part
 X01294	Norris Willcox	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01311	Walter Horace Babcock	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01364	James Elias Bailey	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
-X01424	Strong	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01458	Isabella Thompson	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01459	Eliza E	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01598	Caroline Beckley	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
