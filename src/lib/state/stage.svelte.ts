@@ -200,7 +200,15 @@ export const LADDER: StageRung[] = [
 		u: 0.92,
 		k: 0.96,
 		childCap: 8,
-		nbCap: 5,
+		// nbCap 5 -> 7 (091326). Sam, on George Veazey Strong at this rung: "i only see 5 NBs, lots of
+		// room at bottom for 2 more medium sized ones." The 5 was set when this rung's cards were
+		// assumed to be as tall as the roomy rung's; they are not — the clamp takes u to 0.814 here, so
+		// the type steps down faster than the frame and two more headers fit under the last one.
+		// The width half of the budget (nbCapForWidth) still governs: this rung starts at 1050px, well
+		// above that function's 800px step, so raising the rung cap is what actually moves the count.
+		// Watch a SEVEN-NB card with long bodies at this width — Strong and Pennington are the two — and
+		// drop this to 6 if the list reaches the card's bottom edge.
+		nbCap: 7,
 		siblingColumn: true,
 		label: 'tablet landscape'
 	},
