@@ -1122,7 +1122,7 @@
 		{
 			slug: 'john-morgan-1837',
 			name: 'J.P. Morgan',
-			from: 1887, // ends 1895 (Sam), clearing 1896 for TR
+			from: 1888, // ends 1895 (Sam), clearing 1896 for TR
 			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786376861/jpmhead_iwtuke.png',
 			t: { x: 6200.75, y: 1837 },
@@ -1313,7 +1313,7 @@
 			// rather than a career; moving the opening back two costs nothing true and buys the room.
 			slug: 'gridley-strong-1947',
 			name: 'PFC Gridley Strong',
-			from: 1966,
+			from: 1964,
 			years: 9,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1788034068/Strong_Gridley_Barstow_DOB_1947_2_robdkl.webp',
 			t: { x: 4988, y: 1947 },
@@ -1336,7 +1336,7 @@
 			// which is a better closing year than the 1966 it had.
 			slug: 'henry-labouisse-jr-1904',
 			name: 'Henry R. Labouisse',
-			from: 1956,
+			from: 1954,
 			years: 9,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1787410551/henryl_lobsfd.png',
 			t: { x: 8448.5, y: 1904 },
@@ -1357,7 +1357,7 @@
 			// bracketing it, and the Lenin Peace Prize in 1979 sitting near the middle.
 			slug: 'angela-davis-1944',
 			name: 'Angela Davis',
-			from: 1975,
+			from: 1973,
 			years: 9,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789405263/anghea_imqpph.png',
 			t: { x: 3270, y: 1944 },
@@ -1373,7 +1373,7 @@
 			// whose nine Sam fixed.
 			slug: 'oliver-north-1943',
 			name: 'Oliver North',
-			from: 1985,
+			from: 1983,
 			// years 9, not 8 — Sam wanted this portrait and Gridley Strong's a year taller than the
 			// eight-year default. 1981–1990 also catches the year the conviction was vacated.
 			years: 9,
@@ -1394,7 +1394,7 @@
 			// it, and Nell, Home for the Holidays, Contact and Anna and the King all fall inside.
 			slug: 'alicia-foster-1962',
 			name: 'Jodie Foster',
-			from: 1994,
+			from: 1992,
 			years: 9,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789338716/fohe_tjagsm.png',
 			t: { x: 849, y: 1962 },
@@ -1442,8 +1442,27 @@
 	const anchorBoost = $derived(
 		stage.vh > 0 ? Math.min(ANCHOR_SHORT_CAP, Math.max(1, SHORT_VH / stage.vh)) : 1
 	);
-	const anchorD = (yearsTall: number) =>
-		Math.max(14, (yearsTall / span) * railH) * anchorBoost;
+	/**
+	 * EVERY PORTRAIT IS THE SAME SIZE (091426, Sam: "i swear the diameter for henry is bigger than
+	 * for robert... all headshots should be same size"). He was right, and it was not an illusion:
+	 * 18 anchors carry `years: 8` and 11 carry `years: 9`, and this function used to size the circle
+	 * off that number. Jackson (8) and Labouisse (9) sit adjacent, so the step was visible — 14.0px
+	 * against 15.1px on a 740px rail.
+	 *
+	 * The diameter is now a CONSTANT and `years` no longer reaches it. This reverses the older note
+	 * above ("the circle is the span, so equal spans are the only way to get equal portraits"):
+	 * equal portraits are now free, and `years` means only where the anchor sits and how far it runs.
+	 *
+	 * REFERENCE SPAN IS 8, THE SMALLEST IN USE, not 9 — a portrait must never render wider than its
+	 * own span, or the back-to-back pairs (Hooker/Shepard, Whitney/Burr, Roosevelt/Taft/House) would
+	 * each overlap by ~1.6px. Sizing to the smallest leaves a hair of air instead.
+	 *
+	 * The parameter is kept so call sites and anchorOrigin() need no change, and so restoring
+	 * span-sized circles is a one-line revert.
+	 */
+	const ANCHOR_UNIFORM_YEARS = 8;
+	const anchorD = (_yearsTall: number) =>
+		Math.max(14, (ANCHOR_UNIFORM_YEARS / span) * railH) * anchorBoost;
 	/** 8px off the window edge — 4px, then another 4 on Sam's word. Close enough to read as pinned, far
 	    enough not to look clipped. anchorOrigin reads this too, so a portrait near the edge still picks
 	    the corner it grows from off the distance it actually has. */
@@ -1541,8 +1560,10 @@
 	   because anchorOrigin reads this too: it picks which corner a portrait grows from off the room it
 	   has to the window edge, and that room just changed. */
 	const anchorInset = $derived(stage.tightRail ? ANCHOR_INSET - 2.5 : ANCHOR_INSET);
-	/** Hover growth: +200%, then 10% more on Sam's word — three and a third times the resting size. */
-	const ANCHOR_HOVER_SCALE = 3.3;
+	/** Hover growth: +200%, then 10% more, then 5% more again (091426) — 3.3 x 1.05. The expanded
+	    DIAMETER is what Sam sizes by eye, so the 5% is applied here and backed out of the hover
+	    border below, keeping the painted ring at the width he set when it was 3.3. */
+	const ANCHOR_HOVER_SCALE = 3.465;
 	const EDGE_MARGIN = 4;
 
 	/**
@@ -2957,7 +2978,7 @@
 		inset: 0;
 		/* The ink is the portrait's own average, 5% darker — see sampleInk. It falls back to the shared
 		   rail ink for the frame before the sample lands, and permanently if the sample cannot be taken. */
-		border: 1.5px solid var(--anchor-ink, var(--color-rail-ink, #ab7a42));
+		border: 1.2px solid var(--anchor-ink, var(--color-rail-ink, #ab7a42));
 		border-radius: 50%;
 		background: var(--color-cream, #f7f1e6);
 		box-shadow: 0 1px 3px rgba(40, 30, 20, 0.3);
@@ -2979,7 +3000,7 @@
 		position: absolute;
 		inset: 0;
 		border-radius: 50%;
-		transform: scale(var(--anchor-scale, 3.3));
+		transform: scale(var(--anchor-scale, 3.465));
 		transform-origin: var(--anchor-origin, center);
 		pointer-events: none;
 	}
@@ -3012,8 +3033,8 @@
 	   At REST the portrait stays at z 1 and the bars still pass in front — that part is unchanged. */
 	.anchor:hover .anchor-vis,
 	.anchor:focus-visible .anchor-vis {
-		transform: scale(var(--anchor-scale, 3.3));
-		border-width: 1.35px;
+		transform: scale(var(--anchor-scale, 3.465));
+		border-width: 1.029px;
 		box-shadow: 0 2px 7px rgba(40, 30, 20, 0.38);
 	}
 	.anchor:hover,
@@ -3029,7 +3050,7 @@
 	   a keyboard user has no "move the mouse away" to perform. */
 	.anchor.no-hover:hover .anchor-vis {
 		transform: none;
-		border-width: 1.5px;
+		border-width: 1.2px;
 		box-shadow: 0 1px 3px rgba(40, 30, 20, 0.3);
 	}
 	.anchor.no-hover:hover {
@@ -3061,7 +3082,7 @@
 		align-items: center;
 		line-height: 1.25;
 		pointer-events: none;
-		transform: scale(calc(1 / var(--anchor-scale, 3.3)));
+		transform: scale(calc(1 / var(--anchor-scale, 3.465)));
 		transform-origin: left bottom;
 	}
 	.anchor.tip-below .anchor-tip {
