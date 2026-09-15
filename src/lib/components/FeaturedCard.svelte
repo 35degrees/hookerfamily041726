@@ -403,9 +403,26 @@
 		if (!orbit) return null;
 		if (crossConnections.length >= ORBIT_OWN_CC) return ORBIT_TITLE;
 		const g = (person.gender ?? '').toLowerCase();
-		// Neither/unknown gets "Spouse of" rather than a guess — the same rule the rest of the card
-		// follows when a gender is absent.
-		const rel = g.startsWith('f') ? 'Wife' : g.startsWith('m') ? 'Husband' : 'Spouse';
+		// TWO WAYS INTO AN ORBIT COMPONENT, and the title has to tell them apart. The reasoning above
+		// holds that a member with few cross-connections of their own is in the component BECAUSE OF THE
+		// PERSON THEY MARRIED — true of everyone who married in, false of anyone BORN in. Leland Stanford
+		// Jr. died at fifteen with one CC and no wife, and the card called him "Husband of a major
+		// influence on multiple Hooker descendants" (Sam, 15 Sep 2026). Someone with no spouse is titled
+		// off their parents instead.
+		const marriedIn = (person.marriages ?? []).some((m) => m?.spouse_id);
+		// Neither/unknown gets the ungendered word rather than a guess — the same rule the rest of the
+		// card follows when a gender is absent.
+		const rel = marriedIn
+			? g.startsWith('f')
+				? 'Wife'
+				: g.startsWith('m')
+					? 'Husband'
+					: 'Spouse'
+			: g.startsWith('f')
+				? 'Daughter'
+				: g.startsWith('m')
+					? 'Son'
+					: 'Child';
 		return `${rel} of a ${ORBIT_TITLE[0].toLowerCase()}${ORBIT_TITLE.slice(1)}`;
 	});
 	// Orbit and Pynchon cannot both apply — the Pynchon line reaches the tree through family edges, so

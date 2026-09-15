@@ -165,6 +165,10 @@
 		return isPynchonKin(p.id) ? { ...lane, ink: PYNCHON_INK } : lane;
 	}
 
+	// The shortest bar that can hold a vertical name. Used twice: to gate re-centring a living
+	// person's label, and to gate drawing a label at all.
+	const LABEL_MIN_H = 34;
+
 	type Bar = {
 		key: string;
 		lane: number;
@@ -181,6 +185,8 @@
 		/** Height of the NAME's box in px, when it should be shorter than the bar — see barFor. Null =
 		    the full bar, which is every case except a living person outliving the estimate. */
 		labelH: number | null;
+		/** False when the bar is too short to hold a vertical name at all — see LABEL_MIN_H. */
+		nameFits: boolean;
 		/** What a bar needs to BE a navigation link — see barLink. */
 		slug: string | null;
 		tx: number | null;
@@ -419,7 +425,7 @@
 				const estEnd = estFrom + estimatedLifespan(estFrom, p.sx);
 				if (estEnd < endYear) {
 					const h = yFor(Math.max(from + 1, estEnd)) - top;
-					if (h >= 34 && h < bottom - top - 4) labelH = Math.round(h);
+					if (h >= LABEL_MIN_H && h < bottom - top - 4) labelH = Math.round(h);
 				}
 			}
 		}
@@ -461,6 +467,16 @@
 			style: styleFor(p),
 			mask,
 			labelH,
+			// A VERTICAL NAME NEEDS ROOM, and this is the second place that 34px matters: above it is the
+			// shortest box the living-person branch will re-centre a name into, because below it the
+			// letters stack into a smear instead of a word. The same floor has to gate the name existing
+			// at all. Leland Stanford Jr. lived 1868–1884 — SIXTEEN by the subtraction below, so not
+			// `young`, but his bar is about thirty pixels and it tried to print his name down it (Sam,
+			// 15 Sep 2026). Widening the died-young test to catch him is not available: that arithmetic is
+			// shared with the card's child-chip dimming and the "(N died young)" connector counts, and a
+			// child dimmed on the card but named on the rail is worse than either answer alone.
+			// The tooltip still carries name, years and age, so nothing is lost — it is asked for.
+			nameFits: bottom - top >= LABEL_MIN_H,
 			// THE APP-WIDE RULE, not a second one: `death − birth <= 15`, the same arithmetic buildFeatured
 			// uses for the child-chip dimming, the "(N died young)" connector count and the roster sort.
 			// It is deliberately NOT `ageAtDeath` — that would disagree at the boundary with everything
@@ -1955,7 +1971,7 @@
 			     raises ("why is this bar a dot?") instead of leaving the reader to check the card. -->
 			{#if b.young}
 				<span class="bar-dy">died young</span>
-			{:else}
+			{:else if b.nameFits}
 				<span class="bar-label" style={b.labelH != null ? `height: ${b.labelH}px` : ''}>{b.name}</span>
 			{/if}
 			<!-- The bar's own tooltip: who and when, in the bar's OWN colours rather than the portraits'
