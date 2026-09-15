@@ -345,3 +345,18 @@ people at 6 losing one, 171 at 7 losing two). Raised to 7 on 13 Sep 2026.
 This is the §v24-1 render-contract trap in a new place: *stored ≠ emitted ≠ rendered*, and
 `card.py` proves only the first two. **A disagreement between `card.py` and Sam's screen is a
 render-layer cap, not a data problem** — check `stage.svelte.ts` before touching prose.
+
+## §v25-N  `last_updated` on the person record  (091426)
+
+New optional top-level key on a person: `"last_updated": "YYYY-MM-DD"`.
+
+Set it whenever an entry is edited. It is **internal tracking only** —
+`regenerate-data.js` does not emit it and no card renders it. `validate.py`
+ignores it. Purpose: with ~23,600 people it had become impossible to tell which
+entries had been worked and which were still first-draft.
+
+Backfill status: **not backfilled.** Only entries touched from 091426 forward
+carry it; absence of the key means "unknown, not recently edited." A historical
+backfill is possible by walking `git log -p canonical.json` and attributing each
+changed id to its commit date, but it is expensive over a 55 MB file and has not
+been run.
