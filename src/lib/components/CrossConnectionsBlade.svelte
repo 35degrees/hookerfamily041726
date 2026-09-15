@@ -476,6 +476,12 @@
 		margin: 0;
 		line-height: 1.6;
 		color: var(--color-inkblue);
+		/* NO ORPHANS (Sam, 091526). The blade is ONE flowing run of connections, so the last line of
+		   the block is the tail of the last CC — and it was landing a single word ("Haven's") alone
+		   under a full line. `pretty` makes the browser pull a word down rather than leave a widow.
+		   It fixes the block's LAST line only, which is exactly the case that shows; a CC wrapping
+		   mid-run is still governed by the 70-char label cap. Progressive — older engines ignore it. */
+		text-wrap: pretty;
 	}
 
 	/* A lone connection is centred rather than left at the edge with the rest of the blade empty. */
