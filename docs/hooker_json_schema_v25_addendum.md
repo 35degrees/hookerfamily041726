@@ -403,3 +403,22 @@ has to land in one of the segments above — a career row and a tag are the two 
 A hyphenated string in the data matches both query forms; a spaced one matches only the spaced
 query. **Store the hyphen.** HD3923 carries both (career `North Haven Wide-Awakes` + tag
 `wide_awakes`), which is belt and braces.
+
+### 12.3 Cross-connections are now indexed (091526)
+
+`factSegments()` gained a **`linked:`** segment carrying each CC's `link_text` + `display_label`
+(and any `co_link` name). 2,172 of 22,778 rows have one. Two things had to be got right:
+
+- **Severance applies.** A CC whose target is `hidden` is skipped, the same rule the emit path uses.
+  Without it a hidden person's NAME becomes searchable text on a visible person's row.
+- **It uses `pushRaw`, not `push`.** `push()` de-duplicates words within a segment — invisible on
+  names and places, but a CC label is PROSE and is shown verbatim in the match reason:
+  `"isham's chicago law firm from 1872; the firm bore his name"` lost its second "firm" and
+  rendered as *"the bore his name"*.
+
+### 12.4 Store the LONGEST form of a hyphenated term
+
+Extends §12.2. A query term must be a substring of a stored word, so the plural covers the singular
+but not the reverse: stored `wide-awake` MISSES the query `wide-awakes`, while stored `wide-awakes`
+matches `wide-awake`, `wide awake`, `wide awakes` and `wide-awakes`. Caught on X02064, whose CC
+label read "a Wide-Awake company" until it was changed to "a company of Wide-Awakes".
