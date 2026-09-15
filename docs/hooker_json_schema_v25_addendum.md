@@ -360,3 +360,17 @@ carry it; absence of the key means "unknown, not recently edited." A historical
 backfill is possible by walking `git log -p canonical.json` and attributing each
 changed id to its commit date, but it is expensive over a 55 MB file and has not
 been run.
+
+## §11 New canonical tag: `sea_captain`
+*Added 15 Sep 2026 on Hezekiah Brockett (H00886), on the `photographer` (§7) / `actor` (§9) precedent.*
+
+`canonical_tags.txt` held `navy`, `lost_at_sea` and `drowned` but nothing for the trade
+itself, so a merchant master could only be tagged `merchant`. A corpus scan for
+`sea[- ]captain|master mariner|mariner|shipmaster` returns **58 people** — far past the
+threshold that carried `photographer` (1 bearer) and `actor` (4).
+
+- **Added to `canonical_tags.txt` now**, so `validate.py` accepts it immediately.
+- Scope: people whose trade was commanding a merchant vessel — masters, shipmasters,
+  master mariners. Not naval officers (`navy` covers those), not passengers or owners.
+- Applied to H00886 only. **The other ~57 are unswept** — a corpus sweep is available
+  work, not done here.

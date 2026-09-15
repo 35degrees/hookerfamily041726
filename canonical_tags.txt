@@ -265,3 +265,4 @@ dar_member
 dar_patriot
 photographer
 actor
+sea_captain
