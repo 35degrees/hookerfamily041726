@@ -5855,3 +5855,68 @@ this same person; its comment names her.
 4. **A scrollbar that flashes** → §50.3, look for a transform before you look at the content.
 5. **A panel that will not appear** → `showsSiblingPanel`, and check the PAYLOAD first: the data
    frequently already contains what you are about to build.
+
+---
+
+## 56. OPEN — the demote crossfade drops the face to a quarter opacity (measured 2026-09-15)
+
+**Sam's report:** the Cruttenden photo "flickers when i expand and contract spouse chip."
+Not a data or asset problem, and not specific to that photo. **Parked for a later session —
+nothing has been changed.**
+
+### 56.1 What was measured, and how
+
+Probe: Playwright at 1440×900, a `requestAnimationFrame` sampler that collects every `<img>`
+carrying the person's photo, records its rect, and walks the ancestor chain multiplying
+`opacity` (a mid-flight person is 3–4 DOM nodes, so the element's own opacity is meaningless —
+see the flight-measurement rule in §49). Sampled across a chip→featured click and the return.
+
+**The photo is innocent.** One network request (40 KB), and the `<img>` reports `complete`
+with `naturalWidth > 0` in *every* frame of both flights. No reload, no second derivative, no
+blank paint. `preloadNeighborhood` is doing its job.
+
+**EXPAND (chip → featured) is clean.** Two nodes throughout: the traveller at opacity 1, the
+resting seat pinned at 0. No trough.
+
+**CONTRACT (featured → chip) is where it flickers.** Three nodes: the destination seat (0 until
+settle), the demoting portrait, and the traveller. The two visible copies hand off
+*sequentially rather than complementarily* — the outgoing starts falling ~3 frames before the
+incoming starts rising, so their sum dips well below 1:
+
+| frame | demoting | traveller | **sum** |
+|---|---|---|---|
+| 5853 | 0.94 | 0    | 0.94 |
+| 5869 | 0.65 | 0    | 0.65 |
+| 5886 | 0.37 | 0    | **0.37** |
+| 5902 | 0.08 | 0.17 | **0.25**  ← trough |
+| 5919 | 0    | 0.45 | 0.45 |
+| 5951 | 0    | 1.00 | 1.00 |
+
+~50 ms at or under a quarter opacity, with the card ground showing through. That is the flicker.
+
+**It is universal, not Cruttenden's.** The same probe on Charles Edward Phelps ↔ Martha Woodward
+Phelps returns the identical curve — 0.94 → 0.37 → 0.25 → 0.74 → 1, same frames. Any spouse chip
+with a photo does this. A newly added photo is simply the one looked at hard enough to catch it.
+
+### 56.2 The aggravating factor in the same window
+
+During the overlap the two visible copies are **different shapes**. The demoting portrait squashes
+off-aspect on the way down (204×273 → 116×137 → ends 54×44, aspect 1.2) while the traveller holds
+true proportion (127×173 → 61×84). At the trough frame they sit 5–12 px apart at different
+aspect ratios — so it reads as ghosting layered on the dip, not as a clean fade. The seat they
+are both aiming at is 55×75, which the traveller matches and the demoting copy does not.
+
+### 56.3 The proposed fix (NOT applied — Sam to decide)
+
+Drive both copies from **one** progress value so the outgoing is exactly `1 − t` of the incoming,
+and start the incoming's rise on the same frame the outgoing begins to fall. That closes the
+trough without touching the flight's duration, easing, or path — the demote-settle canary
+(§55.5.1, card 276px/1.9px) should stay byte-stable, and it is the check to run first.
+
+Second, smaller: give the demoting portrait the traveller's aspect so the overlap superimposes
+two copies of the same shape. Worth doing only if the trough fix alone does not settle it — the
+dip is the dominant term.
+
+**Re-run the measurement before and after.** The probe is throwaway (it lived at
+`scripts/_flick.mjs` and was deleted); rebuild it from §56.1 — the ancestor-opacity walk is the
+part that matters, an element-local `opacity` read shows 1 the whole way and hides the bug.
