@@ -374,3 +374,32 @@ threshold that carried `photographer` (1 bearer) and `actor` (4).
   master mariners. Not naval officers (`navy` covers those), not passengers or owners.
 - Applied to H00886 only. **The other ~57 are unswept** — a corpus sweep is available
   work, not done here.
+
+## §12 New canonical tag: `wide_awakes`
+*Added 15 Sep 2026 on Capt. Henry Hobart Stiles (HD3923) and Robert Todd Lincoln (X02064).*
+
+The 1860 Republican marching clubs. Added because **Sam wanted "wide awake" to reach a person
+through UX search**, and the search index does NOT read artworks or narrative blocks — see below.
+
+### 12.1 What `factSegments()` actually indexes (verified against `regenerate-data.js`)
+
+`n` (every name form) · `born` · `died` · `buried` · `lived` (residence) · `work` (career) ·
+`school` (education) · `served` (military_service) · `landmark` · `inst` · **`tag`** ·
+`is` (notable_blurb ?? bio_blurb + notable_category).
+
+**Not indexed: `artworks`, `narrative_blocks`, `documents`, `videos`, `cross_connections`.**
+Writing a fact only into an NB or an ART record makes it unsearchable. To make a fact findable it
+has to land in one of the segments above — a career row and a tag are the two cheapest.
+
+### 12.2 The hyphen rule — put the HYPHENATED form in the data
+
+`fold()` preserves `-`, and the client ANDs the query word by word over the blob:
+
+| stored | query `wide awake` | query `Wide-Awakes` |
+|---|---|---|
+| `wide awakes` (from a tag, `_`→space) | match | **miss** |
+| `wide-awakes` (from a career string) | match | match |
+
+A hyphenated string in the data matches both query forms; a spaced one matches only the spaced
+query. **Store the hyphen.** HD3923 carries both (career `North Haven Wide-Awakes` + tag
+`wide_awakes`), which is belt and braces.

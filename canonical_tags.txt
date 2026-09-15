@@ -266,3 +266,4 @@ dar_patriot
 photographer
 actor
 sea_captain
+wide_awakes
