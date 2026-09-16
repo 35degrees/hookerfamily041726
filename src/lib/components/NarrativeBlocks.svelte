@@ -109,7 +109,11 @@
 				</button>
 				{#if openKey === key}
 					<div class="pt-1 pr-8 pb-1.5" transition:slide={{ duration: 220, axis: 'y' }}>
-						<p class="text-[calc(13.5px*var(--type-k,1))] leading-relaxed text-stone-700 select-none">
+						<!-- whitespace-pre-line so a body that contains real newlines renders as lines — the
+						     verse blocks (Edward Taylor, 091626). Prose bodies are unaffected: pre-line still
+						     collapses runs of spaces and wraps normally, it only honours an explicit \n. -->
+						<p
+							class="text-[calc(13.5px*var(--type-k,1))] leading-relaxed whitespace-pre-line text-stone-700 select-none">
 							{block.body}
 						</p>
 					</div>
