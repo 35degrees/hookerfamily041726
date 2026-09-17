@@ -195,10 +195,8 @@ X00078	Jacob Woodruff	true-orphan	no blood/egg flag, no marriage anchor, no CC �
 X00095	Capt. William Fowler Jr.	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00110	Captain Aaron Cooke IV	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00111	Martha Allyn Cooke	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00119	Dea. Ebenezer Hart	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00251	Anna Cheney	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00280	Charlotta Jemima Welles	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00314	Thomas Hart	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00365	Sidney Humiston	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00369	unknown unknown-wav	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00436	Abby Talcott	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -434,8 +432,6 @@ X04145	Bela Crocker Kellogg	true-orphan	no blood/egg flag, no marriage anchor, n
 X04146	Mary Golden Bartlett Kellogg	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X04150	William Seton Henry	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X04151	Josephine Wharton Drexel	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X04203	Thomas Hart	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X04204	Mary Thomson Hart	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X3699	Benjamin Hazard Field	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X3700	Catharine Matilda Van Cortlandt de Peyster Field	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 Y00006	John Hollister	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -470,6 +466,9 @@ HD3881	Rebekah Carlyn Krulee	no-y-basis	no birth year and no dated relative/part
 HD3884	Myron Paul Jackson	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 I01024	Mr. Proctor	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X02838	Lucy Huston Sturdevant	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
+TD0374	Connie Eliza Hedderwick O’Sullivan	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
+TD0375	Nancy Susan Blackwell O’Sullivan	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
+TD0376	Henry August Metcalf Blackwell	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 I01606	Dorothy Howe Bass Spencer	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X03286	Abel Smith	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X03582	Duncan S. Magee	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
