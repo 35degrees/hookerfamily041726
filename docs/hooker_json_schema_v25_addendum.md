@@ -422,3 +422,43 @@ Extends §12.2. A query term must be a substring of a stored word, so the plural
 but not the reverse: stored `wide-awake` MISSES the query `wide-awakes`, while stored `wide-awakes`
 matches `wide-awake`, `wide awake`, `wide awakes` and `wide-awakes`. Caught on X02064, whose CC
 label read "a Wide-Awake company" until it was changed to "a company of Wide-Awakes".
+
+
+## §13 `--only` staleness is an EDIT problem, not a new-person problem
+*Added 17 Sep 2026, after Bela and Mary Kellogg's portraits rendered on their hero cards and
+vanished from their chips.*
+
+This is the §v24-1 render-contract trap one layer further out: **stored ≠ emitted ≠ rendered**, and
+here the break is between *emitted for this person* and *emitted for everyone who quotes them*.
+
+`personPayload()` embeds a COPY of each neighbour (via `compact()`: `n`, `p`, `by`/`dy`, `sx`,
+`hd`/`td`/`ee`/`sp`, `g`, `sn`/`sf`/`fn`/`cf`/`nk`/`cm`, `t`) and embeds relatives' whole client
+records under `context`. `regenerate-data.js --only` rebuilds the listed people's pages and skips
+both the aggregates and every page holding such a copy.
+
+**Why the old guard missed it.** `batch.py` forced a full rebuild only when a touched id was absent
+from the emitted index — true for a NEW person, never for an EDIT. Setting `photo_url` on an
+existing person therefore took the incremental path, and the stale copies survived on every
+relative's card.
+
+**Why `card.py` cannot catch it.** `card.py` reads the subject's OWN payload, which the `--only`
+run just refreshed. The defect lives exclusively in *other people's* files. Verify a chip-surface
+change by reading a NEIGHBOUR's payload, or just rebuild fully.
+
+**The fix (in `batch.py`, not in the schema).** `full_rebuild_reason()` diffs each touched record
+against the git baseline, ignoring `INCREMENTAL_SAFE_KEYS` — the only fields that reach neither an
+aggregate nor another page's copy:
+
+```
+narrative_blocks · documents · videos · artworks · statues · quotes
+research_notes · research_sources · research_tags · naming_inspiration
+last_updated · has_descendants_documented · number_of_marriages
+```
+
+Anything else — `bio`, `birth`, `death`, `gender`, `classification`, `parents`, `marriages`,
+`tags`, `career`, `education`, `military_service`, `burial`, `residence`, `institutions`,
+`landmarks`, `notable`, blurbs, `cross_connections`, `former_ids` — forces a full rebuild, as does
+any edit to a top-level registry (those are emitted as whole files).
+
+Note how small the safe set is: **`--only` is the exception now, not the default.** That is the
+honest shape of the dependency, and the ~7s it costs is worth never shipping a blank chip again.

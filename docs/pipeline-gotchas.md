@@ -128,7 +128,24 @@ regenerate 8.3s. **The cost was always re-derivation, not compute.** Two flags c
 - **`regenerate-data.js --only ID1,ID2`** rebuilds just those page payloads and skips every
   aggregate: **0.9s vs 8.3s**. It was already there and undocumented. Aggregates go stale, so run a
   FULL rebuild before pushing, and always for a NEW person (they must reach search-index).
-  `batch.py` forces full automatically when a touched id is missing from the index.
+
+  **`--only` is unsafe for far more than new people, and `card.py` CANNOT see the damage (091726).**
+  `personPayload()` bakes a COPY of every neighbour through `compact()` — name, photo, dates,
+  flags, chip names, table seat — and bakes relatives' whole client records into `context`. So an
+  EDIT to a baked surface writes to the edited person's own payload and leaves every other page
+  serving yesterday's copy. Signature: **the portrait shows on the hero card and is missing from
+  the chip.** (Bela and Mary Kellogg, 091726: `photo_url` set in an `--only` run; their own pages
+  were right, their daughter's parent-chips were blank. `card.py` reads the person's OWN payload,
+  which is the one that is fresh — it reports everything correct.)
+
+  **`batch.py` now decides this from the diff, not from the id.** It compares each touched record
+  against the baseline minus `INCREMENTAL_SAFE_KEYS` and forces a full rebuild on any difference,
+  and on any top-level registry edit (cemeteries/institutions/landmarks/artworks/...), which are
+  emitted whole. Incremental now survives only for changes confined to
+  `narrative_blocks`, `documents`, `videos`, `artworks`, `statues`, `research_*`, `quotes`,
+  `naming_inspiration`, `last_updated` — the fields no aggregate indexes and no other page copies.
+  Red-proven three ways: a `photo_url` edit forces full, an NB-only edit stays incremental, a
+  cemetery edit forces full.
 
 ---
 

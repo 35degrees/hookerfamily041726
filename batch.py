@@ -15,9 +15,10 @@ WHAT IT DOES, in the order CLAUDE.md requires:
   4. validate       — validate.py --since, which reports ONLY what this batch introduced.
                       ANY new error or silent loss STOPS here: nothing is regenerated,
                       nothing is committed, and canonical is left in the tree for `git checkout`.
-  5. regenerate     — incremental (--only the touched ids, ~1s) unless --full, and forced to
-                      full when a touched id is missing from the emitted index (a new person
-                      needs the aggregates rebuilt or they will not be searchable).
+  5. regenerate     — incremental (--only the touched ids, ~1s) ONLY when the batch changed
+                      nothing that another page bakes a copy of; forced to full for a new
+                      person, for any edit to a baked surface (photo, name, dates, flags,
+                      blurb, career, CCs...), and for any top-level registry edit.
   6. verify + report— card.py on every touched person: the card's VISIBLE surface, plus the
                       review URLs.
   7. commit         — only with --commit, and only when step 4 was clean.
@@ -50,6 +51,64 @@ def ids_from_sheet(path):
                     if ID_RE.match(tok) and tok not in out:
                         out.append(tok)
     return out
+
+
+# ── WHEN IS `--only` ACTUALLY SAFE? ────────────────────────────────────────────────────────────
+# `--only` rebuilds the listed people's own page payloads and SKIPS every aggregate
+# (search-index, people.json, redirects, notables, table-index, cemeteries, institutions, stats).
+# It also leaves every OTHER page that BAKES A COPY of a touched person stale — personPayload()
+# embeds neighbours through compact() (name, photo, dates, flags, chip names, seat) and embeds
+# relatives' whole client records in `context`.
+#
+# The old rule only forced a full rebuild for an id missing from the emitted index — i.e. for a
+# NEW person. That never fired for an EDIT, so adding a photo_url to an existing person wrote it
+# to their own payload and left their children's parent-chips serving the old copy: the portrait
+# appears on the hero card and is missing from the chip. (Hit 091726 on Bela and Mary Kellogg;
+# `card.py` cannot see it, because card.py reads the person's OWN payload — the one that is fresh.)
+#
+# So decide from the DIFF instead. These keys are the only ones that touch neither an aggregate
+# nor anyone else's baked copy, so a change confined to them is safe to do incrementally:
+#   narrative_blocks — the person's own card only; NOT in the search index (see v25 §12.1)
+#   documents/videos/artworks/statues — resolved onto the owner's card only, not indexed
+#   research_* / quotes / naming_inspiration — stripped at emit or dead fields
+#   last_updated / has_descendants_documented / number_of_marriages — never emitted
+# Everything else — bio, birth, death, gender, classification, parents, marriages, tags, career,
+# education, military_service, burial, residence, institutions, landmarks, notable, blurbs,
+# cross_connections, former_ids — reaches an aggregate or a neighbour's copy. Full rebuild.
+INCREMENTAL_SAFE_KEYS = {
+    'narrative_blocks', 'research_notes', 'research_sources', 'research_tags', 'quotes',
+    'documents', 'videos', 'artworks', 'statues', 'naming_inspiration',
+    'last_updated', 'has_descendants_documented', 'number_of_marriages',
+}
+
+
+def _surface(person):
+    """The part of a record that other pages and the aggregates can see."""
+    return {k: v for k, v in person.items() if k not in INCREMENTAL_SAFE_KEYS}
+
+
+def full_rebuild_reason(touched, baseline_path):
+    """None if `--only` is safe for this batch, else a short human reason why it is not."""
+    try:
+        base = json.load(open(baseline_path, encoding='utf-8'))
+        cur = json.load(open(os.path.join(ROOT, 'canonical.json'), encoding='utf-8'))
+    except Exception as e:
+        return f'could not diff against the baseline ({e})'
+    b = {p['id']: p for p in base.get('people', [])}
+    c = {p['id']: p for p in cur.get('people', [])}
+    changed = [i for i in touched
+               if i in b and i in c and _surface(b[i]) != _surface(c[i])]
+    if changed:
+        shown = ', '.join(changed[:6]) + (f' +{len(changed) - 6} more' if len(changed) > 6 else '')
+        return (f'{len(changed)} touched record(s) changed a surface other pages bake a copy of '
+                f'({shown}) — their relatives\' chips and the aggregates would stay stale')
+    # Top-level registries are emitted as whole files (cemeteries.json / institutions.json) or
+    # resolved into every card that references them, so any edit there invalidates the build.
+    for key in ('cemeteries', 'institutions', 'landmarks', 'artworks', 'documents', 'videos',
+                'statues', 'wars'):
+        if base.get(key) != cur.get(key):
+            return f'the {key} registry changed — it is emitted whole, not per person'
+    return None
 
 
 def main():
@@ -125,8 +184,17 @@ def main():
         full = True
         say('5 regenerate', f'FULL rebuild forced — {unseen} not in the emitted index (new people '
                             f'need the aggregates)')
+    elif not full:
+        # An EDIT can be just as unsafe as a new person: see full_rebuild_reason above.
+        why = full_rebuild_reason(touched, BASELINE)
+        if why:
+            full = True
+            say('5 regenerate', f'FULL rebuild forced — {why}')
+        else:
+            say('5 regenerate', f'incremental --only {",".join(touched)} '
+                                f'(changes confined to own-card-only fields)')
     else:
-        say('5 regenerate', 'full rebuild' if full else f'incremental --only {",".join(touched)}')
+        say('5 regenerate', 'full rebuild')
     cmd = ['node', 'regenerate-data.js', 'canonical.json'] + ([] if full else ['--only', ','.join(touched)])
     g = sh(cmd)
     print('\n'.join(g.stdout.strip().splitlines()[-4:]) or g.stderr[-800:])
