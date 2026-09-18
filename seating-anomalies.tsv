@@ -195,6 +195,7 @@ X00078	Jacob Woodruff	true-orphan	no blood/egg flag, no marriage anchor, no CC �
 X00095	Capt. William Fowler Jr.	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00110	Captain Aaron Cooke IV	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00111	Martha Allyn Cooke	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
+X00131	James Prentiss Goodwin	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00251	Anna Cheney	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00280	Charlotta Jemima Welles	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00365	Sidney Humiston	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -214,6 +215,7 @@ X00966	Caroline Skinner Terrell	true-orphan	no blood/egg flag, no marriage ancho
 X00979	Caroline Eunice Beach	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00980	Mary Titus Hazen	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01003	Edward Jackson	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
+X01205	Samuel van Gorder	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01228	Dr. William Hooker	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01249	Mary Drake	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01254	Florence Anna Whitney	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -443,6 +445,7 @@ X00706	Mary Chapman	no-y-basis	no birth year and no dated relative/partner — y
 X00966	Caroline Skinner Terrell	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X00980	Mary Titus Hazen	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01003	Edward Jackson	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
+X01205	Samuel van Gorder	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01228	Dr. William Hooker	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01249	Mary Drake	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01254	Florence Anna Whitney	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
