@@ -101,10 +101,19 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 	//      • spouse: "Husband/Wife of Hooker Descendant" — marriage ordinal AND the spouse's
 	//        generation are dropped in this merged form only.
 	if (hookerLine) {
-		if (spouseLabel && cls.generation_from_thomas != null) {
-			const compactDescent = compactHookerDescent(cls.generation_from_thomas, genderOf(person));
-			const compactSpouse = computeSpouseCompact(person, byId) ?? spouseLabel;
-			lines.push(`${compactDescent} & ${compactSpouse}`);
+		// The ' & ' merge exists for a COUSIN MARRIAGE — both halves blood. computeSpouseCompact returns
+		// null when no spouse is a descendant, and the old `?? spouseLabel` fallback then glued on
+		// whatever computeSpouseLabel had found, INCLUDING a getSpouseChainShort hop. That produced
+		// "Seventh Generation Hooker Descendant & Second Husband of Wife of Seventh Generation Hooker"
+		// on Linus Cowles (HD0510) and 70 others: the chain points at his third wife's FIRST husband,
+		// which says nothing about Linus — who is a seventh-generation Hooker in his own right, and
+		// whose own line is the whole label. A non-blood spouse adds nothing to someone who has descent.
+		const compactSpouse =
+			cls.generation_from_thomas != null ? computeSpouseCompact(person, byId) : null;
+		if (compactSpouse) {
+			lines.push(
+				`${compactHookerDescent(cls.generation_from_thomas as number, genderOf(person))} & ${compactSpouse}`
+			);
 		} else {
 			lines.push(hookerLine);
 		}
