@@ -81,12 +81,18 @@ regardless of the flag. What the flag actually gates is the **notables.json shuf
 (`is_notable === true && is_searchable === true && !orbit`). Turning it off removes a person
 from the random-notable door; it does not touch search, and it does not change the card blurb.
 
-**CC `display_label` 70-char cap now has sanctioned exceptions.** Three labels so far: the
+**CC `display_label` 70-char cap now has sanctioned exceptions.** Five labels so far: the
 X02039↔H00001 pair carrying the two Hartford quotations, and X02039→X02045, where naming
 Charles Dudley Warner AND identifying him as the Gilded Age co-author will not fit in 70
-(Sam: "otherwise no one knows that"). The cap yields when a label would otherwise name a
-person the reader cannot place. They sit permanently in
-the `C4_cc_label_over_70` counter; that counter is no longer a pure error signal.
+(Sam: "otherwise no one knows that"); and the X04143↔HD2556 pair added 18 Sep 2026 (86 and
+89 chars), where **neither end is a person the reader arrives knowing** — an axe manufacturer
+and a machine-tool historian — so each label has to spend its budget defining the far person
+before it can state the connection. Sam's ruling there generalises the Warner precedent and
+sets the working ceiling: *"assuming users don't really know who either person is, define the
+connection at a more fundamental level, ok to lengthen to 80-90 char for intro."* The cap
+yields when a label would otherwise name a person the reader cannot place. They sit
+permanently in the `C4_cc_label_over_70` counter; that counter is no longer a pure error
+signal.
 
 ---
 
