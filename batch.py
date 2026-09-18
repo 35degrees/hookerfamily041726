@@ -125,7 +125,16 @@ def main():
     ids_arg = None
     if '--ids' in argv:
         i = argv.index('--ids')
-        ids_arg = argv[i + 1]
+        # Accept BOTH spellings: --ids A,B,C and --ids A B C. It took only argv[i+1] before, so a
+        # space-separated list silently became its FIRST id — the regenerate scope and the card.py
+        # verification both shrank to one person without saying so. Caught 091826, when ten newly
+        # created Bills were left out of static/data because the lone id it kept needed no rebuild.
+        rest = []
+        for a in argv[i + 1:]:
+            if a.startswith('--') or a.endswith(('.csv', '.tsv')):
+                break
+            rest.append(a)
+        ids_arg = ','.join(x for a in rest for x in a.split(',') if x)
     sheet = next((a for a in argv if a.endswith(('.csv', '.tsv'))), None)
 
     if not sheet and not ids_arg:
