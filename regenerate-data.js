@@ -293,8 +293,16 @@ const abbreviateTitle = (title) => (!title ? null : (TITLE_ABBREVIATIONS[title] 
 // name (e.g. Juliet Burkett Hooker → "Julie Burkett", never "Julie Hooker").
 function chipSurname(p) {
 	const bio = bioOf(p);
-	if (p.gender === 'female' || bio.maiden_name) return bio.maiden_name ?? bio.last_name ?? null;
-	return bio.last_name ?? null;
+	// married_names is the LAST resort, not a preference: it fires only when maiden_name AND
+	// last_name are both empty, which is the one shape that used to render a bare first name.
+	// A married-in woman recorded only under her husband's surname (Lisa Cowles X04179 and nine
+	// others) had no chip surname at all — `sn` came back "Lisa". Nobody who already resolves a
+	// surname changes, so maiden-name chips ("Alice Gwynne") are untouched; the child-chip
+	// married-name rule still lives in `cm` and still wins where it applies.
+	const married = (bio.married_names && bio.married_names[bio.married_names.length - 1]) || null;
+	if (p.gender === 'female' || bio.maiden_name)
+		return bio.maiden_name ?? bio.last_name ?? married ?? null;
+	return bio.last_name ?? married ?? null;
 }
 function computeShortName(p) {
 	const bio = bioOf(p);
