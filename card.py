@@ -120,7 +120,13 @@ def show(key, idx, raw=False):
         if got:
             print(f"\n  {label} ({len(got)})")
             for r in got:
-                print(f"    {r.get('name')}  ·  {r.get('typeLabel') or '—'}  ·  {r.get('subtitle') or '—'}"
+                # The component draws name + subtitle only; typeLabel is emitted but never rendered
+                # for these rows, and for a landmark with no location the subtitle now OPENS with the
+                # type. Printing both read as a stutter ("Missile destroyer · Missile destroyer (1958)").
+                sub, tl = r.get('subtitle') or '', r.get('typeLabel') or ''
+                seg = [r.get('name'), sub or '—'] if (tl and sub.startswith(tl)) else \
+                      [r.get('name'), tl or '—', sub or '—']
+                print(f"    {'  ·  '.join(str(x) for x in seg)}"
                       f"   {'[photo]' if r.get('thumbUrl') else '[no photo]'}"
                       f" {'[link]' if r.get('url') else '[no link]'}")
 

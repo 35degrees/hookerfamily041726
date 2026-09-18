@@ -1120,7 +1120,12 @@ function resolveLandmarks(p, byId) {
 		const rawBuilt =
 			r.dates?.built ?? r.dates?.founded ?? r.built_year ?? r.date_built ?? r.founded ?? null;
 		const built = /^\d{4}$/.test(String(rawBuilt)) ? Number(rawBuilt) : null;
-		const locYear = loc && built ? `${loc} (${built})` : (loc ?? (built ? `(${built})` : null));
+		// The component renders name + subtitle ONLY (typeLabel is emitted but never drawn for a
+		// landmark row), so a landmark with no location used to show a bare "(1958)". Fall back to what
+		// the thing IS when there is no place to name — the same shape artworks already use, where
+		// subtitle is `blurb ?? artTypeLabel(type)`. Located landmarks are unchanged.
+		const label = loc ?? landmarkTypeLabel(r.type);
+		const locYear = label && built ? `${label} (${built})` : (label ?? (built ? `(${built})` : null));
 		return mediaRow({
 			name: r.primary_name,
 			typeLabel: landmarkTypeLabel(r.type),
