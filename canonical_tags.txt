@@ -267,3 +267,4 @@ photographer
 actor
 sea_captain
 wide_awakes
+victoria_cross

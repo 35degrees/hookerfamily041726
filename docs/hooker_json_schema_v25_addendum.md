@@ -468,3 +468,20 @@ any edit to a top-level registry (those are emitted as whole files).
 
 Note how small the safe set is: **`--only` is the exception now, not the default.** That is the
 honest shape of the dependency, and the ~7s it costs is worth never shipping a blank chip again.
+
+## §14 New canonical tag: `victoria_cross`
+*Added 18 Sep 2026 on Gen. Sir Harry North Dalrymple Prendergast (X04262), on the decoration-family
+precedent set in §5 and the one-bearer precedent of `photographer` (§7) and `actor` (§9).*
+
+§5 added eight military decorations — `croix_de_guerre`, `george_medal`, `legion_of_honour`,
+`legion_of_merit`, `navy_cross`, `purple_heart`, `distinguished_service_order`,
+`mentioned_in_despatches` — and the Victoria Cross was the obvious missing member of that family.
+A corpus scan for "Victoria Cross" returned **zero** records before Prendergast, so he is the first
+and only bearer.
+
+- **Added to `canonical_tags.txt` now**, so `validate.py` accepts it immediately.
+- Scope: recipients of the VC itself. Not for the George Cross and not for a family's custody of a
+  medal — the tag marks the award, not the object.
+- Note while here: **`military` is NOT a canonical tag** and is a recurring mistake. The canonical
+  members are `army`, `navy`, `general`, and the decoration family above. `validate.py` caught it
+  on this very record.
