@@ -130,7 +130,9 @@ def show(key, idx, raw=False):
               f"   {'[map pin]' if cem.get('gps') else '[no gps — no pin]'}")
 
     ccs = pay.get('crossConnections') or []
-    print(f"\n  CROSS-CONNECTIONS ({len(ccs)}" + (", card shows first 6" if len(ccs) > 6 else "") + ")")
+    # No cap: CrossConnectionsBlade.svelte iterates crossConnections whole (no slice),
+    # and regenerate-data.js emits them whole. Unlike career/education, nothing is dropped.
+    print(f"\n  CROSS-CONNECTIONS ({len(ccs)})")
     for c in ccs:
         lab = c.get('display_label') or ''
         # Mirrors ccTail() in FeaturedCard.svelte: NO separator dash (removed 072926). A label
