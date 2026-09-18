@@ -1,0 +1,5 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+X04143	cc	"related=HD2556 link=""Joseph Wickham Roe"" label=""traced American machine tools back to the axe shop he built"""	OK cc->HD2556 added; FLAG needs reciprocal cc row on HD2556	/person/samuel-collins-1802		
+HD2556	cc	"related=X04143 link=""Samuel Watkinson Collins"" label=""made axes at Collinsville, where the tool builder Elisha Root began"""	OK cc->X04143 added (reciprocal present)	/person/joseph-roe-1871		
+X04143	field_set	last_updated=2026-09-18	OK set last_updated = '2026-09-18'	/person/samuel-collins-1802		
+HD2556	field_set	last_updated=2026-09-18	OK set last_updated = '2026-09-18'	/person/joseph-roe-1871		
