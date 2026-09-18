@@ -1,0 +1,12 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD6116 marriages[0].date_year=1945	field_set		FLAG BLOCKED: person HD6116 marriages[0].date_year=1945 not in tree			
+HD6116 marriages[0].date_month=6	field_set		FLAG BLOCKED: person HD6116 marriages[0].date_month=6 not in tree			
+HD6116 marriages[0].date_day=8	field_set		FLAG BLOCKED: person HD6116 marriages[0].date_day=8 not in tree			
+HD6116 marriages[2].date_year=1979	field_set		FLAG BLOCKED: person HD6116 marriages[2].date_year=1979 not in tree			
+I1672 marriages[0].date_year=1945	field_set		FLAG BLOCKED: person I1672 marriages[0].date_year=1945 not in tree			
+I1672 marriages[0].date_month=6	field_set		FLAG BLOCKED: person I1672 marriages[0].date_month=6 not in tree			
+I1672 marriages[0].date_day=8	field_set		FLAG BLOCKED: person I1672 marriages[0].date_day=8 not in tree			
+I1674 marriages[0].date_year=1979	field_set		FLAG BLOCKED: person I1674 marriages[0].date_year=1979 not in tree			
+HD6116	field_set	last_updated=2026-09-18	OK set last_updated = '2026-09-18'	/person/theodora-roosevelt-1919		
+I1672	field_set	last_updated=2026-09-18	OK set last_updated = '2026-09-18'	/person/tom-christal-keogh-1922		
+I1674	field_set	last_updated=2026-09-18	OK set last_updated = '2026-09-18'	/person/arthur-alfred-rauchfuss-1921		
