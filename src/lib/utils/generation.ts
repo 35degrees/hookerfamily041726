@@ -193,6 +193,27 @@ export function buildDescendantLabel(generation: number, gender: string | null, 
  *   gen 2-4: full relational phrase including "of Thomas Hooker"
  *   gen 5+: abbreviated, just "Fifth Generation Hooker" (drops "of Thomas Hooker")
  */
+/**
+ * An override is safe to use as a BLOOD ANCHOR — the phrase "Husband of …" hangs off — only when it
+ * describes blood. Anything already carrying a marriage or step hop is itself a DERIVED phrase, and
+ * prefixing a derived phrase compounds it.
+ *
+ * The old guard tested two literal shapes (`-in-law`, and a bare `Husband|Wife|Spouse of` opener),
+ * so an ORDINAL in front walked straight past it. Alice Hathaway Lee's stored "First Wife of the
+ * Husband of a Ninth Generation Hooker" was read as blood, reached through Theodore Roosevelt's
+ * FIRST marriage, and returned before the loop ever got to his second — so TR read "Husband of First
+ * Wife of the Husband of a Ninth Generation Hooker" instead of "Husband of Ninth Generation Hooker",
+ * and Edith, the actual ninth-generation descendant, inherited the whole chain through the
+ * cousin-marriage merge: "Ninth Generation Hooker Descendant & Second Wife of Husband of First Wife
+ * of the Husband of a Ninth Generation Hooker".
+ *
+ * 26 of the 189 stored overrides have that shape (Jacqueline Onassis, the Astors, the Kelloggs, the
+ * Bouviers). Testing for the hop ANYWHERE in the string covers all of them and leaves the 22 genuine
+ * blood anchors ("Sister of Thomas Hooker", "Nephew of a Ninth Generation Hooker") working.
+ */
+const DERIVED_OVERRIDE =
+	/\b(husband|wife|spouse|widow|widower|in-law|step(?:son|daughter|child|children|mother|father|parent|brother|sister)s?)\b/i;
+
 function getDescendantOrdinalShort(person: Person): string | null {
 	// Honor a stored relationship (ancestor/collateral cases like "Sister of Thomas
 	// Hooker") so a spouse derives e.g. "Husband of Sister of Thomas Hooker" the same
@@ -200,7 +221,7 @@ function getDescendantOrdinalShort(person: Person): string | null {
 	// relationships are safe to prefix with "Husband/Wife of" — skip already-derived
 	// overrides (in-law, or spouse-prefixed) to avoid "Husband of Mother-in-law of …".
 	const override = person.relational_label_override;
-	if (override && !/-in-law\b/i.test(override) && !/^(Husband|Wife|Spouse) of /i.test(override)) {
+	if (override && !DERIVED_OVERRIDE.test(override)) {
 		return override;
 	}
 	const cls = person.classification;
