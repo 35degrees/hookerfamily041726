@@ -1,0 +1,10 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+H02611	nb_approved	"header=""Five hardware firms, one small village"" body=""New Britain threw up five hardware firms inside fifteen years — Stanley Works and Landers, Frary & Clark in 1842, P. & F. Corbin in 1848, Stanley Rule and Level in 1854 — in a village of a few thousand. He practised patent law there."" category=business"	OK nb_approved appended verbatim: 'Five hardware firms, one small village'	/person/charles-mitchell-1837		
+H02611	cc	"related=TD0052 link=""Philip Bartholomew Stanley"" label=""was the son of the man who founded Stanley Rule and Level"""	OK cc->TD0052 added; FLAG needs reciprocal cc row on TD0052	/person/charles-mitchell-1837		
+TD0052	cc	"related=H02611 link=""Charles Elliott Mitchell"" label=""ran Stanley Rule and Level after running the whole U.S. Patent Office"""	OK cc->H02611 added (reciprocal present)	/person/philip-stanley-1883		
+HD1714	cc	"related=X03129 link=""Silas Hoadley"" label=""helped start the Connecticut clock trade the dollar watch came out of"""	OK cc->X03129 added; FLAG needs reciprocal cc row on X03129	/person/robert-ingersoll-1860		
+X03129	cc	"related=HD1714 link=""Robert Hawley Ingersoll"" label=""took an alarm clock apart and sold the result for a dollar in 1896"""	OK cc->HD1714 added (reciprocal present)	/person/silas-hoadley-1786		
+H02611	field_set	last_updated=2026-09-18	OK set last_updated = '2026-09-18'	/person/charles-mitchell-1837		
+TD0052	field_set	last_updated=2026-09-18	OK set last_updated = '2026-09-18'	/person/philip-stanley-1883		
+HD1714	field_set	last_updated=2026-09-18	OK set last_updated = '2026-09-18'	/person/robert-ingersoll-1860		
+X03129	field_set	last_updated=2026-09-18	OK set last_updated = '2026-09-18'	/person/silas-hoadley-1786		
