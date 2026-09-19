@@ -1,0 +1,3 @@
+person_id	field	value_or_angle	status	slug	proposed	decision
+HD6492	video	"title=""That Gol-Darned Wheel (Lomax collection)"" url=https://www.youtube.com/watch?v=TUU3aExE4rE platform=youtube summary=""The Gol-Darned Wheel"" notes=""The cowboy song he sang to John Lomax at Texas A&M in 1908, printed in Cowboy Songs and Other Frontier Ballads."""	OK video created VID133 'The Gol-Darned Wheel'; backlink wired (bidirectional)	/person/william-bogel-jr-1885		
+HD6492	field_set	bio.bio_blurb=Rancher and electrical engineer	OK set bio.bio_blurb = 'Rancher and electrical engineer'	/person/william-bogel-jr-1885		
