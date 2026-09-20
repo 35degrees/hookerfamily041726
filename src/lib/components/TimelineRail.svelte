@@ -983,6 +983,31 @@
 			lifespan: '1703–1758'
 		},
 		{
+			// 1825-1834, ADDED 092026 AND PLACED BY THE CHAIN Sam asked for: Sophia forward a year,
+			// Emma forward to meet her, and Robinson into the room that opens above Emma. Nine years
+			// like both of them, closing at 1834 where Emma now starts, and with six clear years
+			// between him and Jared Ingersoll's 1819 close.
+			//
+			// THIS IS HIS APPRENTICE DECADE, NOT HIS FAMOUS ONE, and it is worth saying so here. The
+			// years that made him are 1838-1846 — the Palestine survey with Eli Smith, Biblical
+			// Researches in 1841, the Royal Geographical Society's Gold Medal in 1842 — and that
+			// window is wholly occupied by Sophia and Vanderbilt. What 1825-1834 does hold is real
+			// and consecutive: Wahl's Clavis translated in 1825, Halle and Berlin from 1826, the
+			// marriage to Therese von Jakob in August 1828, the return in 1830 to the Andover chair,
+			// and the Biblical Repository he founded in 1831. The same compromise the rail already
+			// makes for Strong's Geneva decade.
+			slug: 'edward-robinson-1794',
+			name: 'Rev. Edward Robinson',
+			from: 1825,
+			years: 9,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789918445/Screenshot_2026-09-20_at_8-resized_qezujx.png',
+			// Copied from his emitted payload (person.t), not invented — this is the camera target a
+			// click on the portrait flies to.
+			t: { x: 6432, y: 1794 },
+			headshotBlurb: 'Father of Biblical Geography',
+			lifespan: '1794–1863'
+		},
+		{
 			// 1842–1850, AND THIS IS A PLACEMENT OF AVAILABLE YEARS RATHER THAN HER BEST ONES — better
 			// to say so here than to let the rail imply an argument it cannot make. Her peak is
 			// 1857–1866: matron of the Columbia Institution from 30 May 1857 to 1 Aug 1866, and the
@@ -995,7 +1020,13 @@
 			// day Vanderbilt can shift.
 			slug: 'sophia-fowler-1798',
 			name: 'Sophia Fowler Gallaudet',
-			from: 1842,
+			from: 1843,
+			// 1842 -> 1843 (092026, Sam: "push Sophia fowler headshot forward a year towards today").
+			// The portrait is a CONSTANT eight years wide regardless of `years`, so at 1843 it runs
+			// 1843-1851 and now BUTTS Vanderbilt's 1851 exactly instead of leaving a year of air short
+			// of him. The span below still reads 1852 and so overlaps his first year by two rather than
+			// the one the note beneath describes; that is documentary only — nothing computes an end
+			// year, and what the eye gets is the clean back-to-back the Hooker/Shepard pair already has.
 			// NINE, NOT EIGHT (Sam: "seems a little smaller than his") — matched to Vanderbilt's circle
 			// so the two neighbours read as the same size. It grows DOWNWARD into 1851, which touches
 			// the first year of his window; that is the one-year kiss Sam's own founding-era rule
@@ -1124,7 +1155,13 @@
 			// above her and fifteen below — the emptiest stretch left on the rail.
 			slug: 'emma-willard-1787',
 			name: 'Emma Hart Willard',
-			from: 1828,
+			from: 1834,
+			// 1828 -> 1834 (092026, Sam: "then push Emma Williart towards today, same size so she ends
+			// as sophia begins"). Nine years from 1834 closes at 1843, which is Sophia's new opening
+			// year exactly. The window she gives up was the seminary's founding decade; what 1834-1843
+			// holds instead is the 1833 Athens school endowed from her travel book's proceeds, and her
+			// handing the seminary to her son in 1838 — which now falls INSIDE the span rather than just
+			// after it. The nine clear years she vacates above are what Edward Robinson takes.
 			// 8 -> 9 (091426). `years` drives the portrait DIAMETER as well as the bar length, so at 8
 			// she rendered a size smaller than Sophia Fowler Gallaudet just below her and than Angela
 			// Davis. Sam asked for the three to match; nine puts her bar at 1828-1837, still five clear
