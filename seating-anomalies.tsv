@@ -1,4 +1,5 @@
 id	name	reason	detail
+HD0089	Sarah Clark	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD0629	Samuel Lee	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD1414	Ann Rawson	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD1415	Elizabeth Rawson	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
@@ -191,6 +192,7 @@ I04731	Eunice M. Slater Cowles	true-orphan	no blood/egg flag, no marriage anchor
 I04803	Samuel Cowles III	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I04804	Olive Phelps Cowles	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I04810	Evelyn Louise Gridley Cowles	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
+I04835	Elizabeth Sackett Blakeslee	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00001	Thomas Hooker I	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00002	Susannah Hooker	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00003	Richard Garbrand	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
