@@ -206,6 +206,7 @@ rockefeller_family
 percy_family
 hooker_family
 talcott_family
+fighting_mccooks
 
 # --- research / data quality (internal) ---
 not_yet_fully_entered
