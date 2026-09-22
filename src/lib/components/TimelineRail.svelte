@@ -983,6 +983,31 @@
 			lifespan: '1703–1758'
 		},
 		{
+			// 1817-1825, A YEAR OF AIR ABOVE AND BELOW, AND NOTHING OVERLAPS ANYTHING. Ingersoll gave
+			// three years from above and Robinson one from below; neither had to give more than it had.
+			//
+			// A CORRECTION TO WHAT I WROTE HERE FIRST: `years` has not driven the portrait diameter
+			// since 091426 — anchorD ignores its argument and every circle is a constant eight years
+			// tall, anchored at `from`, so each one occupies [from, from+8]. Six years would NOT have
+			// rendered him smaller, and the whole size problem was imaginary. What `years` still sets is
+			// the bar; the spacing of the portraits is `from` alone.
+			//
+			// THE YEARS ARE HIS BEST ONES, which is not true of either neighbour. Clio I and II came
+			// out in 1822 and made him, for a few years, the most read poet in the country; he was
+			// editing and translating throughout, and Noah Webster took him on for the pronunciation
+			// of the 1828 Dictionary just after it closes. His geology — the Connecticut survey of
+			// 1835-1842, the first state survey in the country — falls where Emma Willard sits.
+			slug: 'james-percival-1795',
+			name: 'James Gates Percival',
+			from: 1817,
+			years: 9,
+			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1790109195/Screenshot_2026-09-22_at_1-resized_ro6tls.png',
+			// Copied from his emitted payload (person.t), not invented.
+			t: { x: 6265, y: 1795 },
+			headshotBlurb: 'Physician, poet, geologist',
+			lifespan: '1795\u20131856'
+		},
+		{
 			// 1825-1834, ADDED 092026 AND PLACED BY THE CHAIN Sam asked for: Sophia forward a year,
 			// Emma forward to meet her, and Robinson into the room that opens above Emma. Nine years
 			// like both of them, closing at 1834 where Emma now starts, and with six clear years
@@ -996,10 +1021,15 @@
 			// marriage to Therese von Jakob in August 1828, the return in 1830 to the Andover chair,
 			// and the Biblical Repository he founded in 1831. The same compromise the rail already
 			// makes for Strong's Geneva decade.
+			// 1825 -> 1826 and 9 -> 8 (092226, Sam: "there's room after robinson to move him a couple of
+			// years forward to stop this nonsense. no overlaps!"). The year forward is what centres
+			// Percival above him. The year off the span is so the BAR still clears Emma's 1834 opening —
+			// his portrait is a constant eight years either way, so nothing about his size changes, and
+			// his circle now sits flush against hers instead of a year clear of it.
 			slug: 'edward-robinson-1794',
 			name: 'Rev. Edward Robinson',
-			from: 1825,
-			years: 9,
+			from: 1826,
+			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1789918445/Screenshot_2026-09-20_at_8-resized_qezujx.png',
 			// Copied from his emitted payload (person.t), not invented — this is the camera target a
 			// click on the portrait flies to.
@@ -1134,9 +1164,20 @@
 			// the Federalist candidate for vice president in 1812, and United States Attorney for the
 			// Eastern District of Pennsylvania from 1815. The blurb still names what he is remembered
 			// for, so the portrait does not read as a stranger.
+			//
+			// 1811 -> 1808 (092226, Sam: "move ingersoll back a few years ie. towards 1700 and move
+			// percival also back, there's room"). Three years back, and three is where it stops. I took
+			// him to 1807 for a turn to buy Percival a symmetrical year, which put his portrait one year
+			// into Burr's; Sam: "do not overlap ingersoll and burr. move ingersoll down then." At 1808 he
+			// sits flush against Burr's close the way Jay, Whitney and Burr already sit against each
+			// other — touching, not overlapping. The spare year for Percival comes from Robinson instead.
+			//
+			// All three facts the window was chosen for survive inside 1808-1815: Attorney General of
+			// Pennsylvania from 1811, the vice-presidential run in 1812, and the Eastern District
+			// attorneyship from 1815.
 			slug: 'jared-ingersoll-jr-1749',
 			name: 'Jared Ingersoll Jr.',
-			from: 1811,
+			from: 1808,
 			years: 8,
 			src: 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1786382476/ingersollhea_ihwyar.png',
 			t: { x: 379.5, y: 1749 },
