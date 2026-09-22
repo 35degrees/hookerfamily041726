@@ -210,7 +210,7 @@ docs/
   hooker_json_schema_v25_addendum.md      <- SUPERSEDED, folded into v25 verbatim; kept as the source
   ENRICHED_DESIGN_FABLE_<date>.md         <- frontend design (what/why) -- TAKE THE NEWEST
   ENRICHED_CODING_ROADMAP_FABLE_<date>.md <- frontend sequencing + session record -- TAKE THE NEWEST
-  HANDOFF_content_<date>.md               <- Stream A content session record -- TAKE THE NEWEST
+  HANDOFF_content_<date>.md               <- Stream A content session record -- TAKE THE NEWEST (092126)
   examples/                               <- frontend pattern references
 static/data/                  <- GENERATED (gitignored); rebuilt by regenerate-data.js
 ```
