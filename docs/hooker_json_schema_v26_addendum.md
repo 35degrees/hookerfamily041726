@@ -174,6 +174,51 @@ marriage row §v25-0.6.1 already prescribes.
 fallback is gated on it (`generation.ts:132`). A correctly wired parent-in-law with the flag
 unset is still titleless.
 
+## §3.1 THE INVERSE of §v25-0.6.1 — on a marriage row, but no `parents` link
+
+*Found 22 Sep 2026 on `HD14223` Eliza Sheldon Butler McCook, in records this session created.*
+
+§v25-0.6.1 covers a child linked UPWARD but absent from the parents' marriage row: no child
+chip. The mirror image is a separate, equally visible defect and the schema does not name it:
+
+**A child on `marriages[].children_ids` with an empty `parents` object renders as a child chip
+from above, and their OWN card shows no parents, no grandparents and no siblings.**
+
+`neighborhood()` builds `parents`, `grandparents` and the sibling tiers from
+`p.parents.father_id` / `mother_id` — never from who lists them. So the two directions fail
+independently and neither implies the other. Eliza rendered correctly on both her parents'
+cards while her own card showed `parents 0 · siblings 0` and an empty grandparent block.
+
+**The detector** — a child must be reachable in both directions:
+
+```python
+listed = {}
+for y in d['people']:
+    for m in y.get('marriages', []):
+        for k in m.get('children_ids') or []: listed.setdefault(k, []).append(y['id'])
+for pid, parents in listed.items():
+    pa = P[pid].get('parents') or {}
+    assert any(v for k, v in pa.items() if k.endswith('_id')), f'{pid} listed by {parents}, no parents link'
+```
+
+**The assert that let it through, and why.** The build script guarded with
+
+```python
+pa = r['parents']
+if pa:                      # <-- an EMPTY DICT is falsy
+    ...check father/mother, mirroring, generation...
+```
+
+so every record with the defect skipped the entire check. **Guard on the CONDITION, not on the
+container**: test "is this person listed as someone's child", then require the upward link.
+A truthiness test on the thing you are validating will always pass the records that are empty,
+which are exactly the broken ones.
+
+Corpus-wide the class stands at **59** occurrences; most are pre-existing and several are
+deliberate (`father_research_notes` placeholders where the parent is unbuilt). Run the
+detector, then judge each — an empty `parents` with a `*_research_notes` sibling key is the
+documented unbuilt-parent pattern, not this bug.
+
 ---
 
 ## §4. `bio.chip_first_name` is the chip field; `bio.nickname` is deliberately ignored
