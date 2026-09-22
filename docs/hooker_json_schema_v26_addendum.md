@@ -84,6 +84,33 @@ neither says what it is scoped to:
 And §v25-1 already names the audience — it ends **"descendants who care about history."**
 The register has to actually serve that last clause.
 
+### 1.6 An INTERVAL earns a block only when the number itself is remarkable
+
+*Added 22 Sep 2026 (Sam), on `X00118` Maj. John Ripley NB5.*
+
+§v25-0.3.2 says **"Do the arithmetic for the reader."** True, and it has a threshold that
+was missing: the subtraction has to produce something the reader would not shrug at.
+
+```
+GOOD  "He outlived Abigail by eighteen years"     ← unusual span; says something about the life
+GOOD  "Thirty-nine years a widow in Cambridge"    ← same
+BAD   "He outlived her by four years"             ← that is just what the two dates already say
+```
+
+Sam: *"outliving a spouse by 18 years is perfect because it's unique and an unusual number
+of years. but if it's not unique, if it were like four years, it's not worth an NB, it would
+just be repeating implicit fields."*
+
+Both dates are already **printed on the card**. An interval block is only additive when the
+gap is long, short, or exact enough to be a fact in its own right — eighteen years alone,
+thirty-nine years a widow, three days old, married the day after her birthday. A four-year
+gap restates the vitals in words and spends a block on nothing.
+
+The same test kills the other reflexive arithmetic: an age at death that the birth and death
+years already show, a marriage-to-first-child interval of the ordinary length, a "he was
+sixty-one" where the card says 1738 and 1799. Compute it, look at it, and **only keep it if
+the number is the point.**
+
 ---
 
 ## §2. CORRECTION to §v25-0.6.3 — a career row with no `start_year` DOES render
