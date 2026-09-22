@@ -45,7 +45,7 @@ dates, bio blurbs, tags, cross-connections, institutions, landmarks, the schema,
 **Read before acting:**
 - `docs/WORKFLOW.md` -- the editorial contract (what is *good*, the blurb/NB/CC doctrine, the task-sheet protocol). This is the day-to-day law for content.
 - `docs/pipeline-gotchas.md` -- the mechanical facts that no model can infer and no doc should make you re-derive (what `process_tasks.py` can and can't do, the INST-ID map, the render rules, the enum asymmetries). **Read it before your first batch of the session.**
-- `docs/hooker_json_schema_v24.md` -- **THE structural law, and the current one.** v24 is the complete v23 body unaltered plus the v24 delta record appended at the end; where they differ, **v24 wins**. **A reference, not a preload** -- but the delta record (§v24-1 … §v24-9) is short and is where every rule Sam has had to repeat now lives. **Read §v24-1 (the render contract) before your first batch**: writing to the wrong key is how work becomes invisible -- stored, validating clean, and absent from the card. §v24-6 is the editorial law (NB ceiling and the ~250-word overflow point, concrete-not-riddle headers, the rebuild-don't-tack-on rule, no celebrity signposting).
+- `docs/hooker_json_schema_v25.md` -- **THE structural law, and the current one.** v25 is a new consolidated front section (**§v25-0**) followed by the complete v24 document and the complete v25 record, both byte-for-byte. Where they disagree, the LATER text wins: §v25-0 beats the v24 body, and the v25 record beats both. **A reference, not a preload -- except §v25-0, which you read before your first batch, every session.** It is the consolidated doctrine: the two laws, the scope law, the render contract short list, the NB rules (relevance ordering, small slices, the caps, headers that name rather than withhold, rebuild-don't-tack-on, quotations last), the blurb rules (quick hits, noun-phrase role labels only), the CC law with the reach-and-dates test, the six recurring structural bugs with their detectors, and the verification loop. v24 and the v25 addendum are retained on disk as the sources of the fold but are **superseded** -- read v25.
 
 The Woodward entry (X00804) is the NB quality bar -- re-read its blocks before
 writing NBs.
@@ -199,13 +199,15 @@ CLAUDE.md                     <- this file (auto-read every session)
 canonical.json                <- the genealogy DB (the SOURCE; edited directly, git-protected)
 tasks.tsv / tasks.csv         <- the data task sheet (csv or tsv; auto-detected)
 process_tasks.py              <- two-pass, append/set-only, direct-on-canonical task processor
-validate.py                   <- schema v24 gate + git-HEAD silent-loss diff
+validate.py                   <- schema v25 gate + git-HEAD silent-loss diff
 regenerate-data.js            <- builds static/data/ from canonical.json (takes a filename arg)
 docs/
   WORKFLOW.md                             <- data editorial contract
   pipeline-gotchas.md                     <- mechanical pipeline facts (read before first batch)
-  hooker_json_schema_v24.md               <- THE structural law (read the v24 delta record)
-  hooker_json_schema_v25_addendum.md      <- running tally of schema changes since v24; folds into v25
+  hooker_json_schema_v25.md               <- THE structural law (read §v25-0 before the first batch)
+  CONTENT_BUGS.md                         <- standing data debt, with a live detector per class
+  hooker_json_schema_v24.md               <- SUPERSEDED, folded into v25 verbatim; kept as the source
+  hooker_json_schema_v25_addendum.md      <- SUPERSEDED, folded into v25 verbatim; kept as the source
   ENRICHED_DESIGN_FABLE_<date>.md         <- frontend design (what/why) -- TAKE THE NEWEST
   ENRICHED_CODING_ROADMAP_FABLE_<date>.md <- frontend sequencing + session record -- TAKE THE NEWEST
   HANDOFF_content_<date>.md               <- Stream A content session record -- TAKE THE NEWEST
