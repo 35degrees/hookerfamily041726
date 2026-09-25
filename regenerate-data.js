@@ -1206,7 +1206,8 @@ function resolveStatues(p, bySubject) {
 			url: r.url ?? null,
 			thumbUrl: r.photo_url ?? null,
 			alt: nm,
-			tooltip: nm
+			tooltip: nm,
+			thumbPos: r.photo_position ?? null
 		});
 	});
 }
