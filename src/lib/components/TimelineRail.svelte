@@ -921,6 +921,9 @@
 	 * field alongside the prominent-years range — NOT a re-read of notable_blurb, for exactly the reason
 	 * above. Recorded here because the temptation at that point will be to reuse what already exists.
 	 */
+	// `line` — Hooker line or married into it (the payload's hd || sp, copied like `t`). A line portrait
+	// flies VERTICAL UP (Sam: "if its a Hooker spouse or a Hooker line person, can the transition always be
+	// vertical up? if its an easter egg non-spouse it can just be lateral like it is now"). See ccFlyTo.
 	const ANCHORS = [
 		{
 			// PUSHED BACK TO 1633 (Sam) so Hooker and Shepard are the SAME SIZE and still touch: eight
@@ -929,6 +932,7 @@
 			// the settled ministry after it. The circle is the span, so equal spans are the only way to
 			// get equal portraits.
 			slug: 'thomas-hooker-1586',
+			line: true,
 			name: 'Rev. Thomas Hooker',
 			from: 1633,
 			years: 8,
@@ -941,6 +945,7 @@
 			// BACK TO BACK WITH HOOKER, SAME SIZE. Hooker closes at 1641 and Shepard opens there, running
 			// the eight years to 1649, when he died at forty-three. He married Hooker's daughter Joanna.
 			slug: 'thomas-shepard-1605',
+			line: true,
 			name: 'Rev. Thomas Shepard',
 			from: 1641,
 			years: 8,
@@ -953,6 +958,7 @@
 			// Yale is chartered in 1701; the span runs from the founding through the years he spent
 			// building it.
 			slug: 'james-pierpont-1659',
+			line: true,
 			name: 'Rev. James Pierpont',
 			from: 1701,
 			years: 9,
@@ -974,6 +980,7 @@
 			// great-granddaughter. The rail has 24 clear years either side of him, so nothing here
 			// competes for space; this is the one recent addition that needed no arithmetic.
 			slug: 'jonathan-edwards-1703',
+			line: true,
 			name: 'Rev. Jonathan Edwards',
 			from: 1734,
 			years: 8,
@@ -998,6 +1005,7 @@
 			// of the 1828 Dictionary just after it closes. His geology — the Connecticut survey of
 			// 1835-1842, the first state survey in the country — falls where Emma Willard sits.
 			slug: 'james-percival-1795',
+			line: true,
 			name: 'James Gates Percival',
 			from: 1817,
 			years: 9,
@@ -1027,6 +1035,7 @@
 			// his portrait is a constant eight years either way, so nothing about his size changes, and
 			// his circle now sits flush against hers instead of a year clear of it.
 			slug: 'edward-robinson-1794',
+			line: true,
 			name: 'Rev. Edward Robinson',
 			from: 1826,
 			years: 8,
@@ -1049,6 +1058,7 @@
 			// and closes exactly where Vanderbilt opens, with no overlap anywhere. Move her to 1857 the
 			// day Vanderbilt can shift.
 			slug: 'sophia-fowler-1798',
+			line: true,
 			name: 'Sophia Fowler Gallaudet',
 			from: 1843,
 			// 1842 -> 1843 (092026, Sam: "push Sophia fowler headshot forward a year towards today").
@@ -1076,6 +1086,7 @@
 			// Harlem corner is 1863 and the New York Central 1867, which would have run straight through
 			// the Civil War years Sam wanted left out.
 			slug: 'cornelius-vanderbilt-1794',
+			line: false,
 			name: 'Cornelius Vanderbilt',
 			// 1851, nudged two years down off the 1850 rule so the label is not sitting behind his face.
 			from: 1851,
@@ -1089,6 +1100,7 @@
 			// The Revolutionary War itself — 1775 to 1783, which is both the span of the war and the span
 			// of his service in it. The only anchor so far whose years need no argument.
 			slug: 'benjamin-tallmadge-jr-1754',
+			line: true,
 			name: 'Benjamin Tallmadge',
 			from: 1775,
 			years: 8,
@@ -1123,6 +1135,7 @@
 			// one year short of the Jay Treaty (1794), which is the cost of leaving Whitney the 1790s;
 			// the alternative window, 1789–1796, buys the treaty and loses the diplomacy.
 			slug: 'john-jay-1745',
+			line: false,
 			name: 'John Jay',
 			from: 1784,
 			years: 8,
@@ -1136,6 +1149,7 @@
 			// contract that turned him into an arms manufacturer. His whole claim on the century sits
 			// inside these eight years.
 			slug: 'eli-whitney-ii-1765',
+			line: true,
 			name: 'Eli Whitney',
 			from: 1792,
 			years: 8,
@@ -1148,6 +1162,7 @@
 			// The least ambiguous window on the rail: the tied election of 1800, the vice presidency
 			// 1801–1805, Weehawken in July 1804, the conspiracy in 1806 and the treason trial in 1807.
 			slug: 'aaron-burr-jr-1756',
+			line: true,
 			name: 'Aaron Burr Jr.',
 			from: 1800,
 			years: 8,
@@ -1176,6 +1191,7 @@
 			// Pennsylvania from 1811, the vice-presidential run in 1812, and the Eastern District
 			// attorneyship from 1815.
 			slug: 'jared-ingersoll-jr-1749',
+			line: true,
 			name: 'Jared Ingersoll Jr.',
 			from: 1808,
 			years: 8,
@@ -1195,6 +1211,7 @@
 			// Nothing competes: Ingersoll ends 1819 and Vanderbilt begins 1851, so she has nine clear years
 			// above her and fifteen below — the emptiest stretch left on the rail.
 			slug: 'emma-willard-1787',
+			line: true,
 			name: 'Emma Hart Willard',
 			from: 1834,
 			// 1828 -> 1834 (092026, Sam: "then push Emma Williart towards today, same size so she ends
@@ -1215,6 +1232,7 @@
 		},
 		{
 			slug: 'john-morgan-1837',
+			line: true,
 			name: 'J.P. Morgan',
 			from: 1888, // ends 1895 (Sam), clearing 1896 for TR
 			years: 8,
@@ -1228,6 +1246,7 @@
 			// The blurb is written for the portrait rather than taken from his record, whose canonical
 			// blurb is the placeholder "General, generation 7 from Hooker".
 			slug: 'alfred-terry-1827',
+			line: true,
 			name: 'Alfred Howe Terry',
 			from: 1861,
 			years: 8,
@@ -1243,6 +1262,7 @@
 			// 1870 until it passed in 1877. Placing her in the 1880s would put the portrait after the
 			// thing she won. Shares 1869 with Terry's last year, the same way Whitney and Burr share 1800.
 			slug: 'isabella-beecher-1822',
+			line: true,
 			name: 'Isabella Beecher Hooker',
 			from: 1869,
 			years: 8,
@@ -1265,6 +1285,7 @@
 			// Cleveland Conquest, which is where the monopoly was actually built. Nothing competes for the
 			// space — Terry ends 1869 and Morgan begins 1892, so there are 3 clear years above and 12 below.
 			slug: 'john-rockefeller-sr-1839',
+			line: false,
 			name: 'John D. Rockefeller',
 			// MOVED OFF 1872 (Sam, Sept 2026): "rockefeller can move back to the 1880s, he was dominant
 			// that whole long era." 1880–1888 now covers the Standard Oil Trust of 1882 — the landmark
@@ -1279,6 +1300,7 @@
 		},
 		{
 			slug: 'theodore-roosevelt-1858',
+			line: true,
 			name: 'Theodore Roosevelt',
 			from: 1896, // starts exactly 1896 (Sam)
 			years: 8,
@@ -1292,6 +1314,7 @@
 			// (Sam: "move Taft headshot starting year by 2, ok for slight overlap"). Which is also the
 			// truer picture — Taft was Roosevelt's Secretary of War before he was his successor.
 			slug: 'william-taft-1857',
+			line: true,
 			name: 'William Howard Taft',
 			// 1910, not 1909. Sam moved him +2 originally to accept a slight overlap with Teddy; the
 			// short-viewport portrait boost then grew BOTH circles and pushed it to 2.00 years, past his
@@ -1309,6 +1332,7 @@
 			// 1912-1920 — which is the one place on this scale where the portraits are meant to touch
 			// rather than merely avoid each other. Do not "fix" the lack of gaps here.
 			slug: 'edward-house-1858',
+			line: false,
 			name: 'Col. Edward House',
 			headshotBlurb: "Wilson's closest adviser",
 			lifespan: '1858–1938',
@@ -1326,6 +1350,7 @@
 			// still ends on the June 1945 brigadier's star. Circle size wins: an anchor nobody can see
 			// is worse than a start year three years early.
 			slug: 'george-strong-1880',
+			line: true,
 			name: 'Gen. George V. Strong',
 			from: 1928,
 			years: 8,
@@ -1349,6 +1374,7 @@
 			// 1920 and nothing stood between there and Munson. It butt-joins 1936/1937 the way
 			// Hooker/Shepard and North/Foster do.
 			slug: 'edward-munson-jr-1904',
+			line: true,
 			name: 'Gen. Edward Munson Jr.',
 			from: 1937,
 			years: 8,
@@ -1363,6 +1389,7 @@
 			// AFTER the thing it names. 1946 is the year the case closed. Eight years carries him to
 			// 1954 — Brown v. Board, and his own death.
 			slug: 'robert-jackson-1892',
+			line: false,
 			name: 'Robert H. Jackson',
 			from: 1946,
 			years: 8,
@@ -1406,6 +1433,7 @@
 			// at Khe Sanh in 1968, so any nine-year window is a frame around a twenty-one-year life
 			// rather than a career; moving the opening back two costs nothing true and buys the room.
 			slug: 'gridley-strong-1947',
+			line: true,
 			name: 'PFC Gridley Strong',
 			from: 1964,
 			years: 9,
@@ -1429,6 +1457,7 @@
 			// itself — the year he took UNICEF and accepted its Nobel Peace Prize five months in —
 			// which is a better closing year than the 1966 it had.
 			slug: 'henry-labouisse-jr-1904',
+			line: true,
 			name: 'Henry R. Labouisse',
 			from: 1954,
 			years: 9,
@@ -1450,6 +1479,7 @@
 			// San Francisco State, the two Communist Party vice-presidential runs of 1980 and 1984
 			// bracketing it, and the Lenin Peace Prize in 1979 sitting near the middle.
 			slug: 'angela-davis-1944',
+			line: true,
 			name: 'Angela Davis',
 			from: 1973,
 			years: 9,
@@ -1466,6 +1496,7 @@
 			// wrong on the rail, the fix is North back to 7 years or Foster forward — not Angela,
 			// whose nine Sam fixed.
 			slug: 'oliver-north-1943',
+			line: true,
 			name: 'Oliver North',
 			from: 1983,
 			// years 9, not 8 — Sam wanted this portrait and Gridley Strong's a year taller than the
@@ -1487,6 +1518,7 @@
 			// still brackets what it was chosen for: the Silence of the Lambs Oscar sits just before
 			// it, and Nell, Home for the Holidays, Contact and Anna and the King all fall inside.
 			slug: 'alicia-foster-1962',
+			line: true,
 			name: 'Jodie Foster',
 			from: 1992,
 			years: 9,
@@ -1498,6 +1530,7 @@
 		},
 		{
 			slug: 'anderson-cooper-1967',
+			line: true,
 			name: 'Anderson Cooper',
 			from: 2013,
 			years: 9,
@@ -1865,7 +1898,7 @@
 		}
 		const el = e.currentTarget as HTMLElement;
 		hoverSuppressed = a.slug;
-		void ccFlyTo(el, { slug: a.slug, t: a.t });
+		void ccFlyTo(el, { slug: a.slug, t: a.t }, a.line ? { vertical: 'up' } : undefined);
 	}
 
 	// ── ERA MARKS ───────────────────────────────────────────────────────────────────────────────────

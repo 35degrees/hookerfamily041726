@@ -138,8 +138,14 @@ export async function shuffleToNotable(node: HTMLElement): Promise<void> {
  */
 export async function ccFlyTo(
 	node: HTMLElement,
-	target: { slug: string; t: { x: number; y: number | null } | null }
+	target: { slug: string; t: { x: number; y: number | null } | null },
+	opts?: { vertical?: 'up' }
 ): Promise<void> {
+	// VERTICAL UP for a timeline portrait on the Hooker line (or married into it). Built from the same
+	// inputs the rail's own bars use for an ancestor — relationClass 'direct' + a negative genDelta — so
+	// isVerticalMove/deckDirFor give the flat vertical dive entering from the TOP, and isArcMove (which
+	// needs 'collateral') never arcs it. Absent = the lateral carousel flight, unchanged.
+	const vertical = opts?.vertical === 'up';
 	// Everything below mirrors the CC branch of warmPersonLinks, in the same order, for the same reasons.
 	if (!prefersReducedMotion.current) lockFlight();
 	captureFlightOrigin(node.getBoundingClientRect());
@@ -172,8 +178,8 @@ export async function ccFlyTo(
 		duration: relativeGrowMs(distance),
 		easing: 'cubicOut',
 		kind: 'cc',
-		relationClass: 'collateral',
-		genDelta: 0,
+		relationClass: vertical ? 'direct' : 'collateral',
+		genDelta: vertical ? -1 : 0,
 		kinDistance: null,
 		scaleMin: null
 	};
