@@ -48,7 +48,9 @@ dates, bio blurbs, tags, cross-connections, institutions, landmarks, the schema,
 - `docs/hooker_json_schema_v25.md` -- **THE structural law, and the current one.** v25 is a new consolidated front section (**§v25-0**) followed by the complete v24 document and the complete v25 record, both byte-for-byte. Where they disagree, the LATER text wins: §v25-0 beats the v24 body, and the v25 record beats both. **A reference, not a preload -- except §v25-0, which you read before your first batch, every session.** It is the consolidated doctrine: the two laws, the scope law, the render contract short list, the NB rules (relevance ordering, small slices, the caps, headers that name rather than withhold, rebuild-don't-tack-on, quotations last), the blurb rules (quick hits, noun-phrase role labels only), the CC law with the reach-and-dates test, the six recurring structural bugs with their detectors, and the verification loop. v24 and the v25 addendum are retained on disk as the sources of the fold but are **superseded** -- read v25.
 
 The Woodward entry (X00804) is the NB quality bar -- re-read its blocks before
-writing NBs.
+writing NBs. Measured: ~220 chars per body (up to ~270), each block ONE scene with a
+concrete image. Never hard-cap bodies at 240 in scripts and trim the texture out, and
+never cram three facts into primer sentences -- Sam's verdict on that: "puny... for babies."
 
 **The data loop -- ONE COMMAND (072926). You (Code) run it; Sam types no git or shell commands:**
 
