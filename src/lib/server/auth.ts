@@ -102,6 +102,13 @@ if (!DATABASE_URL) {
  */
 export const pool = new Pool({ connectionString: DATABASE_URL });
 
+/**
+ * An IDLE client dropped by the server (Neon suspend, network timeout) emits 'error' on the pool; with
+ * no listener Node treats it as fatal and the process exits. pg-pool already discards the dead client,
+ * so logging is all that's needed. Query errors are unaffected — they still reject to their callers.
+ */
+pool.on('error', (err) => console.warn('[pg pool] idle client error:', err.message));
+
 export const auth = betterAuth({
 	database: pool,
 
