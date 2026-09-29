@@ -67,7 +67,7 @@ RECOGNIZED_FIELDS = {
     'career_set',       # value = index=N role="..." org="..."  (replace one career row in place)
     'education_set',    # value = index=N ...kv...                (replace one education row in place)
     'nb_replace',       # value = old="<exact header>" header="..." body="..." category=<enum> (placed VERBATIM)
-    'new_person',       # CREATE a new entry. value = name="..." gender=... [searchable=false notable=false ...]
+    'new_person',       # CREATE a new entry. value = name="..." gender=... [notable=false ...]
     'cemetery',         # create-or-link a CEM + wire burial. value = name="..." city="..." state="..." lat=.. lng=.. [cem_id=CEM### to link existing]
     'video',            # create-or-link a VID + backlink. value = title="..." url=... platform=youtube summary="3-4 word chip" [notes="..."] [vid_id=VID### to link]
     'landmark',         # create-or-link a LM + backlink. value = name="..." type=... city="..." state="..." [lat= lng=] [url=] [photo_url=] [blurb="person-side ≤... line"] [lm_id=LM### to link]
@@ -266,9 +266,6 @@ def apply_mechanical(field, val, p, tp):
         if not rid or rid not in tp: return f"FLAG BLOCKED: cc related '{rid}' not in tree", False
         label = kv.get('label', '')
         if len(label) > 70: return f"FLAG BLOCKED: cc label {len(label)} chars (max 70)", False
-        if (p.get('classification') or {}).get('is_searchable') is not False and \
-           (tp[rid].get('classification') or {}).get('is_searchable') is False:
-            return f"FLAG BLOCKED: searchable cannot CC non-searchable {rid}", False
         cc = {'related_id': rid, 'type': 'connection',
               'link_text': kv.get('link', ''), 'display_label': label}
         if not any(c.get('related_id') == rid for c in p.setdefault('cross_connections', [])):
@@ -277,8 +274,7 @@ def apply_mechanical(field, val, p, tp):
             return f"OK cc->{rid} added; FLAG needs reciprocal cc row on {rid}", True
         return f"OK cc->{rid} added (reciprocal present)", True
     if field == 'searchable':
-        p.setdefault('classification', {})['is_searchable'] = (val.strip().lower() in ('true','1','yes'))
-        return f"OK is_searchable={p['classification']['is_searchable']}", True
+        return "FLAG is_searchable was retired 092926 -- everyone is searchable; nothing written", None
     if field == 'notable':
         kv = parse_kv(val); no = p.setdefault('notable', {})
         no['is_notable'] = (kv.get('on', 'true').lower() in ('true','1','yes'))
@@ -460,7 +456,7 @@ def next_x_id(people):
 
 def make_new_person(val, people, tp):
     """Create a minimal valid NEW entry. value = name="Full Name" [gender=male|female]
-       [searchable=false] [notable=false] [easter_egg=false] [first="..." last="..." maiden="..."].
+       [notable=false] [easter_egg=false] [first="..." last="..." maiden="..."].
        Returns (status, new_id|None). The entry is a clean skeleton; enrich it with
        normal task rows (birth_date, photo_url, bio_blurb, parents, nb_angle, ...) in
        the SAME batch by referencing the returned id."""
@@ -475,7 +471,6 @@ def make_new_person(val, people, tp):
     def as_bool(k, default):
         v = kv.get(k)
         return default if v is None else (v.lower() in ('true', '1', 'yes'))
-    searchable = as_bool('searchable', False)   # new orbit/parent entries default non-searchable
     notable = as_bool('notable', False)
     easter = as_bool('easter_egg', False)
     bio = {'display_name': name, 'first_name': first, 'last_name': last, 'married_names': []}
@@ -495,7 +490,6 @@ def make_new_person(val, people, tp):
             'is_thomas_descendant': False,
             'is_talcott_descendant': False,
             'is_easter_egg': easter,
-            'is_searchable': searchable,
             'include_in_path_calculation': False,
         },
         'notable': {'is_notable': notable},
@@ -503,7 +497,7 @@ def make_new_person(val, people, tp):
     }
     people.append(person)
     tp[new_id] = person
-    flags = f"searchable={searchable} notable={notable} easter_egg={easter}"
+    flags = f"notable={notable} easter_egg={easter}"
     return f"OK created {new_id} '{name}' ({flags})", new_id
 
 

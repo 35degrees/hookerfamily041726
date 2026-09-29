@@ -304,10 +304,6 @@ def validate(path, baseline_path=None):
                        for cc in (tp[other].get('cross_connections') or [])):
                 debt['C5_cc_one_directional'] += 1
                 warnings.append(f"{who}: CC to {other} is one-directional (no reciprocal)")
-            # the WORKFLOW rule: a searchable person must not show a CC to a non-searchable person
-            if (p.get('classification') or {}).get('is_searchable') is not False:
-                if (tp[other].get('classification') or {}).get('is_searchable') is False:
-                    errors.append(f"{who}: searchable person has a CC to NON-searchable {other}")
 
         # --- non-canonical tags (the §6 vocabulary debt — WARNING, never blocks) ---
         if CANONICAL_TAGS is not None:

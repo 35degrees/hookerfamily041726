@@ -106,8 +106,8 @@ A comma may open the label ONLY as an appositive that is then followed by a main
 `who`/`whose` clause is a fragment. No capitalised opener, no terminal period. `card.py` flags
 the capitalised and terminal-period cases; the fragment case is on you to read aloud.
 (55 labels written 072926-073026 had to be rewritten for exactly this -- don't repeat it.) The `type` field is **ignored**: default it, never
-deliberate, never ask Sam about it. A searchable person must never CC a
-non-searchable one.
+deliberate, never ask Sam about it. (`is_searchable` was retired 092926 --
+everyone is searchable.)
 
 ---
 

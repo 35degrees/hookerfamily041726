@@ -1436,7 +1436,6 @@ function validateLineAnchorOverrides(byId) {
 			const by = q.birth?.year ?? null;
 			const dy = q.death?.year ?? null;
 			if (by == null && dy == null) warn(`${t} has no birth or death year — its bar cannot draw, and the lane it was assigned stays empty`);
-			if (q.classification?.is_searchable === false) warn(`${t} is not searchable — its bar will render but cannot be clicked`);
 		}
 	}
 }
@@ -2358,7 +2357,7 @@ function main() {
 		// random one without touching people.json (30 MB, never loaded) or search-index.json (3.2 MB,
 		// and it carries no notable flag). Eligibility is computed HERE, at build time, so the client
 		// ships a list it can trust rather than a filter it has to re-derive:
-		//   is_notable === true   AND   is_searchable === true
+		//   is_notable === true   (is_searchable was retired 092926 -- everyone is searchable)
 		// `visible` already excludes the hidden (the Talcott severance), so nothing hidden can surface.
 		// Strict === true throughout, so a null or a missing block never counts as eligible.
 		//
@@ -2370,8 +2369,8 @@ function main() {
 		// specific person." The shuffle is a door into a random notable, and an orbit figure has exactly
 		// one legitimate door. Not a small leak: 50 of the 94 are is_notable.
 		//
-		// `is_searchable` is deliberately UNTOUCHED and must stay so — it gates the app's own future
-		// search menu, not Google, and Sam wants these people indexed AND wants them in that menu with
+		// Orbit figures stay indexed and in the search menu (is_searchable itself was retired 092926 —
+		// everyone is searchable). Sam wants them in that menu with
 		// their own colour coding ("I don't want to hide them from google… I'll have special color coding
 		// so a user can interpret them easily as not being official Hooker line descendants"). The shuffle
 		// is the only door being closed.
@@ -2380,7 +2379,6 @@ function main() {
 				(p) =>
 					p.notable &&
 					p.notable.is_notable === true &&
-					(p.classification || {}).is_searchable === true &&
 					!orbitIds.has(p.id)
 			)
 			.map((p) => {

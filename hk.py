@@ -87,7 +87,7 @@ def person(P, d, pid, display, first, last, gender, middle=None, maiden=None, ma
      "number_of_marriages": 0, "marriages": [],
      "classification": {"is_thomas_descendant": not inlaw, "is_talcott_descendant": False,
         "is_thomas_spouse": inlaw, "is_talcott_spouse": False, "is_easter_egg": False,
-        "is_searchable": True, "include_in_path_calculation": not inlaw,
+        "include_in_path_calculation": not inlaw,
         "descent_from_thomas_hooker": not inlaw, "descent_from_john_talcott": False,
         "generation_from_thomas": (None if inlaw else gen), "generation_from_john_talcott": None},
      "notable": {"is_notable": False, "notable_category": [], "notable_blurb": None,

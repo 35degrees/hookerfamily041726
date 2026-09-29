@@ -44,7 +44,6 @@ for i in IDS:
         if r not in P: issues.append(f"{i}: CC dangling {r}"); continue
         back=[y for y in P[r].get('cross_connections') or [] if y.get('related_id')==i]
         if not back: issues.append(f"{i}: CC to {r} NOT reciprocal")
-        if not P[r]['classification'].get('is_searchable'): issues.append(f"{i}: CC to NON-SEARCHABLE {r}")
     # education dupes
     names=[ (e.get('school_name') or e.get('institution_id')) for e in p.get('education') or []]
     dup=[n for n in set(names) if n and names.count(n)>1]
@@ -55,6 +54,5 @@ for i in IDS:
     # new-person hygiene
     if c.get('is_thomas_descendant') and c.get('generation_from_thomas') is None:
         issues.append(f"{i}: thomas descendant with NO generation_from_thomas")
-    if not c.get('is_searchable'): issues.append(f"{i}: not searchable")
 print(f"AUDITED {len(IDS)} records — {len(issues)} issues")
 for x in issues: print(' *',x)
