@@ -453,7 +453,12 @@
 						} of a Hartford Founder`
 					]
 				: orbitLabel
-					? [...generationLabels, orbitLabel]
+					? // ONE LINE, NOT TWO (Sam, 27 Sep 2026): a relational label and the orbit title read as a
+						// single claim — "Grandfather-in-law of a Seventh Generation Hooker & Major influence on
+						// multiple Hooker descendants" — so they share a line joined by an ampersand.
+						generationLabels.length
+						? [[...generationLabels, orbitLabel].join(' & ')]
+						: [orbitLabel]
 					: pynchonLabel
 						? [...generationLabels, pynchonLabel]
 						: generationLabels

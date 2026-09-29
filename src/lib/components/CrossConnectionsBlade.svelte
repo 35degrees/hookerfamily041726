@@ -61,10 +61,15 @@
 	// The label reads straight on from the linked name with NO separator dash. Two legal shapes need
 	// different spacing: a predicate ("was his father-in-law…") takes one space, a leading appositive
 	// (", her grandmother, …") takes none. Getting it wrong prints "Name , her grandmother".
+	//
+	// A NAME NEVER ENDS A LINE WITHOUT ITS SENTENCE (Sam, 28 Sep 2026). "…helped create • Francis Birch"
+	// then "married Barbara…" on the next row strands the name from the verb that says why it is there.
+	// The gap after the name (or after an appositive's comma) is a non-breaking space, so the name and
+	// the first word of its label wrap as one unit: a name that will not fit with its verb moves down.
 	function ccTail(label: string): string {
 		const t = bindYears((label ?? '').trim());
 		if (!t) return '';
-		return /^[,;:.!?]/.test(t) ? t : ' ' + t;
+		return /^[,;:.!?]/.test(t) ? t.replace(/^([,;:.!?])[ \t]+/, '$1 ') : ' ' + t;
 	}
 
 	// A YEAR NEVER STARTS A LINE ALONE. Line breaking is greedy and per-line, so "…ordination, November
@@ -297,8 +302,8 @@
 					><span style="margin-right: {row0Inset}px">Cross</span><span>Connections</span></span
 				>
 				<div class="cc-tooltip">
-					Notable relationships beyond direct family ties — peers, colleagues, neighbors, or
-					parallel descents through the Hooker tree.
+					Surprising links across the tree — distant ancestors and descendants, in-laws,
+					colleagues, neighbors, and lives that ran in parallel.
 				</div>
 			</div>
 		</div>

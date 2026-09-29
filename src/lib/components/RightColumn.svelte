@@ -68,7 +68,7 @@
 		const s = c.start_year;
 		const e = c.end_year;
 		if (s == null && e == null) return null; // omit line entirely
-		if (s != null && e != null) return `${s}–${e}`;
+		if (s != null && e != null) return s === e ? `${s}` : `${s}–${e}`;
 		if (s != null) return `${s}–`;
 		return `–${e}`;
 	}

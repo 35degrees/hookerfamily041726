@@ -19,6 +19,7 @@
 	 */
 	import { listYears as years } from '$lib/utils/dates';
 	import { hoverIntent } from '$lib/state/hoverIntent';
+	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
 	import { modal, closeModal } from '$lib/state/modal.svelte';
 	import { ascension } from '$lib/state/ascension.svelte';
 	import {
@@ -566,7 +567,7 @@
 						<div class="photo aspect-square shrink-0 bg-stone-100">
 							{#if r.ph}
 								<img
-									src={r.ph}
+									src={cldSize(r.ph, PHOTO_TRANSFORM)}
 									alt={r.n}
 									class="h-full w-full object-cover object-top"
 									loading="lazy"

@@ -717,8 +717,22 @@
 		const full = featured.current?.lineAnchors ?? [];
 		const chain = full.length > 3 ? [full[0], full[1], full[full.length - 1]] : full;
 		if (chain.length) {
-			const out = chain.map((q, i) => barFor(q, i));
-			out.push(barFor(f, chain.length, fallbackBirthYear()));
+			// A LIVING LINK IN THE ROUTE GETS AN ANCHOR TOO, for the same reason the bloodline spouse
+			// below does: `pv` reads as no dates, and barFor with no fallback returns null — so the route
+			// silently lost its living links. Sam, on Lt. Charles von Stade (son and daughter-in-law both
+			// living): "the timeline needs to be hooked up to the Hooker line person, not just a single sad
+			// timeline." The nearest non-`pv` year along the chain places them, else the focus's own;
+			// nothing leaks, since the bar is positioned from a relative's year and dissolves at both ends.
+			const known = (q: PersonCompact | undefined) => (q && !q.pv ? (q.by ?? q.dy ?? null) : null);
+			const nearestYear = (i: number): number | null => {
+				for (let d = 1; d <= chain.length; d++) {
+					const y = known(chain[i + d]) ?? known(chain[i - d]);
+					if (y != null) return y;
+				}
+				return f.by ?? f.dy ?? fallbackBirthYear();
+			};
+			const out = chain.map((q, i) => barFor(q, i, q.pv ? nearestYear(i) : null));
+			out.push(barFor(f, chain.length, fallbackBirthYear() ?? nearestYear(chain.length)));
 			return out.filter((b): b is Bar => !!b);
 		}
 
