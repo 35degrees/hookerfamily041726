@@ -723,6 +723,11 @@
 			// living): "the timeline needs to be hooked up to the Hooker line person, not just a single sad
 			// timeline." The nearest non-`pv` year along the chain places them, else the focus's own;
 			// nothing leaks, since the bar is positioned from a relative's year and dissolves at both ends.
+			//
+			// AN UNDATED LINK IS THE SAME CASE. Not `pv`, just no years on record: barFor with no fallback
+			// returns null for them too, so George Frost Kennan's route (Domitilla Enders, his son
+			// Christopher) drew nothing and he stood alone. Sam: "the vertical bars need to show all the
+			// way down to the hooker line person." Any link with no year of its own takes the fallback.
 			const known = (q: PersonCompact | undefined) => (q && !q.pv ? (q.by ?? q.dy ?? null) : null);
 			const nearestYear = (i: number): number | null => {
 				for (let d = 1; d <= chain.length; d++) {
@@ -731,7 +736,7 @@
 				}
 				return f.by ?? f.dy ?? fallbackBirthYear();
 			};
-			const out = chain.map((q, i) => barFor(q, i, q.pv ? nearestYear(i) : null));
+			const out = chain.map((q, i) => barFor(q, i, known(q) == null ? nearestYear(i) : null));
 			out.push(barFor(f, chain.length, fallbackBirthYear() ?? nearestYear(chain.length)));
 			return out.filter((b): b is Bar => !!b);
 		}
