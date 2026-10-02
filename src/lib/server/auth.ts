@@ -37,12 +37,15 @@
 import { betterAuth } from 'better-auth';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
-import { env as privateEnv } from '$env/dynamic/private';
+// SvelteKit 3: `$app/env/private` exposes ONLY the variables declared in src/env.ts — add any new
+// one there or it reads as undefined here. Imported as a namespace so `readEnv` can look up by name.
+import * as privateEnv from '$app/env/private';
 import { Pool } from 'pg';
 
 /** SvelteKit's env first, `process.env` second — see the header. Empty string, never `undefined`,
  *  so a missing value fails loudly at the library rather than silently defaulting somewhere. */
-const readEnv = (key: string): string => privateEnv?.[key] ?? process.env[key] ?? '';
+const readEnv = (key: string): string =>
+	(privateEnv as Record<string, string | undefined>)?.[key] ?? process.env[key] ?? '';
 
 const DATABASE_URL = readEnv('DATABASE_URL');
 const dev = (readEnv('NODE_ENV') || process.env.NODE_ENV) === 'development';

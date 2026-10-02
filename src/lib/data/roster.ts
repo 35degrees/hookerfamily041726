@@ -10,9 +10,9 @@
  * grandparents/grandchildren into the same shape. Keep the role order here as the
  * single source of priority.
  */
-import type { FeaturedData } from '$lib/state/featured.svelte';
-import type { Person } from '$lib/types/person';
-import type { PersonCompact } from '$lib/types/neighborhood';
+import type { FeaturedData } from '#lib/state/featured.svelte.js';
+import type { Person } from '#lib/types/person.js';
+import type { PersonCompact } from '#lib/types/neighborhood.js';
 
 /**
  * THE ORDER A ROW OF DESCENDANTS IS READ IN. Four groups in sequence (a stable sort keeps input order

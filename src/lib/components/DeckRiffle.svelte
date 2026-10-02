@@ -22,10 +22,10 @@
 -->
 <script lang="ts">
 	import { CARD_TOP_H, CARD_W as CARD_W_BASE } from './FeaturedCard.svelte';
-	import { stage } from '$lib/state/stage.svelte';
+	import { stage } from '#lib/state/stage.svelte.js';
 	import { onMount } from 'svelte';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { subscribeCameraMove, type CameraMove } from '$lib/state/camera';
+	import { subscribeCameraMove, type CameraMove } from '#lib/state/camera.js';
 	import {
 		deckDirFor,
 		deckScheduleFor,
@@ -33,8 +33,8 @@
 		DECK_GHOST_V,
 		DECK_GHOST_OPACITY,
 		DECK_GHOST_BLUR
-	} from '$lib/transitions/flight';
-	import { GROUNDS, groundState } from '$lib/state/ground.svelte';
+	} from '#lib/transitions/flight.js';
+	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
 
 	// Ghosts read as pale card-shells on either ground — atmosphere, never holes.
 	const dark = $derived(['dark', 'ledger'].includes(GROUNDS[groundState.idx]?.kind));

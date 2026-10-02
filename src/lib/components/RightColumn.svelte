@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Person, Education, Career, MediaRow } from '$lib/types/person';
-	import { hoverIntent } from '$lib/state/hoverIntent';
-	import type { Institution } from '$lib/types/institution';
-	import type { Cemetery } from '$lib/types/cemetery';
-	import { buildMapUrl, formatLocationShort } from '$lib/utils/dates';
-	import { isPynchonKin } from '$lib/data/pynchonLine';
+	import type { Person, Education, Career, MediaRow } from '#lib/types/person.js';
+	import { hoverIntent } from '#lib/state/hoverIntent.js';
+	import type { Institution } from '#lib/types/institution.js';
+	import type { Cemetery } from '#lib/types/cemetery.js';
+	import { buildMapUrl, formatLocationShort } from '#lib/utils/dates.js';
+	import { isPynchonKin } from '#lib/data/pynchonLine.js';
 
 	type Props = {
 		person: Person;

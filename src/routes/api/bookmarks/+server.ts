@@ -13,9 +13,9 @@
  * serverless invocations for an icon, and nothing in the app would notice. `scripts/probe-static-
  * contract.mjs` is the only instrument that can see it.
  */
-import { json, error } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { pool } from '$lib/server/auth';
+import { pool } from '#lib/server/auth.js';
 
 type Row = { person_id: string; list: number; created_at: Date };
 
@@ -42,7 +42,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 		  order by created_at desc`,
 		[userId]
 	);
-	return json({
+	return Response.json({
 		bookmarks: rows.map((r) => ({
 			personId: r.person_id,
 			list: r.list,
@@ -75,7 +75,7 @@ export const PUT: RequestHandler = async ({ locals, request }) => {
 			userId,
 			personId
 		]);
-		return json({ personId, list: null });
+		return Response.json({ personId, list: null });
 	}
 
 	/**
@@ -90,5 +90,5 @@ export const PUT: RequestHandler = async ({ locals, request }) => {
 		 on conflict (user_id, person_id) do update set list = excluded.list`,
 		[crypto.randomUUID(), userId, personId, list]
 	);
-	return json({ personId, list });
+	return Response.json({ personId, list });
 };

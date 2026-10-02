@@ -9,7 +9,7 @@
  *   scale    arcScaleAt(t) — 1 → scaleMin (rise) → scaleMin (traverse) → 1 (descend)
  *   cx, cy   camera centre in TABLE coords — pans from → to across the traverse
  */
-import { arcScaleAt, arcProgress } from '$lib/transitions/arc-math';
+import { arcScaleAt, arcProgress } from '#lib/transitions/arc-math.js';
 
 // cx/cy = camera centre this frame (pans from → to); fx/fy → tx/ty = the traverse corridor endpoints in
 // table coords (fixed for the arc), so the substrate can pick its tiles once and only re-transform them.

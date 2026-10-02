@@ -10,10 +10,10 @@
 	 * gzipped and one fetch per session, so paying for it while the pointer is still travelling is
 	 * free; `load()` is idempotent, so hovering ten times still fetches once.
 	 */
-	import { openModal } from '$lib/state/modal.svelte';
-	import { load } from '$lib/state/search.svelte';
-	import { GROUNDS, groundState } from '$lib/state/ground.svelte';
-	import { ascension } from '$lib/state/ascension.svelte';
+	import { openModal } from '#lib/state/modal.svelte.js';
+	import { load } from '#lib/state/search.svelte.js';
+	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
+	import { ascension } from '#lib/state/ascension.svelte.js';
 
 	/**
 	 * THE INK IS A PROPERTY OF THE PAIR, NOT OF THE CONTROL (design §29). There are seven grounds and

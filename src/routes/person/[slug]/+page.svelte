@@ -1,16 +1,16 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import PersonBox from '$lib/components/PersonBox.svelte';
-	import FeaturedCard from '$lib/components/FeaturedCard.svelte';
-	import ConnectModal from '$lib/components/ConnectModal.svelte';
-	import ConnectAnyoneModal from '$lib/components/ConnectAnyoneModal.svelte';
-	import Field from '$lib/components/Field.svelte';
-	import TimelineRail from '$lib/components/TimelineRail.svelte';
-	import TopRightChrome from '$lib/components/TopRightChrome.svelte';
-	import SearchModal from '$lib/components/SearchModal.svelte';
-	import AuthModal from '$lib/components/AuthModal.svelte';
-	import CardMarks from '$lib/components/CardMarks.svelte';
-	import BookmarksModal from '$lib/components/BookmarksModal.svelte';
+	import PersonBox from '#lib/components/PersonBox.svelte';
+	import FeaturedCard from '#lib/components/FeaturedCard.svelte';
+	import ConnectModal from '#lib/components/ConnectModal.svelte';
+	import ConnectAnyoneModal from '#lib/components/ConnectAnyoneModal.svelte';
+	import Field from '#lib/components/Field.svelte';
+	import TimelineRail from '#lib/components/TimelineRail.svelte';
+	import TopRightChrome from '#lib/components/TopRightChrome.svelte';
+	import SearchModal from '#lib/components/SearchModal.svelte';
+	import AuthModal from '#lib/components/AuthModal.svelte';
+	import CardMarks from '#lib/components/CardMarks.svelte';
+	import BookmarksModal from '#lib/components/BookmarksModal.svelte';
 
 	/**
 	 * THE SHORT NAME, for the home-card confirmation's BUTTON (roadmap §50).
@@ -90,17 +90,17 @@
 		if (tokens[0] && TITLES.test(tokens[0])) tokens.shift();
 		return tokens[0] || full;
 	}
-	import DeckRiffle from '$lib/components/DeckRiffle.svelte';
+	import DeckRiffle from '#lib/components/DeckRiffle.svelte';
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { cubicOut } from 'svelte/easing';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import type { PersonCompact } from '$lib/types/neighborhood';
-	import { cardinalWord, cardinalWordLower, possessive } from '$lib/utils/dates';
+	import type { PersonCompact } from '#lib/types/neighborhood.js';
+	import { cardinalWord, cardinalWordLower, possessive } from '#lib/utils/dates.js';
 	import { page } from '$app/state';
-	import { featured } from '$lib/state/featured.svelte';
-	import { loadFeatured, warmPersonLinks, focusPerson } from '$lib/state/navigate';
-	import { buildRoster } from '$lib/data/roster';
+	import { featured } from '#lib/state/featured.svelte.js';
+	import { loadFeatured, warmPersonLinks, focusPerson } from '#lib/state/navigate.js';
+	import { buildRoster } from '#lib/data/roster.js';
 	import {
 		flyOut,
 		chipExit,
@@ -120,18 +120,18 @@
 		captureFlightKind,
 		captureAscend,
 		getAscend
-	} from '$lib/transitions/flight';
-	import { getSiblingNavPlan } from '$lib/state/siblingNav';
-	import { anchorOffsetFor, showsSiblingPanel } from '$lib/state/siblingLayout';
-	import { chipColumns } from '$lib/state/childRows';
-	import { ccRoster } from '$lib/state/ccRoster.svelte';
-	import { stage, applyStageVars, clearStageVars } from '$lib/state/stage.svelte';
-	import { unlockFlight } from '$lib/state/flightLock';
-	import { preloadNeighborhood } from '$lib/photo';
-	import SiblingPanel from '$lib/components/SiblingPanel.svelte';
-	import Ascension from '$lib/components/Ascension.svelte';
-	import { ascension, clearAscent } from '$lib/state/ascension.svelte';
-	import Caret from '$lib/components/Caret.svelte';
+	} from '#lib/transitions/flight.js';
+	import { getSiblingNavPlan } from '#lib/state/siblingNav.js';
+	import { anchorOffsetFor, showsSiblingPanel } from '#lib/state/siblingLayout.js';
+	import { chipColumns } from '#lib/state/childRows.js';
+	import { ccRoster } from '#lib/state/ccRoster.svelte.js';
+	import { stage, applyStageVars, clearStageVars } from '#lib/state/stage.svelte.js';
+	import { unlockFlight } from '#lib/state/flightLock.js';
+	import { preloadNeighborhood } from '#lib/photo.js';
+	import SiblingPanel from '#lib/components/SiblingPanel.svelte';
+	import Ascension from '#lib/components/Ascension.svelte';
+	import { ascension, clearAscent } from '#lib/state/ascension.svelte.js';
+	import Caret from '#lib/components/Caret.svelte';
 
 	let { data }: { data: PageData } = $props();
 

@@ -14,7 +14,7 @@
 	// "gently rounded" on a 925px card and on a 660px one alike, where 6.6px reads as very slightly less
 	// rounded and nobody can tell you which card they are looking at. Leaving it fixed also keeps the
 	// blade's carve arithmetically exact — the blade imports this same constant and mitres against it,
-	import { hoverIntent } from '$lib/state/hoverIntent';
+	import { hoverIntent } from '#lib/state/hoverIntent.js';
 	// and two independently-rounded numbers is how a seam appears at one size and not another. Radii,
 	// hairlines and border widths are the class of constant that should stay put while the frame moves.
 	export const CORNER_R = 8;
@@ -29,21 +29,21 @@
 </script>
 
 <script lang="ts">
-	import { isPynchonKin, pynchonGeneration, pynchonLiteralLabel } from '$lib/data/pynchonLine';
-	import { buildDescendantLabel } from '$lib/utils/generation';
-	import type { Person } from '$lib/types/person';
-	import type { SpouseEntry, PersonCompact } from '$lib/types/neighborhood';
-	import { openModal } from '$lib/state/modal.svelte';
-	import type { Cemetery } from '$lib/types/cemetery';
-	import type { Institution } from '$lib/types/institution';
+	import { isPynchonKin, pynchonGeneration, pynchonLiteralLabel } from '#lib/data/pynchonLine.js';
+	import { buildDescendantLabel } from '#lib/utils/generation.js';
+	import type { Person } from '#lib/types/person.js';
+	import type { SpouseEntry, PersonCompact } from '#lib/types/neighborhood.js';
+	import { openModal } from '#lib/state/modal.svelte.js';
+	import type { Cemetery } from '#lib/types/cemetery.js';
+	import type { Institution } from '#lib/types/institution.js';
 	import RightColumn from './RightColumn.svelte';
 	import NarrativeBlocks from './NarrativeBlocks.svelte';
-	import { formatDate, formatLocationShort, buildMapUrl, ageAtDeath } from '$lib/utils/dates';
-	import { shrinkToFit } from '$lib/actions/shrinkToFit';
-	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
+	import { formatDate, formatLocationShort, buildMapUrl, ageAtDeath } from '#lib/utils/dates.js';
+	import { shrinkToFit } from '#lib/actions/shrinkToFit.js';
+	import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
 	import CrossConnectionsBlade, { BLADE_TANG } from './CrossConnectionsBlade.svelte';
-	import { unsheathBlade } from '$lib/transitions/flight';
-	import { stage } from '$lib/state/stage.svelte';
+	import { unsheathBlade } from '#lib/transitions/flight.js';
+	import { stage } from '#lib/state/stage.svelte.js';
 	import { untrack, tick } from 'svelte';
 
 	// ── PHASE 2.75 — THE TWO DIALS, READ ONCE ───────────────────────────────────────────────────────

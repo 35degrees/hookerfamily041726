@@ -27,8 +27,8 @@
  *
  * Everything downstream then reads a settled value with no ordering hazard.
  */
-import type { Neighborhood } from '$lib/types/neighborhood';
-import { peekFlightOrigin } from '$lib/transitions/flight';
+import type { Neighborhood } from '#lib/types/neighborhood.js';
+import { peekFlightOrigin } from '#lib/transitions/flight.js';
 import {
 	chipW,
 	chipH,

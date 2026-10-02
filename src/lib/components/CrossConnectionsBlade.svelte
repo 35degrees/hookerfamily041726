@@ -96,8 +96,8 @@
 </script>
 
 <script lang="ts">
-	import { stage } from '$lib/state/stage.svelte';
-	import { fitBlade } from '$lib/actions/fitBlade';
+	import { stage } from '#lib/state/stage.svelte.js';
+	import { fitBlade } from '#lib/actions/fitBlade.js';
 
 	type CC = {
 		type: string;

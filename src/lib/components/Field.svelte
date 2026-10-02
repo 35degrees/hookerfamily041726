@@ -7,9 +7,9 @@
 	// Only the featured person docks; chips are annotations over the paper, never plotted points.
 	// Skins: DARK (gold motes) | LEDGER (paper + rules + red verticals + rust foxing) | LIGHT (no field).
 	import { onMount, untrack } from 'svelte';
-	import { subscribeCameraMove, getCameraMove, type CameraMove } from '$lib/state/camera';
-	import { GROUNDS, groundState } from '$lib/state/ground.svelte';
-	import { featured } from '$lib/state/featured.svelte';
+	import { subscribeCameraMove, getCameraMove, type CameraMove } from '#lib/state/camera.js';
+	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
+	import { featured } from '#lib/state/featured.svelte.js';
 	import { prefersReducedMotion } from 'svelte/motion';
 
 	const active = $derived(GROUNDS[groundState.idx]);

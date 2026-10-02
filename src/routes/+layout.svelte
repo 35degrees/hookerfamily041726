@@ -27,8 +27,8 @@
 	// Supports weights 100-900 — the TIMELINE RAIL's years and nothing else (TimelineRail .tick-year).
 	// Variable, so the 500 Sam asked for is a real weight rather than a synthesised one.
 	import '@fontsource-variable/fraunces/wght.css';
-	import favicon from '$lib/assets/favicon.svg';
-	import SettleVeil from '$lib/components/SettleVeil.svelte';
+	import favicon from '#lib/assets/favicon.svg';
+	import SettleVeil from '#lib/components/SettleVeil.svelte';
 
 	let { children } = $props();
 </script>

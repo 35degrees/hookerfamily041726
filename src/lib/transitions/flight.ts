@@ -12,7 +12,7 @@
  */
 import { cubicOut, cubicIn, cubicInOut } from 'svelte/easing';
 import { prefersReducedMotion } from 'svelte/motion';
-import { su } from '$lib/state/stage.svelte';
+import { su } from '#lib/state/stage.svelte.js';
 import { getCameraMove, type CameraMove } from '../state/camera';
 import { isArcMove, arcDurationMsFor, ARC_DESC, ARC_RISE } from './arc-math';
 import { arcClock } from '../state/arc.svelte';

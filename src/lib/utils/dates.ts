@@ -1,4 +1,4 @@
-import type { DateLocation } from '$lib/types/person';
+import type { DateLocation } from '#lib/types/person.js';
 
 // FULL month names (Aug 4, Sam: "spell out the entire month to be consistent"). Abbreviating some
 // months and not others — "Apr." but "May", "Sept." but "June" — made the vitals column read as two

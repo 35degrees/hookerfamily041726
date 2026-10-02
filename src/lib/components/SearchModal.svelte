@@ -17,11 +17,11 @@
 	 * list that re-sorts six times while you type "thomas" has no time to have any. The motion budget
 	 * goes where it still means something — the veil coming in, and the exit into the card's flight.
 	 */
-	import { listYears as years } from '$lib/utils/dates';
-	import { hoverIntent } from '$lib/state/hoverIntent';
-	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
-	import { modal, closeModal } from '$lib/state/modal.svelte';
-	import { ascension } from '$lib/state/ascension.svelte';
+	import { listYears as years } from '#lib/utils/dates.js';
+	import { hoverIntent } from '#lib/state/hoverIntent.js';
+	import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
+	import { modal, closeModal } from '#lib/state/modal.svelte.js';
+	import { ascension } from '#lib/state/ascension.svelte.js';
 	import {
 		search,
 		load,
@@ -38,7 +38,7 @@
 		CATEGORIES,
 		RESULT_CAP,
 		diedYoungRow
-	} from '$lib/state/search.svelte';
+	} from '#lib/state/search.svelte.js';
 	import SearchYears from './SearchYears.svelte';
 	import { linear, cubicOut } from 'svelte/easing';
 	import { tick } from 'svelte';

@@ -23,9 +23,9 @@
  * WITHOUT a second round trip — and so that a cancelled confirmation still leaves the reader knowing
  * what they had.
  */
-import { json, error } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { pool } from '$lib/server/auth';
+import { pool } from '#lib/server/auth.js';
 
 export const PUT: RequestHandler = async ({ locals, request }) => {
 	const session = await locals.getSession();
@@ -61,7 +61,7 @@ export const PUT: RequestHandler = async ({ locals, request }) => {
 		[personId, userId]
 	);
 
-	return json({
+	return Response.json({
 		personId,
 		previousPersonId: rows[0]?.previous ?? null
 	});

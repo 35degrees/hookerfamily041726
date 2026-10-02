@@ -47,7 +47,7 @@ import {
 	setCarouselLateral,
 	setCarouselTempo,
 	relativeGrowMs
-} from '$lib/transitions/flight';
+} from '#lib/transitions/flight.js';
 import { prefersReducedMotion } from 'svelte/motion';
 
 type NotableRow = { slug: string; t: { x: number; y: number | null } | null };

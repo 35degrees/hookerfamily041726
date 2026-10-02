@@ -37,20 +37,20 @@
 	 * rail that animated on its own duration would drift against the card mid-navigation, and §30 names
 	 * two-clock desync as THE failure mode of this layer. One clock, many subscribers.
 	 */
-	import { featured } from '$lib/state/featured.svelte';
+	import { featured } from '#lib/state/featured.svelte.js';
 	// THE SAME FUNCTION THE CARD AND THE CHIP ASK. `isPynchonKin` is the RAINBOW set — the direct line to
 	// Thomas Ruggles Pynchon Jr. plus Jackson and the mother at each step — and it is derived from the
 	// parent graph, not listed. Reusing it is what stops the rail from growing a third, drifting answer to
 	// "is this person in the line": FeaturedCard.prism, PersonBox.prism and this bar are now one rule.
-	import { isPynchonKin } from '$lib/data/pynchonLine';
-	import { ascension } from '$lib/state/ascension.svelte';
-	import { getCameraMove, subscribeCameraMove } from '$lib/state/camera';
-	import { ccFlyTo } from '$lib/state/shuffle.svelte';
-	import { warmPersonLinks } from '$lib/state/navigate';
-	import { isFlightLocked, subscribeFlightLock } from '$lib/state/flightLock';
-	import { stage } from '$lib/state/stage.svelte';
-	import type { PersonCompact } from '$lib/types/neighborhood';
-	import { ageAtDeath } from '$lib/utils/dates';
+	import { isPynchonKin } from '#lib/data/pynchonLine.js';
+	import { ascension } from '#lib/state/ascension.svelte.js';
+	import { getCameraMove, subscribeCameraMove } from '#lib/state/camera.js';
+	import { ccFlyTo } from '#lib/state/shuffle.svelte.js';
+	import { warmPersonLinks } from '#lib/state/navigate.js';
+	import { isFlightLocked, subscribeFlightLock } from '#lib/state/flightLock.js';
+	import { stage } from '#lib/state/stage.svelte.js';
+	import type { PersonCompact } from '#lib/types/neighborhood.js';
+	import { ageAtDeath } from '#lib/utils/dates.js';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { fade } from 'svelte/transition';
 	import { cubicOut, cubicInOut } from 'svelte/easing';

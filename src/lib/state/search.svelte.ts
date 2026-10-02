@@ -22,7 +22,7 @@
  * 11.7ms worst ("t", 17,874 hits), inside a single 16.7ms frame. An inverted index or trigram table
  * would add a build step and real complexity to save a few milliseconds.
  */
-import { fold } from '$lib/search/fold.js';
+import { fold } from '#lib/search/fold.js';
 
 /** One row of static/data/search-index.json. Built by `searchRow()` in regenerate-data.js. */
 export type SearchRow = {

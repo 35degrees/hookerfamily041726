@@ -29,10 +29,10 @@
  * invocations — for a star icon — and §3's Option A is gone. Nothing in the app would notice; the
  * probe in slice 3 is the only instrument that can see it.
  */
-import { auth } from '$lib/server/auth';
+import { auth } from '#lib/server/auth.js';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
-import { building } from '$app/environment';
-import type { Handle } from '@sveltejs/kit';
+import { building } from '$app/env';
+import type { Handle } from '@sveltejs/kit/hooks';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	let cached: Awaited<ReturnType<typeof auth.api.getSession>> | undefined;

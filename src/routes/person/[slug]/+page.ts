@@ -1,7 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import { buildFeatured, type PersonPayload } from '$lib/data/buildFeatured';
-import { resolveRedirect } from '$lib/data/redirects';
+import { buildFeatured, type PersonPayload } from '#lib/data/buildFeatured.js';
+import { resolveRedirect } from '#lib/data/redirects.js';
 
 // Cold-load path: fetch the single self-contained payload (see DATA ARCHITECTURE)
 // and resolve it through the shared builder. The warm path (focusPerson) uses the

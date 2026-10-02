@@ -11,7 +11,7 @@
  *
  * popstate (back/forward) is reconciled in +page.svelte by watching the URL.
  */
-import { pushState } from '$app/navigation';
+import { goto } from '$app/navigation';
 import { prefersReducedMotion } from 'svelte/motion';
 import { featured } from './featured.svelte';
 import { publishCameraMove, type CameraMove } from './camera';
@@ -19,8 +19,8 @@ import { hideCcRoster, showCcRoster } from './ccRoster.svelte';
 import { isFlightLocked, lockFlight } from './flightLock';
 import { startArc } from './arc.svelte';
 import { markAscent, clearAscent } from './ascension.svelte';
-import { isArcMove, arcScaleMinFor, arcDurationMsFor } from '$lib/transitions/arc-math';
-import { fetchFeatured } from '$lib/data/buildFeatured';
+import { isArcMove, arcScaleMinFor, arcDurationMsFor } from '#lib/transitions/arc-math.js';
+import { fetchFeatured } from '#lib/data/buildFeatured.js';
 import { planSiblingNav, clearSiblingNavPlan } from './siblingNav';
 import {
 	captureFlightOrigin,
@@ -37,7 +37,7 @@ import {
 	relativeGrowMs,
 	resolveLateralDir,
 	captureAscend
-} from '$lib/transitions/flight';
+} from '#lib/transitions/flight.js';
 
 /** Fetch a person and set them as featured. No history change. False if not found. */
 export async function loadFeatured(slug: string): Promise<boolean> {
@@ -68,7 +68,9 @@ export async function focusPerson(slug: string): Promise<void> {
 		clearSiblingNavPlan();
 	}
 	featured.set(data);
-	pushState(`/person/${slug}`, {});
+	// SvelteKit 3: shallow routing is goto(..., { shallow: true }) — pushState is deprecated. A new history
+	// entry exactly as before, no load re-run; `void` because it returns a promise this path has never needed to await.
+	void goto(`/person/${slug}`, { shallow: true });
 	// Clear the per-navigation flight captures one frame later — after the transition flush has
 	// read them — so a subsequent back/forward nav (which captures nothing) can't reuse stale data.
 	requestAnimationFrame(() => clearFlightCaptures());

@@ -18,12 +18,12 @@
 	 * nothing — a control that leads nowhere is a lie about being available, which is the same
 	 * argument that keeps the card marks signed-in only.
 	 */
-	import { auth } from '$lib/state/auth.svelte';
-	import { featured } from '$lib/state/featured.svelte';
-	import { load, personById, search, CAT } from '$lib/state/search.svelte';
-	import { arriveAtPerson } from '$lib/state/bookmarkNav';
-	import { GROUNDS, groundState } from '$lib/state/ground.svelte';
-	import { ascension } from '$lib/state/ascension.svelte';
+	import { auth } from '#lib/state/auth.svelte.js';
+	import { featured } from '#lib/state/featured.svelte.js';
+	import { load, personById, search, CAT } from '#lib/state/search.svelte.js';
+	import { arriveAtPerson } from '#lib/state/bookmarkNav.js';
+	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
+	import { ascension } from '#lib/state/ascension.svelte.js';
 
 	const onDark = $derived(GROUNDS[groundState.idx]?.kind === 'dark');
 	const inZone = $derived(ascension.active);

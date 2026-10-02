@@ -11,9 +11,9 @@
  * decorative: the client cannot write them through Better Auth's generic user-update endpoint, so
  * this is the single authorised path.
  */
-import { json, error } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { pool } from '$lib/server/auth';
+import { pool } from '#lib/server/auth.js';
 
 /**
  * 25 CHARACTERS (Sam). Enforced HERE as well as in the input's `maxlength`, because a `maxlength`
@@ -48,5 +48,5 @@ export const PUT: RequestHandler = async ({ locals, request }) => {
 	const column = list === 1 ? 'list1Name' : 'list2Name';
 	await pool.query(`update "user" set "${column}" = $1 where id = $2`, [name || null, userId]);
 
-	return json({ list, name: name || null });
+	return Response.json({ list, name: name || null });
 };

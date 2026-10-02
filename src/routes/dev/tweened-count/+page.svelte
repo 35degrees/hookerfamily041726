@@ -4,7 +4,7 @@
 	 * browser with placeholder numbers. No search UI, no routing dependency.
 	 * Safe to delete once the component is wired into the real search modal.
 	 */
-	import TweenedCount from '$lib/components/TweenedCount.svelte';
+	import TweenedCount from '#lib/components/TweenedCount.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();

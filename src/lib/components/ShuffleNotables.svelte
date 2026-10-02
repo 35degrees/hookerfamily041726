@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * NOTABLE PEOPLE — the button. All the thinking is in `$lib/state/shuffle.svelte.ts`; this is the
+	 * NOTABLE PEOPLE — the button. All the thinking is in `#lib/state/shuffle.svelte.ts`; this is the
 	 * affordance and nothing else.
 	 *
 	 * THE BUTTON ITSELF NEVER FADES (Sam, Aug 7). The first version used `disabled` + `opacity: 0.4` to say
@@ -29,8 +29,8 @@
 	 * instead of waiting on a request. Without this the first shuffle of a session stalls for as long as
 	 * the fetch takes — which on the 3G profile is exactly when it is least forgivable.
 	 */
-	import { shuffleToNotable, warmShuffle } from '$lib/state/shuffle.svelte';
-	import { ascension } from '$lib/state/ascension.svelte';
+	import { shuffleToNotable, warmShuffle } from '#lib/state/shuffle.svelte.js';
+	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { onMount } from 'svelte';
 
 	let { settled = true }: { settled?: boolean } = $props();

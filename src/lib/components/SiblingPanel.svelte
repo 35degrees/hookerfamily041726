@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { PersonCompact } from '$lib/types/neighborhood';
+	import type { PersonCompact } from '#lib/types/neighborhood.js';
 	import PersonBox from './PersonBox.svelte';
 	import Caret from './Caret.svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { untrack } from 'svelte';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { easeOutBack, solveBackS, markPending } from '$lib/transitions/flight';
-	import { getSiblingNavPlan, isIncomingSeat, type SiblingNavPlan } from '$lib/state/siblingNav';
+	import { easeOutBack, solveBackS, markPending } from '#lib/transitions/flight.js';
+	import { getSiblingNavPlan, isIncomingSeat, type SiblingNavPlan } from '#lib/state/siblingNav.js';
 	// The layout model lives in siblingLayout.ts (§19): the flight has to know where a seat in this list
 	// will come to REST, and that question is only answerable with this arithmetic. One home for it.
 	import {
@@ -26,7 +26,7 @@
 		endItemFor,
 		maxOffsetFor,
 		type SibItem
-	} from '$lib/state/siblingLayout';
+	} from '#lib/state/siblingLayout.js';
 
 	type Tiers = { full: PersonCompact[]; half: PersonCompact[]; step: PersonCompact[] };
 	type Props = {

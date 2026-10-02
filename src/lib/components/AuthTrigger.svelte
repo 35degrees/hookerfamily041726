@@ -17,10 +17,10 @@
 	 * time both were on screen, which they always are. Copied rather than shared, per §46.2: these are
 	 * two controls that happen to look alike, not one control rendered twice.
 	 */
-	import { openModal } from '$lib/state/modal.svelte';
-	import { auth } from '$lib/state/auth.svelte';
-	import { GROUNDS, groundState } from '$lib/state/ground.svelte';
-	import { ascension } from '$lib/state/ascension.svelte';
+	import { openModal } from '#lib/state/modal.svelte.js';
+	import { auth } from '#lib/state/auth.svelte.js';
+	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
+	import { ascension } from '#lib/state/ascension.svelte.js';
 
 	/** §29 / §41.3, as SearchTrigger records at length: five of the seven grounds are LIGHT, so ink
 	 *  tuned against midnight is invisible on the sheet the reader sees most of the time. */

@@ -28,15 +28,15 @@
 -->
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { hoverIntent } from '$lib/state/hoverIntent';
+	import { hoverIntent } from '#lib/state/hoverIntent.js';
 	import { fade } from 'svelte/transition';
 	import { linear, cubicOut } from 'svelte/easing';
-	import { modal, closeModal } from '$lib/state/modal.svelte';
-	import { featured } from '$lib/state/featured.svelte';
-	import type { PersonCompact } from '$lib/types/neighborhood';
-	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
-	import { stage } from '$lib/state/stage.svelte';
-	import { shrinkToFit } from '$lib/actions/shrinkToFit';
+	import { modal, closeModal } from '#lib/state/modal.svelte.js';
+	import { featured } from '#lib/state/featured.svelte.js';
+	import type { PersonCompact } from '#lib/types/neighborhood.js';
+	import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
+	import { stage } from '#lib/state/stage.svelte.js';
+	import { shrinkToFit } from '#lib/actions/shrinkToFit.js';
 	import {
 		search,
 		setGate,
@@ -44,8 +44,8 @@
 		load,
 		clear as clearSearch,
 		CAT
-	} from '$lib/state/search.svelte';
-	import { connect, sentence, type KinCache } from '$lib/search/kin';
+	} from '#lib/state/search.svelte.js';
+	import { connect, sentence, type KinCache } from '#lib/search/kin.js';
 
 	/**
 	 * ITS OWN FILE, DELIBERATELY. Read design §46.2 before moving anything out of here.

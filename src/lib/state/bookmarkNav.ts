@@ -16,7 +16,7 @@
  * does search's own housekeeping — `remember()`, `clear()`, its exit choreography — none of which
  * belongs to a bookmark.
  */
-import { closeModal } from '$lib/state/modal.svelte';
+import { closeModal } from '#lib/state/modal.svelte.js';
 
 /**
  * @param slug   the person's CURRENT slug, resolved from their id at render time (§50.2 — bookmarks

@@ -12,7 +12,7 @@
  * Nothing about the model changed in the move. SiblingPanel imports every constant and function it
  * used to declare inline, and its rendered geometry is byte-identical.
  */
-import type { Neighborhood, PersonCompact } from '$lib/types/neighborhood';
+import type { Neighborhood, PersonCompact } from '#lib/types/neighborhood.js';
 import { stage } from './stage.svelte';
 
 export type SiblingTiers = {

@@ -31,8 +31,8 @@
 	 * Mounted as a child, ~80% of each circle would simply vanish, and it would read as a broken
 	 * asset rather than as clipping.
 	 */
-	import { auth, setBookmark, setHero, type ListId } from '$lib/state/auth.svelte';
-	import { load, personById } from '$lib/state/search.svelte';
+	import { auth, setBookmark, setHero, type ListId } from '#lib/state/auth.svelte.js';
+	import { load, personById } from '#lib/state/search.svelte.js';
 	import { cubicOut, linear } from 'svelte/easing';
 
 	/**

@@ -16,13 +16,13 @@
 	 * text box, 25 characters, and the new name propagates everywhere immediately because every
 	 * surface reads `auth.listName()` rather than holding its own copy (§50.2).
 	 */
-	import { listYears as years } from '$lib/utils/dates';
-	import { modal, closeModal } from '$lib/state/modal.svelte';
-	import { ascension } from '$lib/state/ascension.svelte';
-	import { auth, setListName, setBookmark, LIST_NAME_MAX, type ListId } from '$lib/state/auth.svelte';
+	import { listYears as years } from '#lib/utils/dates.js';
+	import { modal, closeModal } from '#lib/state/modal.svelte.js';
+	import { ascension } from '#lib/state/ascension.svelte.js';
+	import { auth, setListName, setBookmark, LIST_NAME_MAX, type ListId } from '#lib/state/auth.svelte.js';
 	import { flip } from 'svelte/animate';
-	import { load, personById, search, CAT } from '$lib/state/search.svelte';
-	import { arriveAtPerson } from '$lib/state/bookmarkNav';
+	import { load, personById, search, CAT } from '#lib/state/search.svelte.js';
+	import { arriveAtPerson } from '#lib/state/bookmarkNav.js';
 	import { linear, cubicOut } from 'svelte/easing';
 
 	/** §45.11's numbers, copied — two overlays over the same tree that agreed only roughly would read

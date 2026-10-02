@@ -12,10 +12,10 @@
  *   - warm path (Step 2): focusPerson() will set it directly after pushState
  * Everything reads through the getters / `current`.
  */
-import type { Person } from '$lib/types/person';
-import type { Neighborhood, PersonCompact } from '$lib/types/neighborhood';
-import type { Cemetery } from '$lib/types/cemetery';
-import type { Institution } from '$lib/types/institution';
+import type { Person } from '#lib/types/person.js';
+import type { Neighborhood, PersonCompact } from '#lib/types/neighborhood.js';
+import type { Cemetery } from '#lib/types/cemetery.js';
+import type { Institution } from '#lib/types/institution.js';
 
 export type CrossConnection = {
 	type: string;

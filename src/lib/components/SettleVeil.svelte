@@ -35,7 +35,7 @@
 	 * place, outside the one module §33.1 says may read the window. That is the real fix and it is a
 	 * §33-sized decision; this is the cheap one, and it is reversible.
 	 */
-	import { stage } from '$lib/state/stage.svelte';
+	import { stage } from '#lib/state/stage.svelte.js';
 	import { linear } from 'svelte/easing';
 
 	/**

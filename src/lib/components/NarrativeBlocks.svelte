@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import { untrack } from 'svelte';
-	import type { NarrativeBlock } from '$lib/types/person';
-	import { stage } from '$lib/state/stage.svelte';
+	import type { NarrativeBlock } from '#lib/types/person.js';
+	import { stage } from '#lib/state/stage.svelte.js';
 
 	type Props = {
 		blocks: NarrativeBlock[];

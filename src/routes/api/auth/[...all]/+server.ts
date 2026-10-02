@@ -12,7 +12,7 @@
  *
  * Verify with `GET /api/auth/ok` → `{"status":"ok"}`. That is the end of slice 1.
  */
-import { auth } from '$lib/server/auth';
+import { auth } from '#lib/server/auth.js';
 import type { RequestHandler } from './$types';
 
 export const prerender = false;

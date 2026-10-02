@@ -8,7 +8,7 @@
 -->
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { tableCamera } from '$lib/state/tableCamera.svelte';
+	import { tableCamera } from '#lib/state/tableCamera.svelte.js';
 
 	type Row = {
 		id: string;

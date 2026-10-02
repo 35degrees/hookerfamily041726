@@ -21,14 +21,14 @@
 	 * SearchTrigger's own hover; this warms it too, so the menu is populated before the pointer
 	 * arrives rather than after.
 	 */
-	import { listYears as years } from '$lib/utils/dates';
-	import { hoverIntent } from '$lib/state/hoverIntent';
-	import { auth, type ListId } from '$lib/state/auth.svelte';
-	import { openModal } from '$lib/state/modal.svelte';
-	import { load, personById, search, CAT } from '$lib/state/search.svelte';
-	import { arriveAtPerson } from '$lib/state/bookmarkNav';
-	import { GROUNDS, groundState } from '$lib/state/ground.svelte';
-	import { ascension } from '$lib/state/ascension.svelte';
+	import { listYears as years } from '#lib/utils/dates.js';
+	import { hoverIntent } from '#lib/state/hoverIntent.js';
+	import { auth, type ListId } from '#lib/state/auth.svelte.js';
+	import { openModal } from '#lib/state/modal.svelte.js';
+	import { load, personById, search, CAT } from '#lib/state/search.svelte.js';
+	import { arriveAtPerson } from '#lib/state/bookmarkNav.js';
+	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
+	import { ascension } from '#lib/state/ascension.svelte.js';
 
 	const PER_LIST = 5;
 

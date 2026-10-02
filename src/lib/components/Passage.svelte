@@ -10,9 +10,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { subscribeCameraMove, type CameraMove } from '$lib/state/camera';
-	import { ccScreenDirFor, passageMsFor } from '$lib/transitions/flight';
-	import { GROUNDS, groundState } from '$lib/state/ground.svelte';
+	import { subscribeCameraMove, type CameraMove } from '#lib/state/camera.js';
+	import { ccScreenDirFor, passageMsFor } from '#lib/transitions/flight.js';
+	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
 
 	// Pale scenery on the dark/ledger grounds, muted ink on the light/paper ones — the decades read as
 	// atmosphere on either, never as holes.

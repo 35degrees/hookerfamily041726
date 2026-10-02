@@ -20,7 +20,7 @@
  */
 import { createAuthClient } from 'better-auth/svelte';
 import { inferAdditionalFields } from 'better-auth/client/plugins';
-import type { auth } from '$lib/server/auth';
+import type { auth } from '#lib/server/auth.js';
 
 export const authClient = createAuthClient({
 	plugins: [inferAdditionalFields<typeof auth>()],

@@ -24,7 +24,7 @@
 	 * on its own (Sam: "or 'now' this year, so it automatically updates in future years"). The lower
 	 * bound is the earliest birth year in the LOADED index, floored to its half-century.
 	 */
-	import { search, setYears } from '$lib/state/search.svelte';
+	import { search, setYears } from '#lib/state/search.svelte.js';
 
 	let el = $state<HTMLElement | null>(null);
 	let dragging = $state<'lo' | 'hi' | null>(null);

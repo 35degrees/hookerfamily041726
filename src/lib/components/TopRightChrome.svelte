@@ -23,7 +23,7 @@
 	import AuthTrigger from './AuthTrigger.svelte';
 	import BookmarksTrigger from './BookmarksTrigger.svelte';
 	import HomeTrigger from './HomeTrigger.svelte';
-	import { ascension } from '$lib/state/ascension.svelte';
+	import { ascension } from '#lib/state/ascension.svelte.js';
 
 	let { settled = true }: { settled?: boolean } = $props();
 </script>

@@ -1,4 +1,4 @@
-import type { Person } from '$lib/types/person';
+import type { Person } from '#lib/types/person.js';
 
 /**
  * TALCOTT SEVERANCE — Phase 1 (labels only).

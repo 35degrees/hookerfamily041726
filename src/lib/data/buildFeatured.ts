@@ -8,13 +8,13 @@
  * The enrich / diedYoung / computeGenerationLabels logic used to live in +page.ts;
  * it moved here unchanged so there is no second copy to drift.
  */
-import type { Person } from '$lib/types/person';
-import type { Neighborhood, PersonCompact } from '$lib/types/neighborhood';
-import type { Institution } from '$lib/types/institution';
-import type { Cemetery } from '$lib/types/cemetery';
-import { computeGenerationLabels } from '$lib/utils/generation';
+import type { Person } from '#lib/types/person.js';
+import type { Neighborhood, PersonCompact } from '#lib/types/neighborhood.js';
+import type { Institution } from '#lib/types/institution.js';
+import type { Cemetery } from '#lib/types/cemetery.js';
+import { computeGenerationLabels } from '#lib/utils/generation.js';
 import { rosterOrder } from './roster';
-import type { CrossConnection, FeaturedData } from '$lib/state/featured.svelte';
+import type { CrossConnection, FeaturedData } from '#lib/state/featured.svelte.js';
 
 /** Raw payload as written by regenerate-data.js (static/data/person/<slug>.json). */
 export type PersonPayload = {

@@ -22,8 +22,8 @@
  * hydrated once, so that a star on a person card never turns that page into a server route. See
  * roadmap §50.0 — that boundary is the whole reason this feature does not touch the delivery model.
  */
-import { browser } from '$app/environment';
-import { authClient } from '$lib/auth-client';
+import { browser } from '$app/env';
+import { authClient } from '#lib/auth-client.js';
 
 type SessionUser = {
 	id: string;

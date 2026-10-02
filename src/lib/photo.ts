@@ -19,7 +19,7 @@ export function cldSize(url: string | null | undefined, transform: string): stri
 		: url;
 }
 
-import type { Neighborhood, PersonCompact } from '$lib/types/neighborhood';
+import type { Neighborhood, PersonCompact } from '#lib/types/neighborhood.js';
 
 // Warm EVERY person photo in a neighborhood as one high-priority batch, the moment the neighborhood is known
 // (client-only). A neighborhood is a complete, finite set delivered in ONE payload — focus, spouses + their

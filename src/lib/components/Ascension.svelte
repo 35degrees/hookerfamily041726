@@ -41,8 +41,8 @@
 	 * lands. Sam: "I trust your instinct for the dark leading slightly, I won't know until I test it."
 	 * Set to 0 to have them arrive exactly together.
 	 */
-	import { ascension } from '$lib/state/ascension.svelte';
-	import { ASCEND_MS } from '$lib/transitions/flight';
+	import { ascension } from '#lib/state/ascension.svelte.js';
+	import { ASCEND_MS } from '#lib/transitions/flight.js';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { fade } from 'svelte/transition';
 	import { cubicInOut, cubicOut } from 'svelte/easing';

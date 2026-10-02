@@ -9,7 +9,7 @@
  *   descend   [ARC_DESC, 1]        scale scaleMin → 1 (ease-in) — settle onto the destination seat
  * scaleMin previews the Zoom 2 resting scale. Direct dives and short collateral hops do NOT arc.
  */
-import type { CameraMove } from '$lib/state/camera';
+import type { CameraMove } from '#lib/state/camera.js';
 
 export const ARC_RISE = 0.3;
 export const ARC_DESC = 0.7;

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { isPynchonKin } from '$lib/data/pynchonLine';
-	import type { PersonCompact } from '$lib/types/neighborhood';
-	import { shrinkToFit } from '$lib/actions/shrinkToFit';
-	import { cldSize, PHOTO_TRANSFORM } from '$lib/photo';
-	import { stage, mergeChipUnion } from '$lib/state/stage.svelte';
+	import { isPynchonKin } from '#lib/data/pynchonLine.js';
+	import type { PersonCompact } from '#lib/types/neighborhood.js';
+	import { shrinkToFit } from '#lib/actions/shrinkToFit.js';
+	import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
+	import { stage, mergeChipUnion } from '#lib/state/stage.svelte.js';
 
 	type Props = {
 		person: PersonCompact;
