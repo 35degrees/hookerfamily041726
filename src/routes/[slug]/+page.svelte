@@ -122,8 +122,17 @@
 		retractBladeIn,
 		captureFlightKind,
 		captureAscend,
-		getAscend
+		getAscend,
+		captureFlightOrigin,
+		captureClicked,
+		capturePivot,
+		capturePanDir,
+		captureRects,
+		clearFlightCaptures
 	} from '#lib/transitions/flight.js';
+	import { publishCameraMove } from '#lib/state/camera.js';
+	import { lockFlight } from '#lib/state/flightLock.js';
+	import { intro, takeIntroHold } from '#lib/state/intro.svelte.js';
 	import { getSiblingNavPlan } from '#lib/state/siblingNav.js';
 	import { anchorOffsetFor, showsSiblingPanel } from '#lib/state/siblingLayout.js';
 	import { chipColumns } from '#lib/state/childRows.js';
@@ -143,6 +152,15 @@
 	// we fall back to `data`. Client: $effect.pre re-syncs BEFORE the DOM update.
 	$effect.pre(() => featured.set(data));
 	const f = $derived(featured.current ?? data);
+
+	// THE INTRO HOLD (100226). Arriving from `/`, this page mounts UNDER the intro overlay and starts BLANK —
+	// no card, no roster, no rail or corner chrome — until the overlay has faded to paper. Then the card is
+	// let in as an ordinary vertical cross-connection from below (see releaseIntroHold), so the arrival is
+	// the existing deck flight and the existing landing unfurl, not a new animation. Read once, at mount;
+	// every other way of reaching this page (direct link, refresh, in-app nav) never holds.
+	let introHold = $state(untrack(() => takeIntroHold()));
+	// …and the chrome stays down until that first card has LANDED, then fades up (see the effect below).
+	let introArrival = $state(untrack(() => introHold));
 
 	// FOUNDATIONAL PHOTO PRELOAD: the moment a neighborhood is known — on cold-load hydration, and on a warm
 	// nav the instant the incoming payload is set (during the flight, before the chips reveal at landing) —
@@ -299,7 +317,13 @@
 		clearAscent();
 		void focusPerson(home);
 	}
-	const roster = $derived(buildRoster(f, zoom));
+	// Held: an empty roster, so every row's {#each} is mounted and empty. At release the real roster arrives
+	// in the same tick as the card — its chips mount pending (in:markPending) and unfurl at landing, exactly
+	// as they do after any CC flight.
+	const roster = $derived.by(() => {
+		const r = buildRoster(f, zoom);
+		return introHold ? { ...r, parents: [], spouses: [], children: [] } : r;
+	});
 
 	// animate:flip glides SURVIVORS (e.g. children shared across a spouse swap) to their new
 	// positions. Its fix() mis-pins LEAVERS (measured post-insertion), but flyOut's WAAPI
@@ -393,7 +417,7 @@
 	// INCOMING person to know whether there is a seat to fly into — and two copies of one rule is how they
 	// drift. See showsSiblingPanel for what it tests and why it grew a second clause (the one-way door).
 	const focusC = $derived(f.neighborhood.focus);
-	const showSiblings = $derived(showsSiblingPanel(f.neighborhood));
+	const showSiblings = $derived(!introArrival && showsSiblingPanel(f.neighborhood)); // intro: mounts at landing
 	// OPEN BY DEFAULT (Sam, Aug 4): "it should start for all users default in the visible mode but users
 	// can close it anytime." The panel was closed until asked for, on §21.1's reasoning that the trigger
 	// must read peripheral; the sticky preference then made travelling with it open convenient enough that
@@ -466,7 +490,8 @@
 	// A gate of `featuredLanded && f.person.id === landedPersonId` instead goes false the instant f changes
 	// (landedPersonId still holds the old id) — atomically with the new text, so nothing stale is ever
 	// painted. The spouse CHIPS don't need this: markPending holds each new chip at opacity 0 on mount.
-	let landedPersonId = $state(untrack(() => f.person.id)); // initial-capture is intended (cold-load person)
+	// initial-capture is intended (cold-load person) — null under the intro hold: nothing has landed yet
+	let landedPersonId = $state<string | null>(untrack(() => (introHold ? null : f.person.id)));
 
 	// Notch suppression: a carved notch makes the growing/shrinking cards animate around a corner
 	// cutout — a blur, not a discrete object. So while a card flies we flatten it to a COMPLETE
@@ -761,6 +786,48 @@
 		revealPending((el) => isSeatFor(el, id), 0);
 		if (demotingPivotId === id) demotingPivotId = null;
 	}
+
+	// THE INTRO RELEASE. The overlay has reached paper: fire the CC capture sequence (the same order as
+	// ccFlyTo and warmPersonLinks — every line is load-bearing there) with a DIRECT, +1 generation move, so
+	// isVerticalMove/deckDirFor send the card in from the BOTTOM edge, then drop the hold so the card's
+	// {#each} gains its item and in:growFrom plays. Nothing departs: there is no outgoing card.
+	function releaseIntroHold() {
+		if (motionOff()) {
+			introHold = false; // reduced motion: a cut — no flight, chips visible at once
+			landedPersonId = f.person.id;
+			return;
+		}
+		lockFlight();
+		const slot = document.querySelector('.featured-slot');
+		captureFlightOrigin(slot?.getBoundingClientRect() ?? new DOMRect(innerWidth / 2, innerHeight, 0, 0));
+		captureFlightKind('cc');
+		captureClicked(null);
+		capturePivot(null);
+		capturePanDir('lateral');
+		captureRects(document.querySelectorAll('[data-flight-id]'));
+		const t = f.person.t;
+		publishCameraMove({
+			from: null,
+			to: t ? { x: t.x, y: t.y } : null,
+			screenVector: { dx: 0, dy: 0 },
+			distance: 0,
+			duration: 0,
+			easing: 'cubicOut',
+			kind: 'cc',
+			relationClass: 'direct',
+			genDelta: 1,
+			kinDistance: null,
+			scaleMin: null
+		});
+		introHold = false;
+		requestAnimationFrame(() => clearFlightCaptures());
+	}
+	$effect(() => {
+		if (introHold && intro.released) untrack(releaseIntroHold);
+	});
+	$effect(() => {
+		if (introArrival && !introHold && familyLanded) introArrival = false; // the chrome fades up
+	});
 
 	// Safety net: if anything is still pending when the incoming card lands (e.g. the demoted card's
 	// landing signal never fired), reveal it. For a RELATIVE demotion under motion the pivot is owned
@@ -1760,16 +1827,16 @@
 </script>
 
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
-<Field />
+<Field held={introArrival} />
 <!-- THE LEFT TIMELINE (design §3.6). Fixed chrome at the window's edge, mounted HERE beside Field and
      ShuffleNotables rather than inside .page-container: it is a ruler and must keep its size while the
      stage scales, and a fixed element inside a transformed ancestor re-bases to that ancestor. -->
-<TimelineRail />
+<div class="intro-chrome" class:held={introArrival}><TimelineRail /></div>
 <!-- SHUFFLE NOTABLES (roadmap §13, design §22.8) — the deck dealt at random. Mounted beside Field so the
      two pieces of fixed chrome live together, and gated on `familyLanded`, the SAME landing signal the
      card and connector use, so the button can never disagree with the flight lock about whether a flight
      is in progress. -->
-<TopRightChrome settled={familyLanded} />
+<div class="intro-chrome" class:held={introArrival}><TopRightChrome settled={familyLanded} /></div>
 
 <!-- THE ASCENSION'S SURROUND (roadmap §40) — the midnight veil and the way out. Mounted HERE, beside the
      other screen chrome, rather than inside `.page-container`: it must cover the whole window, which is
@@ -2064,7 +2131,7 @@
 				onUserToggle={(o) => (siblingsPref = o ? 'open' : 'closed')}
 			/>
 		{/if}
-		{#each [f] as cur (cur.person.id)}
+		{#each introHold ? [] : [f] as cur (cur.person.id)}
 			<div
 				class="featured-flight"
 				data-flight-dir="lateral"
@@ -2882,5 +2949,14 @@
 
 	.connector-children .connector-line.connector-line-full {
 		height: 50px;
+	}
+	/* THE INTRO HOLD: the rail and the corner chrome wait for the first card to land, then fade up.
+	   Opacity only — a transform or filter here would re-base their position:fixed (design §33.1). */
+	.intro-chrome {
+		transition: opacity 600ms ease;
+	}
+	.intro-chrome.held {
+		opacity: 0;
+		pointer-events: none;
 	}
 </style>

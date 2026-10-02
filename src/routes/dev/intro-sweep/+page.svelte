@@ -48,7 +48,7 @@
 	let fadeMs = $state(1150); // the even fade up to full gilt
 	let beatMs = $state(500); // "a beat or two" after the gilt is full, before the painting starts
 	let paintMs = $state(1500); // the painting's fade in, full screen behind the title
-	let shadow = $state(0.7); // the dark shadow's strength once the painting is full (it rises with it)
+	let shadow = $state(0.35); // (Sam: 0.7 -> 0.525 -> 0.35) the dark shadow's strength once the painting is full (it rises with it)
 	let shadowBlur = $state(14); // its softness, in plate units (at 480px wide, 14 is ~4px)
 
 	// torch centre in plate units (y grows downward); fade = the even fill's strength, 0..1

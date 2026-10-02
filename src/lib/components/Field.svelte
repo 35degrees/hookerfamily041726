@@ -6,6 +6,8 @@
 	// (a FLIP) on the flight clock incl. the settle curve — the drift IS the seek ("sliding on paper").
 	// Only the featured person docks; chips are annotations over the paper, never plotted points.
 	// Skins: DARK (gold motes) | LEDGER (paper + rules + red verticals + rust foxing) | LIGHT (no field).
+	// The intro (100226): the page holds its corner chrome until the first card lands — this toggle too.
+	let { held = false }: { held?: boolean } = $props();
 	import { onMount, untrack } from 'svelte';
 	import { subscribeCameraMove, getCameraMove, type CameraMove } from '#lib/state/camera.js';
 	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
@@ -273,6 +275,7 @@
 
 <button
 	class="ground-toggle"
+	class:held
 	type="button"
 	title="Toggle field skin"
 	aria-label={`Field skin: ${active.name} — click to change`}
@@ -461,6 +464,10 @@
 		}
 	}
 
+	.ground-toggle.held {
+		opacity: 0;
+		pointer-events: none;
+	}
 	.ground-toggle {
 		position: fixed;
 		right: 16px;
@@ -477,6 +484,7 @@
 		border-radius: 999px;
 		cursor: pointer;
 		backdrop-filter: blur(6px);
+		transition: opacity 600ms ease;
 	}
 	.ground-toggle:hover {
 		background: rgba(30, 40, 62, 0.75);

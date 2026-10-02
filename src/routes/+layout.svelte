@@ -29,6 +29,9 @@
 	import '@fontsource-variable/fraunces/wght.css';
 	import favicon from '#lib/assets/favicon.svg';
 	import SettleVeil from '#lib/components/SettleVeil.svelte';
+	import IntroOverlay from '#lib/components/IntroOverlay.svelte';
+	import { page } from '$app/state';
+	import { intro } from '#lib/state/intro.svelte.js';
 
 	let { children } = $props();
 </script>
@@ -39,4 +42,10 @@
      remounting. A page-level veil would arrive after hydration — which is the exact moment it exists
      to cover — and would re-fire on every card change. -->
 <SettleVeil />
+<!-- THE INTRO (100226), here for the same two reasons as the veil: it must be in the SSR'd HTML of `/`
+     to cover the first paint, and it must outlive `/` replacing itself with Thomas's page underneath.
+     It renders on `/` itself, and then for as long as the intro is running. -->
+{#if page.url.pathname === '/' || intro.active}
+	<IntroOverlay />
+{/if}
 {@render children()}
