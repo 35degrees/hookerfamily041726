@@ -43,7 +43,7 @@
 	 */
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { ASCEND_MS } from '#lib/transitions/flight.js';
-	import { prefersReducedMotion } from 'svelte/motion';
+	import { motionOff } from '#lib/state/motion.svelte.js';
 	import { fade } from 'svelte/transition';
 	import { cubicInOut, cubicOut } from 'svelte/easing';
 
@@ -112,7 +112,7 @@
 			window.removeEventListener('resize', measureCard);
 		};
 	});
-	const fadeMs = $derived(prefersReducedMotion.current ? 0 : ASCEND_MS);
+	const fadeMs = $derived(motionOff() ? 0 : ASCEND_MS);
 	/** The dark leads the card slightly, so the room dims before the figure arrives rather than with it.
 	 *  Set to 0 to have them land together. */
 	// 120 -> 0, AND THE CURVE CHANGES. Sam: "the midnight blue darkness finalizes too soon as we enter

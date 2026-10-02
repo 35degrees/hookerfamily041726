@@ -10,7 +10,7 @@
 	import { subscribeCameraMove, getCameraMove, type CameraMove } from '#lib/state/camera.js';
 	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
 	import { featured } from '#lib/state/featured.svelte.js';
-	import { prefersReducedMotion } from 'svelte/motion';
+	import { motionOff } from '#lib/state/motion.svelte.js';
 
 	const active = $derived(GROUNDS[groundState.idx]);
 	const showField = $derived(active.kind !== 'light');
@@ -167,7 +167,7 @@
 			const wdx = prev.x - a.x,
 				wdy = prev.y - a.y; // world delta old→new
 			prev = { x: a.x, y: a.y };
-			if (prefersReducedMotion.current) return; // no drift — jump straight to the settled positions
+			if (motionOff()) return; // no drift — jump straight to the settled positions
 			// jump to the OLD screen mapping (no transition) …
 			dur = 0;
 			flip = flip.map((_, i) => ({

@@ -11,7 +11,7 @@
  * the top of this file and are read by the transitions during the flush, then cleared one frame on.
  */
 import { cubicOut, cubicIn, cubicInOut } from 'svelte/easing';
-import { prefersReducedMotion } from 'svelte/motion';
+import { motionOff } from '#lib/state/motion.svelte.js';
 import { su } from '#lib/state/stage.svelte.js';
 import { getCameraMove, type CameraMove } from '../state/camera';
 import { isArcMove, arcDurationMsFor, ARC_DESC, ARC_RISE } from './arc-math';
@@ -1350,7 +1350,7 @@ export function growFrom(node: Element) {
 	// repair — it let `origin` be null through 300 lines of FLIP arithmetic that all assume otherwise
 	// (svelte-check found five). Answering the depth axis on its own terms costs nothing and leaves the
 	// planar path exactly as strict as it was.
-	if (ascendDir !== 0 && !prefersReducedMotion.current) {
+	if (ascendDir !== 0 && !motionOff()) {
 		const seat = (node as HTMLElement).getBoundingClientRect();
 		if (seat.width && seat.height) {
 			const hero = node as HTMLElement;
@@ -1523,7 +1523,7 @@ export function growFrom(node: Element) {
 	// descent's fallback path calls focusPerson directly, captures no origin, and this returned
 	// { duration: 0 } before the ascend branch below could ever be reached. The payload swapped, the URL
 	// changed, and nothing moved.
-	if (!origin || prefersReducedMotion.current) {
+	if (!origin || motionOff()) {
 		heroSchedule = { duration: 0, delay: 0, kind: 'relative', axis: 'lateral' };
 		return { duration: 0 };
 	}
@@ -1826,7 +1826,7 @@ function chipShadowAt(s: number): string {
 }
 
 export function shrinkTo(node: Element, params: { id: string }) {
-	if (prefersReducedMotion.current) return { duration: 0 };
+	if (motionOff()) return { duration: 0 };
 	const el = node as HTMLElement;
 	const card = node.getBoundingClientRect(); // the card's START rect (center) — stable through the flight
 	if (!card.width || !card.height) return { duration: 0 };
@@ -2587,7 +2587,7 @@ export function shrinkTo(node: Element, params: { id: string }) {
  * so boxes appear immediately.
  */
 export function markPending(node: Element) {
-	if (prefersReducedMotion.current) return { duration: 0 };
+	if (motionOff()) return { duration: 0 };
 	const el = node as HTMLElement;
 	el.style.opacity = '0';
 	el.dataset.pending = '';
@@ -2605,7 +2605,7 @@ export function markPending(node: Element) {
  * reveals it. Reduced motion: instant.
  */
 export function morphIn(node: Element, params: { id: string }) {
-	if (prefersReducedMotion.current) return { duration: 0 };
+	if (motionOff()) return { duration: 0 };
 	const el = node as HTMLElement;
 	// Pivot: the demoted card morphs into this slot; hold the box hidden until that hand-off reveals it.
 	if (params.id === pivotId) {
@@ -2709,7 +2709,7 @@ export function morphIn(node: Element, params: { id: string }) {
  */
 const CHIP_SLIDE = 24; // px: starts +CHIP_SLIDE down-and-right, settles up-and-left to 0
 export function slideChip(_node: Element) {
-	if (prefersReducedMotion.current) return { duration: 0 };
+	if (motionOff()) return { duration: 0 };
 	return {
 		delay: 200, // begin partway through the swap flight — ~40% sooner than land-and-fade
 		duration: 260,
@@ -3242,7 +3242,7 @@ function scheduleHandoff(node: HTMLElement, key: string, snap: PinRect, ms: numb
  *   BUG 2 — drift in the navigation's PAN direction (camera pan) while fading.
  */
 export function flyOut(node: Element, params: { key: string }) {
-	if (prefersReducedMotion.current) return { duration: 0 };
+	if (motionOff()) return { duration: 0 };
 	// CC ARRIVAL (item 4): the roster already GATHERED into the card (faded to nothing) in the pre-flight
 	// beat. These leavers must NOT re-animate from opacity 1 (that re-showed them mid-flight — the bug);
 	// hold them INVISIBLE, pinned out of flow, while Svelte removes them. No chip pixels during the flight.
@@ -3476,7 +3476,7 @@ const BLADE_SAMPLES = 24;
  * offscreen, scaled down to a chip.
  */
 export function unsheathBlade(node: HTMLElement): void {
-	if (prefersReducedMotion.current) return;
+	if (motionOff()) return;
 	const { duration, delay, kind, axis } = getHeroSchedule();
 	if (!duration) return; // no flight (cold load, back/forward) → the blade is simply already out
 	const spec =
@@ -3532,7 +3532,7 @@ export function unsheathBlade(node: HTMLElement): void {
  */
 export function retractBladeIn(node: HTMLElement): void {
 	const mount = node.querySelector<HTMLElement>('.cc-blade-mount');
-	if (!mount || prefersReducedMotion.current) return;
+	if (!mount || motionOff()) return;
 	mount.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }], {
 		duration: BLADE_RETRACT_MS,
 		easing: 'cubic-bezier(0.32, 0, 0.67, 0)', // cubicIn — accelerating INTO the case, the draw's mirror

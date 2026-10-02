@@ -5,7 +5,7 @@
 	import { fade, fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { untrack } from 'svelte';
-	import { prefersReducedMotion } from 'svelte/motion';
+	import { motionOff } from '#lib/state/motion.svelte.js';
 	import { easeOutBack, solveBackS, markPending } from '#lib/transitions/flight.js';
 	import { getSiblingNavPlan, isIncomingSeat, type SiblingNavPlan } from '#lib/state/siblingNav.js';
 	// The layout model lives in siblingLayout.ts (§19): the flight has to know where a seat in this list
@@ -155,7 +155,7 @@
 	// to `$.get(flyIn)(i)`, and during a teardown-time invocation the derived is already destroyed, so
 	// `$.get(...)` returns non-callable and THROWS, aborting the whole reactive flush (this is what froze the
 	// old card + panel). A plain function is a direct call with no signal read. It still reads
-	// prefersReducedMotion.current live, at intro time, when the reactive context is alive.
+	// motionOff() live, at intro time, when the reactive context is alive.
 	const STAGGER_IN = 38;
 	const DUR_IN = 150;
 	const SIBLING_SETTLE_PX = 2.5; // dial — the incoming overshoot in px
@@ -168,11 +168,11 @@
 	const settleS = solveBackS(SIBLING_SETTLE_PX / PITCH); // reuse the settle solver, tiny target
 	const settleEase = (t: number) => easeOutBack(t, settleS);
 	function flyIn(i: number) {
-		return prefersReducedMotion.current
+		return motionOff()
 			? { duration: 0 }
 			: { y: -pitch(), duration: DUR_IN, delay: i * STAGGER_IN, easing: settleEase };
 	}
-	let flipMs = $derived(prefersReducedMotion.current ? 0 : 300);
+	let flipMs = $derived(motionOff() ? 0 : 300);
 
 	// ── §19: the IN-PLACE MUTATION ────────────────────────────────────────────────────────────────────
 	// A sibling promotion barely changes this list — it loses the person clicked and gains the person
@@ -285,7 +285,7 @@
 		onUserToggle?.(open);
 	}
 	function collapse(node: HTMLElement) {
-		const animate = userClosing && !prefersReducedMotion.current;
+		const animate = userClosing && !motionOff();
 		userClosing = false; // consume the intent so a following nav-close stays instant
 		if (!animate) return { duration: 0 }; // nav teardown or reduced motion → instant, no animation
 		const h = node.offsetHeight; // measured natural height → collapse to 0
@@ -314,7 +314,7 @@
 			return;
 		}
 		arrowsShown = false;
-		if (prefersReducedMotion.current) {
+		if (motionOff()) {
 			arrowsShown = true;
 			return;
 		}

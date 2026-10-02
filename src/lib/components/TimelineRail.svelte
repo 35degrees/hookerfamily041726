@@ -51,7 +51,7 @@
 	import { stage } from '#lib/state/stage.svelte.js';
 	import type { PersonCompact } from '#lib/types/neighborhood.js';
 	import { ageAtDeath } from '#lib/utils/dates.js';
-	import { prefersReducedMotion } from 'svelte/motion';
+	import { motionOff } from '#lib/state/motion.svelte.js';
 	import { fade } from 'svelte/transition';
 	import { cubicOut, cubicInOut } from 'svelte/easing';
 	import { onMount } from 'svelte';
@@ -810,7 +810,7 @@
 	 * than competing with it. Reduced motion drops it to zero, which is the honest degrade: the bar is
 	 * information, so it still appears, just without the transition.
 	 */
-	const barFadeMs = $derived(prefersReducedMotion.current ? 0 : 95);
+	const barFadeMs = $derived(motionOff() ? 0 : 95);
 
 	/**
 	 * THE BAR TOOLTIP RIDES THE CURSOR VERTICALLY — the same gesture as the FeaturedCard photo zoom, and
@@ -876,12 +876,12 @@
 			// Read BEFORE the payload lands and the bars recompute — this is the outgoing position.
 			spawnTop =
 				document.querySelector('.rail .bar')?.getBoundingClientRect().top ?? null;
-			moveMs = prefersReducedMotion.current
+			moveMs = motionOff()
 				? 0
 				: isCc
 					? ANCHOR_BAR_MS
 					: (getCameraMove()?.duration ?? 420);
-			barEase = isCc && !prefersReducedMotion.current ? ANCHOR_BAR_EASE : BAR_EASE;
+			barEase = isCc && !motionOff() ? ANCHOR_BAR_EASE : BAR_EASE;
 			// THE ASCENSION DOES NOT LIFT THE RAIL (roadmap §40). The lift exists because a deck CC sweeps
 			// a card ACROSS the window's edge and the rail should read as a pane of glass it passes
 			// behind. A head-on crossing passes no edge — it comes straight out of the foreground — so

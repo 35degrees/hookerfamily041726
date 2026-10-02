@@ -94,12 +94,12 @@
 	import { untrack, tick } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { cubicOut } from 'svelte/easing';
-	import { prefersReducedMotion } from 'svelte/motion';
+	import { motionOff, beginInstantSwap } from '#lib/state/motion.svelte.js';
 	import type { PersonCompact } from '#lib/types/neighborhood.js';
 	import { cardinalWord, cardinalWordLower, possessive } from '#lib/utils/dates.js';
-	import { page } from '$app/state';
+	import { fetchFeatured } from '#lib/data/buildFeatured.js';
 	import { featured } from '#lib/state/featured.svelte.js';
-	import { loadFeatured, warmPersonLinks, focusPerson } from '#lib/state/navigate.js';
+	import { warmPersonLinks, focusPerson } from '#lib/state/navigate.js';
 	import { buildRoster } from '#lib/data/roster.js';
 	import {
 		flyOut,
@@ -186,17 +186,33 @@
 		}
 	});
 
-	// popstate reconcile (Step 2): back/forward across shallow history changes the
-	// URL without re-running load. Track ONLY page.url; read state under untrack.
-	$effect(() => {
-		const slug = page.url.pathname.split('/')[2];
-		if (!slug) return;
-		untrack(() => {
-			if (featured.current?.person.slug === slug) return;
-			if (data.person.slug === slug) featured.set(data);
-			else void loadFeatured(slug);
-		});
-	});
+	// ── BACK / FORWARD: ENTER THE STATE, DO NOT TRAVEL TO IT (100226) ──────────────────────────────
+	// Back/forward across the warm path's shallow history entries changes the URL without re-running
+	// load, so this page brings the card along itself — INSTANTLY.
+	//
+	// IT USED TO WATCH `page.url`, AND THAT WAS THE BUG. Shallow routing never updates `page.url` — it
+	// stays on the URL of the last REAL navigation (the cold load) for as long as you travel warm. So
+	// on Back the effect re-ran, read the cold-load slug and put THAT person on the card: the address
+	// bar said Timothy Dwight while the card showed whoever the page was first opened on (Sam, 100226).
+	// This listens to the browser's own popstate and reads `location`, which is always the entry shown.
+	//
+	// AND IT DOES NOT FLY. A Back captures nothing — no origin, no kind, no pivot — so letting the
+	// flights run plays them on empty captures, which Sam rejected on sight. `beginInstantSwap` puts
+	// every transition into the reduced-motion path for this one swap (see state/motion.svelte.ts); the
+	// card and its family are simply in their new places. Clicks are untouched.
+	let historySeq = 0;
+	async function onHistoryStep() {
+		const slug = decodeURIComponent(location.pathname.split('/')[2] ?? '');
+		if (!slug || featured.current?.person.slug === slug) return;
+		const seq = ++historySeq;
+		const next = data.person.slug === slug ? data : await fetchFeatured(slug);
+		// Two quick Backs start two fetches that can resolve out of order; only the latest may set the card.
+		if (seq !== historySeq) return;
+		// No payload (a retired or severed slug): a real load runs +page.ts's 301 / 404, a swap cannot.
+		if (!next) return location.reload();
+		beginInstantSwap();
+		featured.set(next);
+	}
 
 	// Re-focus choreography (DESIGN "RESOLVED ARCHITECTURE"): one roster per focus,
 	// each person in exactly one role-zone, keyed by person id. Zoom is fixed at 1
@@ -219,7 +235,7 @@
 	 * back to normal position."
 	 *
 	 * IT IS NOT A BACK BUTTON, and that is a correctness point rather than a preference. Browser back
-	 * goes through the popstate reconcile above, which calls `loadFeatured(slug)` with NO flight
+	 * goes through the history handler above (onHistoryStep), which swaps INSTANTLY with no flight
 	 * captures — so it snaps, with no flight at all. The X has to perform the descent, which means
 	 * synthesising the same click the reciprocal CC would have produced.
 	 *
@@ -283,7 +299,7 @@
 	// animate:flip glides SURVIVORS (e.g. children shared across a spouse swap) to their new
 	// positions. Its fix() mis-pins LEAVERS (measured post-insertion), but flyOut's WAAPI
 	// position:fixed pin overrides that, so leavers still land at their true click-captured rect.
-	const flipMs = $derived(prefersReducedMotion.current ? 0 : 420);
+	const flipMs = $derived(motionOff() ? 0 : 420);
 
 	// ── Stranded-transition sweep (Layer 1 — the orphan root fix) ──────────────────────────
 	// A relative box (parent/child/spouse) carries animate:flip (fix() → inline position:absolute)
@@ -459,7 +475,7 @@
 			if (!accept(el)) continue;
 			delete el.dataset.pending;
 			el.style.opacity = '';
-			if (prefersReducedMotion.current) continue;
+			if (motionOff()) continue;
 			// CHILDREN (data-flight-dir="down") get the MIRROR of the parents' fade-and-rise: they arrive
 			// from the CARD's side — the card sits directly above the children row — fading in while
 			// settling DOWN into place, instead of a flat opacity pop. Parents rise UP from below into
@@ -520,7 +536,7 @@
 	let navSeq = 0;
 
 	function onIncomingStart(node: HTMLElement) {
-		if (prefersReducedMotion.current) return;
+		if (motionOff()) return;
 		navSeq++;
 		node.classList.add('flat'); // suppress notch → solid rectangle for the flight
 		// THE ANTICIPATED NOTCH. `.flat` normally holds until landing, because a carved corner on a card
@@ -669,7 +685,7 @@
 		// gesture — leaving the zone. Every other navigation in the app reads 0 here and takes the
 		// untouched synchronous path, so there is no timing anywhere else to get wrong. Cleared on the
 		// next capture, so a stale value cannot leak into the flight after it.
-		const beat = getAscend() === -1 && !prefersReducedMotion.current ? ASCENSION_CHIP_BEAT_MS : 0;
+		const beat = getAscend() === -1 && !motionOff() ? ASCENSION_CHIP_BEAT_MS : 0;
 		const land = () => {
 			featuredLanded = true; // → reveals the pivot box + any remaining pending boxes
 			landedPersonId = f.person.id; // the shown person has landed → ungate its trigger (see above)
@@ -696,7 +712,7 @@
 		}, 700);
 	}
 	function onOutgoingStart(node: HTMLElement, id: string) {
-		if (prefersReducedMotion.current) return;
+		if (motionOff()) return;
 		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
 		retractBladeIn(node); // the CC blade stows back into the case as the card starts to leave
 		demotingPivotId = id; // this card IS the pivot (getPivotId is already cleared by introend)
@@ -752,7 +768,7 @@
 			if (landed && !prevLanded) {
 				// BOTH kinds now own their pivot via the onOutgoingEnd atomic swap (fires first, DEMOTE_LEAD);
 				// exclude it so this net can't fade-reveal it and double the seat against the shrinking card.
-				const excludePivot = !prefersReducedMotion.current && demotingPivotId != null;
+				const excludePivot = !motionOff() && demotingPivotId != null;
 				revealPending((el) => !(excludePivot && isSeatFor(el, demotingPivotId!)));
 			}
 			prevLanded = landed;
@@ -1786,6 +1802,7 @@
 	onpointermove={(ev) => { onStagePointerMove(ev); onChildTierPointerMove(ev); }}
 	onclickcapture={armTierNavClose}
 	onmouseout={onWindowMouseOut}
+	onpopstate={onHistoryStep}
 />
 
 
