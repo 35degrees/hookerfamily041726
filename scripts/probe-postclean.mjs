@@ -14,7 +14,7 @@ pg.on('console', (m) => m.type() === 'error' && errs.push('CONSOLE ' + m.text())
 const sleep = (ms) => pg.waitForTimeout(ms);
 const n = (sel) => pg.locator(sel).count();
 
-await pg.goto('http://localhost:5173/person/aaron-burr-jr-1756', { waitUntil: 'networkidle' });
+await pg.goto('http://localhost:5173/aaron-burr-jr-1756', { waitUntil: 'networkidle' });
 await sleep(1200);
 
 // --- 1. PATHS TO THOMAS, the shipped feature, must still work end to end

@@ -5,7 +5,7 @@ const VPS = [[1440,900,'desktop'],[1024,768,'tablet-land'],[768,1024,'tablet-por
 const out = [];
 for (const [w,h,name] of VPS) {
   await pg.setViewportSize({ width: w, height: h });
-  await pg.goto('http://localhost:5173/person/aaron-burr-jr-1756', { waitUntil: 'networkidle' });
+  await pg.goto('http://localhost:5173/aaron-burr-jr-1756', { waitUntil: 'networkidle' });
   await pg.waitForTimeout(1400);
   const r = { vp: `${name} ${w}x${h}` };
   const overflow = () => pg.evaluate(() => ({

@@ -23,21 +23,21 @@ for (const s of SIZES) {
 	const ctx = await b.newContext({ viewport: { width: s.w, height: s.h } });
 	const page = await ctx.newPage();
 	// warm the routes (first SvelteKit dev compile is janky — the pinned lesson's cousin)
-	for (const c of CASES) await page.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+	for (const c of CASES) await page.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(200);
 	for (const c of CASES) {
 		total++;
-		await page.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+		await page.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(320);
 		// scroll the CC into view first — on a short viewport a long card pushes lower CCs below the fold,
 		// and a click at an out-of-viewport y is a silent no-op (the 1440×900 miss).
 		await page.evaluate((tg) => {
-			const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+			const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 			a?.scrollIntoView({ block: 'center' });
 		}, c.target);
 		await page.waitForTimeout(150);
 		const geo = await page.evaluate((tg) => {
-			const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+			const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 			if (!a) return null;
 			const r = a.getBoundingClientRect();
 			return { x: r.left + r.width / 2, y: r.top + r.height / 2 };

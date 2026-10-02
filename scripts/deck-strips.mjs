@@ -14,10 +14,10 @@ const page = await ctx.newPage();
 page.on('pageerror', (e) => console.log('PAGEERROR:', e.message));
 
 for (const c of CASES) {
-	await page.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(400);
 	const geo = await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		if (!a) return null;
 		const r = a.getBoundingClientRect();
 		return { x: r.left + r.width / 2, y: r.top + r.height / 2, rc: a.dataset.relationClass };

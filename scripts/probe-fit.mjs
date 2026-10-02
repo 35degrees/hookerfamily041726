@@ -72,7 +72,7 @@ for (const v of VIEWPORTS) {
 	for (const slug of SLUGS) {
 		const ctx = await browser.newContext({ viewport: { width: v.w, height: v.h } });
 		const page = await ctx.newPage();
-		await page.goto(`http://localhost:5173/person/${slug}`, { waitUntil: 'networkidle' });
+		await page.goto(`http://localhost:5173/${slug}`, { waitUntil: 'networkidle' });
 		await page.evaluate(() => document.fonts.ready);
 		// Park the pointer off every chip. The grandchild tier opens on a 1.2s child-chip hover and is
 		// the one sanctioned overflow (see the header) — a probe that drifted the mouse over a chip would

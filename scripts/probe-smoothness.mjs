@@ -24,12 +24,12 @@ const ok = (c, m) => { if (!c) fails.push(m); };
 const median = (a) => { const s = [...a].sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : 0; };
 
 const spouseClick = (idx) => async () => {
-	await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/john-morgan-1930`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	return page.evaluate((i) => { const a = [...document.querySelectorAll('.spouse-notch .flight a')][i]; if (!a) return null; const r = a.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, idx);
 };
 const relClick = (slug, sel) => async () => {
-	await page.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${slug}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	return page.evaluate((s) => { const a = document.querySelector(s); if (!a) return null; const r = a.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, sel);
 };

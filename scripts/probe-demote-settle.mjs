@@ -54,7 +54,7 @@ const browser = await chromium.launch();
 async function captureDemote(reducedMotion) {
 	const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1, reducedMotion: reducedMotion ? 'reduce' : 'no-preference' });
 	const page = await ctx.newPage();
-	await page.goto(`${BASE}/person/${base.slug}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${base.slug}`, { waitUntil: 'networkidle' });
 	await page.waitForSelector('.spouse-notch .flight', { timeout: 8000 }).catch(() => {});
 	await page.waitForSelector('.children-slot .flight[data-flight-dir="down"]', { timeout: 4000 }).catch(() => {});
 	await page.waitForTimeout(200);
@@ -163,7 +163,7 @@ function opacityContractDrift(live) {
 {
 	const wctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 	const wpage = await wctx.newPage();
-	await wpage.goto(`${BASE}/person/${base.slug}`, { waitUntil: 'networkidle' });
+	await wpage.goto(`${BASE}/${base.slug}`, { waitUntil: 'networkidle' });
 	await wpage.waitForSelector('.children-slot .flight[data-flight-dir="down"]', { timeout: 8000 }).catch(() => {});
 	const childHref = await wpage.evaluate(() => {
 		const a = document.querySelector('.children-slot .flight[data-flight-dir="down"] a');
@@ -227,7 +227,7 @@ if (!base.cc) {
 } else {
 	const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 	const page = await ctx.newPage();
-	await page.goto(`${BASE}/person/${CC_SLUG}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${CC_SLUG}`, { waitUntil: 'networkidle' });
 	await page.waitForSelector('a[data-cc="true"]', { timeout: 8000 }).catch(() => {});
 	await page.waitForTimeout(400);
 	const ccPt = await page.evaluate(() => {

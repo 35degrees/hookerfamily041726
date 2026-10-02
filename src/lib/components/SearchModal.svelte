@@ -17,6 +17,7 @@
 	 * list that re-sorts six times while you type "thomas" has no time to have any. The motion budget
 	 * goes where it still means something — the veil coming in, and the exit into the card's flight.
 	 */
+	import { personHref } from '#lib/paths.js';
 	import { listYears as years } from '#lib/utils/dates.js';
 	import { hoverIntent } from '#lib/state/hoverIntent.js';
 	import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
@@ -366,7 +367,7 @@
 		const card = document.querySelector('.featured-card');
 		const r = (card ?? stage).getBoundingClientRect();
 		const a = document.createElement('a');
-		a.href = `/person/${slug}`;
+		a.href = personHref(slug);
 		a.dataset.cc = 'true';
 		/**
 		 * ORBIT FIGURES AND HARTFORD FOUNDERS DESCEND INTO THE ZONE (Sam) — Abraham Lincoln and
@@ -560,7 +561,7 @@
 						class:founder-row={isFounder}
 						class:orbit-row={isOrbit}
 						class:died-young={diedYoungRow(r)}
-						href="/person/{r.slug}"
+						href={personHref(r.slug)}
 						onclick={(e) => pick(e, r.slug, r.f)}
 						onmouseenter={() => (cursor = i)}
 					>

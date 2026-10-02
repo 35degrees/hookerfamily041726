@@ -13,19 +13,19 @@ const ctx = await b.newContext({ viewport: { width: 1680, height: 1000 } });
 const page = await ctx.newPage();
 let pass = 0;
 for (const c of CASES) {
-	await page.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(350);
 	// baseline: connectors ARE visible at rest (so the probe proves the cut, not an always-empty page)
 	const restMax = await page.evaluate(() =>
 		Math.max(0, ...[...document.querySelectorAll('.connector')].map((e) => +getComputedStyle(e).opacity))
 	);
 	await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		a?.scrollIntoView({ block: 'center' });
 	}, c.target);
 	await page.waitForTimeout(150);
 	const geo = await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		const r = a.getBoundingClientRect();
 		return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 	}, c.target);
@@ -34,7 +34,7 @@ for (const c of CASES) {
 		const t0 = performance.now();
 		const tick = () => {
 			const t = performance.now() - t0;
-			if (location.pathname.endsWith('/person/' + tg)) {
+			if (location.pathname.endsWith('/' + tg)) {
 				for (const e of document.querySelectorAll('.connector')) {
 					const landed = e.classList.contains('landed'); // the intended landing reveal
 					const op = +getComputedStyle(e).opacity;

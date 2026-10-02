@@ -38,7 +38,7 @@ for (const slug of slugs) {
 	});
 	page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
 
-	await page.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${slug}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(600); // let shrinkToFit + fonts.ready settle
 
 	const data = await page.evaluate(() => {

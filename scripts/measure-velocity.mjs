@@ -17,7 +17,7 @@ const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } }
 const page = await ctx.newPage();
 
 async function peak(startSlug, targetSel, label) {
-	await page.goto(`${BASE}/person/${startSlug}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${startSlug}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	const t = await page.evaluate((sel) => { const a = document.querySelector(sel); const r = a.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, targetSel);
 	await page.mouse.move(5, 5);
@@ -52,7 +52,7 @@ async function peak(startSlug, targetSel, label) {
 
 // pick the relative box (any slot) whose center is FURTHEST from the featured-slot center → max pan.
 async function peakFarthest(startSlug, label) {
-	await page.goto(`${BASE}/person/${startSlug}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${startSlug}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	const t = await page.evaluate(() => {
 		const slot = document.querySelector('.featured-slot').getBoundingClientRect();

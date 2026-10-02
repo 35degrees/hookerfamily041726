@@ -27,7 +27,7 @@ const topGaps = [];
 for (const [w, h] of SIZES) {
 	await page.setViewportSize({ width: w, height: h });
 	for (const slug of PEOPLE) {
-		const res = await page.goto(`http://localhost:5173/person/${slug}`, { waitUntil: 'networkidle' });
+		const res = await page.goto(`http://localhost:5173/${slug}`, { waitUntil: 'networkidle' });
 		if (res.status() !== 200) { console.log(`  ${slug} -> HTTP ${res.status()}`); fail++; continue; }
 		await page.waitForTimeout(300);
 		const m = await page.evaluate(() => {

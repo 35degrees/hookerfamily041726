@@ -38,9 +38,9 @@ async function sampleFlight(clickTarget, byHref) {
 }
 
 // CC nav — mary-pierpont → mary-talcott (the destination has parents, so the parent-row unfurl is tested)
-await page.goto(`${BASE}/person/mary-pierpont-1673`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/mary-pierpont-1673`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
-const cc = await sampleFlight('/person/mary-talcott-1720', true);
+const cc = await sampleFlight('/mary-talcott-1720', true);
 ok(cc, 'CC: mary-talcott link not found');
 if (cc) {
 	const flightIdx = cc.map((f, i) => ({ f, i })).filter((x) => x.f.flying).map((x) => x.i);
@@ -56,7 +56,7 @@ if (cc) {
 }
 
 // CHIP nav — a parent/child click must STILL reveal its roster during the flight (bare-screen gap closed)
-await page.goto(`${BASE}/person/michael-hooker-1935`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/michael-hooker-1935`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
 const chip = await sampleFlight('.parents-slot a, .children-slot a', false);
 if (chip) {

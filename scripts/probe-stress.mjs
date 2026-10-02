@@ -46,7 +46,7 @@ const randomTarget = () =>
 		return { kind, x: r.left + r.width / 2, y: r.top + r.height / 2, label: (el.textContent || el.getAttribute('aria-label') || '').trim().slice(0, 14) };
 	});
 
-await page.goto(`${BASE}/person/${pick(START)}`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/${pick(START)}`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
 
 const log = [];
@@ -56,7 +56,7 @@ for (let i = 0; i < N; i++) {
 	// occasionally reset to a known multi-spouse start so we keep exercising carousels
 	if (Math.random() < 0.08) {
 		const s = pick(START);
-		await page.goto(`${BASE}/person/${s}`, { waitUntil: 'domcontentloaded' }).catch(() => {});
+		await page.goto(`${BASE}/${s}`, { waitUntil: 'domcontentloaded' }).catch(() => {});
 		log.push(`goto ${s}`);
 		await page.waitForTimeout(300);
 	}

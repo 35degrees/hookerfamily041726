@@ -15,7 +15,7 @@ page.on('request', (r) => {
 
 // Start on Peter Taft; navigate UP to his father Alphonso (a chip click) — Alphonso's page has children
 // (incl. Peter) with photos, which must be preloaded during the flight.
-await page.goto(`${BASE}/person/peter-taft-ii-1846`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/peter-taft-ii-1846`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
 imgReqs = 0; // reset — count only what the NAV triggers
 

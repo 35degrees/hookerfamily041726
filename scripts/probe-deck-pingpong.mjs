@@ -19,18 +19,18 @@ function sideOf(hero, vw) {
 const b = await chromium.launch();
 const ctx = await b.newContext({ viewport: { width: 1680, height: 1000 } });
 const page = await ctx.newPage();
-await page.goto(`${BASE}/person/${A}`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/${A}`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
 
 const sides = [];
 for (const target of HOPS) {
 	await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		a?.scrollIntoView({ block: 'center' });
 	}, target);
 	await page.waitForTimeout(180);
 	const geo = await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		if (!a) return null;
 		const r = a.getBoundingClientRect();
 		return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
@@ -40,7 +40,7 @@ for (const target of HOPS) {
 		window.__h = null;
 		const t0 = performance.now();
 		const tick = () => {
-			if (location.pathname.endsWith('/person/' + tg) && !window.__h) {
+			if (location.pathname.endsWith('/' + tg) && !window.__h) {
 				const hero = [...document.querySelectorAll('.featured-flight')].find((f) => getComputedStyle(f).zIndex === '3');
 				if (hero) { const r = hero.getBoundingClientRect(); window.__h = { left: Math.round(r.left), vw: innerWidth }; }
 			}

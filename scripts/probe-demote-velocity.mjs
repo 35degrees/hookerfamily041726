@@ -21,7 +21,7 @@ const page = await ctx.newPage();
 const fails = [];
 
 async function measure(slug, chipIdx, label) {
-	await page.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${slug}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(400);
 	const c = await page.evaluate((i) => {
 		const a = [...document.querySelectorAll('.spouse-notch .flight a')][i];

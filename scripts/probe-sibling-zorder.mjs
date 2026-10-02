@@ -19,7 +19,7 @@ const ensurePanelOpen = async (page) => {
 
 const b = await chromium.launch();
 const p = await (await b.newContext({ viewport: { width: 1440, height: 1100 }, reducedMotion: 'no-preference' })).newPage();
-await p.goto(`${BASE}/person/john-morgan-1837`, { waitUntil: 'networkidle' });
+await p.goto(`${BASE}/john-morgan-1837`, { waitUntil: 'networkidle' });
 await p.waitForTimeout(800);
 await ensurePanelOpen(p); await p.waitForTimeout(600);
 await p.evaluate(() => {
@@ -47,7 +47,7 @@ await p.evaluate(() => {
 		if (t < 750) requestAnimationFrame(f); else window.__d = true;
 	})();
 });
-await p.click('.sibling-strip a[href="/person/sarah-morgan-1839"]');
+await p.click('.sibling-strip a[href="/sarah-morgan-1839"]');
 await p.waitForFunction(() => window.__d, null, { timeout: 5000 });
 const z = await p.evaluate(() => window.__z);
 const bad = z.filter((s) => s.occludes);

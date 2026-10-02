@@ -30,7 +30,7 @@ const page = await ctx.newPage();
 // ── pick the first person with BOTH a spouse chip and a child link (the couple-demotes-to-parents nav) ──
 let slug = null, spouseId = null, childPt = null;
 for (const s of CANDIDATES) {
-	await page.goto(`${BASE}/person/${s}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${s}`, { waitUntil: 'networkidle' });
 	// wait on the actual nodes, not a fixed delay — a COLD dev-server route compile can outlast networkidle
 	await page.waitForSelector('.spouse-notch .flight', { timeout: 8000 }).catch(() => {});
 	await page.waitForSelector('.children-slot .flight[data-flight-dir="down"]', { timeout: 4000 }).catch(() => {});
@@ -56,7 +56,7 @@ const childHref = await page.evaluate(() => {
 	return a ? a.getAttribute('href') : null;
 });
 if (childHref) { await page.goto(`${BASE}${childHref}`, { waitUntil: 'networkidle' }); await page.waitForTimeout(300); }
-await page.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/${slug}`, { waitUntil: 'networkidle' });
 await page.waitForSelector('.children-slot .flight[data-flight-dir="down"]', { timeout: 8000 }).catch(() => {});
 await page.waitForTimeout(500);
 childPt = await page.evaluate(() => {
@@ -115,7 +115,7 @@ await ctx.close(); // close the demote session before the CC capture (fresh cont
 // and monotonicity so the probe can assert the CC path stays byte-stable (the July-12 flash guard). ──
 const ccCtx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
 const ccPage = await ccCtx.newPage();
-await ccPage.goto(`${BASE}/person/${CC_SLUG}`, { waitUntil: 'networkidle' });
+await ccPage.goto(`${BASE}/${CC_SLUG}`, { waitUntil: 'networkidle' });
 await ccPage.waitForSelector('a[data-cc="true"]', { timeout: 8000 }).catch(() => {});
 await ccPage.waitForTimeout(500);
 let ccBaseline = null;

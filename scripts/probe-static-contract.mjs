@@ -6,7 +6,7 @@
  *
  * THE LAW IT GUARDS:
  *
- *   `/` is the only route that may be dynamic. Everything under `/person/` stays static CDN
+ *   `/` is the only route that may be dynamic. Everything under `/` stays static CDN
  *   payloads, forever. (roadmap §50.0, DEPLOYMENT §18.2)
  *
  * WHY IT NEEDS AN INSTRUMENT AT ALL. Breaking this does not look like breaking anything. Someone
@@ -46,8 +46,10 @@ const check = (name, pass, detail) => {
  * `locals`, `getSession`, or a `+page.server.ts` anywhere under the person route.
  */
 function checkPersonRouteSource() {
-	const dir = 'src/routes/person/[slug]';
-	const files = readdirSync(dir);
+	// BOTH person routes (100226): the page moved to the root as `[slug]`, and `person/[slug]` stayed
+	// behind as a permanent 301 for old links. Either one gaining a server file breaks the contract.
+	const dirs = ['src/routes/[slug]', 'src/routes/person/[slug]'];
+	const files = dirs.flatMap((d) => readdirSync(d).map((f) => `${d}/${f}`));
 
 	const serverFiles = files.filter((f) => f.includes('.server.'));
 	check(
@@ -59,7 +61,7 @@ function checkPersonRouteSource() {
 	const offenders = [];
 	for (const f of files) {
 		if (!/\.(ts|js|svelte)$/.test(f)) continue;
-		const src = readFileSync(`${dir}/${f}`, 'utf8');
+		const src = readFileSync(f, 'utf8');
 		// Comments legitimately discuss `getSession` at length in this codebase — strip them first,
 		// or the probe reports the DOCUMENTATION of the rule as a violation of it.
 		const code = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
@@ -108,7 +110,7 @@ async function checkPayloadIsStatic() {
  * exact equality would be permanently red for reasons unrelated to the contract.
  */
 async function checkPageIgnoresSession() {
-	const url = `${BASE}/person/thomas-hooker-1586`;
+	const url = `${BASE}/thomas-hooker-1586`;
 	const anon = await fetch(url);
 	const withCookie = await fetch(url, {
 		headers: { cookie: 'better-auth.session_token=probe-not-a-real-session' }

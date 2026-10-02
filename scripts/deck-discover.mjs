@@ -8,7 +8,7 @@ const ctx = await b.newContext({ viewport: { width: 1680, height: 1000 } });
 const page = await ctx.newPage();
 
 for (const s of STARTS) {
-	const resp = await page.goto(`${BASE}/person/${s}`, { waitUntil: 'networkidle' }).catch(() => null);
+	const resp = await page.goto(`${BASE}/${s}`, { waitUntil: 'networkidle' }).catch(() => null);
 	if (!resp || !resp.ok()) {
 		console.log(`\n## ${s} — UNREACHABLE`);
 		continue;
@@ -16,7 +16,7 @@ for (const s of STARTS) {
 	await page.waitForTimeout(300);
 	const links = await page.evaluate(() =>
 		[...document.querySelectorAll('a[data-cc]')].map((a) => ({
-			href: (a.getAttribute('href') || '').replace('/person/', ''),
+			href: (a.getAttribute('href') || '').replace('/', ''),
 			rc: a.dataset.relationClass || '(none)',
 			text: (a.textContent || '').trim().slice(0, 40)
 		}))

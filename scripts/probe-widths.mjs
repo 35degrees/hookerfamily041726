@@ -66,7 +66,7 @@ const SIZES = [
 
 async function sample(page, w, h) {
 	await page.setViewportSize({ width: w, height: h });
-	await page.goto(`${BASE}/person/${SUBJECT}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${SUBJECT}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(380);
 	return page.evaluate(() => {
 		const rs = getComputedStyle(document.documentElement);

@@ -22,7 +22,7 @@ for (const slug of slugs) {
 	for (const v of VIEWPORTS) {
 		const ctx = await browser.newContext({ viewport: { width: v.w, height: v.h } });
 		const page = await ctx.newPage();
-		await page.goto(`http://localhost:5173/person/${slug}`, { waitUntil: 'networkidle' });
+		await page.goto(`http://localhost:5173/${slug}`, { waitUntil: 'networkidle' });
 		await page.evaluate(() => document.fonts.ready);
 		await page.waitForTimeout(900);
 		const m = await page.evaluate(() => {

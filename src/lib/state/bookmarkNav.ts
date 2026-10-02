@@ -17,6 +17,7 @@
  * belongs to a bookmark.
  */
 import { closeModal } from '#lib/state/modal.svelte.js';
+import { personHref } from '#lib/paths.js';
 
 /**
  * @param slug   the person's CURRENT slug, resolved from their id at render time (§50.2 — bookmarks
@@ -36,7 +37,7 @@ export function arriveAtPerson(slug: string, orbit: boolean): void {
 	const r = (card ?? stage).getBoundingClientRect();
 
 	const a = document.createElement('a');
-	a.href = `/person/${slug}`;
+	a.href = personHref(slug);
 	a.dataset.cc = 'true';
 	/**
 	 * SET ONLY WHEN TRUE, NEVER `'false'`. `navigate.ts` carries a scar about exactly this: an absent

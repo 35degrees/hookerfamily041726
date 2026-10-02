@@ -24,7 +24,7 @@ const ctx = await browser.newContext({ viewport: { width: 1440, height: 1400 }, 
 const page = await ctx.newPage();
 
 async function clickParent() {
-	await page.goto(`${BASE}/person/${START}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${START}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	const p = await page.evaluate(() => {
 		const a = document.querySelector('.parents-slot a');

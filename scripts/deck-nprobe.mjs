@@ -9,10 +9,10 @@ const ctx = await b.newContext({ viewport: { width: 1680, height: 1000 } });
 const page = await ctx.newPage();
 
 for (const t of TARGETS) {
-	await page.goto(`${BASE}/person/${START}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${START}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(250);
 	const geo = await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		if (!a) return null;
 		const r = a.getBoundingClientRect();
 		return { x: r.left + r.width / 2, y: r.top + r.height / 2, rc: a.dataset.relationClass };

@@ -5,13 +5,14 @@
  *   - focusPerson(slug): fetch + set featured state, then pushState the URL
  *     (SvelteKit shallow routing). No load re-run, no page unmount → the
  *     single-source `f` in +page.svelte just re-reads the new featured payload.
- *   - warmPersonLinks (action): delegates clicks on /person/<slug> links to the
+ *   - warmPersonLinks (action): delegates clicks on /<slug> person links to the
  *     warm path for plain left-clicks, while leaving the <a href> intact for SEO,
  *     cold loads, middle-click, cmd/ctrl-click, and new-tab.
  *
  * popstate (back/forward) is reconciled in +page.svelte by watching the URL.
  */
 import { goto } from '$app/navigation';
+import { personHref, slugFromPath } from '#lib/paths.js';
 import { prefersReducedMotion } from 'svelte/motion';
 import { featured } from './featured.svelte';
 import { publishCameraMove, type CameraMove } from './camera';
@@ -52,7 +53,7 @@ export async function focusPerson(slug: string): Promise<void> {
 	const data = await fetchFeatured(slug);
 	if (!data) {
 		// Unknown/stale slug — fall back to a real navigation so the 404/redirect path runs.
-		window.location.href = `/person/${slug}`;
+		window.location.href = personHref(slug);
 		return;
 	}
 	// §19 SEAM — the one instant where the INCOMING sibling list is in hand and the OUTGOING panel is
@@ -70,7 +71,7 @@ export async function focusPerson(slug: string): Promise<void> {
 	featured.set(data);
 	// SvelteKit 3: shallow routing is goto(..., { shallow: true }) — pushState is deprecated. A new history
 	// entry exactly as before, no load re-run; `void` because it returns a promise this path has never needed to await.
-	void goto(`/person/${slug}`, { shallow: true });
+	void goto(personHref(slug), { shallow: true });
 	// Clear the per-navigation flight captures one frame later — after the transition flush has
 	// read them — so a subsequent back/forward nav (which captures nothing) can't reuse stale data.
 	requestAnimationFrame(() => clearFlightCaptures());
@@ -80,7 +81,7 @@ const isModified = (e: MouseEvent) => e.metaKey || e.ctrlKey || e.shiftKey || e.
 
 /**
  * Svelte action: delegate clicks within `node` to the warm path when they land on
- * an internal /person/<slug> link. Plain left-clicks re-focus in place; everything
+ * an internal /<slug> person link. Plain left-clicks re-focus in place; everything
  * else (modified clicks, middle-click, target=_blank, download, non-person links)
  * falls through to the browser / SvelteKit default.
  */
@@ -90,8 +91,10 @@ export function warmPersonLinks(node: HTMLElement) {
 		const anchor = (event.target as Element | null)?.closest('a');
 		if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return;
 		const href = anchor.getAttribute('href');
-		const match = href?.match(/^\/person\/([^/?#]+)$/);
-		if (!match) return; // not an internal person link — leave it to the browser
+		// slugFromPath, never a pattern of our own: a person URL is a ROOT path now, and /table or /api
+		// are root paths too. One reader, in $lib/paths.ts, knows which root names are not people.
+		const targetSlug = href ? slugFromPath(href) : null;
+		if (!targetSlug) return; // not an internal person link — leave it to the browser
 		// FLIGHT LOCK: a warm nav is in progress (a card is mid-flight, its roster not yet extended). Swallow
 		// this click entirely — no overlapping flight, no nav off a card the user can't yet read. Released when
 		// the incoming card LANDS with its chips out (+page's landing effect → unlockFlight).
@@ -232,7 +235,7 @@ export function warmPersonLinks(node: HTMLElement) {
 		const ascend = isFamilyChip ? null : toOrbit === fromOrbit ? null : toOrbit ? 1 : -1;
 		// The door, remembered on the way IN only — a single slot, never a stack (see ascension.svelte.ts).
 		if (ascend === 1) {
-			markAscent(decodeURIComponent(window.location.pathname.replace(/^\/person\//, '')));
+			markAscent(slugFromPath(window.location.pathname) ?? '');
 		} else if (ascend === -1) {
 			clearAscent();
 		}
@@ -250,8 +253,8 @@ export function warmPersonLinks(node: HTMLElement) {
 		// Fresh lateral CC → exit left; clicking the reciprocal link straight back → flip; anything else resets.
 		// (Vertical CCs self-skip inside — they use the gen sign, not this memory.)
 		if (isCC) {
-			const source = decodeURIComponent(window.location.pathname.replace(/^\/person\//, ''));
-			resolveLateralDir(provisional, source, decodeURIComponent(match[1]));
+			const source = slugFromPath(window.location.pathname) ?? '';
+			resolveLateralDir(provisional, source, targetSlug);
 		}
 		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, kinDistance, ascend, scaleMin });
 		// The arc clock is started at the STATE SWAP (below), not here — so it shares its time origin with the
@@ -260,7 +263,7 @@ export function warmPersonLinks(node: HTMLElement) {
 		const arcTo = from && to ? { x: to.x, y: to.y ?? from.y ?? 0 } : null;
 		const arcDuration = arcDurationMsFor(provisional);
 
-		const slug = decodeURIComponent(match[1]);
+		const slug = targetSlug;
 		// HARD CUT → FLY (item A): a CC arrival removes the roster THIS frame — the same frame the flight
 		// origin was captured above — no beat, no fade. The lone card launches; the incoming roster is held
 		// pending and unfurls at landing. Chip navs (and reduced motion) never cut. Restored once the flight

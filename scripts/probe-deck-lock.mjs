@@ -1,16 +1,16 @@
 // PROBE (v4.2.1): nav clicks are DISABLED while a card is in flight, and RE-ENABLED once the incoming card
-// lands with its chips extended. Inject a persistent /person/ link inside the warm-nav container, then:
+// lands with its chips extended. Inject a persistent / link inside the warm-nav container, then:
 //   1. click a CC → nav starts (lock engages)
 //   2. mid-flight, click the injected link → must be SWALLOWED (URL unchanged)
 //   3. after landing, click the injected link → must NAVIGATE (lock released)
 import { chromium } from '@playwright/test';
 const BASE = 'http://localhost:5173';
-const TESTHREF = '/person/mary-pierpont-1673';
+const TESTHREF = '/mary-pierpont-1673';
 
 const b = await chromium.launch();
 const ctx = await b.newContext({ viewport: { width: 1680, height: 1000 } });
 const page = await ctx.newPage();
-await page.goto(`${BASE}/person/thomas-hooker-1586`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/thomas-hooker-1586`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
 
 // inject a persistent test link inside the page-container (delegated by warmPersonLinks; survives SPA swap)
@@ -25,7 +25,7 @@ await page.evaluate((href) => {
 
 // find a CC to click
 const geo = await page.evaluate(() => {
-	const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/john-haynes-1594'));
+	const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/john-haynes-1594'));
 	a?.scrollIntoView({ block: 'center' });
 	const r = a.getBoundingClientRect();
 	// The FIRST line fragment, not the union box. A CC link that wraps has two client rects and
@@ -39,14 +39,14 @@ const geo = await page.evaluate(() => {
 await page.mouse.click(geo.x, geo.y);
 await page.waitForTimeout(240);
 const afterCC = page.url();
-const navigatedToCC = afterCC.endsWith('/person/john-haynes-1594');
+const navigatedToCC = afterCC.endsWith('/john-haynes-1594');
 
 // 2. still mid-flight (total flight ~1.7s), click the injected link — should be swallowed
 await page.waitForTimeout(150);
 await page.evaluate(() => document.querySelector('#testlink')?.click());
 await page.waitForTimeout(150);
 const midFlightUrl = page.url();
-const swallowed = midFlightUrl.endsWith('/person/john-haynes-1594'); // did NOT go to mary-pierpont
+const swallowed = midFlightUrl.endsWith('/john-haynes-1594'); // did NOT go to mary-pierpont
 
 // 3. after landing, click the injected link — should navigate
 await page.waitForTimeout(1600); // well past landing + unlock

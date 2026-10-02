@@ -37,10 +37,10 @@ const ctx = await b.newContext({ viewport: { width: 1680, height: 1000 } });
 const page = await ctx.newPage();
 let pass = 0;
 for (const c of CASES) {
-	await page.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(320);
 	const geo = await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		if (!a) return null;
 		const r = a.getBoundingClientRect();
 		return { x: r.left + r.width / 2, y: r.top + r.height / 2, gd: a.dataset.genDelta ?? '(absent)' };
@@ -50,7 +50,7 @@ for (const c of CASES) {
 		window.__h = null;
 		const t0 = performance.now();
 		const tick = () => {
-			if (location.pathname.endsWith('/person/' + tg) && !window.__h) {
+			if (location.pathname.endsWith('/' + tg) && !window.__h) {
 				// the hero is z-index 3 (car-1 is z 2) — grab ITS rect at the offscreen entry start
 				const hero = [...document.querySelectorAll('.featured-flight')].find((f) => getComputedStyle(f).zIndex === '3');
 				if (hero) {

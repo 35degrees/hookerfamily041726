@@ -90,12 +90,15 @@
 	// the name IS the link. Every space inside a linked name becomes non-breaking, so the whole name
 	// moves to the next line together or not at all. The width search below takes the paragraph's
 	// min-content width as its floor, so a bound name can never be squeezed into overflowing.
+	// A HYPHEN is a break point too ("Rowan-|Hamilton"), and U+2011 is missing from most fonts, so the
+	// hyphen is held by `white-space: nowrap` on .cc-link / .cc-name instead of by a character swap.
 	function bindName(text: string): string {
 		return (text ?? '').replace(/[ \t]+/g, '\u00a0');
 	}
 </script>
 
 <script lang="ts">
+	import { personHref } from '#lib/paths.js';
 	import { stage } from '#lib/state/stage.svelte.js';
 	import { fitBlade } from '#lib/actions/fitBlade.js';
 
@@ -269,7 +272,7 @@
 </script>
 
 {#snippet ccAnchor(l: Record<string, any>)}{#if l.slug}<a
-			href="/person/{l.slug}"
+			href={personHref(l.slug)}
 			data-cc="true"
 			data-tx={l.t?.x ?? undefined}
 			data-ty={l.t?.y ?? undefined}
@@ -496,6 +499,7 @@
 
 	.cc-link {
 		font-weight: 500;
+		white-space: nowrap;
 		color: var(--cc-link);
 		text-decoration: underline;
 		text-decoration-thickness: 1px;
@@ -507,6 +511,7 @@
 	}
 	.cc-name {
 		font-weight: 500;
+		white-space: nowrap;
 	}
 	.cc-label-text {
 		opacity: 0.75;

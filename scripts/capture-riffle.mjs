@@ -8,7 +8,7 @@ const b = await chromium.launch();
 const ctx = await b.newContext({ viewport: { width: 1680, height: 1000 }, deviceScaleFactor: 1 });
 const page = await ctx.newPage();
 page.on('pageerror', (e) => console.log('PAGEERROR:', e.message));
-await page.goto(`${BASE}/person/mary-pierpont-1673`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/mary-pierpont-1673`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
 
 const diag = await page.evaluate(() => ({
@@ -20,7 +20,7 @@ console.log('CC links on page:', diag.ccLinks);
 
 const geo = await page.evaluate(() => {
 	const a = [...document.querySelectorAll('a[data-cc]')].find((x) =>
-		(x.getAttribute('href') || '').endsWith('/person/mary-talcott-1720')
+		(x.getAttribute('href') || '').endsWith('/mary-talcott-1720')
 	);
 	if (!a) return null;
 	const r = a.getBoundingClientRect();

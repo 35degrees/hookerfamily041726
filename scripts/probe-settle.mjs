@@ -19,7 +19,7 @@ const ok = (c, m) => { if (!c) fails.push(m); };
 // getClick: async () => {x,y} — navigates and returns the click point (a spouse chip or a relative link).
 // The settle now applies to BOTH promotion regimes (Layer 3), so the measurement is regime-agnostic.
 const spouseClick = (idx) => async () => {
-	await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/john-morgan-1930`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	return page.evaluate((i) => {
 		const a = [...document.querySelectorAll('.spouse-notch .flight a')][i];
@@ -29,7 +29,7 @@ const spouseClick = (idx) => async () => {
 	}, idx);
 };
 const relativeClick = (slug, sel) => async () => {
-	await page.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${slug}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	return page.evaluate((s) => {
 		const a = document.querySelector(s);

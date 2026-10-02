@@ -11,10 +11,10 @@ const b = await chromium.launch();
 const ctx = await b.newContext({ viewport: { width: 1680, height: 1000 } });
 const page = await ctx.newPage();
 for (const c of CASES) {
-	await page.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(350);
 	const geo = await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		const r = a.getBoundingClientRect();
 		return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 	}, c.target);
@@ -22,7 +22,7 @@ for (const c of CASES) {
 		window.__hero = null;
 		const t0 = performance.now();
 		const tick = () => {
-			const here = location.pathname.endsWith('/person/' + tg);
+			const here = location.pathname.endsWith('/' + tg);
 			if (here && !window.__hero) {
 				const fs = [...document.querySelectorAll('.featured-flight')].map((f) => {
 					const r = f.getBoundingClientRect();

@@ -17,7 +17,7 @@
 import { chromium } from '@playwright/test';
 
 const BASE = 'http://localhost:5173';
-const START = '/person/thomas-hooker-1586';
+const START = '/thomas-hooker-1586';
 const SETTLE = 1800; // a flight plus its landing, generously
 
 const b = await chromium.launch();

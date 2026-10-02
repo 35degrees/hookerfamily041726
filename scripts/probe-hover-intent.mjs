@@ -42,7 +42,7 @@ async function photoBox() {
 	return b;
 }
 
-await page.goto(`${BASE}/person/${SUBJECT}`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/${SUBJECT}`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(900);
 const box = await photoBox();
 const mid = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
@@ -87,7 +87,7 @@ await page.waitForTimeout(200);
 await page.mouse.move(mid.x, mid.y);
 await page.waitForTimeout(SETTLE);
 await page.evaluate(() => {
-	const a = document.querySelector('.sibling-strip a[href^="/person/"]');
+	const a = document.querySelector('.sibling-strip a[href^="/"]');
 	if (a) a.click();
 });
 await page.waitForTimeout(1800); // the whole flight, plus the landing unfurl

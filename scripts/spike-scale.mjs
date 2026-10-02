@@ -11,7 +11,7 @@ import { chromium } from '@playwright/test';
 
 const browser = await chromium.launch();
 const page = await (await browser.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
-await page.goto('http://localhost:5173/person/aaron-burr-jr-1756', { waitUntil: 'networkidle' });
+await page.goto('http://localhost:5173/aaron-burr-jr-1756', { waitUntil: 'networkidle' });
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(800);
 

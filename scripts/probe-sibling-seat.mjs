@@ -76,10 +76,10 @@ p.on('pageerror', (e) => pageErrors.push(e.message.split('\n')[0]));
 
 let failures = 0;
 for (const c of CASES) {
-	await p.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+	await p.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 	await p.waitForTimeout(800);
 	await ensurePanelOpen(p);
-	await p.waitForSelector(`.sibling-strip a[href="/person/${c.click}"]`, { timeout: 5000 });
+	await p.waitForSelector(`.sibling-strip a[href="/${c.click}"]`, { timeout: 5000 });
 	await p.waitForTimeout(400);
 	pageErrors = [];
 
@@ -132,7 +132,7 @@ for (const c of CASES) {
 		})();
 	}, { pivot: c.pivot, promoted: c.promoted, glider: c.glider });
 
-	await p.click(`.sibling-strip a[href="/person/${c.click}"]`);
+	await p.click(`.sibling-strip a[href="/${c.click}"]`);
 	await p.waitForFunction(() => window.__sd, null, { timeout: 8000 });
 	const s = await p.evaluate(() => window.__s);
 
@@ -268,18 +268,18 @@ for (const c of CASES) {
 // SCROLLED — first chips above the fold, and the trigger replaced by an up-caret for a list nobody had
 // touched. Only a hand on the trigger reset it. Every arrival except a §19 mutation starts at the top.
 {
-	await p.goto(`${BASE}/person/elnathan-strong-1783`, { waitUntil: 'networkidle' });
+	await p.goto(`${BASE}/elnathan-strong-1783`, { waitUntil: 'networkidle' });
 	await p.waitForTimeout(800);
 	await ensurePanelOpen(p);
-	await p.waitForSelector('.sibling-strip a[href="/person/florella-strong-1769"]', { timeout: 5000 });
+	await p.waitForSelector('.sibling-strip a[href="/florella-strong-1769"]', { timeout: 5000 });
 	await p.waitForTimeout(400);
 	pageErrors = [];
 	// 1. the mutation, which deliberately leaves the strip scrolled
-	await p.click('.sibling-strip a[href="/person/florella-strong-1769"]');
+	await p.click('.sibling-strip a[href="/florella-strong-1769"]');
 	await p.waitForTimeout(1400);
 	const mid = await p.evaluate(() => document.querySelector('.sibling-window')?.dataset.sibOffset ?? null);
 	// 2. a parent promotion onto someone who has a panel of their own
-	await p.click('a[data-relation="parent"][href="/person/cyprian-strong-1743"]');
+	await p.click('a[data-relation="parent"][href="/cyprian-strong-1743"]');
 	await p.waitForTimeout(1800);
 	const after = await p.evaluate(() => ({
 		offset: document.querySelector('.sibling-window')?.dataset.sibOffset ?? null,
@@ -310,7 +310,7 @@ for (const c of CASES) {
 // single load unless the first paint is quiet.
 {
 	pageErrors = [];
-	await p.goto(`${BASE}/person/alfred-vanderbilt-1877`, { waitUntil: 'commit' });
+	await p.goto(`${BASE}/alfred-vanderbilt-1877`, { waitUntil: 'commit' });
 	await p.evaluate(() => {
 		window.__d = [];
 		const t0 = performance.now();
@@ -356,11 +356,11 @@ for (const c of CASES) {
 {
 	pageErrors = [];
 	const chipTop = () => p.evaluate(() => { const e = document.querySelector('.sib-item'); return e ? +e.getBoundingClientRect().top.toFixed(1) : null; });
-	await p.goto(`${BASE}/person/rodman-hooker-1909`, { waitUntil: 'networkidle' });
+	await p.goto(`${BASE}/rodman-hooker-1909`, { waitUntil: 'networkidle' });
 	await p.waitForTimeout(1000);
 	await ensurePanelOpen(p);
 	const compact = await chipTop(); // 3 spouses → compact notch
-	await p.click('.sibling-strip a[href="/person/john-hooker-1903"]');
+	await p.click('.sibling-strip a[href="/john-hooker-1903"]');
 	await p.waitForTimeout(1600);
 	const normal = await chipTop(); // 1 spouse → full notch
 	const fails = [];
@@ -390,7 +390,7 @@ for (const c of CASES) {
 // reserved for the open/closed state.
 {
 	pageErrors = [];
-	await p.goto(`${BASE}/person/alfred-vanderbilt-1877`, { waitUntil: 'networkidle' });
+	await p.goto(`${BASE}/alfred-vanderbilt-1877`, { waitUntil: 'networkidle' });
 	await p.waitForTimeout(1100);
 	const read = () => p.evaluate(() => {
 		const t = document.querySelector('.sibling-trigger');

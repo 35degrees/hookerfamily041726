@@ -26,10 +26,10 @@ const PAIRS = [
 ];
 
 async function arrival(src, target, label, wantClass, [tLo, tHi]) {
-	await page.goto(`${BASE}/person/${src}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${src}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(400);
 	const geo = await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		if (!a) return null;
 		const r = a.getBoundingClientRect();
 		const s = document.querySelector('.featured-slot').getBoundingClientRect();

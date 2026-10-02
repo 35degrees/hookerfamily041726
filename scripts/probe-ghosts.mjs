@@ -24,14 +24,14 @@ const OLD_SIBLING_SLUGS = ['sarah-morgan-1839', 'junius-morgan-jr-1846', 'juliet
 // of her in her own panel is the real ghost. Vertical promotions still land on a genuinely different sibling
 // set, so they keep the full four.
 const CASES = [
-	{ name: 'UP → parent chip', link: 'a[data-relation="parent"][href="/person/junius-morgan-1813"]', mustLeave: OLD_SIBLING_SLUGS },
-	{ name: 'DOWN → child chip', link: 'a[data-relation="child"][href="/person/louisa-satterlee-1866"]', mustLeave: OLD_SIBLING_SLUGS },
+	{ name: 'UP → parent chip', link: 'a[data-relation="parent"][href="/junius-morgan-1813"]', mustLeave: OLD_SIBLING_SLUGS },
+	{ name: 'DOWN → child chip', link: 'a[data-relation="child"][href="/louisa-satterlee-1866"]', mustLeave: OLD_SIBLING_SLUGS },
 	// Slice 3: LATERAL sibling flight. Sam's worst case: the panel is OPEN and the click lands ON a chip
 	// inside it. The old CARD and its spouse chips must still leave, and the promoted sibling's own chip
 	// must leave — the shared siblings stay, because they belong to the person who just arrived.
 	{
 		name: 'LATERAL → sibling chip',
-		link: '.sibling-strip a[data-relation="sibling"][href="/person/sarah-morgan-1839"]',
+		link: '.sibling-strip a[data-relation="sibling"][href="/sarah-morgan-1839"]',
 		mustLeave: ['sarah-morgan-1839']
 	}
 ];
@@ -51,12 +51,12 @@ const p = await ctx.newPage();
 let pageErrors = [];
 p.on('pageerror', (e) => pageErrors.push(e.message.split('\n')[0]));
 
-const sibSel = (slugs) => slugs.map((s) => `.sibling-strip a[href="/person/${s}"]`).join(',');
+const sibSel = (slugs) => slugs.map((s) => `.sibling-strip a[href="/${s}"]`).join(',');
 
 let failures = 0;
 for (const c of CASES) {
 	const oldSiblingSel = sibSel(c.mustLeave); // per-case: only the chips THIS nav is entitled to remove
-	await p.goto(`${BASE}/person/${START}`, { waitUntil: 'networkidle' });
+	await p.goto(`${BASE}/${START}`, { waitUntil: 'networkidle' });
 	await p.waitForTimeout(900);
 	if (await p.locator('.sibling-trigger').count()) {
 		await ensurePanelOpen(p); // Sam's worst case: carousel OPEN before the click
@@ -125,13 +125,13 @@ for (const c of CASES) {
 }
 
 // Accumulation guard: repeated round-trips must not leak resident flight/chip nodes.
-await p.goto(`${BASE}/person/${START}`, { waitUntil: 'networkidle' });
+await p.goto(`${BASE}/${START}`, { waitUntil: 'networkidle' });
 await p.waitForTimeout(600);
 const baseline = await p.evaluate(() => document.querySelectorAll('.featured-flight, .sibling-strip .person-box, .spouse-strip .flight').length);
 for (let i = 0; i < 3; i++) {
-	await p.goto(`${BASE}/person/junius-morgan-1813`, { waitUntil: 'networkidle' });
+	await p.goto(`${BASE}/junius-morgan-1813`, { waitUntil: 'networkidle' });
 	await p.waitForTimeout(400);
-	await p.goto(`${BASE}/person/${START}`, { waitUntil: 'networkidle' });
+	await p.goto(`${BASE}/${START}`, { waitUntil: 'networkidle' });
 	await p.waitForTimeout(400);
 }
 const afterRepeats = await p.evaluate(() => document.querySelectorAll('.featured-flight, .sibling-strip .person-box, .spouse-strip .flight').length);

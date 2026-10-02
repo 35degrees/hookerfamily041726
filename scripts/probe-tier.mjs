@@ -109,7 +109,7 @@ const INSTRUMENT = () => {
 	};
 };
 
-await page.goto(`${BASE}/person/${START}`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/${START}`, { waitUntil: 'networkidle' });
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(1500);
 // The grandchildren list lives in the page payload, not the DOM, so the probe fetches it the same way
@@ -1059,7 +1059,7 @@ if (process.argv.includes('--film')) {
 	await fs.mkdir(dir, { recursive: true });
 	for (const f of await fs.readdir(dir)) if (f.startsWith(`${label}-`)) await fs.unlink(`${dir}/${f}`);
 
-	await page.goto(`${BASE}/person/${START}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${START}`, { waitUntil: 'networkidle' });
 	await page.evaluate(() => document.fonts.ready);
 	await page.waitForTimeout(1200);
 	const p = await rectOf('.parents-slot a.person-box', parentMatch);

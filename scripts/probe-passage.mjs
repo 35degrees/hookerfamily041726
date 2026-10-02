@@ -31,24 +31,24 @@ async function clickAndPeak(selectorOrHref, byHref) {
 }
 
 // far dive: michael (1935) → Rev. Bunker Gay (1735), span 200 → full passage
-await page.goto(`${BASE}/person/michael-hooker-1935`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/michael-hooker-1935`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
 ok((await count()) === 0, `far: ${await count()} passage elements at rest BEFORE flight (want 0)`);
-const far = await clickAndPeak('/person/bunker-gay-1735', true);
+const far = await clickAndPeak('/bunker-gay-1735', true);
 ok(far.peak > 4, `far dive: peak markers ${far.peak} (want > 4)`);
 ok(far.peak <= 8, `far dive: peak markers ${far.peak} (want ≤ 8 cap)`);
 ok(far.atRest === 0, `far dive: ${far.atRest} passage elements linger at rest (want 0)`);
 console.log(`  far dive (michael→bunker, 200y): peak=${far.peak} markers, at-rest=${far.atRest}`);
 
 // uncle-class: same-era CC, span 48 (< 60) → NO passage
-await page.goto(`${BASE}/person/matthew-russell-1761`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/matthew-russell-1761`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
-const uncle = await clickAndPeak('/person/matthew-talcott-1713', true);
+const uncle = await clickAndPeak('/matthew-talcott-1713', true);
 ok(uncle.peak === 0, `uncle-class CC: peak markers ${uncle.peak} (want 0 — same-era)`);
 console.log(`  uncle-class (matthew-russell→matthew-talcott, 48y): peak=${uncle.peak} markers`);
 
 // chip navigation: a parent/child click must spawn no passage
-await page.goto(`${BASE}/person/michael-hooker-1935`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/michael-hooker-1935`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
 const chip = await clickAndPeak('.parents-slot a, .children-slot a', false);
 ok(chip.peak <= 0, `chip nav: ${chip.peak} passage markers (want 0 — chip navs untouched)`);

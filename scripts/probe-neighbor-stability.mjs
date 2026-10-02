@@ -4,7 +4,7 @@
  * its seat and spring back. A non-flying neighbour that dips-and-returns is "jello screen", the failure
  * state. This probe drives the reported repro and asserts the stationary neighbour settles MONOTONICALLY.
  *
- * Repro (Sam): /person/aaron-burr-jr-1756 featured → click father Aaron Burr Sr. Aaron Burr Jr (H00913)
+ * Repro (Sam): /aaron-burr-jr-1756 featured → click father Aaron Burr Sr. Aaron Burr Jr (H00913)
  * demotes to a child chip and settles (allowed). His sister Sarah "Sally" Burr Reeve (H00912) did NOT fly
  * — she must reach her rest position without dipping PAST it. Today she overshoots ~23px (the whole child
  * row dips), because the featured-slot height-glide repositions the row while her entrance transform plays.
@@ -26,7 +26,7 @@ const fails = [];
 // NEIGHBOUR = a children-slot chip that is NOT the flying element's seat. Its rest is its final settled top;
 // a clean entrance approaches rest monotonically. Overshoot = how far it passes rest and returns.
 async function neighbourOvershoot(featured, fatherHrefFrag, neighbourId, flyingSeatId, label) {
-	await page.goto(`${BASE}/person/${featured}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${featured}`, { waitUntil: 'networkidle' });
 	await page.waitForSelector('.parents-slot .flight a', { timeout: 8000 }).catch(() => {});
 	await page.waitForTimeout(500);
 	const fpt = await page.evaluate((frag) => {

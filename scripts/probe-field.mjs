@@ -30,7 +30,7 @@ const ruleTops = () => page.evaluate(() => [...document.querySelectorAll('.rule-
 const rulesTransform = () => page.evaluate(() => { const el = document.querySelector('.layer.rules'); return el ? new DOMMatrixReadOnly(getComputedStyle(el).transform).m42 : null; });
 async function clickNav(sel) { const c = await centerOf(sel); if (!c) return false; await page.mouse.click(c.x, c.y); await page.waitForTimeout(950); return true; }
 
-await page.goto(`${BASE}/person/michael-hooker-1935`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/michael-hooker-1935`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(400);
 ok(await setSkin('Ledger'), 'could not reach the Ledger skin via the toggle');
 await page.waitForTimeout(300);

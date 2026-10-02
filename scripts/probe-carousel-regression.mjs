@@ -84,7 +84,7 @@ const wide = await browser.newContext({ viewport: { width: 1440, height: 900 } }
 const wp = await wide.newPage();
 const captured = {};
 for (const slug of GUARD) {
-	await wp.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+	await wp.goto(`${BASE}/${slug}`, { waitUntil: 'networkidle' });
 	await wp.waitForTimeout(500);
 	const m = await measure(wp);
 	captured[slug] = m.chips.filter((c) => c.visible).map((c) => ({ name: c.name, x: c.x, right: c.right }));
@@ -108,7 +108,7 @@ if (MODE === 'capture') {
 const wide2 = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const cp = await wide2.newPage();
 for (const slug of CAROUSEL) {
-	await cp.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+	await cp.goto(`${BASE}/${slug}`, { waitUntil: 'networkidle' });
 	await cp.waitForTimeout(500);
 	let frozen = null; // the docked visible-chip rects — must be identical at EVERY offset
 	for (let step = 0; step < 6; step++) {
@@ -138,7 +138,7 @@ for (const slug of CAROUSEL) {
 // and the two carets are EQUIDISTANT from the chips they flank (left before the first chip's left
 // edge, right past the trailing chip's right edge — symmetry against the CHIP edges, not the card).
 {
-	await cp.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+	await cp.goto(`${BASE}/john-morgan-1930`, { waitUntil: 'networkidle' });
 	await cp.waitForTimeout(500);
 	const opacity = (sel) => cp.$eval(sel, (el) => getComputedStyle(el).opacity).catch(() => 'absent');
 	ok((await opacity('.caret-right')) === '1', 'right caret not fully visible at offset 0');
@@ -177,7 +177,7 @@ await wide2.close();
 const narrow = await browser.newContext({ viewport: { width: 1000, height: 900 } });
 const np = await narrow.newPage();
 for (const slug of CAROUSEL) {
-	await np.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+	await np.goto(`${BASE}/${slug}`, { waitUntil: 'networkidle' });
 	await np.waitForTimeout(400);
 	const m = await measure(np);
 	ok(m.hScroll <= 0, `${slug} @1000px: horizontal scrollbar (hScroll=${m.hScroll})`);
@@ -186,7 +186,7 @@ for (const slug of CAROUSEL) {
 	ok(clip === 'clip', `${slug}: page-container overflow-x is '${clip}', not 'clip' (overhang could scroll)`);
 }
 // mid-flight scrollbar: click a chip (reachable at offset 0), sample during the flight.
-await np.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+await np.goto(`${BASE}/john-morgan-1930`, { waitUntil: 'networkidle' });
 await np.waitForTimeout(500);
 const chipA = await np.$('.spouse-notch .flight a, .spouse-strip .flight a');
 if (chipA) {

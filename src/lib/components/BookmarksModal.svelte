@@ -16,6 +16,7 @@
 	 * text box, 25 characters, and the new name propagates everywhere immediately because every
 	 * surface reads `auth.listName()` rather than holding its own copy (§50.2).
 	 */
+	import { personHref } from '#lib/paths.js';
 	import { listYears as years } from '#lib/utils/dates.js';
 	import { modal, closeModal } from '#lib/state/modal.svelte.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
@@ -299,7 +300,7 @@
 										class:ee-line={(r.f & CAT.INLAW) !== 0}
 										class:founder-row={isFounder}
 										class:orbit-row={isOrbit}
-										href="/person/{r.slug}"
+										href={personHref(r.slug)}
 										onclick={(e) => {
 											if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 											e.preventDefault();

@@ -39,10 +39,10 @@ const ensurePanelOpen = async (page) => {
 
 const b = await chromium.launch();
 const p = await (await b.newContext({ viewport: { width: 1440, height: 1100 }, reducedMotion: 'no-preference' })).newPage();
-await p.goto(`${BASE}/person/${START}`, { waitUntil: 'networkidle' });
+await p.goto(`${BASE}/${START}`, { waitUntil: 'networkidle' });
 await p.waitForTimeout(800);
 await ensurePanelOpen(p);
-await p.waitForSelector(`.sibling-strip a[href="/person/${STEP_SIB}"]`, { timeout: 5000 });
+await p.waitForSelector(`.sibling-strip a[href="/${STEP_SIB}"]`, { timeout: 5000 });
 await p.waitForTimeout(400);
 
 await p.evaluate(() => {
@@ -71,7 +71,7 @@ await p.evaluate(() => {
 		if (t < 900) requestAnimationFrame(f); else window.__d = true;
 	})();
 });
-await p.click(`.sibling-strip a[href="/person/${STEP_SIB}"]`);
+await p.click(`.sibling-strip a[href="/${STEP_SIB}"]`);
 await p.waitForFunction(() => window.__d, null, { timeout: 5000 });
 const s = await p.evaluate(() => window.__n);
 await b.close();

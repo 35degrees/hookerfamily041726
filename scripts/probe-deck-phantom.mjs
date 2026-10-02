@@ -18,15 +18,15 @@ const SIZES = [
 ];
 
 async function run(page, c) {
-	await page.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(300);
 	await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		a?.scrollIntoView({ block: 'center' });
 	}, c.target);
 	await page.waitForTimeout(150);
 	const geo = await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		if (!a) return null;
 		const r = a.getBoundingClientRect();
 		return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
@@ -106,7 +106,7 @@ let pass = 0, total = 0;
 for (const s of SIZES) {
 	const ctx = await b.newContext({ viewport: { width: s.w, height: s.h } });
 	const page = await ctx.newPage();
-	for (const c of CASES) await page.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' }); // warm
+	for (const c of CASES) await page.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' }); // warm
 	for (const c of CASES) {
 		total++;
 		const tl = await run(page, c);

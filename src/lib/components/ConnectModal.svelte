@@ -33,6 +33,7 @@
   Building downward from Thomas would be the same rows in the same places telling the opposite story.
 -->
 <script lang="ts">
+	import { personHref } from '#lib/paths.js';
 	import { fade } from 'svelte/transition';
 	import { hoverIntent } from '#lib/state/hoverIntent.js';
 	import { linear, cubicOut } from 'svelte/easing';
@@ -835,7 +836,7 @@
 			// is right here for the same reason the ±1 case is: the chip is on stage, so click the real one.
 			// ±1 — the person IS on stage, as a parent chip or in the children row. Click the real one.
 			if (isPartner || delta === -1 || delta === 1) {
-				const onStage = stage.querySelector<HTMLElement>(`a[href="/person/${slug}"]`);
+				const onStage = stage.querySelector<HTMLElement>(`a[href="${personHref(slug)}"]`);
 				if (onStage) {
 					onStage.click();
 					return;
@@ -847,7 +848,7 @@
 			const card = document.querySelector('.featured-card');
 			const r = (card ?? stage).getBoundingClientRect();
 			const a = document.createElement('a');
-			a.href = `/person/${slug}`;
+			a.href = personHref(slug);
 			a.dataset.cc = 'true';
 			a.dataset.relationClass = 'direct';
 			// `if (delta)` EXCLUDES 0 AS WELL AS NULL, and that is deliberate. A chain should never hold two
@@ -1004,7 +1005,7 @@
 				     instead of restating it. The href is a genuine person URL, so middle-click and
 				     cmd-click open a tab exactly as they do from a chip on the stage. -->
 				<a
-					href={p.slug ? `/person/${p.slug}` : '#'}
+					href={p.slug ? personHref(p.slug) : '#'}
 					onclick={(e) => rungNav(p, e)}
 					data-rid={p.id}
 					class="rung person-box"
@@ -1145,7 +1146,7 @@
 				     short-circuits on `p.id === focus.id` and simply closes: this is the card you are
 				     already on, so "return to it" and "close" are the same gesture. -->
 				<a
-					href={focus.slug ? `/person/${focus.slug}` : '#'}
+					href={focus.slug ? personHref(focus.slug) : '#'}
 					onclick={(e) => rungNav(focus as Rung, e)}
 					data-rid={focus.id}
 					class="rung-spouse person-box spouse-line"

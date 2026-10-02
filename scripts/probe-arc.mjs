@@ -16,10 +16,10 @@ const fails = [];
 const ok = (c, m) => { if (!c) fails.push(m); };
 
 async function fly(src, targetSlug) {
-	await page.goto(`${BASE}/person/${src}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${src}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(400);
 	const cc = await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		if (!a) return null; const r = a.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 	}, targetSlug);
 	if (!cc) return null;

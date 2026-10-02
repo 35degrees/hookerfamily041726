@@ -87,7 +87,7 @@ async function step(label, sel, kind, dySign) {
 	await page.waitForTimeout(700); // settle the nav before the next step
 }
 
-await page.goto(`${BASE}/person/michael-hooker-1935`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/michael-hooker-1935`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
 await step('parent', '.parents-slot a', 'relative', +1); // parent above → hero travels DOWN
 await step('child', '.children-slot a', 'relative', -1); // child below → hero travels UP
@@ -100,7 +100,7 @@ const CC_PAIRS = [
 	['nancy-morse-1915', null]
 ];
 for (const [slug, needle] of CC_PAIRS) {
-	await page.goto(`${BASE}/person/${slug}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${slug}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(400);
 	const cc = await page.evaluate((nd) => {
 		const links = [...document.querySelectorAll('a[data-cc]')];

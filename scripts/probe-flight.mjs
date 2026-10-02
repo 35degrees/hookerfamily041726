@@ -43,7 +43,7 @@ const centerOf = (sel) =>
 // ── A. child-click: incoming spouse notch empty until landing ─────────────────────────────
 // nancy-morse-1915 → child michael-hooker-1935 (4 spouses). Nancy has 3, so a visible count of 4
 // is unambiguously the INCOMING card's chips.
-await page.goto(`${BASE}/person/nancy-morse-1915`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/nancy-morse-1915`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
 const child = await centerOf('.children-slot a, [class*="children"] a');
 await page.mouse.click(child.x, child.y);
@@ -94,7 +94,7 @@ ok(frames[frames.length - 1].vis === 4, `child-click: incoming spouse chips neve
 // transform inside it). Only flag genuinely-visible pixels: opacity > 0.5 AND stacked in front
 // (z-index ≥ 1). The demoting card rides at z-index 0 UNDER the incoming hero and incoming chips
 // hold at opacity 0 (markPending) — both are correctly-hidden off-card flights, not the regression.
-await page.goto(`${BASE}/person/nancy-morse-1915`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/nancy-morse-1915`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
 const chip = await centerOf('.spouse-notch .flight a');
 await page.mouse.click(chip.x, chip.y);
@@ -131,7 +131,7 @@ ok(worst.over <= 2, `spouse-swap: a VISIBLE element (${worst.what}) flew ${Math.
 // for a real span, and (b) no OTHER notch chip is visible mid-flight — the sole exception is the pivot
 // SEAT (data-flight-id = the departing person), which legitimately reveals at the demote's landing swap.
 for (const offset of [0, 1, 2]) {
-	await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/john-morgan-1930`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	for (let k = 0; k < offset; k++) { await page.click('.caret-right'); await page.waitForTimeout(460); }
 	const fromId = await page.evaluate(() => document.querySelector('.featured-card h1 .font-mono')?.textContent?.trim() ?? null);
@@ -196,7 +196,7 @@ const trailingChipInfo = () =>
 		return a ? { href: a.getAttribute('href'), x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
 	});
 for (const pages of [1, 2]) {
-	await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/john-morgan-1930`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	for (let i = 0; i < pages; i++) { await page.click('.caret-right'); await page.waitForTimeout(460); }
 	const wife = await trailingChipInfo();
@@ -252,7 +252,7 @@ ok(janitorWarns.length === 0, `dev janitor fired (orphan reached the DOM): ${jan
 // positioned (fixed/absolute) flight box must be ANIMATING — so the sweep's gate (getAnimations()===0)
 // classifies ZERO of them as strandable. If the discrimination were position-only (break the gate),
 // `sweepEligible` would be > 0 and this fails — proving the gate is load-bearing.
-await page.goto(`${BASE}/person/nancy-morse-1915`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/nancy-morse-1915`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
 const sweepBefore = sweepWarns.length;
 const chip2 = await centerOf('.spouse-notch .flight a');
@@ -274,7 +274,7 @@ ok(sweepWarns.length === sweepBefore, `false-positive: sweep reset a live elemen
 // ── F. paged-nav floater guard: leaving a PAGED carousel window must not strand off-window chips
 // visible on the destination card, and the RETURN trip must render the correct window. (Off-window
 // chips exit at duration:0 → they can strand visible on a ≤3-spouse destination that has no mask.)
-await page.goto(`${BASE}/person/john-morgan-1930`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/john-morgan-1930`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
 await page.click('.caret-right'); // → offset 1, window shows spouses 2-4 (Elizabeth[1] & Connie[5] off-window)
 await page.waitForTimeout(500);
@@ -321,7 +321,7 @@ if (backToMorgan) {
 //   G2 DOWN — click a PARENT → old focus demotes DOWN into a CHILD box (paints OVER the card) — the
 //             double-prone case: an early reveal would show the box stacked on the docked card.
 async function atomicSwap(label, startSlug, targetSel) {
-	await page.goto(`${BASE}/person/${startSlug}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${startSlug}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(500);
 	const pivotId = await page.evaluate(() => document.querySelector('.featured-card h1 .font-mono')?.textContent?.trim() ?? null);
 	const target = await centerOf(targetSel);
@@ -427,7 +427,7 @@ await atomicSwap('spouse-demote (notch seat)', 'john-morgan-1930', '.spouse-notc
 // boxes as it flies over a row (z:1), below the hero. michael → parent Rodman: michael's card demotes
 // DOWN, flying over Rodman's children row. Sample mid-flight: where the demoting card overlaps a
 // VISIBLE resting box, the topmost element at that overlap must belong to the demote, never the box.
-await page.goto(`${BASE}/person/michael-hooker-1935`, { waitUntil: 'networkidle' });
+await page.goto(`${BASE}/michael-hooker-1935`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
 const zParent = await centerOf('.parents-slot a');
 await page.mouse.move(5, 5);

@@ -114,12 +114,12 @@ await page.setViewportSize({ width: 1600, height: 1000 });
 console.log('── sibling exchange: rendered skin on both lanes, and the demote settle ──');
 
 for (const c of CASES) {
-	await page.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 	await openPanel(page);
-	await page.waitForSelector(`.sibling-strip a[href="/person/${c.click}"]`, { timeout: 5000 });
+	await page.waitForSelector(`.sibling-strip a[href="/${c.click}"]`, { timeout: 5000 });
 
 	const pending = page.evaluate(collect, 1400);
-	await page.click(`.sibling-strip a[href="/person/${c.click}"]`);
+	await page.click(`.sibling-strip a[href="/${c.click}"]`);
 	const lanes = await pending;
 
 	for (const lane of ['demote', 'promote']) {

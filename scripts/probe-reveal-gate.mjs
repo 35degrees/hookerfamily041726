@@ -18,14 +18,14 @@ const CASES = [
 	{
 		name: 'child promotion (JP Morgan → child Louisa)',
 		start: 'john-morgan-1837',
-		clickSel: 'a[data-relation="child"][href="/person/louisa-satterlee-1866"]',
+		clickSel: 'a[data-relation="child"][href="/louisa-satterlee-1866"]',
 		incomingCount: 'Siblings (3)',
 		newSpouseId: 'X00383'
 	},
 	{
 		name: 'parent promotion (Louisa → parent JP Morgan)',
 		start: 'louisa-satterlee-1866',
-		clickSel: 'a[data-relation="parent"][href="/person/john-morgan-1837"]',
+		clickSel: 'a[data-relation="parent"][href="/john-morgan-1837"]',
 		incomingCount: 'Siblings (4)',
 		newSpouseId: null // discovered at runtime (JP's first spouse chip)
 	}
@@ -37,7 +37,7 @@ const ctx = await b.newContext({ viewport: { width: 1440, height: 1100 }, reduce
 const p = await ctx.newPage();
 
 for (const c of CASES) {
-	await p.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+	await p.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 	await p.waitForTimeout(900);
 	if ((await p.locator(c.clickSel).count()) === 0) {
 		console.log(`  SKIP ${c.name}: affordance not found (${c.clickSel})`);

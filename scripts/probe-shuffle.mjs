@@ -24,7 +24,7 @@
 import { chromium } from '@playwright/test';
 
 const BASE = 'http://localhost:5173';
-const START = '/person/john-morgan-1837';
+const START = '/john-morgan-1837';
 const DRAWS = 14; // enough that a broken ring almost certainly repeats, short enough to stay quick
 
 const browser = await chromium.launch();
@@ -42,7 +42,7 @@ const dirs = [];
 let deadClicks = 0;
 
 for (let i = 0; i < DRAWS; i++) {
-	const before = page.url().split('/person/')[1];
+	const before = new URL(page.url()).pathname.slice(1);
 
 	// Track the DEPARTING card specifically, by holding a reference to it BEFORE the click.
 	//
@@ -76,7 +76,7 @@ for (let i = 0; i < DRAWS; i++) {
 	await page.click('.shuffle-notables', { timeout: 5000 }).catch(() => {});
 	await page.waitForTimeout(2600);
 
-	const after = page.url().split('/person/')[1];
+	const after = new URL(page.url()).pathname.slice(1);
 	if (after === before) deadClicks++;
 	seen.push(after);
 	const dx = await page.evaluate(() => window.__dx);
@@ -147,21 +147,21 @@ for (let i = 0; i < 12 && ccAfterShuffle.length < 3; i++) {
 	await page.waitForTimeout(500);
 	const landed = page.url().replace(BASE, '');
 	const ccHref = await page.evaluate(() => {
-		const a = document.querySelector('.cc-blade a[href^="/person/"]');
+		const a = document.querySelector('.cc-blade a[href^="/"]');
 		return a ? a.getAttribute('href') : null;
 	});
 	if (!ccHref) continue; // that notable has no cross-connections — nothing to time
-	const t1 = await clickTimed('.cc-blade a[href^="/person/"]');
+	const t1 = await clickTimed('.cc-blade a[href^="/"]');
 
 	// CONTROL: the identical CC, from the identical page, with no shuffle in the session.
 	await page.goto(`${BASE}${landed}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(900);
 	const sameCc = await page.evaluate(() => {
-		const a = document.querySelector('.cc-blade a[href^="/person/"]');
+		const a = document.querySelector('.cc-blade a[href^="/"]');
 		return a ? a.getAttribute('href') : null;
 	});
 	if (sameCc !== ccHref) continue; // the blade re-ordered — not a like-for-like pair, so discard both
-	const t2 = await clickTimed('.cc-blade a[href^="/person/"]');
+	const t2 = await clickTimed('.cc-blade a[href^="/"]');
 	if (t1 > 0 && t2 > 0) { ccAfterShuffle.push(Math.round(t1)); ccClean.push(Math.round(t2)); }
 }
 // Compared PER PAIR and reduced by median, not as a mean of means. CCs differ from each other by far more

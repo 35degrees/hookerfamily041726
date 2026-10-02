@@ -11,15 +11,15 @@ const CASES = [
 ];
 
 async function timeline(page, c) {
-	await page.goto(`${BASE}/person/${c.start}`, { waitUntil: 'networkidle' });
+	await page.goto(`${BASE}/${c.start}`, { waitUntil: 'networkidle' });
 	await page.waitForTimeout(300);
 	await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		a?.scrollIntoView({ block: 'center' });
 	}, c.target);
 	await page.waitForTimeout(150);
 	const geo = await page.evaluate((tg) => {
-		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/person/' + tg));
+		const a = [...document.querySelectorAll('a[data-cc]')].find((x) => (x.getAttribute('href') || '').endsWith('/' + tg));
 		const r = a.getBoundingClientRect();
 		// The FIRST line fragment, not the union box. A CC link that wraps has two client rects and
 		// the centre of their union lands in the gap BETWEEN them, on the paragraph — the click hit

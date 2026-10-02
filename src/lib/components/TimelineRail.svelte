@@ -37,6 +37,7 @@
 	 * rail that animated on its own duration would drift against the card mid-navigation, and §30 names
 	 * two-clock desync as THE failure mode of this layer. One clock, many subscribers.
 	 */
+	import { personHref } from '#lib/paths.js';
 	import { featured } from '#lib/state/featured.svelte.js';
 	// THE SAME FUNCTION THE CARD AND THE CHIP ASK. `isPynchonKin` is the RAINBOW set — the direct line to
 	// Thomas Ruggles Pynchon Jr. plus Jackson and the mother at each step — and it is derived from the
@@ -636,7 +637,7 @@
 		const link = barLink(b);
 		if (!link?.spouse || !b.slug) return; // CC bars keep their own link and their own origin
 		const chip = document.querySelector<HTMLElement>(
-			`.page-container a[data-relation="spouse"][href="/person/${b.slug}"]`
+			`.page-container a[data-relation="spouse"][href="${personHref(b.slug)}"]`
 		);
 		if (!chip) return;
 		const r = chip.getBoundingClientRect();
@@ -2075,7 +2076,7 @@
 			class="bar"
 			class:linked={!!link}
 			class:prism={b.prism}
-			href={link ? `/person/${b.slug}` : undefined}
+			href={link && b.slug ? personHref(b.slug) : undefined}
 			data-relation={link && link.spouse ? 'spouse' : undefined}
 			data-cc={link && !link.spouse ? 'true' : undefined}
 			data-relation-class={link && !link.spouse ? 'direct' : undefined}

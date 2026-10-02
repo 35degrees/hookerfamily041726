@@ -15,7 +15,7 @@ const full = process.argv.includes('--full');
 
 const browser = await chromium.launch();
 const page = await (await browser.newContext({ viewport: { width: 1440, height: 1200 } })).newPage();
-await page.goto(`http://localhost:5173/person/${slug}`, { waitUntil: 'networkidle' });
+await page.goto(`http://localhost:5173/${slug}`, { waitUntil: 'networkidle' });
 await page.evaluate(() => document.fonts.ready);
 await page.waitForTimeout(1200);
 await page.screenshot({ path: `scripts/probe-out/${out}.png`, fullPage: full });

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { personHref } from '#lib/paths.js';
 	import { isPynchonKin } from '#lib/data/pynchonLine.js';
 	import type { PersonCompact } from '#lib/types/neighborhood.js';
 	import { shrinkToFit } from '#lib/actions/shrinkToFit.js';
@@ -36,7 +37,7 @@
 	let unionLine = $derived(
 		isPartner
 			? marriageYear
-				? `(partner) ${marriageYear}`
+				? `(partner c. ${marriageYear})`
 				: '(partner)'
 			: marriageYear
 				? `m. ${marriageYear}`
@@ -186,7 +187,7 @@
 	// Slice 3: a sibling nav is now a WARM flight (kind 'sibling'). warmPersonLinks captures the chip rect
 	// and reads the sibling's seat t off data-tx/data-ty (below) to compute the collateral LATERAL departure
 	// vector. No data-sveltekit-reload — the click is preventDefault-ed into the warm path.
-	let href = $derived(person.slug ? `/person/${person.slug}` : null);
+	let href = $derived(person.slug ? personHref(person.slug) : null);
 	// §16 chip-date degrade: when BOTH lifespan ends are unknown, suppress the dates line entirely — no
 	// "?–?" anywhere, at any scale (this box, the featured card, and the demote chip-face all read it).
 	// One end known ("1850–?" / "?–1900") still shows.

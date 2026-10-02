@@ -27,6 +27,7 @@
   feature alone and may be changed without reading another file.
 -->
 <script lang="ts">
+	import { personHref } from '#lib/paths.js';
 	import { tick } from 'svelte';
 	import { hoverIntent } from '#lib/state/hoverIntent.js';
 	import { fade } from 'svelte/transition';
@@ -1130,7 +1131,7 @@
 			// is right here for the same reason the ±1 case is: the chip is on stage, so click the real one.
 			// ±1 — the person IS on stage, as a parent chip or in the children row. Click the real one.
 			if (isPartner || delta === -1 || delta === 1) {
-				const onStage = stage.querySelector<HTMLElement>(`a[href="/person/${slug}"]`);
+				const onStage = stage.querySelector<HTMLElement>(`a[href="${personHref(slug)}"]`);
 				if (onStage) {
 					onStage.click();
 					return;
@@ -1142,7 +1143,7 @@
 			const card = document.querySelector('.featured-card');
 			const r = (card ?? stage).getBoundingClientRect();
 			const a = document.createElement('a');
-			a.href = `/person/${slug}`;
+			a.href = personHref(slug);
 			a.dataset.cc = 'true';
 			a.dataset.relationClass = 'direct';
 			// `if (delta)` EXCLUDES 0 AS WELL AS NULL, and that is deliberate. A chain should never hold two
@@ -1219,7 +1220,7 @@
 	     so a rung here takes the identical paper, shadow, fill and hover, and the Pynchon prism reaches
 	     it for free. Only the geometry class differs, because a V's column is narrower than a ladder. -->
 	<a
-		href={p.slug ? `/person/${p.slug}` : '#'}
+		href={p.slug ? personHref(p.slug) : '#'}
 		onclick={(e) => rungNav(p, e)}
 		data-rid={p.id}
 		class="rung person-box"
@@ -1301,7 +1302,7 @@
 {#snippet half(p: Rung, right: boolean)}
 	<!-- Half of the couple bar. The right half mirrors: text right-aligned, photo on the outside. -->
 	<a
-		href={p.slug ? `/person/${p.slug}` : '#'}
+		href={p.slug ? personHref(p.slug) : '#'}
 		onclick={(e) => rungNav(p, e)}
 		class="v-half"
 		class:right
@@ -1386,7 +1387,7 @@
 		     directly beside the partner it is named against, so the surname is carried by the card next to
 		     it and a suffix has nothing left to disambiguate against. -->
 		<a
-			href={p.slug ? `/person/${p.slug}` : '#'}
+			href={p.slug ? personHref(p.slug) : '#'}
 			onclick={(e) => rungNav(p, e)}
 			data-rid={p.id}
 			class="v-spouse person-box spouse-line"

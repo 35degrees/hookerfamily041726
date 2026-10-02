@@ -21,6 +21,7 @@
 	 * SearchTrigger's own hover; this warms it too, so the menu is populated before the pointer
 	 * arrives rather than after.
 	 */
+	import { personHref } from '#lib/paths.js';
 	import { listYears as years } from '#lib/utils/dates.js';
 	import { hoverIntent } from '#lib/state/hoverIntent.js';
 	import { auth, type ListId } from '#lib/state/auth.svelte.js';
@@ -235,7 +236,7 @@
 								class:ee-line={(r.f & CAT.INLAW) !== 0}
 								class:founder-row={isFounder}
 								class:orbit-row={isOrbit}
-								href="/person/{r.slug}"
+								href={personHref(r.slug)}
 								onclick={(e) => {
 									if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 									e.preventDefault();
