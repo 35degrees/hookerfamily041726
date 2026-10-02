@@ -1,6 +1,7 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: August 25, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_083126.md (the what/why for every item below).**
+**Date: October 2, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Companion: ENRICHED_DESIGN_FABLE_100226.md (the what/why for every item below).**
+**OCTOBER 2, 2026 (§57): NEON, SVELTEKIT 3, BETTER AUTH 1.7.7, BACK/FORWARD, ROOT URLS, AND THE INTRO AT `/`.** One long Stream B day, eleven commits from `f7749c5c` to the dial removal. The database stopped staying awake all day (the Neon bill's real cause). SvelteKit 3.0.0 was migrated with all probes unchanged, which closes §38's assessment. Better Auth went to 1.7.7 after a one-transaction schema cleanup on Neon. Back/Forward now enters the state instantly instead of replaying a flight. People live at the root (`/thomas-hooker-1586`), with `/person/x` 301'd forever. Then the intro at `/` was built in small steps, each signed off on screen: the spine's own gilt title, a torch search, the painting, an Enter arrow, and Thomas's card rising via the existing vertical CC flight. §57.6 is the intro's session record and file map; §57.7 is how to bring its tuning dials back; design §51 is its what and why, including everything Sam rejected.
 **AUGUST 29, 2026 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), THE SCOPING DECISION (§49.5), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right. **§49.5 records the scoping decision itself — 3c and the zoom-3/Card↔Table remainder of 9 RETIRED from the pre-launch path with their specs preserved unaltered, 9.5 (the phone) FLAGGED OPEN rather than cut, 11 still gating launch. Nothing deleted; the phase table is annotated, and a retired phase reopens by saying so.**
 
 **AUGUST 31, 2026 (§55): BOOKMARKS, THE AUDIT, SIBLING EXCEPTIONS, SEARCH.** Eight commits after §54's docs pass. §55.1 is the one to read first: `tsconfig` sets `strict` but NOT `noUnusedLocals`, so dead imports are invisible to the only gate that runs — with a table of the three defect classes that passed svelte-check and reached the screen this session, and what would have caught each. §55.4 says what the likely next moves actually require (more non-Hooker sibling menus are now a DATA job, not a code one). §55.5 is a five-step 'if something is wrong, start here'. Doctrine in design §50.
@@ -5920,3 +5921,213 @@ dip is the dominant term.
 **Re-run the measurement before and after.** The probe is throwaway (it lived at
 `scripts/_flick.mjs` and was deleted); rebuild it from §56.1 — the ancestor-opacity walk is the
 part that matters, an element-local `opacity` read shows 1 the whole way and hides the bug.
+
+---
+
+## 57. OCTOBER 2, 2026 — NEON, SVELTEKIT 3, BETTER AUTH, BACK/FORWARD, ROOT URLS, THE INTRO (session record; design §51)
+
+In the order it happened. Every step was confirmed by Sam on `localhost:5173` before its commit.
+
+### 57.1 NEON: THE DATABASE STOPPED STAYING AWAKE (`f7749c5c`)
+
+Sam's September bill was a few dollars for about 57 awake hours, with almost no users. **Neon bills
+awake time, not queries.** The compute scales to zero after 5 idle minutes, but two things touched
+Postgres often enough that it never did:
+- a 5-minute session cookie cache;
+- a bookmark fetch on every page load.
+
+**Fixes:**
+- cookie cache 24h;
+- `sessionOptions.refetchOnWindowFocus: false`;
+- bookmarks kept in `localStorage`, revalidated once a day and written through on save.
+
+Sam confirmed bookmarks behave exactly as before. **Sam moved to the Free plan**, to return to Launch
+at launch.
+
+The rule for anything new: **no database read on page load or tab focus.** Any such read keeps the
+compute awake all day.
+
+### 57.2 SVELTEKIT 3.0.0 (`040d4b3e`), closing §38
+
+Versions: Svelte 5.57.1, Vite 8.3.2, adapter-auto 8.
+
+**What changed:**
+- `$lib` became `#lib` throughout.
+- `svelte.config.js` was folded into `vite.config.ts`.
+- `json()` became `Response.json()`.
+- The warm path's `pushState` became `goto(…, { shallow: true })`.
+- `goto`'s `replaceState` option is now `replace` (deprecated in 3; fixed in the intro).
+
+**Remote functions are still experimental, so not adopted.**
+
+**What bit:**
+- **`sv migrate` runs Prettier over the whole repo.** It reformatted `canonical.json`, the docs and the
+  probes. That run was discarded and the migration re-run with the formatter set aside. Four files its
+  printer reflowed were restored from HEAD and edited by hand.
+- **SvelteKit 3 exposes only DECLARED env vars.** `src/env.ts` declares all seven. `server/auth.ts`
+  reads its secrets by name, which the codemod cannot see. An `FMP_API_KEY` that leaked in from
+  `docs/examples` was removed.
+- **better-auth 1.7.x still declares a `@sveltejs/kit ^2` peer.** `overrides` did not help;
+  `.npmrc legacy-peer-deps=true` did.
+- **`npm audit fix` removed `$app/tsconfig`.** Restore it with `npx svelte-kit sync`.
+
+All seven probes were byte-identical to the pre-migration baselines.
+
+### 57.3 BETTER AUTH 1.7.2 → 1.7.7 (`ff5df8ca`)
+
+1.7.0–1.7.2 made `account.issuer` NOT NULL with a unique `(issuer, accountId)` index. 1.7.3 reverted
+both. Applied to Neon in one transaction, with Sam's authorization:
+- `issuer DROP NOT NULL`;
+- `DROP INDEX "account_issuer_accountId_uidx"`. The name must be quoted; the guide's unquoted name fails.
+
+Sam verified Google and Microsoft sign-in, and bookmarks were intact. `npm audit` reports 0
+vulnerabilities. Operator's map: §52.
+
+### 57.4 BACK/FORWARD ENTER THE STATE INSTANTLY (`e046e3ad`)
+
+**First attempt, rolled back.** It made Back fly, and Sam said it "works terribly. It tries to recreate the
+transitions." **His rule: a history step does not transition; it enters the state.**
+
+**What was wrong:**
+- **The page read `page.url`, which shallow routing never updates.** Every Back put the cold-load
+  person under a changed URL. It now listens to `popstate` and reads `location` (`slugFromPath`).
+- **The motion fix:** `motionOff()` in `state/motion.svelte.ts` means "reduced motion OR a history swap".
+  The six places that honoured reduced motion now ask it, so Back/Forward takes the existing
+  no-transition path for that one swap.
+
+`probe-back-button.mjs` checks that the card matches the URL and nothing animates. It was proven RED
+without the fix.
+
+### 57.5 PEOPLE LIVE AT THE ROOT (`7549ceb3`)
+
+- `src/lib/paths.ts` owns the URL format both ways:
+  - `personHref(slug)` builds links;
+  - `slugFromPath(path)` reads them, using a `RESERVED` set of top-level names that are not people
+    (`table`, `api`, `dev`, …).
+  - **Add any new top-level route to `RESERVED`.**
+- The route moved from `src/routes/person/[slug]` to `src/routes/[slug]`. The old folder keeps a
+  universal `+page.ts` that 301s forever, with no server file, so the static contract holds.
+- The payload path `/data/person/<slug>.json` did not move.
+- **Found on the way:** the X's last-resort fallback went to `thomas-hooker`, which is a *living* Thomas
+  Creighton Hooker (HD14013, year stripped by the privacy rule). It now goes to `thomas-hooker-1586`.
+
+### 57.6 THE INTRO AT `/` — BUILT IN SMALL STEPS
+
+Sam's terms were "discuss first, then small steps, each signed off on screen". Design §51 holds the what
+and why and the full rejected list.
+
+| Step | Commit | What |
+|---|---|---|
+| 1 | `501b6016` | the gilt title plate, lifted from the spine photos |
+| 2 | `c8f15e2d` | the torch search, then the even fade-up |
+| 3 | `8cc70a21` | the painting fades in behind, with a shadow that comes with it |
+| 4 | `8f83a3c1` | `/` plays the intro; Enter raises Thomas's card |
+| — | `6199c6e0` | the brisker exit after the click |
+| — | (this commit) | the dial panel removed; these docs |
+
+**File map:**
+
+- `scripts/intro/`
+  - `run.sh` rebuilds both plate images from `scripts/intro/source/` in about 20s.
+  - Steps 1–8 are numpy/PIL. Every hand fix is a **named, rerunnable touch-up**.
+  - `README.md` covers **2027**: make a 7 the way the 2 was made.
+- `static/intro/`
+  - `title-plate-1600.webp` (title and year) and `title-gilt-1600.webp` (title only).
+  - `painting-hooker-company-2560.jpg`: Sam's Olana copy, heavily compressed. Swap in a better scan under
+    the same name. Sources: the Wadsworth Atheneum and the Florence Griswold Museum, through rights and
+    reproductions, or a commercial image library. 1600–2560px is plenty.
+- `src/lib/components/IntroOverlay.svelte`: the whole sequence on one rAF clock (torch mask, gilt
+  fade, painting, shadow, Enter button, exit). Mounted by **`src/routes/+layout.svelte`**, as SettleVeil
+  is, for the same two reasons: it must be in the SSR'd HTML of `/` to cover the first paint, and it must
+  outlive the route change.
+- `src/lib/state/intro.svelte.ts`: the hand-off singleton (`startIntro`, `takeIntroHold`, `releaseIntro`,
+  `endIntro`).
+- `src/routes/+page.svelte` (`/`): `startIntro()`, then `goto(personHref('thomas-hooker-1586'),
+  { replace: true })`, with no history entry.
+- `src/routes/[slug]/+page.svelte`: **the hold.** A page that mounts via the intro starts blank:
+  - no card (`{#each introHold ? [] : [f]}`) and an empty roster;
+  - siblings, the timeline rail, the corner chrome and the field-skin toggle held until the first landing.
+
+  On release it fires the CC capture sequence (the order of `ccFlyTo` / `warmPersonLinks`) with
+  `relationClass: 'direct', genDelta: 1`. `growFrom`'s deck path raises the card from the bottom edge and
+  the roster unfurls at landing. **`flight.ts` was not changed.**
+- `src/lib/components/Field.svelte`: a `held` prop for its skin toggle.
+- `/dev/intro-title`, `/dev/intro-sweep`: the tuning pages (design §51.6).
+
+**What went wrong, in order:**
+1. **The extraction** (step 1): many rounds at retina zoom.
+   - Specks glued on by morphological closing were fixed by building from raw gold.
+   - Thin strokes lost on the dimmer right side were fixed with local contrast and hysteresis.
+   - Fills smeared into streaks were fixed by averaging neighbours, never copying distant pixels.
+   - Round letters were fitted as ovals.
+   - The made 2s were too crisp, so they were roughened by eye after two automatic roughness metrics
+     failed (corners count as roughness).
+2. **The light** (step 2): a browser-wide band, then afterglow, then a window-spanning arm arc.
+   - The arc was a misreading of "from the bottom of the browser". Its replacement was **rebuilt from the
+     session transcript**, because the earlier version had been overwritten uncommitted.
+   - **Lesson: commit or copy an approved state before rewriting a page Sam has seen.**
+3. **An unclamped easing curve** (step 4). Past 1 it turns back down, so the gilt and the painting rose
+   and then sank. Caught by the end-to-end capture, not by eye.
+4. **"It doesn't work at all"** (step 4). Sam was on `/dev/intro-sweep`, which stops at the painting by
+   design. The real intro is at `/`. Separately, file saves hot-reload the overlay mid-run and restart
+   it. Probes ran clean in headless Chromium and real Chrome.
+5. **The white strip on the right.** `overflow: hidden` was not enough, because `layout.css` reserves the
+   scrollbar gutter always (`scrollbar-gutter: stable`, against the arc-wobble). The intro now sets both
+   and gives them back only once the painting is gone.
+   - **Headless Chrome hides scrollbars.** Test gutters with
+     `launch({ channel: 'chrome', ignoreDefaultArgs: ['--hide-scrollbars'] })`.
+6. **The hover jerk.** A CSS transition on a transform inside a filtered SVG group arrived as a single
+   step. The hover now eases on the intro's own rAF clock.
+7. **Dial persistence.** Restoring saved dials in the state initialiser was overwritten by hydration of
+   the bound range inputs; restoring in `onMount` fixed it.
+
+**Verification:**
+- `svelte-check` shows only the two standing font-import errors.
+- SSR returns 200 for `/` and for `/thomas-hooker-1586`.
+- The end-to-end capture shows:
+  - the URL replaced, with no history entry;
+  - no card until the release;
+  - the card entering from below the window, landing exactly where a direct load puts it (287, 243 at
+    1440×760);
+  - no console errors.
+- Reduced motion: still, then a cut.
+- **The standing probes all match their baselines:**
+  - widths, sibling-seat, sibling-skin, hover-intent and back-button are GREEN;
+  - demote-settle departure is 564.9px, against 564.6 at baseline;
+  - probe-fit is at its standing **11**.
+
+### 57.7 BRINGING THE INTRO'S DIALS BACK
+
+See design §51.6. In short:
+- **The tuning page:** `/dev/intro-sweep` has dials and starts from today's numbers, but stops at the
+  painting.
+- **The dial panel on the real intro:** it is intact in **`6199c6e0`**
+  (`git show 6199c6e0:src/lib/components/IntroOverlay.svelte`). It is dev-only, with eight brown-ground
+  dials, replay, defaults, and values kept in the browser under `intro-dials`.
+- **To finish:** bake the chosen values into the timings object in `IntroOverlay.svelte`, then remove
+  the panel again.
+
+### 57.8 STILL OPEN
+
+**The intro:**
+- **Signed-in visitors.** §50.3 says signed-in visitors skip the intro and go straight to their home card
+  (`auth.heroPersonId`, falling back to Thomas). It is **not wired**: everyone at `/` gets the intro and
+  lands on Thomas. Sam hasn't decided whether a signed-in visitor sees the intro at all.
+  - **Note:** §50.3's "`/` redirects; it does not render" is deliberately broken by the intro. `/` renders
+    the overlay.
+- **The painting:** a better scan is wanted. The second painting (Church's or Brownell's *Charter Oak*,
+  chosen at random) was discussed but not built.
+- **The card's empty-stage wait** (about 0.4s, the exit time of an outgoing card that does not exist) is
+  hidden under the fading painting. Removing it outright would need a flag in `growFrom` (flight.ts:1593),
+  which was deliberately not touched.
+- **Slow connections:** the faint title shows until JS hydrates, so the search starts late. The faint
+  plate is the intended resting state, so this degrades gracefully. The painting and plate are preloaded.
+- **Pushing:** the intro commits were not yet pushed to GitHub when this was written.
+
+**Not started from Sam's list:**
+- SEO;
+- worn card edges;
+- orbit transitions (re-map the architecture first);
+- search and top-nav improvements;
+- the payload diet (the `context` block is about 78% of every person payload).
+

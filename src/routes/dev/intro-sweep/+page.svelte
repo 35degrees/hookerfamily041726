@@ -19,7 +19,7 @@
 	 * pool on the ground — "horrible", not wanted at all (round 3); and a warm glow on the brown following the
 	 * torch — a light as a "separate object on the screen", rejected: only the LETTERS light (round 4); a
 	 * RETURN pass, the torch coming back down top to bottom and leaving gold behind it — Sam liked it but
-	 * chose an even fade instead (round 5). The dials below are Sam's settings from round 6.
+	 * chose an even fade instead (round 5). The dials below start from Sam's round-8 settings, the ones the real intro uses (IntroOverlay).
 	 *
 	 * HOW: two copies of the plate. The FAINT copy is the resting state. The LIT copy is the full gilt plate
 	 * seen through a mask: the torch (a radial gradient), plus, for the fade-in, a flat fill whose strength
@@ -38,15 +38,15 @@
 	const FAINT = 0.16; // Sam approved this opening state on step 1
 
 	// ── THE DIALS (starting values — Sam tunes these by eye) ──────────────────────────────────────────
-	let holdMs = $state(350); // faint plate, before the light arrives
-	let sweepMs = $state(950); // the search: the torch's journey up, below the plate to above it
+	let holdMs = $state(500); // faint plate, before the light arrives
+	let sweepMs = $state(1400); // the search: the torch's journey up, below the plate to above it
 	let bandPct = $state(38); // the torch's glow, vertical radius as % of the plate's height
-	let widthPct = $state(80); // its horizontal radius, as % of the plate's width — one source, brightest at centre
-	let flicker = $state(0.16); // the flame's waver in strength (size wavers half as much)
+	let widthPct = $state(55); // its horizontal radius, as % of the plate's width — one source, brightest at centre
+	let flicker = $state(0.06); // the flame's waver in strength (size wavers half as much)
 	let afterglow = $state(0); // how lit a line stays once the searching torch has moved on (Sam: ~0)
-	let pauseMs = $state(250); // the beat, all faint, before the title fades up
-	let fadeMs = $state(1150); // the even fade up to full gilt
-	let beatMs = $state(500); // "a beat or two" after the gilt is full, before the painting starts
+	let pauseMs = $state(450); // the beat, all faint, before the title fades up
+	let fadeMs = $state(950); // the even fade up to full gilt
+	let beatMs = $state(650); // "a beat or two" after the gilt is full, before the painting starts
 	let paintMs = $state(1500); // the painting's fade in, full screen behind the title
 	let shadow = $state(0.35); // (Sam: 0.7 -> 0.525 -> 0.35) the dark shadow's strength once the painting is full (it rises with it)
 	let shadowBlur = $state(14); // its softness, in plate units (at 480px wide, 14 is ~4px)

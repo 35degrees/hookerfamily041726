@@ -35,10 +35,10 @@
 	const GROUND = '#3f3730';
 	const FAINT = 0.16;
 
-	// THE BROWN-GROUND DIALS — Sam's settings (round 8, tuned on the intro itself: "just under 4s, perfect"). In DEV a dial panel sits on
-	// the intro itself (Sam: "I want the dials back on just the slate brown background"); its values are
-	// remembered in this browser across reloads, and the numbers he settles on get baked in HERE.
-	const DEFAULTS = {
+	// THE BROWN-GROUND TIMINGS — Sam's settings (round 8, tuned on the intro itself with a dev dial panel:
+	// "just under 4s, perfect"). The panel was removed once he was happy (100226); to bring it back, see the
+	// ENRICHED roadmap's intro entry — it is one `git show` away (commit 6199c6e0 has it).
+	const dials = {
 		hold: 500, // faint plate, before the torch
 		sweep: 1400, // the search: the torch's rise through the title
 		bandPct: 38, // torch height, % of the plate's height
@@ -48,34 +48,12 @@
 		fade: 950, // the even fade up to full gilt
 		beat: 650 // full gilt on brown, before the painting starts — the brown ground totals 3.95s
 	};
-	const DEV = import.meta.env.DEV;
-	const DIALS_KEY = 'intro-dials';
-	const dials = $state({ ...DEFAULTS });
-	// Restored AFTER hydration, not in the initializer: hydrating a bound range input adopts the DOM's
-	// server-rendered value (the default), which silently overwrote a restored setting.
-	let dialsLoaded = $state(false);
-	onMount(() => {
-		if (DEV) {
-			try {
-				Object.assign(dials, JSON.parse(localStorage.getItem(DIALS_KEY) ?? '{}'));
-			} catch {
-				/* nothing saved, or storage blocked: defaults */
-			}
-		}
-		dialsLoaded = true;
-	});
-	$effect(() => {
-		if (!DEV || !dialsLoaded) return;
-		const snap = JSON.stringify(dials);
-		try {
-			localStorage.setItem(DIALS_KEY, snap);
-		} catch {
-			/* private window: the dials just won't persist */
-		}
-	});
 	const PAINT_IN_MS = 1500;
 	const SHADOW = 0.35; // Sam: 0.7 first shown, then 0.525, still "very dark" -> 0.35
 	const SHADOW_BLUR = 14;
+	// the raised look over the painting (see THE RELIEF filter) — kept subtle: a lit top edge, a shaded foot
+	const EMBOSS_LIGHT = 0.4;
+	const EMBOSS_SHADE = 0.5;
 	const ARROW_IN_MS = 700; // the arrow's fade in, once the painting is full and the page beneath is ready
 	// THE EXIT, after the click — brisker than the arrival (Sam: "users when they click the arrow are ready
 	// to dive in; it shouldn't match the speed of the intro"). Still in sequence: the title and arrow go at
@@ -99,6 +77,7 @@
 	let flameSize = $state(1);
 	let fade = $state(0); // the even fill: faint → full gilt
 	let paint = $state(0); // the painting's opacity
+	let relief = $state(0); // 0 = pressed into the leather, 1 = raised off the painting (follows `paint` in)
 	let title = $state(1); // the whole title's opacity (it leaves first)
 	let ground = $state(true); // the brown ground; dropped once the painting covers it
 	let still = $state(false);
@@ -152,25 +131,13 @@
 	let last = 0;
 	let shown0 = 0; // when the arrow began to fade in
 	let out0 = 0; // when the visitor clicked
-	// DEV replay: run the whole intro again in place (the page beneath is still holding, so nothing to undo)
-	function replay() {
-		if (leaving) return;
-		ph = [Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28];
-		t0 = last = performance.now();
-		shown0 = out0 = 0;
-		arrowShown = false;
-		arrow = 0;
-		fade = 0;
-		paint = 0;
-		title = 1;
-		ground = true;
-	}
 	onMount(() => {
 		lockScroll();
 		if (prefersReducedMotion.current) {
 			still = true;
 			fade = 1;
 			paint = 1;
+			relief = 1;
 			ground = false;
 			arrowShown = true;
 			arrow = 1;
@@ -206,6 +173,7 @@
 			else beamY = endY;
 			fade = ease((t - fade0) / dials.fade);
 			paint = ease((t - paint0) / PAINT_IN_MS);
+			if (!out0) relief = paint; // on the exit it stays raised while the title leaves
 			if (paint >= 1) ground = false; // the painting covers the window: the paper waits beneath it
 			if (!arrowShown && paint >= 1 && intro.ready) {
 				arrowShown = true;
@@ -253,16 +221,6 @@
 	});
 	const ry = $derived(band * 2.2 * flameSize); // gradient radius covers ~3 sigma
 	const rx = $derived(((PLATE_W * dials.widthPct) / 100) * 1.4 * flameSize);
-	const DIAL_ROWS: { key: keyof typeof DEFAULTS; label: string; min: number; max: number; step: number; unit: string }[] = [
-		{ key: 'hold', label: 'hold', min: 0, max: 3000, step: 50, unit: 'ms' },
-		{ key: 'sweep', label: 'sweep up', min: 400, max: 4000, step: 50, unit: 'ms' },
-		{ key: 'bandPct', label: 'torch height', min: 10, max: 80, step: 2, unit: '%' },
-		{ key: 'widthPct', label: 'torch width', min: 30, max: 120, step: 5, unit: '%' },
-		{ key: 'flicker', label: 'flicker', min: 0, max: 0.4, step: 0.02, unit: '' },
-		{ key: 'pause', label: 'pause', min: 0, max: 3000, step: 50, unit: 'ms' },
-		{ key: 'fade', label: 'fade in', min: 150, max: 4000, step: 50, unit: 'ms' },
-		{ key: 'beat', label: 'beat', min: 0, max: 3000, step: 50, unit: 'ms' }
-	];
 </script>
 
 <svelte:head>
@@ -277,29 +235,41 @@
 	<div class="title" style:opacity={title}>
 	<svg class="plate" viewBox="0 0 {PLATE_W} {PLATE_H}" aria-hidden="true">
 		<defs>
+			<!-- THE RELIEF. Pressed IN on the leather (the spine's look), RAISED once the painting is behind it
+			     (Sam: "almost would be better embossed… subtly transition deboss to emboss with the painting").
+			     Same edge bands both ways; only what fills them crossfades on `relief` (0 = debossed, 1 =
+			     embossed): the top inside edge goes from shadow to light, the bottom inside edge from glint to
+			     shade, and the dark lip above each letter (a sunken letter's tell) fades away. The cast shadow
+			     below — the painting shadow, rising on the same curve — completes the raised read. -->
 			<filter id="intro-deboss" x="-3%" y="-8%" width="106%" height="116%" color-interpolation-filters="sRGB">
 				<feOffset in="SourceAlpha" dy="7" result="down" />
 				<feComposite in="SourceAlpha" in2="down" operator="out" result="topBand" />
 				<feGaussianBlur in="topBand" stdDeviation="2.5" result="topSoft" />
 				<feComposite in="topSoft" in2="SourceAlpha" operator="in" result="topIn" />
-				<feFlood flood-color="#1e1408" flood-opacity="0.72" />
+				<feFlood flood-color="#1e1408" flood-opacity={0.72 * (1 - relief)} />
 				<feComposite in2="topIn" operator="in" result="shade" />
+				<feFlood flood-color="#fff6c8" flood-opacity={EMBOSS_LIGHT * relief} />
+				<feComposite in2="topIn" operator="in" result="topLight" />
 				<feOffset in="SourceAlpha" dy="-5" result="up" />
 				<feComposite in="SourceAlpha" in2="up" operator="out" result="botBand" />
 				<feGaussianBlur in="botBand" stdDeviation="2" result="botSoft" />
 				<feComposite in="botSoft" in2="SourceAlpha" operator="in" result="botIn" />
-				<feFlood flood-color="#fff6c8" flood-opacity="0.45" />
+				<feFlood flood-color="#fff6c8" flood-opacity={0.45 * (1 - relief)} />
 				<feComposite in2="botIn" operator="in" result="glint" />
+				<feFlood flood-color="#1e1408" flood-opacity={EMBOSS_SHADE * relief} />
+				<feComposite in2="botIn" operator="in" result="botShade" />
 				<feOffset in="SourceAlpha" dy="-3" result="up2" />
 				<feComposite in="up2" in2="SourceAlpha" operator="out" result="lipBand" />
 				<feGaussianBlur in="lipBand" stdDeviation="2" result="lipSoft" />
-				<feFlood flood-color="#120c05" flood-opacity="0.45" />
+				<feFlood flood-color="#120c05" flood-opacity={0.45 * (1 - relief)} />
 				<feComposite in2="lipSoft" operator="in" result="lip" />
 				<feMerge>
 					<feMergeNode in="lip" />
 					<feMergeNode in="SourceGraphic" />
 					<feMergeNode in="shade" />
 					<feMergeNode in="glint" />
+					<feMergeNode in="topLight" />
+					<feMergeNode in="botShade" />
 				</feMerge>
 			</filter>
 			<!-- THE BUTTON'S IMPRESSION: the letters' deboss at about half strength (Sam: the ring and arrow
@@ -395,23 +365,6 @@
 		</button>
 	{/if}
 	</div>
-	{#if DEV && !still}
-		<!-- DEV ONLY: the brown-ground dials. Never in a production build. -->
-		<div class="dials">
-			<div class="row">
-				<button type="button" onclick={replay} disabled={leaving}>replay</button>
-				<button type="button" onclick={() => Object.assign(dials, DEFAULTS)}>defaults</button>
-			</div>
-			{#each DIAL_ROWS as d (d.key)}
-				<label
-					>{d.label}
-					<input type="range" min={d.min} max={d.max} step={d.step} bind:value={dials[d.key]} />
-					{dials[d.key]}{d.unit}</label
-				>
-			{/each}
-			<div class="total">brown ground ≈ {((dials.hold + dials.sweep + dials.pause + dials.fade + dials.beat) / 1000).toFixed(2)}s</div>
-		</div>
-	{/if}
 </div>
 
 <style>
@@ -486,39 +439,5 @@
 		fill: none;
 		stroke: var(--gold, #f8d667);
 		stroke-width: 4.8; /* 4 +20% (Sam) */
-	}
-	.dials {
-		position: fixed;
-		left: 12px;
-		bottom: 12px;
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-		padding: 8px;
-		border-radius: 6px;
-		background: rgba(0, 0, 0, 0.35);
-		font: 12px/1.2 system-ui, sans-serif;
-		color: rgba(255, 255, 255, 0.75);
-		pointer-events: auto;
-	}
-	.dials label {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-	.dials .row {
-		display: flex;
-		gap: 6px;
-	}
-	.dials button {
-		padding: 4px 12px;
-		border-radius: 4px;
-		border: 1px solid rgba(255, 236, 170, 0.6);
-		background: rgba(0, 0, 0, 0.35);
-		color: #fff3c4;
-		cursor: pointer;
-	}
-	.dials .total {
-		opacity: 0.7;
 	}
 </style>

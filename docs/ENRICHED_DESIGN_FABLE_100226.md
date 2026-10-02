@@ -1,6 +1,6 @@
 # HOOKER FAMILY DESCENDANTS — ENRICHED DESIGN (FABLE PASS)
 
-**Date: August 25, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
+**Date: October 2, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
 **Prepared by the architect stream for Samuel Talcott Hooker's review. Nothing here is a decision until Sam says so.**
 **The 070926 edition added §13 (viewport-lock / scrollbar doctrine) and §14 (Zoom 1 card-grid refinements). This 071226 edition adds §17 (motion physics doctrine — learned the hard way in the July 11 card-transition maintenance phase) and threads the one-physics/velocity-ceiling lessons into §3. The card-transition layer is now CLOSED, probe-guarded, and pushed; see docs/CODING_HANDOFF.md in the repo for the session record and ghost taxonomy.**
 
@@ -58,6 +58,8 @@ folded back without conflict.
 **The 083126 edition (August 30–31) adds §49 — THE FRAME UNIT'S UNFINISHED BUSINESS, AND WHAT A HOVER MEANS.** §33 introduced the frame unit and §48 covered what a FLIGHT does to an absolute length; this is what the STAGE does to one. §49.1 spend slack, never shrink — an instrument may not cost the cards their size, and hiding the sibling column has to actually BUY something. §49.2 a model that describes scaled geometry must itself scale, which is why the sibling flight went wobbly below 1250 and why the spouse carousel had the identical bug a fortnight earlier; with the exception that proves it (lengths scale, RATIOS do not). §49.3 hover intent — TRANSIT and ARRIVAL are two faults, and an element arriving under a still pointer is not a hover, a question asked of the document rather than the element. §49.4 the rail is a ruler: it steps, it does not scale. §49.5 gate on the signal that means what you mean, and take a lock AFTER the decision rather than before.
 
 **The 083126 edition also adds §50 — SURFACES, GESTURES AND EXCEPTIONS.** §50.1 intent gates OPENING, not staying open — once a surface is open, re-entering it is not a new request, which is why the bookmarks menu began vanishing on the way down to a row. §50.2 two surfaces can share a feel without sharing a gesture: a deletion has no arrival, so only the gap-close transfers from Paths to Thomas, not the departure. §50.3 a transform can create scroll overflow — the scrollbar was reporting on `animate:flip`, not on the list. §50.4 a model and its stylesheet must be in the SAME register, which is where "a comment is not a mechanism" landed for the fifth time. §50.5 a predicate read in three places gets a name. §50.6 the shape of a narrow exception, and the finding that made it one clause: sibling generation has never had a classification filter, so the Beecher half-siblings were already computed and shipping, merely never allowed to render.
+
+**The 100226 edition (October 2, 2026) adds §51 — THE ARRIVAL: THE INTRO AT `/`.** The first thing a visitor sees, designed with Sam step by step on screen in one day: the book's own gilt spine title on slate brown, a torch that searches it, the gilt catching, Church's *Hooker and Company* (1846) filling the window behind it, an Enter arrow the visitor chooses to click, and Thomas's card rising out of the existing cross-connection flight. §51.3 is the list of everything Sam saw and rejected, kept so none of it is rebuilt; §51.6 is how to bring the tuning dials back.
 
 ---
 
@@ -7092,3 +7094,139 @@ sister-in-law is green.
 
 > **Before writing an exception, find out what the data already says.** Here the answer was that four
 > fifths of the feature already existed and had simply never been allowed to render.
+
+---
+
+## 51. THE ARRIVAL — THE INTRO AT `/` (AS BUILT, October 2, 2026)
+
+Session record, commits and file map: roadmap §57.6. This section is the what and the why.
+
+### 51.1 WHAT IT IS FOR
+
+`/` was SvelteKit's stock welcome page until today. Sam wanted a theatrical arrival that a tenth visit does
+not resent: a **small focus first, then the grand release**. A small gilt title alone on a dark ground,
+then a painting filling the window, then the work itself, Thomas's card. It plays **only at `/`**. A
+direct `/<slug>` link, a refresh and the in-app house button never see it, and because `/` replaces
+itself with Thomas's URL there is no `/` entry to come Back to.
+
+### 51.2 THE SEQUENCE, AND WHY EACH PART IS THE WAY IT IS
+
+1. **The title is the book's own gilt, not a font.** Sam's photographs of the 1908 spine, *The
+   Descendants of Rev. Thomas Hooker*, lifted letter by letter, keeping every hand irregularity: the S
+   and H crowded in THOMASHOOKER, the crooked M, the high second E, the period after REV. Sam refused a
+   substitute typeface outright. The year line keeps the spine's own 1, 5, 8, 6, dash and 0; the spine has
+   no 2, so the 2 is made from Cochin's (Sam: "Cochin better, not even close"), roughened and set slightly
+   off-line like hand-set type. Ground `#3f3730`, a slate-brown ("more brown than grey"); warmer gold;
+   a rebuilt pressed-in edge; 480px wide. It opens **faint** (0.16): the letters are there, unlit.
+2. **The search.** One torch rises up through the title, from just below it to just above it. Only
+   the **letters** light, never the brown, and they fall fully back to faint behind it. Sam's image: someone
+   looking for something sweeps a torch over the area and moves on.
+3. **The catch.** A beat with the title faint, then the whole title fades up **evenly** to full gold and
+   stays.
+4. **The painting.** A beat on the gilt, then Church's *Hooker and Company* fades in full screen behind the
+   title. The title stays put: it sits in the bright sky, and moving it would cover the mountains. So a soft
+   dark shadow develops under the letters **at the same rate as the painting**. It is zero on the brown,
+   where the pressed-in impression is the look.
+   **The letters also rise.** On the brown they are pressed into the leather. As the painting arrives,
+   the same edge bands crossfade to a raised look: the top edges go from shadow to light, the feet go from
+   glint to shade, and the dark lip above each letter fades away. With the shadow below acting as a cast
+   shadow, the title reads as standing off the canvas. On the exit it stays raised. Sam: "gorgeous".
+5. **The visitor chooses.** A gilt ring with an arrow fades in half an inch under the year, and **nothing
+   moves on until it is clicked** (or Enter / → is pressed). Sam: "it shouldn't all be automatic, the user
+   can click to trigger Thomas's entry". This also lets the painting hold as long as anyone wants it.
+6. **The exit is brisker than the arrival.** Sam: users who click "are ready to dive in". Still in
+   sequence: the title and arrow go at once, the painting follows a beat behind, overlapping rather than
+   waiting its turn, onto the page's **real** paper. Then Thomas's card rises from the bottom edge.
+7. **The card arrives through the flight that already exists** (design §47.9: a new surface terminates
+   in an existing transition). It is an ordinary vertical cross-connection (`relationClass: 'direct'`,
+   `genDelta: +1`), so `growFrom`'s deck path raises it from below the window and the roster unfurls at
+   landing, as after any CC click. No new animation was written for it.
+
+**Reduced motion:** the gilt title on the painting, still, with the arrow; the click is a cut to the card.
+
+### 51.3 WHAT SAM SAW AND REJECTED — do not rebuild these
+
+| Tried | Sam's verdict | What replaced it |
+|---|---|---|
+| A substitute font for the title | "I do not want to use a substitute font" | the spine's own gilt, lifted |
+| A browser-wide horizontal band of light sweeping up | read as "multiple beams", even at 12% width | one torch, one source |
+| A dim afterglow on lines already passed | the title never returned to faint | afterglow 0 |
+| The torch travelling the whole WINDOW on an arm's arc, from below the browser's edge to past its top, with a warm pool on the ground | "horrible… that's nothing I want" (a reading of his own loose phrase, "from the bottom of the browser") | the torch centred on the title |
+| A warm glow on the brown that followed the torch | "this beam of light that's a separate object on the screen" | letters-only light |
+| A uniform "catch" right after the search | did not read as anyone coming back | first a top-to-bottom return pass; then an even fade |
+| A RETURN pass: the torch coming back down and leaving gold behind it | liked ("a great job") but not chosen | the even fade-up |
+| An automatic hand-off after a 4s painting hold | "it shouldn't all be automatic" | the Enter arrow |
+| Title shadow at 0.7, then 0.525 | "very dark" | 0.35 |
+| A long arrow drawn at the year's stroke weight | too big | a small arrow inside a ring |
+| The ring and arrow at the letters' full impression | "too old-timey", "too heavy on the deboss" | half-strength impression, thinner round-capped strokes |
+| A darker gold for the button | brought back the same turn | the year figures' gold |
+| A CSS-transition hover | "an instant jerk right" | eased on the intro's own animation clock |
+| The page's scrollbar, and the reserved gutter, over the intro | "distracting… no scrollbar placeholder at all until Thomas shows up" | both lifted for the intro |
+| The exit at the intro's pace (about 3s, click to card) | too slow; then "one beat too quick" at 1.4s | about 1.7s |
+
+### 51.4 THE NUMBERS (Sam's, tuned by eye)
+
+**The brown ground, 3.95s** ("just under 4s, perfect"):
+
+| Setting | Value |
+|---|---|
+| hold | 500ms |
+| sweep up | 1400ms |
+| torch height | 38% |
+| torch width | 55% |
+| flicker | 0.06 |
+| pause | 450ms |
+| fade in | 950ms |
+| beat | 650ms |
+
+**Then:**
+- the painting fades in over 1500ms;
+- the title shadow is 0.35, blur 14;
+- the relief goes from pressed in to raised on the painting's curve (raised top light 0.4, shaded foot 0.5);
+- the arrow fades in over 700ms.
+
+**After the click:**
+- the title and arrow fade out over 480ms;
+- the painting starts going 200ms after the click and fades over 900ms;
+- the card is released 400ms before the painting is gone, so the flight's empty-stage wait is spent under the fading painting.
+
+**The button:**
+- ring stroke 4.8 and arrow stroke 6, in plate units;
+- the year figures' gold, `#f8d667`;
+- the hover drifts the arrow about 5 units and warms the gold over about ⅓s.
+
+### 51.5 PRINCIPLES THIS EARNED
+
+- **Light belongs to the thing it lights.** Every version that drew light as its own object (the band, the
+  window-wide torch, the glow on the brown) was rejected; the one that only changes the letters was kept.
+- **Arrival and departure have different tempos.** The arrival is a performance the visitor watches. The
+  exit answers a choice they have just made, and should feel like it.
+- **Hand the visitor the last step.** The automatic version made the painting a timer. The arrow makes it
+  a place the visitor leaves when they are ready.
+- **A new surface ends in an existing transition** (§47.9 again). The card's arrival is the deck flight
+  every CC already uses, released from a held, blank page. Nothing in `flight.ts` changed.
+- **When a phrase can be read small or large, build the small reading first.** "From the bottom of the
+  browser" became a window-spanning arc that Sam called horrible. The torch on the title was what he meant.
+
+### 51.6 BRINGING THE DIALS BACK
+
+The dials were how the numbers in §51.4 were found, and they were removed once Sam was happy. There are
+two ways to tune again:
+
+1. **The tuning pages** (still in the repo, dev only):
+   - `/dev/intro-title`: the still plate (ground colour, size, impression, warmth, faint state).
+   - `/dev/intro-sweep`: the search, the fade-up, the painting and the shadow, with dials. Its defaults
+     are the §51.4 numbers.
+   - **It stops at the painting by design** and never hands off to a card. Sam once took that for the real
+     intro being broken.
+2. **The dial panel on the real intro at `/`.** Ask for "the intro dials back". The panel lives intact
+   in commit `6199c6e0`, in `src/lib/components/IntroOverlay.svelte`. It has eight brown-ground dials,
+   **replay** (reruns in place) and **defaults**, a running total, and values remembered in the browser
+   under `intro-dials`. It is development-only and never in a production build. Restore it with
+   `git show 6199c6e0:src/lib/components/IntroOverlay.svelte`, merging only the panel back in. Bake the
+   chosen values into the timings object, then remove it again.
+   - **Gotcha, if it is rebuilt:** restore the saved values in `onMount`, not in the state initialiser.
+     Hydrating a bound range input adopts the server-rendered value and silently overwrote the restored one.
+   - After the intro starts, the address bar shows Thomas's URL, so a reload shows the card. To start
+     fresh, type `/` again or use replay.
+
