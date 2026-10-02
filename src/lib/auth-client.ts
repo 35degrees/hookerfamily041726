@@ -23,7 +23,16 @@ import { inferAdditionalFields } from 'better-auth/client/plugins';
 import type { auth } from '$lib/server/auth';
 
 export const authClient = createAuthClient({
-	plugins: [inferAdditionalFields<typeof auth>()]
+	plugins: [inferAdditionalFields<typeof auth>()],
+	/**
+	 * NO SESSION RE-CHECK ON TAB FOCUS (100226). Better Auth's default re-asks the server every time
+	 * the tab becomes visible again — on a working day, every switch back from the editor. With the
+	 * cookie cache expired that is a Postgres read, and each read keeps Neon awake for another five
+	 * minutes (see the cookieCache note in server/auth.ts). Nothing here changes while the tab is
+	 * hidden that the reader needs on return: sign-in and sign-out happen IN this tab, and our own
+	 * writes refresh the session explicitly.
+	 */
+	sessionOptions: { refetchOnWindowFocus: false }
 });
 
 export const { signIn, signOut, useSession } = authClient;

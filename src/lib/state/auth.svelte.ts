@@ -91,16 +91,71 @@ let nameOverride = $state<Partial<Record<ListId, string | null>>>({});
 type Mark = { list: ListId; createdAt: string };
 let marks = $state<Map<string, Mark>>(new Map());
 
-async function hydrateBookmarks() {
+/**
+ * THE SET IS ALSO KEPT IN THIS BROWSER, AND THE SERVER IS ASKED AT MOST ONCE A DAY (100226).
+ *
+ * "Fetched once per session" was really once per PAGE LOAD: this module starts fresh on every full
+ * load, sees a user appear, and hydrated from Postgres — so every refresh woke Neon, and Neon bills
+ * the five minutes it then stays awake, not the millisecond the query took. A copy in localStorage
+ * lets a reload paint the ribbons from the copy with no request at all.
+ *
+ * WRITES STILL GO STRAIGHT TO THE SERVER — the copy is updated beside them (write-through), so this
+ * device can never disagree with what it just saved. What the TTL bounds is the one case the copy
+ * cannot see: a save made on ANOTHER device shows up here within a day, or at the next sign-in
+ * (signOut drops the copy). For a personal bookmark list that is the right trade.
+ *
+ * Keyed by user id, so a second account in the same browser never reads the first one's list.
+ * Every access is guarded: storage can be absent or throw (private windows, blocked site data), and
+ * then this simply falls back to fetching, which is what it always did.
+ */
+const BOOKMARK_TTL_MS = 24 * 60 * 60 * 1000;
+type MarkCache = { fetchedAt: number; marks: [string, Mark][] };
+const cacheKey = (userId: string) => `hooker:bookmarks:${userId}`;
+
+function readMarkCache(userId: string): MarkCache | null {
+	try {
+		const raw = localStorage.getItem(cacheKey(userId));
+		if (!raw) return null;
+		const c = JSON.parse(raw) as MarkCache;
+		return Array.isArray(c?.marks) && typeof c.fetchedAt === 'number' ? c : null;
+	} catch {
+		return null;
+	}
+}
+/** Persist the current set. `fetchedAt` moves ONLY on a real server read — a local write-through keeps
+ *  the old stamp, so the once-a-day revalidation still happens on schedule. */
+function writeMarkCache(userId: string, set: Map<string, Mark>, fetchedAt?: number) {
+	try {
+		const stamp = fetchedAt ?? readMarkCache(userId)?.fetchedAt ?? 0;
+		localStorage.setItem(cacheKey(userId), JSON.stringify({ fetchedAt: stamp, marks: [...set] }));
+	} catch {
+		/* storage full or blocked — the in-memory set is still correct for this page */
+	}
+}
+function dropMarkCache(userId: string) {
+	try {
+		localStorage.removeItem(cacheKey(userId));
+	} catch {
+		/* nothing to drop */
+	}
+}
+
+/** The signed-in user's id, for the write-through. Set by the session subscriber below. */
+let currentUserId: string | null = null;
+
+async function hydrateBookmarks(userId: string) {
 	try {
 		const res = await fetch('/api/bookmarks');
 		if (!res.ok) return;
 		const data = (await res.json()) as {
 			bookmarks: { personId: string; list: ListId; createdAt: string }[];
 		};
+		// A sign-out or account switch while this was in flight: the answer belongs to someone else now.
+		if (currentUserId !== userId) return;
 		marks = new Map(data.bookmarks.map((b) => [b.personId, { list: b.list, createdAt: b.createdAt }]));
+		writeMarkCache(userId, marks, Date.now());
 	} catch {
-		/* A failed hydrate leaves the ribbons blank rather than wrong. The next sign-in retries. */
+		/* A failed hydrate leaves the cached (or blank) ribbons in place. The next load retries. */
 	}
 }
 
@@ -141,8 +196,12 @@ if (browser) {
 		const id = user?.id ?? null;
 		if (id === lastUserId) return;
 		lastUserId = id;
-		marks = new Map();
-		if (id) void hydrateBookmarks();
+		currentUserId = id;
+		// The browser's copy first, so the ribbons are right on the first frame with no request; the
+		// server only when there is no copy or it is older than a day (see BOOKMARK_TTL_MS).
+		const cached = id ? readMarkCache(id) : null;
+		marks = new Map(cached?.marks ?? []);
+		if (id && (!cached || Date.now() - cached.fetchedAt > BOOKMARK_TTL_MS)) void hydrateBookmarks(id);
 	});
 }
 /**
@@ -271,6 +330,8 @@ export async function setBookmark(personId: string, list: ListId | null): Promis
 		// is not something the reader did to them.
 		next.set(personId, { list, createdAt: previous?.createdAt ?? new Date().toISOString() });
 	marks = next;
+	const userId = currentUserId;
+	if (userId) writeMarkCache(userId, marks);
 
 	try {
 		const res = await fetch('/api/bookmarks', {
@@ -284,6 +345,8 @@ export async function setBookmark(personId: string, list: ListId | null): Promis
 		if (previous === null) rollback.delete(personId);
 		else rollback.set(personId, previous);
 		marks = rollback;
+		// The copy rolls back too, or the next reload would resurrect a save the server refused.
+		if (userId) writeMarkCache(userId, marks);
 	}
 }
 
@@ -397,5 +460,8 @@ export async function signInWithMicrosoft(): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
+	// Drop this browser's copy of the list, so the next sign-in reads the server — which is also how a
+	// save made on another device is guaranteed to appear (see BOOKMARK_TTL_MS).
+	if (currentUserId) dropMarkCache(currentUserId);
 	await authClient.signOut();
 }

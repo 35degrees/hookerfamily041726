@@ -259,8 +259,21 @@ export const auth = betterAuth({
 	 * receive. For a bookmark list and a hero card that is irrelevant. It would NOT be irrelevant for
 	 * anything sensitive, and nothing sensitive should be added here without revisiting this number.
 	 */
+	/**
+	 * 5 MINUTES -> 24 HOURS (100226), AND THE OLD NUMBER WAS THE WHOLE NEON BILL.
+	 *
+	 * Neon scales to zero after 5 minutes idle. A 5-minute cache meant the first session check after
+	 * any 5-minute gap read Postgres — so a working day of refreshes touched the database just often
+	 * enough that it never slept: 65 CU-hours in September for ~10 bookmark saves a day. Neon bills
+	 * AWAKE TIME, not query time, so a millisecond query every five minutes costs the same as a busy one.
+	 * At 24 hours the session is read from the database about once a day per browser.
+	 *
+	 * The revocation caveat above scales with it: a session revoked elsewhere stays live on another
+	 * device for up to a day. Still irrelevant for bookmarks and a hero card. Our own writes are not
+	 * delayed by this — setHero / setListName refetch with `disableCookieCache`, which re-signs the cache.
+	 */
 	session: {
-		cookieCache: { enabled: true, maxAge: 5 * 60 },
+		cookieCache: { enabled: true, maxAge: 24 * 60 * 60 },
 		expiresIn: 30 * 24 * 60 * 60,
 		updateAge: 24 * 60 * 60
 	},
