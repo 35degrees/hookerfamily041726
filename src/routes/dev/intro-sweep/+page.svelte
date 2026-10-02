@@ -1,12 +1,17 @@
 <script lang="ts">
 	/**
-	 * /dev/intro-sweep — STEP 2 OF THE INTRO: the search, then the even fade-up, for Sam to judge (100226, round 5).
+	 * /dev/intro-sweep — STEPS 2-3 OF THE INTRO: the search, the even fade-up, then the painting (100226).
 	 *
 	 * Sam: someone is looking for something, sweeps a torch up over the title and moves away — then realises
 	 * he passed over it and comes back. So: the page loads on the FAINT plate; ONE torch (an oval glow centred
 	 * on the title, gaussian falloff, an irregular flame flicker) rises from below the title to above it, and
 	 * the letters fall back to faint behind it (afterglow 0). A beat. Then the whole title fades up EVENLY
-	 * to full warmer gold, and stays (round 5).
+	 * to full warmer gold, and stays (round 5). STEP 3: a beat or two later, the painting fades in full screen
+	 * BEHIND the title — Church's "Hooker and Company Journeying through the Wilderness from Plymouth to
+	 * Hartford, in 1636" (1846), cover-fitted; the title stays over it (it fades out first, a later step).
+	 * The gold is hard to read against the painting's bright sky, and the title stays where it is (moving it
+	 * would cover the mountains), so a soft dark shadow develops under the letters on the painting's own
+	 * curve — none on the brown, where the pressed-in impression is the look.
 	 *
 	 * Tried and rejected, so it is not rebuilt: a browser-wide BAND read as several beams (round 1); the
 	 * uniform "catch" (whole title fading up at once) did not read as anyone coming back (round 2); a torch
@@ -14,7 +19,7 @@
 	 * pool on the ground — "horrible", not wanted at all (round 3); and a warm glow on the brown following the
 	 * torch — a light as a "separate object on the screen", rejected: only the LETTERS light (round 4); a
 	 * RETURN pass, the torch coming back down top to bottom and leaving gold behind it — Sam liked it but
-	 * chose an even fade instead (round 5). The search's dials below are Sam's settings from round 5.
+	 * chose an even fade instead (round 5). The dials below are Sam's settings from round 6.
 	 *
 	 * HOW: two copies of the plate. The FAINT copy is the resting state. The LIT copy is the full gilt plate
 	 * seen through a mask: the torch (a radial gradient), plus, for the fade-in, a flat fill whose strength
@@ -27,22 +32,29 @@
 	const PLATE_W = 1600;
 	const PLATE_H = 660;
 	const SRC = '/intro/title-plate-1600.webp';
+	// Sam's file (Olana's 2560px scan) — heavily compressed; swap for a better scan when he has one
+	const PAINTING = '/intro/painting-hooker-company-2560.jpg';
 	const GROUND = '#3f3730';
 	const FAINT = 0.16; // Sam approved this opening state on step 1
 
 	// ── THE DIALS (starting values — Sam tunes these by eye) ──────────────────────────────────────────
-	let holdMs = $state(300); // faint plate, before the light arrives
-	let sweepMs = $state(1100); // the search: the torch's journey up, below the plate to above it
-	let bandPct = $state(36); // the torch's glow, vertical radius as % of the plate's height
-	let widthPct = $state(85); // its horizontal radius, as % of the plate's width — one source, brightest at centre
-	let flicker = $state(0.06); // the flame's waver in strength (size wavers half as much)
+	let holdMs = $state(350); // faint plate, before the light arrives
+	let sweepMs = $state(950); // the search: the torch's journey up, below the plate to above it
+	let bandPct = $state(38); // the torch's glow, vertical radius as % of the plate's height
+	let widthPct = $state(80); // its horizontal radius, as % of the plate's width — one source, brightest at centre
+	let flicker = $state(0.16); // the flame's waver in strength (size wavers half as much)
 	let afterglow = $state(0); // how lit a line stays once the searching torch has moved on (Sam: ~0)
 	let pauseMs = $state(250); // the beat, all faint, before the title fades up
-	let fadeMs = $state(600); // the even fade up to full gilt
+	let fadeMs = $state(1150); // the even fade up to full gilt
+	let beatMs = $state(500); // "a beat or two" after the gilt is full, before the painting starts
+	let paintMs = $state(1500); // the painting's fade in, full screen behind the title
+	let shadow = $state(0.7); // the dark shadow's strength once the painting is full (it rises with it)
+	let shadowBlur = $state(14); // its softness, in plate units (at 480px wide, 14 is ~4px)
 
 	// torch centre in plate units (y grows downward); fade = the even fill's strength, 0..1
 	let beamY = $state(PLATE_H * 1.5);
 	let fade = $state(0);
+	let paint = $state(0); // the painting's opacity
 	let running = $state(false);
 	let flame = $state(1); // current flame strength 0..1 multiplier
 	let flameSize = $state(1);
@@ -66,11 +78,14 @@
 		const endY = -band * 2.0; // and finish clear above it
 		beamY = startY;
 		fade = 0;
+		paint = 0;
 		ph = [Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28];
 		const t0 = performance.now();
 		const up0 = holdMs;
 		const fade0 = up0 + sweepMs + pauseMs;
-		const done = fade0 + fadeMs;
+		const full = fade0 + fadeMs;
+		const paint0 = full + beatMs;
+		const done = paint0 + paintMs;
 		const frame = (now: number) => {
 			const t = now - t0;
 			const n = flameAt(t);
@@ -82,13 +97,19 @@
 				beamY = startY + (endY - startY) * easeInOut((t - up0) / sweepMs);
 			} else if (t < fade0) {
 				beamY = endY; // gone past; the title is faint again
-			} else if (t < done) {
+			} else if (t < full) {
 				beamY = endY;
 				const k = (t - fade0) / fadeMs;
 				fade = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; // even across the title, eased in time
+			} else if (t < done) {
+				beamY = endY;
+				fade = 1;
+				const k = Math.max(0, (t - paint0) / paintMs); // 0 through the beat
+				paint = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
 			} else {
 				beamY = endY;
 				fade = 1; // full gilt, and it stays
+				paint = 1;
 				running = false;
 				return;
 			}
@@ -119,6 +140,8 @@
 <svelte:head><title>Intro sweep — step 2</title></svelte:head>
 
 <div class="stage" style="background: {GROUND}">
+	<!-- the painting, full screen behind the title -->
+	<img class="painting" src={PAINTING} alt="" style="opacity: {paint}" />
 	<svg class="plate" viewBox="0 0 {PLATE_W} {PLATE_H}" role="img" aria-label="The Descendants of Rev. Thomas Hooker, 1586 - 2026">
 		<defs>
 			<!-- the step-1 impression (light from above) and warmer gold, unchanged -->
@@ -150,6 +173,13 @@
 			<filter id="warmgold" color-interpolation-filters="sRGB">
 				<feColorMatrix type="matrix" values="1.00 0 0 0 0  0 0.90 0 0 0  0 0 0.62 0 0  0 0 0 1 0" />
 			</filter>
+			<!-- the shadow for the painting: the letters' own shape, blurred, dark, dropped slightly -->
+			<filter id="shadow" x="-6%" y="-20%" width="112%" height="140%" color-interpolation-filters="sRGB">
+				<feGaussianBlur in="SourceAlpha" stdDeviation={shadowBlur} />
+				<feOffset dy={shadowBlur * 0.35} result="soft" />
+				<feFlood flood-color="#140d06" />
+				<feComposite in2="soft" operator="in" />
+			</filter>
 			<radialGradient id="torchGrad" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="1"
 				gradientTransform="translate({PLATE_W / 2} {beamY}) scale({rx} {ry})">
 				{#each torchStops as s, i (i)}
@@ -166,6 +196,10 @@
 				<rect x="0" y="0" width={PLATE_W} height={PLATE_H} fill="url(#torchGrad)" />
 			</mask>
 		</defs>
+		<!-- the shadow, only once the painting is coming in -->
+		<g filter="url(#shadow)" opacity={shadow * paint}>
+			<image href={SRC} width={PLATE_W} height={PLATE_H} />
+		</g>
 		<!-- the resting plate: faint -->
 		<g filter="url(#deboss)" opacity={FAINT}>
 			<image href={SRC} width={PLATE_W} height={PLATE_H} filter="url(#warmgold)" />
@@ -187,6 +221,10 @@
 	<label>afterglow <input type="range" min="0" max="0.3" step="0.01" bind:value={afterglow} /> {afterglow}</label>
 	<label>pause <input type="range" min="0" max="1200" step="50" bind:value={pauseMs} /> {pauseMs}ms</label>
 	<label>fade in <input type="range" min="150" max="1500" step="50" bind:value={fadeMs} /> {fadeMs}ms</label>
+	<label>beat <input type="range" min="0" max="1500" step="50" bind:value={beatMs} /> {beatMs}ms</label>
+	<label>painting <input type="range" min="300" max="3000" step="50" bind:value={paintMs} /> {paintMs}ms</label>
+	<label>shadow <input type="range" min="0" max="1" step="0.05" bind:value={shadow} /> {shadow}</label>
+	<label>shadow blur <input type="range" min="2" max="40" step="1" bind:value={shadowBlur} /> {shadowBlur}</label>
 </div>
 
 <style>
@@ -196,7 +234,15 @@
 		display: grid;
 		place-items: center;
 	}
+	.painting {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover; /* full screen; crops the edges on tall or narrow windows */
+	}
 	.plate {
+		position: relative; /* above the painting */
 		display: block;
 		width: min(480px, 82vw); /* Sam's M size */
 		height: auto;
@@ -210,6 +256,9 @@
 		gap: 6px;
 		font: 12px/1.2 system-ui, sans-serif;
 		color: rgba(255, 255, 255, 0.75);
+		padding: 8px;
+		border-radius: 6px;
+		background: rgba(0, 0, 0, 0.35); /* legible over the painting */
 	}
 	.dials label {
 		display: flex;
