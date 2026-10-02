@@ -77,8 +77,18 @@
 	const SHADOW = 0.35; // Sam: 0.7 first shown, then 0.525, still "very dark" -> 0.35
 	const SHADOW_BLUR = 14;
 	const ARROW_IN_MS = 700; // the arrow's fade in, once the painting is full and the page beneath is ready
-	const TITLE_OUT_MS = 700;
-	const PAINT_OUT_MS = 1200;
+	// THE EXIT, after the click — brisker than the arrival (Sam: "users when they click the arrow are ready
+	// to dive in; it shouldn't match the speed of the intro"). Still in sequence: the title and arrow go at
+	// once, the painting follows a beat behind, overlapping rather than waiting its turn. Was 700 + 1200;
+	// then 350 / 150 / 650 ("much better… even one beat too quick"); now the whole exit is 300ms longer,
+	// spread in proportion — the painting is gone 1.1s after the click.
+	const TITLE_OUT_MS = 480;
+	const PAINT_OUT_DELAY_MS = 200; // the painting starts to go this long after the click
+	const PAINT_OUT_MS = 900;
+	// The card's deck flight waits ~0.5s on an empty stage before it moves (the exit time of an outgoing
+	// card that, here, does not exist). Release that much BEFORE the painting is gone, so the wait is
+	// spent under the fading painting and the card starts rising as the paper clears.
+	const RELEASE_LEAD_MS = 400;
 
 	const band = $derived((PLATE_H * dials.bandPct) / 100);
 	const startY = $derived(PLATE_H + band * 2.0);
@@ -203,14 +213,18 @@
 			}
 			if (arrowShown) arrow = ease((t - shown0) / ARROW_IN_MS);
 			if (out0) {
-				const k1 = (t - out0) / TITLE_OUT_MS;
-				title = 1 - ease(k1);
+				const since = t - out0;
+				title = 1 - ease(since / TITLE_OUT_MS);
 				arrow = Math.min(arrow, title);
-				const k2 = (t - out0 - TITLE_OUT_MS) / PAINT_OUT_MS;
+				const k2 = (since - PAINT_OUT_DELAY_MS) / PAINT_OUT_MS;
 				if (k2 > 0) paint = 1 - ease(k2);
+				// the card's flight starts its empty-stage wait under the fading painting (see RELEASE_LEAD_MS)
+				if (since >= PAINT_OUT_DELAY_MS + PAINT_OUT_MS - RELEASE_LEAD_MS) releaseIntro();
 				if (k2 >= 1) {
+					// the gutter comes back only now, with the painting gone — returned at the release it
+					// showed as a white strip beside the fading painting. The card is still waiting off-screen
+					// below, and its flight lands on its layout slot wherever the gutter leaves it.
 					unlockScroll();
-					releaseIntro();
 					endIntro(); // the layout unmounts this; paper is already what shows
 					return;
 				}
