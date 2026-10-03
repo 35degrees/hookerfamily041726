@@ -366,8 +366,14 @@
 	     height (+ gap) so nothing here can ever scroll beneath the pinned corner.
      SPACING (Sam, 100226): 8px between sections (was 10, −20%) and 2.4px from each section header to its
      first row (was 6, −60%, the headers' mb-[2.4px]). -->
+	<!-- scrollbar-gutter: stable (Sam's Safari film, 100326): with a CLASSIC scrollbar the bar takes
+	     width, and on a column at the edge of fitting the two states fed each other every frame: the bar
+	     narrows the column → the fit actions shrink/wrap the titles → taller → keeps the bar; no bar →
+	     wider → titles fit on one line → shorter → bar goes → narrower again. A 60Hz flicker, and a
+	     relayout plus refit on every frame. Reserving the gutter makes the column's width independent of
+	     whether it scrolls, so the loop cannot start. Overlay scrollbars take no width: no change there. -->
 	<div
-		class="scroll-group flex-1 space-y-2 overflow-y-auto pr-1"
+		class="scroll-group flex-1 space-y-2 overflow-y-auto pr-1 [scrollbar-gutter:stable]"
 		style="min-height: 0; padding-bottom: {burialCemetery?.name ? burialHeight + 12 : 0}px"
 	>
 		<!-- 1. EDUCATION (education[], capped at EDU_LIMIT) -->

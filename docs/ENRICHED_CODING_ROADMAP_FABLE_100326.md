@@ -6167,8 +6167,9 @@ lives on display 2):
      H.264 decoder).
    - The recording is variable frame rate: only changed frames are stored, so the timestamps show what
      actually reached the screen.
-   - The scripts lived in the session scratchpad (`recflight.sh`, `frames.swift`, `measure.js`); rebuild
-     them from this description.
+   - **The kit is in the repo now: `scripts/safari/`** (copied from the session scratchpad on October 3;
+     see its README): `busy.js`, `measure.js`, the hover-click scripts, `dupcheck.js`, `recclick.sh`,
+     `recexperiment.sh` and `frames.swift`.
    - **This is what found the root cause in §58.3.** The clock said 59fps and correct positions; the film
      showed the card going from chip to 95% grown between two frames.
 3. **safaridriver (WebDriver).** It was enabled (`sudo safaridriver --enable` in Apple's Terminal, plus
@@ -6354,6 +6355,82 @@ That is Safari redrawing text at full quality, and it happens after any motion.
 **Where a change shows up:** in dev (`npm run dev`, `localhost:5173`) as soon as the file is saved (reload
 fully with ⌘⇧R in Safari). The preview on 4173 serves a frozen build and only changes after
 `vite build` is run again. No deploy is needed to judge it.
+
+### 58.3d OCTOBER 3 — DOES THE PAGE BUILD UP LAG OVER MANY CLICKS? NO (measured)
+
+Sam asked whether five or more CC clicks in a row leave a backlog that slows later transitions, and
+whether we need "browser debt cleanup".
+
+**Measured in Chrome:** `scripts/probe-buildup.mjs`, 40 CC hops in a row with a real mouse, a forced
+garbage collection after each.
+
+|   | First 5 hops | Last 5 hops |
+|---|---|---|
+| DOM nodes | 573 | 578 |
+| Heap | 10.9MB | 12.0MB |
+| Median frame | 16.7ms | 16.7ms |
+
+- **DOM nodes** track the size of the card being shown, not the hop count.
+- **Heap** plateaued from about hop 8, at 11.6–12.2MB. That's the visited people's data being cached, not a
+  leak.
+- **Live animations and stray fixed elements** were 0 and 5 after every settle. The exceptions were the
+  three hub cards (Jefferson, Porter, Muir), which were still running ~90 animations of their own at the
+  sample time, then cleared by the next hop.
+- **The worst frame per hop** tracks the destination card (hubs reach 80–130ms), not the position in the
+  run.
+
+**Safari**, by hand (§58.3b): over 60 navigations, first frames got **faster** as caches warmed.
+
+**Cleanup already exists:**
+- Each flight tears down its own elements.
+- The interrupted-outro orphan race was hunted with `probe-stress.mjs`; the development build's flight
+  janitor warns if one survives.
+- The ping-pong memory (the last CC, so going back and forth reverses the deck) is deliberate state, and
+  is the one thing kept.
+
+**Conclusion:** no cleanup function is needed. Re-run `node scripts/probe-buildup.mjs 40` after any
+change to the flight or teardown code.
+
+**Firefox** (Sam: *"feels good, a little bit of lag, overall acceptable"*):
+- It takes the Chrome path; the WebKit rules don't apply.
+- Its compositor runs `css:` flights off the main thread like Chrome's.
+- It hasn't been measured here. Playwright's Firefox could run the GREEN probes if it ever needs a look.
+
+### 58.3e OCTOBER 3 — TWO FLICKERS FOUND IN SAM'S FILMS, AND FIXED
+
+**1. Chrome: the card's text flashed to Helvetica for one frame on every CC click.** Sam called it a
+"clench": the NB text "shifts laterally". Fixed by `src/lib/state/pinFonts.ts`, run from the root layout's
+`onMount`.
+
+*How it was found.* Neither automated Chrome nor the frame-by-frame layout numbers ever showed it. Sam's
+own screen recording did: on the click frame the whole card was drawn in Helvetica. Measured in his Chrome
+through AppleScript (View › Developer › Allow JavaScript from Apple Events):
+- **Any change to the URL makes his Chrome rebuild all 52 CSS `@font-face` objects.** That includes
+  `pushState`, `replaceState`, and even a change to the `#` part. Nothing on the page changes (stylesheets,
+  rules, viewport, screen scale).
+- It happens in Incognito, so it isn't an extension.
+- It never happens in Playwright's Chrome. That Chrome runs with Chrome's built-in experiments switched
+  off, so one of those experiments is the likely cause.
+- The rebuilt faces reload from cache: about 20ms on dev, 3–4ms in production. While they do, the text
+  paints in the fallback font (`font-display: swap`). The NB header measured 288.1 → 286.9px for one frame.
+
+*The fix.* Every font face that has loaded gets a JavaScript twin: `new FontFace` with the same file and
+descriptors, added to `document.fonts`. Faces added from JavaScript are not tied to the stylesheets, so the
+rebuild leaves them alone and the text keeps them. Faces that load later are pinned on `loadingdone`. The
+files come from the browser cache, so nothing downloads twice.
+
+*Measured in his Chrome:* fallback frames on 2 of 2 clicks before; 0 of 3 after, with no reload frames.
+
+**2. Safari: the right column's scrollbar flickered at 60Hz (Junius Spencer Morgan, X00359).**
+- A classic scrollbar takes width. On a column right at the edge of fitting, the bar narrowed the column,
+  `fitMediaText` and `shrinkToFit` wrapped the titles, and the extra height kept the bar. With no bar the
+  titles fitted, the column got shorter, and the bar went. That repeated on every frame, with a relayout
+  and refit each time.
+- Fixed with `scrollbar-gutter: stable` on `.scroll-group` (RightColumn.svelte). The column's width no
+  longer depends on whether it scrolls.
+- Verified in Sam's Safari: 170px on every frame.
+- **Trap:** the first check was on the stale `:4173` preview build, which showed "no change". Judge only
+  on `:5173`, or rebuild the preview.
 
 ### 58.4 WHAT WAS TRIED AND REVERTED — do not repeat
 
