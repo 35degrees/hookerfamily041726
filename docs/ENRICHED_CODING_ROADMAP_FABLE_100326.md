@@ -1,6 +1,6 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: October 2, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_100226.md (the what/why for every item below).**
+**Date: October 3, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Companion: ENRICHED_DESIGN_FABLE_100326.md (the what/why for every item below).**
 **OCTOBER 2, 2026, LATE (§58): SAFARI.** Everything before this was built and judged in Chrome only, so the first session in real Safari found the hero's shadow blinking and the chip flights skipping. Safari is now close to Chrome. §58.1 is how to measure real Safari from here; nothing on headless WebKit can show these bugs. §58.3 is the one you need if a promotion ever "jumps" again: the arriving card's clock now waits for its first paint (`holdUntilPainted`). §58.4 is what NOT to do: re-timing flights for Safari broke everything and was reverted. All of it is scoped to `html.webkit`, so Chrome is byte-identical.
 
 **OCTOBER 2, 2026 (§57): NEON, SVELTEKIT 3, BETTER AUTH 1.7.7, BACK/FORWARD, ROOT URLS, AND THE INTRO AT `/`.** One long Stream B day, eleven commits from `f7749c5c` to the dial removal. The database stopped staying awake all day (the Neon bill's real cause). SvelteKit 3.0.0 was migrated with all probes unchanged, which closes §38's assessment. Better Auth went to 1.7.7 after a one-transaction schema cleanup on Neon. Back/Forward now enters the state instantly instead of replaying a flight. People live at the root (`/thomas-hooker-1586`), with `/person/x` 301'd forever. Then the intro at `/` was built in small steps, each signed off on screen: the spine's own gilt title, a torch search, the painting, an Enter arrow, and Thomas's card rising via the existing vertical CC flight. §57.6 is the intro's session record and file map; §57.7 is how to bring its tuning dials back; design §51 is its what and why, including everything Sam rejected.
@@ -6265,11 +6265,28 @@ Chrome, Edge and Opera say "AppleWebKit" in their user agent but are excluded.
 
 ### 58.6 STILL OPEN IN SAFARI
 
-1. **The double overshoot on lateral CCs.** The card pulls back on the overshoot as it should, then "ticks
-   up vertically" for a second movement. Lateral deck flights use `easeOutBack` with a seeded tilt and a
-   perpendicular "lane" that both iron out to 0 (flight.ts `growFrom` CC branch). The suspect is the lane
-   or the tilt settling on a different curve or clock than the travel, visible only in Safari. **Film it**
-   (§58.1) before changing anything.
+1. **The "tick up" at the end of a CC or spouse overshoot. Investigated on October 3, and it is
+   Safari's own behaviour, not ours.**
+   - **The flight is clean.** Sampled per frame in Safari, Gilbert Krulee → James Robertson: the card
+     overshoots about 6px and returns on one curve. The perpendicular lane is about 1.8% of the travel, and
+     the tilt is at most 0.23° easing to 0.
+   - **The layout never moves.** The card's measured top is 250.000 before, during and after landing.
+   - **Filmed at full resolution:** the heading's ink sits about 0.5 recording px (≈ 1 device px) off its
+     resting position through the end of the flight, and re-snaps in **one frame, about 50–70ms after
+     motion has stopped**. That's Safari's final-quality redraw of the text once nothing is moving; it
+     draws moving text at slightly different glyph positions.
+   - **Ruled out, each filmed with the change injected as a style, no code change:**
+     - ending the flight on whole device pixels with no tilt (also tried in code, then reverted);
+     - holding z-index constant;
+     - removing the contact-shadow change at landing;
+     - holding the outline flat (no notch carve);
+     - giving the resting card the same identity transform;
+     - turning the card's permanent GPU layer off.
+
+     None of them changed the jump.
+   - **Status:** accepted as a Safari rendering trait, about one device pixel (Sam, October 3); design §52.4. Don't re-run these tests.
+     The only untried idea is a different text rendering mode for the whole card in Safari, which would
+     change how all of its text looks, so it's a design call for Sam, not a fix.
 2. **A rare quiver as a card settles.** Sam can't say where. The card-as-one-layer rule made it rare; film
    a few settles to catch it.
 3. Small: `batch.py`'s review links still print `/person/…` URLs. They redirect fine.

@@ -1,6 +1,6 @@
 # HOOKER FAMILY DESCENDANTS — ENRICHED DESIGN (FABLE PASS)
 
-**Date: October 2, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
+**Date: October 3, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
 **Prepared by the architect stream for Samuel Talcott Hooker's review. Nothing here is a decision until Sam says so.**
 **The 070926 edition added §13 (viewport-lock / scrollbar doctrine) and §14 (Zoom 1 card-grid refinements). This 071226 edition adds §17 (motion physics doctrine — learned the hard way in the July 11 card-transition maintenance phase) and threads the one-physics/velocity-ceiling lessons into §3. The card-transition layer is now CLOSED, probe-guarded, and pushed; see docs/CODING_HANDOFF.md in the repo for the session record and ghost taxonomy.**
 
@@ -60,6 +60,8 @@ folded back without conflict.
 **The 083126 edition also adds §50 — SURFACES, GESTURES AND EXCEPTIONS.** §50.1 intent gates OPENING, not staying open — once a surface is open, re-entering it is not a new request, which is why the bookmarks menu began vanishing on the way down to a row. §50.2 two surfaces can share a feel without sharing a gesture: a deletion has no arrival, so only the gap-close transfers from Paths to Thomas, not the departure. §50.3 a transform can create scroll overflow — the scrollbar was reporting on `animate:flip`, not on the list. §50.4 a model and its stylesheet must be in the SAME register, which is where "a comment is not a mechanism" landed for the fifth time. §50.5 a predicate read in three places gets a name. §50.6 the shape of a narrow exception, and the finding that made it one clause: sibling generation has never had a classification filter, so the Beecher half-siblings were already computed and shipping, merely never allowed to render.
 
 **The 100226 edition (October 2, 2026) adds §51 — THE ARRIVAL: THE INTRO AT `/`.** The first thing a visitor sees, designed with Sam step by step on screen in one day: the book's own gilt spine title on slate brown, a torch that searches it, the gilt catching, Church's *Hooker and Company* (1846) filling the window behind it, an Enter arrow the visitor chooses to click, and Thomas's card rising out of the existing cross-connection flight. §51.3 is the list of everything Sam saw and rejected, kept so none of it is rebuilt; §51.6 is how to bring the tuning dials back.
+
+**The 100226 edition also adds §52 — SAFARI: THE SAME OBJECT ON A DIFFERENT COMPOSITOR.** The rules for any future WebKit work: Chrome is the reference and never changes; isolate or cheapen, never re-time a flight; judge only in real Safari, measured on film. Session record and measurements: roadmap §58.
 
 ---
 
@@ -7229,4 +7231,58 @@ two ways to tune again:
      Hydrating a bound range input adopts the server-rendered value and silently overwrote the restored one.
    - After the intro starts, the address bar shows Thomas's URL, so a reload shows the card. To start
      fresh, type `/` again or use replay.
+
+---
+
+## 52. SAFARI — THE SAME OBJECT ON A DIFFERENT COMPOSITOR (written October 3, 2026)
+
+Everything in §3–§51 was designed and tuned in Chrome. On October 2–3 the app met real Safari for the
+first time. What made it work is durable doctrine for any future WebKit work. The session record, the
+measurements and the file map are in roadmap §58.
+
+### 52.1 THE RULES
+
+1. **Chrome is the reference and is never touched.** Every Safari rule is scoped to `html.webkit`
+   (`isWebKit()` in `src/lib/state/engine.ts`, which detects the engine, so every iOS browser is
+   included). The Chrome probes must stay byte-identical.
+2. **Isolate or cheapen; never re-time.** The flight choreography is coupled through timing that isn't all
+   expressed as transition delays: seat reveals, pending chips, hand-offs, the first-frame pose. A
+   WebKit-only lead-in on every flight broke all of it within the hour (§52.3).
+3. **Judge only in real Safari, and on film.** Headless WebKit renders in software and showed none of the
+   real bugs. Even the in-page clock lied: it reported 59fps and correct positions while the screen showed
+   a card jumping from chip to 95% grown between two frames. Film the screen and count frames (roadmap
+   §58.1).
+4. **When something animates inside a filtered element, Safari's filter blinks.** The hero card's shadow
+   was a `filter` on a wrapper full of animating things. The fix was structural, not a patch per element:
+   **shadow twins**, silent copies of the silhouette that cast the shadow and contain nothing.
+5. **A compositor animation's clock must start when the element is first painted, not when it is created.**
+   Chrome does this itself; Safari doesn't. A freshly mounted card takes Safari about 100ms to paint, so
+   the arriving card's animation now waits for that paint (`holdUntilPainted`). That one rule is what
+   restored the discrete-card feel of parent and sibling promotions.
+
+### 52.2 WHAT THE "DISCRETE BASEBALL CARD" NEEDS ON SAFARI
+
+The feel Sam built in Chrome rests on three perceptual cues, and Safari threatened each one:
+
+| Cue | What broke it on Safari | What restored it |
+|---|---|---|
+| **The card is one continuous object** | the arriving card's growth ran before it reached the screen, so it jumped | the clock waits for the first paint |
+| **It casts a shadow the whole way** | the filter blinked, then a frozen counter-scale shrank the shadow to nothing at chip size | twins carrying the full counter-scaled shadow on their own layers |
+| **It is solid and still at rest** | child layers re-snapped the whole card ("jiggle") | the card on its own permanent GPU layer |
+
+### 52.3 TRIED AND REVERTED
+
+- **A 100ms WebKit-only lead-in on every flight.** It desynced seats and hand-offs: twin chips appeared,
+  and a "miniature preview" sat at chip size.
+- **Holding the shadow's counter-scale at 1 in flight.** It saved frames but killed the heft.
+- **One drop-shadow in flight, two at rest.** It was suspected of the landing tick; the film proved
+  otherwise, and the committed state keeps it.
+- **Snapping the deck flight to whole device pixels.** It didn't change the landing tick.
+
+### 52.4 ACCEPTED AS SAFARI'S OWN
+
+**The landing "tick".** About 50–70ms after any motion stops, Safari re-draws the text at final quality,
+and the glyphs shift by about one device pixel. Six variants filmed in real Safari all showed the
+identical jump, so it isn't caused by our code. The only lever left is a different text-rendering mode for
+the whole card in Safari, which is a design trade, not a fix. It's left alone by choice (Sam, October 3).
 
