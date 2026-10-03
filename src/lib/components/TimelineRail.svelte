@@ -47,6 +47,7 @@
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { getCameraMove, subscribeCameraMove } from '#lib/state/camera.js';
 	import { ccFlyTo } from '#lib/state/shuffle.svelte.js';
+	import { thomasVertical } from '#lib/state/thomasVertical.js';
 	import { warmPersonLinks } from '#lib/state/navigate.js';
 	import { isFlightLocked, subscribeFlightLock } from '#lib/state/flightLock.js';
 	import { stage } from '#lib/state/stage.svelte.js';
@@ -636,15 +637,23 @@
 	function onBarClick(e: MouseEvent, b: Bar) {
 		const link = barLink(b);
 		if (!link?.spouse || !b.slug) return; // CC bars keep their own link and their own origin
-		const chip = document.querySelector<HTMLElement>(
-			`.page-container a[data-relation="spouse"][href="${personHref(b.slug)}"]`
-		);
+		const chip = visibleSpouseChip(b.slug);
 		if (!chip) return;
-		const r = chip.getBoundingClientRect();
-		if (r.width < 1 || r.height < 1) return; // present but not laid out — nothing to grow from
 		// Stops the rail's own delegation (it checks defaultPrevented first) so only ONE flight starts.
 		e.preventDefault();
 		chip.click();
+	}
+
+	/** The featured card's spouse chip for `slug`, if it is on screen to grow from — else null. Shared by
+	 *  the spouse BARS and the PORTRAITS: a click on either for the featured person's spouse becomes that
+	 *  chip's own click, so the corner swap is the genuine article and never a second implementation. */
+	function visibleSpouseChip(slug: string): HTMLElement | null {
+		const chip = document.querySelector<HTMLElement>(
+			`.page-container a[data-relation="spouse"][href="${personHref(slug)}"]`
+		);
+		if (!chip) return null;
+		const r = chip.getBoundingClientRect();
+		return r.width < 1 || r.height < 1 ? null : chip; // present but not laid out — nothing to grow from
 	}
 
 	function barLink(b: Bar) {
@@ -941,9 +950,10 @@
 	 * field alongside the prominent-years range — NOT a re-read of notable_blurb, for exactly the reason
 	 * above. Recorded here because the temptation at that point will be to reuse what already exists.
 	 */
-	// `line` — Hooker line or married into it (the payload's hd || sp, copied like `t`). A line portrait
-	// flies VERTICAL UP (Sam: "if its a Hooker spouse or a Hooker line person, can the transition always be
-	// vertical up? if its an easter egg non-spouse it can just be lateral like it is now"). See ccFlyTo.
+	// `line` — Hooker line or married into it (the payload's hd || sp, copied like `t`). It matters for ONE
+	// thing: Thomas's card sends a click on a `line` portrait DOWN (see #lib/state/thomasVertical.ts). It once sent every
+	// line portrait UP from anywhere (26 Sep, ridden in on a Stream A commit); Sam, 2 Oct: "this was a special
+	// exception request for Rev. Thomas Hooker timeline clicks only… not all headshots in timeline".
 	const ANCHORS = [
 		{
 			// PUSHED BACK TO 1633 (Sam) so Hooker and Shepard are the SAME SIZE and still touch: eight
@@ -1918,7 +1928,17 @@
 		}
 		const el = e.currentTarget as HTMLElement;
 		hoverSuppressed = a.slug;
-		void ccFlyTo(el, { slug: a.slug, t: a.t }, a.line ? { vertical: 'up' } : undefined);
+		// THE PORTRAIT IS THE FEATURED CARD'S SPOUSE: the click becomes the spouse chip's own click, so it is
+		// the corner swap, not a flight from the rail (Sam, 2 Oct: Susanna → Thomas "would be a spouse
+		// transition"). The same hand-off the spouse BARS already make (onBarClick).
+		const chip = visibleSpouseChip(a.slug);
+		if (chip) {
+			e.preventDefault();
+			chip.click();
+			return;
+		}
+		const dir = thomasVertical(a.slug, !!a.line); // the Thomas exception only — see thomasVertical.ts
+		void ccFlyTo(el, { slug: a.slug, t: a.t }, dir ? { vertical: dir } : undefined);
 	}
 
 	// ── ERA MARKS ───────────────────────────────────────────────────────────────────────────────────

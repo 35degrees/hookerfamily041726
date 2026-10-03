@@ -26,7 +26,14 @@
 	 */
 	import { onMount } from 'svelte';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { intro, releaseIntro, endIntro } from '#lib/state/intro.svelte.js';
+	import {
+		intro,
+		releaseIntro,
+		endIntro,
+		holdIntroScroll,
+		releaseIntroGutter,
+		releaseIntroScroll
+	} from '#lib/state/intro.svelte.js';
 
 	const PLATE_W = 1600;
 	const PLATE_H = 660;
@@ -106,25 +113,9 @@
 		return c < 0.5 ? 2 * c * c : 1 - Math.pow(-2 * c + 2, 2) / 2;
 	};
 
-	// NO SCROLLBAR — AND NO GUTTER — over the title or the painting (Sam: "distracting"; "no scrollbar
-	// placeholder at all until Thomas shows up"). Two things put a white strip down the right edge: the
-	// page beneath is often taller than the window (so a scrollbar), and layout.css reserves the gutter
-	// ALWAYS (`scrollbar-gutter: stable`, against the arc-wobble) — which overflow:hidden does not undo.
-	// Both are lifted while the intro plays and given back BEFORE the release, so the card's slot is
-	// measured with the gutter already in place and the card never shifts sideways under it.
-	let unlockScroll = () => {};
-	function lockScroll() {
-		const html = document.documentElement;
-		const prev = { overflow: html.style.overflow, gutter: html.style.scrollbarGutter };
-		html.style.overflow = 'hidden';
-		html.style.scrollbarGutter = 'auto';
-		unlockScroll = () => {
-			html.style.overflow = prev.overflow;
-			html.style.scrollbarGutter = prev.gutter;
-			unlockScroll = () => {};
-		};
-	}
-	onMount(() => () => unlockScroll());
+	// NO SCROLLBAR, NO GUTTER over the title or the painting (Sam: "distracting"). Held by
+	// #lib/state/intro.svelte.ts and given back in two steps — the gutter here, once the painting is gone;
+	// the scrollbar by the person page, once Thomas has landed (see holdIntroScroll there).
 
 	let raf = 0;
 	let t0 = 0;
@@ -132,7 +123,7 @@
 	let shown0 = 0; // when the arrow began to fade in
 	let out0 = 0; // when the visitor clicked
 	onMount(() => {
-		lockScroll();
+		holdIntroScroll();
 		if (prefersReducedMotion.current) {
 			still = true;
 			fade = 1;
@@ -144,7 +135,7 @@
 			enter = () => {
 				if (leaving) return;
 				leaving = true;
-				unlockScroll();
+				releaseIntroScroll(); // a cut: nothing flies, so nothing to wait for
 				releaseIntro();
 				endIntro(); // a cut
 			};
@@ -192,7 +183,7 @@
 					// the gutter comes back only now, with the painting gone — returned at the release it
 					// showed as a white strip beside the fading painting. The card is still waiting off-screen
 					// below, and its flight lands on its layout slot wherever the gutter leaves it.
-					unlockScroll();
+					releaseIntroGutter(); // the scrollbar itself waits for the landing (the person page)
 					endIntro(); // the layout unmounts this; paper is already what shows
 					return;
 				}

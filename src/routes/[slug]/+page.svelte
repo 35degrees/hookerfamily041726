@@ -128,11 +128,12 @@
 		capturePivot,
 		capturePanDir,
 		captureRects,
-		clearFlightCaptures
+		clearFlightCaptures,
+		setArrivalTempo
 	} from '#lib/transitions/flight.js';
 	import { publishCameraMove } from '#lib/state/camera.js';
 	import { lockFlight } from '#lib/state/flightLock.js';
-	import { intro, takeIntroHold } from '#lib/state/intro.svelte.js';
+	import { intro, takeIntroHold, releaseIntroScroll } from '#lib/state/intro.svelte.js';
 	import { getSiblingNavPlan } from '#lib/state/siblingNav.js';
 	import { anchorOffsetFor, showsSiblingPanel } from '#lib/state/siblingLayout.js';
 	import { chipColumns } from '#lib/state/childRows.js';
@@ -801,6 +802,7 @@
 		const slot = document.querySelector('.featured-slot');
 		captureFlightOrigin(slot?.getBoundingClientRect() ?? new DOMRect(innerWidth / 2, innerHeight, 0, 0));
 		captureFlightKind('cc');
+		setArrivalTempo(); // 10% slower than a CC click — Thomas rises with pace, without throwing the family
 		captureClicked(null);
 		capturePivot(null);
 		capturePanDir('lateral');
@@ -826,7 +828,12 @@
 		if (introHold && intro.released) untrack(releaseIntroHold);
 	});
 	$effect(() => {
-		if (introArrival && !introHold && familyLanded) introArrival = false; // the chrome fades up
+		if (introArrival && !introHold && familyLanded) {
+			introArrival = false; // the chrome fades up
+			// …and the scrollbar comes back once the card has landed AND the family has unfurled — handed
+			// back during the flight, the rising card counted as overflow and a scrollbar flashed through it
+			setTimeout(releaseIntroScroll, 600);
+		}
 	});
 
 	// Safety net: if anything is still pending when the incoming card lands (e.g. the demoted card's

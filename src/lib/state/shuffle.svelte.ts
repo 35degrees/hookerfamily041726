@@ -122,7 +122,7 @@ export async function shuffleToNotable(node: HTMLElement): Promise<void> {
 	if (!target) return;
 	markSeen(current);
 	markSeen(target.slug);
-	await ccFlyTo(node, target);
+	await ccFlyTo(node, target, { carousel: true });
 }
 
 /**
@@ -139,13 +139,14 @@ export async function shuffleToNotable(node: HTMLElement): Promise<void> {
 export async function ccFlyTo(
 	node: HTMLElement,
 	target: { slug: string; t: { x: number; y: number | null } | null },
-	opts?: { vertical?: 'up' }
+	opts?: { vertical?: 'up' | 'down'; carousel?: boolean }
 ): Promise<void> {
-	// VERTICAL UP for a timeline portrait on the Hooker line (or married into it). Built from the same
-	// inputs the rail's own bars use for an ancestor — relationClass 'direct' + a negative genDelta — so
-	// isVerticalMove/deckDirFor give the flat vertical dive entering from the TOP, and isArcMove (which
-	// needs 'collateral') never arcs it. Absent = the lateral carousel flight, unchanged.
-	const vertical = opts?.vertical === 'up';
+	// VERTICAL, for the timeline's THOMAS exception only (see TimelineRail's thomasVertical): 'up' when the
+	// rail sends a line person to Thomas, 'down' when it sends Thomas to one. Built from the same inputs the
+	// rail's own bars use — relationClass 'direct' + a signed genDelta (−1 ancestor tier, enters from the
+	// TOP; +1 descendant tier, enters from the BOTTOM) — so isVerticalMove/deckDirFor give the flat vertical
+	// dive, and isArcMove (which needs 'collateral') never arcs it. Absent = the lateral carousel flight.
+	const vertical = opts?.vertical;
 	// Everything below mirrors the CC branch of warmPersonLinks, in the same order, for the same reasons.
 	if (!prefersReducedMotion.current) lockFlight();
 	captureFlightOrigin(node.getBoundingClientRect());
@@ -179,7 +180,7 @@ export async function ccFlyTo(
 		easing: 'cubicOut',
 		kind: 'cc',
 		relationClass: vertical ? 'direct' : 'collateral',
-		genDelta: vertical ? -1 : 0,
+		genDelta: vertical === 'up' ? -1 : vertical === 'down' ? 1 : 0,
 		kinDistance: null,
 		scaleMin: null
 	};
@@ -188,7 +189,10 @@ export async function ccFlyTo(
 	// fact about this flight: it is a shuffle. Both are per-flight and both are cleared by the next
 	// captureFlightKind, so neither can bleed into an ordinary CC.
 	setCarouselLateral(); // fixed direction — never the ping-pong. See (2) above.
-	setCarouselTempo(); // 10% quicker end-to-end. See (4) below.
+	// 10% quicker end-to-end — the SHUFFLE's tempo only (`carousel`). The timeline portraits used to inherit
+	// it by sharing this function; Sam (2 Oct): headshot clicks were "too fast… I'd like to remove that", so
+	// they now fly at the standard CC pace. See (4) below.
+	if (opts?.carousel) setCarouselTempo();
 	publishCameraMove(move);
 
 	if (!prefersReducedMotion.current) {

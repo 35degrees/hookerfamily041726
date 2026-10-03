@@ -776,6 +776,15 @@ function deckTempo(): number {
 export function setCarouselTempo(): void {
 	carouselTempo = CAROUSEL_TEMPO;
 }
+// ARRIVAL TEMPO (Oct 2) — the intro's hand-off, Thomas rising from the bottom edge after the painting. Sam:
+// "Thomas comes in very fast and I don't want to 'throw' the family around… not slow, some pace… maybe a
+// 10% reduction." The same per-flight slot as the carousel (reset by captureFlightKind, TIME only — curves,
+// heft, tilt and the settle distance do not move), just the other way: this flight plays 10% slower.
+const ARRIVAL_TEMPO = 1.1;
+/** Marks the launching flight as the intro's arrival. Called once, by the person page's intro release. */
+export function setArrivalTempo(): void {
+	carouselTempo = ARRIVAL_TEMPO;
+}
 // TRAVEL TEMPO (v4.2.6): shortens the two cards' TRANSIT time only — NOT the beat (spacing held) and NOT the
 // easing shape (velocity curve held): same distances, same curves, same gap, cards just cross a bit faster,
 // so the total drops ~5%. Applied to car 1's exit + the hero's entry, never to the phantom beat.

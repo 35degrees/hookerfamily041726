@@ -18,6 +18,7 @@
 	 * goes where it still means something — the veil coming in, and the exit into the card's flight.
 	 */
 	import { personHref } from '#lib/paths.js';
+	import { thomasVertical } from '#lib/state/thomasVertical.js';
 	import { listYears as years } from '#lib/utils/dates.js';
 	import { hoverIntent } from '#lib/state/hoverIntent.js';
 	import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
@@ -386,6 +387,17 @@
 		 * only re-colours it, read off the arriving person's own tags (ascension.svelte.ts §43.1).
 		 */
 		if (f & CAT.INFLUENCE) a.dataset.orbit = 'true';
+		/**
+		 * THE THOMAS EXCEPTION (Sam, 2 Oct 2026) — searching FOR Thomas from his line, or picking his line
+		 * FROM his card, flies vertically, the same rule as the timeline portraits (#lib/state/thomasVertical).
+		 * Carried the way a CC blade link carries it — `data-relation-class` + a signed `data-gen-delta` — so
+		 * warmPersonLinks/isVerticalMove need nothing new. Every other pick stays lateral, as it always was.
+		 */
+		const dir = thomasVertical(slug, (f & (CAT.HD | CAT.SPOUSE)) !== 0);
+		if (dir) {
+			a.dataset.relationClass = 'direct';
+			a.dataset.genDelta = dir === 'up' ? '-1' : '1';
+		}
 		a.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;opacity:0;pointer-events:none;`;
 		stage.appendChild(a);
 		a.click();

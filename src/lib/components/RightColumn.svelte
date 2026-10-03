@@ -5,6 +5,9 @@
 	import type { Cemetery } from '#lib/types/cemetery.js';
 	import { buildMapUrl, formatLocationShort } from '#lib/utils/dates.js';
 	import { isPynchonKin } from '#lib/data/pynchonLine.js';
+	import { shrinkToFit } from '#lib/actions/shrinkToFit.js';
+	import { fitMediaText } from '#lib/actions/fitMediaText.js';
+	import { stage } from '#lib/state/stage.svelte.js';
 
 	type Props = {
 		person: Person;
@@ -39,6 +42,12 @@
 	let documents = $derived(person.documentsResolved ?? []);
 	let statues = $derived(person.statuesResolved ?? []);
 	let videos = $derived(person.videosResolved ?? []);
+	// The type step, as FeaturedCard rounds it — shrinkToFit takes px, so the --type-k sizes become numbers.
+	const k = $derived(stage.k);
+	const t = (px: number) => Math.round(px * k * 10) / 10;
+	/** The hover tooltip for a media/document row: the whole title and description, for when either had
+	 *  to shrink small or wrap (Sam: "if someone hovers over the text it should appear in a tooltip"). */
+	const tip = (row: MediaRow) => [row.name, row.subtitle].filter(Boolean).join(' — ') || undefined;
 
 	// Measured height of the pinned burial block. The scroll group reserves exactly this much
 	// padding-bottom so the variable stack can never scroll under (or overlap) the pin — the
@@ -208,14 +217,33 @@
 			</span>
 		{/if}
 	</div>
-	<div class="min-w-0 flex-1 space-y-0.5">
+	<!-- TITLE + DESCRIPTION, MEASURED (Sam, 100226): the title on ONE line, shrinking 13 → 11.5px to stay
+	     there; past that it wraps at full size, with the description after it if it fits whole — and the
+	     row never runs past THREE lines (the title shrinks to 10px first). No ellipsis anywhere; the whole
+	     text is on hover. See fitMediaText. -->
+	<div
+		class="min-w-0 flex-1"
+		title={tip(row)}
+		use:fitMediaText={{
+			max: t(13),
+			min: t(11.5),
+			lines: 1,
+			wrapAt: 'max',
+			maxLines: 3,
+			capMin: t(10),
+			subMax: t(11),
+			subMin: t(9.5),
+			key: `${row.name}|${row.subtitle}|${k}`
+		}}
+	>
 		<div
-			class="line-clamp-2 text-[calc(13px*var(--type-k,1))] leading-snug font-medium text-slate-800 group-hover:text-slate-600"
+			data-title
+			class="text-[calc(13px*var(--type-k,1))] leading-tight font-medium text-slate-800 group-hover:text-slate-600"
 		>
 			{row.name ?? '—'}
 		</div>
 		{#if row.subtitle}
-			<div class="truncate text-[calc(11px*var(--type-k,1))] leading-snug text-slate-500" title={row.subtitle}>
+			<div data-sub class="mt-px text-[calc(11px*var(--type-k,1))] leading-tight text-slate-500">
 				{row.subtitle}
 			</div>
 		{/if}
@@ -244,19 +272,72 @@
 
 <!-- textBody / textRow (documents): no thumbnail — a manuscript/letter has no meaningful icon.
      Same whole-row-link treatment; secondary line = row.subtitle (the document blurb), one line. -->
-{#snippet textBody(row: MediaRow)}
-	<div
-		class="line-clamp-2 text-[calc(13px*var(--type-k,1))] leading-snug font-medium text-slate-800 group-hover:text-slate-600"
-	>
-		{row.name ?? '—'}
-	</div>
-	{#if row.subtitle}
-		<div class="truncate text-[calc(11px*var(--type-k,1))] leading-snug text-slate-500" title={row.subtitle}>
-			{row.subtitle}
+{#snippet textBody(row: MediaRow, video = false)}
+	{#if video}
+		<!-- VIDEO TITLES: ONE LINE, NEVER WRAPPING (Sam, 100226) — the right column is narrow, so a title
+		     that wrapped was eating the column. The title SHRINKS to fit rather than being cut (Sam: "I kept
+		     title/summary generally short so I'd rather have smaller font size than ellipsis" — an ellipsis
+		     hid the last three letters of "Sierra Bonita Ranch Legacy"): shrinkToFit, the card name's own
+		     clamp, 13px down to a 10px floor; a title still too long at the floor WRAPS (no ellipsis anywhere). Every video
+		     gets the play mark in front (Sam: "ok to put logo in front of all videos"), at the title's cap
+		     height so it costs as little of the column as possible; flex-none, so a long title can never
+		     squeeze it, and it holds its size while the title beside it shrinks. -->
+		<div
+			class="flex min-w-0 items-center gap-1.5 text-[calc(13px*var(--type-k,1))] leading-snug font-medium text-slate-800 group-hover:text-slate-600"
+			title={row.name ?? undefined}
+		>
+			<img
+				src="/icons/youtube.png"
+				alt=""
+				draggable="false"
+				class="block h-[calc(9.5px*var(--type-k,1))] w-auto flex-none"
+			/>
+			<div
+				class="min-w-0 flex-1"
+				use:shrinkToFit={{ max: t(13), min: t(10), key: `${row.name}|${k}` }}
+			>
+				<span data-fit class="inline-block whitespace-nowrap">{row.name ?? '—'}</span>
+			</div>
+		</div>
+		{#if row.subtitle}
+			<div class="text-[calc(11px*var(--type-k,1))] leading-snug text-slate-500" title={row.subtitle}>
+				{row.subtitle}
+			</div>
+		{/if}
+	{:else}
+		<!-- DOCUMENTS: the title gets TWO lines, shrinking 13 → 10.5px to fit them with minimal line spacing
+		     (Sam: "documents get long, I'd like to wrap on two lines with clamped font size"); past that
+		     it wraps on and the description runs after it. No ellipsis; the whole text is on hover. -->
+		<div
+			class="min-w-0"
+			title={tip(row)}
+			use:fitMediaText={{
+				max: t(13),
+				min: t(10.5),
+				lines: 2,
+				wrapAt: 'min',
+				maxLines: 3,
+				capMin: t(10),
+				subMax: t(11),
+				subMin: t(9.5),
+				key: `${row.name}|${row.subtitle}|${k}`
+			}}
+		>
+			<div
+				data-title
+				class="text-[calc(13px*var(--type-k,1))] leading-tight font-medium text-slate-800 group-hover:text-slate-600"
+			>
+				{row.name ?? '—'}
+			</div>
+			{#if row.subtitle}
+				<div data-sub class="mt-px text-[calc(11px*var(--type-k,1))] leading-tight text-slate-500">
+					{row.subtitle}
+				</div>
+			{/if}
 		</div>
 	{/if}
 {/snippet}
-{#snippet textRow(row: MediaRow)}
+{#snippet textRow(row: MediaRow, video = false)}
 	{#if row.url}
 		<a
 			href={row.url}
@@ -265,11 +346,11 @@
 			aria-label={row.name ?? undefined}
 			class="group block space-y-0.5"
 		>
-			{@render textBody(row)}
+			{@render textBody(row, video)}
 		</a>
 	{:else}
 		<div class="space-y-0.5">
-			{@render textBody(row)}
+			{@render textBody(row, video)}
 		</div>
 	{/if}
 {/snippet}
@@ -282,15 +363,17 @@
 >
 	<!-- Variable entity stack (Education → Career → Landmarks → Art → Documents → Statues → Video):
 	     the ONLY scrolling region. Its padding-bottom is reserved to the measured burial-block
-	     height (+ gap) so nothing here can ever scroll beneath the pinned corner. -->
+	     height (+ gap) so nothing here can ever scroll beneath the pinned corner.
+     SPACING (Sam, 100226): 8px between sections (was 10, −20%) and 2.4px from each section header to its
+     first row (was 6, −60%, the headers' mb-[2.4px]). -->
 	<div
-		class="scroll-group flex-1 space-y-2.5 overflow-y-auto pr-1"
+		class="scroll-group flex-1 space-y-2 overflow-y-auto pr-1"
 		style="min-height: 0; padding-bottom: {burialCemetery?.name ? burialHeight + 12 : 0}px"
 	>
 		<!-- 1. EDUCATION (education[], capped at EDU_LIMIT) -->
 		{#if eduEntries.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Education
 				</div>
 				{#each eduEntries as e, i (i)}
@@ -314,7 +397,7 @@
 		<!-- 2. CAREER (career[]) — notes hidden, carried in title tooltip -->
 		{#if careerEntries.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Career
 				</div>
 				{#each careerEntries as c, i (i)}
@@ -333,7 +416,7 @@
 		<!-- 3. LANDMARKS (landmarksResolved[]) -->
 		{#if landmarks.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Landmarks
 				</div>
 				{#each landmarks as row, i (i)}
@@ -345,7 +428,7 @@
 		<!-- 4. ART (artworksResolved[]) -->
 		{#if artworks.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Art
 				</div>
 				{#each artworks as row, i (i)}
@@ -357,7 +440,7 @@
 		<!-- 5. DOCUMENTS (documentsResolved[]) — text rows, no thumbnail -->
 		{#if documents.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Documents
 				</div>
 				{#each documents as row, i (i)}
@@ -369,7 +452,7 @@
 		<!-- 6. STATUES (statuesResolved[]) -->
 		{#if statues.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Statues
 				</div>
 				{#each statues as row, i (i)}
@@ -383,11 +466,11 @@
 		     the subtitle line later — it needs the YouTube Data API, not in the URL (data-chat task). -->
 		{#if videos.length}
 			<section class="space-y-1">
-				<div class="mb-1.5 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
+				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Video
 				</div>
 				{#each videos as row, i (i)}
-					{@render textRow(row)}
+					{@render textRow(row, true)}
 				{/each}
 			</section>
 		{/if}
