@@ -6145,6 +6145,69 @@ hero the entire time."* Both are fixed. Safari is now *"almost as good as Chrome
 scoped to WebKit**, and the Chrome probes (demote-settle, sibling-seat, sibling-skin, back-button) stayed
 GREEN after each step.
 
+### 58.0 THE SAFARI STORY IN ONE PAGE — read this first (written October 3, 2026)
+
+The detail is in §58.1–58.6. This is the arc: what broke, what we tried, what worked, and why.
+
+**Where we started (October 2).** The app was built and tuned in Chrome. In Safari:
+- the card's shadow blinked out;
+- promotions skipped their middle (chip, then a jump to nearly full size);
+- everything felt like a slightly unstable "baseball card".
+
+**What actually worked, in order:**
+1. **Measure real Safari, never headless WebKit (§58.1).** Headless WebKit renders in software and never
+   shows these bugs. Everything that worked came from Sam's own Safari: JavaScript driven through
+   AppleScript, plus screen recordings split into frames. The kit is in `scripts/safari/`.
+2. **The shadow: twins (§58.2).** The shadow moved onto separate "twin" elements, so the card's own layer
+   never has to repaint it.
+3. **The missing middle, part 1 (§58.3, 58.3b).** Safari starts an animation's clock when it is created,
+   but paints a new card only 45–75ms later, and the growth eases out, so most of it was spent before
+   anything showed. Fix: the arriving card is created *held* at its first pose for 50ms
+   (`SAFARI_HOLD_MS`).
+   - Pausing it after creation failed: after a hover, Safari's compositor had already started it, so the
+     card flashed and rewound.
+   - Moving the transition's start (`introstart`) failed: it produced twin chips.
+4. **The spouse swap (§58.6.0).** Its two cards share one clock, so holding only the arrival split them.
+   Both are held now (the `shrinkTo` wrapper).
+5. **The missing middle, part 2 (§58.3f).** It came back about 75% of the time. The 50ms hold was written
+   as a `delay`, and Safari hands an animation to its compositor only after the delay ends and the page's
+   main thread is free. The delay ended exactly when post-mount work was running, so the hand-off came
+   ~30ms late and skipped the fastest part of the growth.
+   - Fix: write the hold *into the keyframes* (the first 50ms repeat the start pose). Same timing; the
+     compositor owns the card from frame one.
+   - Sam: *"this is it… very smooth."*
+6. **The right-column scrollbar (§58.3e).** It flickered at 60Hz on edge-of-fit columns: a classic
+   scrollbar and the text-fitting code kept undoing each other. Fixed with `scrollbar-gutter: stable`.
+
+**What failed. Don't repeat (§58.4):**
+- A 100ms lead-in on every flight. The choreography broke (twin chips, a "miniature preview").
+- Adaptive holds.
+- 20ms and 40ms start delays (twin chips).
+- A pause-based hold (flash and rewind after a hover).
+- A double shadow in flight.
+- Six variants for the ~1px text re-snap at landing. It's Safari's own final-quality redraw; accepted.
+- **Converting the CC deck to precomputed keyframes for Chrome.** It made no difference, so it was
+  reverted.
+
+**The rules that came out of it** (memory `safari-fixes-never-touch-flight-timing`):
+- Scope every fix to WebKit (`html.webkit` / `isWebKit()`).
+- Isolate or cheapen; never re-time the choreography.
+- In Safari, a `delay` is not a free hold. Write holds into the keyframes.
+- When the same setting has been turned twice without a fix, stop and measure. Most of the progress came
+  right after stopping to measure.
+- Film with a real mouse (hover changes the timing), and never test in the tab Sam is using.
+
+**What we learned about Chrome along the way:**
+- **No lag builds up over a session** (§58.3d: 40 CC hops, flat memory and frame times).
+- **The NB "clench" on every CC click** (§58.3e) was Chrome rebuilding every web font on any URL change, a
+  likely Chrome experiment, so the text drew one frame in Helvetica. Fixed by `pinFonts.ts`.
+- **The remaining occasional CC jerk is very slight** (Sam: *"so slight and sometimes it's smooth"*). It is
+  *not* the per-frame driving (§58.4, last bullet). The next lead, if it ever matters, is a screen
+  recording of a bad one.
+
+**Still open:** the Safari quiver on CC and spouse overshoots (§58.3c, never measured with keyframes in
+Safari) and the accepted landing re-snap (§58.6.1).
+
 ### 58.1 HOW TO MEASURE REAL SAFARI — read this before touching anything
 
 **Headless WebKit (Playwright 26.5) cannot show these bugs.** It renders in software, so it reproduced the
@@ -6298,7 +6361,7 @@ around" is more likely a heavier card, or a test run overlapping Sam's clicks.
 
 ### 58.3c OCTOBER 3 (EVENING) — THE QUIVER: WHY SOME FLIGHTS SHAKE IN SAFARI AND OTHERS DON'T
 
-**Status: diagnosed, NOT fixed. No code changed for this. The fix below is proposed, waiting for Sam.**
+**Status: diagnosed, NOT fixed.** The proposed conversion below was built and measured for CHROME on October 3 and reverted, because it made no measurable difference there (see the last bullet of §58.4). It is still untested for the Safari quiver itself.
 
 **What Sam sees (October 3, 2026):** in Safari, the intro → Thomas rise and the spouse swap's overshoot
 *"quiver"*: *"three or four microtransitions"*, a sense of *"uncertainty"*. Chrome is stable on the same
@@ -6478,10 +6541,24 @@ keyframes.
 - **Diagnostic switches** (`?wk=a…g`, each turning off one suspect) did their job in real Safari: the
   shadow and corners were the cost, and the hover fade caused the blink. They have been removed.
 
+- **The CC deck flights converted from per-frame `tick` to precomputed `css` keyframes** (October 3,
+  for Chrome's "sometimes smooth, sometimes jerky" CC transitions). This covered the hero arrival and
+  car 1's exit; every value is a launch-time constant, so the path was exact.
+  - Chrome's layer inspector confirmed both cards ran on the compositor ("active accelerated transform
+    animation").
+  - Filmed in headed Chrome with 35ms main-thread stalls every 80ms: **no improvement**. Old and new both
+    showed 7 frame gaps of ≥33ms. The new version's landing was slightly choppier (freeze, then a double
+    step).
+  - Reverted. Chrome's occasional CC jerk is **not** the tick driving. Look elsewhere before retrying this
+    (scheduler or commit behaviour with this many overlapping layers, or main-thread work landing during the
+    flight).
+  - It may still help **Safari's** quiver (§58.3c), but that has not been measured.
+
 ### 58.5 THE SAFARI RULE SET AS IT STANDS
 
 Everything is in `layout.css`'s SAFARI section, plus:
-- `holdUntilPainted` in `+page.svelte`;
+- `holdUntilPainted` in `+page.svelte` (the hold written into the keyframes, §58.3f) and the `shrinkTo`
+  wrapper in `flight.ts` (spouse swaps);
 - `blockSlide` in NarrativeBlocks;
 - the twins in FeaturedCard and CrossConnectionsBlade;
 - `src/lib/state/engine.ts`.
@@ -6497,9 +6574,8 @@ Chrome, Edge and Opera say "AppleWebKit" in their user agent but are excluded.
    now held together: the arrival through `holdUntilPainted`, and the demoting card through the
    `shrinkTo` wrapper in `flight.ts`, which holds its first `SAFARI_HOLD_MS` and lands with the arrival.
    The first visible width of the arriving card went from 455px to about 270px (Chrome: 310). Sam:
-   *"looks fine… commit."* The remaining overshoot quiver is the `tick` problem of §58.3c. A short, fast flight is where Safari's slow first frame shows most. Before
-   touching it, **film it with Sam's own mouse** (§58.1). Holding both cards together means re-timing the
-   tick-driven demote, which is exactly the fragile ground of §58.4.
+   *"looks fine… commit."* **Status: done.** The remaining overshoot quiver is the `tick` problem of
+   §58.3c. Before touching it again, **film it with Sam's own mouse** (§58.1).
 
 1. **The "tick up" at the end of a CC or spouse overshoot. Investigated on October 3, and it is
    Safari's own behaviour, not ours.**
