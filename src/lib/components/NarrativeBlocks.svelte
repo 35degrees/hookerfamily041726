@@ -1,8 +1,25 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
+	import type { SlideParams, TransitionConfig } from 'svelte/transition';
 	import { untrack } from 'svelte';
 	import type { NarrativeBlock } from '#lib/types/person.js';
 	import { stage } from '#lib/state/stage.svelte.js';
+	import { isWebKit } from '#lib/state/engine.js';
+
+	/**
+	 * THE BLOCK'S SLIDE — Svelte's own `slide`, except in Safari/WebKit, where its opening opacity fade is
+	 * dropped (100226). That fade is only the first 5% of the slide, but in Safari an opacity ANIMATION gives
+	 * the block its own compositing layer, inside the hero's filtered wrapper, and the card's drop-shadow
+	 * blinked out every time a header was clicked open (the same cause as the header-hover blink — see
+	 * layout.css's SAFARI section). Height-only, the slide looks the same and the shadow holds. Chrome is
+	 * untouched: it gets `slide` exactly as before.
+	 */
+	function blockSlide(node: Element, params: SlideParams): TransitionConfig {
+		const cfg = slide(node, params);
+		if (!isWebKit() || !cfg.css) return cfg;
+		const css = cfg.css;
+		return { ...cfg, css: (t, u) => css(t, u).replace(/opacity:\s*[^;]+;?/, '') };
+	}
 
 	type Props = {
 		blocks: NarrativeBlock[];
@@ -108,7 +125,7 @@
 					</h3>
 				</button>
 				{#if openKey === key}
-					<div class="pt-1 pr-8 pb-1.5" transition:slide={{ duration: 220, axis: 'y' }}>
+					<div class="pt-1 pr-8 pb-1.5" transition:blockSlide={{ duration: 220, axis: 'y' }}>
 						<!-- whitespace-pre-line so a body that contains real newlines renders as lines — the
 						     verse blocks (Edward Taylor, 091626). Prose bodies are unaffected: pre-line still
 						     collapses runs of spaces and wraps normally, it only honours an explicit \n. -->

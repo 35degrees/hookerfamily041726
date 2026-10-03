@@ -134,6 +134,7 @@
 	import { publishCameraMove } from '#lib/state/camera.js';
 	import { lockFlight } from '#lib/state/flightLock.js';
 	import { intro, takeIntroHold, releaseIntroScroll } from '#lib/state/intro.svelte.js';
+	import { isWebKit } from '#lib/state/engine.js';
 	import { getSiblingNavPlan } from '#lib/state/siblingNav.js';
 	import { anchorOffsetFor, showsSiblingPanel } from '#lib/state/siblingLayout.js';
 	import { chipColumns } from '#lib/state/childRows.js';
@@ -568,6 +569,7 @@
 
 	function onIncomingStart(node: HTMLElement) {
 		if (motionOff()) return;
+		if (isWebKit()) holdUntilPainted(node);
 		navSeq++;
 		node.classList.add('flat'); // suppress notch → solid rectangle for the flight
 		// THE ANTICIPATED NOTCH. `.flat` normally holds until landing, because a carved corner on a card
@@ -635,6 +637,28 @@
 				el.dataset.flightDir !== 'lateral' &&
 				!crossingIds.includes(el.dataset.flightId ?? '')
 		);
+	}
+	// THE ARRIVING CARD WAITS FOR ITS FIRST PAINT — Safari/WebKit only (100226). Filmed in Sam's real Safari:
+	// on a parent promotion the arriving card went from chip to ~95% grown between two screen frames. Safari
+	// runs this keyframe animation on its compositor and starts its clock when the animation is CREATED, but
+	// the freshly mounted card only reaches the screen ~100ms later (the first frame of a new card is slow to
+	// build) — and the flight eases out, so most of the growth was spent before anything was shown ("it only
+	// does the first 10%… then jumps"). Chrome starts such a clock at the first commit, which is why it was
+	// perfect there. So here, ONLY this card's own animation is held at its first pose until a frame has been
+	// painted, then released — its first visible frame is the true chip-sized start. Nothing else moves in
+	// time: not the departing card, the chips, the seats or the blade (the broken lead-in shifted those). Safe
+	// to pause: growFrom is a plain keyframe animation; the tick-driven demote, which a pause would kill, is
+	// another element. Called from introstart, i.e. just BEFORE Svelte creates the main animation — hence the
+	// microtask.
+	function holdUntilPainted(node: HTMLElement) {
+		queueMicrotask(() => {
+			const anim = node
+				.getAnimations()
+				.find((a) => a.playState === 'running' && ((a.effect as KeyframeEffect | null)?.getKeyframes().length ?? 0) > 2);
+			if (!anim) return;
+			anim.pause();
+			requestAnimationFrame(() => requestAnimationFrame(() => anim.play()));
+		});
 	}
 	// Spouse-chip reveal fade — quicker than the default box fade (180ms) so the chips settle into the
 	// notch with less lag AFTER the hero lands. NOT an earlier start (that would be a mid-flight rise,

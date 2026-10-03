@@ -788,6 +788,17 @@
             drop-shadow(0 calc(1px * var(--shadow-k, 1)) calc(3px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a2) * var(--shadow-fade, 1))));
     "
 >
+	<!-- THE SHADOW TWIN (Safari/WebKit only — hidden everywhere else; rules in layout.css's SAFARI section).
+	     A silent copy of the card's silhouette, directly behind it, that casts the shadow in Safari in place
+	     of the wrap's filter. The wrap holds everything that animates — header hovers, block slides, the
+	     Connect buttons, the blade — and in Safari any of those taking a compositing layer made the wrap's
+	     drop-shadow blink out. The twin holds nothing, so nothing can. Same shape, same flat swap in flight
+	     (--flat-shape), same --shadow-k / --shadow-fade it inherits from the flight. -->
+	<!-- Two layers, like the wrap and the card they copy: the OUTER casts (filter), the INNER is cut (clip-path)
+	     — a clip-path on the casting element would cut its own shadow away. -->
+	<div class="shadow-twin" aria-hidden="true">
+		<div class="twin-shape" style="clip-path: {clipPath}; --flat-shape: {flatShape};"></div>
+	</div>
 	<!-- The CARVED CARD: clip-path creates the notch silhouette.
 	     No fixed height here — it grows naturally to fit card-top (CARD_TOP_H) + footer (auto). -->
 	<article

@@ -709,3 +709,91 @@ body {
 .tabular-figs {
 	font-variant-numeric: lining-nums tabular-nums;
 }
+
+/* ── SAFARI / WEBKIT ONLY (100226) ───────────────────────────────────────────────────────────────────────
+   Scoped to `html.webkit` (set by #lib/state/engine.ts — Safari, and every iPhone/iPad browser). Chrome
+   never matches these rules; everything above is what Chrome renders, and Chrome is the reference.
+   Session record and the measurements behind each rule: ENRICHED roadmap §58. Two rules of the work:
+   isolate or cheapen, never RE-TIME a flight (a WebKit lead-in desynced the whole choreography and was
+   reverted); and judge only in real Safari — headless WebKit renders in software and cannot show it.
+   The one non-CSS piece: +page.svelte's holdUntilPainted (the arriving card's clock waits for its first
+   paint) — the fix for the "missing middle" of parent and sibling promotions. */
+
+/* THE SHADOW TWINS — the hero's shadow moves OFF the wrap in Safari. The featured card and its CC blade
+   share one shadow, a `filter` of two drop-shadows on .featured-card-wrap (a box-shadow cannot follow the
+   spouse notch). The wrap holds everything that animates (header hovers, block slides, the Connect buttons,
+   the blade, the mouse resting on a landing card), and in Safari any of those taking a compositing layer
+   made that drop-shadow blink out — and re-blurring it every frame in flight cost Safari half its frames.
+   So in Safari the wrap casts nothing, and two silent copies of the silhouette cast it: .shadow-twin behind
+   the card (FeaturedCard) and .cc-twin behind the blade (CrossConnectionsBlade). They hold nothing, so
+   nothing inside the card can disturb them; same two drop-shadows, same --shadow-k / --shadow-fade
+   inherited from the flight. Chrome never shows them. */
+.shadow-twin,
+.cc-twin {
+	display: none;
+	position: absolute;
+	pointer-events: none;
+}
+/* the silhouette itself: cut by the clip-path, filled opaque (only its shadow is ever seen). The OUTER
+   element casts — a clip-path on the casting element would cut its own shadow away, which is why the wrap
+   and the card were two elements in the first place. */
+.twin-shape {
+	position: absolute;
+	inset: 0;
+	background: #fff;
+}
+.shadow-twin {
+	inset: 0;
+	z-index: -2; /* under the blade (-1), so the card casts onto the page, never across the blade */
+}
+.cc-twin {
+	z-index: -1;
+}
+html.webkit .featured-card-wrap {
+	filter: none !important;
+	isolation: isolate; /* the filter was also what kept the blade's z-index:-1 inside the card */
+}
+html.webkit .shadow-twin,
+html.webkit .cc-twin {
+	display: block;
+	will-change: filter; /* its own layer: re-blurring it in flight repaints only this plain shape */
+	filter: drop-shadow(0 calc(4px * var(--shadow-k, 1)) calc(12px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a1) * var(--shadow-fade, 1))))
+		drop-shadow(0 calc(1px * var(--shadow-k, 1)) calc(3px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a2) * var(--shadow-fade, 1))));
+}
+html.webkit .featured-flight.flat:not(.notch-armed) .shadow-twin .twin-shape {
+	clip-path: var(--flat-shape) !important; /* the card flies flat, so its twin does */
+}
+/* IN FLIGHT the shadow keeps its COUNTER-SCALE, as in Chrome: a small card throwing a full-size shadow is
+   much of what makes a flying chip read as a discrete physical card (holding --shadow-k at 1, the first
+   cut, shrank it to nothing at chip size and parent/sibling promotions lost their heft — Sam). One
+   drop-shadow in flight, the main one; two at rest. */
+html.webkit .featured-flight.flat .shadow-twin,
+html.webkit .featured-flight.flat .cc-twin {
+	filter: drop-shadow(0 calc(4px * var(--shadow-k, 1)) calc(12px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a1) * var(--shadow-fade, 1)))) !important;
+}
+
+/* THE CARD AS ONE PICTURE. The featured card lives on its own GPU layer, at rest and in flight. In flight:
+   Safari re-rendered it at every new size, and near the end of the settle the text snapped to whole pixels
+   at each tiny scale change (the "quaking" before the hero settles). At rest: a child taking a layer of
+   its own (a Connect button lifting on hover, a CC name's tooltip fading in) made Safari re-snap the whole
+   card — the "jiggle" on the Connect buttons and the one-time hair-shift on the first CC hover. The layer
+   only holds if nothing INSIDE changes per frame, so the corner counter-scale (--r-kx/--r-ky, written every
+   frame so the corners stay round while the card is squashed) is held at 1 in flight: the corners scale
+   with the card mid-flight and are exact again the moment it lands. (Before the twins, this same permanent
+   layer is what broke the wrap's shadow; the twins took the shadow out of its way.) */
+html.webkit .featured-flight {
+	will-change: transform;
+}
+html.webkit .featured-flight.flat .featured-card,
+html.webkit .featured-flight.flat .shadow-twin .twin-shape {
+	--r-kx: 1 !important;
+	--r-ky: 1 !important;
+}
+
+/* THE NARRATIVE-HEADER HOVER. In Chrome the header fades to 60% over 150ms. In Safari that opacity
+   ANIMATION took a compositing layer inside the card and blinked the shadow out each time the mouse
+   crossed a header (before the twins; kept as belt and braces). The same dim, instant. The block's own
+   slide drops its opacity fade in Safari for the same reason (NarrativeBlocks blockSlide). */
+html.webkit .header-button {
+	transition: none !important;
+}

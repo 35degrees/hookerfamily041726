@@ -30,10 +30,14 @@
 	import favicon from '#lib/assets/favicon.svg';
 	import SettleVeil from '#lib/components/SettleVeil.svelte';
 	import IntroOverlay from '#lib/components/IntroOverlay.svelte';
+	import { markEngine } from '#lib/state/engine.js';
+	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { intro } from '#lib/state/intro.svelte.js';
 
 	let { children } = $props();
+	// WebKit-only workarounds are scoped to `html.webkit` (see engine.ts and layout.css's SAFARI section).
+	onMount(markEngine);
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>

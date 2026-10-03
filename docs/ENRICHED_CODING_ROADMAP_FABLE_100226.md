@@ -1,6 +1,8 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: October 2, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_100226.md (the what/why for every item below).**
+**OCTOBER 2, 2026, LATE (§58): SAFARI.** Everything before this was built and judged in Chrome only, so the first session in real Safari found the hero's shadow blinking and the chip flights skipping. Safari is now close to Chrome. §58.1 is how to measure real Safari from here; nothing on headless WebKit can show these bugs. §58.3 is the one you need if a promotion ever "jumps" again: the arriving card's clock now waits for its first paint (`holdUntilPainted`). §58.4 is what NOT to do: re-timing flights for Safari broke everything and was reverted. All of it is scoped to `html.webkit`, so Chrome is byte-identical.
+
 **OCTOBER 2, 2026 (§57): NEON, SVELTEKIT 3, BETTER AUTH 1.7.7, BACK/FORWARD, ROOT URLS, AND THE INTRO AT `/`.** One long Stream B day, eleven commits from `f7749c5c` to the dial removal. The database stopped staying awake all day (the Neon bill's real cause). SvelteKit 3.0.0 was migrated with all probes unchanged, which closes §38's assessment. Better Auth went to 1.7.7 after a one-transaction schema cleanup on Neon. Back/Forward now enters the state instantly instead of replaying a flight. People live at the root (`/thomas-hooker-1586`), with `/person/x` 301'd forever. Then the intro at `/` was built in small steps, each signed off on screen: the spine's own gilt title, a torch search, the painting, an Enter arrow, and Thomas's card rising via the existing vertical CC flight. §57.6 is the intro's session record and file map; §57.7 is how to bring its tuning dials back; design §51 is its what and why, including everything Sam rejected.
 **AUGUST 29, 2026 (§49): AUTH PULLED FORWARD TO NEXT (Sam's call; nothing built), THE SCOPING DECISION (§49.5), and the 896 multi-token `first_name` records measured into §4.** Sam moves Phase 10 ahead of 2.4/2.5/2.75/3a/3b. §38.5 wanted the SvelteKit 3 migration to happen BEFORE auth — *"migrating a zero-server app is a codemod; migrating an auth'd one is a project"* — but the window never opened: SK3 is still `3.0.0-next.25` against a `latest` of 2.70.3, so the sequence it wanted is not available. §49.2 is the practical half: auth creates every SK3 surface this app currently lacks (hooks, cookies, `$env`, server modules, form actions), and the migration cost is linear in HOW MANY FILES import SvelteKit server primitives — so concentrate them in one `hooks.server.ts` and one `lib/server/auth.ts` and the later cost stays bounded. Also retires §38.5's line that CSRF/cookie hardening is *"nothing to protect yet"*. §4 gains the 896-record analysis: neither of its two leaks needs `first_name` edited at all — the slug fix is one line of `regenerate-data.js` with exactly two collisions, the casual-register fix is `chip_first_name`, and the review pile is 62 compound given names (Mary Ann, Sarah Jane) where the CURRENT output is already right. **§49.5 records the scoping decision itself — 3c and the zoom-3/Card↔Table remainder of 9 RETIRED from the pre-launch path with their specs preserved unaltered, 9.5 (the phone) FLAGGED OPEN rather than cut, 11 still gating launch. Nothing deleted; the phase table is annotated, and a retired phase reopens by saying so.**
 
@@ -6130,4 +6132,145 @@ See design §51.6. In short:
 - orbit transitions (re-map the architecture first);
 - search and top-nav improvements;
 - the payload diet (the `context` block is about 78% of every person payload).
+
+---
+
+## 58. OCTOBER 2, 2026 (LATE) — SAFARI (session record; WebKit-only, Chrome untouched)
+
+Sam: *"my project works perfectly in chrome because that's how I've been testing it."* The first real-Safari
+pass found two families of bugs: the hero card's drop-shadow **blinking out** (on hover, on clicks, and
+through every flight), and chip promotions **skipping their middle**. A parent promotion in particular
+*"only does the first 10%… then jumps… you can see the background between the parent chip and the final
+hero the entire time."* Both are fixed. Safari is now *"almost as good as Chrome"* (Sam). **Every change is
+scoped to WebKit**, and the Chrome probes (demote-settle, sibling-seat, sibling-skin, back-button) stayed
+GREEN after each step.
+
+### 58.1 HOW TO MEASURE REAL SAFARI — read this before touching anything
+
+**Headless WebKit (Playwright 26.5) cannot show these bugs.** It renders in software, so it reproduced the
+frame counts loosely but never the shadow blinks, the jiggle or the jump. The real bugs live in Safari's
+GPU compositor. Three tools were set up on Sam's Mac (an M1 Max with two 6720×3780 displays; Safari
+lives on display 2):
+
+1. **JavaScript in Sam's open Safari tab, via AppleScript.** It needs Safari › Settings › Developer ›
+   "Allow JavaScript from Apple Events".
+   - `osascript -e 'tell application "Safari" to do JavaScript (read POSIX file "x.js") in current tab of front window'`
+   - Write results to `window.__m` and read them back with a second call.
+   - This sees the animation's **clock** (rect per rAF), not the pixels.
+   - It must run outside the command sandbox.
+2. **Screen recording, through Terminal.** Terminal has the Screen Recording permission, and VS Code has
+   Automation rights over Terminal.
+   - `osascript -e 'tell application "Terminal" to do script "screencapture -v -V 7 -D 2 out.mov; exit"'`
+   - **Activate Safari first.** If it sits on another Space, the recording shows only the desktop.
+   - The recorder takes about 3s to start, so click about 4s in.
+   - Frames come out with a small Swift script (AVAssetReader → PNG; Playwright's bundled ffmpeg has no
+     H.264 decoder).
+   - The recording is variable frame rate: only changed frames are stored, so the timestamps show what
+     actually reached the screen.
+   - The scripts lived in the session scratchpad (`recflight.sh`, `frames.swift`, `measure.js`); rebuild
+     them from this description.
+   - **This is what found the root cause in §58.3.** The clock said 59fps and correct positions; the film
+     showed the card going from chip to 95% grown between two frames.
+3. **safaridriver (WebDriver).** It was enabled (`sudo safaridriver --enable` in Apple's Terminal, plus
+   "Allow remote automation"), but sessions timed out connecting to Safari. It wasn't needed in the end.
+
+**Dev override:** `?webkit=off` turns every WebKit rule off in Safari for a side-by-side comparison;
+`?webkit=on` forces them on in Chrome. Development builds only (`src/lib/state/engine.ts`).
+
+### 58.2 THE SHADOW — the twins
+
+**Mechanism.**
+- The hero card and its CC blade share **one** shadow: a `filter` with two `drop-shadow`s on
+  `.featured-card-wrap`, because a `box-shadow` can't follow the spouse notch. The card inside is cut by
+  `clip-path: shape()`.
+- That wrapper contains everything that animates: header hovers, block slides, the Connect buttons, the
+  blade's slide, CC tooltips, and the mouse resting on a landing card.
+- In Safari, any child taking a compositing layer made the wrap's filter stop painting, so the shadow
+  blinked.
+- In flight, `--shadow-k` (the counter-scale) re-blurred the whole filter every frame, which cost Safari
+  half its frames. Measured in WebKit: 12 painted frames against Chrome's 30.
+
+**What shipped, in order** (each item answered a report from Sam):
+1. **Header hover with no fade** (`html.webkit .header-button { transition: none }`). Sam confirmed it in
+   real Safari.
+2. **Block slide without its opacity fade** (`blockSlide` in NarrativeBlocks). Svelte's `slide` fades
+   opacity for its first 5%, which took a layer.
+3. **The shadow twins**, the structural fix for the whole family:
+   - `.shadow-twin` (in FeaturedCard) and `.cc-twin` (in CrossConnectionsBlade) are silent copies of the
+     card's and blade's silhouettes, sitting directly behind them. They cast the shadow in Safari, and the
+     wrap casts nothing (`filter: none; isolation: isolate`).
+   - The twins contain nothing, so nothing can disturb them.
+   - Each twin is **two elements**, an outer one with the `filter` and an inner `.twin-shape` with the
+     `clip-path`, because a clip-path on the casting element cuts its own shadow away. The first twin made
+     that mistake: the blade's shadow was missing until it was split.
+   - The blade twin copies the blade's **live** box with a ResizeObserver, since fitBlade writes the
+     blade's width imperatively.
+   - It asks `isWebKit()` directly: child components mount before the layout's `onMount` sets
+     `html.webkit`.
+4. **The counter-scaled shadow stays in flight**, on its own layer (`will-change: filter` on the twins).
+   The first cut held `--shadow-k` at 1 to save frames. That shrank the shadow to nothing at chip size, so
+   parent and sibling flights lost their "discrete physical card" heft. Re-blurring a plain twin is cheap.
+   It uses one drop-shadow in flight and two at rest.
+
+### 58.3 THE MISSING MIDDLE — the arriving card's clock waits for its first paint
+
+**Diagnosis.** It was ruled out step by step, and only the film found it:
+- **The clock:** 59fps with correct positions in real Safari, so not the logic.
+- **Stacking:** `elementFromPoint` showed the arriving card on top in both browsers.
+- **The film:** chip to about 95% grown between two screen frames.
+
+**Root cause.** Safari runs `growFrom`'s keyframe animation on the compositor and starts its clock when
+the animation is **created**. The freshly mounted card only reaches the screen about 60–110ms later,
+measured as 55 → 114 → 136ms frame times right after mount in real Safari. The flight eases out, so
+70–95% of the growth was spent before anything was shown. Chrome starts such a clock at the first commit.
+Parent and sibling flights are short and almost pure scale (design §18.2's "explodes off a corner that
+barely moves"), so they showed it worst. Child flights are longer and hid it.
+
+**The fix**, in `+page.svelte`, called from `onIncomingStart` (WebKit only):
+- `holdUntilPainted(node)` pauses **only the arriving card's own animation** at its first pose.
+- It plays again two animation frames later.
+- It's a microtask, because introstart fires just **before** Svelte creates the main animation.
+- Pausing is safe for `growFrom`, a plain CSS-keyframe animation. It would **not** be safe for the
+  departing card: Svelte's tick loop for `shrinkTo` stops for good the first time its animation isn't
+  running.
+
+**Filmed after the fix:** parent and sibling promotions grow visibly across several frames from chip size.
+Sam: *"oh wow, i was skeptical but you fixed it."*
+
+### 58.4 WHAT WAS TRIED AND REVERTED — do not repeat
+
+- **A WebKit-only 100ms lead-in on every flight transition** (growFrom, shrinkTo, morphIn, flyOut,
+  chipExit). It reverted the same hour. The choreography is coupled through timing that isn't all
+  transition delays: the pivot seat revealed before the demoting card landed (a visible twin chip), the
+  arriving card sat at chip size showing a "miniature preview" of its contents, and pieces jerked around.
+  Sam: *"you are regressing."* Memory: `safari-fixes-never-touch-flight-timing`.
+  **Isolate or cheapen; never re-time.**
+- **The wrap on a permanent layer before the twins existed** (`translateZ(0)`). It kept breaking the wrap's
+  shadow. After the twins, the same permanent layer is **correct**: `html.webkit .featured-flight
+  { will-change: transform }`, which fixed the Connect-button jiggle and the one-time hair-shift on the
+  first CC hover.
+- **Diagnostic switches** (`?wk=a…g`, each turning off one suspect) did their job in real Safari: the
+  shadow and corners were the cost, and the hover fade caused the blink. They have been removed.
+
+### 58.5 THE SAFARI RULE SET AS IT STANDS
+
+Everything is in `layout.css`'s SAFARI section, plus:
+- `holdUntilPainted` in `+page.svelte`;
+- `blockSlide` in NarrativeBlocks;
+- the twins in FeaturedCard and CrossConnectionsBlade;
+- `src/lib/state/engine.ts`.
+
+`isWebKit()` detects the engine, not the brand. Every iOS browser is WebKit and gets the rules; desktop
+Chrome, Edge and Opera say "AppleWebKit" in their user agent but are excluded.
+
+### 58.6 STILL OPEN IN SAFARI
+
+1. **The double overshoot on lateral CCs.** The card pulls back on the overshoot as it should, then "ticks
+   up vertically" for a second movement. Lateral deck flights use `easeOutBack` with a seeded tilt and a
+   perpendicular "lane" that both iron out to 0 (flight.ts `growFrom` CC branch). The suspect is the lane
+   or the tilt settling on a different curve or clock than the travel, visible only in Safari. **Film it**
+   (§58.1) before changing anything.
+2. **A rare quiver as a card settles.** Sam can't say where. The card-as-one-layer rule made it rare; film
+   a few settles to catch it.
+3. Small: `batch.py`'s review links still print `/person/…` URLs. They redirect fine.
 

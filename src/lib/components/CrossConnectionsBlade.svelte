@@ -101,6 +101,7 @@
 	import { personHref } from '#lib/paths.js';
 	import { stage } from '#lib/state/stage.svelte.js';
 	import { fitBlade } from '#lib/actions/fitBlade.js';
+	import { isWebKit } from '#lib/state/engine.js';
 
 	type CC = {
 		type: string;
@@ -176,6 +177,25 @@
 
 	// The tang is part of the box but never part of what the page sees (see onheight below).
 	let bladeH = $derived(textH > 0 ? textH + bodyPadY + tang : 0);
+
+	// THE BLADE'S SHADOW TWIN (Safari/WebKit only — see FeaturedCard's .shadow-twin and layout.css's SAFARI
+	// section). In Safari the wrap's drop-shadow is off, so the blade casts its own shadow through a silent
+	// copy of its silhouette behind it. The blade's width is written by fitBlade and its height follows its
+	// text, so the twin copies the blade's LIVE box rather than recomputing it — one ResizeObserver.
+	let bladeEl: HTMLElement | undefined = $state();
+	let twinOn = $state(false);
+	let twin = $state({ l: 0, t: 0, w: 0, h: 0 });
+	$effect(() => {
+		const el = bladeEl;
+		if (!el) return;
+		twinOn = isWebKit();
+		if (!twinOn) return;
+		const sync = () => (twin = { l: el.offsetLeft, t: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight });
+		sync();
+		const ro = new ResizeObserver(sync);
+		ro.observe(el);
+		return () => ro.disconnect();
+	});
 	// REPORTED FROM THE DATA, NOT THE DOM. bladeH is a bind:clientHeight on an element inside the
 	// {#if}, so when a person has NO cross-connections that element unmounts and bladeH simply KEEPS
 	// its last value — nothing writes 0. The page then reserves a phantom blade's worth of space and
@@ -322,8 +342,19 @@
 		     collided on every multi-line blade (measured: a five-line blade snapped back to full width
 		     while a one-line blade kept its fit). The directive sets that one property and leaves the
 		     action's width alone. Same hazard the card's name has with shrinkToFit. -->
+		{#if twinOn}
+			<!-- outer casts, inner is cut: a clip-path on the casting element would cut its own shadow away -->
+			<div
+				class="cc-twin"
+				aria-hidden="true"
+				style="left: {twin.l}px; top: {twin.t}px; width: {twin.w}px; height: {twin.h}px;"
+			>
+				<div class="twin-shape" style:clip-path={clip}></div>
+			</div>
+		{/if}
 		<div
 			class="cc-blade"
+			bind:this={bladeEl}
 			style:clip-path={clip}
 			use:fitBlade={{
 				minFont: CC_FONT_MIN * bk,
