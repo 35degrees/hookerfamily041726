@@ -6295,6 +6295,66 @@ around" is more likely a heavier card, or a test run overlapping Sam's clicks.
 - Prefer a **production build** (`npm run build && npm run preview`) for timing judgements. The dev build
   carries Svelte's dev checks and per-navigation console logging.
 
+### 58.3c OCTOBER 3 (EVENING) — THE QUIVER: WHY SOME FLIGHTS SHAKE IN SAFARI AND OTHERS DON'T
+
+**Status: diagnosed, NOT fixed. No code changed for this. The fix below is proposed, waiting for Sam.**
+
+**What Sam sees (October 3, 2026):** in Safari, the intro → Thomas rise and the spouse swap's overshoot
+*"quiver"*: *"three or four microtransitions"*, a sense of *"uncertainty"*. Chrome is stable on the same
+moves. The parent promotion is smooth in both browsers.
+
+**Measured in Sam's Safari, parent promotion, via `busy.js` (§58.1):**
+
+| Build | First-frame main-thread blocks (ms) | Per frame during the flight (ms) |
+|---|---|---|
+| dev (5173) | 23+48, 24+46 | 9–21 |
+| production (`vite build` + `vite preview`, 4173) | 80+12, 23+43 | 10–20 |
+| production, with `--r-kx`, `--r-ky`, `--shadow-k` and `--shadow-fade` stripped from every write | 12+17, 20+41 | 9–17 |
+
+Chrome does the same per-frame work in about 3–5ms. Two conclusions:
+- **A production build or a deploy will not fix it.** Production is no faster than dev for this.
+- **It isn't our per-frame custom properties.** Stripping them left the cost where it was. The 10–20ms is
+  Safari's own style and paint work for this card.
+
+**The real distinction: who moves the card.** Svelte can run a transition in two ways:
+- **`css:`** — Svelte samples the curve into keyframes and hands them to the browser's compositor, which
+  moves the card on its own thread. A busy main thread can't disturb it.
+- **`tick:`** — JavaScript places the card on every frame, on the main thread.
+
+Every flight Sam called smooth is `css:`, and every one he called quivery is `tick:`:
+- **Parent promotion arrival (`growFrom`):** `css:` (`flight.ts` ~1763). Smooth.
+- **CC deck hero arrival:** `tick:` (~1743). This is also the intro → Thomas rise, which is a vertical CC
+  move. Quivers.
+- **CC deck departing card (car 1):** `tick:` (~2062).
+- **Demote, including the spouse swap (`shrinkToCore`):** `tick:` (~2317). Quivers. The comment at ~2306
+  says why it's `tick`: the destination box can move during the flight.
+
+At 10–20ms of main-thread work per frame, Safari keeps missing its 16.7ms frame slot. A `tick` flight then
+advances in uneven steps, which is what reads as "microtransitions". Chrome finishes inside the slot, so
+the same code looks stable there.
+
+**Proposed fix (WebKit only; Chrome keeps its `tick` paths byte-identical).** On WebKit, return `css:`
+keyframes instead of `tick:` for these flights, sampled from the same functions, so the path, easing,
+overshoot and duration are unchanged. Only the engine that moves the card changes. This obeys
+`safari-fixes-never-touch-flight-timing`: introstart, duration and curve all stay the same.
+
+Order of work:
+1. **The intro → Thomas rise first.** Its destination is fixed, so it's the simplest case.
+2. **The CC deck hero and car 1 generally.**
+3. **The spouse-swap demote last.** Its destination can move mid-flight, so either measure the destination
+   at launch (risk: a slightly wrong landing if the slot shifts) or correct it at landing. The
+   `SAFARI_HOLD_MS` wrapper (`shrinkTo`, ~3565) must carry over: hold the first 50ms in the keyframes.
+
+Verification: film before and after in Sam's Safari (§58.1), run the seven-promotion twin-chip check, and
+keep the Chrome probes GREEN.
+
+**What this will NOT remove:** the ~1 device-pixel text re-snap 50–70ms after motion stops (§58.6.1).
+That is Safari redrawing text at full quality, and it happens after any motion.
+
+**Where a change shows up:** in dev (`npm run dev`, `localhost:5173`) as soon as the file is saved (reload
+fully with ⌘⇧R in Safari). The preview on 4173 serves a frozen build and only changes after
+`vite build` is run again. No deploy is needed to judge it.
+
 ### 58.4 WHAT WAS TRIED AND REVERTED — do not repeat
 
 - **A WebKit-only 100ms lead-in on every flight transition** (growFrom, shrinkTo, morphIn, flyOut,
@@ -6325,7 +6385,11 @@ Chrome, Edge and Opera say "AppleWebKit" in their user agent but are excluded.
 
 0. **The spouse swap in Safari** (Sam, October 3: *"probably is working, but too fast to tell… my gut tells me
    it has a jump in timing, but it's acceptable"*). It's exempt from the hold (§58.3b) because its two
-   cards share one clock. A short, fast flight is where Safari's slow first frame shows most. Before
+   cards share one clock. **Update, October 3, commit de3803b3:** it is no longer exempt. Both cards are
+   now held together: the arrival through `holdUntilPainted`, and the demoting card through the
+   `shrinkTo` wrapper in `flight.ts`, which holds its first `SAFARI_HOLD_MS` and lands with the arrival.
+   The first visible width of the arriving card went from 455px to about 270px (Chrome: 310). Sam:
+   *"looks fine… commit."* The remaining overshoot quiver is the `tick` problem of §58.3c. A short, fast flight is where Safari's slow first frame shows most. Before
    touching it, **film it with Sam's own mouse** (§58.1). Holding both cards together means re-timing the
    tick-driven demote, which is exactly the fragile ground of §58.4.
 
@@ -6351,7 +6415,7 @@ Chrome, Edge and Opera say "AppleWebKit" in their user agent but are excluded.
    - **Status:** accepted as a Safari rendering trait, about one device pixel (Sam, October 3); design §52.4. Don't re-run these tests.
      The only untried idea is a different text rendering mode for the whole card in Safari, which would
      change how all of its text looks, so it's a design call for Sam, not a fix.
-2. **A rare quiver as a card settles.** Sam can't say where. The card-as-one-layer rule made it rare; film
+2. **A rare quiver as a card settles.** Sam can't say where. (October 3: likely the `tick`-driven flights; see §58.3c.) The card-as-one-layer rule made it rare; film
    a few settles to catch it.
 3. Small: `batch.py`'s review links still print `/person/…` URLs. They redirect fine.
 
