@@ -7,4 +7,4 @@ osascript -e "with timeout of 20 seconds" -e "tell application \"Terminal\" to d
 osascript -e 'tell application "Safari" to activate'; sleep 4
 osascript -e "tell application \"Safari\" to do JavaScript (read POSIX file \"$JS\") in current tab of front window" >/dev/null
 sleep 5
-swift $S/frames.swift $O/$N.mov $O/${N}f $SC 2>&1 | grep -v -i deprecat | tail -1
+swift "$S/frames.swift" $O/$N.mov $O/${N}f $SC 2>&1 | grep -v -i deprecat | tail -1

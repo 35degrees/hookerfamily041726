@@ -11,7 +11,7 @@ osascript -e "with timeout of 20 seconds" -e "tell application \"Terminal\" to d
 osascript -e 'tell application "Safari" to activate'; sleep 4
 osascript -e "tell application \"Safari\" to do JavaScript (read POSIX file \"$S/${HCFILE:-hoverclick-parent.js}\") in current tab of front window" >/dev/null
 sleep 5
-swift $S/frames.swift $O/$N.mov $O/${N}f 0.5 2>&1 | grep -v -i deprecat | tail -1
+swift "$S/frames.swift" $O/$N.mov $O/${N}f 0.5 2>&1 | grep -v -i deprecat | tail -1
 cd $O && python3 - "$N" <<'PY'
 import glob, sys, numpy as np
 from PIL import Image

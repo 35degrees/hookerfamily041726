@@ -13,7 +13,7 @@ Run a page script and read its result back:
 |---|---|
 | `busy.js` | Clicks a relation chip (`window.__rel`, default `parent`) and records main-thread busy blocks plus rAF frame times for 700ms, into `window.__busy`. The per-frame cost numbers in §58.3c came from this. |
 | `measure.js` | Records every `.featured-flight` rect per frame for one click, into `window.__m`: the animation's clock, not the pixels. |
-| `hoverclick-parent.js` / `hoverclick-spouse.js` | Hover, then click, the way a real mouse does, which triggers SvelteKit's hover preload and changes the timing (§58.3b). |
+| `hoverclick-parent.js` / `hoverclick-spouse.js` / `hoverclick-sibling.js` | Hover, then click, the way a real mouse does, which triggers SvelteKit's hover preload and changes the timing (§58.3b). |
 | `dupcheck.js` | The seven-promotion twin-chip check: spouse, spouse, parent, child, sibling, child, parent. Logs any person visible twice. |
 | `stripvars.js` | Experiment from §58.3c that drops the per-frame custom properties. Kept so the "it isn't the custom properties" result can be re-run. |
 | `recclick.sh <name> <startSlug> <clickJs> [scale]` | Films a click on display 2 with `screencapture`, then splits the film into frames. |

@@ -6432,6 +6432,37 @@ files come from the browser cache, so nothing downloads twice.
 - **Trap:** the first check was on the stale `:4173` preview build, which showed "no change". Judge only
   on `:5173`, or rebuild the preview.
 
+### 58.3f OCTOBER 3 — THE MISSING MIDDLE CAME BACK, AND THE HOLD MOVED INTO THE KEYFRAMES
+
+Sam: parent and sibling promotions were *"the first 20% and the last 30%, the middle missing"* about 75%
+of the time.
+
+**Filmed** (hover, then click): the arriving card sat at chip size, then was ~55% grown one frame later.
+
+**Measured:**
+- Safari now paints the new card about 15ms after the animation is created, well inside the 50ms hold.
+  The first paint was not the problem this time.
+- The main thread is blocked again 35–70ms after mount, which is exactly when a 50ms `delay` ends.
+- Safari hands an animation to its compositor only once its delay is over and the main thread is free.
+  So the hand-off came ~30ms late, the animation started in the past, and the fastest part of the
+  `cubicOut` was skipped.
+
+**Ruled out:** moving `z-index`, `transform-origin` and the CSS variables out of the keyframes. Same jump.
+
+**Fix** (`holdUntilPainted`, `[slug]/+page.svelte`):
+- The 50ms hold is written into the keyframes instead of as a delay. The animation lasts duration + 50ms,
+  its first 50ms repeat the starting pose, and the original keyframes keep their spacing after that.
+- Same start, same end (introend lands where the delay put it), same poses. The compositor owns the card
+  from its first frame, so later stalls can't cut into the growth.
+
+**Verified:**
+- 5 parent promotions and 2 sibling promotions filmed: the card grows a step every frame, roughly
+  25 → 40 → 55 → 65 → 75% over the first 100ms.
+- The seven-promotion twin-chip check is clean.
+
+**Lesson:** in Safari, a `delay` is not a free hold for a compositor animation. Write holds into the
+keyframes.
+
 ### 58.4 WHAT WAS TRIED AND REVERTED — do not repeat
 
 - **A WebKit-only 100ms lead-in on every flight transition** (growFrom, shrinkTo, morphIn, flyOut,

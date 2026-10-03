@@ -662,13 +662,38 @@
 	// to rewind. introstart is untouched (the seats and chips hang off it — moving it gave a twin chip); the
 	// landing comes the same couple of frames later the pause produced.
 	// SAFARI_HOLD_MS (flight.ts, 50): ≈ the two-frame pause it replaces; Safari paints a new card in ~45–75ms
+	//
+	// THE HOLD IS WRITTEN INTO THE KEYFRAMES, NOT AS A `delay` (100326, filmed in Sam's Safari). With a
+	// delay, the parent/sibling promotion was back to "the first 20% and the last 30%, the middle missing":
+	// chip-sized for the hold, then ~55% grown in ONE frame. Measured: the card now paints ~15ms after the
+	// animation is created (the hold covers that easily), but the main thread is busy again 35–70ms after
+	// mount — exactly when a 50ms delay ends. Safari hands the animation to its compositor only once the
+	// delay is over and the main thread next gets a turn, so it arrived ~30ms late, started in the past, and
+	// skipped the fastest part of the cubicOut. So the animation is created ACTIVE from its first frame: the
+	// first SAFARI_HOLD_MS of a duration+SAFARI_HOLD_MS animation repeat the starting pose, then the
+	// original keyframes follow at their original spacing. Same start, same end (introend lands exactly
+	// where the delay put it), same poses — only the encoding changed, so the compositor owns the card from
+	// its first painted frame and later main-thread stalls cannot cut into the growth. Filmed: 3/3 promotions
+	// grow a step every frame (≈30 → 45 → 60 → 75 → 85 → 95%) where the delay version jumped chip → 55%.
 	function holdUntilPainted(node: HTMLElement) {
 		const el = node as HTMLElement & { animate: Element['animate'] };
 		el.animate = function (keyframes, options) {
 			delete (el as { animate?: unknown }).animate; // one shot: back to Element.prototype.animate
-			const n = Array.isArray(keyframes) ? keyframes.length : 0;
-			const opts = typeof options === 'object' && options && n > 2 ? { ...options, delay: (options.delay ?? 0) + SAFARI_HOLD_MS, fill: 'both' as FillMode } : options;
-			return Element.prototype.animate.call(el, keyframes, opts);
+			if (!Array.isArray(keyframes) || keyframes.length <= 2 || typeof options !== 'object' || !options)
+				return Element.prototype.animate.call(el, keyframes, options);
+			const D = Number(options.duration);
+			if (!(D > 0)) {
+				const opts = { ...options, delay: (options.delay ?? 0) + SAFARI_HOLD_MS, fill: 'both' as FillMode };
+				return Element.prototype.animate.call(el, keyframes, opts);
+			}
+			const H = SAFARI_HOLD_MS;
+			const n = keyframes.length;
+			const held: Keyframe[] = [{ ...keyframes[0], offset: 0 }];
+			keyframes.forEach((k, i) => {
+				const off = typeof k.offset === 'number' ? k.offset : i / (n - 1);
+				held.push({ ...k, offset: (H + off * D) / (H + D) });
+			});
+			return Element.prototype.animate.call(el, held, { ...options, duration: H + D, fill: 'both' as FillMode });
 		};
 	}
 	// Spouse-chip reveal fade — quicker than the default box fade (180ms) so the chips settle into the
