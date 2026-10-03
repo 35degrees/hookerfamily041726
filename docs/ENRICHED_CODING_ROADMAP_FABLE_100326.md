@@ -6237,6 +6237,64 @@ barely moves"), so they showed it worst. Child flights are longer and hid it.
 **Filmed after the fix:** parent and sibling promotions grow visibly across several frames from chip size.
 Sam: *"oh wow, i was skeptical but you fixed it."*
 
+### 58.3b OCTOBER 3 — THE HOLD, REDONE, AND WHAT THE FIRST FRAME COSTS
+
+**What a real mouse showed.** Filming Sam's own clicks (§58.1, a 90-second recording while he clicked)
+exposed what the scripted clicks never did. After a **hover**, the app's hover preload (SvelteKit's
+`data-sveltekit-preload-data="hover"` in `app.html`) has the next person's JSON in the HTTP cache, so the
+new card mounts sooner. The committed `holdUntilPainted` then failed visibly: it **paused** the arriving
+animation a microtask after Svelte created it running, and Safari's compositor had already started the
+running animation. The card showed a third grown, snapped back to chip size, then flew.
+Reproduced by dispatching pointer and mouse events on the chip before a scripted click.
+
+**Four re-timings tried and reverted, all on October 3.** This is the "same dial" CLAUDE.md warns about:
+1. **An adaptive hold**, up to about 10 frames until frame times recovered. Result: duplicate chips, gaps,
+   *"chaos"*.
+2. **A 20ms start `delay` on growFrom**, which moved introstart. Result: a **twin chip**: the pivot seat
+   appeared before the demoting card landed.
+3. **A 40ms start `delay`**: the same twin chip.
+4. **The lead-in of §58.4**, from October 2.
+
+**Lesson:** introstart is load-bearing. The seats and pending chips hang off it, and it must not move.
+
+**What shipped:** `holdUntilPainted` now creates the animation **already holding**. A one-shot wrapper on
+the arriving node's `animate` adds `delay: 50, fill: 'both'` to the next animation Svelte creates on it,
+which is the flight.
+- introstart is untouched.
+- The landing comes about two frames later, the same as the pause produced.
+- There's nothing to rewind.
+- Filmed with hover-then-click: no flash, no rewind, growth from chip size on every frame.
+- The seven-promotion twin-chip check was clean, and the Chrome probes were GREEN.
+
+**Spouse swaps are exempt from the hold** (`getFlightKind() !== 'spouse'`). In a spouse swap the arriving
+card and the demoting card share one clock, so holding only the arrival split them; Sam saw a jump.
+
+**What the first frame actually costs (Phase 0, measured in Sam's Safari with dev-only timers, since
+removed):**
+- Main-thread time from mount to first frame is about **60–75ms**, against **about 25ms in Chrome**.
+- **About 15–30ms is Svelte's flush** (building the card). All the text fitting inside it (shrinkToFit,
+  fitMediaText, fitBlade) totals only **4–16ms**.
+- **About 45ms is paint.** Forced style and layout afterwards measured about 0ms.
+- The paint block is **the same with the shadow twins' filter off, and with every WebKit rule off**
+  (`?webkit=off`). It's Safari painting this card, not our Safari additions.
+- The fitting routines are therefore not worth optimising for this problem. The inventory of mount-time
+  work (agent report, October 3) is still worth acting on for general speed:
+  - the redundant `document.fonts.ready` second fit in all three fit actions;
+  - fitMediaText never setting `lastWidth`, so it fits a third time on its first ResizeObserver callback;
+  - the hover preload not feeding `focusPerson`, so the JSON is fetched and built twice;
+  - the SiblingPanel possibly mounting and tearing down every sibling chip in one task.
+
+**No build-up over a session:** after 60 navigations in a row, a parent promotion's first-frame cost was
+**lower** (16–37ms) than fresh (58–70ms), because caches warm. A jump that "comes back after navigating
+around" is more likely a heavier card, or a test run overlapping Sam's clicks.
+
+**Testing rules learned:**
+- Judge Safari only with a **real mouse**: hover changes the timing.
+- Never run scripted tests in the tab Sam is using.
+- Reload fully (⌘⇧R) after edits; Safari's hot update can leave a half-updated page.
+- Prefer a **production build** (`npm run build && npm run preview`) for timing judgements. The dev build
+  carries Svelte's dev checks and per-navigation console logging.
+
 ### 58.4 WHAT WAS TRIED AND REVERTED — do not repeat
 
 - **A WebKit-only 100ms lead-in on every flight transition** (growFrom, shrinkTo, morphIn, flyOut,
@@ -6264,6 +6322,12 @@ Everything is in `layout.css`'s SAFARI section, plus:
 Chrome, Edge and Opera say "AppleWebKit" in their user agent but are excluded.
 
 ### 58.6 STILL OPEN IN SAFARI
+
+0. **The spouse swap in Safari** (Sam, October 3: *"probably is working, but too fast to tell… my gut tells me
+   it has a jump in timing, but it's acceptable"*). It's exempt from the hold (§58.3b) because its two
+   cards share one clock. A short, fast flight is where Safari's slow first frame shows most. Before
+   touching it, **film it with Sam's own mouse** (§58.1). Holding both cards together means re-timing the
+   tick-driven demote, which is exactly the fragile ground of §58.4.
 
 1. **The "tick up" at the end of a CC or spouse overshoot. Investigated on October 3, and it is
    Safari's own behaviour, not ours.**

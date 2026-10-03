@@ -569,7 +569,9 @@
 
 	function onIncomingStart(node: HTMLElement) {
 		if (motionOff()) return;
-		if (isWebKit()) holdUntilPainted(node);
+		// not a spouse swap: there the arriving card and the demoting one share ONE clock (the swap reads as one
+		// motion), and holding only the arrival pulled them apart — a visible jump (Sam, 3 Oct)
+		if (isWebKit() && getFlightKind() !== 'spouse') holdUntilPainted(node);
 		navSeq++;
 		node.classList.add('flat'); // suppress notch → solid rectangle for the flight
 		// THE ANTICIPATED NOTCH. `.flat` normally holds until landing, because a carved corner on a card
@@ -648,17 +650,25 @@
 	// painted, then released — its first visible frame is the true chip-sized start. Nothing else moves in
 	// time: not the departing card, the chips, the seats or the blade (the broken lead-in shifted those). Safe
 	// to pause: growFrom is a plain keyframe animation; the tick-driven demote, which a pause would kill, is
-	// another element. Called from introstart, i.e. just BEFORE Svelte creates the main animation — hence the
-	// microtask.
+	// another element. Called from introstart, i.e. just BEFORE Svelte creates the main animation.
+	//
+	// HOW IT HOLDS (100326): the animation is CREATED already holding — a one-shot wrapper on this node's
+	// `animate` adds a short start `delay` (with fill 'both', so the first pose shows through it) to the very
+	// next animation Svelte creates on it, which is the flight. The first version paused it a microtask after
+	// creation and played it two frames later; after a hover had prefetched the payload, Safari's compositor
+	// had already started the running animation before the pause reached it, so the card showed a third
+	// grown, snapped back to the chip, then flew (filmed with a real mouse). Created holding, there is nothing
+	// to rewind. introstart is untouched (the seats and chips hang off it — moving it gave a twin chip); the
+	// landing comes the same couple of frames later the pause produced.
+	const SAFARI_HOLD_MS = 50; // ≈ the two-frame pause it replaces; Safari paints a new card in ~45–75ms
 	function holdUntilPainted(node: HTMLElement) {
-		queueMicrotask(() => {
-			const anim = node
-				.getAnimations()
-				.find((a) => a.playState === 'running' && ((a.effect as KeyframeEffect | null)?.getKeyframes().length ?? 0) > 2);
-			if (!anim) return;
-			anim.pause();
-			requestAnimationFrame(() => requestAnimationFrame(() => anim.play()));
-		});
+		const el = node as HTMLElement & { animate: Element['animate'] };
+		el.animate = function (keyframes, options) {
+			delete (el as { animate?: unknown }).animate; // one shot: back to Element.prototype.animate
+			const n = Array.isArray(keyframes) ? keyframes.length : 0;
+			const opts = typeof options === 'object' && options && n > 2 ? { ...options, delay: (options.delay ?? 0) + SAFARI_HOLD_MS, fill: 'both' as FillMode } : options;
+			return Element.prototype.animate.call(el, keyframes, opts);
+		};
 	}
 	// Spouse-chip reveal fade — quicker than the default box fade (180ms) so the chips settle into the
 	// notch with less lag AFTER the hero lands. NOT an earlier start (that would be a mid-flight rise,
