@@ -10,6 +10,7 @@
  * Click-time captures (origin rect, flight kind, clicked id, pan direction, rect snapshot) live at
  * the top of this file and are read by the transitions during the flush, then cleared one frame on.
  */
+import { isWebKit } from '#lib/state/engine.js';
 import { cubicOut, cubicIn, cubicInOut } from 'svelte/easing';
 import { motionOff } from '#lib/state/motion.svelte.js';
 import { su } from '#lib/state/stage.svelte.js';
@@ -1834,7 +1835,7 @@ function chipShadowAt(s: number): string {
 	);
 }
 
-export function shrinkTo(node: Element, params: { id: string }) {
+function shrinkToCore(node: Element, params: { id: string }) {
 	if (motionOff()) return { duration: 0 };
 	const el = node as HTMLElement;
 	const card = node.getBoundingClientRect(); // the card's START rect (center) — stable through the flight
@@ -3547,4 +3548,30 @@ export function retractBladeIn(node: HTMLElement): void {
 		easing: 'cubic-bezier(0.32, 0, 0.67, 0)', // cubicIn — accelerating INTO the case, the draw's mirror
 		fill: 'forwards' // stay stowed for the rest of the departure
 	});
+}
+
+// ── SAFARI: THE SPOUSE SWAP HELD AS ONE (100326) ─────────────────────────────────────────────────────────
+// A spouse swap's two cards share ONE clock — the arriving card grows out of the notch while the old hero
+// demotes into it — so on WebKit, where the arriving card is held at its first pose for SAFARI_HOLD_MS
+// while Safari paints it (+page.svelte holdUntilPainted; its first visible frame was ~455px wide against
+// Chrome's 310), the demoting card is held the same: its first SAFARI_HOLD_MS show its starting pose, then
+// it runs its unchanged curve, landing SAFARI_HOLD_MS later — exactly with the arrival. Holding only one of
+// the pair split them (Sam saw a jump), which is why spouse swaps were exempt until this. outrostart is
+// untouched (only the tick's time is remapped); every other demote and every Chrome flight is the core
+// shrinkTo, byte for byte.
+export const SAFARI_HOLD_MS = 50;
+export function shrinkTo(node: Element, params: { id: string }) {
+	const cfg = shrinkToCore(node, params) as { duration?: number; tick?: (t: number, u: number) => void } & Record<string, unknown>;
+	if (!isWebKit() || motionOff() || flightKind !== 'spouse' || !cfg.tick || !cfg.duration) return cfg;
+	const D = cfg.duration;
+	const total = D + SAFARI_HOLD_MS;
+	const tick = cfg.tick;
+	return {
+		...cfg,
+		duration: total,
+		tick: (t: number) => {
+			const tt = Math.min(1, Math.max(0, (t * total - SAFARI_HOLD_MS) / D));
+			tick(tt, 1 - tt);
+		}
+	};
 }

@@ -129,7 +129,8 @@
 		capturePanDir,
 		captureRects,
 		clearFlightCaptures,
-		setArrivalTempo
+		setArrivalTempo,
+		SAFARI_HOLD_MS
 	} from '#lib/transitions/flight.js';
 	import { publishCameraMove } from '#lib/state/camera.js';
 	import { lockFlight } from '#lib/state/flightLock.js';
@@ -569,9 +570,9 @@
 
 	function onIncomingStart(node: HTMLElement) {
 		if (motionOff()) return;
-		// not a spouse swap: there the arriving card and the demoting one share ONE clock (the swap reads as one
-		// motion), and holding only the arrival pulled them apart — a visible jump (Sam, 3 Oct)
-		if (isWebKit() && getFlightKind() !== 'spouse') holdUntilPainted(node);
+		// every arrival, spouse swaps included: a swap's two cards share ONE clock, so its demoting card is held
+		// the same SAFARI_HOLD_MS (flight.ts shrinkTo) — holding only the arrival had split them (Sam, 3 Oct)
+		if (isWebKit()) holdUntilPainted(node);
 		navSeq++;
 		node.classList.add('flat'); // suppress notch → solid rectangle for the flight
 		// THE ANTICIPATED NOTCH. `.flat` normally holds until landing, because a carved corner on a card
@@ -660,7 +661,7 @@
 	// grown, snapped back to the chip, then flew (filmed with a real mouse). Created holding, there is nothing
 	// to rewind. introstart is untouched (the seats and chips hang off it — moving it gave a twin chip); the
 	// landing comes the same couple of frames later the pause produced.
-	const SAFARI_HOLD_MS = 50; // ≈ the two-frame pause it replaces; Safari paints a new card in ~45–75ms
+	// SAFARI_HOLD_MS (flight.ts, 50): ≈ the two-frame pause it replaces; Safari paints a new card in ~45–75ms
 	function holdUntilPainted(node: HTMLElement) {
 		const el = node as HTMLElement & { animate: Element['animate'] };
 		el.animate = function (keyframes, options) {
