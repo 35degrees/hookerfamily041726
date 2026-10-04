@@ -607,7 +607,7 @@
 						<div class="text-area flex min-w-0 flex-col justify-center">
 							<span class="line1">
 								<span class="nm">{r.n}</span>
-								<span class="yr"
+								<span class="yr" class:living={r.pv}
 									>{years(r)}{#if diedYoungRow(r)}{' '}(died young){/if}</span
 								>
 							</span>
@@ -1478,6 +1478,12 @@
 		font: 400 12px/1.2 var(--font-open-sans, 'Open Sans', sans-serif);
 		color: color-mix(in srgb, var(--color-inkblue) 80%, transparent);
 		white-space: nowrap;
+	}
+	/* "Living" (Sam, 4 Oct 2026): slate grey at 60% — it stands in for withheld dates, so it should
+	   read as a quiet placeholder, not as a date. */
+	.yr.living {
+		color: #64748b;
+		opacity: 0.6;
 	}
 	.line2 {
 		font: 400 12px/1.3 var(--font-open-sans, 'Open Sans', sans-serif);

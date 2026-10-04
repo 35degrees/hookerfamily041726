@@ -78,7 +78,13 @@ export type SearchRow = {
 };
 
 /** Prepared once at load: segment 0 split out so ranking never re-parses or re-folds. */
-export type Prepared = SearchRow & { nm: string; wd: string[]; nd: string; tg: string[] };
+export type Prepared = SearchRow & {
+	nm: string;
+	wd: string[];
+	nd: string;
+	fl: string;
+	tg: string[];
+};
 
 export const CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8, FOUNDER: 16 } as const;
 
@@ -234,6 +240,10 @@ export function load(): Promise<void> {
 				// pushes display_name before every other name form. Tiers 0 and 2 test THIS and not the
 				// other parts; see tier() for the surname that made the difference.
 				nd: nm.split(', ')[0] ?? nm,
+				// FIRST NAME + SURNAME of the display name, middle names, titles and suffixes stripped —
+				// "rev. edward judson brockett jr." -> "edward brockett". See tier(): searching
+				// "edward brockett" means the man called Edward Brockett, middle name or not.
+				fl: firstLast(nm.split(', ')[0] ?? nm),
 				// The row's own tags, parsed once. Only 5,369 of 19,728 rows carry any, so most of these
 				// are the same empty array and cost nothing.
 				tg: (() => {
@@ -262,6 +272,46 @@ export function load(): Promise<void> {
  * multi-word query a one-word query: "annie hooker" scored purely on "annie", so an exact
  * "Annie Hooker" tied with everyone else called Annie and lost the tiebreak on birth year.
  */
+const NAME_TITLES = new Set([
+	'rev.',
+	'rev',
+	'dr.',
+	'dr',
+	'capt.',
+	'captain',
+	'col.',
+	'gen.',
+	'hon.',
+	'maj.',
+	'major',
+	'lt.',
+	'mr.',
+	'mrs.',
+	'miss',
+	'dea.',
+	'deacon',
+	'judge',
+	'gov.',
+	'prof.',
+	'sen.',
+	'sgt.',
+	'ens.',
+	'sir',
+	'lady',
+	'brig.',
+	'adm.',
+	'cmdr.',
+	'elder'
+]);
+const NAME_SUFFIXES = new Set(['jr.', 'jr', 'sr.', 'sr', 'ii', 'iii', 'iv', 'v', 'vi', 'i']);
+/** "rev. edward judson brockett jr." -> "edward brockett" (empty when fewer than two name words). */
+function firstLast(nd: string): string {
+	const w = nd.split(/\s+/).filter(Boolean);
+	while (w.length > 2 && NAME_TITLES.has(w[0])) w.shift();
+	while (w.length > 2 && NAME_SUFFIXES.has(w[w.length - 1])) w.pop();
+	return w.length >= 2 ? `${w[0]} ${w[w.length - 1]}` : '';
+}
+
 function tier(r: Prepared, q: string, terms: string[]): number {
 	/**
 	 * TIERS 0 AND 2 TEST THE DISPLAY NAME, and nothing else. This took two goes.
@@ -280,6 +330,28 @@ function tier(r: Prepared, q: string, terms: string[]): number {
 	 * someone, just not evidence that you have found THE person of that name.
 	 */
 	if (r.nd === q) return 0; // the DISPLAY NAME is the query
+	/**
+	 * …OR THE QUERY IS THEIR FIRST NAME AND SURNAME (Sam, 4 Oct 2026). "edward brockett" means the man
+	 * called Edward Brockett; a reader rarely remembers the middle name. Edward Judson Brockett — the
+	 * notable, a true Hooker-line man — ranked FIFTH: two non-notable men literally named "Edward
+	 * Brockett" took tier 0, and in tier 1 Francis Edward Brockett and Elizur Edward Brockett beat him on
+	 * cohesion because their names END in the phrase. First word = first term and last word = last term
+	 * (titles and Jr./III stripped, any middle terms still present) makes him a tier-0 name match, and
+	 * tier 0 orders notables first (see the sort). Francis Edward does not qualify: his first name is
+	 * Francis.
+	 */
+	// …and AS THE SURNAME IS BEING TYPED (Sam): "edward brock" must already rank like "edward brockett",
+	// so the last term only has to START the surname. The first name must still match whole.
+	if (terms.length >= 2) {
+		const [fn, ln] = r.fl.split(' ');
+		const last = terms[terms.length - 1];
+		if (
+			fn === terms[0] &&
+			ln?.startsWith(last) &&
+			terms.slice(1, -1).every((t) => r.wd.includes(t))
+		)
+			return 0;
+	}
 	if (terms.every((t) => r.wd.includes(t))) return 1; // every term is a whole name word
 	if (r.nd.startsWith(q)) return 2; // the display name starts with the query
 	if (terms.every((t) => r.wd.some((w) => w.startsWith(t)))) return 3; // every term starts a word
@@ -449,46 +521,52 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 	// `eb` places the undated by era so the year-range exemption is visible rather than merely true:
 	// before it, all 107 undated "hooker" rows survived the 1800-1900 filter but the first ranked
 	// 1,006th, far below the 60-row cap.
-	const dec = hits.map((r) => ({
-		r,
-		/**
-		 * DIED YOUNG SINKS TO THE END, ahead of every other key including relevance (Sam). Searching
-		 * "Annie Hooker" led with a four-year-old, 1861–1865: she is the EXACT name and so wins tier 0
-		 * outright, which is why demoting her needed a key that outranks the tier rather than one
-		 * inside it.
-		 *
-		 * The test is the house's, not a threshold of mine — `by && dy && dy - by <= 15`, the same
-		 * computation regenerate-data.js bakes as `dy_young` and PersonBox reads to print "died young".
-		 * Its comment says it MUST match diedYoung() in buildFeatured.ts; this is a third reader of the
-		 * same rule, so it copies the rule exactly rather than picking a number that looks similar.
-		 *
-		 * They are demoted, never dropped: they stay in `total` and reachable, just never leading.
-		 */
-		dyoung: diedYoungRow(r) ? 1 : 0,
-		t: q ? tier(r, q, terms) : 5,
-		// Cohesion outranks notability on purpose: a notable whose terms are scattered across
-		// unrelated fields is still not what was asked for, and putting fame ahead of relevance is
-		// exactly the muck this is meant to avoid.
-		c: cohesion(r, terms, q),
-		// NOTABLE FIRST, THEN CHRONOLOGY (Sam). Search "Moffat" and you get a family cluster from the
-		// late 1800s; four of the thirteen are notable, and those four are what a reader is actually
-		// looking for. Relevance still leads — this only orders WITHIN a tier.
-		//
-		// I argued against this once, on the grounds that notability could not discriminate because
-		// 18,429 of 19,728 carried it. THAT NUMBER WAS WRONG: it counted rows carrying a `notable`
-		// OBJECT, most of them with the flag absent or false. The flag itself is on 1,128 rows (5.7%),
-		// which is exactly the useful density.
-		nb: r.nb ? 0 : 1,
-		/**
-		 * BLOOD BEFORE MARRIAGE, but only as a tiebreak — which is what lets one key serve both of Sam's
-		 * cases. A SPECIFIC query is already separated by the tier: "Walter Hope" makes Walter a
-		 * whole-name-word match and everyone else a fact match, so he leads on relevance and this key is
-		 * never consulted. A VAGUE one — plain "hope" — puts a whole cohort in the same tier, and there
-		 * the tree's own people should lead: Walter drops behind the two Hooker notables he was ahead of.
-		 */
-		hd: r.f & CAT.HD ? 0 : 1,
-		b: r.by ?? r.eb ?? 9999
-	}));
+	const dec = hits.map((r) => {
+		const t = q ? tier(r, q, terms) : 5;
+		return {
+			r,
+			/**
+			 * DIED YOUNG SINKS TO THE END, ahead of every other key including relevance (Sam). Searching
+			 * "Annie Hooker" led with a four-year-old, 1861–1865: she is the EXACT name and so wins tier 0
+			 * outright, which is why demoting her needed a key that outranks the tier rather than one
+			 * inside it.
+			 *
+			 * The test is the house's, not a threshold of mine — `by && dy && dy - by <= 15`, the same
+			 * computation regenerate-data.js bakes as `dy_young` and PersonBox reads to print "died young".
+			 * Its comment says it MUST match diedYoung() in buildFeatured.ts; this is a third reader of the
+			 * same rule, so it copies the rule exactly rather than picking a number that looks similar.
+			 *
+			 * They are demoted, never dropped: they stay in `total` and reachable, just never leading.
+			 */
+			dyoung: diedYoungRow(r) ? 1 : 0,
+			t,
+			// Cohesion outranks notability on purpose: a notable whose terms are scattered across
+			// unrelated fields is still not what was asked for, and putting fame ahead of relevance is
+			// exactly the muck this is meant to avoid.
+			// Not inside tier 0: every row there IS the name asked for (exact, or first + surname), so
+			// adjacency says nothing and notability should decide — otherwise the two non-notable
+			// "Edward Brockett"s outrank Edward Judson Brockett on the phrase alone.
+			c: t === 0 ? 0 : cohesion(r, terms, q),
+			// NOTABLE FIRST, THEN CHRONOLOGY (Sam). Search "Moffat" and you get a family cluster from the
+			// late 1800s; four of the thirteen are notable, and those four are what a reader is actually
+			// looking for. Relevance still leads — this only orders WITHIN a tier.
+			//
+			// I argued against this once, on the grounds that notability could not discriminate because
+			// 18,429 of 19,728 carried it. THAT NUMBER WAS WRONG: it counted rows carrying a `notable`
+			// OBJECT, most of them with the flag absent or false. The flag itself is on 1,128 rows (5.7%),
+			// which is exactly the useful density.
+			nb: r.nb ? 0 : 1,
+			/**
+			 * BLOOD BEFORE MARRIAGE, but only as a tiebreak — which is what lets one key serve both of Sam's
+			 * cases. A SPECIFIC query is already separated by the tier: "Walter Hope" makes Walter a
+			 * whole-name-word match and everyone else a fact match, so he leads on relevance and this key is
+			 * never consulted. A VAGUE one — plain "hope" — puts a whole cohort in the same tier, and there
+			 * the tree's own people should lead: Walter drops behind the two Hooker notables he was ahead of.
+			 */
+			hd: r.f & CAT.HD ? 0 : 1,
+			b: r.by ?? r.eb ?? 9999
+		};
+	});
 	dec.sort(
 		(a, b) =>
 			a.dyoung - b.dyoung || a.t - b.t || a.c - b.c || a.nb - b.nb || a.hd - b.hd || a.b - b.b
