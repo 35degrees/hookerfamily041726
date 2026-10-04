@@ -232,13 +232,35 @@ function isPlaceholder(p) {
 	return /\[|unknown/i.test(d) || !firstName(p) || !surname(p);
 }
 
+// The URL a placeholder had under the retired `{desc}-{id}` rule (see baseSlug), computed from the
+// CURRENT display_name so it can be redirected forward without writing former_ids for ~240 people. A
+// display name that has itself changed since carries its old slug in former_ids instead.
+function legacyPlaceholderSlug(p) {
+	const desc = slugify((bioOf(p).display_name || 'unnamed').split(/[([]/)[0]) || 'unnamed';
+	return `${desc}-${p.id.toLowerCase()}`;
+}
+
 // Base slug (pre-collision). Returns { base, sticky, priorBase }.
 // priorBase is the year-bearing slug a now-private person USED to have, so the old URL can be
 // redirected forward without writing former_ids into canonical for ~140 people.
 function baseSlug(p) {
 	if (isPlaceholder(p)) {
-		const desc = slugify((bioOf(p).display_name || 'unnamed').split(/[([]/)[0]) || 'unnamed';
-		return { base: `${desc}-${p.id.toLowerCase()}`, sticky: true, priorBase: null }; // ID-anchored => stable
+		// NO INTERNAL ID IN A URL (Sam, 4 Oct 2026): "the internal ID is an internal-only identifier, so it
+		// should never be in the slug." Placeholders used to be `{desc}-{id}` — ID-anchored for stability —
+		// which put 241 IDs on the public surface (/unnamed-hd0002, /hooker-hd2706). The slug is now the
+		// person's own words, brackets read as words ("[Son] Hooker" → son-hooker), the word "unknown"
+		// dropped ("[Unknown] Whittle" → whittle), plus the birth year when there is one; namesakes take the
+		// ordinary collision counter, which is assigned in ID order and so stays stable. Every retired
+		// `{desc}-{id}` form is redirected forward (legacyPlaceholderSlug, below).
+		const yr = birthYear(p);
+		const priv = datesPrivate(p);
+		const words = (bioOf(p).display_name || '')
+			.replace(/\([^)]*\)/g, ' ')
+			.replace(/[[\]]/g, ' ')
+			.split(/\s+/)
+			.filter((w) => w && !/^unknown$/i.test(w));
+		const desc = slugify(words.join(' ')) || 'unnamed';
+		return { base: desc + (yr && !priv ? `-${yr}` : ''), sticky: Boolean(yr), priorBase: null };
 	}
 	const f = slugify(firstName(p));
 	let s = slugify(surname(p));
@@ -2334,6 +2356,14 @@ function main() {
 		for (const [id, prior] of priorOf) {
 			const current = slugMap.get(id);
 			if (prior && current && prior !== current && !redirects[prior]) redirects[prior] = current;
+		}
+		// Placeholders lost the internal ID off their slug (4 Oct 2026): forward the retired form, same
+		// reasoning as the privacy redirect above — the mapping belongs to the rule, not to canonical.
+		for (const p of visible) {
+			if (!isPlaceholder(p)) continue;
+			const legacy = legacyPlaceholderSlug(p);
+			const current = slugMap.get(p.id);
+			if (current && legacy !== current && !redirects[legacy]) redirects[legacy] = current;
 		}
 
 		// 5) write the bundle
