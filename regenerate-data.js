@@ -1976,6 +1976,14 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 			// Emitted only when TRUE, like kin_distance, so the non-orbit majority costs nothing.
 			if (orbitIds.has(cc.related_id)) out.orbit = true;
 			if (talcottOnly) out.hidden_by_default = true;
+			// PHOTO (100326) — the target's portrait, so the page can warm it once this card has landed and a
+			// CC jump arrives with its photo already in cache (photo.ts warmCrossConnections). Without it the
+			// photo only started downloading at the click, and a first-time Cloudinary fetch (0.6–1s) lost
+			// the race to the ~0.76s landing — the card arrived blank and the photo popped in after it
+			// settled (Sam, Safari, whose cache was new; every first-time visitor in any browser sees the
+			// same). Omitted when there is no photo, like orbit and kin_distance.
+			const ph = tgt && (tgt.bio?.photo_url ?? tgt.name?.photo_url);
+			if (ph) out.p = ph;
 			// CO-LINK (Sam, 5 Sep 2026) — ONE row, TWO linked names sharing one predicate:
 			// "John and Isabella Beecher Hooker founded Nook Farm, and rented him the Forest
 			// Street house in 1871". Two separate rows said the same sentence twice.
@@ -1998,6 +2006,9 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 				const ckd = kinDistance(p.id, co.related_id, byId);
 				if (ckd != null) coOut.kin_distance = ckd;
 				if (orbitIds.has(co.related_id)) coOut.orbit = true;
+				const coTgt = byId[co.related_id];
+				const coPh = coTgt && (coTgt.bio?.photo_url ?? coTgt.name?.photo_url);
+				if (coPh) coOut.p = coPh;
 				out.co = coOut;
 			}
 			return out;

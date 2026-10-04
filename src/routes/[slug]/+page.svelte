@@ -142,7 +142,7 @@
 	import { ccRoster } from '#lib/state/ccRoster.svelte.js';
 	import { stage, applyStageVars, clearStageVars } from '#lib/state/stage.svelte.js';
 	import { unlockFlight } from '#lib/state/flightLock.js';
-	import { preloadNeighborhood } from '#lib/photo.js';
+	import { preloadNeighborhood, warmCrossConnections } from '#lib/photo.js';
 	import SiblingPanel from '#lib/components/SiblingPanel.svelte';
 	import Ascension from '#lib/components/Ascension.svelte';
 	import { ascension, clearAscent } from '#lib/state/ascension.svelte.js';
@@ -172,6 +172,15 @@
 	// panel, or promoted next nav). Client-only (effects don't run in SSR). See $lib/photo.ts.
 	$effect(() => {
 		preloadNeighborhood(f.neighborhood);
+	});
+	// …and, once this card has had time to land, the photos of everyone it CROSS-CONNECTS to — the next
+	// likely featured cards, which the neighborhood does not carry (see warmCrossConnections). Deferred past
+	// the ~0.76s CC landing so it never contends with the arriving card's own chips; a newer card cancels it.
+	const CC_PHOTO_WARM_MS = 900;
+	$effect(() => {
+		const list = f.crossConnections as unknown as Parameters<typeof warmCrossConnections>[0];
+		const id = setTimeout(() => warmCrossConnections(list), CC_PHOTO_WARM_MS);
+		return () => clearTimeout(id);
 	});
 
 	// ── PHASE 2.75: THE STAGE'S TWO DIALS ───────────────────────────────────────────────────────────

@@ -71,6 +71,35 @@ export function preloadNeighborhood(n: Neighborhood | null | undefined): void {
 	warm(secondary, 'low'); // off-screen fills in behind them
 }
 
+// Warm the photos of every person this card CROSS-CONNECTS to — the people a CC click (or the blade's
+// hover) is about to promote to featured. They are not in the neighborhood, so preloadNeighborhood never
+// fetched them, and the photo used to start downloading only at the click: a first-time Cloudinary fetch
+// takes 0.6–1s and the CC deck lands at ~0.76s, so the card arrived blank and the photo popped in after it
+// settled (measured in Sam's Safari, whose cache was new — and true for every first-time visitor). LOW
+// priority and called AFTER the card has landed, so it never contends with the neighborhood's chips; same
+// derivative the featured card renders (PHOTO_TRANSFORM), so the later <img> is a cache hit. A hub's links
+// are warmed once per session (the set), not again on every return.
+const warmedCc = new Set<string>();
+export function warmCrossConnections(
+	list: { p?: string | null; co?: { p?: string | null } | null }[] | null | undefined
+): void {
+	if (!list || typeof Image === 'undefined') return;
+	for (const cc of list) {
+		for (const raw of [cc?.p, cc?.co?.p]) {
+			const url = cldSize(raw, PHOTO_TRANSFORM);
+			if (!url || warmedCc.has(url)) continue;
+			warmedCc.add(url);
+			const img = new Image();
+			try {
+				(img as unknown as { fetchPriority: string }).fetchPriority = 'low';
+			} catch {
+				/* no fetchPriority — still a cache warm */
+			}
+			img.src = url;
+		}
+	}
+}
+
 // ONE derivative for a person's photo everywhere it appears — chip, featured display, and hover-zoom —
 // so it loads EXACTLY ONCE and every later use is a cache hit (no second fetch when a chip promotes to
 // featured; no third when you hover-zoom). Using different sizes per surface was the regression: the chip's
