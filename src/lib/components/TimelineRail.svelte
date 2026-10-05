@@ -2491,7 +2491,8 @@
 	   including the stripe"; extending it here is a judgement — a navy rail against a green ground with
 	   a blue card would be the only thing in the zone still speaking the ascension's palette. */
 	.rail.founder {
-		--zone-rule: var(--color-founderblue);
+		/* Forest green with the card and the chips (Sam, 100526) — see --color-founderrule. */
+		--zone-rule: var(--color-founderrule);
 	}
 	.rail.ascended::before {
 		opacity: 0;

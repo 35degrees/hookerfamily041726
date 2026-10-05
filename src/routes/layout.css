@@ -86,6 +86,12 @@
 	   it sits back the way the midnight does and lets the paper be the brightest thing on screen, which
 	   is the arrangement the whole zone depends on. */
 	--color-foundergreen: #355e3b;
+	/* THE FOUNDER CARD'S RULE (Sam, 100526): "forest green on roughly the same spectrum as the founder
+	   background… not the navy blue." First set a step darker (#2b4d30); then "lighten it up… closer to
+	   bg", so it is now the room's own green — the same value the founder TITLE and NAME are set in. Kept
+	   as its own token so the rule can be re-tuned without moving the room. Card, founder chips and the
+	   rail's bars read it (--zone-rule); orbit cards keep the ink-blue rule. */
+	--color-founderrule: #355e3b;
 	/* THE ASCENSION'S MIDNIGHT — the middle stop of `.ascend-veil`'s gradient, promoted to a token for
 	   the same reason the green was: a second surface now reads it (a Major Influence's row in search),
 	   and two sources of truth for one colour means the words can stop matching the room they name.
@@ -629,6 +635,22 @@ a.person-box.orbit-chip:hover {
 }
 /* The card's own surface, clipped 3px further in — it covers the middle of the navy sheet and leaves
    only the 3px band showing. Same paper as the card so the two cannot drift. */
+/* THE FOUNDER CARD'S NAME, IN THE ROOM'S GREEN (Sam, 100526: "the display name in the same forest
+   green"), matching the "Hartford Founder" title under it. Founder ZONE cards only (`.founder-card` =
+   founder-ish AND orbit); a founder attached to the tree (Dorothy, Goodwin, Haynes) keeps ink blue. Beats
+   the h1's `text-inkblue` utility on specificity. */
+.featured-card.founder-card h1 {
+	color: var(--color-foundergreen);
+}
+/* ...and the NB headers with it (Sam, 100526: "yes apply"), with each block's small category label in
+   the same green at half strength — the 50% the navy label already used — so label and header stay one
+   ink. Body text (warm grey) and the MAP links (a link cue) are deliberately left alone. */
+.featured-card.founder-card .narrative-blocks h3 {
+	color: var(--color-foundergreen);
+}
+.featured-card.founder-card .narrative-blocks .header-button > div {
+	color: rgb(53 94 59 / 0.5);
+}
 .featured-card.orbit-card > .card-top {
 	position: relative;
 	z-index: 1;

@@ -729,6 +729,13 @@
 	// the rule simply retreats a third of a pixel further from the text.
 	const ringOuter = $derived(silhouette(5, ringNotched));
 	const ringInner = $derived(silhouette(7.2, ringNotched)); // 2.2px of rule (Sam), all of it inboard
+	// THE FLAT PAIR, ALWAYS EXPOSED (100526). A LEAVING card is still `settled`, so the pair above stays
+	// notched on it — while the page's `.flat` rule squares the card's own silhouette off for the flight.
+	// The bite then had no rule and no `.card-top` over it, and the bare wax showed through: Sam's "the
+	// area where the spouse chip is turns white". `.flat` swaps the ring to these two in the same rule that
+	// flattens the card, so the stripe wraps the filled corner exactly as a default card's corner fills.
+	const ringOuterFlat = silhouette(5, false);
+	const ringInnerFlat = silhouette(7.2, false);
 
 	let clipPath = $derived.by(() => {
 		const r = CORNER_R;
@@ -811,7 +818,7 @@
 		class:prism={isPynchonKin(person.id)}
 		class:orbit-card={orbit}
 		class:founder-card={founderZone}
-		style="clip-path: {clipPath}; --flat-shape: {flatShape}; --ring-outer: {ringOuter}; --ring-inner: {ringInner};"
+		style="clip-path: {clipPath}; --flat-shape: {flatShape}; --ring-outer: {ringOuter}; --ring-inner: {ringInner}; --ring-outer-flat: {ringOuterFlat}; --ring-inner-flat: {ringInnerFlat};"
 	>
 		<!-- Fixed-height TOP region: header + content area, always exactly CARD_TOP_H tall.
 		     The header row is a FIXED height (HEADER_H) so the LOWER CONTENT — the photo / narrative /

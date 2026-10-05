@@ -121,7 +121,6 @@
 		marchTravel,
 		retractBladeIn,
 		captureFlightKind,
-		captureAscend,
 		getAscend,
 		captureFlightOrigin,
 		captureClicked,
@@ -145,7 +144,8 @@
 	import { preloadNeighborhood, warmCrossConnections } from '#lib/photo.js';
 	import SiblingPanel from '#lib/components/SiblingPanel.svelte';
 	import Ascension from '#lib/components/Ascension.svelte';
-	import { ascension, clearAscent } from '#lib/state/ascension.svelte.js';
+	import { ascension } from '#lib/state/ascension.svelte.js';
+	import { arriveAtPerson } from '#lib/state/bookmarkNav.js';
 	import Caret from '#lib/components/Caret.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -303,31 +303,26 @@
 			ascension.from ?? // 1. the door we came in by
 			slugFromPath(blade()?.getAttribute('href') ?? '') ?? // 2. any CC that leaves the zone
 			null;
-		if (!home) {
-			// 3. nothing on this card reaches the tree (Martha, cold-loaded). History is the honest next
-			//    answer — it is where the reader actually was.
-			if (history.length > 1) {
-				history.back();
-				return;
-			}
-			// 4. and if even that is empty, the line's own root always exists.
-			// thomas-hooker-1586, NOT `thomas-hooker`: that bare slug belongs to a LIVING Thomas Creighton
-			// Hooker (HD14013, b. 1974), whose year the privacy rule strips. This fallback sent people to him.
-			window.location.href = personHref(THOMAS_SLUG);
-			return;
-		}
-		const link = document.querySelector<HTMLElement>(
-			`.cc-blade a[data-cc="true"][href="${personHref(home)}"]`
-		);
+		// EVERY RUNG FLIES (100526). The last two used to leave without the descent: `history.back()` goes
+		// through the popstate reconcile, which SNAPS (the very thing the X exists not to be — roadmap
+		// §40.5), and the no-reciprocal path called focusPerson by hand, skipping the flight lock, the
+		// camera publish (so the rail kept the previous move) and the roster hide. Sam: "when I click a CC
+		// or the X it returns to the original default card I started from… all transitions have the same
+		// timing." So every way home now goes through the SAME delegated click a CC makes —
+		// arriveAtPerson synthesises the anchor on the stage, exactly as search and bookmarks do — and
+		// the descent is the one the blade link would have produced.
+		const link = home
+			? document.querySelector<HTMLElement>(`.cc-blade a[data-cc="true"][href="${personHref(home)}"]`)
+			: null;
 		if (link) {
-			link.click();
+			link.click(); // the real reciprocal: carries its own seat and relation data
 			return;
 		}
-		// No reciprocal on the blade. Capture what the click would have captured, then go.
-		captureFlightKind('cc');
-		captureAscend(-1);
-		clearAscent();
-		void focusPerson(home);
+		// 3. a door with no reciprocal on this blade (William Wadsworth → John Talcott has none), or 4. no
+		//    door at all — Martha Wayles Jefferson cold-loaded, whose card reaches nothing on the tree. The
+		//    line's own root always exists. thomas-hooker-1586, NOT `thomas-hooker`: that bare slug belongs
+		//    to a LIVING Thomas Creighton Hooker (HD14013, b. 1974), whose year the privacy rule strips.
+		arriveAtPerson(home ?? THOMAS_SLUG, false);
 	}
 	// Held: an empty roster, so every row's {#each} is mounted and empty. At release the real roster arrives
 	// in the same tick as the card — its chips mount pending (in:markPending) and unfurl at landing, exactly
@@ -2413,7 +2408,8 @@
 	   not with a fact about the person on it, and the room is exactly what this selector names. */
 	.page-container.in-founder :global(.featured-card.orbit-card::before),
 	.page-container.in-founder :global(.person-box.orbit-chip) {
-		--zone-rule: var(--color-founderblue);
+		/* Forest green, not the navy it was (Sam, 100526) — see --color-founderrule. */
+		--zone-rule: var(--color-founderrule);
 	}
 
 	.page-container {
@@ -2513,6 +2509,10 @@
 	   notch is worth carving, because a passenger is about to dock in it. */
 	.featured-flight:global(.flat):not(:global(.notch-armed)) :global(.featured-card) {
 		clip-path: var(--flat-shape) !important;
+		/* ...and the zone's inset rule with it (no-ops on a card without the ring): a flat card whose
+		   rule kept its notch showed bare wax in the bite — white, on a leaving orbit/founder card. */
+		--ring-outer: var(--ring-outer-flat) !important;
+		--ring-inner: var(--ring-inner-flat) !important;
 	}
 
 	/* L3a "flip early, land as a chip": the demote's CHIP-FACE. A real PersonBox of the demoting
