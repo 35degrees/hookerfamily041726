@@ -6208,6 +6208,11 @@ The detail is in §58.1–58.6. This is the arc: what broke, what we tried, what
 **Still open:** the Safari quiver on CC and spouse overshoots (§58.3c, never measured with keyframes in
 Safari) and the accepted landing re-snap (§58.6.1).
 
+**Update, October 5: the parent/sibling jump is back and TABLED (§58.7).** It never regressed (the October 3
+build, filmed again, jumps the same); "smooth" was the same code on easier cards. The cause is that Safari
+draws the first frames of a new card ~50ms late from the main thread, then its compositor snaps to the true
+clock. The plan for the future pass is §58.7 part 6.
+
 ### 58.1 HOW TO MEASURE REAL SAFARI — read this before touching anything
 
 **Headless WebKit (Playwright 26.5) cannot show these bugs.** It renders in software, so it reproduced the
@@ -6603,3 +6608,136 @@ Chrome, Edge and Opera say "AppleWebKit" in their user agent but are excluded.
    a few settles to catch it.
 3. Small: `batch.py`'s review links still print `/person/…` URLs. They redirect fine.
 
+4. **The parent/sibling promotion jump in Safari. TABLED, October 5, 2026, for a future pass.** See §58.7
+   for the whole investigation and the plan. Sam: *"it's not bad enough where people will have a bad
+   experience… it's time to release it."*
+
+### 58.7 OCTOBER 4–5, 2026 — THE PROMOTION JUMP CAME BACK: WHAT IT REALLY IS, AND THE PLAN (TABLED)
+
+*Written October 5, 2026, 07:00. Status: **tabled by Sam for release.** Nothing about it is urgent.*
+
+**What Sam saw.** Parent and sibling promotions in Safari *"seem to be failing again and jumping. They
+work for a while and then change… we had it working perfectly."* He asked whether it was the engine or too
+many tabs, and for a way to make the §58.3f fix permanent. Later, on the experiments: the promotion is
+*"missing the discrete baseball card, full physical object with heft"* transition.
+
+**The objective measure** (`scripts/safari/cardw.py`): film a hover-then-click parent promotion (Sarah
+Dwight → Josiah Dwight), then read the arriving card's width each frame as a percentage of its final width.
+The parent chip reads 18%, the card's held start pose 23%. A smooth flight steps a little every frame; the
+jump is one step of 25–50 points.
+
+| Build, filmed October 4–5, same click | Width per frame (%) |
+|---|---|
+| **October 3's "smooth" commit 16352f15**, run on :5175 from a worktree (×3) | 23 → **64–71** → 77 → 81 → 84 … |
+| HEAD (×2) | 23 → **66–71** → 72 → 80 … |
+| "Option 2" below (×3) | 23 → 23 → 29 → 40 → 49 → 58 → **83** → 86 … |
+
+**1. Nothing regressed.** The October 3 build, filmed today, jumps exactly like HEAD. Only two frontend
+commits came after it (the CC photo warm, 363c9788, which runs 900ms after landing; and search), and
+Safari itself hasn't updated since September 23 (its Info.plist). What changed is the cards: the data was
+edited heavily, and how long a card takes to render varies from card to card and click to click. On October
+3 the same code had an easier time.
+
+**Correction to §58.3f.** It says *"Safari now paints the new card about 15ms after the animation is
+created."* That was the first `requestAnimationFrame` after mount (measured again: 11–19ms), not the frame
+on screen. The card actually reaches the screen **65–85ms** after mount for parents and siblings, and
+**40–45ms** for children (`budget.js`, `raf2`).
+
+**2. Also ruled out (measured, not guessed):**
+- **Tabs and memory.** 13 tabs, 56% system memory free.
+- **Build-up over a session.** A freshly reloaded tab measured the same. This matches §58.3d.
+- **Our callbacks in the gap.** `attrib` wrapped every timer, rAF, observer and listener, and none took more
+  than 3ms.
+- **The CSS variables, z-index and transform-origin in the keyframes.** Stripped to transform-only, the flight
+  jumped the same. This matches §58.3f.
+
+**3. The mechanism — what the evidence supports.** The model, plus the three experiments behind it:
+- Safari starts the arriving card's clock when the animation is **created**.
+- It then draws the first frames itself, from the main thread. Each of those frames reaches the screen
+  about **50ms** after it was sampled, because rendering and then rasterising/committing the card in
+  Safari's GPU process takes that long. `budget.js`: the main thread **sits idle ~20ms after rendering**
+  before the next frame, so this is not our script.
+- Some way into the flight, Safari hands the animation to its compositor. The compositor draws at the
+  true time, so the card **snaps forward ~50ms**. That snap is the jump.
+- Chrome composites from the first frame, so it never shows this. Child promotions show it least.
+
+The experiments:
+- `plainstall.js`: a plain WAAPI square keeps moving through a 300ms main-thread stall, so the compositor
+  does run animations off the main thread.
+- `stall-early.js`: stalling 70ms after mount, the card can't appear until the stall ends, then
+  appears ~95% grown.
+- `stall-late-parent.js`: stalling 200ms after mount, after the snap, the card keeps growing smoothly
+  through the stall.
+
+**4. Why the hand-off comes late in parent and sibling promotions specifically.** Those flights carry
+per-frame main-thread work that child promotions don't. `busy.js` shows **9–14ms of main-thread work every
+frame** for the whole flight, in parent and sibling flights only. `calls.js` names the layout-forcing reads
+on the critical path, from click to first render, in a parent promotion:
+
+| Where | Cost |
+|---|---|
+| `shrinkToFit.ts` (`scrollWidth` × 88) | 8–10ms (cut, see 5c) |
+| `fitBlade.ts` depth/width search (`scrollHeight`, `offsetWidth`) | 7–14ms (moved, see 5c) |
+| `shrinkToCore` flight.ts:~1774 (`getBoundingClientRect`) | 4–7ms |
+| `growUnionRow` (`scrollHeight`) | 4–6ms |
+| `rowClockMs` (`getBoundingClientRect`), Svelte list `measure`/`fix`, `morphPhotoWidth` (`offsetWidth`) | ~2–4ms each |
+
+The departing card's `shrinkTo` is **tick-driven** (main thread every frame), and so are the row march
+and seat tracking. In Safari that steady per-frame load is the leading suspect for the late compositor
+hand-off.
+
+**5. What was tried this round:**
+- **(a) Reverted: the hold ends at the first paint.** The animation was created holding for up to 130ms.
+  At the second rAF the hold was trimmed with `effect.setKeyframes` to `max(50, elapsed)`, keeping the total
+  duration (so the landing time) fixed.
+  - The clock logged correct trims (55–70ms for parents).
+  - Filmed, it still jumped: `setKeyframes` is a main-thread call and reaches the compositor late, so the
+    trim itself lands in the past.
+- **(b) Stripping the keyframes to transform-only.** No change (see 2).
+- **(c) Kept in the working tree, uncommitted: the mount-path fit trims.** Both are result-identical
+  (checked by comparing every fitted element's font size, old vs new, on five cold loads and three live
+  promotions).
+  - `shrinkToFit` jumps to the predicted size and confirms in 1–3 reads instead of stepping 0.5px per read.
+    Its second fit on `fonts.ready` **stays**: with `ellipsis` it is not a no-op.
+  - `fitBlade` fits two frames later in Safari during a flight, because the blade is sheathed behind the
+    card until landing.
+  - Script before the first render fell from 19–35ms to 16–19ms, but **the first frame on screen did not
+    move**: Safari's own render and raster dominate. Worth keeping for general speed. It does not fix the
+    jump.
+  - The fit comparison also found a **pre-existing flake**: Finch-Hatton's two ellipsis chips come out at
+    11.5px or 13px depending on when the second fit runs. Not fixed.
+- **(d) In the working tree, uncommitted: "Option 2", a longer hold for promotions only.**
+  `holdUntilPainted` in `+page.svelte`:
+  - In Safari, parent promotions (`relative` + pan `down`) and siblings hold the start pose for
+    `SAFARI_PROMOTION_HOLD_MS` = 120ms instead of 50.
+  - The original curve then replays over what's left of the same total duration, so the landing time is
+    unchanged and the growth runs ~15% quicker.
+  - Seven-promotion twin-chip check, sampling every frame mid-flight (`dupflight.js`): clean.
+  - Films: the jump **moved** rather than vanished (58 → 83% mid-growth instead of 23 → 70% at the start,
+    a smaller step).
+  - Sam: *"definitely feels like there's still a gap."* **Keep or revert is Sam's call.**
+
+**6. THE PLAN FOR THE FUTURE PASS** (in order; each step judged by `cardw.py` films, never the clock alone):
+1. **Decide Option 2.** Revert to HEAD's 50ms hold if the experiment below can beat it; it only moves the
+   snap.
+2. **Measure the hand-off point directly.** Add a probe for the frame where the arriving card's
+   on-screen size stops lagging its clock (the snap). Compare it in parent, sibling and child promotions,
+   with the expectation that it lands before the hold ends in children and after it in parents. This turns
+   "the hand-off is late" from the leading model into a number to drive down.
+3. **Cheapen the per-frame main-thread work of parent/sibling flights, in Safari only, without
+   re-timing anything** (§58.4's rule):
+   - **The departing card's `shrinkTo`.** It is `tick`-driven. Precompute it as `css` keyframes in WebKit
+     (every value is a launch-time constant, as §58.4's CC-deck experiment showed for Chrome, where it gave
+     no gain). That experiment was never measured in Safari, and Safari is exactly where it should help.
+   - **The row march and seat tracking.** `growUnionRow`, `trackSeat`, `morphPhotoWidth` and `rowClockMs`:
+     batch their layout reads before their writes, or cache rects captured at click time (as
+     `captureRects` already does for chips).
+   - **`shrinkToCore`'s rect reads at flight start.** Read once, before any write.
+4. Re-film after each change. **Success: the parent's width series steps evenly from 23% with no step
+   over ~15 points, and the 50ms hold back as it was.**
+5. Only if 3 can't move the hand-off: try creating the arriving card **one frame earlier, at click time**
+   (it is already fetched by the hover preload), so Safari has painted and committed its layer before the
+   clock starts. This is the bigger architectural change.
+
+**How to resume:** read §58.0, §58.1 and this section. The kit and the new probes are in `scripts/safari/`
+(see its README). The October 3 build can be stood up for an A/B with the worktree recipe in that README.

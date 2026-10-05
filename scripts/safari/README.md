@@ -20,5 +20,18 @@ Run a page script and read its result back:
 | `recexperiment.sh <name> <startSlug> "<css>"` | The same, with CSS injected first. Builds a contact sheet of the flight's first ~170ms (`<name>_zoom.png`). `HCFILE` picks the click script. Needs numpy and Pillow. |
 | `frames.swift <mov> <outdir> [scale] [startMs] [endMs]` | Extracts PNG frames with AVAssetReader. Playwright's ffmpeg can't decode H.264. |
 
+Added October 4–5 for the promotion jump (roadmap §58.7):
+
+| File | What it does |
+|---|---|
+| `cardw.py <film>…` | **The objective verdict.** Run in `$OUT` on filmed promotions (`recclick.sh … hoverclick-parent.js 0.35`, Sarah Dwight → Josiah Dwight). Prints the arriving card's width per frame as % of its final width, found by its background colour. A smooth flight steps a little every frame; the jump shows as one step of 25–50 points. |
+| `budget.js` | Clicks a relation chip (`window.__rel`) and records, into `window.__bud`: mount time, forced-layout cost at mount, first rAF after mount (`raf1`), the next one (`raf2`, ≈ the card's first frame on screen), and main-thread busy blocks. |
+| `calls.js` | The same click, totalling every layout-forcing read (`getBoundingClientRect`, `scrollWidth/Height`, `offsetWidth`…) from click to first render, with the top call sites. Into `window.__calls`. |
+| `stall-early.js` / `stall-late-parent.js` | A parent hover-click with a 150ms main-thread stall 70ms / 200ms after the card mounts. Early: the card cannot appear until the stall ends. Late: the compositor carries the growth straight through it. |
+| `plainstall.js` | A plain red square animated with WAAPI through a 300ms stall: proves Safari's compositor does run animations off the main thread. |
+| `dupflight.js` | `dupcheck.js` that also samples for duplicate chips **every frame mid-flight**, not only 2s after landing. |
+
+`recclick.sh` takes `PORT=…` to film another build (an old commit in a `git worktree` with `node_modules`, `static/data` and `.env` symlinked in, `npx vite dev --port 5175`).
+
 Recordings and frames go to `$OUT` (default `/tmp/safari-rec`), never into the repo. The scripts point at
 `localhost:5173`; edit the URL to judge a production build on 4173.
