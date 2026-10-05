@@ -6716,6 +6716,8 @@ hand-off.
   - Films: the jump **moved** rather than vanished (58 → 83% mid-growth instead of 23 → 70% at the start,
     a smaller step).
   - Sam: *"definitely feels like there's still a gap."* **Keep or revert is Sam's call.**
+  - **Decision, October 5:** kept and committed for the release (3140e786), together with the 5c trims.
+    Revert that commit's `holdUntilPainted` hunk to return to the plain 50ms hold.
 
 **6. THE PLAN FOR THE FUTURE PASS** (in order; each step judged by `cardw.py` films, never the clock alone):
 1. **Decide Option 2.** Revert to HEAD's 50ms hold if the experiment below can beat it; it only moves the
