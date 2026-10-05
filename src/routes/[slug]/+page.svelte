@@ -129,7 +129,9 @@
 		captureRects,
 		clearFlightCaptures,
 		setArrivalTempo,
-		SAFARI_HOLD_MS
+		SAFARI_HOLD_MS,
+		holdLanding,
+		releaseLanding
 	} from '#lib/transitions/flight.js';
 	import { publishCameraMove } from '#lib/state/camera.js';
 	import { lockFlight } from '#lib/state/flightLock.js';
@@ -146,6 +148,7 @@
 	import Ascension from '#lib/components/Ascension.svelte';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { arriveAtPerson } from '#lib/state/bookmarkNav.js';
+	import { slabFloat, floatResume, floatStart, floatStop } from '#lib/state/slabFloat.svelte.js';
 	import Caret from '#lib/components/Caret.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -708,7 +711,28 @@
 	// (see onIncomingStart). High enough that the cutout is at settled size, early enough to beat the
 	// traveller's arrival — she lands at ~566ms and this fires around ~300ms.
 	const NOTCH_ANTICIPATE = 0.92;
+	// THE ZONE'S LOW GRAVITY (slabFloat.svelte.ts): the slab drifts whenever we are in a zone and nothing is
+	// flying. A click flattens it synchronously (floatPause, in warmPersonLinks); the landing lets it come
+	// loose again (floatResume, below) — from flat, with fresh randomness.
+	let pageEl: HTMLElement | undefined = $state();
+	const FLOAT_ENABLED = false;
+	$effect(() => {
+		const el = pageEl;
+		// NOT IN SAFARI (100526, filmed): WebKit does not move the 3D-tilted slab smoothly — it held still
+		// for seconds, then stepped ~2px in one frame — and it depth-sorted the bookmark mark behind the card
+		// mid-drift. All Sam could see of the "float" was the jerks. Chrome only until that is solved.
+		// AND OFF EVERYWHERE FOR NOW (Sam, 100526: "I don't notice any float on Chrome anyway"). Parked behind
+		// FLOAT_ENABLED rather than removed, so the engine can be re-tuned later without being rebuilt.
+		if (!FLOAT_ENABLED || !el || isWebKit() || !ascension.active || !slabFloat.resting || motionOff()) return;
+		floatStart(el);
+		return floatStop;
+	});
 	function onIncomingLand(node: HTMLElement) {
+		floatResume(); // the zone's slab may drift again — from flat, so the landing hands over to it
+		// SAFARI: keep drawing the card exactly as the flight's last frame drew it, so it never snaps the
+		// ~1px between WebKit's animated and resting rendering (flight.ts holdLanding). Before the inline
+		// clears below — they are inert under the hold, and correct again the moment it is released.
+		holdLanding(node);
 		node.classList.remove('flat'); // re-form the notch ON the real landing (no timer)
 		node.classList.remove('notch-armed'); // the anticipation is spent — the resting rule owns the notch now
 		// Clear the inline origin transform growFrom set for the first-frame-flash fix — the animation is
@@ -807,6 +831,7 @@
 		}, 700);
 	}
 	function onOutgoingStart(node: HTMLElement, id: string) {
+		releaseLanding(node); // a held card must be free before its departure drives transform inline
 		if (motionOff()) return;
 		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
 		retractBladeIn(node); // the CC blade stows back into the case as the card starts to leave
@@ -1951,6 +1976,7 @@
 
 <div
 	class="page-container"
+	bind:this={pageEl}
 	class:in-orbit={ascension.active}
 	class:in-founder={ascension.founder}
 	class:tier-nav-close={tierClosingForNav}

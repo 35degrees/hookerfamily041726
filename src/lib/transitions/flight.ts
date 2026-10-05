@@ -3595,6 +3595,49 @@ export function retractBladeIn(node: HTMLElement): void {
 // untouched (only the tick's time is remapped); every other demote and every Chrome flight is the core
 // shrinkTo, byte for byte.
 export const SAFARI_HOLD_MS = 50;
+
+/**
+ * THE LANDING HOLD — Safari's 1px "tick" after a card settles (Sam: "it feels like a bug… so annoying").
+ * Measured 100526 in Sam's Safari, film tracked to a tenth of a pixel on the card's own text:
+ *   - EVERY flight ends with the card drawn ~1 CSS px (+1.2 recording px on promotions, +1.8 on the orbit
+ *     entry) off its true rest, held perfectly still for 3 frames, then it snaps home. Every card, every
+ *     zone — the stripe, the zone, the 1.8× start scale and the .flat outline were each ruled out.
+ *   - The flight's LAST KEYFRAME IS EXACT IDENTITY ("translate(0px, 0px) scale(1, 1)") and layout never
+ *     moves (card top 250.00 throughout). So the offset is WebKit drawing an ANIMATED layer differently
+ *     from the same layer at rest — and the offset depends on how the animation was set up (anchor top-left
+ *     +1.2, centred +1.8, a 3D no-op −0.7), never on our values.
+ * So the card never makes that switch: at landing the finished flight is replaced by an endless no-op
+ * holding EXACTLY its final keyframe (same transform string, same transform-origin), and WebKit keeps
+ * drawing it the way it drew the flight's last frame. Filmed: promotions now settle 2.0 → 1.0 → 0.2 → 0
+ * and stop, the orbit entry lands at 0.0 throughout — no plateau, no snap.
+ * RELEASED the instant anything else needs the element: at the navigation click (before any rect is
+ * measured) and at the card's own outrostart — departures drive transform frame by frame inline, and a
+ * running animation would override them.
+ */
+const landHolds = new WeakMap<Element, Animation>();
+export function holdLanding(node: HTMLElement): void {
+	if (!isWebKit() || motionOff()) return;
+	const src = node.getAnimations().find((a) => {
+		const e = a.effect as KeyframeEffect | null;
+		return !!e && typeof e.getKeyframes === 'function' && e.getKeyframes().length > 2;
+	});
+	if (!src) return;
+	const k = (src.effect as KeyframeEffect).getKeyframes();
+	const last = k[k.length - 1] as Keyframe & { transformOrigin?: string };
+	if (!last.transform) return;
+	const f: Keyframe = { transform: last.transform as string, transformOrigin: (last.transformOrigin as string) || 'top left' };
+	landHolds.get(node)?.cancel();
+	landHolds.set(node, node.animate([f, f], { duration: 1e9, fill: 'both' }));
+}
+export function releaseLanding(node: Element): void {
+	landHolds.get(node)?.cancel();
+	landHolds.delete(node);
+}
+/** Every held card at once — the navigation click, before it measures anything. */
+export function releaseAllLandings(): void {
+	if (typeof document === 'undefined') return;
+	for (const el of document.querySelectorAll('.featured-flight')) releaseLanding(el);
+}
 export function shrinkTo(node: Element, params: { id: string }) {
 	const cfg = shrinkToCore(node, params) as { duration?: number; tick?: (t: number, u: number) => void } & Record<string, unknown>;
 	if (!isWebKit() || motionOff() || flightKind !== 'spouse' || !cfg.tick || !cfg.duration) return cfg;

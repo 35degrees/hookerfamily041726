@@ -11,6 +11,7 @@
  *
  * popstate (back/forward) is reconciled in +page.svelte by watching the URL.
  */
+import { floatPause } from '#lib/state/slabFloat.svelte.js';
 import { goto } from '$app/navigation';
 import { personHref, slugFromPath } from '#lib/paths.js';
 import { prefersReducedMotion } from 'svelte/motion';
@@ -24,6 +25,7 @@ import { isArcMove, arcScaleMinFor, arcDurationMsFor } from '#lib/transitions/ar
 import { fetchFeatured } from '#lib/data/buildFeatured.js';
 import { planSiblingNav, clearSiblingNavPlan } from './siblingNav';
 import {
+	releaseAllLandings,
 	captureFlightOrigin,
 	captureFlightKind,
 	captureTierSpan,
@@ -102,6 +104,12 @@ export function warmPersonLinks(node: HTMLElement) {
 			event.preventDefault();
 			return;
 		}
+		// THE ZONE'S FLOAT GOES FLAT FIRST (slabFloat.svelte.ts): a tilted `.page-container` would re-base
+		// every rect captured below and become the containing block for the flight's fixed pins. It cancels
+		// the drift synchronously, so everything measured in this handler is flat.
+		floatPause();
+		// ...and any card held at its landing (Safari, flight.ts holdLanding) is released before measuring.
+		releaseAllLandings();
 		// SLICE 3 (Phase 7): a sibling chip is now a WARM flight — kind 'sibling'. The hero grows from the
 		// chip rect (with settle, like a relative promotion); the old card DEPARTS via the CC path (whole
 		// card, opposite lateral vector, no chip-face, no settle) because the old focus has no destination
