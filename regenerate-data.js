@@ -651,26 +651,11 @@ function factSegments(p, reg) {
 		if (rec) push('inst', rec.primary_name || rec.name, rec.short_name, rec.alt_names || []);
 	}
 	push('tag', asList(p.tags));
-	// Cross-connections are SEARCHABLE (Sam, 091526). The CC label is often the only place a fact
-	// lives — "marched with the Exeter Wide-Awakes" is on the connection, not in any career row —
-	// and before this a search for it returned nothing. Both halves go in: `link_text` is the
-	// connected person's name (find X by who they are linked to) and `display_label` is the reason.
-	// SEVERANCE: skip a hidden target, the same rule the emit path applies at line ~1885. Without
-	// it a hidden person's NAME becomes searchable text on a visible person's row.
-	// NOT `push()`: its per-segment word dedupe is harmless on names and places but visibly mangles a
-	// SENTENCE — "isham's chicago law firm from 1872; the firm bore his name" loses the second
-	// "firm" and renders as "the bore his name". CC labels are prose and are shown verbatim in the
-	// match reason, so they go in whole.
-	const pushRaw = (tag, ...parts) => {
-		const out = parts.flat().filter(Boolean).map((r) => fold(String(r)));
-		if (out.length) segs.push(tag + ':' + out.join(', '));
-	};
-	for (const cc of asList(p.cross_connections)) {
-		if (!cc || (cc.related_id && hiddenIds.has(cc.related_id))) continue;
-		pushRaw('linked', cc.link_text, cc.display_label);
-		const co = cc.co_link;
-		if (co && !(co.related_id && hiddenIds.has(co.related_id))) pushRaw('linked', co.link_text);
-	}
+	// Cross-connections are NOT searchable (Sam, 100426 — reverses 091526). They were indexed as a
+	// `linked:` segment (link_text + display_label), so searching "George Dod Armstrong" also
+	// returned Dr. Hamilton Polk Jones with "LINKED George Dod Armstrong, Lost His Wife…" — a person
+	// you have never seen, matched only because his CC names the one you typed. Too confusing; the
+	// CC is found by opening the card, not by search.
 	const n = p.notable || {};
 	push('is', n.notable_blurb || b.bio_blurb, asList(n.notable_category));
 	// Identical segments collapse too — repeated `work:` rows for the same role, or a residence
