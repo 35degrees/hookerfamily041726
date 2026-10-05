@@ -119,6 +119,8 @@
 		/** ORBIT (§40) — the target's orbit-ness, surfaced as data-orbit so warmPersonLinks can decide
 		 *  the ascension's axis at click time, the same way it reads gen_delta and kin_distance. */
 		orbit?: boolean;
+		/** FOUNDER ZONE (100526) — surfaced as data-founder: green and midnight are different altitudes. */
+		founder?: boolean;
 	};
 	type Props = {
 		crossConnections?: CC[];
@@ -300,6 +302,7 @@
 			data-gen-delta={l.gen_delta ?? undefined}
 			data-kin-distance={l.kin_distance ?? undefined}
 			data-orbit={l.orbit ? 'true' : undefined}
+			data-founder={l.founder ? 'true' : undefined}
 			class="cc-link">{bindName(l.link_text)}</a
 		>{:else}<span class="cc-name">{bindName(l.link_text)}</span>{/if}{/snippet}
 

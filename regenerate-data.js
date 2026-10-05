@@ -67,6 +67,15 @@ let marriedIntoLine = new Set();
  * GRAPH, not about a person, so asking it 18,621 times would be asking it wrong.
  */
 let orbitIds = new Set();
+/**
+ * THE FOUNDER ZONE'S MEMBERS (100526) — the orbit people whose card is GREEN: tagged `hartford_founder`,
+ * or married to someone who is (the same two tests FeaturedCard's `founderAny` applies, and the same
+ * `orbit` gate its `founderZone` adds). Sam: the founder zone and the orbit zone are DIFFERENT ALTITUDES
+ * — "a Hartford founder can't move laterally to an orbit" — so a CC between them takes the depth flight,
+ * while founder→founder and orbit→orbit stay lateral. The click decides that off the anchor
+ * (warmPersonLinks), so the target's zone has to ride the CC row beside `orbit`, exactly as orbit does.
+ */
+let founderZoneIds = new Set();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -1982,6 +1991,8 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 			// featured.current.person.orbit.
 			// Emitted only when TRUE, like kin_distance, so the non-orbit majority costs nothing.
 			if (orbitIds.has(cc.related_id)) out.orbit = true;
+			// ...and WHICH zone it is in (100526): green founder vs midnight orbit are different altitudes.
+			if (founderZoneIds.has(cc.related_id)) out.founder = true;
 			if (talcottOnly) out.hidden_by_default = true;
 			// PHOTO (100326) — the target's portrait, so the page can warm it once this card has landed and a
 			// CC jump arrives with its photo already in cache (photo.ts warmCrossConnections). Without it the
@@ -2013,6 +2024,7 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 				const ckd = kinDistance(p.id, co.related_id, byId);
 				if (ckd != null) coOut.kin_distance = ckd;
 				if (orbitIds.has(co.related_id)) coOut.orbit = true;
+				if (founderZoneIds.has(co.related_id)) coOut.founder = true;
 				const coTgt = byId[co.related_id];
 				const coPh = coTgt && (coTgt.bio?.photo_url ?? coTgt.name?.photo_url);
 				if (coPh) coOut.p = coPh;
@@ -2162,6 +2174,18 @@ function main() {
 			.map((p) => p.id)
 	);
 	orbitIds = computeOrbit(visible, byId);
+	{
+		const tagged = (q) => (q?.tags || []).includes('hartford_founder');
+		founderZoneIds = new Set(
+			[...orbitIds].filter((id) => {
+				const q = byId[id];
+				return (
+					(id !== 'H00001' && tagged(q)) ||
+					(q?.marriages || []).some((m) => m && m.spouse_id && tagged(byId[m.spouse_id]))
+				);
+			})
+		);
+	}
 	// Hoisted above the search-index build (cemById/instById/landmarkById were declared with the
 	// per-person payloads): the fact blob resolves cemetery_id, institution_id, landmark_id and
 	// war_id to their NAMES, so an unresolved id would make that whole class unsearchable.

@@ -108,6 +108,8 @@
 			/** ORBIT (§40) — the TARGET's orbit-ness, so the ascension's axis can be decided at click
 			 *  time off the anchor. Absent when false; see computeOrbit in regenerate-data.js. */
 			orbit?: boolean;
+			/** FOUNDER ZONE (100526) — the target's card is green, not midnight. See founderZoneIds. */
+			founder?: boolean;
 		}>;
 		institutionsById?: Record<string, Institution>;
 		/** The blade's measured height, forwarded to the page so the featured slot can reserve it. */

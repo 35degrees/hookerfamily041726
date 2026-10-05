@@ -366,7 +366,15 @@
 			duration: Math.round(fadeMs * 0.9),
 			easing: cubicOut
 		}}
-	></div>
+	>
+		<!-- THE GREEN IS A LAYER, NOT A SWAP (100526). Founder ↔ orbit is now a depth flight between two
+		     zones that are both "active", so the veil itself never re-mounts — and a background gradient
+		     cannot transition, so the old `.founder` class swapped midnight for green in ONE frame, the
+		     snap Sam saw. The midnight is always the veil's own background; the green sits over it and
+		     crossfades on the zone's own clock (fadeMs, cubicInOut — the veil's entrance). Entering green
+		     straight from the line it is already on at mount, and the veil's own fade carries it in. -->
+		<div class="ascend-veil-green" class:on={founder} style="--zone-ms: {fadeMs}ms"></div>
+	</div>
 	<!-- ── THE SPRITES ─────────────────────────────────────────────────────────────────────────────
 	     Atmosphere, not content — aria-hidden, inert, and mounted inside the same `{#if}` as the veil so
 	     they arrive and leave with the dark rather than needing a lifecycle of their own. The fade uses
@@ -508,13 +516,20 @@
 	   not toward a brighter version of itself, which is the wrong operation for "the same green under
 	   more light". If the token is ever changed, RE-TUNE THESE TWO BY EYE; they are its lift and its
 	   shadow, not values derivable from it. */
-	.ascend-veil.founder {
+	.ascend-veil-green {
+		position: absolute;
+		inset: 0;
+		opacity: 0;
+		transition: opacity var(--zone-ms, 660ms) cubic-bezier(0.65, 0, 0.35, 1);
 		background: radial-gradient(
 			120% 90% at 50% 42%,
 			#487f50 0%,
 			var(--color-foundergreen) 55%,
 			#1d3420 100%
 		);
+	}
+	.ascend-veil-green.on {
+		opacity: 1;
 	}
 
 	/* ── THE FIELD ───────────────────────────────────────────────────────────────────────────────────
@@ -759,6 +774,9 @@
 		.ascend-exit {
 			animation-duration: 1ms;
 			animation-delay: 0ms;
+		}
+		.ascend-veil-green {
+			transition: none;
 		}
 		/* The sprites STOP rather than disappear — they are the zone's atmosphere, and someone who has
 		   asked for less motion should still get the room, just a still one. */

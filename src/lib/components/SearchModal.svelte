@@ -387,6 +387,10 @@
 		 * only re-colours it, read off the arriving person's own tags (ascension.svelte.ts §43.1).
 		 */
 		if (f & CAT.INFLUENCE) a.dataset.orbit = 'true';
+		// FOUNDER ZONE (100526): green and midnight are different altitudes, so a pick between them takes the
+		// depth flight. The index carries the TAG (CAT.FOUNDER), not the married-in case, so a founder's wife
+		// picked from inside the midnight zone still reads as orbit→orbit (lateral) — the CC blade has both.
+		if (f & CAT.INFLUENCE && f & CAT.FOUNDER) a.dataset.founder = 'true';
 		/**
 		 * THE THOMAS EXCEPTION (Sam, 2 Oct 2026) — searching FOR Thomas from his line, or picking his line
 		 * FROM his card, flies vertically, the same rule as the timeline portraits (#lib/state/thomasVertical).

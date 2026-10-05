@@ -25,6 +25,9 @@ export type CrossConnection = {
 	slug: string | null;
 	/** ORBIT (§40) — the target's orbit-ness, read at click time to decide the flight's axis. */
 	orbit?: boolean;
+	/** FOUNDER ZONE (100526) — the target is an orbit person on the GREEN ground: a different altitude
+	 *  from the midnight orbit zone, so a CC between the two takes the depth flight. Absent = false. */
+	founder?: boolean;
 };
 
 /** The fully-resolved payload one person page renders from (matches +page.ts `load`). */

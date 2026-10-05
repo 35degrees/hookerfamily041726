@@ -229,12 +229,31 @@ export function warmPersonLinks(node: HTMLElement) {
 		// meaningful `false`. Every other flight input here is read the same way (`dataset.cc === 'true'`,
 		// `dataset.relationClass`), but those are only ever consulted on links that carry them. This one
 		// was consulted on every anchor in the app.
+		//
+		// THREE ALTITUDES, NOT TWO (Sam, 100526): the line, the green FOUNDER zone, the midnight ORBIT zone.
+		// "Imagine the Founder zone and orbit zones are in different stratospheres above the earth, so a
+		// Hartford founder can't move laterally to an orbit." So the delta is between ZONES, not between
+		// orbit-or-not: founder↔orbit goes UP again (the same flight as entering from the line — "the
+		// Hartford founder card recedes into the background and the orbit comes in from the front"), while
+		// founder→founder and orbit→orbit (Lincoln → Mark Twain) stay lateral, and ONLY a link to a line
+		// person brings either zone back DOWN. The zone is read exactly as the card paints it:
+		// FeaturedCard's founderZone = orbit && (tagged || married to a founder). The same "absent is not
+		// false" rule as above: `data-founder` is only ever consulted on a link that also says data-orbit.
 		const isFamilyChip = !isCC;
-		const toOrbit = (anchor as HTMLElement).dataset.orbit === 'true';
-		const fromOrbit = featured.current?.orbit === true;
-		const ascend = isFamilyChip ? null : toOrbit === fromOrbit ? null : toOrbit ? 1 : -1;
-		// The door, remembered on the way IN only — a single slot, never a stack (see ascension.svelte.ts).
-		if (ascend === 1) {
+		const el = anchor as HTMLElement;
+		type Zone = 'line' | 'founder' | 'orbit';
+		const toZone: Zone =
+			el.dataset.orbit !== 'true' ? 'line' : el.dataset.founder === 'true' ? 'founder' : 'orbit';
+		const cur = featured.current;
+		const curFounder =
+			cur?.founderSpouse === true ||
+			(cur?.person?.id !== 'H00001' && (cur?.person?.tags ?? []).includes('hartford_founder'));
+		const fromZone: Zone = cur?.orbit !== true ? 'line' : curFounder ? 'founder' : 'orbit';
+		const ascend = isFamilyChip ? null : toZone === fromZone ? null : toZone === 'line' ? -1 : 1;
+		// The door, remembered on the way IN FROM THE LINE only — a single slot, never a stack (see
+		// ascension.svelte.ts). Going up again (founder → orbit) must NOT overwrite it: the X still means
+		// "back to the line card I started from", in one descent, not two (Sam, 100526).
+		if (ascend === 1 && fromZone === 'line') {
 			markAscent(slugFromPath(window.location.pathname) ?? '');
 		} else if (ascend === -1) {
 			clearAscent();
