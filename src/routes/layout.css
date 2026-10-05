@@ -651,6 +651,10 @@ a.person-box.orbit-chip:hover {
 .featured-card.founder-card .narrative-blocks .header-button > div {
 	color: rgb(53 94 59 / 0.5);
 }
+/* The hover's darker shade, in green (NarrativeBlocks sets #172f76 for the navy headers). */
+.featured-card.founder-card .narrative-blocks .header-button:hover h3 {
+	color: #2b4d30;
+}
 .featured-card.orbit-card > .card-top {
 	position: relative;
 	z-index: 1;
@@ -812,7 +816,7 @@ html.webkit .featured-flight.flat .shadow-twin .twin-shape {
 	--r-ky: 1 !important;
 }
 
-/* THE NARRATIVE-HEADER HOVER. In Chrome the header fades to 60% over 150ms. In Safari that opacity
+/* THE NARRATIVE-HEADER HOVER. In Chrome the header rises from 85% to full over 150ms (it faded to 60% until 100526). In Safari that opacity
    ANIMATION took a compositing layer inside the card and blinked the shadow out each time the mouse
    crossed a header (before the twins; kept as belt and braces). The same dim, instant. The block's own
    slide drops its opacity fade in Safari for the same reason (NarrativeBlocks blockSlide). */

@@ -108,7 +108,7 @@
 				<button
 					type="button"
 					onclick={() => toggle(key)}
-					class="header-button w-full rounded-sm text-left transition-opacity hover:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 focus-visible:ring-offset-2"
+					class="header-button w-full rounded-sm text-left opacity-[0.85] transition-opacity hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 focus-visible:ring-offset-2"
 				>
 					{#if block.category}
 						<div
@@ -144,7 +144,13 @@
 	.header-button {
 		cursor: pointer;
 	}
+	/* THE HOVER RUNS THE OTHER WAY (Sam, 100526: "I've got the NB header hover contrast backwards"). The
+	   header rests at 85% and comes UP to full strength under the pointer (opacity-[0.85] hover:opacity-100 on
+	   the button), where it used to dim to 60% and go slate. The slate colour on hover is gone with it: it
+	   was the other half of the dimming, and it would have turned the founder zone's green headers grey.
+	   In its place the hover goes a shade DARKER (Sam): blue-900 #1c398e → #172f76. The founder zone's
+	   green does the same in layout.css (#355e3b → #2b4d30), on a rule specific enough to beat this one. */
 	.header-button:hover h3 {
-		color: #475569;
+		color: #172f76;
 	}
 </style>
