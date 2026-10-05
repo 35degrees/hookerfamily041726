@@ -157,6 +157,40 @@ export const ASCEND_MS = ASCEND_TOTAL_MS; // 980 -> 840 (Sam: still slow)
  * "too hard and fast coming in" was describing.
  */
 const ASCEND_ENTER_MS = 760;
+/**
+ * THE ARRIVAL IN ORBIT SLOWS ONCE THE ROOM HAS TURNED (Sam, 100526): "as soon as the background colour
+ * changes it means it's hit orbit altitude, so the entering speed changes — it slows down."
+ *
+ * The entry used to run one symmetric cubicInOut over ASCEND_ENTER_MS — fastest in its MIDDLE, which is
+ * exactly when the card comes through the window and the veil is half-dark, then a brake into the settle.
+ * Now the clock is ASCEND_ENTER_MS's curve, UNCHANGED, up to ENTER_GLIDE_FROM (the card still invisible
+ * in front of the camera, the departing card receding on its own unchanged clock), and from there a
+ * single long deceleration — a cubic Hermite that starts at exactly the speed the old curve had and comes
+ * to rest at ENTER_GLIDE_MS. No seam, no second push: from the moment you can see it, it only slows.
+ * The landing moves later by ENTER_GLIDE_MS − ASCEND_ENTER_MS; ENTER_GLIDE_MS is the dial.
+ */
+const ENTER_GLIDE_FROM = 0.45; // fraction of the OLD clock: where the card has come through the window
+/**
+ * "SOUPY" (Sam, 100526, on the first glide: "I don't notice that much of a change… it should be like
+ * entering a more soupy, thick-air environment"). So the tail is not an ease-out but DRAG: from the moment
+ * the card appears its speed decays exponentially with time constant ENTER_DRAG_MS — the medium takes
+ * most of the momentum almost at once, then a long heavy creep — with the curve normalised to land
+ * exactly at ENTER_GLIDE_MS. ENTER_DRAG_MS = 200 makes the entry speed continuous with the old curve
+ * (no push, no seam); smaller is thicker soup.
+ */
+const ENTER_GLIDE_MS = 1300;
+const ENTER_DRAG_MS = 200;
+function enterGlideEase(x: number): number {
+	const tau = x * ENTER_GLIDE_MS;
+	const tv = ENTER_GLIDE_FROM * ASCEND_ENTER_MS;
+	if (tau <= tv) return cubicInOut(tau / ASCEND_ENTER_MS);
+	const p0 = cubicInOut(ENTER_GLIDE_FROM);
+	const L = ENTER_GLIDE_MS - tv;
+	const k = 1 - Math.exp(-L / ENTER_DRAG_MS);
+	return Math.min(1, p0 + (1 - p0) * ((1 - Math.exp(-(tau - tv) / ENTER_DRAG_MS)) / k));
+}
+/** Thick air does not spring: the entry's overshoot and wobble are off while the soup is on. */
+const ENTER_SOUP = true;
 const ASCEND_RETURN_MS = 792;
 const ASCEND_ENTRY_DELAY = 0; // see ONE CLOCK below
 const ASCEND_ENTRY_MS = ASCEND_TOTAL_MS; 
@@ -1374,7 +1408,7 @@ export function growFrom(node: Element) {
 			const jDx = (Math.random() * 2 - 1) * (0.5 + Math.random() * 0.8);
 			const jDy = (Math.random() * 2 - 1) * (0.5 + Math.random() * 0.8);
 			heroSchedule = {
-					duration: ascendDir === 1 ? ASCEND_ENTER_MS : ASCEND_RETURN_MS,
+					duration: ascendDir === 1 ? ENTER_GLIDE_MS : ASCEND_RETURN_MS,
 					delay: ASCEND_ENTRY_DELAY,
 					kind: flightKind,
 					axis: 'front'
@@ -1413,7 +1447,7 @@ export function growFrom(node: Element) {
 			hero.style.zIndex = z;
 			return {
 					delay: ASCEND_ENTRY_DELAY,
-					duration: ascendDir === 1 ? ASCEND_ENTER_MS : ASCEND_RETURN_MS,
+					duration: ascendDir === 1 ? ENTER_GLIDE_MS : ASCEND_RETURN_MS,
 					// The APPROACH is a strong ease-out — most of the distance is spent early, so the card reads
 					// as arriving with momentum and then taking its time to seat. The overshoot is NOT in this
 					// easing; it is in the css below, where it can carry the jitter.
@@ -1442,7 +1476,7 @@ export function growFrom(node: Element) {
 			// and it simply stops. Exponent 1.35 is gentle enough to keep the long middle of the journey
 			// close to even — which is what fixed the loiter-then-rush — while taking the sting out of the
 			// arrival, so it decelerates into the seat instead of reaching it at full speed.
-			easing: ascendDir === -1 ? (x: number) => 1 - Math.pow(1 - x, 1.35) : cubicInOut,
+			easing: ascendDir === -1 ? (x: number) => 1 - Math.pow(1 - x, 1.35) : enterGlideEase,
 					css: (t: number) => {
 						// ── THE RETURN IS INTERPOLATED IN DEPTH, NOT IN SCALE ────────────────────────────────
 				// Sam: "when Burr is entering again from the background as we exit the Ascension zone,
@@ -1486,13 +1520,14 @@ export function growFrom(node: Element) {
 				// at ASCEND_ENTER_APPROACH and the remainder catches it.
 				const ea = Math.min(1, t / ASCEND_ENTER_APPROACH);
 				const eu = Math.max(0, (t - ASCEND_ENTER_APPROACH) / (1 - ASCEND_ENTER_APPROACH));
-				const eEnv = ascendDir === 1 ? Math.sin(Math.PI * Math.pow(eu, 0.72)) : 0;
+				const eEnv = ascendDir === 1 && !ENTER_SOUP ? Math.sin(Math.PI * Math.pow(eu, 0.72)) : 0;
 				const base =
 					ascendDir === -1
 						? scaleAt(DEPTH_FAR + (1 - DEPTH_FAR) * a + carry)
 						: from + (1 - from) * ea - ASCEND_ENTER_CARRY * eEnv * jitter;
 						// A decaying wobble that is exactly zero at both ends, so the card cannot miss its rest.
 						const wob =
+							(ascendDir === 1 && ENTER_SOUP ? 0 : 1) *
 							Math.sin(t * Math.PI * ASCEND_WOBBLE_CYCLES * phase) *
 							Math.exp(-ASCEND_WOBBLE_DECAY * t) *
 							ASCEND_WOBBLE *
