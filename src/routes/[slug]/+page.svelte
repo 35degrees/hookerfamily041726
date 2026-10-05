@@ -695,16 +695,33 @@
 				const opts = { ...options, delay: (options.delay ?? 0) + SAFARI_HOLD_MS, fill: 'both' as FillMode };
 				return Element.prototype.animate.call(el, keyframes, opts);
 			}
-			const H = SAFARI_HOLD_MS;
+			// PARENT AND SIBLING PROMOTIONS HOLD LONGER, IN THE SAME TOTAL TIME (100426, roadmap §58.7).
+			// Measured in Sam's Safari: these cards reach the screen 65–85ms after they are created (child
+			// promotions ~40–45ms). The time is Safari rendering the card and then rasterising/committing it
+			// in its GPU process — the main thread sits idle through the last ~20ms of it, so no script of
+			// ours can shorten it (the mount-path fits were trimmed and the first frame did not move). A 50ms
+			// hold therefore let the growth start unseen: chip, then ~50–80% grown — "missing the discrete
+			// baseball card, full physical object with heft". A hold that ends at the measured first paint
+			// cannot work either: the trim is itself a main-thread call and lands late (tried, filmed,
+			// reverted). So these two kinds hold their start pose for SAFARI_PROMOTION_HOLD_MS, and the
+			// original curve is replayed whole over what remains of the SAME total duration — introstart
+			// and introend (the landing) are exactly where they were, so the departing card, seats and
+			// chips keep their schedule; the growth itself runs ~15% quicker. Child, spouse and CC
+			// arrivals keep SAFARI_HOLD_MS.
+			const kind = getFlightKind();
+			const promotion = kind === 'sibling' || (kind === 'relative' && getPanDir() === 'down');
+			const T = SAFARI_HOLD_MS + D;
+			const H = promotion ? Math.min(SAFARI_PROMOTION_HOLD_MS, T * 0.35) : SAFARI_HOLD_MS;
 			const n = keyframes.length;
 			const held: Keyframe[] = [{ ...keyframes[0], offset: 0 }];
 			keyframes.forEach((k, i) => {
 				const off = typeof k.offset === 'number' ? k.offset : i / (n - 1);
-				held.push({ ...k, offset: (H + off * D) / (H + D) });
+				held.push({ ...k, offset: (H + off * (T - H)) / T });
 			});
-			return Element.prototype.animate.call(el, held, { ...options, duration: H + D, fill: 'both' as FillMode });
+			return Element.prototype.animate.call(el, held, { ...options, duration: T, fill: 'both' as FillMode });
 		};
 	}
+	const SAFARI_PROMOTION_HOLD_MS = 120;
 	// Spouse-chip reveal fade — quicker than the default box fade (180ms) so the chips settle into the
 	// notch with less lag AFTER the hero lands. NOT an earlier start (that would be a mid-flight rise,
 	// the flash-then-cover bug); the chips are still gated on landing, they just resolve faster once there.

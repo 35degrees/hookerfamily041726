@@ -1,3 +1,7 @@
+import { isWebKit } from '#lib/state/engine.js';
+import { motionOff } from '#lib/state/motion.svelte.js';
+import { getHeroSchedule } from '#lib/transitions/flight.js';
+
 /**
  * fitBlade — size the CC blade to its contents: the largest legal type, then the tightest width that
  * still holds it in the same number of lines.
@@ -159,13 +163,25 @@ export function fitBlade(node: HTMLElement, params: BladeFitParams) {
 		return s > 0.01 ? s : 1;
 	}
 
-	fit();
-
 	let cancelled = false;
-	if (typeof document !== 'undefined' && document.fonts?.ready) {
-		// Webfonts swap in late and every measurement above was taken in whatever face was active.
-		document.fonts.ready.then(() => !cancelled && fit()).catch(() => {});
-	}
+	// SAFARI, MID-FLIGHT: FIT AFTER THE CARD'S FIRST FRAME, NOT BEFORE IT (100426, roadmap §58.7).
+	// This action runs while a promoted card is mounting, and its two searches are ~20 forced layouts —
+	// 7–14ms in Sam's Safari, inside the gap between the card mounting and Safari first showing it, which
+	// is exactly what the flight's hold has to cover. Nothing here is visible yet: the blade is sheathed
+	// behind the opaque card for the whole flight and only draws out near landing (unsheathBlade), so
+	// fitting two frames later changes nothing on screen. Cold loads (no flight) and Chrome fit at once,
+	// as before.
+	const deferForFlight = isWebKit() && !motionOff() && getHeroSchedule().duration > 0;
+	// Webfonts swap in late and every measurement above was taken in whatever face was active, so refit
+	// once they land — but only if something is still loading. With every face already loaded, `ready` is
+	// resolved, the refit ran in the same task, and it could only reproduce the same fit.
+	const run = () => {
+		fit();
+		if (typeof document !== 'undefined' && document.fonts?.ready && document.fonts.status !== 'loaded')
+			document.fonts.ready.then(() => !cancelled && fit()).catch(() => {});
+	};
+	if (deferForFlight) requestAnimationFrame(() => requestAnimationFrame(() => !cancelled && run()));
+	else run();
 
 	return {
 		update(next: BladeFitParams) {

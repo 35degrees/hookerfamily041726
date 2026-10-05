@@ -58,11 +58,36 @@ export function shrinkToFit(node: HTMLElement, params: ShrinkParams) {
 		target.style.whiteSpace = 'nowrap';
 		let size = max;
 		node.style.fontSize = `${size}px`;
-		let guard = 0;
-		while (target.scrollWidth > node.clientWidth && size > min && guard < 200) {
-			size = Math.max(min, size - 0.5);
+		// JUMP, THEN CONFIRM (100426). The answer is the largest size on the 0.5px grid down from `max`
+		// that fits. It used to be found by stepping 0.5px at a time, and every step is a style write
+		// followed by a layout read — one forced layout per step, dozens for a long name. In Sam's Safari
+		// that was 88 reads / 8–10ms in the few ms between a promoted card mounting and its first frame,
+		// which is the window the flight's hold has to cover (roadmap §58.7). Text width scales almost
+		// exactly with font-size, so one measurement at `max` predicts the answer; the walk below then
+		// confirms it on the same grid in one or two reads, and lands on the SAME size the old loop did.
+		const fits = () => target.scrollWidth <= node.clientWidth;
+		if (!fits() && size > min) {
+			const needed0 = target.scrollWidth;
+			const available0 = node.clientWidth;
+			const est = max - Math.ceil(((max - (max * available0) / needed0) / 0.5) - 1e-9) * 0.5;
+			size = Math.min(max, Math.max(min, est));
 			node.style.fontSize = `${size}px`;
-			guard++;
+			let guard = 0;
+			if (fits()) {
+				// the estimate fits: climb back up while the next grid step still fits
+				while (size + 0.5 <= max && guard++ < 200) {
+					node.style.fontSize = `${size + 0.5}px`;
+					if (!fits()) break;
+					size += 0.5;
+				}
+				node.style.fontSize = `${size}px`;
+			} else {
+				// the estimate is a hair too big: step down exactly as before
+				while (!fits() && size > min && guard++ < 200) {
+					size = Math.max(min, size - 0.5);
+					node.style.fontSize = `${size}px`;
+				}
+			}
 		}
 		const available = node.clientWidth;
 		const needed = target.scrollWidth;
@@ -106,6 +131,10 @@ export function shrinkToFit(node: HTMLElement, params: ShrinkParams) {
 	}
 
 	let cancelled = false;
+	// NOT a no-op even when every font is already loaded (measured 100426): with `ellipsis`, the first
+	// pass leaves the text as a clipped block, and this second pass re-measures in that state and can land
+	// on a different size (Finch-Hatton's chips: 11.5px after one pass, 13px after two). Skipping it changed
+	// the card, so it stays.
 	if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
 		document.fonts.ready
 			.then(() => {
