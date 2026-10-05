@@ -6716,12 +6716,14 @@ hand-off.
   - Films: the jump **moved** rather than vanished (58 → 83% mid-growth instead of 23 → 70% at the start,
     a smaller step).
   - Sam: *"definitely feels like there's still a gap."* **Keep or revert is Sam's call.**
-  - **Decision, October 5:** kept and committed for the release (3140e786), together with the 5c trims.
-    Revert that commit's `holdUntilPainted` hunk to return to the plain 50ms hold.
+  - **REJECTED, October 5.** It was briefly committed (3140e786), then removed the same morning; the 5c trims
+    stayed. Sam, once he could see it: *"that's like the opposite of what I want… accepting the failure and
+    cashing in my chips for a loss. Undo that garbage."* A visible pause at chip size is NOT an acceptable
+    price for a smaller jump. **Do not retry any longer-hold variant**; the fix has to make the hand-off
+    early (part 6), not hide it.
 
 **6. THE PLAN FOR THE FUTURE PASS** (in order; each step judged by `cardw.py` films, never the clock alone):
-1. **Decide Option 2.** Revert to HEAD's 50ms hold if the experiment below can beat it; it only moves the
-   snap.
+1. ~~Decide Option 2.~~ Done: rejected and removed (see 5d). The release ships the plain 50ms hold.
 2. **Measure the hand-off point directly.** Add a probe for the frame where the arriving card's
    on-screen size stops lagging its clock (the snap). Compare it in parent, sibling and child promotions,
    with the expectation that it lands before the hold ends in children and after it in parents. This turns
