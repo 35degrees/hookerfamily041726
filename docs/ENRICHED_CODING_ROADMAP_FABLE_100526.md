@@ -1,6 +1,6 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: October 3, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_100326.md (the what/why for every item below).**
+**Companion: ENRICHED_DESIGN_FABLE_100526.md (the what/why for every item below).**
 **OCTOBER 2, 2026, LATE (§58): SAFARI.** Everything before this was built and judged in Chrome only, so the first session in real Safari found the hero's shadow blinking and the chip flights skipping. Safari is now close to Chrome. §58.1 is how to measure real Safari from here; nothing on headless WebKit can show these bugs. §58.3 is the one you need if a promotion ever "jumps" again: the arriving card's clock now waits for its first paint (`holdUntilPainted`). §58.4 is what NOT to do: re-timing flights for Safari broke everything and was reverted. All of it is scoped to `html.webkit`, so Chrome is byte-identical.
 
 **OCTOBER 2, 2026 (§57): NEON, SVELTEKIT 3, BETTER AUTH 1.7.7, BACK/FORWARD, ROOT URLS, AND THE INTRO AT `/`.** One long Stream B day, eleven commits from `f7749c5c` to the dial removal. The database stopped staying awake all day (the Neon bill's real cause). SvelteKit 3.0.0 was migrated with all probes unchanged, which closes §38's assessment. Better Auth went to 1.7.7 after a one-transaction schema cleanup on Neon. Back/Forward now enters the state instantly instead of replaying a flight. People live at the root (`/thomas-hooker-1586`), with `/person/x` 301'd forever. Then the intro at `/` was built in small steps, each signed off on screen: the spine's own gilt title, a torch search, the painting, an Enter arrow, and Thomas's card rising via the existing vertical CC flight. §57.6 is the intro's session record and file map; §57.7 is how to bring its tuning dials back; design §51 is its what and why, including everything Sam rejected.
@@ -6208,6 +6208,9 @@ The detail is in §58.1–58.6. This is the arc: what broke, what we tried, what
 **Still open:** the Safari quiver on CC and spouse overshoots (§58.3c, never measured with keyframes in
 Safari) and the accepted landing re-snap (§58.6.1).
 
+**Update, October 5 (later): the landing "tick" is FIXED (§58.8)** — not a text re-draw: every Safari flight ended
+~1 CSS px off rest for ~3 frames, then snapped; the card is now held in its final animated frame.
+
 **Update, October 5: the parent/sibling jump is back and TABLED (§58.7).** It never regressed (the October 3
 build, filmed again, jumps the same); "smooth" was the same code on easier cards. The cause is that Safari
 draws the first frames of a new card ~50ms late from the main thread, then its compositor snaps to the true
@@ -6602,6 +6605,9 @@ Chrome, Edge and Opera say "AppleWebKit" in their user agent but are excluded.
 
      None of them changed the jump.
    - **Status:** accepted as a Safari rendering trait, about one device pixel (Sam, October 3); design §52.4. Don't re-run these tests.
+   - **SUPERSEDED, October 5 — FIXED (§58.8).** This diagnosis was wrong. It is not a text re-draw and not
+     CC/spouse-only: EVERY flight ends with the card drawn ~1 CSS px off rest for ~3 frames, then a snap.
+     The fix is the landing hold (`holdLanding`, flight.ts).
      The only untried idea is a different text rendering mode for the whole card in Safari, which would
      change how all of its text looks, so it's a design call for Sam, not a fix.
 2. **A rare quiver as a card settles.** Sam can't say where. (October 3: likely the `tick`-driven flights; see §58.3c.) The card-as-one-layer rule made it rare; film
@@ -6745,3 +6751,100 @@ hand-off.
 
 **How to resume:** read §58.0, §58.1 and this section. The kit and the new probes are in `scripts/safari/`
 (see its README). The October 3 build can be stood up for an A/B with the worktree recipe in that README.
+
+### 58.8 OCTOBER 5, 2026 — THE LANDING "TICK", FOUND AND FIXED
+
+*Written October 5, 2026, 16:30.*
+
+**What Sam saw.** In Safari, *"that little 1px tick up after the card stops"*. In the zones it was worse: *"you can
+watch the gap between the spouse chip and the featured card shrink during the tick"*. And: *"it feels like a bug,
+not something anyone wants to see… you said you couldn't fix that Safari-only bug. Can you try again?"* §58.6.1 had
+accepted it on October 3 as Safari's own end-of-motion text re-draw.
+
+**How it was measured (the method is the result here).** A film of one landing at FULL resolution
+(`recland.sh`), and a meter that tracks a block of the card's INTERIOR text, never an edge, against the final
+frame, to 0.1 recording px (`absscan.py`; 1 recording px ≈ 0.9 CSS px). Edges were abandoned after the shadow
+twin turned out to change at landing (one drop-shadow in flight, two at rest, the second offset 1px), which made
+edge measurements lie.
+
+**What it actually is.** Every flight, in every zone, on every card, ends like this:
+
+| Flight | Last frames, offset from final rest (recording px) |
+|---|---|
+| Parent promotion, ordinary card (Sarah → Josiah) | … 2.0, 1.4, **1.2, 1.2, 1.2**, then 0 |
+| Family promotion, orbit card (Lincoln → Robert) | … 0.7, 1.1, **1.2, 1.2, 1.2**, then 0 |
+| Soupy orbit entry (Thomas → Clemens) | **1.8** for the whole 0.7s the card sits at full size, then 0 |
+
+The card converges smoothly onto a pose about 1 CSS px off its true rest, holds it perfectly still for ~3 frames
+(~50ms), then snaps home. That snap is the tick.
+
+**Ruled out, each by measurement:**
+1. **Layout.** `landprobe.js`: card top 250.00, name offset 16.00, first NB 121.00, slot height constant, before
+   and after the hand-off.
+2. **Our keyframes.** `kfprobe.js`: the last keyframe is exact identity, `translate(0px, 0px) scale(1, 1)`.
+3. **The `.flat` outline switch.** `toggleflat.js` on a resting card: 0.0 movement over eight toggles.
+4. **The orbit card's clipped content layer** (`.card-top` clip-path for the stripe): disabled, still −1.2.
+5. **The 1.8× start scale of the orbit entry.** Entry started at 0.98: still −1.8.
+6. **Zone-only causes.** Sam corrected this: *"all cards have that 1.8px tick… normal cards don't have a stripe"*.
+   He was right; the first ordinary-card film had been read with a weaker meter. Re-measured, it ticks too.
+7. **The transform anchor.** `transform-origin: 0 0` pinned in flight and at rest: still +1.2.
+8. **A plain 3D no-op at landing** (`translateZ(0)` animation): the offset moved to −0.7, then still snapped.
+   This was the clue: the offset depends on how the ANIMATION is set up, never on our values.
+
+**Cause.** WebKit draws an element under a running transform animation about one CSS pixel away from where it
+draws the same element at rest, by an amount that depends on the animation's setup (anchor top-left +1.2,
+centred +1.8, 3D no-op −0.7). When the flight is removed at landing it switches from one drawing to the other.
+Chrome draws both the same way.
+
+**The fix: the landing hold** (`holdLanding` / `releaseLanding` / `releaseAllLandings` in flight.ts; WebKit only).
+- **At `onIncomingLand`**, the finished flight is replaced by an endless no-op animation holding EXACTLY its last
+  keyframe: the same transform string and the same transform-origin. WebKit keeps drawing the card the way it
+  drew the flight's last frame, so nothing switches and nothing snaps.
+- **The card's real resting place is ~1px from its layout box.** That's invisible, and it is exactly where the
+  reader watched it settle.
+- **Released at the navigation click**, before any rect is captured (`warmPersonLinks`), and again at the card's
+  own `onOutgoingStart`. Departures drive `transform` inline frame by frame (the spouse demote, the CC recede),
+  and a running animation would override them.
+
+**Verified, real code, filmed:**
+- Parent promotion: 2.9 → 0.7 → 0.1 → 0, then still. No plateau, no snap.
+- Orbit entry: 0.0 in every frame across the landing.
+- The seven-promotion twin-chip check, sampling every frame mid-flight (spouse swaps included): clean.
+- The flight cleanup (`sweepStranded`, the janitor) only touches `.flight` chips, so a held `.featured-flight`
+  never meets it.
+
+**What to watch:** anything new that writes `transform` or `transform-origin` on a RESTING `.featured-flight`
+in Safari must call `releaseLanding(node)` first, or the hold silently wins.
+
+### 58.9 OCTOBER 4–5, 2026 — THE ORBIT AND FOUNDER ZONES (session record; design §38/§43)
+
+**Shipped and committed:**
+- **Three altitudes** (be6798e5).
+  - The line, the green founder zone and the midnight orbit zone.
+  - Founder ↔ orbit takes the depth flight. Founder → founder and orbit → orbit stay lateral.
+  - CC rows carry `founder` beside `orbit` (regenerate-data `founderZoneIds`).
+  - The X keeps the original line card through a second ascent.
+  - Green ↔ midnight crossfades (`.ascend-veil-green`) instead of snapping.
+- **Every way out flies** (b58f984a).
+  - The X's no-door and no-reciprocal paths go through `arriveAtPerson`; Martha Jefferson cold-loaded now descends.
+  - **The white spouse corner.** A leaving zone card's ring now flattens with `.flat` (`--ring-*-flat`).
+  - **The founder zone in its own green.** Stripe, chips and rail use `--color-founderrule`, now `#355e3b`.
+    The name and NB headers use `--color-foundergreen`.
+- **NB headers, site-wide** (04c6a5db): rest at 85%, hover to 100% and a shade darker (navy `#172f76`, founder
+  green `#2b4d30`).
+- **The soupy entry** (d7cf30d7). Entering a zone, the card keeps the old clock until it appears, then DRAG
+  (`ENTER_DRAG_MS` 200, lands at `ENTER_GLIDE_MS` 1300) with no overshoot or wobble. Sam: *"it's excellent… up to
+  the point where it just stops coldly"*.
+
+**Tried and parked: the float** (`slabFloat.svelte.ts`, `FLOAT_ENABLED = false` in +page.svelte).
+- The whole slab drifting in 3D, first as a 23s CSS loop, then as random multi-sine noise rolled per landing,
+  flattened synchronously at every click.
+- In Safari it did not move smoothly: it held still for seconds, then stepped ~2px in a frame. The 3D tilt also
+  depth-sorted the bookmark behind the card.
+- In Chrome it was too subtle to see (Sam: *"I don't notice any float on Chrome anyway"*).
+- Next attempt: 2D only (sway in x/y, a slight breathing scale, a hair of rotation), perhaps tied to the room's
+  drifting stars (Sam's idea).
+
+**Noted, not started:** hide the bookmark and home marks on a card while it demotes into the spouse chip (Sam:
+*"you can see the tops of them moving with the transition and you can't click them"*; worst on dark zone grounds).
+

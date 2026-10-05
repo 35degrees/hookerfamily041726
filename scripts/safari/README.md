@@ -35,3 +35,15 @@ Added October 4–5 for the promotion jump (roadmap §58.7):
 
 Recordings and frames go to `$OUT` (default `/tmp/safari-rec`), never into the repo. The scripts point at
 `localhost:5173`; edit the URL to judge a production build on 4173.
+
+Added October 5 for the landing tick (roadmap §58.8):
+
+| File | What it does |
+|---|---|
+| `recland.sh <name> [start] [clickJs]` | Films ONE landing at full resolution (`FROM`/`TO` ms window), with optional `CSS="…"` injected first. |
+| `absscan.py <framesDir> <t0> <t1>` | **The tick meter.** Each frame's vertical offset of a block of the card's INTERIOR text (`R=y0,y1,x0,x1`, default the NB column) from the final frame, to 0.1 recording px. The tick shows as a plateau a little off zero for ~3 frames, then a step to 0. |
+| `jumpscan.py <framesDir> [t0]` | Frame-to-frame steps instead of offsets from the end. |
+| `kfprobe.js` | Prefix to a click script: logs the arriving card's flight keyframes (count, fill, the LAST transform). This is how the last keyframe was proved to be exact identity. |
+| `landprobe.js` | Logs the arriving card's layout every frame across a landing (name/NB offsets, card top, transform, `.flat`). Proved layout never moves. |
+| `toggleflat.js` | Toggles `.flat` on a RESTING card 8×; proved the outline switch moves nothing. |
+| `holdland-inject.js` | The landing hold as an injected experiment (what became `holdLanding` in flight.ts). |

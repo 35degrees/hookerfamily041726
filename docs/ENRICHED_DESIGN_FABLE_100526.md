@@ -7279,10 +7279,22 @@ The feel Sam built in Chrome rests on three perceptual cues, and Safari threaten
   otherwise, and the committed state keeps it.
 - **Snapping the deck flight to whole device pixels.** It didn't change the landing tick.
 
-### 52.4 ACCEPTED AS SAFARI'S OWN
+### 52.4 ACCEPTED AS SAFARI'S OWN — the landing tick is NO LONGER here (fixed October 5, see 52.5)
 
 **The landing "tick".** About 50–70ms after any motion stops, Safari re-draws the text at final quality,
 and the glyphs shift by about one device pixel. Six variants filmed in real Safari all showed the
 identical jump, so it isn't caused by our code. The only lever left is a different text-rendering mode for
 the whole card in Safari, which is a design trade, not a fix. It's left alone by choice (Sam, October 3).
+
+### 52.5 THE LANDING HOLD (October 5) — a landed card stays in its last animated frame, in Safari
+
+The October 3 diagnosis above was wrong. Measured on the card's own text (roadmap §58.8):
+- Every Safari flight ends with the card drawn ~1 CSS px off its true rest, held still ~50ms, then snapped home.
+- WebKit draws an element under a transform ANIMATION about a pixel from where it draws it at rest. The last
+  keyframe is exact identity, and layout never moves.
+
+**The rule:** in Safari, a card that lands stays under an endless no-op animation holding exactly its flight's
+last keyframe, so it is never re-drawn the resting way. It is released, before anything is measured, the moment
+anything else needs to move it (a click, or its own departure). The visible cost is nothing: the card rests
+where the reader watched it settle, a pixel from its layout box. Chrome is unchanged.
 

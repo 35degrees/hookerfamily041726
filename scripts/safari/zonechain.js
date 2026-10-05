@@ -1,5 +1,5 @@
 // Films a zone path in ONE take (the X's door lives in page memory, so a reload would lose it).
-// window.__chain = ['cc:john-talcott-1594', 'cc:john-davenport-1597', 'x'] — each step is hovered, then
+// window.__chain = ['cc:john-talcott-1594', 'cc:john-davenport-1597', 'x'] (also 'rel:child' / 'rel:spouse' …) — each step is hovered, then
 // clicked 600ms later, then the next step starts 2600ms after that. Log in window.__chainLog.
 (function () {
   var steps = window.__chain || ['cc:john-talcott-1594', 'cc:john-davenport-1597', 'x'];
@@ -7,6 +7,7 @@
   function L(m) { log.push(Math.round(performance.now() - T0) + ' ' + m); }
   function find(s) {
     if (s === 'x') return document.querySelector('button[aria-label="Return to the card you came from"]');
+    if (s.indexOf('rel:') === 0) return document.querySelector('.page-container a[data-relation="' + s.slice(4) + '"]');
     var slug = s.slice(3); return document.querySelector('a.cc-link[href="/' + slug + '"]');
   }
   function fire(el, types) { var r = el.getBoundingClientRect(); var o = { bubbles: true, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, pointerType: 'mouse' };
