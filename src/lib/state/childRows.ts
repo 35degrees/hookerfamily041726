@@ -102,10 +102,12 @@ export const GRID_TRACKS = MAX_PER_ROW * 2;
  * The `grid-column-start` for every child, by index — the whole layout in one array.
  * Returns [] for an empty set, so a caller can treat "no plan" and "no children" alike.
  */
-export function chipColumns(n: number): number[] {
+export function chipColumns(n: number, perRow = MAX_PER_ROW): number[] {
 	const cols: number[] = [];
-	for (const size of childRowPlan(n)) {
-		const lead = MAX_PER_ROW - size; // half-chip tracks of air on the left
+	// A phone passes perRow 2 (stage.phone): plain rows of two, the odd one centred on the last.
+	const plan = perRow === MAX_PER_ROW ? childRowPlan(n) : Array.from({ length: Math.ceil(n / perRow) }, (_, i) => Math.min(perRow, n - i * perRow));
+	for (const size of plan) {
+		const lead = perRow - size; // half-chip tracks of air on the left
 		for (let j = 0; j < size; j++) cols.push(1 + lead + j * 2);
 	}
 	return cols;

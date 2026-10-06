@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { stage } from '#lib/state/stage.svelte.js';
 	// Phase 3b — THE FIELD, world-anchored (§18.6/§18.7). The paper's DECADE RULES are drawn RELATIVE to
 	// the featured person's world coords (t.y = birth year, t.x = seat), so the featured person's line
 	// DOCKS at a fixed screen spot and REVISITING a person shows the rules in identical positions — no
@@ -273,6 +274,8 @@
 	</div>
 {/if}
 
+<!-- Not on a phone (stage.phone, Sam 100626). -->
+{#if !stage.phone}
 <button
 	class="ground-toggle"
 	class:held
@@ -284,6 +287,7 @@
 	<span class="swatch" style:background={active.swatch}></span>
 	{active.name}
 </button>
+{/if}
 
 <style>
 	.field {

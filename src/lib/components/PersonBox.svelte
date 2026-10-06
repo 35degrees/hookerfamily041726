@@ -221,9 +221,9 @@
 			class="min-w-0 font-medium {CHIP_TEXT} {chipFontClass} {nameText}"
 			data-chip-name
 			use:shrinkToFit={{
-				max: (chipFontClass ? 12.5 : 11) * stage.u,
-				min: (chipFontClass ? 9 : 8) * stage.u,
-				key: `${displayName}|${stage.u}`
+				max: (chipFontClass ? 12.5 : 11) * stage.chipK,
+				min: (chipFontClass ? 9 : 8) * stage.chipK,
+				key: `${displayName}|${stage.chipK}`
 			}}
 		>
 			<span data-fit class="inline-block whitespace-nowrap">{displayName}</span>
@@ -249,16 +249,16 @@
 			use:shrinkToFit={{
 				max:
 					(chipFontClass ? (compact ? 12.5 : 15) : compact ? 11 : 13) *
-					stage.u *
+					stage.chipK *
 					(isChildTier ? 0.945 : 1),
 				// A LOWER FLOOR ON A CHILD CHIP, because it has the parent tier's TYPE in a 0.9 BOX and so
 				// runs out of width sooner. 8.5 is where "Fernandine von und zu Eltz" — 26 characters in a
 				// ~128px column — still fits on one line; above it she would hit the floor and be cut.
-				min: (chipFontClass ? (compact ? 9.5 : 11) : compact ? 8.5 : isChildTier ? 8.5 : 10) * stage.u,
+				min: (chipFontClass ? (compact ? 9.5 : 11) : compact ? 8.5 : isChildTier ? 8.5 : 10) * stage.chipK,
 				// NEVER WRAP. A second line inside a fixed-height chip pushes the dates out through
 				// `overflow: hidden` — the name would fit and the years would vanish. See ShrinkParams.
 				ellipsis: true,
-				key: `${displayName}|${stage.u}|${compact}|${isChildTier}`
+				key: `${displayName}|${stage.chipK}|${compact}|${isChildTier}`
 			}}
 		>
 			<span data-fit class="inline-block whitespace-nowrap">{displayName}</span>

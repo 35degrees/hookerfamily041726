@@ -609,6 +609,24 @@ const clampedU = $derived(Math.min(rung.uMax ?? rung.u, Math.max(uFloor, uBars))
 // ~8.6px. Height is now bought with height — air, the content budget and a shorter card — never with width
 // or type, so this stays 1. Kept as a named factor so the probe numbers in the record still map to code.
 const heightS = $derived(1);
+
+/**
+ * ── THE PHONE (Sam, 100626: "a very cut off phone UX… just width") ──────────────────────────────────────
+ * Below PHONE_W the desktop composition is not squeezed any further — the Tier C rung's 0.40 frame was 311px of
+ * three-column card with 7px chip names. The page RECOMPOSES instead (FeaturedCard / +page.svelte read
+ * `stage.phone`): one column, a full-width card of automatic height with no notch, spouses in a row under it,
+ * children two to a row, no rail / siblings / ground toggle, an icon-only corner.
+ *
+ * The frame unit is sized by the widest thing that must sit side by side — the two PARENT chips (220u each +
+ * a 16u gap) plus the stage's own 32u padding either side: 520u. That keeps chip names readable (~10px at a
+ * 393px iPhone) where width alone would have given 7. Reading type gets its own floor (PHONE_K).
+ */
+const PHONE_W = 600;
+const CHIP_K_FLOOR = 0.82;
+const PHONE_CHIP_K = 0.95;
+const PHONE_K = 0.9;
+const phone = $derived(vw <= PHONE_W);
+const phoneU = $derived(Math.min(0.85, Math.max(0.66, layoutW / 520)));
 void fitU;
 
 /**
@@ -656,7 +674,7 @@ const shiftX = $derived.by(() => {
 	// underneath it, and whether they are drawn is not a layout fact. So this is now a function of the
 	// window's width alone and `timelineBars` has no say in it — hiding the bars changes what you see
 	// and nothing about where anything sits.
-	if (vw >= CHEAT_MAX_W) return 0;
+	if (vw >= CHEAT_MAX_W || phone) return 0;
 	const cardW = CARD_W_BASE * clampedU * heightS;
 	const padSide = (STAGE_PAD_BASE / 2) * clampedU * heightS;
 	const naturalLeft = (layoutW - cardW) / 2;
@@ -793,7 +811,7 @@ export const stage = {
 	},
 	/** the FRAME unit — geometry multiplier, already width-clamped, and height-squeezed on a short window */
 	get u(): number {
-		return clampedU * heightS;
+		return phone ? phoneU : clampedU * heightS;
 	},
 	/** the rung's declared u before the width clamp — for the probe and for diagnostics */
 	get rungU(): number {
@@ -801,7 +819,44 @@ export const stage = {
 	},
 	/** the TYPE step — type multiplier, always >= u; squeezed with the frame on a short window, floored */
 	get k(): number {
+		if (phone) return PHONE_K;
 		return heightS === 1 ? rung.k : Math.max(Math.min(rung.k, SHORT_K_FLOOR), rung.k * heightS);
+	},
+	/**
+	 * THE CHIP'S TYPE UNIT — u, floored (Sam, 100626: "the Raymond Guest and Lily Polk fonts are wayyyy too
+	 * small… look how much room there is in the parent chips… the name and year text can fill all that room").
+	 * Chip labels rode u exactly (§33.2) so a name could never out-grow its box; at a ~790px window u is ~0.53
+	 * and names came out ~7px in a text column with room to spare. The box still shrinks on u — this floors
+	 * only the TYPE, and the name's shrinkToFit (+ ellipsis) still bounds it to the column, so it cannot spill.
+	 */
+	get chipK(): number {
+		// A phone's chips have room for more (Sam: "maxed text sizes over lots of whitespace" is the failure, not
+		// the goal): 0.95 there, ~12.4px names on a 393px screen; shrinkToFit still steps a long name down.
+		return Math.max(phone ? PHONE_CHIP_K : CHIP_K_FLOOR, this.u);
+	},
+	/**
+	 * THE CORNER NAV'S SCALE (`zoom` on .top-right-chrome) — Sam: "the notable button is huge in relation to the
+	 * sized down parent chips, can we size down the top row nav menu too? the button still needs to be large
+	 * enough to press". 90% under 900px tall, follows u on a narrower window, never below 80%; a phone keeps 1
+	 * (icons there, and a finger to press them).
+	 */
+	get navK(): number {
+		if (phone) return 1;
+		return Math.max(0.8, Math.min(1, this.u, shortH ? 0.9 : 1));
+	},
+	/** The cross-connection blade's TYPE multiplier at 850px tall and below (Sam, 100626: "size down the font size
+	 *  of the CCs by 10-20%"). The gentle end — 0.85 put it at 8.8px on an iPad mini landscape, the same "too
+	 *  small to read" Sam had just rejected on the chips; 0.9 holds ~9.3px there. */
+	get ccFontK(): number {
+		return vh <= 850 && !phone ? 0.9 : 1; // a phone keeps full-size CC type — it is already the narrow case
+	},
+	/** The phone composition — see PHONE_W. */
+	get phone(): boolean {
+		return phone;
+	},
+	/** The phone card's width: the layout box less the stage's own padding (32u each side). */
+	get phoneCardW(): number {
+		return Math.round(layoutW - 64 * phoneU);
 	},
 	/** The AIR factor — the connectors. 1 except on a short window. */
 	get air(): number {
@@ -821,7 +876,9 @@ export const stage = {
 	},
 	/** Birth and death places hidden (under NO_PLACES_H). */
 	get noPlaces(): boolean {
-		return vh < NO_PLACES_H;
+		// Never on a phone: it scrolls vertically anyway, and the places fill the white beside the photo (Sam's
+		// rule — a removal is there to make room for more, so it has no business on the one layout that scrolls).
+		return vh < NO_PLACES_H && !phone;
 	},
 	/** 745px tall and below — see TINY_H. */
 	get tiny(): boolean {
@@ -944,7 +1001,9 @@ export function sk(): number {
  * hand-off is exactly as it was.
  */
 export function mergeChipUnion(): boolean {
-	return stage.vw <= 850;
+	// Not on a phone: there the spouse chips are full size with bigger type (stage.chipK), and the folded
+	// "1823–1844  m. 1841" wrapped its year onto a third line anyway — its own line reads cleaner.
+	return stage.vw <= 850 && !stage.phone;
 }
 
 /**
@@ -981,7 +1040,7 @@ export function applyStageVars(
 	el.style.setProperty('--stage-shift-r', `${Math.max(0, -shiftX)}px`);
 	// LABELS SCALE, READING TEXT STEPS. See the note at the top of this file — chips are recognised,
 	// not read, and their box is shrinking on u, so their type must too or it outgrows the box.
-	el.style.setProperty('--chip-k', String(u));
+	el.style.setProperty('--chip-k', String(stage.chipK));
 }
 
 /** Undo applyStageVars, so leaving the person page leaves no stage geometry behind on the document. */

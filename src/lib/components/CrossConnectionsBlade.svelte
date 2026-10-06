@@ -171,7 +171,7 @@
 	// against the card's own radius, and two independently-rounded numbers is how a seam opens at one
 	// size and not another.
 	const bu = $derived(stage.u);
-	const bk = $derived(stage.k);
+	const bk = $derived(stage.k * stage.ccFontK); // × ccFontK: 85% at 850px tall and below
 	/** The tang, scaled. The card seats the blade with this same number — see FeaturedCard. */
 	const tang = $derived(Math.round(BLADE_TANG * bu));
 	const bodyPadY = $derived(Math.round(BODY_PAD_Y * bu));
@@ -206,7 +206,16 @@
 	// reported height a fact about the PERSON rather than about whatever was rendered last.
 	// The page reserves only the VISIBLE depth — the tang is inside the card, and reserving it would
 	// push the children row down by a strip nobody can see.
-	let reportedH = $derived(crossConnections.length > 0 ? Math.max(0, bladeH - BLADE_TANG) : 0);
+	// On a phone the blade is a plain box whose height its text decides (see `.phone` below), so it reports what
+	// it MEASURES rather than the slanted geometry's computed height.
+	let phoneBladeH = $state(0);
+	let reportedH = $derived(
+		crossConnections.length === 0
+			? 0
+			: stage.phone
+				? Math.max(0, phoneBladeH - tang)
+				: Math.max(0, bladeH - BLADE_TANG)
+	);
 	$effect(() => {
 		onheight?.(reportedH);
 	});
@@ -314,7 +323,7 @@
 
 {#if crossConnections.length > 0}
 	<!-- One row spanning the card's width: the label sits left and outside, the blade to its right. -->
-	<div class="cc-blade-row" style="--tang: {tang}px;">
+	<div class="cc-blade-row" class:phone={stage.phone} style="--tang: {tang}px;">
 		<!-- The label moved out of the card with the CCs, and its HOVER TOOLTIP came with it — it is the
 		     only place the site ever explains what a cross connection is, so it survives the redesign
 		     verbatim. Two fixed rows always, per the drawing, so it never reflows with content. -->
@@ -358,16 +367,20 @@
 		<div
 			class="cc-blade"
 			bind:this={bladeEl}
+			bind:clientHeight={phoneBladeH}
 			style:clip-path={clip}
 			use:fitBlade={{
 				minFont: CC_FONT_MIN * bk,
 				maxFont: CC_FONT_MAX * bk,
-				maxWidth: Math.round((CARD_W * stage.cardWK - BLADE_RIGHT_INSET) * bu), // narrower card, narrower blade
+				// narrower card, narrower blade — and on a phone, the phone card's own width (stage.phoneCardW)
+				maxWidth: stage.phone
+					? Math.round(stage.phoneCardW - BLADE_RIGHT_INSET * bu)
+					: Math.round((CARD_W * stage.cardWK - BLADE_RIGHT_INSET) * bu),
 				// `key` carries the dials so a resize RE-FITS. fitBlade caches on this string; without
 				// them a narrowed window kept the width and font size solved for the wide card.
 				key: `${crossConnections
 					.map((c) => c.link_text + (c.co?.link_text ?? '') + c.display_label)
-					.join('|')}|${bu}|${bk}|${stage.cardWK}`
+					.join('|')}|${bu}|${bk}|${stage.cardWK}|${stage.phone}`
 			}}
 		>
 			<div class="cc-body" style="height: {bladeH}px;">
@@ -472,6 +485,28 @@
 	   sheathed it is entirely inside the card's outline and contributes nothing at all.
 	   The clip-path doubles as the hit area (clipping applies to hit-testing as well as paint), so the
 	   wedge to the left of the slant falls through to the label's hover. */
+	/* ── THE PHONE BLADE (stage.phone, Sam 100626) ───────────────────────────────────────────────────────
+	   The slanted desktop silhouette, its wrap-around gutter, the side label and the shadow twin are all built
+	   for a 925px card; on a 345px one the label ate the width and the slant stood the text up into a tall
+	   wedge that ran over the children. Here it is a plain sheet the card's width, its height set by its text. */
+	.cc-blade-row.phone {
+		width: 100%;
+	}
+	.cc-blade-row.phone .cc-label-layer,
+	.cc-blade-row.phone .cc-twin,
+	.cc-blade-row.phone .cc-gutter {
+		display: none;
+	}
+	.cc-blade-row.phone .cc-blade {
+		clip-path: none !important;
+		width: auto !important;
+		margin: 0 calc(10px * var(--stage-u, 1));
+		border-radius: 0 0 8px 8px;
+	}
+	.cc-blade-row.phone .cc-body {
+		height: auto !important;
+		padding-left: calc(14px * var(--stage-u, 1));
+	}
 	.cc-blade {
 		/* Sam's --light-greyish-blue. The blade used to be pure #fff, the same sheet as the card above
 		   it; this separates the two without reading as a colour. */

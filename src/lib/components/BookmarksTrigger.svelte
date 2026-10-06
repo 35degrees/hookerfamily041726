@@ -191,7 +191,7 @@
 					stroke-linejoin="round"
 				/>
 			</svg>
-			My Bookmarks
+			<span class="nav-label">My Bookmarks</span>
 		</span>
 
 		{#if open && rows.length}

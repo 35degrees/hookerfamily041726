@@ -24,11 +24,14 @@
 	import BookmarksTrigger from './BookmarksTrigger.svelte';
 	import HomeTrigger from './HomeTrigger.svelte';
 	import { ascension } from '#lib/state/ascension.svelte.js';
+	import { stage } from '#lib/state/stage.svelte.js';
 
 	let { settled = true }: { settled?: boolean } = $props();
 </script>
 
-<div class="top-right-chrome">
+<!-- ICONS ONLY ON A PHONE (stage.phone, Sam 100626): the words go, the glyphs stay — the cards fan, the
+     ribbon, the house, the magnifier — and the account word stays because it has no glyph of its own. -->
+<div class="top-right-chrome" class:phone={stage.phone} style:zoom={stage.navK === 1 ? null : stage.navK}>
 	<!-- SHUFFLE TAKES THE INNERMOST SEAT OF ALL (Sam, 100526), and it is the ONLY control here that
 	     comes and goes with the zone. That is why it is at the far LEFT: this row is anchored by its
 	     RIGHT edge, so taking away the left-most item moves nothing — the hole simply closes off the
@@ -90,5 +93,16 @@
 		/* Wide enough that the shelled button and the bare word do not read as one control, tight
 		   enough that they read as one cluster. */
 		gap: 14px;
+	}
+	.top-right-chrome.phone {
+		gap: 12px;
+		right: 12px;
+		top: 12px;
+	}
+	.top-right-chrome.phone :global(.nav-label) {
+		display: none;
+	}
+	.top-right-chrome.phone :global(.shuffle-notables) {
+		padding: 6px 9px;
 	}
 </style>

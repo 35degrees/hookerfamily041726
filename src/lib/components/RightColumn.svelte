@@ -533,7 +533,7 @@
 			<!-- Location + MAP on ONE right-flush line: "City, ST · MAP". Omitted entirely when there's
 			     no location text and no resolvable map destination (name-only degrade). -->
 			<!-- Not on a short window: the place goes, the cemetery stays — as birth and death (Sam, 100626). -->
-			{#if !stage.shortH && (burialLocation || burialMapUrl)}
+			{#if (!stage.shortH || stage.phone) && (burialLocation || burialMapUrl)}
 				<div class="relative z-10 mt-px font-opensans text-[calc(11px*var(--type-k,1))] leading-snug font-light text-slate-500">
 					{#if burialLocation}<span>{burialLocation}</span>{/if}{#if burialMapUrl}<a
 							href={burialMapUrl}

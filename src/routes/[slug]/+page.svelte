@@ -957,7 +957,9 @@
 
 	// Spouse chips, lifted out of FeaturedCard to dock into the carved notch. The
 	// card still carves the notch from the same spouse count, so geometry matches.
-	const useCompact = $derived(roster.spouses.length >= 3);
+	// Not on a phone: there the spouses wrap two to a row at full chip size instead of three compact ones abreast
+	// (their names were ~9px and cut off — Sam, 100626).
+	const useCompact = $derived(roster.spouses.length >= 3 && !stage.phone);
 
 	// ── Spouse carousel (STRIP model, existence-gated) ────────────────────────────────────
 	// ONLY built when spouseCount > 3; ≤3-spouse cards render the untouched baseline flex notch.
@@ -1897,10 +1899,16 @@
 		return card?.neighborhood?.focus?.dy_young ? 'child' : 'parent';
 	}
 	const childrenTotal = $derived(roster.children.length);
+	// THE PHONE'S SPOUSE ROW sits in the slot above the card (see `.page-container.phone .spouse-notch`), so the
+	// slot's explicit height has to pay for it — left out, the grid shared the slack out as a gap above the card
+	// and the slot ended early enough for the blade to run over the children. Row height + its bottom margin.
+	let phoneSpouseRowRaw = $state(0);
+	const phoneSpouseRowH = $derived(phoneSpouseRowRaw ? phoneSpouseRowRaw + Math.round(8 * stage.u) : 0);
 	// WHERE THE CHILDREN ROW BREAKS — Sam's rules, Aug 9. See $lib/state/childRows.ts for the two rules
 	// (four per row maximum, never strand a single child) and for every count worked through.
-	const childCols = $derived(chipColumns(childrenTotal));
-	const gcCols = $derived(chipColumns(revealedGrandchildren.length));
+	// Two to a row on a phone (stage.phone) — the grid below is four half-tracks there instead of eight.
+	const childCols = $derived(chipColumns(childrenTotal, stage.phone ? 2 : undefined));
+	const gcCols = $derived(chipColumns(revealedGrandchildren.length, stage.phone ? 2 : undefined));
 	const childrenDiedYoung = $derived(roster.children.filter((c) => c.dy_young).length);
 	const isEasterEgg = $derived(f.person.classification?.is_easter_egg ?? false);
 
@@ -1939,7 +1947,9 @@
 <!-- THE LEFT TIMELINE (design §3.6). Fixed chrome at the window's edge, mounted HERE beside Field and
      ShuffleNotables rather than inside .page-container: it is a ruler and must keep its size while the
      stage scales, and a fixed element inside a transformed ancestor re-bases to that ancestor. -->
-<div class="intro-chrome" class:held={introArrival}><TimelineRail /></div>
+<!-- No rail on a phone (stage.phone, Sam 100626): at 393px it cost the stage ~60px for an instrument too
+     narrow to read. -->
+{#if !stage.phone}<div class="intro-chrome" class:held={introArrival}><TimelineRail /></div>{/if}
 <!-- SHUFFLE NOTABLES (roadmap §13, design §22.8) — the deck dealt at random. Mounted beside Field so the
      two pieces of fixed chrome live together, and gated on `familyLanded`, the SAME landing signal the
      card and connector use, so the button can never disagree with the flight lock about whether a flight
@@ -1996,6 +2006,7 @@
 	bind:this={pageEl}
 	class:in-orbit={ascension.active}
 	class:in-founder={ascension.founder}
+	class:phone={stage.phone}
 	class:tier-nav-close={tierClosingForNav}
 	class:tier-collapsed={tierCollapsed}
 	data-density={stage.density}
@@ -2119,7 +2130,8 @@
 	     featured→parent), giving the card↔box content cross-dissolve. -->
 	<div
 		class="featured-slot"
-		style={mounted && cardHeight ? `height: ${cardHeight + bladeHeight}px` : ''}
+		style={mounted && cardHeight ? `height: ${cardHeight + bladeHeight + (stage.phone ? phoneSpouseRowH : 0)}px` : ''}
+		class:phone-slot={stage.phone}
 	>
 		<!-- Spouse chips: dock into the carved notch and swap LATERALLY. Clicking a chip
 		     makes that spouse featured — their card growFroms the click-captured chip rect
@@ -2152,7 +2164,11 @@
 		     landing-gate. Carousel geometry (fixed mask width + clip-path + strip transform) is applied
 		     by CONDITIONAL STYLE only when spouseCount > 3; at ≤3 the mask/strip collapse to a plain
 		     right-anchored flex row (the untouched baseline layout). Only the carets are gated. -->
-		<div class="spouse-notch" data-spouse-offset={hasCarousel ? spouseOffset : 0}>
+		<div
+			class="spouse-notch"
+			data-spouse-offset={hasCarousel ? spouseOffset : 0}
+			bind:offsetHeight={phoneSpouseRowRaw}
+		>
 			<div
 				class="spouse-mask"
 				class:carousel={hasCarousel}
@@ -2231,7 +2247,7 @@
 				/>
 			</span>
 		</div>
-		{#if showSiblings}
+		{#if showSiblings && !stage.phone}
 			<!-- Slice 1: trigger + panel + nudge. Inside featured-slot so it travels with the card GROUP on the
 			     nudge. Flow-placed right of the last spouse affordance (caret-aware). No carousel/flight yet. -->
 			<SiblingPanel
@@ -2646,6 +2662,31 @@
 		top: 0;
 		right: 0;
 		z-index: 1;
+	}
+	/* THE PHONE'S SPOUSES (stage.phone): out of the corner — the card has no notch there — and into a row of
+	   their own ABOVE the card, right-aligned, the way the notch sat. Under the card they landed on the
+	   cross-connections blade, which hangs off the card's bottom edge. Row 1 is theirs; the card (and any
+	   card in flight) moves to row 2. */
+	.page-container.phone .spouse-notch {
+		position: static;
+		grid-row: 1;
+		justify-self: end;
+		margin-bottom: calc(8px * var(--stage-u, 1));
+	}
+	.page-container.phone .featured-slot > .featured-flight {
+		grid-area: 2 / 1;
+	}
+	.featured-slot.phone-slot {
+		align-content: start;
+	}
+	.page-container.phone .spouse-strip {
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		max-width: calc(100vw - 64px * var(--stage-u, 1));
+		row-gap: calc(8px * var(--stage-u, 1));
+	}
+	.page-container.phone .children-slot {
+		grid-template-columns: repeat(4, calc(93px * var(--stage-u, 1)));
 	}
 
 	/* Mask + strip are ALWAYS present (keeps the each persistent → landing-gate intact). At ≤3 both

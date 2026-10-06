@@ -576,13 +576,15 @@
 	// cap ALL notch geometry (width, height, clip-path, header padding) at 3. Without this
 	// a 4+-spouse card (Michael HD3384) runs the notch, hence the whole card-top, off its
 	// 925px frame. This is the geometry invariant the carousel build sits on top of.
-	let notchChipCount = $derived(Math.min(chipCount, 3));
+	// A PHONE HAS NO NOTCH (stage.phone): its spouses sit in a row under the card (+page.svelte), so the card is
+	// a plain rectangle and its header gets the full width.
+	let notchChipCount = $derived(stage.phone ? 0 : Math.min(chipCount, 3));
 	// × stage.cardWK: 15% narrower on a short window (stage.svelte.ts SHORT_CARD_W_K), taken out of the NB column.
 	// EXCEPT with THREE spouse chips in the notch: they take ~520px of a 786px card and the header was left a
 	// column — the name wrapped and "Hooker" fell onto its own line (Rev. Jared Bradley Flagg, 100626). Those
 	// cards keep their full width; so this sits below `notchChipCount`.
 	const cardWK = $derived(notchChipCount >= 3 ? 1 : stage.cardWK);
-	const cardW = $derived(Math.round(CARD_W * u * cardWK));
+	const cardW = $derived(stage.phone ? stage.phoneCardW : Math.round(CARD_W * u * cardWK));
 	/**
 	 * THE CONTENT GRID ON A SHORT WINDOW. At full width it is 23% | 1fr | 21%, so a narrower card would shrink
 	 * all three alike. Here the photo column is its full-width size less 7%, the right column its full-width
@@ -590,7 +592,7 @@
 	 * FULL card's content box (card less the 24 + 12 px side padding), so they do not move with the cut.
 	 */
 	const contentCols = $derived.by(() => {
-		if (cardWK === 1) return null;
+		if (cardWK === 1 || stage.phone) return null;
 		const full = (CARD_W - 36) * u;
 		return `${(full * 0.23 * stage.photoColK).toFixed(1)}px minmax(0, 1fr) ${(full * 0.21).toFixed(1)}px`;
 	});
@@ -823,7 +825,7 @@
 	class="featured-card-wrap relative"
 	style="
         width: {cardW}px;
-        min-height: {cardTopH}px;
+        min-height: {stage.phone ? 0 : cardTopH}px;
         filter:
             drop-shadow(0 calc(4px * var(--shadow-k, 1)) calc(12px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a1) * var(--shadow-fade, 1))))
             drop-shadow(0 calc(1px * var(--shadow-k, 1)) calc(3px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a2) * var(--shadow-fade, 1))));
@@ -850,6 +852,7 @@
 		class:prism={isPynchonKin(person.id)}
 		class:orbit-card={orbit}
 		class:founder-card={founderZone}
+		class:phone={stage.phone}
 		style="clip-path: {clipPath}; --flat-shape: {flatShape}; --ring-outer: {ringOuter}; --ring-inner: {ringInner}; --ring-outer-flat: {ringOuterFlat}; --ring-inner-flat: {ringInnerFlat};"
 	>
 		<!-- THE WORN EDGE (Sam, 100626): old-card distressing around the border, heavier in the corners, in the
@@ -872,7 +875,9 @@
 		     variable gap underneath. The dial lives in HEADER_H; there are no other height inputs here. -->
 		<div
 			class="card-top grid"
-			style="height: {cardTopH}px; grid-template-rows: {HEADER_H}px minmax(0, 1fr);"
+			style={stage.phone
+				? 'height: auto; grid-template-rows: auto auto;'
+				: `height: ${cardTopH}px; grid-template-rows: ${HEADER_H}px minmax(0, 1fr);`}
 		>
 			<!-- THE WAX'S LIGHT (orbit and founder cards, 100626). Under the text and the photo (z-index −1 in
 			     .card-top's stacking context), oversized so it never shows an edge, and moved by the zone's
@@ -987,7 +992,7 @@
 			<!-- Content row: minmax(0, 1fr) + overflow-hidden allows NB body expansion
 			     without growing the row. Any overflow is clipped, keeping card height stable. -->
 			<div
-				style:grid-template-columns={contentCols}
+				style:grid-template-columns={stage.phone ? 'minmax(0, 1fr)' : contentCols}
 				style:--nb-head-k={contentCols ? 0.9 : null}
 				style:--nb-body-k={contentCols ? 0.95 : null}
 				style:--nb-lead-k={contentCols ? 0.92 : null}
@@ -1001,12 +1006,17 @@
 					     is where a saving is least felt: it is whitespace between two unlike things, where
 					     every other candidate was leading INSIDE a line of type. The whole budget, and the
 					     reason this column runs out of room at small sizes at all, is on `.vitals` below. -->
-				<div class="portrait-column relative flex h-full flex-col">
+				<!-- FILL-PHOTO (Sam, 100626): once a window is short enough to lose the birth/death places (and below 900
+				     to shorten the card), the PHOTO takes the column's slack — taller and narrow, never squashed — instead
+				     of the slack sitting as a band of white above the button. A square photo was tried first: "you made
+				     the photo too short vertically… you just created this ugly gap." Not on a phone, whose photo sits
+				     beside the dates. -->
+				<div class="portrait-column relative flex h-full flex-col" class:fill-photo={stage.noPlaces && !stage.phone}>
 					{#if photoUrl}
 						<img
 							src={portraitSrc}
 							alt={person.bio?.display_name ?? person.name?.display_name ?? 'Portrait'}
-							class="{stage.shortH ? 'aspect-square' : 'aspect-[3/4]'} w-full rounded-sm bg-stone-100 object-cover {photoPosition
+							class="aspect-[3/4] w-full rounded-sm bg-stone-100 object-cover {photoPosition
 								? ''
 								: 'object-top'}"
 							style={photoPosition ? `object-position: ${photoPosition}` : undefined}
@@ -1020,7 +1030,7 @@
 							}}
 						/>
 					{:else}
-						<div class="{stage.shortH ? 'aspect-square' : 'aspect-[3/4]'} w-full rounded-sm bg-stone-100"></div>
+						<div class="aspect-[3/4] w-full rounded-sm bg-stone-100"></div>
 					{/if}
 					<!--
 						THE VITALS ARE UNTOUCHED, and that is the requirement rather than an accident (Sam, three
@@ -1437,6 +1447,58 @@
 		--vital-gap: 3.8px;
 	}
 
+	/* THE PHOTO TAKES THE SLACK — see the fill-photo note in the markup. The 3:4 box gives way to "whatever the
+	   column has left" (cover, top-anchored, so a face is never cut), and the vitals stop absorbing slack. */
+	.portrait-column.fill-photo > img,
+	.portrait-column.fill-photo > div:first-child {
+		aspect-ratio: auto;
+		flex: 1 1 0;
+		min-height: 0;
+	}
+	.portrait-column.fill-photo .vitals {
+		flex: none;
+		/* The two whitespace gaps take the `.tight` values (Sam: "there's room to size down the gap between the
+		   birth and death section"), and the room they free goes under the dates, so the death line never sits on
+		   the button. */
+		--vital-lead: 3.4px;
+		--vital-gap: 3.8px;
+		margin-bottom: calc(8px * var(--stage-u, 1));
+	}
+	/* ── THE PHONE CARD (stage.phone, Sam 100626) ─────────────────────────────────────────────────────────
+	   One column, automatic height: the header, then the photo with the dates beside it and "Connect to
+	   Thomas" under both, then the narratives, then the right column's rows. Nothing here applies above
+	   PHONE_W — every rule is scoped to `.phone`. */
+	.featured-card.phone .content {
+		row-gap: calc(16px * var(--stage-u, 1));
+	}
+	/* Photo on the left; the dates top-right and "Connect to Thomas" bottom-right BESIDE it — the space under the
+	   dates was white, and the button used to take a row of its own below everything (Sam: removals and
+	   reductions are there to fit MORE in, never to leave a gap). */
+	.featured-card.phone .portrait-column {
+		display: grid;
+		grid-template-columns: 36% minmax(0, 1fr); /* 40% left a ~100px white band between dates and button */
+		grid-template-rows: auto 1fr;
+		column-gap: 14px;
+		height: auto;
+	}
+	.featured-card.phone .portrait-column > img,
+	.featured-card.phone .portrait-column > div:first-child {
+		width: 100%;
+		grid-row: 1 / 3;
+	}
+	.featured-card.phone .vitals {
+		grid-column: 2;
+		grid-row: 1;
+		min-width: 0;
+		margin-top: 0;
+		padding-top: 0;
+	}
+	.featured-card.phone .connect-stack {
+		grid-column: 2;
+		grid-row: 2;
+		align-self: end;
+		margin-bottom: 0;
+	}
 	.connect-stack {
 		/* FULL COLUMN WIDTH, which a flex item in a column gets for free — it ran at 95% for a while,
 		   inset on the right so it stopped short of the photo's edge, and then long names needed the last
