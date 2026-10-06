@@ -37,7 +37,13 @@
 	// The typeface lands on the HEADER only — bodies stay in the card's reading face. A slab serif
 	// sets optically smaller than Inter at the same px, so the override carries its own +20% step
 	// (15px → 18px) rather than changing the default header size for all 18,000 cards.
-	let headerClass = $derived(fontClass ? `${fontClass} text-[calc(18px*var(--type-k,1))]` : 'text-[calc(15px*var(--type-k,1))]');
+	// × --nb-head-k / --nb-body-k / --nb-lead-k: set on the featured card when it NARROWS on a short window
+	// (FeaturedCard, Sam 100626 — headers 10% smaller, body a little smaller and tighter). 1 everywhere else.
+	let headerClass = $derived(
+		fontClass
+			? `${fontClass} text-[calc(18px*var(--type-k,1)*var(--nb-head-k,1))]`
+			: 'text-[calc(15px*var(--type-k,1)*var(--nb-head-k,1))]'
+	);
 
 	// PHASE 2.75 — THE CONTENT BUDGET. 7 is the roomy-rung maximum (raised from 6, Sam, 10 Aug 2026,
 	// alongside validate.py's NB_MAX_PER_PERSON); a smaller stage
@@ -130,7 +136,7 @@
 						     verse blocks (Edward Taylor, 091626). Prose bodies are unaffected: pre-line still
 						     collapses runs of spaces and wraps normally, it only honours an explicit \n. -->
 						<p
-							class="text-[calc(13.5px*var(--type-k,1))] leading-relaxed whitespace-pre-line text-stone-700 select-none">
+							class="text-[calc(13.5px*var(--type-k,1)*var(--nb-body-k,1))] leading-[calc(1.625*var(--nb-lead-k,1))] whitespace-pre-line text-stone-700 select-none">
 							{block.body}
 						</p>
 					</div>

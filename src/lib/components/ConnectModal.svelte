@@ -1331,7 +1331,10 @@
 		display: flex;
 		align-items: center;
 		gap: 14px;
-		width: min(440px, 84vw);
+		/* × --ladder-fit (100626): on a short window the rungs come down in height to fit, and at a fixed 440px
+		   they turned into long flat bars (Sam). The width follows the same fit, which is exactly 1 wherever the
+		   ladder already fits, so nothing moves on a tall window. */
+		width: min(calc(440px * var(--ladder-fit, 1)), 84vw);
 	}
 	.ladder-title {
 		font-family: var(--font-opensans, sans-serif);
@@ -1414,7 +1417,10 @@
 		   9.6px blur, so most of it was landing under the next card. Say the word and this returns to 6
 		   independently of the card height. */
 		gap: calc(9px * var(--stage-u, 1) * var(--ladder-fit, 1));
-		width: min(440px, 84vw);
+		/* × --ladder-fit (100626): on a short window the rungs come down in height to fit, and at a fixed 440px
+		   they turned into long flat bars (Sam). The width follows the same fit, which is exactly 1 wherever the
+		   ladder already fits, so nothing moves on a tall window. */
+		width: min(calc(440px * var(--ladder-fit, 1)), 84vw);
 	}
 
 	/* THE RUNG'S GEOMETRY, and ONLY its geometry. Paper, shadow, line-status fill and the `--line-edge`

@@ -2171,7 +2171,10 @@
 		 */
 		align-items: flex-start;
 		gap: 14px;
-		width: min(440px, 84vw);
+		/* × --ladder-fit (100626): on a short window the rungs come down in height to fit, and at a fixed 440px
+		   they turned into long flat bars (Sam). The width follows the same fit, which is exactly 1 wherever the
+		   ladder already fits, so nothing moves on a tall window. */
+		width: min(calc(440px * var(--ladder-fit, 1)), 84vw);
 	}
 	/* And the X sits on the title's FIRST LINE rather than at its very top: the button is 34px tall
 	   against a ~21px line, so half the difference back up puts the glyph's centre on that line's. */

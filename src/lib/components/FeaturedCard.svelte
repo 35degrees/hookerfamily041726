@@ -988,6 +988,9 @@
 			     without growing the row. Any overflow is clipped, keeping card height stable. -->
 			<div
 				style:grid-template-columns={contentCols}
+				style:--nb-head-k={contentCols ? 0.9 : null}
+				style:--nb-body-k={contentCols ? 0.95 : null}
+				style:--nb-lead-k={contentCols ? 0.92 : null}
 				class="content grid grid-cols-[23%_1fr_21%] overflow-hidden py-(--card-pad-y) pr-[calc(12px*var(--stage-u,1))] pl-[calc(24px*var(--stage-u,1))]"
 			>
 				<!-- space-y: photo->vitals is the original 16 less 5% then a further 20% (15.2 -> 12.16);
