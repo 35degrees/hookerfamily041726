@@ -58,6 +58,14 @@
 	const PAINT_IN_MS = 1500;
 	const SHADOW = 0.35; // Sam: 0.7 first shown, then 0.525, still "very dark" -> 0.35
 	const SHADOW_BLUR = 14;
+	/**
+	 * THE YEARS GET MORE SHADOW THAN THE TITLE (Sam, 100626: "20% more drop shadow on the years actually mostly
+	 * on 1586 which has sky behind it to make it stand out"). A second pass of the same shadow, masked to the year
+	 * line (plate y 578-650, x 531-1069, measured off the plate's alpha) and tapered left → right, so 1586 gets the
+	 * most and 2026, over the darker trees, the least. Strengths are × SHADOW, on top of the base pass.
+	 */
+	const YEAR_SHADOW_L = 0.55; // under 1586
+	const YEAR_SHADOW_R = 0.3; // under 2026
 	// the raised look over the painting (see THE RELIEF filter) — kept subtle: a lit top edge, a shaded foot
 	const EMBOSS_LIGHT = 0.4;
 	const EMBOSS_SHADE = 0.5;
@@ -305,6 +313,14 @@
 					<stop offset={s.o} stop-color="white" stop-opacity={s.v} />
 				{/each}
 			</radialGradient>
+			<linearGradient id="intro-years-taper" gradientUnits="userSpaceOnUse" x1="531" y1="0" x2="1069" y2="0">
+				<stop offset="0" stop-color="white" stop-opacity="1" />
+				<stop offset="0.45" stop-color="white" stop-opacity="1" />
+				<stop offset="1" stop-color="white" stop-opacity={YEAR_SHADOW_R / YEAR_SHADOW_L} />
+			</linearGradient>
+			<mask id="intro-years" maskUnits="userSpaceOnUse" x="0" y="0" width={PLATE_W} height={PLATE_H}>
+				<rect x="400" y="540" width="800" height={PLATE_H - 540} fill="url(#intro-years-taper)" />
+			</mask>
 			<mask id="intro-light" maskUnits="userSpaceOnUse" x="0" y="0" width={PLATE_W} height={PLATE_H}>
 				<rect x="0" y="0" width={PLATE_W} height={PLATE_H} fill="white" fill-opacity={fade} />
 				{#if !still}
@@ -314,6 +330,11 @@
 		</defs>
 		<g filter="url(#intro-shadow)" opacity={SHADOW * paint}>
 			<image href={SRC} width={PLATE_W} height={PLATE_H} />
+		</g>
+		<g mask="url(#intro-years)" opacity={SHADOW * YEAR_SHADOW_L * paint}>
+			<g filter="url(#intro-shadow)">
+				<image href={SRC} width={PLATE_W} height={PLATE_H} />
+			</g>
 		</g>
 		<g filter="url(#intro-deboss)" opacity={FAINT}>
 			<image href={SRC} width={PLATE_W} height={PLATE_H} filter="url(#intro-warmgold)" />

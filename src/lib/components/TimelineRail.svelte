@@ -2453,7 +2453,10 @@
 	   would put a shrinking face over the card for the 160ms of the drop with no label to justify
 	   it. Keyboard focus is not excluded, matching the same decision made there. */
 	.rail:has(.anchor:not(.no-hover):hover),
-	.rail:has(.anchor:focus-visible) {
+	.rail:has(.anchor:focus-visible),
+	/* …and a hovered BAR, whose tooltip ran under the featured card the same way (Sam, 100626). */
+	.rail:has(.bar:hover),
+	.rail:has(.bar:focus-visible) {
 		z-index: 4;
 	}
 
