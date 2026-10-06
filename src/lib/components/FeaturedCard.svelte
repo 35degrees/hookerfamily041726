@@ -991,6 +991,7 @@
 				style:--nb-head-k={contentCols ? 0.9 : null}
 				style:--nb-body-k={contentCols ? 0.95 : null}
 				style:--nb-lead-k={contentCols ? 0.92 : null}
+				style:--vital-k={contentCols ? 0.9 : null}
 				class="content grid grid-cols-[23%_1fr_21%] overflow-hidden py-(--card-pad-y) pr-[calc(12px*var(--stage-u,1))] pl-[calc(24px*var(--stage-u,1))]"
 			>
 				<!-- space-y: photo->vitals is the original 16 less 5% then a further 20% (15.2 -> 12.16);
@@ -1075,7 +1076,7 @@
 								<!-- The age rides the date line at a lighter weight so the DATE stays primary and the
 								     derived figure reads as an annotation on it, not a second fact. -->
 								<div
-									class="font-opensans text-[calc(12.45px*var(--type-k,1))] leading-snug font-normal text-inkblue"
+									class="font-opensans text-[calc(12.45px*var(--type-k,1)*var(--vital-k,1))] leading-snug font-normal text-inkblue"
 								>
 									{date}{#if age}<span class="ml-1.5 font-normal opacity-70"
 											>({age.approx ? '~' : ''}Age {age.years})</span
@@ -1083,7 +1084,7 @@
 								</div>
 								{#if loc || mapUrl}
 									<div
-										class="mt-[0.5px] font-opensans text-[calc(12.08px*var(--type-k,1))] leading-snug font-light text-slate-600"
+										class="mt-[0.5px] font-opensans text-[calc(12.08px*var(--type-k,1)*var(--vital-k,1))] leading-snug font-light text-slate-600"
 									>
 										{loc ?? ''}{#if mapUrl}<a
 												href={mapUrl}

@@ -509,11 +509,14 @@ const SHORT_CARD_K = 0.78;
 /**
  * …AND NARROWER (Sam, 100626: "reduce the width of the featured card overall by 15% and maybe a little in
  * the width of the photo and the Connect to Thomas button… most of the width reduction would be the width of
- * the NB column since reducing to max 3 NBs anyway"). The photo column gives 7%, the right column keeps its
- * width, and the narrative column takes the rest of the cut (~25%).
+ * the NB column since reducing to max 3 NBs anyway"). The photo column gives 20%, the right column keeps its
+ * width, and the narrative column takes the rest of the cut.
  */
 const SHORT_CARD_W_K = 0.85;
-const SHORT_PHOTO_COL_K = 0.93;
+// 0.93 first, and the NB column paid for nearly all of the cut (Sam: "i took too much from NB column and kept
+// photo column too big… take from the photo column to keep overall card width the same"). 0.80 gives the
+// narrative ~26px back; the vitals under the photo step down 10% to fit it (FeaturedCard --vital-k).
+const SHORT_PHOTO_COL_K = 0.8;
 /**
  * THE CHILDREN OUTRANK THE BLADE (Sam, 100626: "children chips are more important to show than long CC
  * blades"). Its own ladder, by window HEIGHT, and it starts well above the 900 squeeze — Sam: "even 1050px
