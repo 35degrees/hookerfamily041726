@@ -29,6 +29,20 @@
 </script>
 
 <div class="top-right-chrome">
+	<!-- SHUFFLE TAKES THE INNERMOST SEAT OF ALL (Sam, 100526), and it is the ONLY control here that
+	     comes and goes with the zone. That is why it is at the far LEFT: this row is anchored by its
+	     RIGHT edge, so taking away the left-most item moves nothing — the hole simply closes off the
+	     end of the row. Seated between My Bookmarks and Search, as it was, its removal shoved Home and
+	     My Bookmarks right on every zone entry and snapped them back left on every exit (Sam: "harsh
+	     and confusing"). Controls that persist must not move because a neighbour left.
+
+	     It also reads better here: the one control with a body leads a row of bare words.
+
+	     SHUFFLE STILL YIELDS THE ZONE (roadmap §40, its own reasoning): it is a door OUT to a random
+	     notable, and offering an exit that skips the descent undoes the whole gesture. -->
+	{#if !ascension.active}
+		<ShuffleNotables {settled} />
+	{/if}
 	<!-- HOME TAKES THE INNERMOST SEAT OF ALL (Sam), left of My Bookmarks — and the ordering that
 	     results is coherent rather than accidental. Reading left to right the corner now runs from
 	     the most PERSONAL to the most GENERAL: your one chosen card, your saved people, a random
@@ -46,11 +60,6 @@
 	     notable, the whole tree, your account. §45.15's original rule seated Search outermost on the
 	     opposite reading; Sam overturned that for Sign In and this follows the same call. -->
 	<BookmarksTrigger />
-	<!-- SHUFFLE STILL YIELDS THE ZONE (roadmap §40, its own reasoning): it is a door OUT to a random
-	     notable, and offering an exit that skips the descent undoes the whole gesture. -->
-	{#if !ascension.active}
-		<ShuffleNotables {settled} />
-	{/if}
 	<!-- SEARCH DOES NOT YIELD (Sam). It is not an exit that skips anything — it is how you get anywhere
 	     from anywhere, and being stranded in the zone with no way to leave except the X was a smaller
 	     app than the one this is. It re-inks itself for the dark ground; see SearchTrigger. -->

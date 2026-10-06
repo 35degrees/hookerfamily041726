@@ -120,7 +120,7 @@
 	.home-trigger {
 		display: inline-flex;
 		align-items: center;
-		color: var(--color-ascendmidnight, #1c2b4a);
+		color: var(--color-midnightink, hsl(212, 21%, 14%));
 		opacity: 0.55;
 		cursor: pointer;
 		user-select: none;

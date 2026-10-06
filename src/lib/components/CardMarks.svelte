@@ -407,13 +407,20 @@
 				? `${personName} is your home card — click to clear`
 				: `Make ${personName} your home card`}
 		>
-			<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+			<!-- THE NAV'S HOUSE, one glyph in both places (Sam, 100526: "match the Home icons… i prefer the
+			     top right nav menu icon"). HomeTrigger's path, doorway and all — the old card house was the
+			     plain pentagon the nav had already been redrawn away from. 16px, not the nav's 17: this
+			     outline spans 19 of the 24 units where the old one spanned 16, so 16 keeps it inside the
+			     30px circle with the same margin the old glyph had. -->
+			<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
 				<path
-					d="M4 10.4 12 4l8 6.4V19a1.2 1.2 0 0 1-1.2 1.2H5.2A1.2 1.2 0 0 1 4 19v-8.6z"
-					fill={isHero ? 'currentColor' : 'none'}
+					d="M12 3 L21.5 11.4 V21 H14.5 V15.5 H9.5 V21 H2.5 V11.4 Z"
+					fill="currentColor"
+					fill-opacity={isHero ? 1 : 0}
 					stroke="currentColor"
-					stroke-width="1.5"
+					stroke-width="1.7"
 					stroke-linejoin="round"
+					stroke-linecap="round"
 				/>
 			</svg>
 		</button>
@@ -620,11 +627,11 @@
 		   ascension's ground colour, which is the darkest ink this app already owns. A home card
 		   is the one entry the reader has claimed, so it takes the heaviest ink available and is
 		   unmistakably NOT a third bookmark colour. */
-		color: var(--color-ascendmidnight, #1c2b4a);
+		color: var(--color-midnightink, hsl(212, 21%, 14%));
 	}
 	.house.on:hover:not(:disabled),
 	.house.on:active:not(:disabled) {
-		color: var(--color-ascendmidnight, #1c2b4a);
+		color: var(--color-midnightink, hsl(212, 21%, 14%));
 		filter: brightness(1.35);
 	}
 

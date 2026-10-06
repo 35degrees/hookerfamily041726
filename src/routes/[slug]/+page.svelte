@@ -148,7 +148,7 @@
 	import Ascension from '#lib/components/Ascension.svelte';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { arriveAtPerson } from '#lib/state/bookmarkNav.js';
-	import { slabFloat, floatResume, floatStart, floatStop } from '#lib/state/slabFloat.svelte.js';
+	import { slabFloat, floatResume, floatStart, floatStop, easeCarriedOut } from '#lib/state/slabFloat.svelte.js';
 	import Caret from '#lib/components/Caret.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -832,6 +832,10 @@
 		releaseLanding(node); // a held card must be free before its departure drives transform inline
 		if (motionOff()) return;
 		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
+		node.classList.add('leaving'); // its bookmark/home marks go at once — see the .leaving rule below
+		// A zone card carries the float's pose out of the click (slabFloat carryPose). Leaving the screen it keeps
+		// it; demoting into a chip seat it levels out on the way, so it docks square.
+		if (getFlightKind() !== 'cc') easeCarriedOut(node);
 		retractBladeIn(node); // the CC blade stows back into the case as the card starts to leave
 		demotingPivotId = id; // this card IS the pivot (getPivotId is already cleared by introend)
 		// "Flip early, land as a chip" — Layer 2 UNIFIES this across both kinds. The .demoting class
@@ -2540,6 +2544,15 @@
 	/* `notch-armed` (the anticipated notch, onIncomingStart) suspends the flattening WITHOUT clearing
 	   `.flat` — the card is still in flight and still says so; it has simply reached a size where its
 	   notch is worth carving, because a passenger is about to dock in it. */
+	/* A LEAVING CARD DROPS ITS MARKS (Sam, 100526): "when a spouse chip is promoted and the former featured
+	   card is shrinking to the spouse chip position, the bookmark and home icons need to disappear — you can
+	   see the tops of them moving with the transition and you can't click them, so it's useless… more
+	   noticeable on the orbit and founder zone cards because the icons contrast against darker backgrounds."
+	   Every departure, not only the spouse swap: the marks belong to the card you are ON. `visibility`, not
+	   an opacity fade — instant, and nothing animates inside a flying card in Safari (§58.4). */
+	.featured-flight:global(.leaving) :global(.card-marks) {
+		visibility: hidden;
+	}
 	.featured-flight:global(.flat):not(:global(.notch-armed)) :global(.featured-card) {
 		clip-path: var(--flat-shape) !important;
 		/* ...and the zone's inset rule with it (no-ops on a card without the ring): a flat card whose

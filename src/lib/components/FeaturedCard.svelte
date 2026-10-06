@@ -830,6 +830,11 @@
 			class="card-top grid"
 			style="height: {cardTopH}px; grid-template-rows: {HEADER_H}px minmax(0, 1fr);"
 		>
+			<!-- THE WAX'S LIGHT (orbit and founder cards, 100626). Under the text and the photo (z-index −1 in
+			     .card-top's stacking context), oversized so it never shows an edge, and moved by the zone's
+			     float (slabFloat.svelte.ts) so the gleam slides as the plate turns. Static where there is no
+			     float — reduced motion, or out of the zones — which is simply a still lustre. -->
+			{#if orbit}<div class="wax-light" aria-hidden="true"></div>{/if}
 			<div
 				class="header min-w-0 px-[calc(24px*var(--stage-u,1))] pt-[calc(16px*var(--stage-u,1))] pb-[calc(12px*var(--stage-u,1))]"
 				style="padding-right: {Math.round(notchChipCount > 0 ? chipZoneWidth + 16 * u : 24 * u)}px;"

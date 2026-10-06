@@ -4,7 +4,6 @@
 	import type { Institution } from '#lib/types/institution.js';
 	import type { Cemetery } from '#lib/types/cemetery.js';
 	import { buildMapUrl, formatLocationShort } from '#lib/utils/dates.js';
-	import { isPynchonKin } from '#lib/data/pynchonLine.js';
 	import { shrinkToFit } from '#lib/actions/shrinkToFit.js';
 	import { fitMediaText } from '#lib/actions/fitMediaText.js';
 	import { stage } from '#lib/state/stage.svelte.js';
@@ -53,6 +52,21 @@
 	// padding-bottom so the variable stack can never scroll under (or overlap) the pin — the
 	// robust guarantee that absolute positioning + a measured reserve buys us over flex mt-auto.
 	let burialHeight = $state(0);
+	/**
+	 * THE ROWS FADE OUT ABOVE THE BURIAL, rather than a slab of card colour being painted over them
+	 * (100626). The slab was `--card-fill`, a FLAT colour: invisible on a plain white card, a white box on
+	 * the Pynchon spectrum (which is why prism cards had it switched off), and a visible patch on the zone
+	 * cards once their wax and gleam showed (Sam: "a white background behind the burial… you can see the
+	 * transition around it"). A mask fades the column's OWN content instead, so it is correct over any
+	 * surface. Same geometry as the slab it replaces: hidden under the pin (its height less the 12px it
+	 * hangs below the column), and an 18px fade above that.
+	 */
+	const burialMask = $derived.by(() => {
+		if (!burialCemetery?.name) return '';
+		const under = Math.max(0, burialHeight - 12);
+		const m = `linear-gradient(to bottom, #000 calc(100% - ${under + 18}px), transparent calc(100% - ${under}px))`;
+		return ` mask-image: ${m}; -webkit-mask-image: ${m};`;
+	});
 
 	// Resolve an INST id to a display name. short_name (compact) → name → primary_name
 	// (drift). Returns null on miss so callers fall through to their own fallback.
@@ -374,7 +388,7 @@
 	     whether it scrolls, so the loop cannot start. Overlay scrollbars take no width: no change there. -->
 	<div
 		class="scroll-group flex-1 space-y-2 overflow-y-auto pr-1 [scrollbar-gutter:stable]"
-		style="min-height: 0; padding-bottom: {burialCemetery?.name ? burialHeight + 12 : 0}px"
+		style="min-height: 0; padding-bottom: {burialCemetery?.name ? burialHeight + 12 : 0}px;{burialMask}"
 	>
 		<!-- 1. EDUCATION (education[], capped at EDU_LIMIT) -->
 		{#if eduEntries.length}
@@ -502,34 +516,8 @@
 			bind:clientHeight={burialHeight}
 			class="burial-pin pointer-events-none absolute right-0 bottom-[-12px] left-[-48px] pr-2 text-right"
 		>
-			<!-- Fade backdrop (interim mask, pending the content sweep): when a column overflows, the
-			     scroll group rests at the top and real rows sit under this always-on pin, colliding with
-			     the burial text. These two purely-visual layers mask that: a solid --card-fill behind the
-			     text, and an ~18px gradient strip just above it so the last row dissolves into the card
-			     rather than being hard-cut. Confined to the column width via left-[48px] (offsetting the
-			     section's -48px overhang) so it NEVER paints over the narrative column. These paint above
-			     the scroll-group content; the burial text is lifted back above THEM via relative z-10 (the
-			     backdrops are positioned, so an in-flow text sibling would otherwise be painted over).
-			     aria-hidden + pointer-events-none: no click interception, no reader noise. No geometry/reserve change.
-
-			     SUPPRESSED ON PRISM CARDS (Sam, 10 Aug 2026). `--card-fill` is never actually set, so both
-			     layers resolve to solid #fff — invisible on a white card, but on a Pynchon-line card they
-			     paint a white slab over the spectrum, which is what Sam saw on the first Pynchon burial.
-			     A flat fill cannot mask a gradient, so there is no colour that fixes this; the layers just
-			     have to go where the rainbow is. Scoped to prism cards rather than removed outright because
-			     the mask is load-bearing everywhere else: without it, an overflowing column's rows sit under
-			     this always-on pin and collide with the burial text. The cost accepted here is that a prism
-			     card with an overflowing right column can show that collision. -->
-			{#if !isPynchonKin(person.id)}
-				<div
-					class="pointer-events-none absolute top-[-18px] right-0 left-[48px] h-[18px] bg-gradient-to-b from-transparent to-[var(--card-fill,#fff)]"
-					aria-hidden="true"
-				></div>
-				<div
-					class="pointer-events-none absolute inset-y-0 right-0 left-[48px] bg-[var(--card-fill,#fff)]"
-					aria-hidden="true"
-				></div>
-			{/if}
+			<!-- The rows under this pin are faded out by a MASK on the scroll group (burialMask), not by a
+			     slab of card colour painted here — see burialMask for why the slab had to go. -->
 			<div
 				class="relative z-10 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none"
 			>

@@ -100,6 +100,17 @@
 	   is not about the zone. The gradient's two END stops stay literal in Ascension.svelte — they are
 	   this colour's hand-tuned lift and shadow, not values derivable from it. */
 	--color-ascendmidnight: #0f1626;
+	/* MIDNIGHT INK — the zone's midnight 30% bluer (Sam, 100526: "they look black make more blue by 30%"),
+	   for the SMALL objects that wear it: the Notable People button and the filled house. The room reads
+	   bluer than its token because its centre is lit (#1b2740); a button-sized patch of the bare token has
+	   no light on it and reads as black. First pass #0f1b36 (saturation up, lightness 10→13.5%) was "still
+	   too dark… worse" — the extra saturation read as a heavier navy. Now the room's own LIT CENTRE hue and
+	   saturation (#1b2740 ≈ hsl(220°, 41%, 18%)) a step lighter still: hsl(220°, 40%, 22%) = #1d2e52.
+	   Then milder (Sam: "how bout a milder blue try --dark-blue-neutral: hsl(212, 21%, 14%)") — his value.
+	   The ROOM keeps --color-ascendmidnight. */
+	/* SETTLED (Sam, 100626): his "darkGreyBlue". Also tried and passed over: hsl(212, 21%, 14%),
+	   hsl(229, 8%, 60%) (gold unreadable on it), hsl(252, 100%, 67%) (violet). */
+	--color-midnightink: hsl(224, 30%, 27%);
 	/* THE DESCENT GOLD — the ink of "Sixth Generation Descendant of Thomas Hooker" on a bloodline card.
 	   It means specifically "this person IS the line"; an in-law's descent line keeps the ordinary ink.
 	   ONE CONSUMER, and deliberately. The search list's bloodline stripe started here and was moved off
@@ -659,7 +670,39 @@ a.person-box.orbit-chip:hover {
 	position: relative;
 	z-index: 1;
 	background-color: var(--card-bg);
+	/* THE WAX, WHERE IT CAN BE SEEN (100626). This sheet covers the WHOLE face inside the rule (measured:
+	   577 of a 577px card), and it was a flat colour — so the wax's veil and grain on `.featured-card`
+	   above only ever showed in the 5px margin outside the navy, and Sam had never seen them ("i had no
+	   idea the zone cards had a waxy finish too hard to see anyway"). The same veil and grain now sit on
+	   the face; the moving light is `.wax-light`, below. Still opaque, so it still covers the navy sheet. */
+	background-image:
+		linear-gradient(rgb(250 249 243 / 0.93), rgb(250 249 243 / 0.93)),
+		url('/textures/paper-manuscript-1400.webp');
+	background-size:
+		cover,
+		720px auto;
+	background-repeat: no-repeat, repeat;
 	clip-path: var(--ring-inner);
+}
+/* THE GLEAM. A band of light across the face at the sheen's 118°, flanked by a faint warm shade on each
+   side — on near-white wax a highlight alone has nowhere to go (white over 250 is invisible), so it is the
+   shade either side that makes the bright band read as gloss. Oversized by 30% each way so its travel
+   (slabFloat SHEEN_PX_PER_DEG, up to ~140px) never brings an edge onto the card. Strength "B" of the two
+   mocked for Sam; A was barely visible. */
+.wax-light {
+	position: absolute;
+	inset: -30%;
+	z-index: -1;
+	pointer-events: none;
+	background: linear-gradient(
+		118deg,
+		transparent 18%,
+		rgb(170 152 112 / 0.17) 34%,
+		rgb(255 253 246 / 1) 45%,
+		rgb(255 255 255 / 0) 53%,
+		rgb(170 152 112 / 0.12) 66%,
+		transparent 82%
+	);
 }
 
 /* (easter egg is declared ABOVE spouse — see the ordering note there) */

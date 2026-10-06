@@ -169,7 +169,10 @@
 		   chip turns a muddy warm grey, which is what made the button look cheap on the ground it is
 		   actually seen against. At 0.86 it reads as one deliberate dark object on every ground, and
 		   the gold has something to sit on. The blur still carries the glass. */
-		background: rgba(20, 28, 46, 0.86);
+		/* THE ORBIT ROOM'S MIDNIGHT, MADE BLUE ENOUGH TO READ AT THIS SIZE (Sam, 100526: "the same blue of
+		   the orbit background", then "they look black make more blue by 30%"). Solid, and the token is
+		   shared with the filled house — see --color-midnightink in layout.css. */
+		background: var(--color-midnightink);
 		/* Softened to match: at 0.18 against the muddy fill the border was doing the work of defining
 		   the shape. Now the fill defines it and the border only catches the light along the edge. */
 		border: 1px solid rgba(255, 250, 240, 0.13);
