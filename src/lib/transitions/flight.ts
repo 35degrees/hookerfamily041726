@@ -14,7 +14,7 @@ import { isWebKit } from '#lib/state/engine.js';
 import { cubicOut, cubicIn, cubicInOut } from 'svelte/easing';
 import { motionOff } from '#lib/state/motion.svelte.js';
 import { floatResume } from '#lib/state/slabFloat.svelte.js';
-import { su } from '#lib/state/stage.svelte.js';
+import { su, stage } from '#lib/state/stage.svelte.js';
 import { getCameraMove, type CameraMove } from '../state/camera';
 import { isArcMove, arcDurationMsFor, ARC_DESC, ARC_RISE } from './arc-math';
 import { arcClock } from '../state/arc.svelte';
@@ -799,7 +799,18 @@ const CAROUSEL_TEMPO = 0.9;
 let carouselTempo = 1;
 /** The deck's time-scale for the flight currently launching. Every duration below reads THIS, not DECK_TEMPO. */
 function deckTempo(): number {
-	return DECK_TEMPO * carouselTempo;
+	return DECK_TEMPO * carouselTempo * narrowTempo();
+}
+/**
+ * NARROW-WINDOW TEMPO (Sam, Oct 6): at 1150px wide and below, every deck flight — a cross-connection, a timeline
+ * headshot, the X, the shuffle — plays 15% slower. "The smaller window makes them move violently quick": the
+ * cards are smaller but the deck's speeds are px/ms, so the same travel reads as a dart on a smaller stage.
+ * TIME only, like the per-flight tempos above (curves, heft, overshoot untouched); multiplies with them.
+ */
+const NARROW_W = 1150;
+const NARROW_TEMPO = 1.15;
+function narrowTempo(): number {
+	return stage.vw <= NARROW_W ? NARROW_TEMPO : 1;
 }
 /** Marks the launching flight as a carousel draw. Paired with setCarouselLateral at shuffle's call site. */
 export function setCarouselTempo(): void {

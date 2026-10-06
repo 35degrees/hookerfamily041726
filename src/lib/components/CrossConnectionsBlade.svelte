@@ -362,12 +362,12 @@
 			use:fitBlade={{
 				minFont: CC_FONT_MIN * bk,
 				maxFont: CC_FONT_MAX * bk,
-				maxWidth: Math.round((CARD_W - BLADE_RIGHT_INSET) * bu),
+				maxWidth: Math.round((CARD_W * stage.cardWK - BLADE_RIGHT_INSET) * bu), // narrower card, narrower blade
 				// `key` carries the dials so a resize RE-FITS. fitBlade caches on this string; without
 				// them a narrowed window kept the width and font size solved for the wide card.
 				key: `${crossConnections
 					.map((c) => c.link_text + (c.co?.link_text ?? '') + c.display_label)
-					.join('|')}|${bu}|${bk}`
+					.join('|')}|${bu}|${bk}|${stage.cardWK}`
 			}}
 		>
 			<div class="cc-body" style="height: {bladeH}px;">

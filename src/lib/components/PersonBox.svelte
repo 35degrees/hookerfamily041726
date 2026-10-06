@@ -34,8 +34,11 @@
 	// partner who was never married gets said so outright. Some partnerships carry a start year and
 	// some (Martha Fay, Suzzy Roche) carry none, so the label stands alone when there is no date.
 	let isPartner = $derived(relation === 'spouse' && relationshipType === 'partner');
+	// 745px tall and below a spouse chip drops this third line (Sam, 100626) — stage.tiny.
 	let unionLine = $derived(
-		isPartner
+		relation === 'spouse' && stage.tiny
+			? null
+			: isPartner
 			? marriageYear
 				? `(partner c. ${marriageYear})`
 				: '(partner)'
@@ -96,8 +99,8 @@
 			: compact
 				? 'w-[calc(160px*var(--stage-u,1))] h-[calc(65px*var(--stage-u,1))]'
 				: isChildTier
-					? 'w-[calc(198px*var(--stage-u,1))] h-[calc(67.5px*var(--stage-u,1))]'
-					: 'w-[calc(220px*var(--stage-u,1))] h-[calc(75px*var(--stage-u,1))]'
+					? 'w-[calc(198px*var(--stage-u,1))] h-[calc(67.5px*var(--stage-u,1)*var(--chip-h,1))]'
+					: 'w-[calc(220px*var(--stage-u,1))] h-[calc(75px*var(--stage-u,1)*var(--chip-h,1))]'
 	);
 	let photoW = $derived(compact && !isSibling ? 'w-[30%]' : 'w-[25%]');
 	// df (display font) — the person's own typeface, allow-listed. CHIP MODE ONLY, and only on the

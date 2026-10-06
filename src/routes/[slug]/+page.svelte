@@ -198,7 +198,17 @@
 	// not resolve for it — the ghost would inherit the fallback and fly at full size through a scaled
 	// stage. The document root is the one element every ghost is guaranteed to descend from.
 	$effect(() => {
-		applyStageVars(document.documentElement, stage.u, stage.k, stage.shiftX);
+		applyStageVars(
+			document.documentElement,
+			stage.u,
+			stage.k,
+			stage.shiftX,
+			stage.air,
+			stage.short,
+			stage.chipH,
+			stage.topClear,
+			stage.leadTrim
+		);
 		return () => clearStageVars(document.documentElement);
 	});
 
@@ -2462,7 +2472,15 @@
 		   pre-multiplied length would hide the 80 and the 32, and both of those numbers are decisions.
 		   --stage-u defaults to 1 so SSR, /table, and any consumer mounted before the effect runs get the
 		   roomy geometry rather than collapsing to zero. */
-		padding-top: calc(80px * var(--stage-u, 1));
+		/* 80u, EXACTLY, until a short window (--stage-short > 0, stage.svelte.ts SHORT_H) — and there it does
+		   NOT squeeze. It was squeezed as "air" at first and the parents rode up under the corner nav (the nav
+		   sits 16-46px down, and "Show parents" hangs ~22px above the row). So on a short window the lead
+		   blends to STAGE_TOP_CLEAR (78px, a hair under the desktop's 80) and the squeeze is taken below it. */
+		/* …and under 1050px tall, 15px less (--stage-lead-trim) while the short squeeze is not yet in charge. */
+		padding-top: calc(
+			80px * var(--stage-u, 1) - var(--stage-lead-trim, 0px) * (1 - var(--stage-short, 0)) +
+				(var(--stage-top-clear, 78px) - 80px * var(--stage-u, 1)) * var(--stage-short, 0)
+		);
 		padding-bottom: calc(80px * var(--stage-u, 1));
 		/* THE TIMELINE GETS NO ROOM HERE, and that is a rule rather than an oversight. Sam, Aug 8, on a
 		   build that had reserved the rail's width and pushed the card 48px right: "there is to be no
@@ -2998,7 +3016,13 @@
 	}
 
 	.parents-slot {
-		min-height: 100px;
+		/* 100px — the 75px chip plus a 25px lead — EXACTLY, until a short window (--stage-short > 0), where it
+		   blends toward the chip's real height plus a squeezed lead. A plain scale would also have moved every
+		   tall window at a narrower width, where the chips are already under 75px; the blend cannot. */
+		min-height: calc(
+			100px +
+				(75px * var(--stage-u, 1) * var(--chip-h, 1) + 25px * var(--stage-air, 1) - 100px) * var(--stage-short, 0)
+		);
 		display: flex;
 		align-items: flex-end;
 		justify-content: center;
@@ -3015,10 +3039,12 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 4px;
-		padding: 6px 0;
+		/* THE CONNECTORS ARE AIR — fixed px that never scaled with the frame — so on a short window they take
+		   the hardest squeeze (--stage-air, stage.svelte.ts SHORT_H). Exactly 1 at 900px tall and above. */
+		gap: calc(4px * var(--stage-air, 1));
+		padding: calc(6px * var(--stage-air, 1)) 0;
 		opacity: 0; /* hidden during flight — the lines+label are scaffolding for the LANDED page */
-		min-height: 70px; /* Reserve space even when empty (e.g., no parents) — no layout shift */
+		min-height: calc(70px * var(--stage-air, 1)); /* Reserve space even when empty (e.g., no parents) — no layout shift */
 	}
 	/* The connector + its label fade in as ONE unit WITH the parent/child/spouse boxes, on the
 	   card's landing (featuredLanded → true). Transition lives on .landed so the reveal is a
@@ -3031,18 +3057,18 @@
 
 	.connector-line {
 		width: 1px;
-		height: 16px;
+		height: calc(16px * var(--stage-air, 1));
 		background-color: rgb(168, 162, 158);
 	}
 
 	/* Parents: bottom line is closer to FeaturedCard → shorter */
 	.connector-parents .connector-line:last-child {
-		height: 12px;
+		height: calc(12px * var(--stage-air, 1));
 	}
 
 	/* Children: top line is closer to FeaturedCard → shorter */
 	.connector-children .connector-line:first-child {
-		height: 12px;
+		height: calc(12px * var(--stage-air, 1));
 	}
 
 	.connector-label {

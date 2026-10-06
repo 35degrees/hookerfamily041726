@@ -15,8 +15,9 @@
 	};
 	let { person, institutionsById = {}, burialCemetery = null }: Props = $props();
 
-	const EDU_LIMIT = 3;
-	const CAREER_LIMIT = 3;
+	// 3 each — 2 on a short window (stage.rowCap, Sam 100626: "two career and two educ entries").
+	const EDU_LIMIT = $derived(stage.rowCap ?? 3);
+	const CAREER_LIMIT = $derived(stage.rowCap ?? 3);
 
 	// Education: canonical order, capped. No reliable recency key (dates is a free-form
 	// string), so we take the first EDU_LIMIT rather than sort. Thomas-scale CVs overflow.
@@ -531,7 +532,8 @@
 			</div>
 			<!-- Location + MAP on ONE right-flush line: "City, ST · MAP". Omitted entirely when there's
 			     no location text and no resolvable map destination (name-only degrade). -->
-			{#if burialLocation || burialMapUrl}
+			<!-- Not on a short window: the place goes, the cemetery stays — as birth and death (Sam, 100626). -->
+			{#if !stage.shortH && (burialLocation || burialMapUrl)}
 				<div class="relative z-10 mt-px font-opensans text-[calc(11px*var(--type-k,1))] leading-snug font-light text-slate-500">
 					{#if burialLocation}<span>{burialLocation}</span>{/if}{#if burialMapUrl}<a
 							href={burialMapUrl}

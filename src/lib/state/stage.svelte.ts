@@ -411,6 +411,130 @@ const coarsePointer = $derived(
 const vw = $derived(innerWidth.current ?? SSR_W);
 const vh = $derived(innerHeight.current ?? SSR_H);
 const rung = $derived(rungFor(vw, vh));
+
+/**
+ * ── THE SHORT WINDOW: HEIGHT AS A SECOND, ONE-WAY DIAL (Sam, 100626) ──────────────────────────────────
+ * "if I'm on an ipad mini, i want to be able to see the whole front layout and not feel like its a partial
+ * cut off experience… i don't want to reduce the experience for desktop and laptop users." Measured before
+ * this: iPad mini LANDSCAPE (1133x700) cut the children row off by 239px (Burr Sr.) to 317px (Taft);
+ * iPad mini PORTRAIT (744x1050) and the desktops already fit.
+ *
+ * Until now height only PICKED a rung (minH); it never sized anything. This mirrors the width system with
+ * the same shape — a pure function of the window, no measuring, no feedback — and the same "take the
+ * smaller" rule as the width clamp, but it is ONE-WAY and THRESHOLDED:
+ *
+ *   vh >= SHORT_H (900)  everything is exactly as before. Not "nearly": hT is 0, every factor is 1, every
+ *                        cap is the old cap. Desktops, windows 900+ tall and iPad portrait cannot move.
+ *   SHORT_H > vh         hT rises 0 → 1 over the first SHORT_RAMP px below it, and from there the frame is
+ *                        simply whatever makes the resting stage fit the window's height (see below).
+ *
+ * What hT spends, in Sam's order — air before content:
+ *   AIR     the dead lead above the parents, and both connectors (their lines, padding and floor), which
+ *           are fixed px today and did not scale at all. `--stage-air`, squeezed hardest.
+ *   FRAME   u and k together — "shrinking everything proportionately" — so the card, its type, the chips
+ *           and the photos all come down as one. k is floored so running text stays readable.
+ *   BUDGET  below the threshold a card carries at most 3 NBs, 6 cross-connections and 2 each of career
+ *           and education (Sam: "if its too large… make it 6 CCs max and two career and two educ entries
+ *           and say 3 NBs max").
+ */
+/**
+ * 900, not the 800 it shipped with (Sam, 100626, at an 815px window: "the size reductions isn't really
+ * starting… i wasn't targeting the ipad mini in exclusion of other tablet sizes"). Regular iPads in landscape
+ * land around 770-800 in Safari, and an 815 desktop window covered the whole children row. Sam chose 900 over
+ * "always fit" knowingly: above it rich cards still scroll as before, and a window dragged across it steps.
+ */
+const SHORT_H = 900;
+/**
+ * THE SQUEEZE COMES IN OVER 24px, NOT 200 — and that was measured, not chosen. The first build eased it in
+ * linearly from 800 to 600 and only got a quarter to a half of the way by iPad heights: at 1180x760 Taft
+ * still ran 191px off the bottom. The reason is that a rich card ALREADY overflows at 800 (the 1440x860
+ * laptop scrolls 200-290px on Taft and Thomas, and that is accepted), so there is no gentle slope that both
+ * starts at "untouched" and fits by 760. The squeeze therefore arrives quickly below 800 and then tracks
+ * the window: past the ramp it is simply "whatever fits".
+ */
+const SHORT_RAMP = 24; // 40 left Thomas 4px over while still easing in; 24 is full fit 24px under SHORT_H
+/**
+ * THE RESTING STAGE'S HEIGHT PER UNIT OF u, BELOW THE TOP LEAD (parents-row top to children-row bottom), with
+ * the air squeezed and the short-window budget applied. Measured at 1133x700, see the probe numbers in the
+ * session record; the richest of Burr Sr., Taft and Thomas Hooker sets it. Declared, like the width ladder, and CHECKED rather than
+ * solved: measuring the live stage and dividing would feed back (its height is itself a function of u).
+ */
+const STAGE_H_PER_U = 1068;
+const SHORT_MARGIN = 16; // breathing room under the children row
+/** The lead above the parents on a short window — NOT squeezed: it is what keeps the parent row (and
+ *  "Show parents" above it) clear of the corner nav. Mirrors the 78px in +page.svelte's padding-top. */
+const STAGE_TOP_CLEAR = 78;
+const AIR_SQUEEZE = 0.6; // the connectors and the lead at full squeeze: 40% of their height
+/**
+ * TYPE FOLLOWS THE FRAME HERE, nearly all the way — Sam: "shrinking everything proportionately". A 0.78
+ * floor was tried first and the type out-grew its own card: at 1133x700 Taft's third NB, the burial line
+ * and the second Connect button were cut off at the card's bottom edge, because the frame had come down to
+ * 0.625 and the text had not. 0.66 (13px body ≈ 8.6px) is the floor; the short-window budget (3 NBs, 2+2
+ * rows, 6 CCs) is what keeps a card from needing more.
+ */
+const SHORT_K_FLOOR = 0.66;
+const SHORT_NB_CAP = 3;
+/**
+ * THE iPAD MINI LANDSCAPE STEP — 745px tall and below (Sam, 100626: "ipad mini landscape is really 700px
+ * height? ouch"). It is: 1133x744 less Safari's bars leaves ~690-700. Below this the chips shorten by 15%,
+ * a spouse chip drops its marriage line, the card's name steps down 15%, and the lead above the parents comes
+ * up 14px (78 → 64) — there was ~28px of air under the corner nav there (Sam: "a little more room between
+ * buttons and parent chips… you can use a little more but not right up against").
+ */
+/**
+ * THE FIRST STEP DOWN — under 1050px tall (Sam, 100626, at a 1015px window: "we should be already closing
+ * gap between parent chips and nav bar menu by 25% and then deleting birth and death locations at 1000px…
+ * reduce the total height of the 'Jared's parents' and 'Seven children' vertical lines by 25%"). The same
+ * line the CC ladder already starts on. Above it nothing moves.
+ */
+const MID_H = 1050;
+const MID_AIR = 0.75; // the connectors, 25% shorter
+const MID_LEAD_TRIM = 15; // px off the lead above the parents: 25% of the ~59px gap under the nav
+const NO_PLACES_H = 1000; // birth and death places go below this
+const mid = $derived(vh < MID_H);
+const TINY_H = 746;
+const TINY_CHIP_H = 0.85;
+const TINY_NAME_K = 0.85;
+const TINY_TOP_CLEAR = 64;
+const tiny = $derived(vh < TINY_H);
+/**
+ * THE CARD GETS SHORTER — NOT SMALLER (100626). Its height is fixed (CARD_TOP_H × u) whatever it holds, and on
+ * a short window it holds less: 3 NBs, 2+2 rows, and no birth/death places or "Connect … to anyone" (Sam:
+ * "delete the birth location and death location and Connect Frank to Anyone button"). So the frame comes down
+ * to fit what is left, while its WIDTH and every size of TYPE stay exactly where the width system put them.
+ */
+// 0.82 first: the left column (a 3:4 photo, two vitals, a button) still ran past it. With the photo
+// SQUARE on a short window (FeaturedCard) and the burial's place gone (RightColumn), 0.78 holds.
+const SHORT_CARD_K = 0.78;
+/**
+ * …AND NARROWER (Sam, 100626: "reduce the width of the featured card overall by 15% and maybe a little in
+ * the width of the photo and the Connect to Thomas button… most of the width reduction would be the width of
+ * the NB column since reducing to max 3 NBs anyway"). The photo column gives 7%, the right column keeps its
+ * width, and the narrative column takes the rest of the cut (~25%).
+ */
+const SHORT_CARD_W_K = 0.85;
+const SHORT_PHOTO_COL_K = 0.93;
+/**
+ * THE CHILDREN OUTRANK THE BLADE (Sam, 100626: "children chips are more important to show than long CC
+ * blades"). Its own ladder, by window HEIGHT, and it starts well above the 900 squeeze — Sam: "even 1050px
+ * height should start the 6 CC max… at 1000px… a 5 CC max… bring it down to max 2 CC as we get to 750px".
+ * A rich blade is the tallest variable thing on the stage, so it is the first content a short window gives up.
+ */
+function ccCapForHeight(h: number): number | null {
+	if (h > 1050) return null;
+	if (h > 1000) return 6;
+	if (h > 900) return 5;
+	if (h > 820) return 4;
+	if (h > 750) return 3;
+	return 2;
+}
+const SHORT_ROW_CAP = 2; // career and education each
+const shortH = $derived(vh < SHORT_H);
+const hT = $derived(shortH ? Math.min(1, (SHORT_H - vh) / SHORT_RAMP) : 0);
+/** u that makes the resting stage fit the window's height. Only ever applied below SHORT_H. */
+const fitU = $derived((vh - STAGE_TOP_CLEAR - SHORT_MARGIN) / STAGE_H_PER_U);
+// heightS is declared BELOW clampedU — it needs it, and a $derived read before its declaration throws.
+const airK = $derived(mid ? Math.min(MID_AIR, 1 - AIR_SQUEEZE * hT) : 1);
 /** The rung's intent, capped by what the viewport's WIDTH can actually hold. See widthClamp. */
 /**
  * THE WIDTH THE LAYOUT ACTUALLY GETS, WHICH IS NOT THE WINDOW'S — DECLARED ABOVE ITS FIRST READER,
@@ -475,6 +599,14 @@ const uBars = $derived(
 	rung.siblingColumn ? uFloor : (layoutW - TIMELINE_BARS_W - 2) / (CARD_W_BASE + STAGE_PAD_BASE)
 );
 const clampedU = $derived(Math.min(rung.uMax ?? rung.u, Math.max(uFloor, uBars)));
+/** The short-window squeeze as a multiplier on clampedU: 1 at SHORT_H (900px) tall and up, then "take the smaller" of
+ *  the width's u and the height's, eased in over SHORT_RAMP. Never above 1 — height can only shrink. */
+// RETIRED AS A SHRINK (Sam, 100626, at 750px tall: "the names and text is too small to read… you may as well
+// have a giant X on the middle of the screen"). Scaling the frame AND the type to fit took body text to
+// ~8.6px. Height is now bought with height — air, the content budget and a shorter card — never with width
+// or type, so this stays 1. Kept as a named factor so the probe numbers in the record still map to code.
+const heightS = $derived(1);
+void fitU;
 
 /**
  * ── THE OFF-CENTRE CHEAT (083026) ───────────────────────────────────────────────────────────────
@@ -522,8 +654,8 @@ const shiftX = $derived.by(() => {
 	// window's width alone and `timelineBars` has no say in it — hiding the bars changes what you see
 	// and nothing about where anything sits.
 	if (vw >= CHEAT_MAX_W) return 0;
-	const cardW = CARD_W_BASE * clampedU;
-	const padSide = (STAGE_PAD_BASE / 2) * clampedU;
+	const cardW = CARD_W_BASE * clampedU * heightS;
+	const padSide = (STAGE_PAD_BASE / 2) * clampedU * heightS;
 	const naturalLeft = (layoutW - cardW) / 2;
 	// RE-CENTRE IN THE SPACE THAT IS LEFT — not "move the minimum distance that clears the bars", which
 	// is what this was and what Sam kept having to report. Clearing the bars pinned the card HARD AGAINST
@@ -572,7 +704,11 @@ function nbCapForWidth(w: number): number {
 	if (w <= 800) return 3;
 	return 7; // the roomy maximum — NarrativeBlocks' own MAX_DISPLAYED
 }
-const effectiveNbCap = $derived(Math.min(rung.nbCap ?? 7, nbCapForWidth(vw)));
+// …and by HEIGHT: 6 under 1000px tall (Sam, 100626: "around 950px prob even 1000px height, NB max should go
+// from 7 to 6"), 3 under 900 (SHORT_NB_CAP).
+const effectiveNbCap = $derived(
+	Math.min(rung.nbCap ?? 7, nbCapForWidth(vw), shortH ? SHORT_NB_CAP : vh < NO_PLACES_H ? 6 : 7)
+);
 
 /**
  * THE VITALS' OWN WHITESPACE, HALVED BELOW 1100px WIDTH. Sam, after seeing it on pixels:
@@ -652,17 +788,73 @@ export const stage = {
 	get density(): Density {
 		return rung.density;
 	},
-	/** the FRAME unit — geometry multiplier, already width-clamped */
+	/** the FRAME unit — geometry multiplier, already width-clamped, and height-squeezed on a short window */
 	get u(): number {
-		return clampedU;
+		return clampedU * heightS;
 	},
 	/** the rung's declared u before the width clamp — for the probe and for diagnostics */
 	get rungU(): number {
 		return rung.u;
 	},
-	/** the TYPE step — type multiplier, always >= u */
+	/** the TYPE step — type multiplier, always >= u; squeezed with the frame on a short window, floored */
 	get k(): number {
-		return rung.k;
+		return heightS === 1 ? rung.k : Math.max(Math.min(rung.k, SHORT_K_FLOOR), rung.k * heightS);
+	},
+	/** The AIR factor — the connectors. 1 except on a short window. */
+	get air(): number {
+		return airK;
+	},
+	/** How far into the short-window squeeze, 0 (800px tall and up) → 1 (SHORT_RAMP below). `--stage-short`. */
+	get short(): number {
+		return hT;
+	},
+	/** Is the window under the short-height threshold? Gates the content budget below. */
+	get shortH(): boolean {
+		return shortH;
+	},
+	/** px taken off the lead above the parents under MID_H (only while the short squeeze is not in charge). */
+	get leadTrim(): number {
+		return mid ? MID_LEAD_TRIM : 0;
+	},
+	/** Birth and death places hidden (under NO_PLACES_H). */
+	get noPlaces(): boolean {
+		return vh < NO_PLACES_H;
+	},
+	/** 745px tall and below — see TINY_H. */
+	get tiny(): boolean {
+		return tiny;
+	},
+	/** Parent/child chip HEIGHT multiplier (both kinds alike, so their shapes still match). `--chip-h`. */
+	get chipH(): number {
+		return tiny ? TINY_CHIP_H : 1;
+	},
+	/** The featured card's name-size multiplier. */
+	get nameK(): number {
+		return tiny ? TINY_NAME_K : 1;
+	},
+	/** The lead above the parents on a short window, px. `--stage-top-clear`. */
+	get topClear(): number {
+		return tiny ? TINY_TOP_CLEAR : STAGE_TOP_CLEAR;
+	},
+	/** The card's height multiplier on a short window (width and type untouched). 1 otherwise. */
+	get cardK(): number {
+		return shortH ? SHORT_CARD_K : 1;
+	},
+	/** The card's WIDTH multiplier on a short window. 1 otherwise. */
+	get cardWK(): number {
+		return shortH ? SHORT_CARD_W_K : 1;
+	},
+	/** The photo column's width multiplier on a short window. 1 otherwise. */
+	get photoColK(): number {
+		return shortH ? SHORT_PHOTO_COL_K : 1;
+	},
+	/** Cross-connections shown in the blade; null = all. */
+	get ccCap(): number | null {
+		return ccCapForHeight(vh);
+	},
+	/** Career and education rows each; null = the column's own limit. */
+	get rowCap(): number | null {
+		return shortH ? SHORT_ROW_CAP : null;
 	},
 	get childCap(): number | null {
 		return rung.childCap;
@@ -760,7 +952,22 @@ export function mergeChipUnion(): boolean {
  * `calc(925px * var(--stage-u))` and reads at the call site what the base number is. A pre-multiplied
  * length would hide the design constant, and every one of those constants is documented somewhere.
  */
-export function applyStageVars(el: HTMLElement, u: number, k: number, shiftX = 0): void {
+export function applyStageVars(
+	el: HTMLElement,
+	u: number,
+	k: number,
+	shiftX = 0,
+	air = 1,
+	short = 0,
+	chipH = 1,
+	topClear = 78,
+	leadTrim = 0
+): void {
+	el.style.setProperty('--stage-lead-trim', `${leadTrim}px`);
+	el.style.setProperty('--chip-h', String(chipH));
+	el.style.setProperty('--stage-top-clear', `${topClear}px`);
+	el.style.setProperty('--stage-air', String(air));
+	el.style.setProperty('--stage-short', String(short));
 	el.style.setProperty('--stage-u', String(u));
 	el.style.setProperty('--type-k', String(k));
 	// TWO NON-NEGATIVE VARIABLES RATHER THAN ONE SIGNED ONE, because the consumer is `padding`, which
@@ -779,4 +986,9 @@ export function clearStageVars(el: HTMLElement): void {
 	el.style.removeProperty('--stage-u');
 	el.style.removeProperty('--type-k');
 	el.style.removeProperty('--chip-k');
+	el.style.removeProperty('--stage-air');
+	el.style.removeProperty('--stage-short');
+	el.style.removeProperty('--chip-h');
+	el.style.removeProperty('--stage-top-clear');
+	el.style.removeProperty('--stage-lead-trim');
 }

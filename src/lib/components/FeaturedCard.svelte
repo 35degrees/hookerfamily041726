@@ -68,8 +68,9 @@
 	 */
 	const tl = (px: number) => Math.round(px * u * 10) / 10;
 	/** The card's live frame, scaled. Integers — these feed a clip-path and a flight's measured rects. */
-	const cardW = $derived(Math.round(CARD_W * u));
-	const cardTopH = $derived(Math.round(CARD_TOP_H * u));
+	// × stage.cardK: SHORTER on a short window, never narrower (stage.svelte.ts SHORT_CARD_K). DeckRiffle's ghosts
+	// read the same product so a riffle's cards stay the hero's shape.
+	const cardTopH = $derived(Math.round(CARD_TOP_H * u * stage.cardK));
 	/** Must match CrossConnectionsBlade's own `tang` exactly — same base, same store, same rounding. */
 	const bladeTang = $derived(Math.round(BLADE_TANG * u));
 
@@ -576,6 +577,23 @@
 	// a 4+-spouse card (Michael HD3384) runs the notch, hence the whole card-top, off its
 	// 925px frame. This is the geometry invariant the carousel build sits on top of.
 	let notchChipCount = $derived(Math.min(chipCount, 3));
+	// × stage.cardWK: 15% narrower on a short window (stage.svelte.ts SHORT_CARD_W_K), taken out of the NB column.
+	// EXCEPT with THREE spouse chips in the notch: they take ~520px of a 786px card and the header was left a
+	// column — the name wrapped and "Hooker" fell onto its own line (Rev. Jared Bradley Flagg, 100626). Those
+	// cards keep their full width; so this sits below `notchChipCount`.
+	const cardWK = $derived(notchChipCount >= 3 ? 1 : stage.cardWK);
+	const cardW = $derived(Math.round(CARD_W * u * cardWK));
+	/**
+	 * THE CONTENT GRID ON A SHORT WINDOW. At full width it is 23% | 1fr | 21%, so a narrower card would shrink
+	 * all three alike. Here the photo column is its full-width size less 7%, the right column its full-width
+	 * size exactly, and the narrative column absorbs the whole remaining cut. Widths are measured off the
+	 * FULL card's content box (card less the 24 + 12 px side padding), so they do not move with the cut.
+	 */
+	const contentCols = $derived.by(() => {
+		if (cardWK === 1) return null;
+		const full = (CARD_W - 36) * u;
+		return `${(full * 0.23 * stage.photoColK).toFixed(1)}px minmax(0, 1fr) ${(full * 0.21).toFixed(1)}px`;
+	});
 	let useCompact = $derived(notchChipCount >= 3);
 	let chipWidth = $derived(useCompact ? CHIP_W_COMPACT : CHIP_W_NORMAL);
 	let chipZoneHeight = $derived(useCompact ? CHIP_ZONE_HEIGHT_COMPACT : CHIP_ZONE_HEIGHT_NORMAL);
@@ -883,9 +901,9 @@
 							? 'font-medium'
 							: NAME_WEIGHT_CLASS} {nameFontClass || NAME_FACE}"
 						use:shrinkToFit={{
-							max: t(nameFontClass ? 28 : NAME_SIZE),
-							min: t(nameFontClass ? 20 : NAME_MIN),
-							key: `${displayName}|${u}|${k}`
+							max: t(nameFontClass ? 28 : NAME_SIZE) * stage.nameK, // 85% at 745px tall and below
+							min: Math.min(t(nameFontClass ? 20 : NAME_MIN), t(nameFontClass ? 28 : NAME_SIZE) * stage.nameK),
+							key: `${displayName}|${u}|${k}|${stage.nameK}`
 						}}
 					>
 						<span data-fit class="inline-block whitespace-nowrap"
@@ -969,6 +987,7 @@
 			<!-- Content row: minmax(0, 1fr) + overflow-hidden allows NB body expansion
 			     without growing the row. Any overflow is clipped, keeping card height stable. -->
 			<div
+				style:grid-template-columns={contentCols}
 				class="content grid grid-cols-[23%_1fr_21%] overflow-hidden py-(--card-pad-y) pr-[calc(12px*var(--stage-u,1))] pl-[calc(24px*var(--stage-u,1))]"
 			>
 				<!-- space-y: photo->vitals is the original 16 less 5% then a further 20% (15.2 -> 12.16);
@@ -983,7 +1002,7 @@
 						<img
 							src={portraitSrc}
 							alt={person.bio?.display_name ?? person.name?.display_name ?? 'Portrait'}
-							class="aspect-[3/4] w-full rounded-sm bg-stone-100 object-cover {photoPosition
+							class="{stage.shortH ? 'aspect-square' : 'aspect-[3/4]'} w-full rounded-sm bg-stone-100 object-cover {photoPosition
 								? ''
 								: 'object-top'}"
 							style={photoPosition ? `object-position: ${photoPosition}` : undefined}
@@ -997,7 +1016,7 @@
 							}}
 						/>
 					{:else}
-						<div class="aspect-[3/4] w-full rounded-sm bg-stone-100"></div>
+						<div class="{stage.shortH ? 'aspect-square' : 'aspect-[3/4]'} w-full rounded-sm bg-stone-100"></div>
 					{/if}
 					<!--
 						THE VITALS ARE UNTOUCHED, and that is the requirement rather than an accident (Sam, three
@@ -1074,12 +1093,18 @@
 								{/if}
 							</div>
 						{/snippet}
-						{#if birthDate}{@render vital('Birth', birthDate, birthLocation, birthMapUrl)}{/if}
+						<!-- Under 1000px tall the PLACES (and their map links) go and the dates stay (Sam, 100626). -->
+						{#if birthDate}{@render vital(
+								'Birth',
+								birthDate,
+								stage.noPlaces ? null : birthLocation,
+								stage.noPlaces ? null : birthMapUrl
+							)}{/if}
 						{#if deathDate}{@render vital(
 								'Death',
 								deathDate,
-								deathLocation,
-								deathMapUrl,
+								stage.noPlaces ? null : deathLocation,
+								stage.noPlaces ? null : deathMapUrl,
 								ageAtDeathValue
 							)}{/if}
 					</div>
@@ -1144,9 +1169,11 @@
 								use:shrinkToFit={{ max: tl(10), min: tl(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
 							>
 								<span data-fit class="inline-block whitespace-nowrap"
-									>Connect {firstName ? `${firstName} ` : ''}to Thomas</span
+									>Connect {firstName && !stage.shortH ? `${firstName} ` : ''}to Thomas</span
 								>
 							</button>
+							<!-- Not on a short window (Sam, 100626) — "to Thomas" stays; it is the line's own question. -->
+							{#if !stage.shortH}
 							<button
 								type="button"
 								class="connect-btn connect-anyone"
@@ -1157,6 +1184,7 @@
 									>Connect {firstName ? `${firstName} ` : ''}to anyone</span
 								>
 							</button>
+							{/if}
 						</div>
 					{/if}
 				</div>
@@ -1214,7 +1242,11 @@
 		style="top: calc(100% - {bladeTang}px);"
 		bind:this={bladeMount}
 	>
-		<CrossConnectionsBlade {crossConnections} onheight={onbladeheight} />
+		<!-- A short window shows the first six (stage.ccCap, Sam 100626) — curated order, so the best lead. -->
+		<CrossConnectionsBlade
+			crossConnections={stage.ccCap ? crossConnections.slice(0, stage.ccCap) : crossConnections}
+			onheight={onbladeheight}
+		/>
 	</div>
 </div>
 

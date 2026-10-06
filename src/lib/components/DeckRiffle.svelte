@@ -50,8 +50,8 @@
 	// is not a mechanism, and the two would have diverged the first time the number moved." Phase 2.75
 	// is that first time — the number now moves on every resize — so both dimensions come from the
 	// owner and go through the same dial.
-	const CARD_W = $derived(Math.round(CARD_W_BASE * stage.u));
-	const CARD_MIN_H = $derived(Math.round(CARD_TOP_H * stage.u));
+	const CARD_W = $derived(Math.round(CARD_W_BASE * stage.u * stage.cardWK)); // the hero's width, short window too
+	const CARD_MIN_H = $derived(Math.round(CARD_TOP_H * stage.u * stage.cardK)); // the hero's shape, short window too
 
 	function clearLive() {
 		for (const a of live) {
