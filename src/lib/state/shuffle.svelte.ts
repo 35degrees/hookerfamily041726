@@ -37,7 +37,10 @@ import { focusPerson } from './navigate';
 import { hideCcRoster, showCcRoster } from './ccRoster.svelte';
 import { publishCameraMove, type CameraMove } from './camera';
 import { lockFlight } from './flightLock';
+import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
+import { floatPause } from './slabFloat.svelte';
 import {
+	releaseAllLandings,
 	captureFlightOrigin,
 	captureFlightKind,
 	captureClicked,
@@ -83,6 +86,46 @@ export function warmShuffle(): void {
 	void getPool();
 }
 
+/**
+ * THE NEXT PICK, MADE IN ADVANCE (100526). A shuffle's target is random, so its photo could never be warmed
+ * ahead — it started downloading at the click, and a first fetch from Cloudinary's CDN can take over a
+ * second (measured: 1.36s cold, 0.10s warm, the same file), longer than the ~0.8s flight. Sam saw ~1 in 10
+ * shuffled cards land with the photo still loading. So the NEXT target is drawn while the reader is on the
+ * current card (the button calls this once a card has settled, at idle), and its payload and its featured
+ * photo — the same derivative the card renders, so no new Cloudinary transformation — are fetched then.
+ * The click then flies to someone already loaded. One photo per pick, held until it is used.
+ */
+let next: NotableRow | null = null;
+let preparing = false;
+export async function prepareNextShuffle(): Promise<void> {
+	if (preparing || typeof window === 'undefined') return;
+	const current = featured.current?.person?.slug ?? null;
+	if (next && next.slug !== current && !recent.includes(next.slug)) return; // still a good pick
+	preparing = true;
+	try {
+		const target = pick(await getPool(), current);
+		if (!target) return;
+		next = target;
+		const res = await fetch(`/data/person/${target.slug}.json`);
+		if (!res.ok) return;
+		const data = await res.json();
+		const url = cldSize(data?.person?.bio?.photo_url ?? data?.person?.name?.photo_url ?? null, PHOTO_TRANSFORM);
+		if (url && next === target) {
+			const img = new Image();
+			try {
+				(img as unknown as { fetchPriority: string }).fetchPriority = 'low';
+			} catch {
+				/* no fetchPriority — still a cache warm */
+			}
+			img.src = url;
+		}
+	} catch {
+		/* a failed warm costs nothing: the click simply picks fresh */
+	} finally {
+		preparing = false;
+	}
+}
+
 /** Record a slug as seen. Exported so the page can seed it with the person you arrived on. */
 export function markSeen(slug: string | null | undefined): void {
 	if (!slug) return;
@@ -118,7 +161,10 @@ function pick(rows: NotableRow[], currentSlug: string | null): NotableRow | null
 export async function shuffleToNotable(node: HTMLElement): Promise<void> {
 	const rows = await getPool();
 	const current = featured.current?.person?.slug ?? null;
-	const target = pick(rows, current);
+	// the pick made in advance (prepareNextShuffle), if it is still a valid one; otherwise draw fresh
+	const ready = next && next.slug !== current && !recent.includes(next.slug) ? next : null;
+	next = null;
+	const target = ready ?? pick(rows, current);
 	if (!target) return;
 	markSeen(current);
 	markSeen(target.slug);
@@ -147,7 +193,11 @@ export async function ccFlyTo(
 	// TOP; +1 descendant tier, enters from the BOTTOM) — so isVerticalMove/deckDirFor give the flat vertical
 	// dive, and isArcMove (which needs 'collateral') never arcs it. Absent = the lateral carousel flight.
 	const vertical = opts?.vertical;
-	// Everything below mirrors the CC branch of warmPersonLinks, in the same order, for the same reasons.
+	// Everything below mirrors the CC branch of warmPersonLinks, in the same order, for the same reasons —
+	// INCLUDING what it does first, before anything is measured (100526): flatten the zone's float, release
+	// a Safari landing hold (the departing card's transform is driven inline and a held animation would win).
+	floatPause();
+	releaseAllLandings();
 	if (!prefersReducedMotion.current) lockFlight();
 	captureFlightOrigin(node.getBoundingClientRect());
 	captureFlightKind('cc');

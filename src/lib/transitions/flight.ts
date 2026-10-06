@@ -13,6 +13,7 @@
 import { isWebKit } from '#lib/state/engine.js';
 import { cubicOut, cubicIn, cubicInOut } from 'svelte/easing';
 import { motionOff } from '#lib/state/motion.svelte.js';
+import { floatResume } from '#lib/state/slabFloat.svelte.js';
 import { su } from '#lib/state/stage.svelte.js';
 import { getCameraMove, type CameraMove } from '../state/camera';
 import { isArcMove, arcDurationMsFor, ARC_DESC, ARC_RISE } from './arc-math';
@@ -156,41 +157,11 @@ export const ASCEND_MS = ASCEND_TOTAL_MS; // 980 -> 840 (Sam: still slow)
  * those to one number was never coupling them, it was only making one of them wrong — which is what
  * "too hard and fast coming in" was describing.
  */
-const ASCEND_ENTER_MS = 760;
-/**
- * THE ARRIVAL IN ORBIT SLOWS ONCE THE ROOM HAS TURNED (Sam, 100526): "as soon as the background colour
- * changes it means it's hit orbit altitude, so the entering speed changes — it slows down."
- *
- * The entry used to run one symmetric cubicInOut over ASCEND_ENTER_MS — fastest in its MIDDLE, which is
- * exactly when the card comes through the window and the veil is half-dark, then a brake into the settle.
- * Now the clock is ASCEND_ENTER_MS's curve, UNCHANGED, up to ENTER_GLIDE_FROM (the card still invisible
- * in front of the camera, the departing card receding on its own unchanged clock), and from there a
- * single long deceleration — a cubic Hermite that starts at exactly the speed the old curve had and comes
- * to rest at ENTER_GLIDE_MS. No seam, no second push: from the moment you can see it, it only slows.
- * The landing moves later by ENTER_GLIDE_MS − ASCEND_ENTER_MS; ENTER_GLIDE_MS is the dial.
- */
-const ENTER_GLIDE_FROM = 0.45; // fraction of the OLD clock: where the card has come through the window
-/**
- * "SOUPY" (Sam, 100526, on the first glide: "I don't notice that much of a change… it should be like
- * entering a more soupy, thick-air environment"). So the tail is not an ease-out but DRAG: from the moment
- * the card appears its speed decays exponentially with time constant ENTER_DRAG_MS — the medium takes
- * most of the momentum almost at once, then a long heavy creep — with the curve normalised to land
- * exactly at ENTER_GLIDE_MS. ENTER_DRAG_MS = 200 makes the entry speed continuous with the old curve
- * (no push, no seam); smaller is thicker soup.
- */
-const ENTER_GLIDE_MS = 1300;
-const ENTER_DRAG_MS = 200;
-function enterGlideEase(x: number): number {
-	const tau = x * ENTER_GLIDE_MS;
-	const tv = ENTER_GLIDE_FROM * ASCEND_ENTER_MS;
-	if (tau <= tv) return cubicInOut(tau / ASCEND_ENTER_MS);
-	const p0 = cubicInOut(ENTER_GLIDE_FROM);
-	const L = ENTER_GLIDE_MS - tv;
-	const k = 1 - Math.exp(-L / ENTER_DRAG_MS);
-	return Math.min(1, p0 + (1 - p0) * ((1 - Math.exp(-(tau - tv) / ENTER_DRAG_MS)) / k));
-}
-/** Thick air does not spring: the entry's overshoot and wobble are off while the soup is on. */
-const ENTER_SOUP = true;
+const ASCEND_ENTER_MS = 1040; // 760 until 100526 — the extra time is the soft rubber-band landing's (see ASCEND_ENTER_CARRY)
+/** When the arriving card has come through the window on a zone entry — the slab's float is let loose
+ *  then (see growFrom). A fraction of ASCEND_ENTER_MS. (A "soupy" drag after this point was tried on
+ *  100526 and removed: "it feels like a bug… just gravity loosens… we were closer before".) */
+const ENTER_GLIDE_FROM = 0.45;
 const ASCEND_RETURN_MS = 792;
 const ASCEND_ENTRY_DELAY = 0; // see ONE CLOCK below
 const ASCEND_ENTRY_MS = ASCEND_TOTAL_MS; 
@@ -588,8 +559,31 @@ const ASCEND_APPROACH = 0.8125; // the card reaches its seat here; the rest is t
 // across eight depth units of room, where the entry is nearly stopped by the time it seats. My estimate
 // was directionally right and quantitatively soft — the asymmetry between the two settles is larger
 // than a halving.
-const ASCEND_ENTER_CARRY = 0.0158;
-const ASCEND_ENTER_APPROACH = 0.8; // the entry's own reserved settle window
+// A SOFTER LANDING, NOT A SLOWER ENTRY (Sam, 100526): "it's not a matter of slowing the entrance velocity…
+// it's about softening the landing… more overshoot going back and returning to the default 2D plane, like
+// a rubber band, but in a gentle way." So the carry is about doubled (0.0158 → 0.032: the card goes ~3% past
+// its seat INTO the room, then comes back), the approach finishes at 66% of the flight instead of 80% so the
+// settle has ~350ms rather than ~150ms, and the settle is a DAMPED rubber band (enterRubber): back, a little
+// forward past rest, home — not the single quick dip. The return (ASCEND_CARRY) is untouched.
+const ASCEND_ENTER_CARRY = 0.0594; // deeper (Sam: "a little slower… deeper", "10% deeper", then "20% deeper"): ~6% past the seat
+/** ONE CORNER GOES DEEPER (Sam, 100526: "not so even of a rebound… maybe one corner of the metal plate goes
+ *  deeper"). During the entry's swing the card also tips in 3D about a random axis, so one corner sinks
+ *  further into the room than the rest — riding the same envelope, so it is level again at rest. Degrees
+ *  at the swing's peak; which corner, and how much, is rolled per flight. */
+const ENTER_CORNER_DEG = 3.1; // 2.6, then +20% with the depth (Sam)
+const ASCEND_ENTER_APPROACH = 0.56; // the entry's own reserved settle window
+/**
+ * Past the seat, then ONE long, soft pull back with a faint echo — exactly 0 at both ends, peak ≈ 1.
+ * The first version (a damped double swing, sin(2π·u^0.8)·e^−2.2u) turned round too fast: Sam, "like a
+ * rubber ball bouncing on concrete… it's a rubber band plus no gravitational field, so a softer pull back."
+ * This one peaks at ~33% of the settle (it keeps travelling a little longer before it turns), and comes
+ * home PILLOWY (Sam: "softer, like a more pillowy rebound"): it slows into rest and its echo past rest is
+ * under 3% of the peak (it was 11%).
+ */
+function enterRubber(u: number): number {
+	if (u <= 0 || u >= 1) return 0;
+	return (Math.sin(1.08 * Math.PI * Math.pow(u, 0.85)) * Math.pow(1 - u, 0.6)) / 0.762;
+}
 const ASCEND_TILT_DEG = 0.28; // peak rotation — scaled with the carry, so character grows with it
 const ASCEND_DRIFT_PX = 4.8; // peak off-centre pull, likewise
 const ASCEND_WOBBLE = 0.018; // peak excursion of the secondary bounce, as a fraction of final scale
@@ -1407,8 +1401,11 @@ export function growFrom(node: Element) {
 			const jTilt = (Math.random() * 2 - 1) * (0.55 + Math.random() * 0.75);
 			const jDx = (Math.random() * 2 - 1) * (0.5 + Math.random() * 0.8);
 			const jDy = (Math.random() * 2 - 1) * (0.5 + Math.random() * 0.8);
+			// which corner of the plate sinks deeper on the entry's swing (ENTER_CORNER_DEG): a random axis
+			const cornerA = Math.random() * Math.PI * 2;
+			const cornerK = 0.7 + Math.random() * 0.3;
 			heroSchedule = {
-					duration: ascendDir === 1 ? ENTER_GLIDE_MS : ASCEND_RETURN_MS,
+					duration: ascendDir === 1 ? ASCEND_ENTER_MS : ASCEND_RETURN_MS,
 					delay: ASCEND_ENTRY_DELAY,
 					kind: flightKind,
 					axis: 'front'
@@ -1422,6 +1419,14 @@ export function growFrom(node: Element) {
 			// ENTERING: out of the foreground, exactly as approved — do not generalise this.
 			// LEAVING: the tree card rides the same belt back, from its parked depth to the seat.
 			const from = ascendDir === 1 ? ASCEND_ENTRY_SCALE : ASCEND_PARK;
+			// THE FLOAT STARTS AS THE CARD ENTERS THE ZONE, NOT AT LANDING (Sam, 100526: "there is no 'final
+			// position' to settle into" — gravity simply lets go; the soup that came with it was removed). Entering a
+			// zone, the slab is let loose the moment the card comes through the window, so its drift builds up
+			// from zero WHILE the card is still settling and there is never a rigid lock. Safe here, unlike in
+			// an ordinary flight: a CC arrival hides the old roster at the click, so nothing launches from a
+			// measured rect that a drifting slab could throw off; the departing card and the spouse ghosts
+			// track their elements, not captured rects. A click before then still flattens it (floatPause).
+			if (ascendDir === 1) setTimeout(floatResume, ENTER_GLIDE_FROM * ASCEND_ENTER_MS);
 			// ── DEPTH DECIDES WHO IS IN FRONT, NOT WHO IS ARRIVING ───────────────────────────────────
 			// Ascending, the incoming card is the near one all the way (1.55 down to 1, against a departure
 			// shrinking from 1 to 0.34), so it sits on top. DESCENDING it is the FAR one — it grows from
@@ -1447,7 +1452,7 @@ export function growFrom(node: Element) {
 			hero.style.zIndex = z;
 			return {
 					delay: ASCEND_ENTRY_DELAY,
-					duration: ascendDir === 1 ? ENTER_GLIDE_MS : ASCEND_RETURN_MS,
+					duration: ascendDir === 1 ? ASCEND_ENTER_MS : ASCEND_RETURN_MS,
 					// The APPROACH is a strong ease-out — most of the distance is spent early, so the card reads
 					// as arriving with momentum and then taking its time to seat. The overshoot is NOT in this
 					// easing; it is in the css below, where it can carry the jitter.
@@ -1476,7 +1481,7 @@ export function growFrom(node: Element) {
 			// and it simply stops. Exponent 1.35 is gentle enough to keep the long middle of the journey
 			// close to even — which is what fixed the loiter-then-rush — while taking the sting out of the
 			// arrival, so it decelerates into the seat instead of reaching it at full speed.
-			easing: ascendDir === -1 ? (x: number) => 1 - Math.pow(1 - x, 1.35) : enterGlideEase,
+			easing: ascendDir === -1 ? (x: number) => 1 - Math.pow(1 - x, 1.35) : cubicInOut,
 					css: (t: number) => {
 						// ── THE RETURN IS INTERPOLATED IN DEPTH, NOT IN SCALE ────────────────────────────────
 				// Sam: "when Burr is entering again from the background as we exit the Ascension zone,
@@ -1520,14 +1525,13 @@ export function growFrom(node: Element) {
 				// at ASCEND_ENTER_APPROACH and the remainder catches it.
 				const ea = Math.min(1, t / ASCEND_ENTER_APPROACH);
 				const eu = Math.max(0, (t - ASCEND_ENTER_APPROACH) / (1 - ASCEND_ENTER_APPROACH));
-				const eEnv = ascendDir === 1 && !ENTER_SOUP ? Math.sin(Math.PI * Math.pow(eu, 0.72)) : 0;
+				const eEnv = ascendDir === 1 ? enterRubber(eu) : 0;
 				const base =
 					ascendDir === -1
 						? scaleAt(DEPTH_FAR + (1 - DEPTH_FAR) * a + carry)
 						: from + (1 - from) * ea - ASCEND_ENTER_CARRY * eEnv * jitter;
 						// A decaying wobble that is exactly zero at both ends, so the card cannot miss its rest.
 						const wob =
-							(ascendDir === 1 && ENTER_SOUP ? 0 : 1) *
 							Math.sin(t * Math.PI * ASCEND_WOBBLE_CYCLES * phase) *
 							Math.exp(-ASCEND_WOBBLE_DECAY * t) *
 							ASCEND_WOBBLE *
@@ -1554,7 +1558,11 @@ export function growFrom(node: Element) {
 				const tilt = ASCEND_TILT_DEG * jTilt * sEnv;
 				const dx = ASCEND_DRIFT_PX * jDx * sEnv;
 				const dy = ASCEND_DRIFT_PX * jDy * sEnv + drop * (1 - t);
-				return `transform: translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) rotate(${tilt.toFixed(3)}deg) scale(${base + wob}); opacity: ${op}; transform-origin: center center; z-index: ${z};`;
+				// the plate's uneven sink, entry only — rides eEnv, so exactly flat at both ends of the swing
+				const cTilt = ascendDir === 1 ? ENTER_CORNER_DEG * cornerK * eEnv : 0;
+				const rx = cTilt * Math.cos(cornerA);
+				const ry = cTilt * Math.sin(cornerA);
+				return `transform: translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) perspective(1600px) rotateX(${rx.toFixed(3)}deg) rotateY(${ry.toFixed(3)}deg) rotate(${tilt.toFixed(3)}deg) scale(${base + wob}); opacity: ${op}; transform-origin: center center; z-index: ${z};`;
 					}
 			};
 		}

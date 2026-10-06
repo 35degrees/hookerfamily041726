@@ -715,15 +715,13 @@
 	// flying. A click flattens it synchronously (floatPause, in warmPersonLinks); the landing lets it come
 	// loose again (floatResume, below) — from flat, with fresh randomness.
 	let pageEl: HTMLElement | undefined = $state();
-	const FLOAT_ENABLED = false;
+	const FLOAT_ENABLED = true;
 	$effect(() => {
 		const el = pageEl;
-		// NOT IN SAFARI (100526, filmed): WebKit does not move the 3D-tilted slab smoothly — it held still
-		// for seconds, then stepped ~2px in one frame — and it depth-sorted the bookmark mark behind the card
-		// mid-drift. All Sam could see of the "float" was the jerks. Chrome only until that is solved.
-		// AND OFF EVERYWHERE FOR NOW (Sam, 100526: "I don't notice any float on Chrome anyway"). Parked behind
-		// FLOAT_ENABLED rather than removed, so the engine can be re-tuned later without being rebuilt.
-		if (!FLOAT_ENABLED || !el || isWebKit() || !ascension.active || !slabFloat.resting || motionOff()) return;
+		// SECOND PASS, 2D (100526): the 3D tilt stepped in Safari and depth-sorted the bookmark behind the
+		// card, and was invisible in Chrome. The sway is now 2D (slabFloat.svelte.ts) and on in both engines;
+		// FLOAT_ENABLED is the off switch if it misbehaves again.
+		if (!FLOAT_ENABLED || !el || !ascension.active || !slabFloat.resting || motionOff()) return;
 		floatStart(el);
 		return floatStop;
 	});
@@ -1974,6 +1972,11 @@
 />
 
 
+<!-- THE SLAB'S FRAME (100526): clips anything the stage pokes past the window — the zone's drifting slab
+     (slabFloat) and a 1.8× zone arrival — so Safari never grows scrollbars that come and go. A real block,
+     unlike the stage's own `display: contents` parent, which cannot clip anything. `clip`, not `hidden`:
+     no scroll container is created, so the page still scrolls as the document. -->
+<div class="slab-frame">
 <div
 	class="page-container"
 	bind:this={pageEl}
@@ -2416,8 +2419,12 @@
 		</div>
 	{/if}
 </div>
+</div>
 
 <style>
+	.slab-frame {
+		overflow: clip;
+	}
 	/* ── THE STAGE'S OWN LABELS, IN THE ZONE ────────────────────────────────────────────────────────
 	   "Sarah's parents", "Two children" and the rest are set in a grey chosen against parchment. In the
 	   Ascension the ground is midnight, and that grey lands almost exactly between the two — too dark to

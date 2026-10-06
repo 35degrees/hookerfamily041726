@@ -29,7 +29,7 @@
 	 * instead of waiting on a request. Without this the first shuffle of a session stalls for as long as
 	 * the fetch takes — which on the 3G profile is exactly when it is least forgivable.
 	 */
-	import { shuffleToNotable, warmShuffle } from '#lib/state/shuffle.svelte.js';
+	import { shuffleToNotable, warmShuffle, prepareNextShuffle } from '#lib/state/shuffle.svelte.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { onMount } from 'svelte';
 
@@ -60,6 +60,19 @@
 	});
 
 	let el = $state<HTMLButtonElement | null>(null);
+
+	// Draw the NEXT notable and warm its photo once this card has settled, at idle (shuffle.svelte.ts
+	// prepareNextShuffle) — so a shuffle flies to someone already loaded. Not in the zones: the button is gone.
+	$effect(() => {
+		if (!settled || ascension.active) return;
+		const run = () => void prepareNextShuffle();
+		if ('requestIdleCallback' in window) {
+			const id = requestIdleCallback(run, { timeout: 2000 });
+			return () => cancelIdleCallback(id);
+		}
+		const id = setTimeout(run, 800);
+		return () => clearTimeout(id);
+	});
 
 	onMount(() => {
 		if ('requestIdleCallback' in window) requestIdleCallback(() => warmShuffle());

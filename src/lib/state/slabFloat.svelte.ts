@@ -2,12 +2,12 @@
  * slabFloat.svelte.ts — THE ZONE'S LOW GRAVITY (Sam, 100526).
  *
  * In the orbit and founder zones the whole family slab — featured card, spouse chip, parent/child rows,
- * the CC blade — drifts in 3D as ONE plane: "like a stone slab, all of them together but moving as a
+ * the CC blade — sways as ONE plane: "like a stone slab, all of them together but moving as a
  * unit". And it is the ENVIRONMENT doing it, not an engine in the card: "imagine an astronaut doing a
  * space walk… a detachment from a grounded source where it's the environment itself with low gravity
  * causing the effect… so there's some randomness to the wobble." The rail, the room and the X stay put.
  *
- * SO IT IS NOT A LOOP. Each of the four channels (tilt about x, tilt about y, drift in x, drift in y) is a
+ * SO IT IS NOT A LOOP. Each of the three channels (drift in x, drift in y, turn) is a
  * sum of three slow sines whose periods and phases are rolled at random — incommensurate, so the slab
  * never passes the same way twice and there is no cycle for the eye to learn. The motion is still a
  * plain WAAPI `transform` animation on `.page-container` (composited, nothing per frame): the noise is
@@ -24,16 +24,25 @@
  * couple of pixels, inside the flight that is starting anyway.
  */
 
-/** How far the environment carries the slab. Kept to "you only notice it if you look". */
-const TILT_X_DEG = 0.45; // about the horizontal axis — top edge toward / away from you
-const TILT_Y_DEG = 0.55; // about the vertical axis — left edge toward / away from you
-const DRIFT_X_PX = 2;
-const DRIFT_Y_PX = 2.5;
+/**
+ * How far the environment carries the slab — 2D ONLY (100526, second pass).
+ * The first pass tilted it in 3D at well under a degree: Sam could not see it in Chrome, and in Safari a
+ * 3D-transformed slab depth-sorted the bookmark behind the card and stepped instead of gliding. Sam: "maybe
+ * the chip can actually sway… on the x and y axis… a sway in the breeze kind of thing, but not wind from
+ * a specific direction, just a lack of gravity." So: a drift in x and y and a hair of turn — and NO
+ * scaling. A breathing in width/height was tried and removed (Sam: "I can see the image stretch and squish…
+ * the unit of the cards together doesn't breathe, it acts more like a metal plate. Metal doesn't stretch
+ * and squeeze"). The slab is RIGID: it only translates and rotates.
+ */
+const DRIFT_X_PX = 6; // Sam: 4 invisible, 12 "very clear… definitely scaled down", 8, then −25% (100526)
+const DRIFT_Y_PX = 6.75;
+const TURN_DEG = 0.41;
 /** From flat to full drift after a (re)start. */
 const LOOSEN_MS = 3500;
 /** One sampled segment; the next continues from its exact end pose. */
 const SEGMENT_MS = 120_000;
 const STEP_MS = 500;
+
 
 type Channel = { p: number; ph: number; a: number }[];
 let channels: Channel[] | null = null;
@@ -46,11 +55,11 @@ function roll(): Channel[] {
 	// three octaves per channel: a slow swell, a medium drift, a faint quicker sway. Periods are drawn from
 	// non-overlapping ranges so no two line up; weights sum to 1 so the channel's max is its amplitude.
 	const ch = (): Channel => [
-		{ p: 16 + Math.random() * 8, ph: Math.random() * Math.PI * 2, a: 0.55 },
-		{ p: 29 + Math.random() * 11, ph: Math.random() * Math.PI * 2, a: 0.3 },
-		{ p: 9 + Math.random() * 4, ph: Math.random() * Math.PI * 2, a: 0.15 }
+		{ p: 11 + Math.random() * 5, ph: Math.random() * Math.PI * 2, a: 0.55 },
+		{ p: 20 + Math.random() * 8, ph: Math.random() * Math.PI * 2, a: 0.3 },
+		{ p: 6 + Math.random() * 2.5, ph: Math.random() * Math.PI * 2, a: 0.15 }
 	];
-	return [ch(), ch(), ch(), ch()];
+	return [ch(), ch(), ch()];
 }
 function noise(c: Channel, tMs: number): number {
 	const t = tMs / 1000;
@@ -59,14 +68,13 @@ function noise(c: Channel, tMs: number): number {
 	return v;
 }
 function pose(tMs: number): string {
-	const [cx, cy, dx, dy] = channels as Channel[];
+	const [dx, dy, rr] = channels as Channel[];
 	const u = Math.min(1, Math.max(0, (tMs - startedAt) / LOOSEN_MS));
 	const e = u * u * (3 - 2 * u); // smoothstep: starts flat with no velocity, so nothing "kicks"
-	const rx = TILT_X_DEG * e * noise(cx, tMs);
-	const ry = TILT_Y_DEG * e * noise(cy, tMs);
 	const tx = DRIFT_X_PX * e * noise(dx, tMs);
 	const ty = DRIFT_Y_PX * e * noise(dy, tMs);
-	return `perspective(2400px) translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) rotateX(${rx.toFixed(3)}deg) rotateY(${ry.toFixed(3)}deg)`;
+	const r = TURN_DEG * e * noise(rr, tMs);
+	return `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) rotate(${r.toFixed(3)}deg)`;
 }
 
 function play(el: HTMLElement, from: number): void {
