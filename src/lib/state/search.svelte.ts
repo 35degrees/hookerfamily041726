@@ -795,8 +795,15 @@ export function setText(v: string): void {
  * rather than derived: a derived would re-roll on any dependency and the row would churn while you
  * type. Selected tags are kept in the pool so a chosen one cannot vanish from under the pointer.
  */
+/**
+ * NEVER OFFERED AT RANDOM (Sam, 100626: "lets remove the died_young and died_in_childhood and suicide tags").
+ * Canonical and still searchable — typing them works, and the records keep them — they are just not tags to
+ * surprise someone with in a random row of suggestions. Stored folded: underscores are spaces.
+ */
+const NOT_SUGGESTED = new Set(['died young', 'died in childhood', 'suicide']);
+
 export function rollTags(): void {
-	const all = vocab;
+	const all = vocab.filter((t) => !NOT_SUGGESTED.has(t));
 	if (!all.length) return;
 	const keep = tags.filter((t) => all.includes(t));
 	/**
