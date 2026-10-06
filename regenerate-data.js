@@ -2218,12 +2218,22 @@ function main() {
 	const sixStart = schemaText.indexOf('## 6. TAG TAXONOMY');
 	const sixEnd = schemaText.indexOf('## 7.', sixStart);
 	if (sixStart < 0 || sixEnd < 0) throw new Error(`${schemaFile}: could not locate §6 TAG TAXONOMY`);
+	// THE PUBLIC SECTIONS ONLY (Sam, 100626: "only canonical tags out of the schema doc… there are too many bad
+	// ones"). §6 ends with three sections the schema itself marks as not for readers — RESEARCH / DATA QUALITY
+	// (internal only), COMPILER TAGS (personal research use) and DEPRECATED — and parsing all of §6 had put
+	// `duplicate_entry`, `needs_research`, `living_contact`, `outreach_target` and `orbit_non_descendant` into the
+	// search modal's "Assorted tags". The cut is the first internal heading; everything public precedes it.
+	const internalAt = schemaText.indexOf('RESEARCH / DATA QUALITY TAGS', sixStart);
+	const publicEnd = internalAt > sixStart && internalAt < sixEnd ? internalAt : sixEnd;
+	// …and three words that read `word —` in PROSE rather than as entries: "new in v17 —", "Use sparingly —",
+	// "a different group —".
+	const PROSE = new Set(['sparingly', 'group']);
 	// Entries read `tag_name — definition`; the em dash is what marks a definition line.
 	const tagVocab = [
 		...new Set(
-			[...schemaText.slice(sixStart, sixEnd).matchAll(/(?:^|[^a-z0-9_])([a-z][a-z0-9_]{2,})\s+—/g)].map(
-				(m) => m[1]
-			)
+			[...schemaText.slice(sixStart, publicEnd).matchAll(/(?:^|[^a-z0-9_])([a-z][a-z0-9_]{2,})\s+—/g)]
+				.map((m) => m[1])
+				.filter((t) => !/^v\d+$/.test(t) && !PROSE.has(t))
 		)
 	].sort();
 	if (tagVocab.length < 100)

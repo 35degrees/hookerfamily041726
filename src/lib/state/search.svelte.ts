@@ -77,6 +77,37 @@ export type SearchRow = {
 	eb?: number;
 };
 
+/**
+ * INITIALS TYPED RUN TOGETHER (Sam, 100626: "nc butler" found no one for N. C. Butler). A display name with two
+ * or more single-letter initials in a row gets a joined alias appended to its `n:` name forms — "n. c. butler"
+ * also answers "nc butler". Appended AFTER the display name, so `nd` (the ranking's display name) is unchanged
+ * and the alias only widens what can match. Client-side, at load: the shared fold and the built index are not
+ * touched.
+ */
+function withJoinedInitials(r: { x: string }): void {
+	const end = r.x.indexOf('|');
+	const nm = end < 0 ? r.x.slice(2) : r.x.slice(2, end);
+	const nd = nm.split(', ')[0] ?? nm;
+	const words = nd.split(/\s+/);
+	const out: string[] = [];
+	let run = '';
+	let runs = 0;
+	for (const w of words) {
+		if (/^[a-z]\.?$/.test(w)) {
+			run += w[0];
+			continue;
+		}
+		if (run.length >= 2) runs++;
+		if (run) out.push(run);
+		run = '';
+		out.push(w);
+	}
+	if (run.length >= 2) runs++;
+	if (run) out.push(run);
+	if (!runs) return;
+	r.x = 'n:' + nm + ', ' + out.join(' ') + (end < 0 ? '' : r.x.slice(end));
+}
+
 /** Prepared once at load: segment 0 split out so ranking never re-parses or re-folds. */
 export type Prepared = SearchRow & {
 	nm: string;
@@ -229,6 +260,7 @@ export function load(): Promise<void> {
 		// time — leaving that inside the sort was measured at 2,238ms for "t" (O(n log n) Unicode
 		// normalizes) against 11.7ms once hoisted.
 		index = raw.map((r) => {
+			withJoinedInitials(r);
 			const end = r.x.indexOf('|');
 			const nm = end < 0 ? r.x.slice(2) : r.x.slice(2, end);
 			// Split on commas AS WELL as spaces: segment parts are comma-joined, so a plain space
@@ -416,8 +448,11 @@ const counts = $derived.by(() => {
 	return out;
 });
 
-/** Folded query terms. Multi-term is an AND across the whole blob. */
-const terms = $derived(fold(applied).split(/\s+/).filter(Boolean));
+/** Folded query terms. Multi-term is an AND across the whole blob.
+ *  PERIODS ARE SPACES IN A QUERY (Sam, 100626: "n.c. butler" found no one). "n.c." becomes "n c", and each
+ *  letter then starts the stored "n." / "c." exactly as a typed initial would. The stored blob keeps its periods
+ *  — the shared fold() is not touched — so "st. john", "jr." and "rev." match as they always did. */
+const terms = $derived(fold(applied).replace(/\./g, ' ').split(/\s+/).filter(Boolean));
 
 /**
  * TERMS MATCH AT WORD BOUNDARIES, AND A SECOND WORD MEANS THE USER IS BEING SPECIFIC.
