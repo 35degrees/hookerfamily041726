@@ -6832,19 +6832,38 @@ in Safari must call `releaseLanding(node)` first, or the hold silently wins.
     The name and NB headers use `--color-foundergreen`.
 - **NB headers, site-wide** (04c6a5db): rest at 85%, hover to 100% and a shade darker (navy `#172f76`, founder
   green `#2b4d30`).
-- **The soupy entry** (d7cf30d7). Entering a zone, the card keeps the old clock until it appears, then DRAG
-  (`ENTER_DRAG_MS` 200, lands at `ENTER_GLIDE_MS` 1300) with no overshoot or wobble. Sam: *"it's excellent… up to
-  the point where it just stops coldly"*.
-
-**Tried and parked: the float** (`slabFloat.svelte.ts`, `FLOAT_ENABLED = false` in +page.svelte).
-- The whole slab drifting in 3D, first as a 23s CSS loop, then as random multi-sine noise rolled per landing,
-  flattened synchronously at every click.
-- In Safari it did not move smoothly: it held still for seconds, then stepped ~2px in a frame. The 3D tilt also
-  depth-sorted the bookmark behind the card.
-- In Chrome it was too subtle to see (Sam: *"I don't notice any float on Chrome anyway"*).
-- Next attempt: 2D only (sway in x/y, a slight breathing scale, a hair of rotation), perhaps tied to the room's
-  drifting stars (Sam's idea).
-
-**Noted, not started:** hide the bookmark and home marks on a card while it demotes into the spouse chip (Sam:
-*"you can see the tops of them moving with the transition and you can't click them"*; worst on dark zone grounds).
+- **The zone landing, after four rounds (a05f455c).**
+  - *Soup, tried and removed.* A drag curve after the card appears (lands at 1.3s, then 1.8s), plus a
+    turbulence burst. Sam: *"it feels like a bug… it's not that the environment is soupy, just gravity
+    loosens… we were closer before."* All of that code is gone.
+  - *What shipped:* the approved approach, then a soft **rubber-band landing**.
+    - The card goes ~6% past its seat into the room, peaking a third of the way through the settle
+      (`ASCEND_ENTER_CARRY` 0.0594).
+    - It is drawn back in one slow swing with a pillowy finish: the echo past rest is under 3% of the peak
+      (`enterRubber`, after a first version Sam called *"a rubber ball bouncing on concrete"*).
+    - One corner of the plate sinks deeper on a random axis, up to `ENTER_CORNER_DEG` 3.1°, level again at
+      rest (Sam: *"maybe one corner of the metal plate goes deeper"*).
+    - The entry runs `ASCEND_ENTER_MS` 1040 (760 before), with the approach finished at 56%.
+    - Sam: *"yes! that's fantastic"*, then 20% deeper and softer, which is what shipped.
+- **The float, on (a05f455c).** `slabFloat.svelte.ts`, `FLOAT_ENABLED = true`.
+  - *2D only:* drift ±6–7px and turn ~0.4°, random multi-sine noise rolled per landing.
+  - *No breathing:* scaling was tried and removed (Sam: *"metal doesn't stretch and squeeze"*).
+  - *The 3D first pass is gone:* it stepped in Safari, depth-sorted the bookmark, and was invisible in Chrome.
+  - *It starts as a zone card comes through the window, not at landing,* so the card never locks in place first.
+  - *It is flattened synchronously at every click and every shuffle* (`floatPause`), before any rect is measured.
+- **No scrollbars from the drift.** The stage now sits in a real clipping frame (`.slab-frame`,
+  `overflow: clip`). The first fix clipped the stage's parent, which is `display: contents` and so clipped
+  nothing; that is why the scrollbars kept coming back.
+- **The shuffle pre-picks.** The next random notable is drawn once a card settles, at idle, and its payload
+  and featured photo are fetched then (`prepareNextShuffle`).
+  - *Why:* first fetches from Cloudinary's CDN can take over a second (1.36s cold vs 0.10s warm, the same
+    file), and the shuffle's target used to be chosen at the click.
+  - *Measured:* `scripts/probe-shuffle-photos.mjs`, 2/20 late before; 0/20 and 1/20 after.
+  - *Cancelling the CC photo warms at the click was tried first:* no effect, removed.
+  - *The shuffle path (`ccFlyTo`) now also pauses the float and releases Safari's landing hold,* which it had
+    been missing.
+- **Notable photos off Cloudinary.** 77 listed in `notable-photos-to-cloudinary.tsv`; Sam is moving them, 18
+  done (Moffat's Google-thumbnail hotlink was the trigger).
+- **A leaving card drops its bookmark/home marks at once** (`.leaving`, +page.svelte). Sam: *"you can see the
+  tops of them moving with the transition and you can't click them"*.
 
