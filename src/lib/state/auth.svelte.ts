@@ -159,7 +159,59 @@ async function hydrateBookmarks(userId: string) {
 	}
 }
 
+/**
+ * ── A RELOAD IS A REQUEST FOR THE TRUTH (Sam, 100626) ───────────────────────────────────────────────
+ * The session (and the hero and list names on it) is read from a 24h signed cookie, not from Postgres —
+ * that is what lets Neon sleep (memory: neon-bills-awake-time). The cost is that a home card set in
+ * Safari stayed invisible to Chrome for up to a day, refresh or no refresh: Chrome kept the hero it last
+ * saw (none), hid the nav's house, and Safari kept John after Chrome chose Philippe. Sam: "if i refresh,
+ * it should refresh the db values right? … i don't want to run the db ragged either."
+ *
+ * So an explicit RELOAD — not a first visit, not a new tab, not any in-app navigation — re-reads the
+ * session and the bookmarks from the database. EVERY reload: a five-minute throttle was tried first and
+ * Sam turned it down ("I'm ok with a database update on a refresh instead of a cookie… I don't want to
+ * just remove the best UX"). The intro at `/` asks too (refreshSession), since it is the one place the
+ * home card is the whole point. Ordinary navigation still never touches the database.
+ */
+function reloadWantsFresh(): boolean {
+	try {
+		const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+		return nav?.type === 'reload';
+	} catch {
+		return false;
+	}
+}
+/**
+ * Re-read the session from the database, and APPLY what it says. Resolves to the fresh user.
+ *
+ * APPLYING IS THE HALF THAT WAS MISSING (100626, measured in Sam's two browsers). The read re-signs the
+ * cookie, but `getSession()` does not push its answer into the `useSession` store this page renders from
+ * (see setHero), and the page's own get-session can land AFTER it and re-sign the stale copy. So Chrome
+ * reloaded, read "X03712" from the database, and went on showing the cookie's "no home card" with no
+ * house in the corner. The fresh values go in through the same overrides setHero uses — authoritative
+ * until the store catches up, then retired by the subscriber — so the order of requests cannot matter.
+ */
+export async function refreshSession(): Promise<SessionUser | null> {
+	let u: SessionUser | null = null;
+	try {
+		const r = await authClient.getSession({ query: { disableCookieCache: true } });
+		u = ((r as { data?: { user?: SessionUser } | null })?.data?.user as SessionUser) ?? null;
+	} catch {
+		return null;
+	}
+	if (!u || u.id !== currentUserId) return u; // signed out or switched while this was in flight
+	const hero = u.heroPersonId ?? null;
+	if ((snapshot.user?.heroPersonId ?? null) !== hero) heroOverride = hero;
+	for (const l of [1, 2] as ListId[]) {
+		const name = (l === 1 ? u.list1Name : u.list2Name) ?? null;
+		const shown = (l === 1 ? snapshot.user?.list1Name : snapshot.user?.list2Name) ?? null;
+		if (shown !== name) nameOverride[l] = name;
+	}
+	return u;
+}
+
 if (browser) {
+	let freshChecked = false;
 	// App-lifetime singleton, never torn down — the same shape every other state module here uses.
 	// Deliberately not unsubscribed: there is no point at which this app stops caring who is signed in.
 	let lastUserId: string | null = null;
@@ -197,11 +249,15 @@ if (browser) {
 		if (id === lastUserId) return;
 		lastUserId = id;
 		currentUserId = id;
+		// once per page load, on the first signed-in emission — see reloadWantsFresh
+		const fresh = !!id && !freshChecked && reloadWantsFresh();
+		if (id) freshChecked = true;
+		if (fresh) void refreshSession();
 		// The browser's copy first, so the ribbons are right on the first frame with no request; the
 		// server only when there is no copy or it is older than a day (see BOOKMARK_TTL_MS).
 		const cached = id ? readMarkCache(id) : null;
 		marks = new Map(cached?.marks ?? []);
-		if (id && (!cached || Date.now() - cached.fetchedAt > BOOKMARK_TTL_MS)) void hydrateBookmarks(id);
+		if (id && (fresh || !cached || Date.now() - cached.fetchedAt > BOOKMARK_TTL_MS)) void hydrateBookmarks(id);
 	});
 }
 /**

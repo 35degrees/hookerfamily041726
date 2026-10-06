@@ -261,6 +261,29 @@
 		};
 	}
 
+	/** The confirmation lives on <body> — see the markup. Client-only: the block never renders on SSR. */
+	function toBody(node: HTMLElement) {
+		document.body.appendChild(node);
+		return { destroy: () => node.remove() };
+	}
+	/**
+	 * THE PATHS TO THOMAS VEIL'S ARRIVAL (ConnectModal `veil`): tint and blur on ONE smoothstep, because
+	 * the blur is a property of the same layer — driven separately it blurs the tree before the tint lands.
+	 * QUICKER THAN THAT ROOM'S, though (Sam, 100626: "this is just one small box it needs to fade in
+	 * quicker"): 150ms in. The ladder's slow veil suits a room building itself; this answers one click.
+	 */
+	const VEIL_BLUR = 10;
+	function veilFade(_node: Element, { duration }: { duration: number }) {
+		return {
+			duration,
+			css: (t: number) => {
+				const e = t * t * (3 - 2 * t);
+				const b = (VEIL_BLUR * e).toFixed(2);
+				return `opacity: ${e}; backdrop-filter: blur(${b}px); -webkit-backdrop-filter: blur(${b}px);`;
+			}
+		};
+	}
+
 	function nextList(current: ListId | null): ListId | null {
 		if (current === null) return 1;
 		if (current === 1) return 2;
@@ -442,7 +465,18 @@
 		<!-- A GATE THAT NAMES WHAT IS BEING LOST. "Proceed?" protects the action without telling you
 		     what it costs; naming the person is the entire content of the warning — and it is what
 		     lets a CANCELLED confirmation still leave the reader knowing what they had. -->
-		<div class="confirm-veil" role="presentation" onclick={() => (confirmReplacing = null)}></div>
+		<!-- MOVED TO <body> (100626). Rendered here, inside the flying card's wrapper, the "fixed" veil was only
+		     as fixed as its ancestors allowed — and in Safari the landed card carries a held animation
+		     (flight.ts holdLanding), which makes it the containing block AND the stacking context: the blur
+		     covered just the card, sat over its own ribbon and house, and under the spouse chip beside it. -->
+		<div class="confirm-layer" use:toBody>
+		<div
+			class="confirm-veil"
+			role="presentation"
+			onclick={() => (confirmReplacing = null)}
+			in:veilFade={{ duration: 150 }}
+			out:veilFade={{ duration: 180 }}
+		></div>
 		<div class="confirm" role="dialog" aria-modal="true" aria-label="Change your home card">
 			<p class="confirm-text">
 				{#if confirmReplacing}
@@ -465,6 +499,7 @@
 					{heroBusy ? 'Saving…' : `Make ${shortName} my home card`}
 				</button>
 			</div>
+		</div>
 		</div>
 	{/if}
 {/if}
@@ -696,16 +731,24 @@
 	 * not a surface of its own: it interrupts a single gesture and gets out of the way. So it is
 	 * local, it sits above the card, and it never touches the slot.
 	 *
-	 * Its own small veil catches the outside click. Lighter than the marshmallow one (§45.10) because
-	 * this is a question about one control, not a room the reader has arrived in.
+	 * Its own veil catches the outside click. It was once deliberately LIGHTER than the marshmallow one
+	 * (§45.10) — "a question about one control, not a room" — and Sam overruled that on seeing it (100626):
+	 * weak and cluttered next to Paths to Thomas. It is now that veil, to the value.
 	 */
 	.confirm-veil {
 		position: fixed;
 		inset: 0;
 		z-index: 44;
-		background: rgba(43, 38, 32, 0.14);
-		backdrop-filter: blur(1.5px);
-		-webkit-backdrop-filter: blur(1.5px);
+		/* THE PATHS TO THOMAS VEIL, to the value (Sam, 100626: the old 14% wash and 1.5px blur were "weak and
+		   cluttered compared to Paths to Thomas"). Marshmallow, lifted at the centre, 10px of blur. */
+		background: radial-gradient(
+			120% 90% at 50% 42%,
+			rgba(228, 226, 216, 0.36) 0%,
+			rgba(222, 220, 210, 0.43) 55%,
+			rgba(216, 214, 204, 0.49) 100%
+		);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
 	}
 	.confirm {
 		position: fixed;

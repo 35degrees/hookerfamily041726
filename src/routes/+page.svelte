@@ -22,7 +22,7 @@
 	import { goto } from '$app/navigation';
 	import { personHref } from '#lib/paths.js';
 	import { startIntro } from '#lib/state/intro.svelte.js';
-	import { auth } from '#lib/state/auth.svelte.js';
+	import { auth, refreshSession } from '#lib/state/auth.svelte.js';
 	import { load, personById } from '#lib/state/search.svelte.js';
 
 	const THOMAS_SLUG = 'thomas-hooker-1586';
@@ -30,7 +30,11 @@
 
 	async function homeSlug(): Promise<string> {
 		while (auth.isPending) await new Promise((r) => setTimeout(r, 40));
-		const id = auth.signedIn ? auth.heroPersonId : null;
+		if (!auth.signedIn) return THOMAS_SLUG;
+		// FROM THE DATABASE, not the 24h cookie (100626): a home card chosen in another browser must be the
+		// one that rises here. One read per intro — see refreshSession in auth.svelte.ts.
+		const fresh = await refreshSession();
+		const id = fresh ? (fresh.heroPersonId ?? null) : auth.heroPersonId;
 		if (!id || id === 'H00001') return THOMAS_SLUG;
 		await load();
 		// severed or merged since it was chosen — Thomas rather than a 404 under the painting
