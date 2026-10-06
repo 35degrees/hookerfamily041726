@@ -1,6 +1,7 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: October 3, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_100526.md (the what/why for every item below).**
+**Date: October 6, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Companion: ENRICHED_DESIGN_FABLE_100626.md (the what/why for every item below).**
+**OCTOBER 6, 2026 (§59): SHORT WINDOWS, THE PHONE, READABLE CHIPS — paused here by Sam's choice; written to be picked up cold.** A one-way HEIGHT ladder (1050 → 745) that buys room with content and air, never by shrinking type; a PHONE recomposition (≤600px wide, step 1 of 3); chip type that fills its chip. §59.5 is how to resume (`scripts/probe-heights.mjs`), §59.6 the open list in priority order. Design §53 holds Sam's ranked priorities and every approach that was tried and discarded — read it first.
 **OCTOBER 2, 2026, LATE (§58): SAFARI.** Everything before this was built and judged in Chrome only, so the first session in real Safari found the hero's shadow blinking and the chip flights skipping. Safari is now close to Chrome. §58.1 is how to measure real Safari from here; nothing on headless WebKit can show these bugs. §58.3 is the one you need if a promotion ever "jumps" again: the arriving card's clock now waits for its first paint (`holdUntilPainted`). §58.4 is what NOT to do: re-timing flights for Safari broke everything and was reverted. All of it is scoped to `html.webkit`, so Chrome is byte-identical.
 
 **OCTOBER 2, 2026 (§57): NEON, SVELTEKIT 3, BETTER AUTH 1.7.7, BACK/FORWARD, ROOT URLS, AND THE INTRO AT `/`.** One long Stream B day, eleven commits from `f7749c5c` to the dial removal. The database stopped staying awake all day (the Neon bill's real cause). SvelteKit 3.0.0 was migrated with all probes unchanged, which closes §38's assessment. Better Auth went to 1.7.7 after a one-transaction schema cleanup on Neon. Back/Forward now enters the state instantly instead of replaying a flight. People live at the root (`/thomas-hooker-1586`), with `/person/x` 301'd forever. Then the intro at `/` was built in small steps, each signed off on screen: the spine's own gilt title, a torch search, the painting, an Enter arrow, and Thomas's card rising via the existing vertical CC flight. §57.6 is the intro's session record and file map; §57.7 is how to bring its tuning dials back; design §51 is its what and why, including everything Sam rejected.
@@ -6867,3 +6868,127 @@ in Safari must call `releaseLanding(node)` first, or the hold silently wins.
 - **A leaving card drops its bookmark/home marks at once** (`.leaving`, +page.svelte). Sam: *"you can see the
   tops of them moving with the transition and you can't click them"*.
 
+
+---
+
+## 59. OCTOBER 6, 2026 — SHORT WINDOWS, THE PHONE, AND READABLE CHIPS (session record; design §53)
+
+Mobile sizing was paused at the end of this day by Sam's choice; this section is written to be picked up cold.
+The design doctrine — Sam's ranked priorities, the architecture, the ladder, and every discarded approach with its
+reason — is design §53. Read §53.1 and §53.6 before changing anything here.
+
+### 59.1 WHAT SHIPPED, IN ORDER (all on `main`, pushed)
+
+| commit | what |
+|---|---|
+| `880bd2e1` | the height ladder: CC caps by height, 3 NBs / 2+2 rows / no places / no "to anyone" / shorter card under 900, chips 15% shorter + no marriage line + smaller name at ≤745, the parents' nav clearance, deck flights 15% slower at ≤1150px wide |
+| `fd7f09c1` | Paths to Thomas ladder narrows with its fit; NB type 90/95/92% on the narrowed card |
+| `6aa392ba` | the narrowed card takes its width from the photo column (80%) not the NB column; vitals 90% |
+| `26a20f42` | the phone composition (step 1); chip type floor (`chipK`); the corner nav's `zoom`; `.fill-photo`; CC type 90% at ≤850 |
+| (docs) | this section, design §53, `scripts/probe-heights.mjs` |
+
+### 59.2 HOW THE DAY WENT — the wrong turns, in order (the reasons are design §53.6)
+
+1. **Measured first.** Before anything: the children row was cut off by 239px (Burr Sr.) to 317px (Taft) at iPad mini
+   landscape (1133×700); iPad mini portrait (744×1050) and the desktops fit. A 1440×860 laptop scrolled 200–290px on
+   rich cards, and Sam called that working.
+2. **Built a proportional fit** (u and k scaled to fit the height, a declared per-u stage height). Everything fitted;
+   Sam rejected it at 750px: unreadable. Then at 800: *"even at 800px browser height right now, the UX is over."*
+3. **Raised the threshold** 800 → 900 after Sam's 815px window showed nothing had started. He chose 900 over "always
+   fit" and over 1000 (AskUserQuestion, 100626).
+4. **Rebuilt as content-and-air only.** Removed the frame/type shrink entirely. Shorter card (78%), Sam's caps,
+   his removals (places, "to anyone"), then the narrower card (85%) from his next message, then the CC ladder from
+   1050 down, then the ≤745 chip/name/lead step, then the 1050/1000 air-and-places steps.
+5. **Fixed the parents riding under the nav** (the lead had been squeezed as air): a fixed 78px clearance.
+6. **Fixed the white band above the button** (the square photo): `.fill-photo`.
+7. **Fixed tiny chip text** (chips rode `u`): `chipK`. Sam's message that set the rule for the rest of the day:
+   *"you are kinda missing the point… its so i can have more things in the smaller space."*
+8. **Phone step 1**, then a pass against that rule: bigger chip type, full-size spouses wrapping, the button beside
+   the photo, places kept, CC type full size.
+
+### 59.3 MEASUREMENTS AT THE END OF THE DAY (`node scripts/probe-heights.mjs`)
+
+`over` = children-row bottom minus window height (negative fits). All with `chipSpill 0` and no horizontal scroll.
+
+| window | Taft | Jared Flagg (7 children) | notes |
+|---|---|---|---|
+| 1920×1300 | −150 | −165 | unchanged from before the day; names 26px, chips 13, NB 13.5, CC 11.5 |
+| 1460×880 | −3 | +39 | the 900 step: card 786×449; NB body 12.8 |
+| 1133×700 (iPad mini land.) | −6 | +38 | u 0.85; names 19.9, chips 11.1, NB 11.5–12.2, CC 9.3 |
+| 744×1050 (iPad mini port.) | −182 | −157 | **inCard +2 / +17 — something past the card bottom; check (§59.6)** |
+| 393×760 (iPhone) | scrolls | scrolls | u 0.756; card 345px; names 23.4, chips 12.3, NB 12.2, CC 10.3 |
+
+Earlier in the day, for the record: the ≤745 step brought Taft, Burr Sr., Braynard and J.P. Morgan to −1…−21 at
+1133×700; Thomas Hooker (two child rows) stayed ~+80. Jared Flagg's +38 is the same cause — the "+N" chip.
+
+### 59.4 WHERE THINGS LIVE
+
+- **`src/lib/state/stage.svelte.ts`** — all of it. Constants, in file order: `SHORT_H` 900, `SHORT_RAMP` 24,
+  `STAGE_H_PER_U` (retired fit, kept for the record), `SHORT_MARGIN`, `STAGE_TOP_CLEAR` 78, `AIR_SQUEEZE` 0.6,
+  `SHORT_K_FLOOR` (retired), `SHORT_NB_CAP` 3, `SHORT_CARD_K` 0.78, `SHORT_CARD_W_K` 0.85, `SHORT_PHOTO_COL_K` 0.8,
+  `MID_H` 1050, `MID_AIR` 0.75, `MID_LEAD_TRIM` 15, `NO_PLACES_H` 1000, `TINY_H` 746, `TINY_CHIP_H` 0.85,
+  `TINY_NAME_K` 0.85, `TINY_TOP_CLEAR` 64, `ccCapForHeight()`, `SHORT_ROW_CAP` 2, `PHONE_W` 600, `PHONE_K` 0.9,
+  `CHIP_K_FLOOR` 0.82, `PHONE_CHIP_K` 0.95; getters listed in design §53.2. `applyStageVars` publishes the variables.
+- **`FeaturedCard.svelte`** — `cardTopH` (× cardK), `cardW` (× cardWK; phone width; three-spouse exception),
+  `contentCols`, the `--nb-*-k` / `--vital-k` variables, `.fill-photo`, the phone card CSS, the places, the
+  buttons, the name's `nameK`.
+- **`+page.svelte`** — the lead (`padding-top` blend), `.parents-slot` min-height blend, the connectors (`--stage-air`),
+  the phone: rail/siblings gates, spouse row (`.page-container.phone .spouse-notch`), slot height
+  (`phoneSpouseRowH`), children grid.
+- **`PersonBox.svelte`** (chip heights × `--chip-h`; names' shrinkToFit on `stage.chipK`; spouse marriage line),
+  **`RightColumn.svelte`** (row caps; burial place), **`CrossConnectionsBlade.svelte`** (CC cap via FeaturedCard;
+  `ccFontK`; the phone sheet; measured height), **`NarrativeBlocks.svelte`** (the `--nb-*-k` variables),
+  **`DeckRiffle.svelte`** (ghosts follow cardK/cardWK), **`TopRightChrome.svelte`** (`zoom`; phone icons-only),
+  **`ConnectModal.svelte` / `ConnectAnyoneModal.svelte`** (width × fit), **`childRows.ts`** (`chipColumns(n, perRow)`),
+  **`flight.ts`** (`narrowTempo`, `setThomasVerticalTempo`).
+
+### 59.5 HOW TO PICK THIS BACK UP
+
+1. `npm run dev`, then `node scripts/probe-heights.mjs` — the same yardstick every number above came from. Narrow it
+   with `SLUGS=` / `SIZES=`. Its default sizes include the desktops on purpose: they must stay where §59.3 has them.
+2. Good test cards: **Taft** (11 CCs, long blade), **Thomas Hooker** (children in two rows), **Jared Flagg** (three
+   spouses, seven children — the three-spouse exception), **Burr Sr.** (typical rich card), **Robert Louis Tracy**
+   (short vitals — the white-band case), **Kenneth Ransom** (light card), **Raymond Guest Jr.** (11-rung ladder).
+3. Judge by Sam's rules, in his order (design §53.1). Two checks catch most mistakes: is any text that has room
+   smaller than it needs to be, and did a reduction leave white that nothing took?
+
+### 59.6 OPEN — in priority order
+
+1. **Real devices, in Safari.** Nothing here has been seen on an iPad or an iPhone. iPad mini landscape is the
+   target; the ≤745 step was tuned for its ~690–700px. Check also that Safari's bottom toolbar (which changes
+   `innerHeight` as it collapses) does not flicker the ladder across a threshold while scrolling.
+2. **The "+N more" children chip.** `stage.childCap` / the rung's `childCap` exist and nothing renders them. Cap the
+   children to one row on short windows (and two rows on a phone) with a final "+N" chip that opens the rest.
+   Fixes Thomas (+80 at 1133×700), Jared (+38) and every large family on a phone.
+3. **Phone step 3 — transitions on the phone layout.** Untested: chip taps, spouse promotions (the spouse row is no
+   longer a notch — the demote lands on a row above the card), CC flights and the deck's offscreen reach on a 393px
+   window, the timeline-less arrival. They measure real rects, so they may mostly work; the tuning was all desktop.
+4. **iPad portrait inCard +17 on Jared** (744×1050, §59.3) — something renders past the card's bottom edge. Check
+   whether it predates the day (`git stash`, re-probe) before fixing.
+5. **Between 900 and 1050** rich cards still run 30–120px over (the content steps start at 1050 but the shorter card
+   starts at 900). Sam accepted this when choosing 900; revisit only if he raises it.
+6. **Phone nice-to-haves:** the CC blade's label ("Cross Connections") is gone on a phone — consider a small header
+   line; the burial row is right-aligned at the column's foot with white beside it; landscape phones (wide and very
+   short) get the desktop composition at a tiny height — untested.
+7. **Docs/probes:** fold `probe-heights.mjs` into the probe suite if it proves stable; it currently waits a fixed
+   2.3s per page.
+
+### 59.7 THE REST OF OCTOBER 6 (non-mobile), for the record
+
+- **Corner nav:** the card's house matches the nav's house; Notable People moved to the far left (its leaving the
+  zone no longer reflows Home/Bookmarks); button + filled houses in `--color-midnightink` (Sam's darkGreyBlue,
+  hsl(224 30% 27%)) after several tries.
+- **Intro at `/`:** a signed-in reader's home card rises after the painting (session + search index, capped 3.5s).
+- **Session freshness:** a reload (and the intro) re-reads the session from the database and APPLIES it through the
+  hero/list overrides — the 24h cookie had kept each browser on its own home card. Neon impact discussed with Sam and
+  accepted.
+- **Home-card confirm:** portalled to `<body>` (Safari's landing hold had trapped the veil inside the card) with the
+  Paths to Thomas veil, fading in at 150ms.
+- **Zones:** the wax veil/grain now on the face (card-top had painted flat colour over it); a moving gleam (Chrome;
+  still in Safari, where the nested animated layer quivered); the departing zone card and docked spouse chips carry
+  the float's pose out of the click instead of snapping flat.
+- **Worn edges** on every non-zone card (`.card-wear`): the Manuscript paper's fibres as an alpha mask in the card's
+  ink, edges + corners + the notch, a wandering reach tile; level A at 95% (76% for people born 1900+).
+- **Burial pin:** rows fade under it via a mask, not a flat slab.
+- **Paths to Thomas:** the header and the spouse card follow the rows when paths differ in length (Ralph Knutti).
+- **Timeline:** years 5px nearer the portraits, bars 3.75px left, the gold ground 10px nearer the window.

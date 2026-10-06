@@ -1,6 +1,6 @@
 # HOOKER FAMILY DESCENDANTS — ENRICHED DESIGN (FABLE PASS)
 
-**Date: October 3, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
+**Date: October 6, 2026 (originated July 29, 2026; the filename tracks the latest edition) — companion/overlay to DESIGN.md (070126). PROPOSALS unless marked confirmed.**
 **Prepared by the architect stream for Samuel Talcott Hooker's review. Nothing here is a decision until Sam says so.**
 **The 070926 edition added §13 (viewport-lock / scrollbar doctrine) and §14 (Zoom 1 card-grid refinements). This 071226 edition adds §17 (motion physics doctrine — learned the hard way in the July 11 card-transition maintenance phase) and threads the one-physics/velocity-ceiling lessons into §3. The card-transition layer is now CLOSED, probe-guarded, and pushed; see docs/CODING_HANDOFF.md in the repo for the session record and ghost taxonomy.**
 
@@ -62,6 +62,8 @@ folded back without conflict.
 **The 100226 edition (October 2, 2026) adds §51 — THE ARRIVAL: THE INTRO AT `/`.** The first thing a visitor sees, designed with Sam step by step on screen in one day: the book's own gilt spine title on slate brown, a torch that searches it, the gilt catching, Church's *Hooker and Company* (1846) filling the window behind it, an Enter arrow the visitor chooses to click, and Thomas's card rising out of the existing cross-connection flight. §51.3 is the list of everything Sam saw and rejected, kept so none of it is rebuilt; §51.6 is how to bring the tuning dials back.
 
 **The 100226 edition also adds §52 — SAFARI: THE SAME OBJECT ON A DIFFERENT COMPOSITOR.** The rules for any future WebKit work: Chrome is the reference and never changes; isolate or cheapen, never re-time a flight; judge only in real Safari, measured on film. Session record and measurements: roadmap §58.
+
+**The 100626 edition (October 6, 2026) adds §53 — THE SMALL SCREEN: HEIGHT, AND THE PHONE.** Sam's priorities ranked in his own words (readable beats complete; a removal exists to make room for MORE, never to leave white; the iPad mini is the floor for a full experience; tall desktops untouched; children outrank a long blade), the architecture (width sizes the frame, HEIGHT only takes away content and air, the phone recomposes), the ladder as built, the phone composition, and §53.6 — fifteen approaches tried and discarded, each with the reason. Session record: roadmap §59.
 
 ---
 
@@ -7298,3 +7300,178 @@ last keyframe, so it is never re-drawn the resting way. It is released, before a
 anything else needs to move it (a click, or its own departure). The visible cost is nothing: the card rests
 where the reader watched it settle, a pixel from its layout box. Chrome is unchanged.
 
+
+---
+
+## 53. THE SMALL SCREEN — HEIGHT, AND THE PHONE (written October 6, 2026)
+
+The what and why of fitting the stage into short windows and onto phones. The session record, the measurements
+and the open list are roadmap §59. Everything here was built in one day with Sam reviewing each step on screen,
+and several of the first attempts were wrong in instructive ways, so §53.6 matters as much as §53.3.
+
+### 53.1 SAM'S PRIORITIES — the brief, in his words, ranked
+
+1. **Readable beats complete. Never shrink type to make things fit.** At 750px tall, after a uniform shrink put
+   body text at ~8.6px: *"the names and text is too small to read which you may as well have a giant X on the middle
+   of the screen, no users would use it."* And: *"i guess you can technically make font 0.5px tall but i won't
+   approve it."* This overrides everything below it.
+2. **A removal or a reduction exists to make room for MORE content — never to leave white.** *"you seem to think that
+   I want things removed or reduced at smaller viewport heights just to create tons of whitespace? no… its so i can
+   have more things in the smaller space."* And: *"I'm not trying to create tons of white space when the text is too
+   small for a user to read it."* A box that got smaller must have its text grow into it; a gap that opened must be
+   taken by something.
+3. **The iPad mini is the floor for a FULL experience** — in both orientations, and every tablet above it. *"ipad mini
+   would be the smallest screen size I'd want to give a very full experience. phone UX would be greatly reduced but
+   someone on an ipad should not have the children chips cut off."* Landscape iPad mini is ~1133×690–700 inside
+   Safari (*"ipad mini landscape is really 700px height? ouch"*).
+4. **Don't take anything away from tall desktops.** *"I don't want to change the layout for desktop users on a 21"
+   monitor with a 15" tall browser."* Every height rule is one-way and thresholded; above the top step nothing moves.
+5. **The children outrank a long cross-connection blade.** *"children chips are more important to show than long CC
+   bladees."* The blade is the first content a short window gives up.
+6. **The parent row never crosses the corner nav** — *"its ok to move them higher but"* never under it.
+7. **Mimic the width system, read the window through Svelte.** *"I'd obviously prefer you utilize Svelte's built in
+   dynamic innerHeight… the width sizing I worked on a while ago is VERY successful so I'd like to mimic how that
+   worked."* The stage store already reads `innerHeight` from `svelte/reactivity/window`; nothing else reads the window.
+8. **A phone is a deliberately reduced, recomposed experience** — *"a very cut off phone UX… just width"* — not the
+   desktop squeezed.
+
+### 53.2 THE ARCHITECTURE — one store, two axes, and why they are not alike
+
+`src/lib/state/stage.svelte.ts` is still the only reader of the window (design §33's rule). It now answers three
+questions:
+
+- **WIDTH → the frame.** Unchanged: the declared ladder of rungs and the width clamp give `u` (geometry) and `k`
+  (reading type). Width is solvable by division because the stage's width at u = 1 is a constant.
+- **HEIGHT → content and air, never the frame or the type.** A one-way ladder of thresholds. Each step takes away AIR
+  (gaps, connector lines), CONTENT (CCs, NBs, rows, places, a button) or card HEIGHT (a shorter, narrower card whose
+  freed width goes to the narratives) — and never touches `u` or `k`. Height cannot be solved by division the way
+  width is: the stage's height depends on the card's content (blade lines, child rows), so any "fit u to the
+  height" has to be declared per-unit and is wrong for every card but the one it was measured on — and when it is
+  right, it is right by making the type unreadable (§53.6a).
+- **THE PHONE → a recomposition.** Below 600px wide the page lays out differently rather than smaller (§53.4).
+
+The published CSS variables (all default to "no change", so SSR and any consumer mounted early render the desktop):
+
+| variable | from | used by |
+|---|---|---|
+| `--stage-u`, `--type-k` | width (and the phone) | everything, as before |
+| `--chip-k` | `stage.chipK` = max(u, 0.82; 0.95 on a phone) | chip labels only (PersonBox) |
+| `--stage-air` | 0.75 under 1050, squeezed further under 900 | connectors (lines, padding, floor) |
+| `--stage-short` | 0 at 900+, 1 within 24px below | blends the parent lead and the parents slot |
+| `--stage-top-clear` | 78px (64 at ≤745) | the lead above the parents on a short window |
+| `--stage-lead-trim` | 15px under 1050 | the lead above the parents before the squeeze |
+| `--chip-h` | 0.85 at ≤745 | parent/child chip HEIGHT (both alike) |
+
+And getters read directly in components: `shortH`, `tiny`, `noPlaces`, `ccCap`, `rowCap`, `nbCap`, `cardK`
+(height), `cardWK` (width), `photoColK`, `nameK`, `ccFontK`, `navK`, `phone`, `phoneCardW`.
+
+### 53.3 THE HEIGHT LADDER (as built)
+
+Window height, top step first. "Under" means strictly below.
+
+| under | what changes | why it is this, here |
+|---|---|---|
+| **1050** | 6 CCs max; connectors 25% shorter; 15px off the lead above the parents | Sam at 1015: "already closing gap between parent chips and nav bar menu by 25%… reduce the total height of the 'Jared's parents' and 'Seven children' vertical lines by 25%"; "even 1050px height should start the 6 CC max" |
+| **1000** | 5 CCs; 6 NBs (from 7); birth/death PLACES go (dates stay); the photo starts taking the column's slack (§53.5) | "deleting birth and death locations at 1000px"; "around 950px prob even 1000px height, NB max should go from 7 to 6" |
+| **900** | 4 CCs; 3 NBs; 2 career, 2 education; card **78% tall and 85% wide** (photo column 80%, right column full, the narratives take the rest); burial place goes; no "Connect … to anyone"; "Connect to Thomas" (no first name); connectors squeezed further; the parent row held at 78px (never squeezed); NB headers 90%, body 95%, leading 92%; vitals 90%; the corner nav at 90% | Sam chose 900 over "always fit" (§53.6c). The width cut comes out of the narrative column because the card holds 3 NBs anyway |
+| **850** | CC type 90% (≤850) | "size down the font size of the CCs by 10-20%" — the gentle end (§53.6f) |
+| **820** | 3 CCs | the CC ladder |
+| **≤750** | 2 CCs | "bring it down to max 2 CC as we get to 750px height and lowers" |
+| **≤745** | parent/child chips 15% SHORTER (text unchanged); no marriage line on spouse chips; the card's name 85%; the parent row 64px down (from 78) | the iPad mini landscape step; Sam: "a little more room between buttons and parent chips… you can use a little more but not right up against" |
+
+Three-spouse cards are the one exception to the narrower card: three chips take ~520px of a 786px card and crushed
+the header, so a card whose notch holds three chips keeps its full width (and its full-size NB type).
+
+Independent of height: **deck flights (CCs, timeline headshots, the X, the shuffle) play 15% slower at ≤1150px
+wide** — "the smaller window makes them move violently quick" (flight.ts `narrowTempo`). And the rail's Thomas
+drop/lift plays 10% slower everywhere (`setThomasVerticalTempo`) — it was fastest on short windows because the dive
+starts just off the window's edge.
+
+### 53.4 THE PHONE (≤600px wide, as built — step 1 of 3)
+
+- **The card:** full width (the layout box less the stage's 32u padding each side — 345px on a 393px iPhone),
+  automatic height, no notch. Inside: the header across the full width; the photo at 36% with the dates (and their
+  places) beside it and "Connect to Thomas" beside it too, under the dates; the narratives (the width rule's 2);
+  then education/career/art/burial stacked.
+- **Spouses:** a row ABOVE the card, right-aligned (where the notch sat), full-size chips wrapping two to a row,
+  marriage year on its own line.
+- **Children:** two to a row (`chipColumns(n, 2)`, a four-half-track grid), the odd one centred.
+- **Parents:** two side by side — this is what sizes the phone's frame unit: two 220u chips + a 16u gap + the
+  stage's 32u padding either side = 520u, so `u = layoutW / 520` (0.756 at 393px), clamped 0.66–0.85.
+- **Type:** reading type `k = 0.9` (NB body ~12.2px); chip type 0.95 (names ~12.4px).
+- **Gone:** the timeline rail, the siblings column, the Manuscript toggle, "Connect … to anyone", the words in the
+  corner nav (icons stay; the account word stays — it has no glyph).
+- **The CC blade:** a plain sheet the card's width — no slant, no side label, no shadow twin — that reports its
+  MEASURED height to the slot. The slot's explicit height also counts the spouse row.
+- **Kept on a phone, though the short-height ladder would remove them:** birth/death/burial places (a phone scrolls;
+  the places fill the white beside the photo), full-size CC type.
+
+### 53.5 TYPE AND SPACE — the doctrine the day earned
+
+1. **Height is bought with height.** Fewer things, less air, a shorter box — never a smaller frame unit, never a
+   smaller type step. The one exception is a deliberate, small type step where Sam asked for one (NB headers 90%,
+   vitals 90%, CC 90%), each kept well above ~9px.
+2. **When a box shrinks, its text does not shrink with it unless it has to.** Chip labels used to ride `u` exactly
+   (§33.2, to stop a name wrapping); that was right for an overflow and wrong for legibility, and at a ~790px window
+   it put names at ~7px in a column with room to spare. Chip type now has its own unit with a floor (`chipK`), and
+   the name's existing `shrinkToFit` (with ellipsis) still bounds it to the column — so it fills the room it has and
+   cannot spill. Probe: `chipSpill` must be 0.
+3. **A gap that opens must be taken.** When the places went and the card got shorter, the slack pooled above the
+   button as a white band. The fix was not a tighter rule but giving the slack to the PHOTO (`.fill-photo`: the 3:4
+   box becomes "whatever the column has left", top-anchored cover) — taller and narrower, never squashed — and
+   tightening the vitals' gaps to `.tight` values so the death line clears the button by 8u.
+4. **The parent row's lead is structural, not air.** It is the clearance under the corner nav and the "Show parents"
+   label. It may come up (78 → 64 at ≤745), never under the nav.
+5. **Scale the corner as one object.** `zoom` on `.top-right-chrome` (navK) shrinks text, padding and hit area
+   together; a phone keeps 1 because its icons are pressed with a finger.
+6. **Rows that share a shape must keep it.** Parent and child chips shorten by the same factor, because flight.ts
+   chooses the cheap same-tier landing by comparing the two seats' aspect ratios.
+
+### 53.6 TRIED AND DISCARDED — and why (do not rebuild these)
+
+a. **A uniform proportional fit** — scale `u` AND `k` until the resting stage fits the window's height
+   (`STAGE_H_PER_U` ≈ 1068–1100 per unit, measured kids-row-bottom ÷ u on Burr/Taft/Thomas). It fitted every card
+   at every height. It also took body text to ~8.6px and chip names to ~7. Rejected on sight (§53.1 #1). Retired:
+   `heightS` is a constant 1, kept as a name so the record maps to code.
+b. **A gentle linear ramp (800 → 600).** At iPad heights it was only a quarter to half applied, and rich cards
+   ALREADY overflow at the threshold (a 1440×860 laptop scrolls 200–290px on Taft/Thomas), so no gentle slope can
+   both start at "untouched" and fit by 760. Moot once (a) went, but the lesson stands: thresholds are steps.
+c. **The threshold at 800.** Too low — an 815 window and regular iPads (~770–800 in Safari) got nothing. Sam was
+   offered three choices — *always fit* (no threshold), *900*, *1000* — and chose **900**, knowingly accepting that
+   rich cards still scroll above it and that a window dragged across it steps. Later he extended the CONTENT steps
+   (CCs, places, NBs, air) up to 1050, which does not contradict this: those remove content, they do not shrink.
+d. **Squeezing the lead above the parents as "air".** It took the parent row up under the nav. Now a fixed
+   clearance (§53.5.4).
+e. **A square photo on a short card.** The photo got shorter, the vitals got shorter (no places), and the button
+   was pinned to the bottom — so the slack pooled as a white band. Sam: *"you made the photo too short vertically…
+   you just created this ugly gap. i'd rather have a taller photo that doesn't get squished but it can be
+   narrower."* Replaced by `.fill-photo`.
+f. **CC type at 85%.** 8.8px on an iPad mini landscape — the same "too small" Sam had just rejected on the chips.
+   90%.
+g. **Taking the narrower card's width mostly from the NB column with the photo column at 93%.** Sam: *"i took too
+   much from NB column and kept photo column too big."* Photo column 80%.
+h. **Narrowing three-spouse cards too.** The header was left a column; the name wrapped and "Hooker" fell onto its
+   own line. Those cards keep full width.
+i. **Per-card height fitting** (size each person's stage to its own content). Rejected without building: the card
+   would change size between two people mid-flight, and the flight system assumes one card size per window.
+j. **The phone's spouse row UNDER the card.** It landed on the CC blade, which hangs off the card's bottom edge.
+   Moved above, right-aligned.
+k. **The desktop blade on a phone.** Its side label ate the width and the slant stood the text up into a tall wedge
+   that ran over the children. A plain sheet.
+l. **Removing places on a phone** (it inherited the short-height rule at 760px tall). It just made white. A phone
+   scrolls; it keeps them.
+m. **The phone photo at 40% with the button on its own row below.** ~100px of white beside the photo; 36% with the
+   button beside it.
+n. **A hamburger / icons-only nav at short heights** (Sam's suggestion, 766px). Not needed once the parent row held
+   its clearance; the corner scales with `zoom` instead, and only the PHONE goes icons-only.
+o. **The Paths to Thomas ladder at a fixed 440px wide.** Its rows shrink in height to fit (`--ladder-fit`) and at a
+   fixed width became long flat bars. The width now follows the same fit (1 wherever the ladder already fits).
+
+### 53.7 WHAT THIS LEAVES FOR NEXT TIME (the order matters; detail in roadmap §59.6)
+
+1. Verify on real hardware — an iPad mini in both orientations, a regular iPad, an iPhone — in Safari.
+2. The "+N more" children chip (`stage.childCap` exists and nothing reads it). It is the one thing still costing
+   large families (Thomas, Jared Flagg's seven) a row or two on short windows and phones.
+3. Phone step 3 — transitions on the phone layout (taps, promotions, CC flights, the deck's offscreen reach on a
+   393px window), tuned on a phone.
+4. iPad portrait: the probe shows something 17px past Jared's card bottom (2px on Taft) — check what.
