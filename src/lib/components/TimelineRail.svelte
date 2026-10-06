@@ -107,7 +107,9 @@
 	// THIS COSTS 48px OF RAIL, and RAIL_W, the ground's ramp and this constant are ONE measurement.
 	// The stage reserves nothing for the rail (stage.svelte.ts, TIMELINE_RAIL_BASE = 0), so nothing
 	// reflows — the instrument simply gets wider and reaches further under the card.
-	const LABEL_W = 84;
+	// 84 → 79 with the year's 5px move (--tick-len 100 → 95, Sam 100626). The bars move in the same ratio Sam
+	// first asked for (15px against the year's 20), i.e. 3.75px: the first lane is LABEL_W + 8.25 = 87.25.
+	const LABEL_W = 79;
 	/** The RENDERED width of a bar. 26, less 5%, less 5% again (Sam, Aug 10). */
 	const BAR_W = 23.47;
 	/**
@@ -139,7 +141,7 @@
 	function laneX(lane: number): number {
 		// +3px on Sam's word (Aug 10), applied to the FIRST lane only — every other lane is measured from
 		// it by the overlap table below, so the whole group shifts together and the spacing is untouched.
-		let x = LABEL_W + 7;
+		let x = LABEL_W + 8.25; // 87.25: 3.75px left of the old 91 (Sam, 100626), the whole group moving together
 		for (let i = 1; i <= lane; i++) x += LANE_W - (OVERLAP[i] ?? OVERLAP[OVERLAP.length - 1]);
 		return x;
 	}
@@ -2171,7 +2173,9 @@
 		   edge, so they differ only in how far RIGHT they reach, which is what makes the cascade read as
 		   one scale rather than three sets of marks. The half's right end (-12 + 100 = 88) is also where
 		   the year sits. */
-		--tick-len: 100px;
+		/* 100 → 95 (Sam, 100626): the year sits at the half-rule's right end, so this moves every year 5px
+		   nearer the portraits. 80 (20px) was "way too far to the left"; 90 (10px) was then eased back 5. */
+		--tick-len: 95px;
 		/* THE YEAR'S SIZE IS A VARIABLE FOR THE SAME REASON --tick-len IS: it changes with the rules, so
 		   it should change in ONE place. Sam: "when the year timeline lines get reduced, also reduce the
 		   font size of the year text by 20% smaller." */
@@ -2267,7 +2271,7 @@
 		   RAIL_W still governs where the ticks, labels, bars and portraits live. */
 		/* Still 12px past the rail's right edge, Sam's 10% overhang — RAIL_W absorbed the 48 the ramp
 		   travelled (122+48=170), so the box is 182 and the ramp still ends exactly on it. */
-		inset: 0 -12px 0 0;
+		inset: 0 -2px 0 0; /* right edge 10px nearer the window (Sam, 100626) — every stop below moved −10 with it */
 		z-index: 0;
 		pointer-events: none;
 		/* BOTH BLEND INPUTS ARE OPAQUE, and that is the entire trick. The grain went through three failed
@@ -2304,42 +2308,42 @@
 			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch' result='t'/%3E%3CfeComponentTransfer in='t' result='o'%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix in='o' type='saturate' values='0' result='s'/%3E%3CfeColorMatrix in='s' type='matrix' values='1.125 0 0 0 -0.0625 1.125 0 0 0 -0.0625 1.125 0 0 0 -0.0625 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
 			linear-gradient(
 				to right,
-				rgb(226, 217, 152) 48px,
-				rgb(226, 217, 152) 51px,
-				rgb(227, 218, 153) 56px,
-				rgb(227, 218, 153) 59px,
-				rgb(227, 218, 153) 63px,
-				rgb(228, 219, 154) 67px,
-				rgb(228, 219, 154) 71px,
-				rgb(228, 219, 155) 74px,
-				rgb(229, 220, 155) 79px,
-				rgb(229, 220, 155) 82px,
-				rgb(229, 220, 156) 86px,
-				rgb(230, 221, 156) 90px,
-				rgb(230, 221, 156) 94px,
-				rgb(230, 221, 157) 97px,
-				rgb(231, 222, 157) 102px,
-				rgb(231, 222, 158) 105px,
-				rgb(232, 223, 158) 110px,
-				rgb(232, 223, 158) 113px,
-				rgb(232, 223, 159) 117px,
-				rgb(232, 223, 159) 120px,
-				rgb(233, 224, 159) 125px,
-				rgb(233, 224, 160) 128px,
-				rgb(234, 225, 160) 133px,
-				rgb(234, 225, 161) 136px,
-				rgb(234, 225, 161) 140px,
-				rgb(235, 226, 161) 144px,
-				rgb(235, 226, 162) 148px,
-				rgb(235, 226, 162) 151px,
-				rgb(236, 227, 162) 156px,
-				rgb(236, 227, 163) 159px,
-				rgb(236, 227, 163) 163px,
-				rgb(237, 228, 164) 167px,
-				rgb(237, 228, 164) 171px,
-				rgb(237, 228, 164) 174px,
-				rgb(238, 229, 165) 179px,
-				rgb(238, 229, 165) 182px
+				rgb(226, 217, 152) 38px,
+				rgb(226, 217, 152) 41px,
+				rgb(227, 218, 153) 46px,
+				rgb(227, 218, 153) 49px,
+				rgb(227, 218, 153) 53px,
+				rgb(228, 219, 154) 57px,
+				rgb(228, 219, 154) 61px,
+				rgb(228, 219, 155) 64px,
+				rgb(229, 220, 155) 69px,
+				rgb(229, 220, 155) 72px,
+				rgb(229, 220, 156) 76px,
+				rgb(230, 221, 156) 80px,
+				rgb(230, 221, 156) 84px,
+				rgb(230, 221, 157) 87px,
+				rgb(231, 222, 157) 92px,
+				rgb(231, 222, 158) 95px,
+				rgb(232, 223, 158) 100px,
+				rgb(232, 223, 158) 103px,
+				rgb(232, 223, 159) 107px,
+				rgb(232, 223, 159) 110px,
+				rgb(233, 224, 159) 115px,
+				rgb(233, 224, 160) 118px,
+				rgb(234, 225, 160) 123px,
+				rgb(234, 225, 161) 126px,
+				rgb(234, 225, 161) 130px,
+				rgb(235, 226, 161) 134px,
+				rgb(235, 226, 162) 138px,
+				rgb(235, 226, 162) 141px,
+				rgb(236, 227, 162) 146px,
+				rgb(236, 227, 163) 149px,
+				rgb(236, 227, 163) 153px,
+				rgb(237, 228, 164) 157px,
+				rgb(237, 228, 164) 161px,
+				rgb(237, 228, 164) 164px,
+				rgb(238, 229, 165) 169px,
+				rgb(238, 229, 165) 172px
 			);
 		/* The gold returns with everything else, and not before. */
 		transition: opacity var(--night-ms) cubic-bezier(0.33, 1, 0.68, 1) var(--night-out);
@@ -2350,81 +2354,81 @@
 		   colour stops use — so ground and grain vanish together, on one curve, with no second edge. */
 		-webkit-mask-image: linear-gradient(
 			to right,
-			rgba(0, 0, 0, 1.000) 48px,
-			rgba(0, 0, 0, 1.000) 51px,
-			rgba(0, 0, 0, 0.999) 56px,
-			rgba(0, 0, 0, 0.996) 59px,
-			rgba(0, 0, 0, 0.990) 63px,
-			rgba(0, 0, 0, 0.983) 67px,
-			rgba(0, 0, 0, 0.968) 71px,
-			rgba(0, 0, 0, 0.953) 74px,
-			rgba(0, 0, 0, 0.928) 79px,
-			rgba(0, 0, 0, 0.904) 82px,
-			rgba(0, 0, 0, 0.865) 86px,
-			rgba(0, 0, 0, 0.832) 90px,
-			rgba(0, 0, 0, 0.782) 94px,
-			rgba(0, 0, 0, 0.740) 97px,
-			rgba(0, 0, 0, 0.679) 102px,
-			rgba(0, 0, 0, 0.630) 105px,
-			rgba(0, 0, 0, 0.563) 110px,
-			rgba(0, 0, 0, 0.511) 113px,
-			rgba(0, 0, 0, 0.441) 117px,
-			rgba(0, 0, 0, 0.389) 120px,
-			rgba(0, 0, 0, 0.322) 125px,
-			rgba(0, 0, 0, 0.274) 128px,
-			rgba(0, 0, 0, 0.216) 133px,
-			rgba(0, 0, 0, 0.176) 136px,
-			rgba(0, 0, 0, 0.129) 140px,
-			rgba(0, 0, 0, 0.099) 144px,
-			rgba(0, 0, 0, 0.066) 148px,
-			rgba(0, 0, 0, 0.046) 151px,
-			rgba(0, 0, 0, 0.026) 156px,
-			rgba(0, 0, 0, 0.016) 159px,
-			rgba(0, 0, 0, 0.007) 163px,
-			rgba(0, 0, 0, 0.003) 167px,
-			rgba(0, 0, 0, 0.001) 171px,
-			rgba(0, 0, 0, 0.000) 174px,
-			rgba(0, 0, 0, 0.000) 179px,
-			rgba(0, 0, 0, 0.000) 182px
+			rgba(0, 0, 0, 1.000) 38px,
+			rgba(0, 0, 0, 1.000) 41px,
+			rgba(0, 0, 0, 0.999) 46px,
+			rgba(0, 0, 0, 0.996) 49px,
+			rgba(0, 0, 0, 0.990) 53px,
+			rgba(0, 0, 0, 0.983) 57px,
+			rgba(0, 0, 0, 0.968) 61px,
+			rgba(0, 0, 0, 0.953) 64px,
+			rgba(0, 0, 0, 0.928) 69px,
+			rgba(0, 0, 0, 0.904) 72px,
+			rgba(0, 0, 0, 0.865) 76px,
+			rgba(0, 0, 0, 0.832) 80px,
+			rgba(0, 0, 0, 0.782) 84px,
+			rgba(0, 0, 0, 0.740) 87px,
+			rgba(0, 0, 0, 0.679) 92px,
+			rgba(0, 0, 0, 0.630) 95px,
+			rgba(0, 0, 0, 0.563) 100px,
+			rgba(0, 0, 0, 0.511) 103px,
+			rgba(0, 0, 0, 0.441) 107px,
+			rgba(0, 0, 0, 0.389) 110px,
+			rgba(0, 0, 0, 0.322) 115px,
+			rgba(0, 0, 0, 0.274) 118px,
+			rgba(0, 0, 0, 0.216) 123px,
+			rgba(0, 0, 0, 0.176) 126px,
+			rgba(0, 0, 0, 0.129) 130px,
+			rgba(0, 0, 0, 0.099) 134px,
+			rgba(0, 0, 0, 0.066) 138px,
+			rgba(0, 0, 0, 0.046) 141px,
+			rgba(0, 0, 0, 0.026) 146px,
+			rgba(0, 0, 0, 0.016) 149px,
+			rgba(0, 0, 0, 0.007) 153px,
+			rgba(0, 0, 0, 0.003) 157px,
+			rgba(0, 0, 0, 0.001) 161px,
+			rgba(0, 0, 0, 0.000) 164px,
+			rgba(0, 0, 0, 0.000) 169px,
+			rgba(0, 0, 0, 0.000) 172px
 		);
 		mask-image: linear-gradient(
 			to right,
-			rgba(0, 0, 0, 1.000) 48px,
-			rgba(0, 0, 0, 1.000) 51px,
-			rgba(0, 0, 0, 0.999) 56px,
-			rgba(0, 0, 0, 0.996) 59px,
-			rgba(0, 0, 0, 0.990) 63px,
-			rgba(0, 0, 0, 0.983) 67px,
-			rgba(0, 0, 0, 0.968) 71px,
-			rgba(0, 0, 0, 0.953) 74px,
-			rgba(0, 0, 0, 0.928) 79px,
-			rgba(0, 0, 0, 0.904) 82px,
-			rgba(0, 0, 0, 0.865) 86px,
-			rgba(0, 0, 0, 0.832) 90px,
-			rgba(0, 0, 0, 0.782) 94px,
-			rgba(0, 0, 0, 0.740) 97px,
-			rgba(0, 0, 0, 0.679) 102px,
-			rgba(0, 0, 0, 0.630) 105px,
-			rgba(0, 0, 0, 0.563) 110px,
-			rgba(0, 0, 0, 0.511) 113px,
-			rgba(0, 0, 0, 0.441) 117px,
-			rgba(0, 0, 0, 0.389) 120px,
-			rgba(0, 0, 0, 0.322) 125px,
-			rgba(0, 0, 0, 0.274) 128px,
-			rgba(0, 0, 0, 0.216) 133px,
-			rgba(0, 0, 0, 0.176) 136px,
-			rgba(0, 0, 0, 0.129) 140px,
-			rgba(0, 0, 0, 0.099) 144px,
-			rgba(0, 0, 0, 0.066) 148px,
-			rgba(0, 0, 0, 0.046) 151px,
-			rgba(0, 0, 0, 0.026) 156px,
-			rgba(0, 0, 0, 0.016) 159px,
-			rgba(0, 0, 0, 0.007) 163px,
-			rgba(0, 0, 0, 0.003) 167px,
-			rgba(0, 0, 0, 0.001) 171px,
-			rgba(0, 0, 0, 0.000) 174px,
-			rgba(0, 0, 0, 0.000) 179px,
-			rgba(0, 0, 0, 0.000) 182px
+			rgba(0, 0, 0, 1.000) 38px,
+			rgba(0, 0, 0, 1.000) 41px,
+			rgba(0, 0, 0, 0.999) 46px,
+			rgba(0, 0, 0, 0.996) 49px,
+			rgba(0, 0, 0, 0.990) 53px,
+			rgba(0, 0, 0, 0.983) 57px,
+			rgba(0, 0, 0, 0.968) 61px,
+			rgba(0, 0, 0, 0.953) 64px,
+			rgba(0, 0, 0, 0.928) 69px,
+			rgba(0, 0, 0, 0.904) 72px,
+			rgba(0, 0, 0, 0.865) 76px,
+			rgba(0, 0, 0, 0.832) 80px,
+			rgba(0, 0, 0, 0.782) 84px,
+			rgba(0, 0, 0, 0.740) 87px,
+			rgba(0, 0, 0, 0.679) 92px,
+			rgba(0, 0, 0, 0.630) 95px,
+			rgba(0, 0, 0, 0.563) 100px,
+			rgba(0, 0, 0, 0.511) 103px,
+			rgba(0, 0, 0, 0.441) 107px,
+			rgba(0, 0, 0, 0.389) 110px,
+			rgba(0, 0, 0, 0.322) 115px,
+			rgba(0, 0, 0, 0.274) 118px,
+			rgba(0, 0, 0, 0.216) 123px,
+			rgba(0, 0, 0, 0.176) 126px,
+			rgba(0, 0, 0, 0.129) 130px,
+			rgba(0, 0, 0, 0.099) 134px,
+			rgba(0, 0, 0, 0.066) 138px,
+			rgba(0, 0, 0, 0.046) 141px,
+			rgba(0, 0, 0, 0.026) 146px,
+			rgba(0, 0, 0, 0.016) 149px,
+			rgba(0, 0, 0, 0.007) 153px,
+			rgba(0, 0, 0, 0.003) 157px,
+			rgba(0, 0, 0, 0.001) 161px,
+			rgba(0, 0, 0, 0.000) 164px,
+			rgba(0, 0, 0, 0.000) 169px,
+			rgba(0, 0, 0, 0.000) 172px
 		);
 	}
 	/* 3 clears the flying hero (2) and the deck ghosts (1). Set only while a CC flight is running — see

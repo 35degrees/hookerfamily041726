@@ -814,6 +814,16 @@ const ARRIVAL_TEMPO = 1.1;
 export function setArrivalTempo(): void {
 	carouselTempo = ARRIVAL_TEMPO;
 }
+// THOMAS TEMPO (Oct 6) — a timeline headshot that drops a line person to Thomas or lifts Thomas to one (the
+// rail's vertical exception, TimelineRail thomasVertical). Sam: "super fast… maybe it depends on the height
+// of the browser… slowed down by 10%". It does: the dive starts just off the window's top or bottom edge,
+// so a shorter window is less travel at the same pace (measured 1.18s at 900px tall, 1.00s at 700). Same
+// per-flight slot as the two above — TIME only.
+const THOMAS_VERTICAL_TEMPO = 1.1;
+/** Marks the launching flight as the rail's Thomas drop/lift. Called by ccFlyTo for `vertical` only. */
+export function setThomasVerticalTempo(): void {
+	carouselTempo = THOMAS_VERTICAL_TEMPO;
+}
 // TRAVEL TEMPO (v4.2.6): shortens the two cards' TRANSIT time only — NOT the beat (spacing held) and NOT the
 // easing shape (velocity curve held): same distances, same curves, same gap, cards just cross a bit faster,
 // so the total drops ~5%. Applied to car 1's exit + the hero's entry, never to the phantom beat.

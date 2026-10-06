@@ -400,6 +400,25 @@
 	const buildMs = $derived(rows.length ? (rows.length - 1) * STAGGER + ROW_MS : ROW_MS);
 	const VEIL_OUT_MS = 260;
 	const FLIP_MS = 460; // survivors closing or opening a gap — same clock as the leavers, on purpose
+
+	/**
+	 * THE HEADER AND THE SPOUSE FOLLOW THE ROWS (Sam, 100626, on Dr. Ralph Knutti: two paths, 10 and 11 rungs).
+	 * The box above is sized for the LONGEST path and a shorter one sits centred in it, which is right for the
+	 * rows — but the header sits on the box's top edge and the spouse card is pinned to its bottom, so on the
+	 * shorter path both stayed where the longer one puts them: a row's worth of air under "Paths to Thomas",
+	 * and Ralph hanging half a rung below his wife instead of beside her.
+	 *
+	 * The empty space is split evenly above and below the centred rows, so each of them moves by HALF of it:
+	 * the header down, the spouse up. On the rows' own clock — the gap-closing beat (`flipDelay`, then
+	 * FLIP_MS on cubic-out) — so the header, the cards and the spouse move as one. The `translate` property,
+	 * not `transform`: the arrive/depart transitions own `transform` on the spouse card.
+	 */
+	const slackHalf = $derived(
+		maxRows > rows.length ? ((maxRows - rows.length) * (RUNG_H + RUNG_GAP) * stage.u * fit) / 2 : 0
+	);
+	const followRows = $derived(
+		`transition: translate ${FLIP_MS}ms cubic-bezier(0.33, 1, 0.68, 1) ${flipDelay}ms;`
+	);
 	const SWITCH_STAGGER = 70;
 	/**
 	 * THE ARRIVALS OVERLAP THE DEPARTURES — a negative beat, not a positive one.
@@ -947,6 +966,7 @@
 		     the moment you ask to leave and the cards sweep out from under it. -->
 		<div
 			class="ladder-head"
+			style="translate: 0 {slackHalf.toFixed(1)}px; {followRows}"
 			in:fade|global={{ delay: buildMs, duration: 300 }}
 			out:fade|global={{ duration: 220 }}
 		>
@@ -1150,7 +1170,7 @@
 					onclick={(e) => rungNav(focus as Rung, e)}
 					data-rid={focus.id}
 					class="rung-spouse person-box spouse-line"
-					style="--sp-y-max: {tt(14.3) * RUNG_Y_EM}px"
+					style="--sp-y-max: {tt(14.3) * RUNG_Y_EM}px; translate: 0 {(-slackHalf).toFixed(1)}px; {followRows}"
 					class:no-photo={!focus.p}
 					class:prism={focus.id === PRISM_SPOUSE}
 					in:arrive|global={{ i: rows.length - 1, n: rows.length }}
@@ -1304,6 +1324,10 @@
 	}
 	.ladder-head {
 		position: relative;
+		/* ABOVE .ladder-rows (100626). On a shorter path the header slides down into the top of the rows' box
+		   (slackHalf), and that box comes later in the document — so without this it sat over the tabs and
+		   the X and swallowed their clicks. */
+		z-index: 2;
 		display: flex;
 		align-items: center;
 		gap: 14px;

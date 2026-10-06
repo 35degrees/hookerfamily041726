@@ -49,6 +49,7 @@ import {
 	captureRects,
 	setCarouselLateral,
 	setCarouselTempo,
+	setThomasVerticalTempo,
 	relativeGrowMs
 } from '#lib/transitions/flight.js';
 import { prefersReducedMotion } from 'svelte/motion';
@@ -243,6 +244,7 @@ export async function ccFlyTo(
 	// it by sharing this function; Sam (2 Oct): headshot clicks were "too fast… I'd like to remove that", so
 	// they now fly at the standard CC pace. See (4) below.
 	if (opts?.carousel) setCarouselTempo();
+	else if (vertical) setThomasVerticalTempo(); // the rail's Thomas drop/lift, 10% slower (Sam, Oct 6)
 	publishCameraMove(move);
 
 	if (!prefersReducedMotion.current) {
