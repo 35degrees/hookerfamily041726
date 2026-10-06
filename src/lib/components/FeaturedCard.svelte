@@ -401,6 +401,20 @@
 	 */
 	const ORBIT_TITLE = 'Major influence on multiple Hooker descendants';
 	const ORBIT_OWN_CC = 3; // three of their own and the claim is theirs — Sam's number
+	/**
+	 * WHERE THIS CARD'S WEAR FALLS ON THE TEXTURE — fixed per person, different between people (100626).
+	 * One worn-paper tile serves every card; offsetting it by a hash of the id means the same card always
+	 * shows the same nicks and no two neighbours repeat a pattern the eye could learn.
+	 */
+	const wearOffset = $derived.by(() => {
+		let h = 2166136261;
+		for (const ch of person.id) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+		const x = (h >>> 0) % 1100;
+		const y = (h >>> 11) % 733;
+		// the REACH tile (how deep the wear runs, see layout.css) takes its own, unrelated offset
+		return `--wear-at: ${x}px ${y}px; --wear-reach-at: ${(x * 7 + 300) % 1100}px ${(y * 5 + 200) % 733}px;`;
+	});
+
 	const orbitLabel = $derived.by(() => {
 		if (!orbit) return null;
 		if (crossConnections.length >= ORBIT_OWN_CC) return ORBIT_TITLE;
@@ -820,6 +834,18 @@
 		class:founder-card={founderZone}
 		style="clip-path: {clipPath}; --flat-shape: {flatShape}; --ring-outer: {ringOuter}; --ring-inner: {ringInner}; --ring-outer-flat: {ringOuterFlat}; --ring-inner-flat: {ringInnerFlat};"
 	>
+		<!-- THE WORN EDGE (Sam, 100626): old-card distressing around the border, heavier in the corners, in the
+		     card's own ink — gold on the bloodline, a darker shade of the mint or blue on spouse and easter-egg
+		     cards, a warm grey on plain cards. Under all the content (z-index −1 in the card's stacking context), so
+		     it never sits on a word. Never on a zone card (layout.css .card-wear). -->
+		{#if !orbit}<div
+				class="card-wear"
+				class:recent={(person.birth?.year ?? 0) >= 1900}
+				aria-hidden="true"
+				style="{wearOffset} --notch-w: {notchChipCount > 0 ? chipZoneWidth : 0}px; --notch-h: {notchChipCount > 0
+					? chipZoneHeight
+					: 0}px;"
+			></div>{/if}
 		<!-- Fixed-height TOP region: header + content area, always exactly CARD_TOP_H tall.
 		     The header row is a FIXED height (HEADER_H) so the LOWER CONTENT — the photo / narrative /
 		     RightColumn grid — begins at the same y on every card. This REVERSES the previous rule, which
@@ -1450,7 +1476,12 @@
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: var(--color-inkblue);
-		background: rgba(30, 42, 71, 0.045);
+		/* SOLID (100626). The 4.5% ink used to be the whole fill, so whatever was under the button showed through
+		   it — harmless on bare paper, but the worn edge (.card-wear) runs under the bottom-left corner and Sam
+		   could see it through both buttons. Same tint, now laid over the card's own opaque surface. */
+		background:
+			linear-gradient(rgba(30, 42, 71, 0.045), rgba(30, 42, 71, 0.045)),
+			var(--card-fill, #fff);
 		border: 1px solid rgba(30, 42, 71, 0.18);
 		border-radius: calc(3px * var(--stage-u, 1));
 		cursor: pointer;

@@ -2560,6 +2560,14 @@
 		--ring-outer: var(--ring-outer-flat) !important;
 		--ring-inner: var(--ring-inner-flat) !important;
 	}
+	/* ...and the worn edge with it (Sam, 100626). The wear follows the notch through --notch-w/h, set inline
+	   from the card's FINAL geometry — so a promoted spouse, flying square, wore distressing around a notch
+	   that was not cut yet, with bare rectangles inside it. A flat card wears a flat card's edge; the notch's
+	   wear arrives with the notch (notch-armed / landing), exactly as the outline does. */
+	.featured-flight:global(.flat):not(:global(.notch-armed)) :global(.card-wear) {
+		--notch-w: 0px !important;
+		--notch-h: 0px !important;
+	}
 
 	/* L3a "flip early, land as a chip": the demote's CHIP-FACE. A real PersonBox of the demoting
 	   person (identical to the box it becomes). shrinkTo's tick counter-scales it every frame against

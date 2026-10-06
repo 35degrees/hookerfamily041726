@@ -705,6 +705,97 @@ a.person-box.orbit-chip:hover {
 	);
 }
 
+/* ── THE WORN EDGE (Sam, 100626) ──────────────────────────────────────────────────────────────────────
+   "some old-timey distressing… an attempt at a border but creative and old-timey… subtle… not behind any
+   text." Not a stripe: the bloodline, spouse and easter-egg cards had only a clean edge, and a rule is what
+   the zone cards already wear.
+
+   ONE TEXTURE, ANY INK. `card-wear-1100.webp` is the app's own Manuscript paper with its darker fibres and
+   foxing lifted out as ALPHA (plus faint mottled clouds) — white, so it carries no colour of its own. It is
+   used as a MASK over a flat fill of the card's wear ink, so the same crinkle prints gold on a bloodline
+   card and a darker mint or blue on the others. Alpha masks only (no blend modes — design §36.3).
+
+   EDGES, HEAVIER AT THE CORNERS, WITH NO INNER EDGE. The texture is intersected with the union of the card's
+   edge bands and corner pools — the notch's two edges and two outer corners included, so the wear follows
+   the real outline (`--notch-w` / `--notch-h` from FeaturedCard; 0 when there is no notch) — and then with
+   the REACH tile, a soft blotchy field that makes the wear run deep in some stretches and stop short in
+   others. Without it every band ended on the same line and read as "a stripe with a border" (Sam).
+
+   --wear-band / --wear-corner are the two dials. Sam saw the heavier mock "B" (18 / 80) first, then asked
+   for "A" (12 / 52), which is what this is. A band's wear can reach up to twice --wear-band where the
+   reach tile is strong. */
+/* THE PLAIN (GREY) CARD — not bloodline, spouse or easter egg: Elder William Goodwin and the like (Sam,
+   100626: "we also need same distressing on grey status entries"). A darker shade of its own near-white,
+   at the mint and blue inks' lightness, with a hair of warmth so it reads as aged paper rather than ash.
+   Declared first so the three line classes below override it. */
+.featured-card {
+	--wear-ink: hsl(30 6% 58%);
+}
+.featured-card.hooker-line {
+	--wear-ink: rgb(212 175 55); /* the bloodline gold the search dropdown's stripe uses */
+}
+.featured-card.spouse-line {
+	--wear-ink: hsl(160 32% 58%);
+}
+.featured-card.ee-line {
+	--wear-ink: hsl(200 32% 58%);
+}
+.card-wear {
+	display: none;
+	/* A (12 / 52), then pulled 5% back toward the border (Sam, 100626; 10% was tried first) */
+	--wear-band: 11.4px;
+	--wear-corner: 49.4px;
+	--wear-mask:
+		url('/textures/card-wear-1100.webp'),
+		url('/textures/card-wear-reach.png'),
+		linear-gradient(to right, #000, rgb(0 0 0 / 0.55) var(--wear-band), transparent calc(var(--wear-band) * 2)),
+		linear-gradient(to left, #000, rgb(0 0 0 / 0.55) var(--wear-band), transparent calc(var(--wear-band) * 2)),
+		linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) var(--wear-band), transparent calc(var(--wear-band) * 2)),
+		linear-gradient(to top, #000, rgb(0 0 0 / 0.55) var(--wear-band), transparent calc(var(--wear-band) * 2)),
+		radial-gradient(circle at 0 0, #000, transparent var(--wear-corner)),
+		radial-gradient(circle at 100% 0, #000, transparent var(--wear-corner)),
+		radial-gradient(circle at 0 100%, #000, transparent var(--wear-corner)),
+		radial-gradient(circle at 100% 100%, #000, transparent var(--wear-corner)),
+		linear-gradient(to left, #000, rgb(0 0 0 / 0.55) var(--wear-band), transparent calc(var(--wear-band) * 2)),
+		linear-gradient(to bottom, #000, rgb(0 0 0 / 0.55) var(--wear-band), transparent calc(var(--wear-band) * 2)),
+		radial-gradient(circle at calc(100% - var(--notch-w, 0px)) 0, #000, transparent var(--wear-corner)),
+		radial-gradient(circle at 100% var(--notch-h, 0px), #000, transparent var(--wear-corner));
+	/* FOURTEEN ENTRIES EACH, written out: a shorter list REPEATS across the layers. In order: the crinkle,
+	   the reach, the four edges, the four corners, then the notch's left edge, its underside, and its two
+	   outer corners (the card's own top-right corner is cut away by the notch). */
+	--wear-size: 1100px auto, 1100px auto, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
+		calc(var(--wear-band) * 2) var(--notch-h, 0px), var(--notch-w, 0px) calc(var(--wear-band) * 2), 100% 100%, 100% 100%;
+	--wear-pos: var(--wear-at, 0 0), var(--wear-reach-at, 0 0), 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0,
+		right var(--notch-w, 0px) top 0, right 0 top var(--notch-h, 0px), 0 0, 0 0;
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background: var(--wear-ink);
+	/* THE STRENGTH DIAL, separate from the reach. Fades the ink only — band, corners and reach are untouched.
+	   Sam, 100626: −20% (0.8) was "too much", −5% is right. */
+	opacity: 0.95;
+	-webkit-mask-image: var(--wear-mask);
+	mask-image: var(--wear-mask);
+	-webkit-mask-size: var(--wear-size);
+	mask-size: var(--wear-size);
+	-webkit-mask-repeat: repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+	mask-repeat: repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+	-webkit-mask-position: var(--wear-pos);
+	mask-position: var(--wear-pos);
+	/* crinkle ∩ reach ∩ (edges ∪ corners ∪ notch): each layer combines with everything composited beneath it,
+	   so the twelve shapes add up first and the two textures then cut into that. */
+	-webkit-mask-composite: source-in, source-in, source-over, source-over, source-over, source-over, source-over, source-over, source-over, source-over, source-over, source-over, source-over, source-over;
+	mask-composite: intersect, intersect, add, add, add, add, add, add, add, add, add, add, add, add;
+}
+/* A NEWER CARD IS LESS WORN (Sam, 100626): anyone born in 1900 or later wears it 20% lighter. */
+.card-wear.recent {
+	opacity: 0.76; /* 0.95 × 0.8 */
+}
+.featured-card:not(.orbit-card) > .card-wear {
+	display: block;
+}
+
 /* (easter egg is declared ABOVE spouse — see the ordering note there) */
 
 /* THE DESCENT LINE ("Founder of the American Hooker Line", "Daughter of Thomas Hooker") in gold, and
