@@ -1,0 +1,5 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD6966,field_set,"cross_connections[0].display_label=, his uncle, apprenticed him at sixteen in his dry-goods house","OK set cross_connections[0].display_label = ', his uncle, apprenticed him at sixteen in his dry-goods house'",/person/alfred-edwards-1804,,
+X03572,field_set,"cross_connections[0].display_label=, his nephew, rose from clerk to partner in his dry-goods house","OK set cross_connections[0].display_label = ', his nephew, rose from clerk to partner in his dry-goods house'",/person/arthur-tappan-1786,,
+HD6966,field_set,"cross_connections[1].display_label=, who married his father's cousin, kept the Bible Society's books","OK set cross_connections[1].display_label = "", who married his father's cousin, kept the Bible Society's books""",/person/alfred-edwards-1804,,
+X00637,field_set,"cross_connections[2].display_label=, his wife's cousin's son, managed the Bible Society and an insurer","OK set cross_connections[2].display_label = "", his wife's cousin's son, managed the Bible Society and an insurer""",/person/william-woolsey-1766,,
