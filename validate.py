@@ -189,7 +189,7 @@ def validate(path, baseline_path=None):
             errors.append(f"{who}: notable is malformed (not a dict)")
         elif isinstance(no, dict):
             if no.get('is_notable'):
-                if not no.get('primary_url'):
+                if not no.get('primary_url') and not no.get('url_override'):  # url_override: Sam-approved notable with no link
                     errors.append(f"{who}: is_notable=true but no primary_url")
                 cats = no.get('notable_category') or []
                 if not cats:
