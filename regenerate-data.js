@@ -1135,7 +1135,11 @@ function resolveLandmarks(p, byId) {
 		// a string like "c. 1660" or a {status:'destroyed'} dates object falls through to no year.
 		const rawBuilt =
 			r.dates?.built ?? r.dates?.founded ?? r.built_year ?? r.date_built ?? r.founded ?? null;
-		const built = /^\d{4}$/.test(String(rawBuilt)) ? Number(rawBuilt) : null;
+		const builtYear = /^\d{4}$/.test(String(rawBuilt)) ? Number(rawBuilt) : null;
+		// Sam, 8 Oct 2026: a restored building with no build year shows its renovation instead —
+		// "Wilmington, NC (1976 Renovation)" (Chandler's Wharf).
+		const renovated = /^\d{4}$/.test(String(r.dates?.renovated)) ? Number(r.dates.renovated) : null;
+		const built = builtYear ?? (renovated ? `${renovated} Renovation` : null);
 		// The component renders name + subtitle ONLY (typeLabel is emitted but never drawn for a
 		// landmark row), so a landmark with no location used to show a bare "(1958)". Fall back to what
 		// the thing IS when there is no place to name — the same shape artworks already use, where
