@@ -147,7 +147,8 @@
 	// has to grow with it or the lights come up on the tail of the card again — which is the whole thing
 	// this constant exists to prevent. Sam: "we know the background color is influencing the harshness,
 	// maybe leave the screen darker for longer."
-	const DARK_HOLD_MS = 420;
+	// 420 -> 462 (Oct 9): × flight.ts's ZONE_TEMPO, with the rest of the zone's clocks. Mirrored in TimelineRail.
+	const DARK_HOLD_MS = 462;
 
 	/**
 	 * ── THE SPRITES (roadmap §40, the last unbuilt piece) ───────────────────────────────────────────
@@ -455,7 +456,7 @@
 		style="--fade-ms: {fadeMs}ms; {anchor
 			? `left:${anchor.x}px; top:${anchor.y}px; right:auto;`
 			: ''}"
-		out:fade={{ duration: 160 }}
+		out:fade={{ duration: 176 }}
 		onclick={() => onexit?.()}
 		aria-label="Return to the card you came from"
 	>
@@ -737,7 +738,7 @@
 		   applied and the hover had nothing to travel from. `backwards` still supplies the pre-start
 		   state (so it cannot flash at full strength before its delay elapses) but releases the element
 		   to its own rules the moment it finishes, which is where the resting 0.7 and the hover live. */
-		animation: exit-in 420ms cubic-bezier(0.33, 1, 0.68, 1) backwards;
+		animation: exit-in 462ms cubic-bezier(0.33, 1, 0.68, 1) backwards; /* 420 × 1.1, Oct 9 (ZONE_TEMPO) */
 		animation-delay: var(--fade-ms, 520ms);
 		transition:
 			opacity 200ms ease-out,

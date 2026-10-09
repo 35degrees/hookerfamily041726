@@ -1788,7 +1788,10 @@
 	// the bar is what Sam judges a CC against: "we want to measure at the speed of the vertical bar
 	// transitioning into place." If this number moves, move that one. A transition module cannot import
 	// a component, so the two carry notes at each other rather than one constant.
-	const ANCHOR_BAR_MS = 1200;
+	// 1200 -> 1320 (Oct 9): ×1.1 with the CC deck (flight.ts DECK_TEMPO) and the zones (ZONE_TEMPO), which Sam
+	// slowed 10% the same day — "slow down vertical bar timing to match new slower transition timing". Same curve.
+	// 1320 -> 1386 (Oct 9, later): another 5% — "it gets to its final position too soon".
+	const ANCHOR_BAR_MS = 1386;
 	const ANCHOR_BAR_EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
 	const BAR_EASE = 'cubic-bezier(0.33, 1, 0.68, 1)';
 	let barEase = $state(BAR_EASE);
@@ -2618,8 +2621,8 @@
 	   at its busiest.
 	   IF DARK_HOLD_MS OR ASCEND_MS MOVE, MOVE THESE — a mirror, like ANCHOR_BAR_MS's to flight.ts. */
 	.rail {
-		--night-out: 420ms; /* = DARK_HOLD_MS — the moment the veil starts to lift */
-		--night-ms: 594ms; /* = round(ASCEND_MS × 0.9) — how long it takes to go */
+		--night-out: 462ms; /* = DARK_HOLD_MS — the moment the veil starts to lift (420 × 1.1, Oct 9) */
+		--night-ms: 653ms; /* = round(ASCEND_MS × 0.9) — how long it takes to go (726 × 0.9, Oct 9) */
 		/* ── THE INK TURNS OVER A BEAT AHEAD OF THE ROOM ────────────────────────────────────────────
 		   Sam, after seeing the above land: "the white ink year text and horizontal lines last a beat
 		   too long — those are white while the light background is settled, so they are virtually
@@ -2632,8 +2635,8 @@
 		   Starting 120ms sooner and running 114ms shorter puts the ink home at ~780ms against the
 		   room's ~1014 — turned over while there is still dark to turn against. Its own two variables
 		   so it can be tuned without touching the ground's mirror of the veil's schedule. */
-		--ink-out: 300ms;
-		--ink-ms: 480ms;
+		--ink-out: 330ms; /* 300 × 1.1, Oct 9 — with the zone's ZONE_TEMPO */
+		--ink-ms: 528ms; /* 480 × 1.1 */
 	}
 	.tick {
 		position: absolute;

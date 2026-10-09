@@ -457,8 +457,10 @@
 				// people, being one of the men and women who founded Hartford outranks how the tree
 				// happens to reach them.
 				['Hartford Founder']
-			: founderSpouse
-				? // Gendered the same way the orbit title is, and ungendered rather than guessed when the
+			: founderSpouse && person.id !== 'I00001'
+				? // Susanna Garbrand Hooker is excused: she married two Hartford founders but is a founder of
+					// the line herself, so her one-off title comes from computeGenerationLabels (Sam, 6 Oct 2026).
+					// Gendered the same way the orbit title is, and ungendered rather than guessed when the
 					// record does not say — see orbitLabel.
 					[
 						`${
@@ -1195,7 +1197,7 @@
 								use:shrinkToFit={{ max: tl(10), min: tl(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
 							>
 								<span data-fit class="inline-block whitespace-nowrap"
-									>Connect {firstName ? `${firstName} ` : ''}to anyone</span
+									>Connect {firstName ? `${firstName} ` : ''}to family</span
 								>
 							</button>
 							{/if}

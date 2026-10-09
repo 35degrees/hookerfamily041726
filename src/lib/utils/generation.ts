@@ -45,7 +45,8 @@ export function computeGenerationLabels(person: Person, byId: Record<string, Per
 		// point: she enters the story as his wife, and she is equally a founder of the line. The ' & ' is
 		// also load-bearing — FeaturedCard routes a label containing it through the shrink-to-fit branch,
 		// so this stays on one line instead of wrapping the header to four.
-		return ['Wife of Thomas Hooker & Founder of the American Hooker Line'];
+		// 6 Oct 2026 (Sam): founder first, and the Hartford tie named — she married two Hartford founders.
+		return ['Founder of the American Hooker Line & Wife of Hartford Founder'];
 	}
 	if (person.id === 'T00011') {
 		// The Talcott progenitor (gen 0). Was hardcoded as T00010, which no longer exists (merged

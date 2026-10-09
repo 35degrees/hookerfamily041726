@@ -83,7 +83,7 @@ function settleBackFor(distance: number, boost = 1): number {
 // transitioning… we want to measure at the speed of the vertical bar transitioning into place."
 //
 // He is right that the bar is the reference, and it is a NUMBER rather than a feel: TimelineRail gives
-// every CC `ANCHOR_BAR_MS` = 1200ms on an ease-in-out, because a bar that arrived on the camera's own
+// every CC `ANCHOR_BAR_MS` = 1200ms (1386 since Oct 9) on an ease-in-out, because a bar that arrived on the camera's own
 // ~410ms duration "screams down the timeline". So the ascension is 1200ms end to end and the two land
 // together instead of one waiting on the other.
 //
@@ -105,7 +105,14 @@ function settleBackFor(distance: number, boost = 1): number {
 // felt — "the point of these transitions is not to have users marvel at how good the transitions are,
 // it's to get them to see the orbit card, but not in an instant flash that removes the idea and
 // illusion of the discrete baseball cards." A gesture that has to be admired has already failed.
-const ASCEND_TOTAL_MS = 660;
+// ZONE TEMPO (Oct 9) — Sam: "slow the Founder Zone and orbit zone entry and exit timing by 10% overall, keeping
+// everything else the same including transition bezier curves and landing animations… the transition completes
+// itself 10% slower." TIME only, applied to the three clocks below; every fraction of them (ENTER_GLIDE_FROM, the
+// approach/settle windows) and every curve stays put, so the gesture is the same gesture, played 10% longer.
+// Ascension.svelte's veil and sprites read ASCEND_MS and follow; its DARK_HOLD_MS and TimelineRail's --night-out /
+// --night-ms mirrors were scaled by hand to match. The founder zone is the same flight in a different skin.
+const ZONE_TEMPO = 1.1;
+const ASCEND_TOTAL_MS = 660 * ZONE_TEMPO;
 /** The gesture's whole clock, for the surround — see the note in Ascension.svelte on why it is read
  *  from here rather than off the published hero schedule. */
 export const ASCEND_MS = ASCEND_TOTAL_MS; // 980 -> 840 (Sam: still slow)
@@ -157,12 +164,12 @@ export const ASCEND_MS = ASCEND_TOTAL_MS; // 980 -> 840 (Sam: still slow)
  * those to one number was never coupling them, it was only making one of them wrong — which is what
  * "too hard and fast coming in" was describing.
  */
-const ASCEND_ENTER_MS = 1040; // 760 until 100526 — the extra time is the soft rubber-band landing's (see ASCEND_ENTER_CARRY)
+const ASCEND_ENTER_MS = 1040 * ZONE_TEMPO; // 760 until 100526 — the extra time is the soft rubber-band landing's (see ASCEND_ENTER_CARRY)
 /** When the arriving card has come through the window on a zone entry — the slab's float is let loose
  *  then (see growFrom). A fraction of ASCEND_ENTER_MS. (A "soupy" drag after this point was tried on
  *  100526 and removed: "it feels like a bug… just gravity loosens… we were closer before".) */
 const ENTER_GLIDE_FROM = 0.45;
-const ASCEND_RETURN_MS = 792;
+const ASCEND_RETURN_MS = 792 * ZONE_TEMPO;
 const ASCEND_ENTRY_DELAY = 0; // see ONE CLOCK below
 const ASCEND_ENTRY_MS = ASCEND_TOTAL_MS; 
 // The receding card keeps going well past the arrival's start — it is still being pushed while the new
@@ -777,7 +784,10 @@ const DECK_HERO_V_MULT = 1.1; // v4.2.1: the ENTERING card is 10% quicker than t
 // GLOBAL TEMPO (v4.2.3): a uniform time-scale on EVERY deck duration + the beat — the whole operation plays
 // this much faster end-to-end. It does NOT touch any easing curve, the heft, the angles, or the overshoot
 // distance (those are shape/space, not tempo) — it just compresses the timeline. 0.9 = 10% quicker overall.
-const DECK_TEMPO = 0.9;
+// Oct 9: 0.9 → 0.99 — Sam: "slow down all CC and headshot transition timing by 10%", vertical and lateral CCs,
+// the timeline headshots and the Shuffle alike. Every deck duration ×1.1; the per-flight tempos below multiply on
+// top unchanged, except the intro's arrival, which is compensated so its signed-off pace does not move.
+const DECK_TEMPO = 0.99;
 // CAROUSEL TEMPO (Aug 7) — Sam: "can we speed up notable transition by 10% but maintain CC standard
 // transition speed as is?" So this is a SHUFFLE-ONLY multiplier on the dial above, not a new clock.
 //
@@ -820,7 +830,9 @@ export function setCarouselTempo(): void {
 // "Thomas comes in very fast and I don't want to 'throw' the family around… not slow, some pace… maybe a
 // 10% reduction." The same per-flight slot as the carousel (reset by captureFlightKind, TIME only — curves,
 // heft, tilt and the settle distance do not move), just the other way: this flight plays 10% slower.
-const ARRIVAL_TEMPO = 1.1;
+// Oct 9: 1.1 → 1.0, because DECK_TEMPO absorbed the same 10% (0.9 → 0.99). 0.99 × 1.0 = the 0.9 × 1.1 Sam
+// signed off on Oct 2, so the intro's Thomas rises at exactly the pace it did. Not part of the Oct 9 ask.
+const ARRIVAL_TEMPO = 1.0;
 /** Marks the launching flight as the intro's arrival. Called once, by the person page's intro release. */
 export function setArrivalTempo(): void {
 	carouselTempo = ARRIVAL_TEMPO;
