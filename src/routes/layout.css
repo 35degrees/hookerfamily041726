@@ -789,6 +789,19 @@ a.person-box.orbit-chip:hover {
 	mask-composite: intersect, intersect, add, add, add, add, add, add, add, add, add, add, add, add;
 }
 /* A NEWER CARD IS LESS WORN (Sam, 100626): anyone born in 1900 or later wears it 20% lighter. */
+/* SAFARI: THE WORN EDGE WAITS FOR THE LANDING (Oct 9, Sam: "the distressing all over the edge of the promoted
+   entry flickers" during every transition, "a big cause of the flicker and queasiness"; never in Chrome). The wear
+   is a fourteen-layer alpha mask, and WebKit re-rasterizes it badly while its card is transformed in flight. So in
+   WebKit a card in flight (`.flat`, set at launch and removed on the real landing) carries no worn edge, and the
+   edge fades in once the card has settled. The rest rule holds the fade-in; the flight rule's `transition: none`
+   makes the hide instant, so nothing is ever animated mid-flight. Chrome is untouched. */
+html.webkit .card-wear {
+	transition: opacity 260ms ease-out;
+}
+html.webkit .featured-flight.flat .card-wear {
+	opacity: 0;
+	transition: none;
+}
 .card-wear.recent {
 	opacity: 0.76; /* 0.95 × 0.8 */
 }
