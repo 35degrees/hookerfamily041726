@@ -11,6 +11,7 @@
 	import AuthModal from '#lib/components/AuthModal.svelte';
 	import CardMarks from '#lib/components/CardMarks.svelte';
 	import BookmarksModal from '#lib/components/BookmarksModal.svelte';
+	import ContactModal from '#lib/components/ContactModal.svelte';
 
 	/**
 	 * THE SHORT NAME, for the home-card confirmation's BUTTON (roadmap §50).
@@ -1978,6 +1979,9 @@
      `modal.svelte.ts`, and shares nothing that renders. Two columns, editable headers, and rows that
      terminate in the app's EXISTING arrival rather than a sixth way to travel (§45.16). -->
 <BookmarksModal />
+<!-- SIX. Same rule again: the veil's values and the one slot, nothing that renders. Opened from an NB body
+     link (`[here](contact)`, NarrativeBlocks), not from the chrome. -->
+<ContactModal />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
 <!-- The keep-alive test listens on the WINDOW, not on the stage. On .page-container it simply stopped

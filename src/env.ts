@@ -35,6 +35,19 @@ export const variables = defineEnvVars({
 		schema: optional,
 		description: 'Microsoft client secret. EXPIRES 2028-08-28 (Azure maximum) — see roadmap §52.7.'
 	},
+	// THE CONTACT FORM (100926, /api/contact). Optional so the app starts without them; unset, the endpoint
+	// answers 503 and the form says it could not send. `SES_`, not `AWS_`: Vercel reserves the AWS_ names.
+	SES_ACCESS_KEY_ID: {
+		schema: optional,
+		description: 'IAM user hooker-contact-sender, allowed ses:SendEmail only.'
+	},
+	SES_SECRET_ACCESS_KEY: { schema: optional, description: 'That IAM user’s secret key.' },
+	SES_REGION: { schema: optional, description: 'The SES region holding the verified identities (us-west-1, N. California).' },
+	CONTACT_FROM: {
+		schema: optional,
+		description: 'Sender on the SES-verified domain, e.g. "Hooker Family Site <sam@samhooker.com>".'
+	},
+	CONTACT_TO: { schema: optional, description: 'Where contact-form messages are delivered.' },
 	PUBLIC_AUTH_MICROSOFT: {
 		public: true,
 		schema: optional,

@@ -5,6 +5,7 @@
 	import type { NarrativeBlock } from '#lib/types/person.js';
 	import { stage } from '#lib/state/stage.svelte.js';
 	import { isWebKit } from '#lib/state/engine.js';
+	import { openModal, type ModalKind } from '#lib/state/modal.svelte.js';
 
 	/**
 	 * THE BLOCK'S SLIDE — Svelte's own `slide`, except in Safari/WebKit, where its opening opacity fade is
@@ -105,6 +106,27 @@
 	function toggle(key: string | number) {
 		openKey = openKey === key ? null : key;
 	}
+
+	/**
+	 * IN-BODY ACTION LINKS (100926). `[words](action)` in a body renders `words` as a link that runs the
+	 * action. An ALLOW-LIST, like FONTS above: canonical supplies a KEY, never a URL or markup, so a body
+	 * can open one of the app's own surfaces and nothing else. An unknown key renders as its plain words.
+	 * First (and so far only) use: "Click [here](contact)" on Samuel Talcott Hooker's NB 5.
+	 */
+	const ACTIONS: Record<string, ModalKind> = { contact: 'contact' };
+	const LINK_RE = /\[([^\]]+)\]\(([a-z-]+)\)/g;
+	type Seg = { text: string; action?: ModalKind };
+	function segments(body: string): Seg[] {
+		const out: Seg[] = [];
+		let last = 0;
+		for (const m of body.matchAll(LINK_RE)) {
+			if (m.index > last) out.push({ text: body.slice(last, m.index) });
+			out.push({ text: m[1], action: ACTIONS[m[2]] });
+			last = m.index + m[0].length;
+		}
+		if (last < body.length) out.push({ text: body.slice(last) });
+		return out;
+	}
 </script>
 
 {#if sortedBlocks.length > 0}
@@ -137,7 +159,11 @@
 						     collapses runs of spaces and wraps normally, it only honours an explicit \n. -->
 						<p
 							class="text-[calc(13.5px*var(--type-k,1)*var(--nb-body-k,1))] leading-[calc(1.625*var(--nb-lead-k,1))] whitespace-pre-line text-stone-700 select-none">
-							{block.body}
+							{#each segments(block.body) as seg, i (i)}{#if seg.action}<button
+										type="button"
+										class="body-link"
+										onclick={() => openModal(seg.action!)}>{seg.text}</button
+									>{:else}{seg.text}{/if}{/each}
 						</p>
 					</div>
 				{/if}
@@ -158,5 +184,27 @@
 	   green does the same in layout.css (#355e3b → #2b4d30), on a rule specific enough to beat this one. */
 	.header-button:hover h3 {
 		color: #172f76;
+	}
+	/* An in-body action link: the header's blue, underlined, set in the body's own type. A <button> (it opens
+	   a surface, it goes nowhere), stripped back to inline text. */
+	.body-link {
+		display: inline;
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		color: #1c398e;
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 2px;
+		cursor: pointer;
+	}
+	.body-link:hover {
+		color: #172f76;
+	}
+	.body-link:focus-visible {
+		outline: 2px solid #1c398e;
+		outline-offset: 1px;
+		border-radius: 2px;
 	}
 </style>
