@@ -1831,8 +1831,9 @@
 			rgba(222, 220, 210, 0.43) 55%,
 			rgba(216, 214, 204, 0.49) 100%
 		);
-		backdrop-filter: blur(10px);
+		/* -webkit- FIRST: the production minifier keeps only the LAST of the pair (Oct 9) */
 		-webkit-backdrop-filter: blur(10px);
+		backdrop-filter: blur(10px);
 	}
 	.ladder {
 		/* THE FIT EASES, IT DOES NOT STEP. Inherited from the Thomas ladder, where a stepped change made

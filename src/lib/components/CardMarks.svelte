@@ -711,8 +711,9 @@
 		padding: 5px 10px;
 		border-radius: 6px;
 		background: rgba(233, 231, 223, 0.86);
-		backdrop-filter: blur(9px);
+		/* -webkit- FIRST: the production minifier keeps only the LAST of the pair (Oct 9) */
 		-webkit-backdrop-filter: blur(9px);
+		backdrop-filter: blur(9px);
 		color: var(--color-ascendmidnight, #0f1626);
 		font: 500 11px/1 var(--font-inter, sans-serif);
 		letter-spacing: 0.01em;
@@ -747,8 +748,9 @@
 			rgba(222, 220, 210, 0.43) 55%,
 			rgba(216, 214, 204, 0.49) 100%
 		);
-		backdrop-filter: blur(10px);
+		/* -webkit- FIRST: the production minifier keeps only the LAST of the pair (Oct 9) */
 		-webkit-backdrop-filter: blur(10px);
+		backdrop-filter: blur(10px);
 	}
 	.confirm {
 		position: fixed;
