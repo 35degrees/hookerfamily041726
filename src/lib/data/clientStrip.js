@@ -13,6 +13,8 @@
  * added here in the same change, or it will silently be missing from every card.
  */
 
+/** @typedef {Record<string, any>} Rec — a canonical record, untyped on purpose: this file sees every shape. */
+
 /** Top-level person fields the client reads. `classification` is narrowed separately (CLIENT_CLASSIFICATION). */
 export const CLIENT_PERSON_KEYS = [
 	'id',
@@ -50,28 +52,36 @@ export const CLIENT_CLASSIFICATION = [
 
 /** Nested working notes. NOT career[].notes or education[].notes — RightColumn renders those. */
 const NOTE_KEYS = ['notes', 'research_notes'];
+/** @param {any} o */
 const dropNotes = (o) => {
 	if (!o || typeof o !== 'object' || Array.isArray(o)) return o;
+	/** @type {Rec} */
 	const out = { ...o };
 	for (const k of NOTE_KEYS) delete out[k];
 	return out;
 };
 
-/** A person record as the client may see it. Input is never mutated. */
+/** A person record as the client may see it. Input is never mutated.
+ *  @param {Rec} p
+ *  @returns {Rec} */
 export function clientPerson(p) {
+	/** @type {Rec} */
 	const out = {};
 	for (const k of CLIENT_PERSON_KEYS) if (k in p) out[k] = p[k];
 	if (p.classification) {
-		out.classification = {};
+		/** @type {Rec} */
+		const cls = {};
 		for (const k of CLIENT_CLASSIFICATION)
-			if (k in p.classification) out.classification[k] = p.classification[k];
+			if (k in p.classification) cls[k] = p.classification[k];
+		out.classification = cls;
 	}
 	for (const k of ['bio', 'name', 'birth', 'death', 'parents']) if (out[k]) out[k] = dropNotes(out[k]);
 	if (Array.isArray(out.marriages)) out.marriages = out.marriages.map(dropNotes);
 	return out;
 }
 
-/** A cemetery or institution as embedded in a payload: everything but its notes and sources. */
+/** A cemetery or institution as embedded in a payload: everything but its notes and sources.
+ *  @param {any} e */
 export function clientRegistryEntry(e) {
 	if (!e || typeof e !== 'object') return e;
 	const out = dropNotes(e);
