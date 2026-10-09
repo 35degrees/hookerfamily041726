@@ -1,6 +1,7 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
-**Date: October 6, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
+**Date: October 9, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_100626.md (the what/why for every item below).**
+**OCTOBER 9, 2026 (§60): THE FIRST DEPLOY (hooker-test.vercel.app) AND TWO GROUND-UP PROJECTS.** Sam's direction at close: no more Safari patches — a WebKit rebuild from the ground up, Chrome untouched (§60.1 A); and screen sizes designed per target rather than squeezed (§60.1 B). Both are their own future sessions; nothing in §60.1 is built. §60.2 is what shipped (contact form, payload privacy/diet, deploy setup, cache header, footer); §60.3 the deploy-only lessons; §60.4 what is open, including the uncommitted Privacy/Sources.
 **OCTOBER 6, 2026 (§59): SHORT WINDOWS, THE PHONE, READABLE CHIPS — paused here by Sam's choice; written to be picked up cold.** A one-way HEIGHT ladder (1050 → 745) that buys room with content and air, never by shrinking type; a PHONE recomposition (≤600px wide, step 1 of 3); chip type that fills its chip. §59.5 is how to resume (`scripts/probe-heights.mjs`), §59.6 the open list in priority order. Design §53 holds Sam's ranked priorities and every approach that was tried and discarded — read it first.
 **OCTOBER 2, 2026, LATE (§58): SAFARI.** Everything before this was built and judged in Chrome only, so the first session in real Safari found the hero's shadow blinking and the chip flights skipping. Safari is now close to Chrome. §58.1 is how to measure real Safari from here; nothing on headless WebKit can show these bugs. §58.3 is the one you need if a promotion ever "jumps" again: the arriving card's clock now waits for its first paint (`holdUntilPainted`). §58.4 is what NOT to do: re-timing flights for Safari broke everything and was reverted. All of it is scoped to `html.webkit`, so Chrome is byte-identical.
 
@@ -6992,3 +6993,104 @@ Earlier in the day, for the record: the ≤745 step brought Taft, Burr Sr., Bray
 - **Burial pin:** rows fade under it via a mask, not a flat slab.
 - **Paths to Thomas:** the header and the spouse card follow the rows when paths differ in length (Ralph Knutti).
 - **Timeline:** years 5px nearer the portraits, bars 3.75px left, the gold ground 10px nearer the window.
+
+---
+
+## 60. OCTOBER 9, 2026 — THE FIRST DEPLOY, AND TWO GROUND-UP PROJECTS (session record; nothing in 60.1 is built)
+
+The site was deployed for the first time, to **https://hooker-test.vercel.app** (noindex, robots `Disallow: /`).
+Chrome there is what Sam wants: *"chrome is perfection."* Safari and smaller screens are not. Sam's direction
+at the end of the day was explicit: stop patching both, and give each its own ground-up session later.
+
+### 60.1 THE TWO PROJECTS — Sam's priorities, in his words. Not started; a session opens each one.
+
+**A. A WEBKIT REBUILD, FROM THE GROUND UP.** *"I think we literally need to rebuild the site from the ground up
+with a webkit perspective… keeping the chrome view totally clean as it runs now… you can't just keep patching
+patching patching. We are beyond that, we patched for days already, these are patches on patches."*
+
+His three Safari concerns, none of which happen in Chrome:
+1. **Quivery, weak transitions.** Flights feel shaky, unsteady and slower; the parent-chip → featured promotion
+   works inconsistently (the §58.7 jump, tabled October 5, never solved).
+2. **Blurry timeline headshots on hover.** The portrait enlarges through a blurred beat, on every hover.
+3. **Ghost drop shadows.** Child and sibling chips vanish while their shadows stay in place, during a parent click
+   and during Shuffle, until the incoming card settles. Chips have no shadow twins (only the hero card and the CC
+   blade do, §58.2), so this is not the twins.
+
+Facts to start from, so the rebuild does not re-learn them:
+- **The headshot blur appeared only on the deployed site, never on localhost in Safari** (Sam: "the first time it
+  ever appeared was on hooker-test… thomas-shepard"). So a dev-build vs production-build difference is part of
+  the Safari story. Step one of the session: the same card in Safari on the dev server, a local production build
+  (`npm run build && npx vite preview --port 4173`), and the deployed site, to find where it changes. The
+  minifier has already rewritten CSS once in a way only one browser felt (60.3, the veils).
+- **What was tried today and failed:**
+  - `will-change: transform` on the portrait `<img>` under `html.webkit` made the blur PERMANENT, opened a
+    transparent ring inside the border and blurred the tooltip. Reverted (`34623300`); a note marks it in
+    TimelineRail.
+  - A grow-by-size hover (animating the circle's width and height instead of scaling it, geometry proved equal
+    to Chrome's) was written and removed before commit, when Sam's dev-vs-deployed observation reframed the
+    problem.
+- **The standing rule changes:** no Safari-specific patches without Sam starting the work (memory
+  `no-safari-patches`). §58's toolkit (`scripts/safari/`, the AppleScript and screen-recording method) is still
+  the only honest way to see Safari.
+
+**B. SCREEN SIZES, DESIGNED RATHER THAN SQUEEZED.** *"As the browser shrinks to laptop and iPad screen sizes, the
+content output and layout just gets lazy and confusing. It's not thought out. So we need to pick a couple of
+screen sizes and maximize the view for it — not just a squished weak version of the showcase large view."*
+
+This supersedes §59's approach (a height ladder of reductions applied to the desktop composition) as the way
+forward; §59 stays as the record of what was tried. The session starts by choosing the target sizes with Sam —
+likely a 13–14" laptop (Chrome viewport ~1440×800–860), iPad (landscape and portrait), and a phone — then
+designs a composition for each. Reference viewports measured today: no MacBook at default scaling gives Chrome
+more than ~1000px of height; 1050 (§59's MID_H) is iPad mini portrait.
+
+### 60.2 WHAT SHIPPED (all on `main`; deployed unless marked)
+
+| commit | what |
+|---|---|
+| `b7ca84b1`, `3450c197` | **Contact form**: "Get in Touch" modal opened from `[here](contact)` in an NB body (NarrativeBlocks allow-lists the action), delivered by AWS SES (us-west-1, `sam@samhooker.com` → `CONTACT_TO`, visitor as Reply-To) through `/api/contact` |
+| `fc81b12d`, `f76316e8` | data: Sam's contact block moved to NB3; Thomas Hooker's CC to John Talcott relabelled |
+| `c09fb6ca` | "Connect X to **family**"; every deck flight 10% slower (`DECK_TEMPO` 0.99, intro compensated), zones 10% slower (`ZONE_TEMPO`), timeline bar 1386ms |
+| `3a1c5a0c`, `63d579f1`, `a3a03d8b` | **Payload privacy and diet**: person files ship an allow-list of the fields `src/` reads (`src/lib/data/clientStrip.js`); nested notes, research fields and registry notes/sources stay in canonical; context records carry only graph fields; `people.json` no longer written. 720 → 455 MB; a person file averages 3.0 KB compressed. Proved by `probe-payload-equivalence.mjs --strip` (all 28,577) and `probe-render-text.mjs` |
+| `e5775cff`, `d480393c` | **Deploy setup**: adapter-vercel (pdx1, next to Neon us-west-2), `vercel.json` (build = regenerate + vite build, `X-Robots-Tag: noindex`), `.vercelignore` as an allow-list (125 files, ~74 MB) |
+| `0d665bc4` | probes: `probe-soak.mjs` (memory/bandwidth over N hops + idle; LEAK=1 proves it red), `probe-render-text.mjs`, `probe-payload-equivalence.mjs`, `scripts/safari/soak.js` |
+| `405e0d84` | data files `max-age=300, stale-while-revalidate` — a hovered chip's click went from **687 ms** to **88 ms** |
+| `f9ce7dff` | veils write `-webkit-backdrop-filter` FIRST (60.3) |
+| `fea4cd7c` | the record ID after the name shows on the dev server only |
+| `2f6bb753`, `34623300` | timeline portrait: clipping frame, photo 2% larger, backing in the ring's ink; (the WebKit `will-change` from `2f6bb753` reverted in `34623300`) |
+| `14bf2b84` | contact: bare Reply-To; CONTACT_FROM/TO unquoted |
+| `db5b51d2`, `81d96342` | **footer** "About / Contact" (lateral `ccFlyTo` to Samuel Talcott Hooker) + "© 2026"; the Manuscript ground toggle removed entirely (Manuscript is `GROUNDS[0]`, the default) |
+
+**Measured today, for the record.** Soak, 200 hops: Chrome JS heap 3.5 → 6.1 MB and flat through 10 idle
+minutes (0.35 MB per 100 hops); Safari's tab 257 MB → 0.7–1.0 GB sawtooth (decoded photos), flat while idle.
+Photos are 94% of a session's bytes (~10 per click, ~29 KB each, the deliberate neighbourhood preload, which
+Sam wants kept: no photo may arrive late or change while looked at).
+
+### 60.3 DEPLOY NOTES — what only became true on a real deployment
+
+- **Deploy:** `vercel deploy --prod` from this Mac (CLI 63; 41 was too old). GitHub is not linked; Vercel builds
+  from the uploaded files. Environment variables live in the Vercel project (13, Production).
+- **The production CSS minifier keeps only the LAST of a prefixed pair.** Written `backdrop-filter` then
+  `-webkit-backdrop-filter`, every veil shipped the prefixed one only and Chrome lost its blur. Prefixed first
+  (memory `prefixed-css-pairs-webkit-first`). Verify against the built CSS, never the source.
+- **`.env` quotes survive a paste into Vercel.** `CONTACT_FROM="…"` arrived quoted and SES refused every message;
+  the endpoint now strips quotes. Sam may also remove them in the dashboard.
+- **Sign-in on hooker-test:** Google (origin + `/api/auth/callback/google`) and Azure (`/api/auth/callback/microsoft`)
+  registered and verified by Sam. Better Auth logs "Could not validate the database schema" on cold starts —
+  a background startup check; sign-in works.
+- **Person pages are still server-rendered** (DEPLOYMENT §3 Option B) — fine for a noindexed test site; Option A
+  (static) remains the pre-launch target.
+
+### 60.4 OPEN AT CLOSE
+
+- **Uncommitted, waiting for Sam's look on localhost:** the footer as two smaller right-aligned rows (About /
+  Contact · © 2026, then Sources · Privacy); `SourcesModal` (a DRAFT from Sam's own NB 3 and canonical's
+  primary_source, for him to rewrite); `PrivacyModal` (signed-in only) with account deletion (`deleteUser`
+  enabled in `server/auth.ts`; bookmarks cascade; requires a sign-in within a day). Not tested end to end —
+  deleting needs a throwaway account.
+- ~~The GitHub repo appears public~~ — **it is PRIVATE** (Sam confirmed). Vercel's import list showed no padlock
+  beside it, which was misleading; noted so the question is not raised again.
+- Speed, proposed and not built: prefetch every visible chip's file after landing (§6.4b — instant clicks on
+  phones too); let Vercel cache each person page's server render for an hour.
+- canonical.json size (70 MB; GitHub warns at 50): moving research fields to a sidecar file plus one person per
+  line measures 49.6 MB. Sam's direction: nothing deleted, research moved to another JSON. Its own careful
+  session — validate.py's silent-loss check must learn the sidecar first.
