@@ -297,6 +297,15 @@ export const auth = betterAuth({
 	 * set by our own authorised route so the write path stays one place.
 	 */
 	user: {
+		/**
+		 * ACCOUNT DELETION (Oct 9) — DEPLOYMENT §16-O / §18.8: a reader must be able to remove everything this
+		 * site keeps about them. Better Auth deletes the user row (name, email, image, heroPersonId, list names)
+		 * and its sessions; `account` and `bookmark` rows go with it by ON DELETE CASCADE (migrations/001).
+		 * No password exists to confirm with (social sign-in only), so Better Auth requires a FRESH session
+		 * instead — created within `session.freshAge` (default one day) — and answers SESSION_EXPIRED
+		 * otherwise. PrivacyModal turns that into "sign out, sign back in, then delete".
+		 */
+		deleteUser: { enabled: true },
 		additionalFields: {
 			heroPersonId: { type: 'string', required: false, input: false },
 			/**

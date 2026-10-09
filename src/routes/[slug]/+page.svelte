@@ -13,6 +13,8 @@
 	import BookmarksModal from '#lib/components/BookmarksModal.svelte';
 	import ContactModal from '#lib/components/ContactModal.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
+	import PrivacyModal from '#lib/components/PrivacyModal.svelte';
+	import SourcesModal from '#lib/components/SourcesModal.svelte';
 
 	/**
 	 * THE SHORT NAME, for the home-card confirmation's BUTTON (roadmap §50).
@@ -1986,6 +1988,9 @@
 <!-- SIX. Same rule again: the veil's values and the one slot, nothing that renders. Opened from an NB body
      link (`[here](contact)`, NarrativeBlocks), not from the chrome. -->
 <ContactModal />
+<!-- SEVEN and EIGHT, opened from SiteFooter. Same rule: the veil's values and the one slot, nothing that renders. -->
+<PrivacyModal />
+<SourcesModal />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
 <!-- The keep-alive test listens on the WINDOW, not on the stage. On .page-container it simply stopped

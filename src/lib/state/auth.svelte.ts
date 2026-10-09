@@ -521,3 +521,25 @@ export async function signOut(): Promise<void> {
 	if (currentUserId) dropMarkCache(currentUserId);
 	await authClient.signOut();
 }
+
+/**
+ * DELETE THE SIGNED-IN READER'S ACCOUNT (Oct 9, PrivacyModal). Server side, Better Auth removes the user and
+ * the database cascades to their accounts, sessions and bookmarks (server/auth.ts `deleteUser`). Client side,
+ * this browser's bookmark copy goes too, and the session refetch below empties the stores, so the page is
+ * signed out without a reload.
+ *
+ * 'stale' is Better Auth's SESSION_EXPIRED: with no password to confirm against, deletion requires a session
+ * created within the last day. The caller asks the reader to sign out and back in.
+ */
+export async function deleteAccount(): Promise<'deleted' | 'stale' | 'failed'> {
+	const id = currentUserId;
+	try {
+		const { error } = await authClient.deleteUser();
+		if (error) return error.code === 'SESSION_EXPIRED' ? 'stale' : 'failed';
+		if (id) dropMarkCache(id);
+		await authClient.getSession({ query: { disableCookieCache: true } }).catch(() => {});
+		return 'deleted';
+	} catch {
+		return 'failed';
+	}
+}

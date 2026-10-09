@@ -1,8 +1,9 @@
 <script lang="ts">
 	/**
-	 * SiteFooter — the bottom-right corner (Sam, Oct 9): "About / Contact" and "© 2026".
+	 * SiteFooter — the bottom-right corner (Sam, Oct 9): "About / Contact", "Sources", "Privacy" (signed in only)
+	 * and "© 2026".
 	 *
-	 * It took the Manuscript ground toggle's seat (that toggle is now dev-only, see Field.svelte), and it takes
+	 * It took the seat of the Manuscript ground toggle (removed Oct 9, see Field.svelte), and it takes
 	 * the corner chrome's type rather than inventing its own: 500 12px Inter in the house ink, one step back at
 	 * rest, full on hover, cream in the zone — SearchTrigger's rules, so the two corners read as one family.
 	 *
@@ -17,6 +18,8 @@
 	import { featured } from '#lib/state/featured.svelte.js';
 	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
+	import { auth } from '#lib/state/auth.svelte.js';
+	import { openModal } from '#lib/state/modal.svelte.js';
 
 	/** HD3386's slug. Living, so the year is withheld from it; if his name ever changes, redirects.json maps
 	 *  the old slug and the warm path falls back to a real navigation that follows it. */
@@ -32,25 +35,54 @@
 	}
 </script>
 
+<!-- TWO SHORT ROWS, RIGHT-ALIGNED (Sam, Oct 9: "we can't just build out to the left"). The corner shares its
+     height with the children row, so the footer grows UP into empty paper rather than LEFT into the chips:
+     the primary row (About / Contact and the year) at 11px, 8% under the corner chrome's 12, nearest the corner;
+     the secondary links above it, smaller again. Narrower than the one-row footer was with half the links. -->
 <footer class="site-footer" class:on-dark={onDark} class:in-zone={inZone}>
-	<button type="button" class="about" onclick={onAbout}>About / Contact</button>
-	<span class="copy" aria-label="Copyright {YEAR}">© {YEAR}</span>
+	<!-- THE SMALL ROW ON TOP (Sam, Oct 9): Privacy then Sources, right-aligned, so Sources holds the corner's edge and
+	     Privacy appears beside it only for a signed-in reader (it is about what an account stores, and holds the delete). -->
+	<div class="row secondary">
+		{#if auth.signedIn}
+			<button type="button" class="about" onclick={() => openModal('privacy')}>Privacy</button>
+		{/if}
+		<button type="button" class="about" onclick={() => openModal('sources')}>Sources</button>
+	</div>
+	<div class="row primary">
+		<button type="button" class="about" onclick={onAbout}>About / Contact</button>
+		<span class="copy" aria-label="Copyright {YEAR}">© {YEAR}</span>
+	</div>
 </footer>
 
 <style>
 	.site-footer {
 		position: fixed;
 		right: 16px;
-		bottom: 16px;
+		bottom: 12px;
 		z-index: 10;
 		display: flex;
-		align-items: center;
-		gap: 14px;
-		font: 500 12px/1 var(--font-inter, sans-serif);
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 1px;
+		font-family: var(--font-inter, sans-serif);
+		font-weight: 500;
+		line-height: 1;
 		letter-spacing: 0.02em;
 	}
+	.row {
+		display: flex;
+		align-items: center;
+	}
+	.row.primary {
+		gap: 12px;
+		font-size: 11px; /* 8% under the corner chrome's 12px (Sam) */
+	}
+	.row.secondary {
+		gap: 10px;
+		font-size: 10px;
+	}
 	.about {
-		padding: 6px 2px;
+		padding: 4px 1px;
 		border: 0;
 		background: none;
 		font: inherit;

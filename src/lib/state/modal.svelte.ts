@@ -17,8 +17,17 @@
  */
 /** 082926: `auth` joins as the FOURTH surface, and it is a fourth FILE — §46.2. It shares this slot
  *  and the veil's values; it shares nothing that renders. `bookmarks` follows in slice 5. */
-/** 100926: `contact` is the SIXTH, opened from an NB body link (`[here](contact)`, NarrativeBlocks). */
-export type ModalKind = 'connect-thomas' | 'connect-anyone' | 'search' | 'auth' | 'bookmarks' | 'contact';
+/** 100926: `contact` is the SIXTH, opened from an NB body link (`[here](contact)`, NarrativeBlocks); `privacy` and
+ *  `sources` the seventh and eighth, opened from SiteFooter. */
+export type ModalKind =
+	| 'connect-thomas'
+	| 'connect-anyone'
+	| 'search'
+	| 'auth'
+	| 'bookmarks'
+	| 'contact'
+	| 'privacy'
+	| 'sources';
 
 let openKind = $state<ModalKind | null>(null);
 
