@@ -113,7 +113,7 @@
 				</div>
 				{#if auth.signedIn}
 					<div class="acts">
-						<button type="button" class="btn ghost danger" onclick={() => (step = 'confirm')}>Delete my account</button>
+						<button type="button" class="btn go danger first" onclick={() => (step = 'confirm')}>Delete my account</button>
 						<button type="button" class="btn go" onclick={dismiss}>Close</button>
 					</div>
 				{/if}
@@ -273,10 +273,9 @@
 	.btn.ghost:hover:not(:disabled) {
 		opacity: 1;
 	}
-	/* The delete link sits at the far LEFT, away from Close, in a muted brick rather than the house blue. */
-	.btn.ghost.danger {
+	/* The delete button sits at the far LEFT, away from Close — red with white text (Sam, Oct 9). */
+	.btn.first {
 		margin-right: auto;
-		color: rgba(150, 40, 30, 0.9);
 	}
 	.btn.go {
 		background: var(--color-inkblue);

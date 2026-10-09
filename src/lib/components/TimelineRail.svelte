@@ -1751,6 +1751,13 @@
 					: 'center';
 		return `${ox} ${oy}`;
 	}
+	/** The same origin as fractions of the box — 0 left/top, 0.5 centre, 1 bottom — for WebKit's grow-by-size
+	 *  hover (see `.anchor-vis` under html.webkit), which positions the enlarged circle instead of scaling it. */
+	function anchorOriginK(fromYear: number, yearsTall: number): string {
+		const [ox, oy] = anchorOrigin(fromYear, yearsTall).split(' ');
+		const k = (v: string) => (v === 'left' || v === 'top' ? 0 : v === 'bottom' ? 1 : 0.5);
+		return `--ox-k: ${k(ox)}; --oy-k: ${k(oy)};`;
+	}
 	/** The tooltip sits above unless there is no room, in which case it drops below. */
 	const tipBelow = (fromYear: number) => yFor(fromYear) < 90;
 
@@ -2055,7 +2062,7 @@
 			class:tip-below={tipBelow(a.from)}
 			style="top: {yFor(a.from)}px; left: {anchorInset}px; width: {anchorD(a.years)}px;
 			       height: {anchorD(a.years)}px; --anchor-origin: {anchorOrigin(a.from, a.years)};
-			       --anchor-scale: {ANCHOR_HOVER_SCALE};
+			       --anchor-scale: {ANCHOR_HOVER_SCALE}; {anchorOriginK(a.from, a.years)}
 			       {anchorInk[a.slug] ? `--anchor-ink: ${anchorInk[a.slug]};` : ''}"
 			aria-label="Go to {a.name}"
 			class:no-hover={hoverSuppressed === a.slug}
@@ -3216,6 +3223,54 @@
 	   blurred beat on hover. It made it permanent instead — Safari rasterized the layer at rest size and never
 	   repainted it at 3.5x, opened a transparent ring inside the border, and blurred the tooltip with it
 	   (Sam's Labouisse screenshot). The beat is back to what it was; do not re-try promoting this image. */
+	/* SAFARI GROWS THE CIRCLE BY SIZE, NOT BY SCALE (Oct 9, Sam: "yes try photo safari solution"). WebKit animates
+	   a transform by stretching the small raster it painted at rest and repaints sharp only when the transition
+	   ends — the blurred beat on every hover (seen on the deployed site). So in WebKit the portrait's real box
+	   grows: width and height to --anchor-scale x, left/top shifted by the same origin the transform used
+	   (--ox-k/--oy-k, from anchorOrigin), painted at its true size on every frame. Ring, shadow and the tooltip's
+	   offset are multiplied out to the values the transform produced (final geometry measured equal to Chrome's,
+	   Δ0.0px on the circle); the tooltip drops its counter-scale because nothing is scaled. Chrome keeps the
+	   transform. If this does not hold on the deployed site, revert this block and anchorOriginK together. */
+	:global(html.webkit) .anchor-vis {
+		inset: auto;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		transition:
+			left 160ms cubic-bezier(0.33, 1, 0.68, 1),
+			top 160ms cubic-bezier(0.33, 1, 0.68, 1),
+			width 160ms cubic-bezier(0.33, 1, 0.68, 1),
+			height 160ms cubic-bezier(0.33, 1, 0.68, 1),
+			border-width 160ms cubic-bezier(0.33, 1, 0.68, 1),
+			box-shadow 160ms cubic-bezier(0.33, 1, 0.68, 1);
+	}
+	:global(html.webkit) .anchor:hover .anchor-vis,
+	:global(html.webkit) .anchor:focus-visible .anchor-vis {
+		transform: none;
+		left: calc(100% * (1 - var(--anchor-scale, 3.465)) * var(--ox-k, 0.5));
+		top: calc(100% * (1 - var(--anchor-scale, 3.465)) * var(--oy-k, 0.5));
+		width: calc(100% * var(--anchor-scale, 3.465));
+		height: calc(100% * var(--anchor-scale, 3.465));
+		border-width: calc(1.029px * var(--anchor-scale, 3.465));
+		box-shadow: 0 calc(2px * var(--anchor-scale, 3.465)) calc(7px * var(--anchor-scale, 3.465))
+			rgba(40, 30, 20, 0.38);
+	}
+	:global(html.webkit) .anchor.no-hover:hover .anchor-vis {
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		border-width: 1.2px;
+		box-shadow: 0 1px 3px rgba(40, 30, 20, 0.3);
+	}
+	:global(html.webkit) .anchor-tip {
+		transform: none;
+		bottom: calc(100% + 6px * var(--anchor-scale, 3.465));
+	}
+	:global(html.webkit) .anchor.tip-below .anchor-tip {
+		top: calc(100% + 6px * var(--anchor-scale, 3.465));
+	}
 	/* +20% AND ABOVE EVERYTHING (Sam). The z-index lift is the point of the hover as much as the scale
 	   is: at rest a bar may be covering half the face, and hovering has to reveal the whole of it rather
 	   than just enlarge the visible sliver. transform-origin is centred so it grows about itself and does
