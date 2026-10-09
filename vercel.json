@@ -1,0 +1,10 @@
+{
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"buildCommand": "node regenerate-data.js canonical.json && npm run build",
+	"headers": [
+		{
+			"source": "/(.*)",
+			"headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+		}
+	]
+}

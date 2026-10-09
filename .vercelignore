@@ -1,0 +1,35 @@
+# .vercelignore — WHAT `vercel deploy` UPLOADS, as an ALLOW-LIST (Oct 9, the first test deploy).
+#
+# Everything at the repo root is excluded, then only what the Vercel build needs is let back in. The repo
+# root is a working directory — screenshots, screen recordings, review TSVs, research files, _exports, .env —
+# and an allow-list means a new file dropped there is private by default rather than uploaded by default.
+#
+# The build (vercel.json) runs `node regenerate-data.js canonical.json` and then `npm run build`, so it needs
+# the source JSON, the generator and its two imports, the app, and the one schema doc the generator reads
+# (docs/hooker_json_schema_v*.md, for the tag vocabulary). static/data is REGENERATED on Vercel, so the local
+# copy is never uploaded.
+/*
+!/src
+!/static
+!/canonical.json
+!/regenerate-data.js
+!/table-coords.mjs
+!/package.json
+!/package-lock.json
+!/.npmrc
+!/vite.config.ts
+!/tsconfig.json
+!/vercel.json
+!/docs
+/docs/*
+!/docs/hooker_json_schema_v*.md
+
+# generated on Vercel by regenerate-data.js — never upload the local build output
+/static/data/*
+!/static/data/tag-vocab.json
+
+# working files that can land anywhere
+**/Screenshot*
+**/Screen Shot*
+**/Screen Recording*
+**/.DS_Store

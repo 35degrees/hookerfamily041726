@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-vercel';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
@@ -12,10 +12,10 @@ export default defineConfig({
 				runes: ({ filename }) => filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
-			// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
-			// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-			// See https://svelte.dev/docs/kit/adapters for more information about adapters.
-			adapter: adapter()
+			// Vercel, chosen explicitly (100926) rather than detected by adapter-auto. The functions run in
+			// pdx1 because Neon lives in us-west-2: the only routes that touch the database (/, /api/*) are
+			// then one region-local hop from it. Static payloads are served by the CDN and never reach here.
+			adapter: adapter({ runtime: 'nodejs22.x', regions: ['pdx1'] })
 		})
 	],
 	server: {
