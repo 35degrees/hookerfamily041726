@@ -7015,6 +7015,16 @@ His three Safari concerns, none of which happen in Chrome:
 3. **Ghost drop shadows.** Child and sibling chips vanish while their shadows stay in place, during a parent click
    and during Shuffle, until the incoming card settles. Chips have no shadow twins (only the hero card and the CC
    blade do, §58.2), so this is not the twins.
+   Also seen AT REST (Sam's Henry Homes Porter screenshot, later Oct 9): faint vertical shadow edges standing on the
+   paper to the right of the featured card, where no chip is.
+4. **The worn edges flicker in flight** (added later Oct 9). The `.card-wear` distressing around the featured card's
+   border (§59.7: the Manuscript fibres as an alpha mask) flickers all over the promoted card's edge for the whole
+   transition, until it settles. Sam names it a big cause of the "flicker and queasiness". Not in Chrome.
+
+**One Safari fix DID land (`1416513a`, Oct 9, with Sam's go):** timeline headshots no longer blur on hover. In WebKit
+the portrait grows by its real width and height instead of a `transform: scale`, so there is never a small raster to
+stretch; final geometry measured equal to Chrome's. Sam confirmed it in Safari on the deployed site. Worth carrying
+into the rebuild as a principle: in WebKit, size an image at its destination size rather than scaling it up.
 
 Facts to start from, so the rebuild does not re-learn them:
 - **The headshot blur appeared only on the deployed site, never on localhost in Safari** (Sam: "the first time it
