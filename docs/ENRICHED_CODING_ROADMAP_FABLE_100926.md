@@ -7020,6 +7020,10 @@ His three Safari concerns, none of which happen in Chrome:
 4. **The worn edges flicker in flight** (added later Oct 9). The `.card-wear` distressing around the featured card's
    border (§59.7: the Manuscript fibres as an alpha mask) flickers all over the promoted card's edge for the whole
    transition, until it settles. Sam names it a big cause of the "flicker and queasiness". Not in Chrome.
+   TRIED AND REVERTED (`75040169`, reverted the same evening): hiding the wear while a card is `.flat` (in flight)
+   and fading it in on landing. Sam: "even worse… they don't even appear until the featured card is settled in
+   final position. Chrome does NOT have this problem, it just stays stable." The worn edge must travel WITH the
+   card, steady, as it does in Chrome. Removing it in flight is not an answer; it belongs to the rebuild.
 
 **One Safari fix DID land (`1416513a`, Oct 9, with Sam's go):** timeline headshots no longer blur on hover. In WebKit
 the portrait grows by its real width and height instead of a `transform: scale`, so there is never a small raster to
