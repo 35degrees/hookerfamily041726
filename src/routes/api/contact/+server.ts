@@ -85,7 +85,10 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 			new SendEmailCommand({
 				FromEmailAddress: from,
 				Destination: { ToAddresses: [to] },
-				ReplyToAddresses: [name ? `"${name.replace(/"/g, '')}" <${email}>` : email],
+				// THE BARE ADDRESS, no display name (Oct 9). A typed name inside "Name <addr>" is parsed by SES as an
+				// address header, and some name broke it — "Missing final '@domain'" — while the same form with a
+				// plain name sent fine. The name is already in the body, so Reply-To needs only the address.
+				ReplyToAddresses: [email],
 				Content: {
 					Simple: {
 						Subject: { Data: `[Hooker site] ${reason}${subject ? ` — ${subject}` : ''}`, Charset: 'UTF-8' },
