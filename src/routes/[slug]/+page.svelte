@@ -12,6 +12,7 @@
 	import CardMarks from '#lib/components/CardMarks.svelte';
 	import BookmarksModal from '#lib/components/BookmarksModal.svelte';
 	import ContactModal from '#lib/components/ContactModal.svelte';
+	import SiteFooter from '#lib/components/SiteFooter.svelte';
 
 	/**
 	 * THE SHORT NAME, for the home-card confirmation's BUTTON (roadmap §50).
@@ -1956,6 +1957,9 @@
      card and connector use, so the button can never disagree with the flight lock about whether a flight
      is in progress. -->
 <div class="intro-chrome" class:held={introArrival}><TopRightChrome settled={familyLanded} /></div>
+<!-- The bottom-right corner: About / Contact and the copyright (SiteFooter). Held through the intro with the top
+     corner, and not on a phone yet — the phone composition has not given this corner a seat. -->
+{#if !stage.phone}<div class="intro-chrome" class:held={introArrival}><SiteFooter /></div>{/if}
 
 <!-- THE ASCENSION'S SURROUND (roadmap §40) — the midnight veil and the way out. Mounted HERE, beside the
      other screen chrome, rather than inside `.page-container`: it must cover the whole window, which is

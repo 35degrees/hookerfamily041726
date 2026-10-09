@@ -274,8 +274,10 @@
 	</div>
 {/if}
 
-<!-- Not on a phone (stage.phone, Sam 100626). -->
-{#if !stage.phone}
+<!-- Not on a phone (stage.phone, Sam 100626). DEV ONLY since Oct 9 (Sam: "remove the Manuscript background paper
+     toggle") — the deployed site keeps the default ground and SiteFooter takes this corner; on the dev server the
+     toggle is still here to compare grounds, and it sits over the footer while it is. -->
+{#if !stage.phone && import.meta.env.DEV}
 <button
 	class="ground-toggle"
 	class:held
@@ -475,7 +477,8 @@
 	.ground-toggle {
 		position: fixed;
 		right: 16px;
-		bottom: 16px;
+		/* one row up (Oct 9): dev-only now, and SiteFooter owns the bottom-right corner */
+		bottom: 48px;
 		z-index: 10;
 		display: inline-flex;
 		align-items: center;
