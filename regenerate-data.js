@@ -7,7 +7,7 @@
  *   node regenerate-data.js [path/to/canonical.json]
  *
  * Emits (paths relative to repo root, overridable via the CONFIG block):
- *   static/data/people.json             full records, research_notes stripped
+ *   (static/data/people.json is no longer written — Oct 9; see step 5)
  *   static/data/tag-vocab.json          canonical tag names, parsed from the schema's §6
  *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,pv?,f,x,bl?,eb?,nb?,ph?}
  *                                       bitfield, x=field-tagged folded fact blob (segment 0 = names)
@@ -91,13 +91,56 @@ const CONFIG = {
 	dataDir: 'static/data',
 	personDir: 'static/data/person', // one self-contained page payload per slug
 	redirectsFile: 'static/data/redirects.json',
-	// Fields removed from the CLIENT people.json only (canonical keeps everything).
-	// research_notes is the approved strip. The others are FLAGGED candidates —
-	// left in for now; uncomment after Sam's okay.
+	// Fields kept OUT OF EVERYTHING A BROWSER DOWNLOADS — every person payload, and every relative's record
+	// inside its `context` (canonical keeps everything; nothing is deleted). Oct 9, Sam: "remove all non-user
+	// facing research and notes fields… don't delete anything". The list is what src/ never reads, measured by
+	// grep across every .ts/.svelte file, and proved invisible by scripts/probe-render-text.mjs (40 cards,
+	// before/after identical). A field that starts RENDERING must come off this list in the same change.
 	stripFromClient: [
-		'research_notes'
-		// 'research_tags', 'research_sources',
-		// 'paths_to_thomas', 'paths_to_john_talcott', 'naming_inspiration'
+		'research_notes',
+		'research_sources',
+		'research_tags',
+		'sources',
+		'naming_inspiration',
+		'former_ids', // feeds redirects.json at build time; the client never reads it
+		'has_descendants_documented',
+		'is_placeholder',
+		'military_service', // stored, never rendered (memory: fields-that-store-but-never-render)
+		'quotes',
+		'last_updated',
+		'baptism',
+		'residence',
+		'institutions', // resolved into the payload's own institutionsById; the raw refs are unread
+		'number_of_marriages',
+		'is_living', // privacy is decided HERE at emit (datesPrivate → pv); the flag itself is unread
+		'cross_reference',
+		'orbit_connections',
+		'careers',
+		'political_offices',
+		'enslaved_persons',
+		'prominent_name_reason',
+		'compiler_connection',
+		'ministry_positions',
+		'memberships',
+		'church_roles',
+		'discrepancy_note',
+		'primary_residence',
+		'awards',
+		'merged_ids',
+		'talcott_book_id',
+		'compiler_ancestor',
+		'has_discrepancy'
+	],
+	// `classification` ships only the flags src/ reads. Its other keys (path-calculation and descent bookkeeping)
+	// stay in canonical. An ALLOW-list here, unlike the strip above, because classification is pipeline
+	// machinery that grows new keys, and a new one should not reach the CDN by default.
+	clientClassification: [
+		'is_easter_egg',
+		'is_thomas_descendant',
+		'is_talcott_descendant',
+		'hidden',
+		'generation_from_thomas',
+		'generation_from_john_talcott'
 	]
 };
 
@@ -1918,9 +1961,42 @@ function genDelta(sourceId, targetId, byId) {
 	return t - s;
 }
 
+// THE CONTEXT RECORD — what a RELATIVE's record must carry inside someone else's payload (Oct 9, roadmap
+// §10.3 item 1, the logged "payload diet"). Context exists so the client can walk the family graph locally;
+// its ONLY consumer is buildFeatured.ts, which reads, per relative: bio + name + gender (chip photo and short
+// name — enrich), birth/death years (diedYoung), tags (founderSpouse), and hands the set to
+// computeGenerationLabels, which reads marriages, classification, relational_label_override and gender.
+// Every record is still SHIPPED — removing records is the July trap (§10.2: diedYoung reads the full record
+// and silently returned false). What goes is each relative's own card content: narrative blocks, career,
+// education, CCs, burial, media, notable — rendered only on that person's OWN card, from their own payload.
+// An allow-list, so a field added to canonical later stays out of every neighbour's payload by default.
+// Proved by buildFeatured's output being identical, old payload vs new, for every person (Oct 9).
+const CONTEXT_KEYS = [
+	'id',
+	'slug',
+	'bio',
+	'name',
+	'gender',
+	'birth',
+	'death',
+	'tags',
+	'marriages',
+	'parents',
+	'classification',
+	'relational_label_override',
+	'pv',
+	't'
+];
+function contextRecord(rec) {
+	if (!rec) return rec;
+	const out = {};
+	for (const k of CONTEXT_KEYS) if (k in rec) out[k] = rec[k];
+	return out;
+}
+
 function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 	const context = {};
-	for (const id of contextIds(p, byId)) context[id] = clientById[id];
+	for (const id of contextIds(p, byId)) context[id] = contextRecord(clientById[id]);
 
 	const instIds = collectInstitutionIds(p, new Set());
 	const institutionsById = {};
@@ -2345,6 +2421,11 @@ function main() {
 		// so the gate has to ride here too.
 		if (datesPrivate(p)) out.pv = true;
 		for (const f of CONFIG.stripFromClient) delete out[f];
+		if (p.classification) {
+			out.classification = {};
+			for (const k of CONFIG.clientClassification)
+				if (k in p.classification) out.classification[k] = p.classification[k];
+		}
 		return out;
 	});
 
@@ -2396,7 +2477,10 @@ function main() {
 			writeFileSync(full, JSON.stringify(obj)); // minified
 			return full;
 		};
-		W(join(CONFIG.dataDir, 'people.json'), clientPeople);
+		// people.json is NO LONGER WRITTEN (Oct 9). Nothing has read it since the per-person payloads landed
+		// (DEPLOYMENT §5.2, §16-I), and in static/ it was the whole corpus as one public download — 47 MB.
+		// The stale copy is removed so a deploy cannot ship it.
+		rmSync(join(CONFIG.repoRoot, CONFIG.dataDir, 'people.json'), { force: true });
 		W(join(CONFIG.dataDir, 'search-index.json'), searchIndex);
 		W(join(CONFIG.dataDir, 'tag-vocab.json'), tagVocab);
 		log(`  tag-vocab.json: ${tagVocab.length} canonical tags from ${schemaFile} §6`);
@@ -2545,7 +2629,7 @@ function main() {
 	if (only) {
 		log(`  --only: ${pgCount} page payload(s) rebuilt; aggregates untouched`);
 	} else {
-		log(`  people.json            ${clientPeople.length} records (research_notes stripped)`);
+		log(`  people.json            not written (Oct 9) — ${clientPeople.length} client records feed the payloads`);
 		log(`  search-index.json      ${searchIndex.length} rows`);
 		log(`  person/                ${pgCount} page payloads`);
 		log(`  redirects.json         ${Object.keys(redirects).length} entries`);
