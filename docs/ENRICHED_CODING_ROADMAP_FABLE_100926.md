@@ -1,7 +1,7 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: October 9, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_100626.md (the what/why for every item below).**
-**OCTOBER 9, 2026 (§60): THE FIRST DEPLOY (hooker-test.vercel.app) AND TWO GROUND-UP PROJECTS.** Sam's direction at close: no more Safari patches — a WebKit rebuild from the ground up, Chrome untouched (§60.1 A); and screen sizes designed per target rather than squeezed (§60.1 B). Both are their own future sessions; nothing in §60.1 is built. §60.2 is what shipped (contact form, payload privacy/diet, deploy setup, cache header, footer); §60.3 the deploy-only lessons; §60.4 what is open, including the uncommitted Privacy/Sources.
+**OCTOBER 9, 2026 (§60): THE FIRST DEPLOY (hooker-test.vercel.app) AND TWO GROUND-UP PROJECTS.** Sam's direction at close: no more Safari patches — a WebKit rebuild from the ground up, Chrome untouched (§60.1 A); and screen sizes designed per target rather than squeezed (§60.1 B). Both are their own future sessions; nothing in §60.1 is built. §60.2 is what shipped (contact form, payload privacy/diet, deploy setup, cache header, footer); §60.3 the deploy-only lessons; §60.4 what is open, including Privacy/Sources (shipped last).
 **OCTOBER 6, 2026 (§59): SHORT WINDOWS, THE PHONE, READABLE CHIPS — paused here by Sam's choice; written to be picked up cold.** A one-way HEIGHT ladder (1050 → 745) that buys room with content and air, never by shrinking type; a PHONE recomposition (≤600px wide, step 1 of 3); chip type that fills its chip. §59.5 is how to resume (`scripts/probe-heights.mjs`), §59.6 the open list in priority order. Design §53 holds Sam's ranked priorities and every approach that was tried and discarded — read it first.
 **OCTOBER 2, 2026, LATE (§58): SAFARI.** Everything before this was built and judged in Chrome only, so the first session in real Safari found the hero's shadow blinking and the chip flights skipping. Safari is now close to Chrome. §58.1 is how to measure real Safari from here; nothing on headless WebKit can show these bugs. §58.3 is the one you need if a promotion ever "jumps" again: the arriving card's clock now waits for its first paint (`holdUntilPainted`). §58.4 is what NOT to do: re-timing flights for Safari broke everything and was reverted. All of it is scoped to `html.webkit`, so Chrome is byte-identical.
 
@@ -7082,8 +7082,8 @@ Sam wants kept: no photo may arrive late or change while looked at).
 
 ### 60.4 OPEN AT CLOSE
 
-- **Uncommitted, waiting for Sam's look on localhost:** the footer as two smaller right-aligned rows (About /
-  Contact · © 2026, then Sources · Privacy); `SourcesModal` (a DRAFT from Sam's own NB 3 and canonical's
+- **Shipped at close (`b0565873`, deployed):** the footer as two smaller right-aligned rows (Privacy · Sources on
+  top at 10px, About / Contact · © 2026 below at 11px); `SourcesModal` (a DRAFT from Sam's own NB 3 and canonical's
   primary_source, for him to rewrite); `PrivacyModal` (signed-in only) with account deletion (`deleteUser`
   enabled in `server/auth.ts`; bookmarks cascade; requires a sign-in within a day). Not tested end to end —
   deleting needs a throwaway account.
