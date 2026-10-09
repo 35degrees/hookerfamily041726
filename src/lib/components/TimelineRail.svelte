@@ -3159,7 +3159,10 @@
 		   rail ink for the frame before the sample lands, and permanently if the sample cannot be taken. */
 		border: 1.2px solid var(--anchor-ink, var(--color-rail-ink, #ab7a42));
 		border-radius: 50%;
-		background: var(--color-cream, #f7f1e6);
+		/* THE RING'S OWN INK, not cream (Oct 9). Safari's circle clip and this border do not meet to the pixel, so a
+		   hair of whatever is behind the photo shows — cream read as a white crescent at the top and right of every
+		   enlarged headshot (Sam's Robert Jackson screenshot). In the ring's colour that hair is just more ring. */
+		background: var(--anchor-ink, var(--color-rail-ink, #ab7a42));
 		box-shadow: 0 1px 3px rgba(40, 30, 20, 0.3);
 		transform-origin: var(--anchor-origin, center);
 		pointer-events: none;
@@ -3209,14 +3212,10 @@
 		display: block;
 		transform: scale(1.02);
 	}
-	/* SAFARI'S HOVER BLUR (Oct 9, WebKit only). The portrait enlarges 3.5x by a transform on .anchor-vis, and
-	   WebKit animates the small raster it painted at rest, then repaints sharp when the transition ends — a
-	   blurred beat on every hover, cached image or not. Chrome re-rasterizes and never showed it. Promoting the
-	   <img> to its own layer, with nothing on it but a transform (the clip and the ring live on its parents),
-	   lets WebKit composite the decoded image itself, which holds its full resolution at any scale. */
-	:global(html.webkit) .anchor img {
-		will-change: transform;
-	}
+	/* TRIED AND REVERTED (Oct 9): `will-change: transform` on this img under html.webkit, to stop Safari's
+	   blurred beat on hover. It made it permanent instead — Safari rasterized the layer at rest size and never
+	   repainted it at 3.5x, opened a transparent ring inside the border, and blurred the tooltip with it
+	   (Sam's Labouisse screenshot). The beat is back to what it was; do not re-try promoting this image. */
 	/* +20% AND ABOVE EVERYTHING (Sam). The z-index lift is the point of the hover as much as the scale
 	   is: at rest a bar may be covering half the face, and hovering has to reveal the whole of it rather
 	   than just enlarge the visible sliver. transform-origin is centred so it grows about itself and does

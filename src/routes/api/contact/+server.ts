@@ -57,8 +57,12 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
 	const keyId = readEnv('SES_ACCESS_KEY_ID');
 	const secret = readEnv('SES_SECRET_ACCESS_KEY');
-	const from = readEnv('CONTACT_FROM');
-	const to = readEnv('CONTACT_TO');
+	// QUOTES ARE STRIPPED, because .env needs them around a value with spaces and a dashboard paste keeps them:
+	// on the first deploy CONTACT_FROM arrived as `"Hooker Family Site <sam@samhooker.com>"`, quotes and all,
+	// and SES rejected every message with "Missing final '@domain'" (Oct 9).
+	const unquote = (v: string) => v.trim().replace(/^(['"])(.*)\1$/, '$2').trim();
+	const from = unquote(readEnv('CONTACT_FROM'));
+	const to = unquote(readEnv('CONTACT_TO'));
 	if (!keyId || !secret || !from || !to) throw error(503, 'The contact form is not configured');
 
 	client ??= new SESv2Client({
