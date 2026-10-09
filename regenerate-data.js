@@ -41,6 +41,7 @@ import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { computeTableCoords } from './table-coords.mjs';
 import { fold } from './src/lib/search/fold.js';
+import { clientPerson, clientRegistryEntry } from './src/lib/data/clientStrip.js';
 
 // Phase 3a Block 1: table coordinates, computed at emit time only (never at runtime, never stored in
 // canonical). Set once in main(), read by compact() so `t:{x,y,e?}` rides on every payload.
@@ -91,57 +92,8 @@ const CONFIG = {
 	dataDir: 'static/data',
 	personDir: 'static/data/person', // one self-contained page payload per slug
 	redirectsFile: 'static/data/redirects.json',
-	// Fields kept OUT OF EVERYTHING A BROWSER DOWNLOADS — every person payload, and every relative's record
-	// inside its `context` (canonical keeps everything; nothing is deleted). Oct 9, Sam: "remove all non-user
-	// facing research and notes fields… don't delete anything". The list is what src/ never reads, measured by
-	// grep across every .ts/.svelte file, and proved invisible by scripts/probe-render-text.mjs (40 cards,
-	// before/after identical). A field that starts RENDERING must come off this list in the same change.
-	stripFromClient: [
-		'research_notes',
-		'research_sources',
-		'research_tags',
-		'sources',
-		'naming_inspiration',
-		'former_ids', // feeds redirects.json at build time; the client never reads it
-		'has_descendants_documented',
-		'is_placeholder',
-		'military_service', // stored, never rendered (memory: fields-that-store-but-never-render)
-		'quotes',
-		'last_updated',
-		'baptism',
-		'residence',
-		'institutions', // resolved into the payload's own institutionsById; the raw refs are unread
-		'number_of_marriages',
-		'is_living', // privacy is decided HERE at emit (datesPrivate → pv); the flag itself is unread
-		'cross_reference',
-		'orbit_connections',
-		'careers',
-		'political_offices',
-		'enslaved_persons',
-		'prominent_name_reason',
-		'compiler_connection',
-		'ministry_positions',
-		'memberships',
-		'church_roles',
-		'discrepancy_note',
-		'primary_residence',
-		'awards',
-		'merged_ids',
-		'talcott_book_id',
-		'compiler_ancestor',
-		'has_discrepancy'
-	],
-	// `classification` ships only the flags src/ reads. Its other keys (path-calculation and descent bookkeeping)
-	// stay in canonical. An ALLOW-list here, unlike the strip above, because classification is pipeline
-	// machinery that grows new keys, and a new one should not reach the CDN by default.
-	clientClassification: [
-		'is_easter_egg',
-		'is_thomas_descendant',
-		'is_talcott_descendant',
-		'hidden',
-		'generation_from_thomas',
-		'generation_from_john_talcott'
-	]
+	// WHAT A BROWSER MAY SEE of a person, a cemetery or an institution lives in src/lib/data/clientStrip.js
+	// (Oct 9): an ALLOW-list of the person fields src/ reads, with nested notes removed. canonical keeps everything.
 };
 
 const GENERATIONAL = new Set([
@@ -2000,10 +1952,10 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 
 	const instIds = collectInstitutionIds(p, new Set());
 	const institutionsById = {};
-	for (const id of instIds) if (instById[id]) institutionsById[id] = instById[id];
+	for (const id of instIds) if (instById[id]) institutionsById[id] = clientRegistryEntry(instById[id]); // no notes/sources
 
 	const cemeteryId = p.burial && p.burial.cemetery_id;
-	const burialCemetery = (cemeteryId && cemById[cemeteryId]) || null;
+	const burialCemetery = clientRegistryEntry((cemeteryId && cemById[cemeteryId]) || null); // no notes/sources
 
 	const crossConnections = (p.cross_connections || [])
 		// SEVERANCE: drop connections whose target is hidden. This is the ONE emit path that does not
@@ -2420,13 +2372,7 @@ function main() {
 		// FeaturedCard reads person.birth / person.death off the FULL record, not the compact,
 		// so the gate has to ride here too.
 		if (datesPrivate(p)) out.pv = true;
-		for (const f of CONFIG.stripFromClient) delete out[f];
-		if (p.classification) {
-			out.classification = {};
-			for (const k of CONFIG.clientClassification)
-				if (k in p.classification) out.classification[k] = p.classification[k];
-		}
-		return out;
+		return clientPerson(out); // src/lib/data/clientStrip.js
 	});
 
 	// 3-5) aggregate bundle files. SKIPPED entirely in --only mode (a card fetches only its own
