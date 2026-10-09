@@ -2068,7 +2068,8 @@
 			     why. Same box (inset 0), same transform, same origin the button used to carry, so the
 			     tooltip's containing block and its counter-scale are unchanged. -->
 			<span class="anchor-vis">
-				<img src={a.src} alt="" draggable="false" />
+				<!-- THE FRAME CLIPS, THE PHOTO DOESN'T (Oct 9) — see .anchor-photo. -->
+				<span class="anchor-photo"><img src={a.src} alt="" draggable="false" /></span>
 				<!-- Three lines, in Sam's order: who, what, when. No `title` attribute alongside it — the
 				     browser's own tooltip would appear a second later on top of this one. -->
 				<span class="anchor-tip">
@@ -3189,12 +3190,32 @@
 	.anchor.no-hover:hover .anchor-hit {
 		pointer-events: none;
 	}
+	/* THE FRAME CLIPS, THE PHOTO DOESN'T (Oct 9). The image used to round ITSELF, so its outermost pixels sat
+	   right on the ring — and on the cut-out PNGs those edge pixels are a thin fringe, which Sam saw in Safari as
+	   "very thin white dots at the inner edge". Now this round frame does the clipping (still not .anchor-vis, so
+	   the tooltip is never clipped), and the photo inside is drawn 2% larger about its centre: same ring, same
+	   circle, and the source's edge falls just outside what can be seen. */
+	.anchor-photo {
+		display: block;
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		overflow: hidden;
+	}
 	.anchor img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 		display: block;
-		border-radius: 50%; /* clips ITSELF, so the button does not have to clip its children */
+		transform: scale(1.02);
+	}
+	/* SAFARI'S HOVER BLUR (Oct 9, WebKit only). The portrait enlarges 3.5x by a transform on .anchor-vis, and
+	   WebKit animates the small raster it painted at rest, then repaints sharp when the transition ends — a
+	   blurred beat on every hover, cached image or not. Chrome re-rasterizes and never showed it. Promoting the
+	   <img> to its own layer, with nothing on it but a transform (the clip and the ring live on its parents),
+	   lets WebKit composite the decoded image itself, which holds its full resolution at any scale. */
+	:global(html.webkit) .anchor img {
+		will-change: transform;
 	}
 	/* +20% AND ABOVE EVERYTHING (Sam). The z-index lift is the point of the hover as much as the scale
 	   is: at rest a bar may be covering half the face, and hovering has to reveal the whole of it rather
