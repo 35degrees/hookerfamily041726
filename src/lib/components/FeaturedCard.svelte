@@ -199,6 +199,9 @@
 	// is imported now (see +layout.svelte). Setting NAME_FACE to a font-* class is all that is needed to
 	// try another, but the SIZE must move with it — see above.
 	const NAME_FACE = 'font-outfit';
+	/** The record ID after the name ("HD1364") is a working aid: shown on localhost (the dev server), hidden on
+	 *  every deployed build (Sam, Oct 9). Nothing to restore — `npm run dev` shows it again automatically. */
+	const SHOW_ID = import.meta.env.DEV;
 	const NAME_SIZE = 26;
 	const NAME_MIN = 18.5;
 	// 500, unchanged across the face trials. Inter is variable (100-900), so it is a real weight.
@@ -914,10 +917,10 @@
 						}}
 					>
 						<span data-fit class="inline-block whitespace-nowrap"
-							>{displayName}<span
-								class="ml-2 align-middle font-mono text-[calc(14px*var(--type-k,1))] font-normal text-stone-400"
-								>{person.id}</span
-							></span
+							>{displayName}{#if SHOW_ID}<span
+									class="ml-2 align-middle font-mono text-[calc(14px*var(--type-k,1))] font-normal text-stone-400"
+									>{person.id}</span
+								>{/if}</span
 						>
 					</h1>
 					{#if allLabels.length > 0}
