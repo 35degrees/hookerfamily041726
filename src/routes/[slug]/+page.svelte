@@ -1945,7 +1945,7 @@
 </script>
 
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
-<Field held={introArrival} />
+<Field />
 <!-- THE LEFT TIMELINE (design §3.6). Fixed chrome at the window's edge, mounted HERE beside Field and
      ShuffleNotables rather than inside .page-container: it is a ruler and must keep its size while the
      stage scales, and a fixed element inside a transformed ancestor re-bases to that ancestor. -->

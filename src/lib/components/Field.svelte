@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { stage } from '#lib/state/stage.svelte.js';
 	// Phase 3b — THE FIELD, world-anchored (§18.6/§18.7). The paper's DECADE RULES are drawn RELATIVE to
 	// the featured person's world coords (t.y = birth year, t.x = seat), so the featured person's line
 	// DOCKS at a fixed screen spot and REVISITING a person shows the rules in identical positions — no
@@ -7,8 +6,6 @@
 	// (a FLIP) on the flight clock incl. the settle curve — the drift IS the seek ("sliding on paper").
 	// Only the featured person docks; chips are annotations over the paper, never plotted points.
 	// Skins: DARK (gold motes) | LEDGER (paper + rules + red verticals + rust foxing) | LIGHT (no field).
-	// The intro (100226): the page holds its corner chrome until the first card lands — this toggle too.
-	let { held = false }: { held?: boolean } = $props();
 	import { onMount, untrack } from 'svelte';
 	import { subscribeCameraMove, getCameraMove, type CameraMove } from '#lib/state/camera.js';
 	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
@@ -24,9 +21,6 @@
 	const isParchment = $derived(active.kind === 'parchment');
 	// A photographed sheet. Like parchment it carries no motes — its character is in the pixels.
 	const isSheet = $derived(active.kind === 'sheet');
-	function cycleGround() {
-		groundState.idx = (groundState.idx + 1) % GROUNDS.length;
-	}
 	$effect(() => {
 		if (typeof document === 'undefined') return;
 		if (active.ground) document.documentElement.style.setProperty('--ground', active.ground);
@@ -274,22 +268,9 @@
 	</div>
 {/if}
 
-<!-- Not on a phone (stage.phone, Sam 100626). DEV ONLY since Oct 9 (Sam: "remove the Manuscript background paper
-     toggle") — the deployed site keeps the default ground and SiteFooter takes this corner; on the dev server the
-     toggle is still here to compare grounds, and it sits over the footer while it is. -->
-{#if !stage.phone && import.meta.env.DEV}
-<button
-	class="ground-toggle"
-	class:held
-	type="button"
-	title="Toggle field skin"
-	aria-label={`Field skin: ${active.name} — click to change`}
-	onclick={cycleGround}
->
-	<span class="swatch" style:background={active.swatch}></span>
-	{active.name}
-</button>
-{/if}
+<!-- THE GROUND TOGGLE IS GONE (Sam, Oct 9: "remove the Manuscript toggle completely, i've picked my background").
+     Manuscript is GROUNDS[0], the default every visitor gets; the other skins stay in ground.svelte.ts and a
+     different one is a one-number change there (groundState's initial idx). SiteFooter now owns this corner. -->
 
 <style>
 	.field {
@@ -470,36 +451,4 @@
 		}
 	}
 
-	.ground-toggle.held {
-		opacity: 0;
-		pointer-events: none;
-	}
-	.ground-toggle {
-		position: fixed;
-		right: 16px;
-		/* one row up (Oct 9): dev-only now, and SiteFooter owns the bottom-right corner */
-		bottom: 48px;
-		z-index: 10;
-		display: inline-flex;
-		align-items: center;
-		gap: 7px;
-		padding: 6px 11px 6px 8px;
-		font: 500 12px/1 var(--font-inter, sans-serif);
-		color: rgba(255, 250, 240, 0.85);
-		background: rgba(20, 28, 46, 0.6);
-		border: 1px solid rgba(255, 250, 240, 0.18);
-		border-radius: 999px;
-		cursor: pointer;
-		backdrop-filter: blur(6px);
-		transition: opacity 600ms ease;
-	}
-	.ground-toggle:hover {
-		background: rgba(30, 40, 62, 0.75);
-	}
-	.ground-toggle .swatch {
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		border: 1px solid rgba(255, 250, 240, 0.35);
-	}
 </style>
