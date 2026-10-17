@@ -37,10 +37,13 @@ import { focusPerson } from './navigate';
 import { hideCcRoster, showCcRoster } from './ccRoster.svelte';
 import { publishCameraMove, type CameraMove } from './camera';
 import { lockFlight } from './flightLock';
+import { ascension } from './ascension.svelte';
+import { releaseHeld } from '#lib/transitions/webkit/flight.js';
 import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
 import { floatPause } from './slabFloat.svelte';
 import {
 	releaseAllLandings,
+	startEarlyCcExit,
 	captureFlightOrigin,
 	captureFlightKind,
 	captureClicked,
@@ -199,6 +202,10 @@ export async function ccFlyTo(
 	// a Safari landing hold (the departing card's transform is driven inline and a held animation would win).
 	floatPause();
 	releaseAllLandings();
+	// …and the WebKit engine's held frames (Safari, after a chip promotion): this is Hooker's own flight, and the
+	// engine's holds would pin the old card and the connectors where they rest, so the card vanished with no
+	// exit and a connector line was left standing (Sam, Oct 17, on Shuffle). warmPersonLinks does the same.
+	releaseHeld();
 	if (!prefersReducedMotion.current) lockFlight();
 	captureFlightOrigin(node.getBoundingClientRect());
 	captureFlightKind('cc');
@@ -249,6 +256,9 @@ export async function ccFlyTo(
 
 	if (!prefersReducedMotion.current) {
 		hideCcRoster();
+		// SAFARI: the leaving card starts its exit now, on the compositor (flight.ts startEarlyCcExit, which
+		// checks WebKit, lateral and non-arc itself) — the same as a CC link's click. Not in the zones.
+		if (!ascension.active && featured.current?.orbit !== true) startEarlyCcExit();
 		void focusPerson(target.slug).then(() => requestAnimationFrame(() => showCcRoster()));
 		return;
 	}

@@ -39,8 +39,16 @@ import {
 	spouseGrowMs,
 	relativeGrowMs,
 	resolveLateralDir,
-	captureAscend
+	captureAscend,
+	startEarlyCcExit
 } from '#lib/transitions/flight.js';
+import { isWebKit } from './engine';
+import { motionOff } from './motion.svelte';
+import { ascension } from './ascension.svelte';
+import { stage } from './stage.svelte';
+import { unlockFlight } from './flightLock';
+import type { FeaturedData } from './featured.svelte';
+import { captureFlight, abandonFlight, launch, releaseHeld } from '#lib/transitions/webkit/flight.js';
 
 /** Fetch a person and set them as featured. No history change. False if not found. */
 export async function loadFeatured(slug: string): Promise<boolean> {
@@ -58,6 +66,11 @@ export async function focusPerson(slug: string): Promise<void> {
 		window.location.href = personHref(slug);
 		return;
 	}
+	focusWith(data, slug);
+}
+
+/** focusPerson's swap, with the payload already in hand (the WebKit engine's fallback reuses it). */
+function focusWith(data: FeaturedData, slug: string): void {
 	// §19 SEAM — the one instant where the INCOMING sibling list is in hand and the OUTGOING panel is
 	// still on screen with its geometry intact. Plan the in-place mutation here, synchronously, so the
 	// demote's clock (computed at outro init, before any effect runs) and the panel's scroll target
@@ -77,6 +90,107 @@ export async function focusPerson(slug: string): Promise<void> {
 	// Clear the per-navigation flight captures one frame later — after the transition flush has
 	// read them — so a subsequent back/forward nav (which captures nothing) can't reuse stale data.
 	requestAnimationFrame(() => clearFlightCaptures());
+}
+
+// ── THE WEBKIT ENGINE'S FLIGHTS (Kennedy port, Oct 2026; src/lib/transitions/webkit/) ─────────────────────
+// In Safari (every WebKit engine), a plain parent, child, sibling or spouse promotion on the stage is flown by
+// the WebKit engine: the board measured once, every motion handed to the compositor whole, nothing run per
+// frame. Everything else keeps Hooker's own flights, in Safari too, until the engine has been built and
+// filmed for it: cross-connections and the deck, the orbit and founder zones, the grandparent and grandchild
+// tiers, a card with more than three spouses (the carousel), the phone, reduced motion. Chrome never reaches
+// any of this: isWebKit() is the first test.
+
+/** The page's landing signals, registered by +page.svelte (Hooker's onIncomingStart / onIncomingLand do the
+ *  same for its own flights). */
+type EngineHooks = { onSwap: (relation: string) => void; onLanded: () => void };
+let engineHooks: EngineHooks | null = null;
+export function registerEngineHooks(h: EngineHooks): () => void {
+	engineHooks = h;
+	return () => {
+		if (engineHooks === h) engineHooks = null;
+	};
+}
+
+const ENGINE_RELATIONS = new Set(['parent', 'child', 'sibling', 'spouse']);
+/** More spouses than this and the notch is a carousel, which the engine does not fly yet. */
+const NOTCH_WINDOW = 3;
+
+/** Can the WebKit engine fly this click? Asked at the click, before anything has changed. */
+function engineCanFly(anchor: HTMLElement, relation: string | null): boolean {
+	if (!isWebKit() || prefersReducedMotion.current || motionOff() || !engineHooks) return false;
+	if (!relation || !ENGINE_RELATIONS.has(relation) || anchor.dataset.cc === 'true') return false;
+	if (!anchor.closest('.page-container')) return false; // the rail, search, bookmarks: not a chip
+	if (relation !== 'sibling' && !anchor.closest('[data-flight-id]')) return false;
+	if (anchor.closest('[data-tier-span]')) return false;
+	if (document.querySelector('.grandparent-tier, .grandchild-tier, .child-focus, .child-settling')) return false;
+	if (ascension.active || featured.current?.orbit === true || stage.phone) return false;
+	if (document.querySelectorAll('.spouse-notch [data-flight-id]').length > NOTCH_WINDOW) return false;
+	return true;
+}
+
+/**
+ * THE HOVER'S PAYLOAD, KEPT FOR THE CLICK (Safari only; Sam, Oct 17: "a full beat" before every flight). The
+ * hover already asks for the next person's file (SvelteKit's hover preload), but only into the HTTP cache, so
+ * the click fetched and built it again (roadmap §58.3b's "fetched and built twice"). Here the hover's built
+ * payload is kept, and the click starts from it. Bounded, oldest first; a file never changes within a visit.
+ */
+const hovered = new Map<string, Promise<FeaturedData | null>>();
+const HOVERED_MAX = 60;
+function hoverPayload(slug: string): Promise<FeaturedData | null> {
+	let p = hovered.get(slug);
+	if (!p) {
+		p = fetchFeatured(slug).catch(() => null);
+		hovered.set(slug, p);
+		while (hovered.size > HOVERED_MAX) hovered.delete(hovered.keys().next().value as string);
+	}
+	return p;
+}
+
+/** The engine's half of a click: the board was captured at the click; get the next person ready, then fly. */
+async function engineFocus(slug: string, relation: string): Promise<void> {
+	const data = await hoverPayload(slug);
+	if (!data) {
+		abandonFlight();
+		unlockFlight();
+		window.location.href = personHref(slug);
+		return;
+	}
+	// The arriving card brings a carousel: that flight is still Hooker's. Its captures were all taken at the
+	// click as well, so it simply carries on from here.
+	if ((data.neighborhood.spouses?.length ?? 0) > NOTCH_WINDOW || !engineHooks) {
+		abandonFlight();
+		releaseHeld();
+		focusWith(data, slug);
+		return;
+	}
+	// NO WAIT FOR PHOTOS. Kennedy decoded the arriving board's photos here (capped at 400ms), paired with
+	// preparing every neighbour on landing. Hooker's doctrine is the neighbourhood preload (photo.ts
+	// preloadNeighborhood): the next board's photos are already warmed before the click, so waiting here only
+	// added lag (Sam: "a beat or two" after every click; ~100ms measured in Safari).
+	// §19: a sibling promotion lands the old card in the sibling panel; its seat is planned now, while the
+	// outgoing panel is still on screen (as focusPerson does).
+	if (relation === 'sibling') planSiblingNav(data.neighborhood, featured.current?.person.id ?? null);
+	else clearSiblingNavPlan();
+	const hooks = engineHooks;
+	launch(
+		() => {
+			hooks.onSwap(relation);
+			featured.set(data);
+			void goto(personHref(slug), { shallow: true });
+		},
+		{
+			onLanded: () => {
+				// Hooker's per-navigation captures die at the landing, not a frame after the swap: the §19 sibling
+				// plan is one of them, and the engine reads it when it measures the board (the frame after the
+				// settle frame). Cleared a frame early, the leaving card never found its sibling seat and faded in
+				// place (Sam: "you skipped the featured card demotion to the sibling menu").
+				clearFlightCaptures();
+				captureFlightOrigin(null);
+				hooks.onLanded();
+			},
+			onReleased: () => unlockFlight()
+		}
+	);
 }
 
 const isModified = (e: MouseEvent) => e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;
@@ -110,6 +224,11 @@ export function warmPersonLinks(node: HTMLElement) {
 		floatPause();
 		// ...and any card held at its landing (Safari, flight.ts holdLanding) is released before measuring.
 		releaseAllLandings();
+		// WHICH ENGINE FLIES THIS CLICK (WebKit only; see engineCanFly). Decided now, before anything moves.
+		// Any other flight first lets go of the frames the engine holds at rest, so Hooker's own transitions
+		// and classes own those chips again (webkit/flight.ts releaseHeld).
+		const engine = engineCanFly(anchor as HTMLElement, anchor.getAttribute('data-relation'));
+		if (!engine) releaseHeld();
 		// SLICE 3 (Phase 7): a sibling chip is now a WARM flight — kind 'sibling'. The hero grows from the
 		// chip rect (with settle, like a relative promotion); the old card DEPARTS via the CC path (whole
 		// card, opposite lateral vector, no chip-face, no settle) because the old focus has no destination
@@ -297,14 +416,38 @@ export function warmPersonLinks(node: HTMLElement) {
 		// has taken over (one frame after the state swap) so the NEW roster is display-able but still pending.
 		if (isCC && !prefersReducedMotion.current) {
 			hideCcRoster();
+			// SAFARI: a lateral CC's leaving card starts its exit NOW, on the compositor, while the next card is
+			// fetched (flight.ts startEarlyCcExit; it checks WebKit, lateral and non-arc itself). Not in the zones,
+			// whose cards float and recede on flights of their own.
+			if (!arc && !ascend && !ascension.active && featured.current?.orbit !== true) startEarlyCcExit();
 			void focusPerson(slug).then(() => {
 				if (arc && arcFrom && arcTo) startArc({ from: arcFrom, to: arcTo, scaleMin: scaleMin as number, duration: arcDuration });
 				requestAnimationFrame(() => showCcRoster());
 			});
 			return;
 		}
-		void focusPerson(slug);
+		// THE WEBKIT ENGINE: Hooker's captures above have all been taken (the camera has its move, and a fallback
+	// to Hooker's flight can carry on from them); the engine takes its own snapshot of the board now.
+	if (engine && relation && captureFlight(anchor as HTMLElement, featured.current?.person.id ?? null)) {
+		void engineFocus(slug, relation);
+		return;
 	}
+	if (engine) releaseHeld();
+	void focusPerson(slug);
+	}
+	// Safari only: a hovered chip's payload is fetched and built ahead of its click (hoverPayload).
+	function onPointerOver(event: PointerEvent) {
+		const a = (event.target as Element | null)?.closest('a');
+		const slug = a ? slugFromPath(a.getAttribute('href') ?? '') : null;
+		if (slug && a?.hasAttribute('data-relation')) void hoverPayload(slug);
+	}
+	const webkit = isWebKit();
 	node.addEventListener('click', onClick);
-	return { destroy: () => node.removeEventListener('click', onClick) };
+	if (webkit) node.addEventListener('pointerover', onPointerOver);
+	return {
+		destroy: () => {
+			node.removeEventListener('click', onClick);
+			if (webkit) node.removeEventListener('pointerover', onPointerOver);
+		}
+	};
 }

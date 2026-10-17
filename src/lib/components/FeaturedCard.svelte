@@ -43,6 +43,7 @@
 	import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
 	import CrossConnectionsBlade, { BLADE_TANG } from './CrossConnectionsBlade.svelte';
 	import { unsheathBlade } from '#lib/transitions/flight.js';
+	import { bakeWear } from '#lib/actions/bakeWear.js';
 	import { stage } from '#lib/state/stage.svelte.js';
 	import { untrack, tick } from 'svelte';
 
@@ -868,6 +869,7 @@
 				class="card-wear"
 				class:recent={(person.birth?.year ?? 0) >= 1900}
 				aria-hidden="true"
+				use:bakeWear
 				style="{wearOffset} --notch-w: {notchChipCount > 0 ? chipZoneWidth : 0}px; --notch-h: {notchChipCount > 0
 					? chipZoneHeight
 					: 0}px;"

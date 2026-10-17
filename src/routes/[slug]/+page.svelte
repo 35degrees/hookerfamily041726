@@ -106,15 +106,22 @@
 	/** The line's root — the X's last resort when nothing else on the card leads home. */
 	const THOMAS_SLUG = 'thomas-hooker-1586';
 	import { featured } from '#lib/state/featured.svelte.js';
-	import { warmPersonLinks, focusPerson } from '#lib/state/navigate.js';
+	import { warmPersonLinks, focusPerson, registerEngineHooks } from '#lib/state/navigate.js';
+	// THE WEBKIT ENGINE (Kennedy port): in Safari, the page's flight transitions ask, per flight, whether the
+	// engine flies it. In Chrome every one of these is Hooker's own transition, called unchanged.
+	import {
+		growFromGated,
+		shrinkToGated,
+		morphInGated,
+		markPendingGated,
+		flyOutGated,
+		chipExitGated,
+		flipGated
+	} from '#lib/transitions/webkit/gate.js';
+	import { engineFlying, releaseHeld } from '#lib/transitions/webkit/flight.js';
 	import { buildRoster } from '#lib/data/roster.js';
 	import {
 		flyOut,
-		chipExit,
-		growFrom,
-		shrinkTo,
-		markPending,
-		morphIn,
 		getPivotId,
 		getFlightKind,
 		getPanDir,
@@ -260,6 +267,7 @@
 		if (seq !== historySeq) return;
 		// No payload (a retired or severed slug): a real load runs +page.ts's 301 / 404, a swap cannot.
 		if (!next) return location.reload();
+		releaseHeld(); // the WebKit engine's held frames (webkit/flight.ts): an instant swap owns the board now
 		beginInstantSwap();
 		featured.set(next);
 	}
@@ -369,6 +377,7 @@
 	function sweepStranded() {
 		if (typeof document === 'undefined') return;
 		for (const el of document.querySelectorAll<HTMLElement>('.flight')) {
+			if ('leaving' in el.dataset) continue; // the WebKit engine's leaver: pinned by design (depart)
 			if (el.getAnimations().length > 0) continue; // legitimately mid-transition — never touch
 			const pos = getComputedStyle(el).position;
 			if (pos !== 'fixed' && pos !== 'absolute') continue; // no stranded positioning residue
@@ -590,12 +599,16 @@
 	let navSeq = 0;
 
 	function onIncomingStart(node: HTMLElement) {
+		if (engineFlying()) return; // the WebKit engine flies this one; its landing is engineHooks below
 		if (motionOff()) return;
 		// every arrival, spouse swaps included: a swap's two cards share ONE clock, so its demoting card is held
 		// the same SAFARI_HOLD_MS (flight.ts shrinkTo) — holding only the arrival had split them (Sam, 3 Oct)
 		if (isWebKit()) holdUntilPainted(node);
 		navSeq++;
+		node.classList.remove('spouse-demote'); // a card revived mid-departure is arriving now, shadow and all
 		node.classList.add('flat'); // suppress notch → solid rectangle for the flight
+		// SAFARI: a CC arrival keeps BOTH drop-shadows in flight (layout.css `.cc-flight`; Sam, Oct 17).
+		if (isWebKit()) node.classList.toggle('cc-flight', getFlightKind() === 'cc');
 		// THE ANTICIPATED NOTCH. `.flat` normally holds until landing, because a carved corner on a card
 		// that is still growing reads as a blur. But in ONE scenario the card acquires a passenger before
 		// it lands: a promoted parent whose partner is crossing from the parents row to the notch (see
@@ -740,6 +753,7 @@
 		return floatStop;
 	});
 	function onIncomingLand(node: HTMLElement) {
+		if (engineFlying()) return;
 		floatResume(); // the zone's slab may drift again — from flat, so the landing hands over to it
 		// SAFARI: keep drawing the card exactly as the flight's last frame drew it, so it never snaps the
 		// ~1px between WebKit's animated and resting rendering (flight.ts holdLanding). Before the inline
@@ -842,11 +856,45 @@
 			}
 		}, 700);
 	}
+	// THE WEBKIT ENGINE'S LANDING (Kennedy port; state/navigate.ts flies it, webkit/flight.ts plays it). Its
+	// flights skip the four handlers above and below, so the signals they keep are set here instead, on the
+	// engine's own clock: down at the swap, up when the card is at rest. Clicks come back separately, once
+	// every leaver is gone (navigate.ts → unlockFlight).
+	$effect(() =>
+		registerEngineHooks({
+			onSwap: (relation) => {
+				featuredLanded = false;
+				openSiblingsOnLand = relation === 'child'; // a child promotion opens the panel (see its declaration)
+			},
+			onLanded: () => {
+				floatResume();
+				if (siblingsPref === 'open' && showSiblings && !siblingsOpen) {
+					siblingsQuiet = true;
+					siblingsOpen = true;
+				}
+				if (openSiblingsOnLand) {
+					openSiblingsOnLand = false;
+					if (showSiblings && siblingsPref !== 'closed') {
+						siblingsQuiet = true;
+						siblingsOpen = true;
+					}
+				}
+				featuredLanded = true;
+				landedPersonId = f.person.id;
+			}
+		})
+	);
 	function onOutgoingStart(node: HTMLElement, id: string) {
+		if (engineFlying()) return;
 		releaseLanding(node); // a held card must be free before its departure drives transform inline
 		if (motionOff()) return;
 		node.classList.add('flat'); // demoting card flies as a solid rectangle; destroyed flat
 		node.classList.add('leaving'); // its bookmark/home marks go at once — see the .leaving rule below
+		// SAFARI: a CC departure keeps BOTH drop-shadows in flight (layout.css `.cc-flight`; Sam, Oct 17).
+		if (isWebKit()) node.classList.toggle('cc-flight', getFlightKind() === 'cc');
+		// SAFARI ONLY (Kennedy port §3.4, Sam): a spouse swap's leaving card flies without its shadow, which
+		// could be watched collapsing toward the corner as it shrank into its notch seat (layout.css).
+		if (isWebKit() && getFlightKind() === 'spouse') node.classList.add('spouse-demote');
 		// A zone card carries the float's pose out of the click (slabFloat carryPose). Leaving the screen it keeps
 		// it; demoting into a chip seat it levels out on the way, so it docks square.
 		if (getFlightKind() !== 'cc') easeCarriedOut(node);
@@ -888,7 +936,8 @@
 	// what warmPersonLinks reads at click time). Same atomic swap, same instant reveal.
 	const isSeatFor = (el: HTMLElement, id: string) =>
 		el.dataset.flightId === id || el.dataset.sibSeatId === id;
-	function onOutgoingEnd(_node: HTMLElement, id: string) {
+	function onOutgoingEnd(node: HTMLElement, id: string) {
+		if ('leaving' in node.dataset) return; // an engine leaver (webkit/flight.ts depart): nothing pending
 		revealPending((el) => isSeatFor(el, id), 0);
 		if (demotingPivotId === id) demotingPivotId = null;
 	}
@@ -1287,6 +1336,7 @@
 	 * exit mechanisms on grandparent chips are working and can stay the same." Only the door changed.
 	 */
 	function openGrandparentTier(e: MouseEvent, id: string) {
+		releaseHeld(); // the tier moves the rows: the WebKit engine's held frames must not pin them
 		// The .flight wrapper, not the button — the tier centres on the CHIP, and the trigger sits off at
 		// its right edge. Centring on the trigger would put the row a half-chip out.
 		const chip = (e.currentTarget as HTMLElement).closest('.flight') as HTMLElement | null;
@@ -1696,6 +1746,7 @@
 		clearChildHoverTimer();
 		if (focusedChildId === id) return;
 		childHoverTimer = setTimeout(() => {
+			releaseHeld(); // the rise, the dimming and the shake are classes: held frames would override them
 			if (childrenOf(id).length) {
 				// How far this chip has to rise: its own row's top minus the FIRST row's top. Both read from
 				// the DOM in the same frame, so a wrap at any viewport width answers correctly.
@@ -2097,9 +2148,9 @@
 				data-flight-id={parent.id}
 				data-tx={parent.t?.x}
 				data-ty={parent.t?.y}
-				in:morphIn={{ id: parent.id }}
-				out:flyOut={{ key: parent.id }}
-				animate:flip={{ duration: flipMs }}
+				in:morphInGated={{ id: parent.id }}
+				out:flyOutGated={{ key: parent.id }}
+				animate:flipGated={{ duration: flipMs }}
 			>
 				<PersonBox person={parent} relation="parent" orbit={f.orbit === true} />
 				<!-- THE ONLY WAY UP. Rendered only when there is something to show, so its ABSENCE is the
@@ -2204,9 +2255,9 @@
 							data-tx={chip.spouse.t?.x}
 							data-ty={chip.spouse.t?.y}
 							data-offwindow={hasCarousel && (i < spouseOffset || i >= spouseOffset + WINDOW)}
-							in:markPending
-							out:chipExit={{ key: chip.spouse.id }}
-							animate:flip={{ duration: flipMs }}
+							in:markPendingGated
+							out:chipExitGated={{ key: chip.spouse.id }}
+							animate:flipGated={{ duration: flipMs }}
 						>
 							<div class="chip-slide">
 								<PersonBox
@@ -2279,8 +2330,8 @@
 				class="featured-flight"
 				data-flight-dir="lateral"
 				bind:clientHeight={cardHeight}
-				in:growFrom
-				out:shrinkTo={{ id: cur.person.id }}
+				in:growFromGated
+				out:shrinkToGated={{ id: cur.person.id }}
 				onintrostart={(e) => onIncomingStart(e.currentTarget)}
 				onintroend={(e) => onIncomingLand(e.currentTarget)}
 				onoutrostart={(e) => onOutgoingStart(e.currentTarget, cur.person.id)}
@@ -2414,9 +2465,9 @@
 				data-ty={child.t?.y}
 				onpointerenter={(e) => onChildEnter(e, child.id)}
 				onpointerleave={onChildLeave}
-				in:markPending
-				out:flyOut={{ key: child.id }}
-				animate:flip={{ duration: flipMs }}
+				in:markPendingGated
+				out:flyOutGated={{ key: child.id }}
+				animate:flipGated={{ duration: flipMs }}
 			>
 				<PersonBox person={child} relation="child" dimmed={child.dy_young} orbit={f.orbit === true} />
 			</div>

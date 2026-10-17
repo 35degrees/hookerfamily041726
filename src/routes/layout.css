@@ -957,3 +957,121 @@ html.webkit .featured-flight.flat .shadow-twin .twin-shape {
 html.webkit .header-button {
 	transition: none !important;
 }
+
+/* ── THE KENNEDY PORT (October 2026) ─────────────────────────────────────────────────────────────────────
+   Safari fixes built and filmed in the Kennedy test bed (its docs/HOOKER_PORT.md §3–§4, measurements in its
+   docs/MOTION_WEBKIT.md), carried across rule for rule. All of them answer one Safari habit: it draws a
+   moving or fading element on a temporary layer, ~1px differently from the page's own drawing, so anything
+   that joins or leaves a layer snaps by that pixel. The rules keep things on layers that never change.
+   `opacity` hints only, never `transform`: a leaving chip is pinned position: fixed, and a transform hint
+   would make its container the containing block and fling it. */
+
+/* THE CHIP SHADOW KEEPS ONE REACH (3.1). Hovering a spouse chip moved BOTH notch chips up ~1px as a unit:
+   the hover shadow reaches further than the resting one, so the layer the chips share grew and Safari
+   redrew it rounded to another pixel. Every chip carries BOTH shadow pairs, the unused pair transparent, so
+   hover only changes which pair shows. Same values as the tokens above, same order, so it still
+   interpolates. Filmed in Kennedy: 0.0px through a hover. */
+html.webkit {
+	--chip-shadow:
+		0 3.2px 9.6px hsl(var(--shadow-ink) / var(--shadow-a1)),
+		0 0.8px 2.4px hsl(var(--shadow-ink) / var(--shadow-a2)),
+		0 5px 14px hsl(var(--shadow-ink) / 0),
+		0 1.2px 3.5px hsl(var(--shadow-ink) / 0);
+	--chip-shadow-hover:
+		0 3.2px 9.6px hsl(var(--shadow-ink) / 0),
+		0 0.8px 2.4px hsl(var(--shadow-ink) / 0),
+		0 5px 14px hsl(var(--shadow-ink) / calc(var(--shadow-a1) * 1.25)),
+		0 1.2px 3.5px hsl(var(--shadow-ink) / var(--shadow-a2));
+}
+
+/* THE SLOT AND THE ROWS ON THEIR OWN LAYERS (3.3, 3.3b). Every landing ended ~1px short for ~5 frames and
+   then stepped home (roadmap §58.8's tick), and the rows dropped ~2px after landing: when the leavers are
+   removed a few frames after the landing, Safari regroups the slot's and each row's layers and re-places
+   what is in them. On layers of their own nothing is regrouped. Filmed in Kennedy, two takes each: a clean
+   settle to 0.0. Reaches the grandparent and grandchild tiers' rows too, on purpose. */
+html.webkit .featured-slot,
+html.webkit .parents-slot,
+html.webkit .children-slot {
+	will-change: opacity;
+}
+/* …and the chips themselves (3.2). A chip fading into the notch jumped ~1px when its fade ended (Safari
+   folded it back into the page's drawing); child chips sat ~1px off for ~250ms after a demotion landed; the
+   sibling list dropped ~0.5px when the leaving card that flew over it was removed. Each on a layer of its
+   own, before, during and after: 0.0 throughout. */
+html.webkit .spouse-notch .flight,
+html.webkit .parents-slot .flight,
+html.webkit .children-slot .flight,
+html.webkit .sib-item {
+	will-change: opacity;
+}
+
+/* THE SPOUSE-SWAP DEMOTE FLIES WITHOUT ITS SHADOW (3.4, Sam's call in Kennedy, 14 Oct 2026). Shrinking into
+   its notch seat behind the arriving card, its shadow could be watched collapsing toward the corner along
+   the top and right edges. Chrome looks fine and keeps it. The class is set in +page.svelte's
+   onOutgoingStart, WebKit only. */
+html.webkit .featured-flight.spouse-demote .shadow-twin {
+	visibility: hidden;
+}
+
+/* THE WORN EDGE AS PICTURES (§4; `bakeWear`, src/lib/actions/bakeWear.ts). Safari redrew the 14-layer
+   .card-wear mask late: filmed in Kennedy, the wear vanished for a frame at landing (density 4.9% → 0.4%
+   → 3.3%) and flickered in flight (roadmap §60.1A item 4). Once baked, the mask and its fill are off and
+   the card shows one of two pre-drawn canvases: the flat outline while it flies (`.flat`, until a notch is
+   armed), the notched outline at rest. Switching is visibility only, so the edge travels with the card. */
+html.webkit .card-wear.wear-baked {
+	-webkit-mask-image: none;
+	mask-image: none;
+	background: none;
+}
+html.webkit .card-wear canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+html.webkit .featured-flight.flat:not(.notch-armed) .card-wear .wear-notched,
+html.webkit .featured-flight:not(.flat) .card-wear .wear-flat,
+html.webkit .featured-flight.notch-armed .card-wear .wear-flat {
+	visibility: hidden;
+}
+
+/* ── THE WEBKIT ENGINE'S FLIGHTS (src/lib/transitions/webkit/) ─────────────────────────────────────────── */
+/* NO HEIGHT GLIDE IN AN ENGINE FLIGHT. `.wk-flight` is on the slot from just before the swap to the landing:
+   the engine measures where the rows under the slot will rest right after the swap, and a height animates on
+   the main thread every frame (webkit/flight.ts launch). */
+html.webkit .featured-slot.wk-flight {
+	transition: none !important;
+}
+/* CONSTANT STACKING (Kennedy port §5.2b.2). The card always at 2 and the notch above it at 3, in flight and
+   at rest; the engine puts a leaving card at 1. Raising the card only while it flew and dropping it at
+   landing made Safari regroup its drawing, and the landing settle reversed by ~1px (filmed in Kennedy).
+   ONLY on a board the engine flew (`.wk-board`, set at its swap). The class comes off the moment Hooker's own
+   flights take over (webkit/flight.ts releaseHeld, before they measure), so a cross-connection, the carousel
+   or a tier flies with Hooker's stacking exactly as before: the card's z-index inline, the notch at 1. */
+html.webkit .featured-slot.wk-board > .featured-flight {
+	z-index: 2;
+}
+html.webkit .featured-slot.wk-board .spouse-notch {
+	z-index: 3;
+}
+/* BOTH DROP-SHADOWS IN FLIGHT ON A CROSS-CONNECTION TOO (Oct 17, Sam): "when I click any CC trigger… the drop
+   shadow behind the featured card instantly reduces intensity by 50%… then the entering card… settles into final
+   position, and then the drop shadow boldens and thickens". The one-shadow rule above exists for flights that
+   re-blur the shadow every frame (--shadow-k, the chip-size counter-scale); a CC flight never writes it (the card
+   is full size the whole way, sliding and tilting), so cutting the second shadow bought nothing and broke design
+   §52.2's cue, "it casts a shadow the whole way". `.cc-flight` is set on both cards of a CC flight, WebKit only
+   (+page.svelte, and flight.ts's early exit at the click). */
+html.webkit .featured-flight.flat.cc-flight .shadow-twin,
+html.webkit .featured-flight.flat.cc-flight .cc-twin {
+	filter: drop-shadow(0 calc(4px * var(--shadow-k, 1)) calc(12px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a1) * var(--shadow-fade, 1))))
+		drop-shadow(0 calc(1px * var(--shadow-k, 1)) calc(3px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a2) * var(--shadow-fade, 1)))) !important;
+}
+/* BOTH DROP-SHADOWS IN FLIGHT, for the engine's flights (Kennedy port §3.5). Hooker's flights re-blur the
+   shadow every frame (--shadow-k), which is why the rule above casts only one there. The engine never
+   touches it, so the cheaper shadow buys nothing, and the step from one shadow to two at landing showed (the
+   card's shadow "strengthens" as it settles; the change of reach nudged the notch chips). */
+html.webkit .featured-flight.flat.wk-flight .shadow-twin,
+html.webkit .featured-flight.flat.wk-flight .cc-twin {
+	filter: drop-shadow(0 calc(4px * var(--shadow-k, 1)) calc(12px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a1) * var(--shadow-fade, 1))))
+		drop-shadow(0 calc(1px * var(--shadow-k, 1)) calc(3px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a2) * var(--shadow-fade, 1)))) !important;
+}

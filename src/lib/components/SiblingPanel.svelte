@@ -6,7 +6,10 @@
 	import { flip } from 'svelte/animate';
 	import { untrack } from 'svelte';
 	import { motionOff } from '#lib/state/motion.svelte.js';
-	import { easeOutBack, solveBackS, markPending } from '#lib/transitions/flight.js';
+	import { easeOutBack, solveBackS } from '#lib/transitions/flight.js';
+	// Gated: in Safari, on a sibling promotion the WebKit engine holds and reveals the incoming seat itself;
+	// everywhere else this is Hooker's markPending, unchanged.
+	import { markPendingGated as markPending } from '#lib/transitions/webkit/gate.js';
 	import { getSiblingNavPlan, isIncomingSeat, type SiblingNavPlan } from '#lib/state/siblingNav.js';
 	// The layout model lives in siblingLayout.ts (§19): the flight has to know where a seat in this list
 	// will come to REST, and that question is only answerable with this arithmetic. One home for it.

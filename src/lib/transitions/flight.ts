@@ -48,7 +48,7 @@ export function solveBackS(targetG: number): number {
 // easeOutBack's inherent overshoot is g(s)·distance. A fixed s flings far swaps (corner-to-corner spouse
 // distances span ~8×). So CLAMP the carry to a few px and solve s per-flight to hit it. `boost` scales the
 // target carry: the DECK arrival passes 1.1 (v4.2.1 — a heavier card needs more to settle); everyone else 1.
-function settleBackFor(distance: number, boost = 1): number {
+export function settleBackFor(distance: number, boost = 1): number {
 	if (distance < 1) return 0;
 	const targetPx = boost * Math.min(5.4, Math.max(4.5, distance * 0.011)); // whole-path along-axis carry (4.5–5.4px × boost)
 	return solveBackS(Math.min(0.1, targetPx / distance));
@@ -626,7 +626,7 @@ let flightOrigin: DOMRect | null = null;
  *  rect), and it runs in the same flush as the outro — so an outro that needs the hero's origin cannot
  *  race it for the same variable. §19's plan reads it at the click-time seam instead, before either. */
 /** The last hero flight's clock AND kind, published by growFrom so the CC blade can be placed inside it. */
-type HeroSchedule = {
+export type HeroSchedule = {
 	duration: number;
 	delay: number;
 	kind: 'spouse' | 'relative' | 'cc' | 'sibling';
@@ -641,6 +641,11 @@ type HeroSchedule = {
 let heroSchedule: HeroSchedule = { duration: 0, delay: 0, kind: 'relative', axis: 'lateral' };
 export function getHeroSchedule(): HeroSchedule {
 	return heroSchedule;
+}
+/** The WebKit engine's flights (transitions/webkit/) publish their clock here, as growFrom does, so the blade
+ *  draws on it (unsheathBlade) and fitBlade knows whether a card is mounting mid-flight. */
+export function publishHeroSchedule(s: HeroSchedule): void {
+	heroSchedule = s;
 }
 
 export function peekFlightOrigin(): DOMRect | null {
@@ -1236,6 +1241,7 @@ export function captureRects(boxes: Iterable<Element>): void {
 // Clear the per-navigation captures one frame after the transition flush consumed them, so a
 // later nav with NO click (back/forward) can't reuse a stale id / direction / pinned rect.
 export function clearFlightCaptures(): void {
+	endEarlyCcExit();
 	rowClock = null; // per-navigation: the next nav derives its own row/demote tempo
 	rowPitch = null;
 	clickedId = null;
@@ -1318,7 +1324,7 @@ export function spouseGrowMs(distance: number): number {
 // the demote off top-left/corner travel let the photo run ~2× the velocity ceiling and STROBE (browsers
 // don't motion-blur). So measure the MAX displacement over all four corners — the fastest point, the
 // photo's path — and time off THAT, so no corner exceeds the ceiling.
-function maxCornerTravel(a: PinRect, b: PinRect): number {
+export function maxCornerTravel(a: PinRect, b: PinRect): number {
 	let m = 0;
 	for (const cx of [0, 1])
 		for (const cy of [0, 1]) {
@@ -1333,8 +1339,8 @@ function maxCornerTravel(a: PinRect, b: PinRect): number {
 // demote's own honest duration + the finish lead). Both growFrom (returns this) and shrinkTo (returns this
 // − the lead) call it with the same (heroDist, demote max-corner travel), so demote lands exactly the lead
 // ahead of the hero and no point on EITHER card ever exceeds the ceiling.
-const SPOUSE_FINISH_LEAD_MS = 60;
-function spouseHeroDurationMs(heroDist: number, demoteMaxCorner: number): number {
+export const SPOUSE_FINISH_LEAD_MS = 60;
+export function spouseHeroDurationMs(heroDist: number, demoteMaxCorner: number): number {
 	const ownDuration = demoteMaxCorner / SPOUSE_DEMOTE_V_CEIL; // honest: fastest corner obeys the SPOUSE ceiling
 	return Math.max(spouseGrowMs(heroDist), ownDuration + SPOUSE_FINISH_LEAD_MS);
 }
@@ -1342,7 +1348,7 @@ function spouseHeroDurationMs(heroDist: number, demoteMaxCorner: number): number
 // — the leaving card releases attention to the hero and never competes with the hero's landing. (The
 // SPOUSE demote gets its finish-first from spouseHeroDurationMs / SPOUSE_FINISH_LEAD_MS above, at honest
 // velocity — see shrinkTo.)
-const DEMOTE_LEAD = 0.85;
+export const DEMOTE_LEAD = 0.85;
 
 // DEMOTE SETTLE — the reciprocal of the promotion settle, on the DEMOTING elements (the leaving featured
 // card via shrinkTo, and its spouse via morphIn). Same easeOutBack machinery, aimed INWARD: the element
@@ -1362,11 +1368,11 @@ const DEMOTE_SETTLE_CAP_PX = 9; // ceiling — a demote overshoot larger than th
 // PARENT: Sam's verdict — too strong, take it to the FLOOR. At 0.6 the parent targetPx (0.45·232·0.035·0.6 =
 // 2.2) lands exactly on DEMOTE_SETTLE_FLOOR_PX, so the floor dominates and this factor is INERT (further
 // reduction needs lowering the floor). Applies ONLY to the card demoting UP into a parent seat. FROZEN.
-const DEMOTE_SETTLE_PARENT_FACTOR = 0.6;
+export const DEMOTE_SETTLE_PARENT_FACTOR = 0.6;
 // CHILD: applies ONLY to the card demoting DOWN into a child seat. Ratio-driven (targetPx 3.66 at factor 1,
 // well above the floor — a real dial, not floor-clamped). At 1.57px the child read too imperceptible (Sam);
 // its ~3× travel + dramatic shrink want MORE overshoot than the parent to read equally. Being bracketed.
-const DEMOTE_SETTLE_CHILD_FACTOR = 1.6;
+export const DEMOTE_SETTLE_CHILD_FACTOR = 1.6;
 // SIBLING seat (§21.3). WAS 1, WHICH MEANT THE DIAL WAS NOT CONNECTED (083026). At factor 1 the ratio
 // term is 0.45·131·0.035 = 2.06px, just UNDER DEMOTE_SETTLE_FLOOR_PX — so the floor won and the sibling
 // carried a flat 2.2px no matter what this number said. It was set smallest on Sam's earlier note ("not
@@ -1381,11 +1387,21 @@ const DEMOTE_SETTLE_CHILD_FACTOR = 1.6;
 // 2.5 puts the demote at 5.11px (measured, ±0.03 across all three panel geometries), so the pair reads as
 // one physical event. Paired with SHAPE_AT — see its comment; a carry this size REQUIRES the footprint to
 // be finished earlier, or the chip emerges from behind the hero still shrinking.
-const DEMOTE_SETTLE_SIBLING_FACTOR = 2.5;
+export const DEMOTE_SETTLE_SIBLING_FACTOR = 2.5;
+// THE DEMOTE'S OTHER DIALS, held here rather than inside shrinkTo so the WebKit engine (transitions/webkit/)
+// reads the same numbers and the two can never drift. Each one's reasoning is at its use in shrinkTo.
+export const SIBLING_SEAT_HOLD = 0.04;
+export const SIBLING_SHAPE_AT = 0.48;
+export const SIBLING_FINISH_LEAD_MS = 50;
+export const FACE_SCALE_MAX = 2.3;
+export const FACE_OUT_LO = 2.0;
+export const FACE_OUT_HI = 2.4;
+export const FACE_IN_LO = 1.7;
+export const FACE_IN_HI = 2.1;
 // Solve easeOutBack's overshoot parameter s so the carry hits targetPx (footprint-scaled), same Newton
 // solve as settleBackFor. distance = the element's own travel; footprint = the destination box's diagonal;
 // factor trims the amplitude per-direction (1 = full; parent-seat landings pass DEMOTE_SETTLE_PARENT_FACTOR).
-function demoteSettleBackFor(distance: number, footprint: number, factor = 1): number {
+export function demoteSettleBackFor(distance: number, footprint: number, factor = 1): number {
 	if (distance < 1) return 0;
 	// PHASE 2.75 — the FLOOR and CAP travel with the frame, the RATIO does not. `footprint` is a measured
 	// diagonal, so the ratio term already shrinks with the stage on its own; the two px bounds are the
@@ -1676,12 +1692,14 @@ export function growFrom(node: Element) {
 	// for car 1 to FULLY exit, THEN the empty-stage beat, THEN it enters. The exiting and entering cards are
 	// never on screen together; the empty gap between them IS the large-tree distance (Sam). heroDelay =
 	// car1ExitMs + beat.
+	// Safari's early exit (startEarlyCcExit): car 1 left at the click, so its remaining run is what is left of it.
+	const earlyLeft = cc && !arc ? earlyExitRemaining() : null;
 	const ccDelay = arc
 		? 0
 		: sched
 			? DECK_GHOSTS
 				? sched.convoyHeroDelayMs
-				: car1ExitMs + sched.phantomBeatMs
+				: (earlyLeft ?? car1ExitMs) + sched.phantomBeatMs
 			: 0;
 	if (arc) {
 		duration = arcDur; // run the whole arc; opacity/scale are driven by the arc clock inside css
@@ -1827,6 +1845,16 @@ export function growFrom(node: Element) {
 	hero.style.transformOrigin = 'top left';
 	hero.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
 	hero.style.zIndex = '2';
+	// CHROME: NO MINIATURE CARD STANDING STILL ON THE CHIP (Oct 17; Sam, three times: "the inner content of the
+	// parent chip becomes a shrunken featured hero card… for a millisecond, it's clunky"). Measured: the card is
+	// placed on the chip at chip size, fully opaque, and Chrome holds it there for 2–3 frames (~40ms, its first
+	// render of the new board) before the clock runs, so the whole card shows shrunk into the chip, standing
+	// still. For parent and child promotions it now starts INVISIBLE (inline, so the frames before the clock show
+	// the chip that was clicked, which flyOut keeps for the same CHIP_HANDOFF_MS) and fades in over the first
+	// CHIP_HANDOFF_MS of its growth, while it is already moving. Kennedy's rule for Safari, the same idea. Safari
+	// flies these in its own engine (transitions/webkit/), which already does it.
+	const handoff = flightKind === 'relative' && !isWebKit() && duration > 0 ? CHIP_HANDOFF_MS / duration : 0;
+	if (handoff) hero.style.opacity = '0';
 	return {
 		duration,
 		delay: ccDelay, // the passage beat (0 for chip navs and near CCs)
@@ -1861,7 +1889,7 @@ export function growFrom(node: Element) {
 			const gx = 1 - u * (1 - sx);
 			const gy = 1 - u * (1 - sy);
 			return (
-				`z-index: 2; opacity: 1; transform-origin: top left; ` +
+				`z-index: 2; opacity: ${handoff ? clamp01(t / handoff) : 1}; transform-origin: top left; ` +
 				`--r-kx: ${1 / Math.max(gx, 1e-4)}; --r-ky: ${1 / Math.max(gy, 1e-4)}; ` +
 				`--shadow-k: ${1 / Math.max(Math.sqrt(gx * gy), 1e-4)}; ` +
 				`transform: translate(${u * dx}px, ${u * dy}px) scale(${gx}, ${gy});`
@@ -1911,9 +1939,116 @@ function chipShadowAt(s: number): string {
 	);
 }
 
+// ── CAR 1's EXIT, as numbers (the deck's departing card) ────────────────────────────────────────────
+// Shared by shrinkToCore below (every browser) and Safari's early exit (startEarlyCcExit), so the two can never
+// describe different exits. Pure arithmetic on the card's rest rect and the click's camera move.
+type Car1Plan = { ex: number; ey: number; lx: number; ly: number; rot: number; car1Ms: number };
+function car1Plan(card: PinRect, arcM: CameraMove | null): Car1Plan {
+	const dir = deckDirFor(arcM); // offscreen START; the card travels −dir
+	// Exit terminus = the LIVE distance from car 1's rest rect to just past the FAR window edge (−dir),
+	// not a fixed DECK_TRAVEL that a wide window would leave a sliver of. Duration off that honest distance.
+	const exit = deckExit({ x: -dir.x, y: -dir.y }, card.left, card.top, card.width, card.height);
+	const ex = exit.x,
+		ey = exit.y;
+	const car1Ms = (Math.hypot(ex, ey) / DECK_GHOST_V) * deckTempo() * DECK_TRAVEL_TEMPO; // rest → fully offscreen (× tempo, × travel-tempo)
+	const sched = deckScheduleFor(arcM);
+	const j0 = sched.jitter[0]; // seeded per flight (protected variation)
+	const horiz = Math.abs(dir.x) >= Math.abs(dir.y); // lateral exit → banks; vertical → leans
+	const perp = { x: -dir.y, y: dir.x };
+	// Push → a FLOORED seeded draw (never flat), per-axis tilt; convoy → the full un-floored fan character.
+	const draw = DECK_GHOSTS
+		? { rot: j0.rotDeg, lane: j0.lanePx }
+		: pushDraw(j0.rotDeg, j0.lanePx, horiz);
+	return { ex, ey, lx: draw.lane * perp.x, ly: draw.lane * perp.y, rot: draw.rot, car1Ms };
+}
+
+// ── SAFARI: A LATERAL CC's EXIT STARTS AT THE CLICK (Oct 17) ────────────────────────────────────────
+// Sam: the card leaving out the left edge "feels like it's going over big rocks". Filmed in his Safari: the
+// exit began inside Safari's heaviest frame (the new board being built), so its tick lurched ~10px on its first
+// frame and then stumbled up to ~20px whenever a frame was missed; handing the same curve to the compositor at
+// the swap lurched worse (its clock starts at creation, its first drawn frame comes after that heavy frame).
+// Nothing about this exit depends on the next person: direction, path, tilt and duration are all known at the
+// click. So in Safari it starts THEN, on the compositor, while the next card is still being fetched and the
+// main thread is idle; by the time the heavy swap frame comes the compositor owns the motion and rides through
+// it. The arriving card still waits for car 1 to be fully gone plus the empty-stage beat, counted from when it
+// really left (growFrom). Same curve, tilt, lane and duration as the tick. Chrome never comes here.
+type EarlyExit = { el: HTMLElement; startedAt: number | null; runMs: number; notch: HTMLElement[] };
+let earlyExit: EarlyExit | null = null;
+/** Bumped by every early exit, so only a NEWER click can cancel a start that is still two frames away (the
+ *  per-navigation cleanup must not: a fast swap can clear the record before the animation exists). */
+let earlyExitToken = 0;
+/** How long the early exit's last (offscreen) frame is held after it ends: past Svelte's removal of the card,
+ *  so Safari never falls back to drawing it at rest in the middle of the stage (Kennedy: outliveElement). */
+const EARLY_EXIT_TAIL_MS = 4000;
+const EARLY_EXIT_SAMPLES = 30;
+/** Called by warmPersonLinks at a lateral CC click in Safari, after the camera move is published. */
+export function startEarlyCcExit(): boolean {
+	earlyExit = null;
+	if (!isWebKit() || motionOff() || DECK_GHOSTS) return false;
+	const m = getCameraMove();
+	const dir = deckDirFor(m);
+	if (!m || isArcMove(m) || dir.y !== 0 || dir.x === 0) return false; // lateral, non-arc only
+	const el = document.querySelector<HTMLElement>('.featured-flight');
+	const card = el?.getBoundingClientRect();
+	if (!el || !card || !card.width || !card.height) return false;
+	const { ex, ey, lx, ly, rot, car1Ms } = car1Plan(card, m);
+	const hold = SAFARI_HOLD_MS; // the start pose held inside the keyframes (Safari's hand-off, §58.3f)
+	const total = hold + car1Ms + EARLY_EXIT_TAIL_MS;
+	const pose = (u: number): Keyframe => {
+		const e = u * u; // the tick's easeIn, exactly
+		return { transform: `translate(${e * (ex + lx)}px, ${e * (ey + ly)}px) rotate(${(u * rot).toFixed(2)}deg)` };
+	};
+	const frames: Keyframe[] = [{ ...pose(0), offset: 0 }];
+	for (let i = 0; i <= EARLY_EXIT_SAMPLES; i++) {
+		const u = i / EARLY_EXIT_SAMPLES;
+		frames.push({ ...pose(u), offset: (hold + u * car1Ms) / total });
+	}
+	frames.push({ ...pose(1), offset: 1 });
+	// What onOutgoingStart does at the departure, done now because the departure is now: the card flies as a
+	// complete rounded card, its marks go, and it rides above the ghost layer from the middle of the stage.
+	el.classList.add('flat', 'leaving', 'cc-flight'); // cc-flight: both drop-shadows in flight (layout.css)
+	el.style.zIndex = '2';
+	el.style.transformOrigin = 'center';
+	// The notch's spouse chips belong to this card's corner: they go with it (the rest of the roster is already
+	// cut at this click, ccRoster). Their elements leave at the swap; a survivor is shown again (endEarlyCcExit).
+	const notch = [...document.querySelectorAll<HTMLElement>('.spouse-notch .flight')];
+	for (const n of notch) n.style.opacity = '0';
+	// Created AFTER the click's own frame has painted (Kennedy's rule: the clock never starts inside a render).
+	// The click itself makes Safari re-render (the roster cut, the camera's move), and an animation created in
+	// that task first reached the screen ~15–20px into its run (filmed). The record exists from now, so a swap
+	// that comes before the animation (a cached payload) still defers to it.
+	const exit: EarlyExit = { el, startedAt: null, runMs: hold + car1Ms, notch };
+	earlyExit = exit;
+	const token = ++earlyExitToken;
+	requestAnimationFrame(() =>
+		requestAnimationFrame(() => {
+			if (token !== earlyExitToken || !el.isConnected) return;
+			el.animate(frames, { duration: total, easing: 'linear', fill: 'forwards' });
+			exit.startedAt = performance.now();
+		})
+	);
+	return true;
+}
+/** ms until the early-exiting card is fully offscreen (0 if it already is, null if there is no early exit). */
+function earlyExitRemaining(el?: Element): number | null {
+	if (!earlyExit || (el && earlyExit.el !== el)) return null;
+	if (earlyExit.startedAt === null) return earlyExit.runMs + 2 * (1000 / 60); // not started yet: two frames away
+	return Math.max(0, earlyExit.startedAt + earlyExit.runMs - performance.now());
+}
+/** After the swap: a notch chip still on the new card (not leaving) is shown again; the record is dropped. */
+function endEarlyCcExit(): void {
+	if (!earlyExit) return;
+	for (const n of earlyExit.notch) if (n.isConnected && !n.inert) n.style.removeProperty('opacity');
+	earlyExit = null;
+}
+
 function shrinkToCore(node: Element, params: { id: string }) {
 	if (motionOff()) return { duration: 0 };
 	const el = node as HTMLElement;
+	// Safari's early CC exit (startEarlyCcExit) is already carrying this card off: Svelte only keeps it mounted
+	// until it is offscreen. Its own animation holds the offscreen frame well past that.
+	const early = flightKind === 'cc' ? earlyExitRemaining(el) : null;
+	if (early !== null) return { duration: early + 100 };
 	const card = node.getBoundingClientRect(); // the card's START rect (center) — stable through the flight
 	if (!card.width || !card.height) return { duration: 0 };
 	// CC (directional arrival): the old card leaves the NEIGHBOURHOOD, not landing in it — depart WHOLE
@@ -2107,24 +2242,7 @@ function shrinkToCore(node: Element, params: { id: string }) {
 		// along −deckDir, exiting the far edge at full opacity — a real card leaving, never dimmed in place.
 		// NO BLUR (sharp at every frame). A seeded tilt is DRAWN in as it goes (the exit's own angle); it stays
 		// on top of nothing here — with the phantom beat, the hero doesn't paint until car 1 is long gone.
-		const dir = deckDirFor(arcM); // offscreen START; the card travels −dir
-		// Exit terminus = the LIVE distance from car 1's rest rect to just past the FAR window edge (−dir),
-		// not a fixed DECK_TRAVEL that a wide window would leave a sliver of. Duration off that honest distance.
-		const exit = deckExit({ x: -dir.x, y: -dir.y }, card.left, card.top, card.width, card.height);
-		const ex = exit.x,
-			ey = exit.y;
-		const car1Ms = (Math.hypot(ex, ey) / DECK_GHOST_V) * deckTempo() * DECK_TRAVEL_TEMPO; // rest → fully offscreen (× tempo, × travel-tempo)
-		const sched = deckScheduleFor(arcM);
-		const j0 = sched.jitter[0]; // seeded per flight (protected variation)
-		const horiz = Math.abs(dir.x) >= Math.abs(dir.y); // lateral exit → banks; vertical → leans
-		const perp = { x: -dir.y, y: dir.x };
-		// Push → a FLOORED seeded draw (never flat), per-axis tilt; convoy → the full un-floored fan character.
-		const draw = DECK_GHOSTS
-			? { rot: j0.rotDeg, lane: j0.lanePx }
-			: pushDraw(j0.rotDeg, j0.lanePx, horiz);
-		const lx = draw.lane * perp.x,
-			ly = draw.lane * perp.y;
-		const rot = draw.rot;
+		const { ex, ey, lx, ly, rot, car1Ms } = car1Plan(card, arcM);
 		// WEIGHT PHYSICS (v4.2): the card is HEAVY leaving its slot. It doesn't dart off at a uniform clip — it
 		// starts slow, reluctant, and ACCELERATES away (easeIn, every axis now, not just the downward fall Sam
 		// loved). Cards have weight, not engines: they lean into the exit and build speed, never launch flat-out.
@@ -2167,7 +2285,7 @@ function shrinkToCore(node: Element, params: { id: string }) {
 	// never reads as a pause. Not a fudge for the clock: the clock is right, the last frame was simply
 	// never painted. Trimmed 0.08 → 0.04 once the travel got its easeOutBack tail, which is already
 	// near-stationary at the end; this is now only the guarantee of a painted resting frame.
-	const SEAT_HOLD = 0.04;
+	const SEAT_HOLD = SIBLING_SEAT_HOLD;
 	// §21.3 — SHAPE EARLY, THEN SLIDE. Sam: the demote "looks like it's coming down from a high level and
 	// being vacuumed up into the sibling chip space", and its direction fights the promotion, which
 	// "doesn't feel like it's moving up, it's expanding out". The cause is that scale and translation ride
@@ -2191,7 +2309,7 @@ function shrinkToCore(node: Element, params: { id: string }) {
 	// build ever managed (it measured 121–125px), and it is a closer reading of what Sam asked for in the
 	// first place: "it should be in its final form already for a long time." The overshoot is then a
 	// chip-sized object sliding past its seat and back — a rubber band, not something still collapsing.
-	const SHAPE_AT = 0.48; // travel fraction by which the footprint is final
+	const SHAPE_AT = SIBLING_SHAPE_AT; // travel fraction by which the footprint is final
 	// The demote lands BEFORE the hero — Sam: "they should land at the same time, even the sibling chip in
 	// final position 50ms before the Featured Card is in position." It measured at 0ms, and not by design:
 	// a sibling demote was clocked by `spouseHeroDurationMs`, a formula from the spouse regime, while the
@@ -2201,7 +2319,6 @@ function shrinkToCore(node: Element, params: { id: string }) {
 	// The lead is stated against the moment the chip STOPS MOVING, which is what "in final position" means
 	// and is SEAT_HOLD short of the clock ending — measuring it against the duration instead put the chip
 	// at rest 84ms early, well past what was asked.
-	const SIBLING_FINISH_LEAD_MS = 50;
 	// PHASE 2.75 — SCALED, because these ASSERT a size rather than MEASURE one. Everything else in this
 	// file reads the world with getBoundingClientRect and stays correct at any frame unit for free; these
 	// few constants were written when a compact chip was always 160x65, and only they go stale. (The
@@ -2275,15 +2392,14 @@ function shrinkToCore(node: Element, params: { id: string }) {
 	// The chip-face's on-screen scale is capped at FACE_SCALE_MAX× its natural chip size — a ceiling on the
 	// geometry; the CROSSFADE below is what keeps the NAME from ever reading billboard (invisible above
 	// REVEAL_HI×). Uniform (aspect preserved), centered. BOTH regimes.
-	const FACE_SCALE_MAX = 2.3;
 	// GEOMETRY-KEYED CROSSFADE bands (×natural chip scale = shellWidth/FACE_W). The card's own face fades
 	// OUT over [OUT_LO, OUT_HI] and the chip-face fades IN over [REVEAL_LO, REVEAL_HI], OVERLAPPING so at
 	// every shell size something is visible (no blink) and the chip-face never paints above REVEAL_HI (no
 	// billboard name). If a name still reads large, drop the whole band by 0.2 (one edit, keeps the overlap).
-	const OUT_LO = 2.0;
-	const OUT_HI = 2.4; // outgoing face: opaque ≥2.4×, gone ≤2.0×
-	const REVEAL_LO = 1.7;
-	const REVEAL_HI = 2.1; // chip-face: invisible ≥2.1×, opaque ≤1.7×
+	const OUT_LO = FACE_OUT_LO;
+	const OUT_HI = FACE_OUT_HI; // outgoing face: opaque ≥2.4×, gone ≤2.0×
+	const REVEAL_LO = FACE_IN_LO;
+	const REVEAL_HI = FACE_IN_HI; // chip-face: invisible ≥2.1×, opaque ≤1.7×
 	// THE IMPLIED SEAT — the demote that has nowhere to land.
 	//
 	// A demote resolves its destination by querying the PIVOT's box: the seat the person we are leaving
@@ -2836,7 +2952,10 @@ export function slideChip(_node: Element) {
 // parents" — the tier that isn't drawn but is unambiguously there. A children row leaving downward moves
 // into the GRANDCHILDREN seat below a connector that would read "Five grandchildren". They fade out
 // before they arrive, so the seat is implied and never asserted. Destination, not escape.
-const ROW_TRAVEL_FALLBACK = 145;
+export const ROW_TRAVEL_FALLBACK = 145;
+/** Chrome's chip → card hand-off on a parent or child promotion (growFrom, flyOut): the arriving card fades in
+ *  and the clicked chip fades out over this long, once the card is already growing. */
+const CHIP_HANDOFF_MS = 40;
 /**
  * The tier pitch, DERIVED rather than hardcoded — one row's seat to the next. It is measurable in one
  * subtraction: a row's top to the featured slot's top spans exactly that row plus the connector under
@@ -2905,8 +3024,8 @@ export function rowClockMs(): number {
 		);
 	return rowClock;
 }
-const ROW_SOLID = 0.34; // fully opaque this far along — a card being shoved is a solid object for as
-const ROW_GONE = 0.7; // long as you can see it, and it is GONE before it reaches the tier seat it is
+export const ROW_SOLID = 0.34; // fully opaque this far along — a card being shoved is a solid object for as
+export const ROW_GONE = 0.7; // long as you can see it, and it is GONE before it reaches the tier seat it is
 // heading for, so the implied row is never asserted. Alpha only; the motion is unchanged.
 // These are fractions of DISTANCE COVERED, and the march decelerates, so they are far later in TIME than
 // they look. THAT IS THE WHOLE POINT OF THE DIAL, and 0.5/0.92 had it on the wrong side of the knee: a
@@ -3352,6 +3471,15 @@ export function flyOut(node: Element, params: { key: string }) {
 	// whole flight: opacity 0 the entire time, so the only thing the user tracks is the morphing
 	// card. (Pinned in the same flush as the siblings → no separate reflow, no sideways shove.)
 	if (params.key === clickedId) {
+		// CHROME, parent and child promotions: the chip stays until the card has started to grow, then hands over
+		// in CHIP_HANDOFF_MS (growFrom's no-miniature rule). Invisible for the rest of the flight, as before.
+		if (flightKind === 'relative' && !isWebKit()) {
+			return {
+				duration: 360,
+				easing: (x: number) => x,
+				css: (_t: number, u: number) => `${pin}opacity: ${clamp01(1 - (u * 360) / CHIP_HANDOFF_MS)};`
+			};
+		}
 		return { duration: 360, easing: cubicOut, css: () => `${pin}opacity: 0;` };
 	}
 	// THE COUPLED PUSH (see above): a box in a ROW leaves as the far half of that row's one displacement —
