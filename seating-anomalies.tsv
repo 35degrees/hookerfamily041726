@@ -10,13 +10,11 @@ HD1419	Edward Wilson Rawson	detached-td-root	is_thomas_descendant but no in-tree
 HD1420	Thomas Hooker Rawson	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD4399	Julia Belden Saint John	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD7478	Louisa May Cowles Cowles	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
-H03798	Lovice Hooker H02380	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD13802	Ethel Maria Andrews	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD13803	Llewellyn Hanfrant Andrews	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD13804	Ruth Andrews	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD13805	Francis Loudon Andrews	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD13806	Charles Wakeman Andrews	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
-HD9857	Elizabeth Cornelia	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD13030	Hester Ndoja	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD13031	Mary Katherine Erwin	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
 HD13032	Elizabeth Lindsay	detached-td-root	is_thomas_descendant but no in-tree parent; seated as a detached subtree (linkage gap)
@@ -55,6 +53,7 @@ X03228	William Harry Chichele Pynchon	archipelago	orbit figure: documented CCs b
 X03297	Major John Pynchon	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X03441	William Dwight Whitney	archipelago	orbit figure — Sam-confirmed islander (no linkage chase)
 X03442	Elizabeth Wooster Baldwin Whitney	archipelago	orbit figure — Sam-confirmed islander (no linkage chase)
+X03597	Dorothy Hooker Chester	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X03845	Thomas Jefferson	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X03947	Samuel Finley Breese Morse	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X03948	Maj. Gen. Joseph Hooker	archipelago	orbit figure: documented CCs but no blood/marriage anchor
@@ -64,6 +63,7 @@ X04035	Lucy Stone	archipelago	orbit figure: documented CCs but no blood/marriage
 X04036	Henry Browne Blackwell	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X04037	Rev. Henry Cowles	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 X04038	Alice Welch Cowles	archipelago	orbit figure: documented CCs but no blood/marriage anchor
+X04257	Abigail Adams	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 Y00001	William Wadsworth	archipelago	orbit figure — Sam-confirmed islander (no linkage chase)
 Y00004	Hon. William Pynchon	archipelago	orbit figure: documented CCs but no blood/marriage anchor
 H01707	James Chauncey Hooker	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -170,7 +170,6 @@ HD3884	Myron Paul Jackson	true-orphan	no blood/egg flag, no marriage anchor, no 
 HD4941	Sarah Kingsley Drury	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I00346	Mehitable Mason Hooker	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I00602	Lockey Benham Tuttle	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-I01024	Mr. Proctor	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I01606	Dorothy Howe Bass Spencer	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I01608	Mabel Williams Spencer	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 I02246	Rebecca F Green Cowles	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -194,7 +193,6 @@ X00017	Captain John Mills	true-orphan	no blood/egg flag, no marriage anchor, no 
 X00018	Hannah Hayward Mills	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00029	Samuel Smith	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00030	Rachel Lambert Smith	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00046	Captain William Burnham	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00053	Lt. John Worthington	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00054	Mary Pratt Worthington	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00057	Hon. Nathaniel Standley	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -207,14 +205,11 @@ X00131	James Prentiss Goodwin	true-orphan	no blood/egg flag, no marriage anchor,
 X00251	Anna Cheney	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00280	Charlotta Jemima Welles	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00365	Sidney Humiston	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00369	unknown unknown-wav	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00436	Abby Talcott	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00464	Sarah Beecher	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00476	Josephine Boyle	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00477	James Willet Hazard	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00706	Mary Chapman	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00831	John Browning Hurlbut	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X00874	Peyton Horatio Skipwith	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00890	Leonard Marler	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00966	Caroline Skinner Terrell	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X00979	Caroline Eunice Beach	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -233,23 +228,21 @@ X01458	Isabella Thompson	true-orphan	no blood/egg flag, no marriage anchor, no C
 X01459	Eliza E	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01598	Caroline Beckley	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01605	Grace Carpenter	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
+X01649	George Larned	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01657	Ezra Stiles	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01715	(unknown spouse)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01720	Elizabeth Hart	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01722	(unknown spouse)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01736	Elizabeth Stone	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01762	Mary Russell Talcott	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01779	Ann Andrew	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01780	Frances Sandford	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01831	Isabella G Hedges	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01836	(unknown spouse)	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
+X01836	[Unknown spouse]	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01838	Anne Griswold	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01839	Lucy Farnum	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01849	Mary Tapp	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01850	Elizabeth Alsop (widow) Baldwin	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
+X01850	Elizabeth Alsop Baldwin	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01854	Captain Thomas Willett	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01912	David M. Perkins	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X01913	William Shewell	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01949	Asaph Darius Hayward	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01950	Josephine Hayward Carter	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X01951	Benjamin Clement Hayward	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -293,7 +286,6 @@ X02810	Amelia Blakeslee Brooks	true-orphan	no blood/egg flag, no marriage anchor
 X02811	Zophar Blakeslee	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X02812	Eunice Ives Blakeslee	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X02820	Jotham Manning Tuttle	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X02821	George D. Magoon	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X02828	Rev. Edward Newman Packard	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X02836	Nos W Reed	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X02837	M. Louisa Reed	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -322,10 +314,7 @@ X03426	George Washington Morse	true-orphan	no blood/egg flag, no marriage anchor
 X03427	Clara Rebecca Boit Morse	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X03428	Rosalind Morse Notman	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X03429	Arthur Lorne Notman	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X03489	John Arnold Rockwell	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X03490	Mary Watkinson Perkins Rockwell	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X03596	John Hooker	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X03597	Dorothy Hooker Chester	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X03598	Frances Hooker Tarleton	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X03599	Anne Hooker Alcock	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X03600	Elizabeth Hooker Milner	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -398,7 +387,6 @@ X04137	Charles Perry Pendleton	true-orphan	no blood/egg flag, no marriage anchor
 X04138	Gyongyi Katona Henson	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X04145	Bela Crocker Kellogg	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X04146	Mary Golden Bartlett Kellogg	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
-X04257	Abigail Adams	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X04262	Sir Harry North Dalrymple Prendergast	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X04263	Emilie Rachel Simpson	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X04264	Theresa Ella Drummond Prendergast	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -410,6 +398,7 @@ X04294	William Smith Kimball	true-orphan	no blood/egg flag, no marriage anchor, 
 X04295	Laura Page Mitchell Kimball	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X04320	Mary Speakman Minot	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X04340	Richard Lawrence deZeng	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
+X04343	Rebecca Greenleaf Webster	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X3699	Benjamin Hazard Field	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X3700	Catharine Matilda Van Cortlandt de Peyster Field	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 Y00006	John Hollister	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
@@ -418,7 +407,6 @@ Y00010	Samuel H. Huntington	true-orphan	no blood/egg flag, no marriage anchor, n
 Y00011	Hannah Huntington	true-orphan	no blood/egg flag, no marriage anchor, no CC — likely a linkage gap
 X03268	Celestia Smith	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X00251	Anna Cheney	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
-X00369	unknown unknown-wav	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X00706	Mary Chapman	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X00966	Caroline Skinner Terrell	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X00980	Mary Titus Hazen	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
@@ -435,15 +423,14 @@ X01458	Isabella Thompson	no-y-basis	no birth year and no dated relative/partner 
 X01459	Eliza E	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01598	Caroline Beckley	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01605	Grace Carpenter	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
+X01649	George Larned	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01657	Ezra Stiles	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
-X01715	(unknown spouse)	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01720	Elizabeth Hart	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01831	Isabella G Hedges	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
-X01836	(unknown spouse)	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
+X01836	[Unknown spouse]	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X01854	Captain Thomas Willett	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 HD3881	Rebekah Carlyn Krulee	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 HD3884	Myron Paul Jackson	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
-I01024	Mr. Proctor	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 I01606	Dorothy Howe Bass Spencer	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X03286	Abel Smith	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)
 X03582	Duncan S. Magee	no-y-basis	no birth year and no dated relative/partner — y:null (consumers skip)

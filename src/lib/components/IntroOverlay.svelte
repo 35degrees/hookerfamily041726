@@ -55,7 +55,7 @@
 		fade: 950, // the even fade up to full gilt
 		beat: 650 // full gilt on brown, before the painting starts — the brown ground totals 3.95s
 	};
-	const PAINT_IN_MS = 1500;
+	const PAINT_IN_MS = 1300; // 1500 approved; 1525 for the sun-first trail, then 15% faster (Sam, Oct 9)
 	const SHADOW = 0.35; // Sam: 0.7 first shown, then 0.525, still "very dark" -> 0.35
 	const SHADOW_BLUR = 14;
 	/**
@@ -70,6 +70,28 @@
 	const EMBOSS_LIGHT = 0.4;
 	const EMBOSS_SHADE = 0.5;
 	const ARROW_IN_MS = 700; // the arrow's fade in, once the painting is full and the page beneath is ready
+	// ── THE HUMAN TORCH (Oct 9, Sam: "more human, not just a straight up pass like a scanner… very very close to what we
+	// have now"). The search keeps every approved number above; only its PATH and its HEART change.
+	//   BEND — the flame drifts right as it rises: bottom centre at the start, upper right of the letters at the top, on
+	//   a gentle curve (the drift grows as p^BEND_CURVE), the way a hand carrying a light rarely goes straight up.
+	//   CORE — a smaller, hotter heart inside the flame warms the letters nearest it a shade past full gilt. It is a
+	//   copy of the LETTERS, masked like the rest, so no light ever lands on the brown (§51.3: light belongs to the
+	//   thing it lights).
+	const TORCH_BEND = 0.13; // how far right the flame ends up, as a fraction of the plate's width (0 = straight up)
+	const TORCH_BEND_CURVE = 1.8; // >1 bends late (a curve), 1 would be a straight diagonal
+	const TORCH_CORE_SIZE = 0.42; // the heart's size against the flame's
+	const TORCH_CORE_GAIN = 0.32; // how much hotter than gilt the heart lights the letters it passes
+	// ── THE PAINTING ARRIVES FROM ITS SUN (Oct 9, Sam: "can the painting fade in starting at the sunlight first? the
+	// sun is bright in the painting just to the lower right of the text"). Same PAINT_IN_MS and the same moment of
+	// full coverage; the reveal simply LEADS at the sun and spreads to the corners. Local opacity =
+	// paint*(1+SUN_LEAD) - SUN_LEAD*d, clamped, with d the distance from the sun as a fraction of its farthest corner.
+	// The exit is unchanged (an even fade).
+	const SUN_X = 0.672; // the sun in the painting's own pixels: fraction of its width…
+	const SUN_Y = 0.578; // …and of its height (measured off painting-hooker-company-2560.jpg)
+	const SUN_LEAD = 0.2; // 0 = the old even fade; higher = the sun leads the corners by more. 0.75 first: "too ham handed" — it should
+	// read only if you look for it (Sam), so each pixel fades at close to the original speed
+	const PAINT_W = 2560;
+	const PAINT_H = 1707;
 	// THE EXIT, after the click — brisker than the arrival (Sam: "users when they click the arrow are ready
 	// to dive in; it shouldn't match the speed of the intro"). Still in sequence: the title and arrow go at
 	// once, the painting follows a beat behind, overlapping rather than waiting its turn. Was 700 + 1200;
@@ -88,6 +110,8 @@
 	const endY = $derived(-band * 2.0);
 
 	let beamY = $state(PLATE_H * 2);
+	let beamX = $state(PLATE_W / 2); // the flame's centre across the plate (see TORCH_BEND)
+	let paintMask = $state(''); // the sun-first reveal while the painting arrives; '' = none
 	let flame = $state(1);
 	let flameSize = $state(1);
 	let fade = $state(0); // the even fill: faint → full gilt
@@ -167,11 +191,12 @@
 			const n = flameAt(t);
 			flame = 1 - dials.flicker * (0.5 - 0.5 * n);
 			flameSize = 1 + dials.flicker * 0.5 * n;
-			if (t < up0) beamY = startY;
-			else if (t < up0 + dials.sweep) beamY = startY + (endY - startY) * ease((t - up0) / dials.sweep);
-			else beamY = endY;
+			const up = t < up0 ? 0 : t < up0 + dials.sweep ? ease((t - up0) / dials.sweep) : 1;
+			beamY = startY + (endY - startY) * up;
+			beamX = PLATE_W / 2 + PLATE_W * TORCH_BEND * Math.pow(up, TORCH_BEND_CURVE);
 			fade = ease((t - fade0) / dials.fade);
 			paint = ease((t - paint0) / PAINT_IN_MS);
+			paintMask = !out0 && paint > 0 && paint < 1 ? sunMask(paint) : '';
 			if (!out0) relief = paint; // on the exit it stays raised while the title leaves
 			if (paint >= 1) ground = false; // the painting covers the window: the paper waits beneath it
 			if (!arrowShown && paint >= 1 && intro.ready) {
@@ -210,6 +235,25 @@
 		}
 	}
 
+	/** The sun-first reveal: a radial mask centred on the painting's sun as it lands on THIS window (the painting is
+	 *  `object-fit: cover`, so the crop decides where the sun is on screen). See SUN_LEAD. */
+	function sunMask(k: number): string {
+		const W = innerWidth;
+		const H = innerHeight;
+		const sc = Math.max(W / PAINT_W, H / PAINT_H);
+		const x = (W - PAINT_W * sc) / 2 + SUN_X * PAINT_W * sc;
+		const y = (H - PAINT_H * sc) / 2 + SUN_Y * PAINT_H * sc;
+		const far = Math.max(Math.hypot(x, y), Math.hypot(W - x, y), Math.hypot(x, H - y), Math.hypot(W - x, H - y));
+		const stops: string[] = [];
+		for (let i = 0; i <= 8; i++) {
+			const d = i / 8;
+			const a = Math.min(1, Math.max(0, k * (1 + SUN_LEAD) - SUN_LEAD * d));
+			stops.push(`rgba(0,0,0,${a.toFixed(3)}) ${(d * far).toFixed(0)}px`);
+		}
+		const g = `radial-gradient(circle at ${x.toFixed(0)}px ${y.toFixed(0)}px, ${stops.join(', ')})`;
+		return `-webkit-mask-image: ${g}; mask-image: ${g};`;
+	}
+
 	const torchStops = $derived.by(() => {
 		const out = [];
 		for (let i = 0; i <= 12; i++) {
@@ -230,7 +274,7 @@
 <svelte:window onkeydown={onkey} />
 
 <div class="intro" class:ground class:leaving style:--intro-ground={GROUND}>
-	<img class="painting" src={PAINTING} alt="" style:opacity={paint} />
+	<img class="painting" src={PAINTING} alt="" style="opacity: {paintMask ? 1 : paint}; {paintMask}" />
 	<div class="title" style:opacity={title}>
 	<svg class="plate" viewBox="0 0 {PLATE_W} {PLATE_H}" aria-hidden="true">
 		<defs>
@@ -307,12 +351,32 @@
 				cx="0"
 				cy="0"
 				r="1"
-				gradientTransform="translate({PLATE_W / 2} {beamY}) scale({rx} {ry})"
+				gradientTransform="translate({beamX} {beamY}) scale({rx} {ry})"
 			>
 				{#each torchStops as s, i (i)}
 					<stop offset={s.o} stop-color="white" stop-opacity={s.v} />
 				{/each}
 			</radialGradient>
+			<!-- THE TORCH'S HEART (see TORCH_CORE_*): the same flame, smaller, on the same path. -->
+			<radialGradient
+				id="intro-torch-core"
+				gradientUnits="userSpaceOnUse"
+				cx="0"
+				cy="0"
+				r="1"
+				gradientTransform="translate({beamX} {beamY}) scale({rx * TORCH_CORE_SIZE} {ry * TORCH_CORE_SIZE})"
+			>
+				{#each torchStops as s, i (i)}
+					<stop offset={s.o} stop-color="white" stop-opacity={s.v} />
+				{/each}
+			</radialGradient>
+			<mask id="intro-core" maskUnits="userSpaceOnUse" x="0" y="0" width={PLATE_W} height={PLATE_H}>
+				<rect x="0" y="0" width={PLATE_W} height={PLATE_H} fill="url(#intro-torch-core)" />
+			</mask>
+			<!-- the gilt a shade hotter: warmer and lighter, toward the button's lit gold -->
+			<filter id="intro-hotgold" color-interpolation-filters="sRGB">
+				<feColorMatrix type="matrix" values="1.00 0 0 0 0.10  0 0.96 0 0 0.10  0 0 0.70 0 0.05  0 0 0 1 0" />
+			</filter>
 			<linearGradient id="intro-years-taper" gradientUnits="userSpaceOnUse" x1="531" y1="0" x2="1069" y2="0">
 				<stop offset="0" stop-color="white" stop-opacity="1" />
 				<stop offset="0.45" stop-color="white" stop-opacity="1" />
@@ -342,6 +406,13 @@
 		<g filter="url(#intro-deboss)" mask="url(#intro-light)">
 			<image href={SRC} width={PLATE_W} height={PLATE_H} filter="url(#intro-warmgold)" />
 		</g>
+		{#if !still}
+			<!-- the heart: letters only (it is the plate itself), during the search only (it rides the flame, which
+			     has left the plate by the even fade-up) -->
+			<g filter="url(#intro-deboss)" mask="url(#intro-core)" opacity={TORCH_CORE_GAIN}>
+				<image href={SRC} width={PLATE_W} height={PLATE_H} filter="url(#intro-hotgold)" />
+			</g>
+		{/if}
 	</svg>
 	{#if arrowShown}
 		<!-- ENTER. Drawn in plate units so it scales with the title: a small arrow inside a gilt ring
