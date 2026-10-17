@@ -3477,7 +3477,13 @@ export function flyOut(node: Element, params: { key: string }) {
 			return {
 				duration: 360,
 				easing: (x: number) => x,
-				css: (_t: number, u: number) => `${pin}opacity: ${clamp01(1 - (u * 360) / CHIP_HANDOFF_MS)};`
+				// `transform: none`: the row's animate:flip has already pinned this leaver itself (Svelte's fix(),
+				// position absolute plus a corrective translate). `pin` re-pins it where it really stood, but the
+				// stray translate stayed and drew it 118px to the side for the frames it is visible (Sam, Oct 17:
+				// the parent chip "flashes out to the left" on every click). Invisible from frame one before
+				// the hand-off, so it never showed.
+				css: (_t: number, u: number) =>
+					`${pin}transform: none; opacity: ${clamp01(1 - (u * 360) / CHIP_HANDOFF_MS)};`
 			};
 		}
 		return { duration: 360, easing: cubicOut, css: () => `${pin}opacity: 0;` };
