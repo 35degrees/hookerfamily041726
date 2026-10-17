@@ -43226,11 +43226,7 @@
     }
    ],
    "naming_inspiration": [],
-   "landmarks": [
-    {
-     "landmark_id": "LM004"
-    }
-   ],
+   "landmarks": [],
    "institutions": [
     {
      "institution_id": "INST006",
@@ -2514207,9 +2514203,7 @@
    },
    "nrhp": false,
    "visitable": false,
-   "person_ids": [
-    "H00001"
-   ],
+   "person_ids": [],
    "notes": "Warren 1887 (Stanley book) confirms Daniel Hooker 'inherited the farm of Thomas Hooker of West Hartford.' Exact location within West Hartford not yet researched.\nSignificance: Farm originally belonging to Rev. Thomas Hooker (H00001) in West Hartford. Inherited by his grandson Dr. Daniel Hooker (H00036), who deeded it to his sons in 1728. The Hooker family's tangible land connection to the Hartford founding generation.\nNot to confuse with: The Sarah Whitman Hooker House in West Hartford — a different property with a different history; The Hooker Elm site in Farmington (LM001) — that was John Hooker's house, not Thomas Hooker's farm\nAssociated family: Hooker\nSource: Warren 1887 — Entry 24 'Sarah Stanley'",
    "hooker_connections": []
   },
