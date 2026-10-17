@@ -2196,6 +2196,7 @@
 		class="featured-slot"
 		style={mounted && cardHeight ? `height: ${cardHeight + bladeHeight + (stage.phone ? phoneSpouseRowH : 0)}px` : ''}
 		class:phone-slot={stage.phone}
+		class:cc-hidden={ccRoster.hidden}
 	>
 		<!-- Spouse chips: dock into the carved notch and swap LATERALLY. Clicking a chip
 		     makes that spouse featured — their card growFroms the click-captured chip rect
@@ -2880,6 +2881,14 @@
 	   ccRoster); chip navs never see it, so their reveals are untouched. */
 	.parents-slot.cc-hidden .flight,
 	.children-slot.cc-hidden .flight {
+		opacity: 0 !important;
+		transition: none !important;
+	}
+	/* THE SIBLING PANEL IS PART OF THE ROSTER CUT (Oct 17, Sam): "her parent and child chips and the lines
+	   connecting them disappear right away… but sometimes the Sibling menu will sit and linger for a few
+	   beats… it should just disappear in the same way and same timing". It belongs to the card being left, so
+	   it goes in the same frame, the same hard cut. The next card's panel comes back at its own landing. */
+	.featured-slot.cc-hidden :global(.sibling-zone) {
 		opacity: 0 !important;
 		transition: none !important;
 	}

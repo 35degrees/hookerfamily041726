@@ -46,7 +46,7 @@
 	import { isPynchonKin } from '#lib/data/pynchonLine.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { getCameraMove, subscribeCameraMove } from '#lib/state/camera.js';
-	import { ccFlyTo } from '#lib/state/shuffle.svelte.js';
+	import { ccFlyTo, warmPerson } from '#lib/state/shuffle.svelte.js';
 	import { thomasVertical } from '#lib/state/thomasVertical.js';
 	import { warmPersonLinks } from '#lib/state/navigate.js';
 	import { isFlightLocked, subscribeFlightLock } from '#lib/state/flightLock.js';
@@ -2067,6 +2067,7 @@
 			aria-label="Go to {a.name}"
 			class:no-hover={hoverSuppressed === a.slug}
 			onclick={(e) => onAnchorClick(e, a)}
+			onpointerenter={() => warmPerson(a.slug)}
 			onpointerleave={() => {
 				if (hoverSuppressed === a.slug) hoverSuppressed = null;
 			}}

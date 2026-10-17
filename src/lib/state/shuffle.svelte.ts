@@ -101,6 +101,32 @@ export function warmShuffle(): void {
  */
 let next: NotableRow | null = null;
 let preparing = false;
+
+/**
+ * WARM A PERSON BEFORE THE CLICK: their file into the HTTP cache (the data files are cacheable for five
+ * minutes in production) and their portrait, low priority. The timeline's headshots are BUTTONS, not links,
+ * so SvelteKit's hover preload never warmed them the way it warms a CC link: a headshot click waited on the
+ * network before anything moved (Sam, Oct 17: "a delay… just for a beat", headshots only). Once per person.
+ */
+const warmed = new Set<string>();
+export function warmPerson(slug: string): void {
+	if (typeof window === 'undefined' || warmed.has(slug)) return;
+	warmed.add(slug);
+	void fetch(`/data/person/${slug}.json`)
+		.then((res) => (res.ok ? res.json() : null))
+		.then((data) => {
+			const url = cldSize(data?.person?.bio?.photo_url ?? data?.person?.name?.photo_url ?? null, PHOTO_TRANSFORM);
+			if (!url) return;
+			const img = new Image();
+			try {
+				(img as unknown as { fetchPriority: string }).fetchPriority = 'low';
+			} catch {
+				/* no fetchPriority — still a cache warm */
+			}
+			img.src = url;
+		})
+		.catch(() => warmed.delete(slug)); // a failed warm costs nothing; try again next hover
+}
 export async function prepareNextShuffle(): Promise<void> {
 	if (preparing || typeof window === 'undefined') return;
 	const current = featured.current?.person?.slug ?? null;
