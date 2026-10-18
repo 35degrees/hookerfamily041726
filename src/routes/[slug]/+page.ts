@@ -1,4 +1,5 @@
 import { error, redirect } from '@sveltejs/kit';
+import { dataUrl } from '#lib/paths.js';
 import type { PageLoad } from './$types';
 import { buildFeatured, type PersonPayload } from '#lib/data/buildFeatured.js';
 import { resolveRedirect } from '#lib/data/redirects.js';
@@ -10,7 +11,7 @@ import { personHref } from '#lib/paths.js';
 export const load: PageLoad = async ({ params, fetch }) => {
 	let res: Response | null = null;
 	try {
-		res = await fetch(`/data/person/${params.slug}.json`);
+		res = await fetch(dataUrl(`/data/person/${params.slug}.json`));
 	} catch {
 		// The dev server resolves a static asset by reading it off disk and THROWS ENOENT when it
 		// is missing, rather than returning a 404 response — so the miss escapes the res.ok check

@@ -9,6 +9,7 @@
  * it moved here unchanged so there is no second copy to drift.
  */
 import type { Person } from '#lib/types/person.js';
+import { dataUrl } from '#lib/paths.js';
 import type { Neighborhood, PersonCompact } from '#lib/types/neighborhood.js';
 import type { Institution } from '#lib/types/institution.js';
 import type { Cemetery } from '#lib/types/cemetery.js';
@@ -249,7 +250,7 @@ export async function fetchFeatured(
 	slug: string,
 	fetchFn: typeof fetch = fetch
 ): Promise<FeaturedData | null> {
-	const res = await fetchFn(`/data/person/${slug}.json`);
+	const res = await fetchFn(dataUrl(`/data/person/${slug}.json`));
 	if (!res.ok) return null;
 	const payload: PersonPayload = await res.json();
 	return buildFeatured(payload);

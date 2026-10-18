@@ -16,6 +16,7 @@
  * Chains are followed (11 keys point at another key today) with a hop cap and a cycle guard, so the
  * visitor gets ONE 301 to the final slug rather than a bounce chain.
  */
+import { dataUrl } from '#lib/paths.js';
 
 const MAX_HOPS = 6; // deeper than any real chain (longest today is 2); the guard, not the expectation
 
@@ -26,7 +27,7 @@ let cache: Promise<RedirectMap> | null = null;
 function loadMap(fetchFn: typeof fetch): Promise<RedirectMap> {
 	cache ??= (async () => {
 		try {
-			const res = await fetchFn('/data/redirects.json');
+			const res = await fetchFn(dataUrl('/data/redirects.json'));
 			if (!res.ok) return {};
 			return (await res.json()) as RedirectMap;
 		} catch {

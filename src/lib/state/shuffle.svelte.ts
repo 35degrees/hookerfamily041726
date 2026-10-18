@@ -33,6 +33,7 @@
  *      the deck's ONE shared time dial, so the army stays in formation and only the clock moves.
  */
 import { featured } from './featured.svelte';
+import { dataUrl } from '#lib/paths.js';
 import { focusPerson } from './navigate';
 import { hideCcRoster, showCcRoster } from './ccRoster.svelte';
 import { publishCameraMove, type CameraMove } from './camera';
@@ -72,7 +73,7 @@ let loading: Promise<NotableRow[]> | null = null;
 async function getPool(): Promise<NotableRow[]> {
 	if (pool) return pool;
 	if (loading) return loading;
-	loading = fetch('/data/notables.json')
+	loading = fetch(dataUrl('/data/notables.json'))
 		.then((r) => (r.ok ? r.json() : []))
 		.then((rows: NotableRow[]) => {
 			pool = Array.isArray(rows) ? rows : [];
@@ -112,7 +113,7 @@ const warmed = new Set<string>();
 export function warmPerson(slug: string): void {
 	if (typeof window === 'undefined' || warmed.has(slug)) return;
 	warmed.add(slug);
-	void fetch(`/data/person/${slug}.json`)
+	void fetch(dataUrl(`/data/person/${slug}.json`))
 		.then((res) => (res.ok ? res.json() : null))
 		.then((data) => {
 			const url = cldSize(data?.person?.bio?.photo_url ?? data?.person?.name?.photo_url ?? null, PHOTO_TRANSFORM);
@@ -136,7 +137,7 @@ export async function prepareNextShuffle(): Promise<void> {
 		const target = pick(await getPool(), current);
 		if (!target) return;
 		next = target;
-		const res = await fetch(`/data/person/${target.slug}.json`);
+		const res = await fetch(dataUrl(`/data/person/${target.slug}.json`));
 		if (!res.ok) return;
 		const data = await res.json();
 		const url = cldSize(data?.person?.bio?.photo_url ?? data?.person?.name?.photo_url ?? null, PHOTO_TRANSFORM);

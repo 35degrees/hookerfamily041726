@@ -8,6 +8,7 @@
 -->
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { dataUrl } from '#lib/paths.js';
 	import { tableCamera } from '#lib/state/tableCamera.svelte.js';
 
 	type Row = {
@@ -51,7 +52,7 @@
 		(async () => {
 			let rows: Row[] = [];
 			try {
-				const res = await fetch('/data/table-index.json');
+				const res = await fetch(dataUrl('/data/table-index.json'));
 				rows = await res.json();
 			} catch {
 				rows = [];

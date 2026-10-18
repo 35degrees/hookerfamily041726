@@ -15,7 +15,18 @@
  */
 
 /** The page URL for a person. */
+import { version } from '$app/env'; // SvelteKit 3's name for the build version
+
 export const personHref = (slug: string): string => `/${slug}`;
+
+/**
+ * A DATA FILE'S ADDRESS, TIED TO THE BUILD (Oct 18, Sam: James Shepherd's bars "there one time… not another").
+ * The data files are served `max-age=300, stale-while-revalidate=86400`, so after a deploy a browser kept
+ * showing its OLD copy of a file for up to five minutes, then once more while it refetched. Every build has
+ * its own `version`, so a deploy changes every data address and no old copy can be reused; within one deploy
+ * the caching (and the hover warm-ups, which must use this same address) still work.
+ */
+export const dataUrl = (path: string): string => `${path}?v=${version}`;
 
 /**
  * TOP-LEVEL NAMES THAT ARE NOT PEOPLE. A person route at the root shares its namespace with every

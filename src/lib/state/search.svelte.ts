@@ -23,6 +23,7 @@
  * would add a build step and real complexity to save a few milliseconds.
  */
 import { fold } from '#lib/search/fold.js';
+import { dataUrl } from '#lib/paths.js';
 
 /** One row of static/data/search-index.json. Built by `searchRow()` in regenerate-data.js. */
 export type SearchRow = {
@@ -169,8 +170,8 @@ export const RESULT_CAP = 60;
  */
 const DEBOUNCE_MS = 110;
 
-const INDEX_URL = '/data/search-index.json';
-const VOCAB_URL = '/data/tag-vocab.json';
+const INDEX_URL = dataUrl('/data/search-index.json');
+const VOCAB_URL = dataUrl('/data/tag-vocab.json');
 /** Shared so the ~14,000 tagless rows all point at one array rather than 14,000 empty ones. */
 const EMPTY_TAGS: string[] = [];
 /** How many tags the discovery row offers per visit. */
