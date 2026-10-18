@@ -990,17 +990,21 @@ html.webkit {
    what is in them. On layers of their own nothing is regrouped. Filmed in Kennedy, two takes each: a clean
    settle to 0.0. Reaches the grandparent and grandchild tiers' rows too, on purpose. */
 html.webkit .featured-slot,
-html.webkit .parents-slot,
-html.webkit .children-slot {
+html.webkit .parents-slot {
 	will-change: opacity;
 }
+/* NOT THE CHILDREN ROW (Oct 17, filmed in Sam's Safari). Hovering a child to reveal the grandchildren made the
+   whole children row wobble ±1px through the reveal opening and closing (the row's dimming and height glide
+   re-drawing on these layers); the same hover before the port, or with the children row and its chips off
+   their layers, measured 0.0 in every frame. Taking them off cost the engine's landing nothing measurable
+   (the children row settled the same with and without, two takes each), so they stay off. Turning them off
+   only during the reveal was worse: the switch itself stepped the row 1px. */
 /* …and the chips themselves (3.2). A chip fading into the notch jumped ~1px when its fade ended (Safari
    folded it back into the page's drawing); child chips sat ~1px off for ~250ms after a demotion landed; the
    sibling list dropped ~0.5px when the leaving card that flew over it was removed. Each on a layer of its
    own, before, during and after: 0.0 throughout. */
 html.webkit .spouse-notch .flight,
 html.webkit .parents-slot .flight,
-html.webkit .children-slot .flight,
 html.webkit .sib-item {
 	will-change: opacity;
 }
