@@ -9,6 +9,9 @@ export interface PersonCompact {
 	/** PRESUMED LIVING — independent of `pv`, which additionally requires non-notability. Every `pv`
 	    person is `lv`; a living notable is `lv` and not `pv`. */
 	lv?: boolean;
+	/** a `pv` person's rail anchor: the latest PUBLIC birth year among their parents (regenerate-data
+	    parentAnchorYear). The rail places their bar from it where their parents are not in the payload. */
+	ab?: number;
 	/** birth/death month and day — present only when the record has them. Their whole purpose is to let
 	    a consumer call `ageAtDeath` for a REAL age rather than subtracting years; see compact() in
 	    regenerate-data.js for why the age itself is not baked. */

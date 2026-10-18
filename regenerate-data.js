@@ -60,6 +60,15 @@ let hiddenIds = new Set();
 // The honest definition is structural and complete: NOT a Thomas descendant, and married to someone who
 // IS. That is exactly the "married in" category, and it needs no data edit to be right.
 let marriedIntoLine = new Set();
+
+// A LIVING, PRIVATE PERSON'S RAIL ANCHOR (Oct 18, Sam) — set in main(), read by compact() as `ab`. Their own
+// dates are never drawn (`pv`), so the timeline rail places their bar from a relative's PUBLIC year: on their
+// own card, the latest public birth year among their parents (TimelineRail fallbackBirthYear). But a married-in
+// spouse's card does not carry those parents, so the rail could not place the bloodline spouse there and drew
+// no bar (Dr. James Shepherd beside Katherine; Marcella Mittendorf Wainwright beside Stuyvesant III; 425
+// married-in cards). `ab` carries that same parent year on the chip itself. Nothing new is revealed: it is a
+// parent's PUBLIC birth year, already shown on that parent's own card. Only on `pv` people with such a parent.
+let parentAnchorYear = new Map();
 /**
  * ORBIT — the people the tree reaches ONLY by cross-connection. Roadmap §40 (THE ASCENSION).
  *
@@ -391,6 +400,9 @@ function compact(p, slugMap) {
 		// The notable carve-out is about PRIVACY, so it belongs to pv and only to pv. Whether someone is
 		// alive is a different fact and now travels separately.
 		...(presumedLiving(p) ? { lv: true } : {}),
+		// ab — a living, private person's rail anchor: their parents' latest PUBLIC birth year (see
+		// parentAnchorYear). Absent on everyone else.
+		...(parentAnchorYear.has(p.id) ? { ab: parentAnchorYear.get(p.id) } : {}),
 		sx: sex(p),
 		hd: Boolean(c.is_thomas_descendant),
 		td: Boolean(c.is_talcott_descendant),
@@ -2191,6 +2203,16 @@ function main() {
 	const byId = Object.fromEntries(visible.map((p) => [p.id, p]));
 	// Curated routes home are ids typed by hand; every way of getting one wrong is silent on the rail.
 	validateLineAnchorOverrides(byId);
+	parentAnchorYear = new Map();
+	for (const p of visible) {
+		if (!datesPrivate(p)) continue;
+		const par = p.parents || {};
+		const years = [par.father_id, par.mother_id]
+			.map((id) => (id ? byId[id] : null))
+			.filter((q) => q && !datesPrivate(q) && birthYear(q) != null)
+			.map((q) => birthYear(q));
+		if (years.length) parentAnchorYear.set(p.id, Math.max(...years));
+	}
 	marriedIntoLine = new Set(
 		visible
 			.filter((p) => {

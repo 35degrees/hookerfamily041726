@@ -770,10 +770,17 @@
 		// Nothing leaks: `pv` still zeroes their real dates, so the bar is positioned from the focus's
 		// year and dissolves at both ends. A bloodline spouse with real dates never reaches the
 		// fallback, so every card that already drew two bars is untouched.
+		// AND WHEN THE FOCUS HAS NO YEAR EITHER (Oct 18, Sam: "every living person can still have a bar"), the
+		// bloodline spouse is placed from the anchor their OWN card uses — their parents' public year plus a
+		// generation, carried on the chip as `ab` — so the bar lands where it does on their card, and a
+		// dateless focus stands beside it on the same year (Dr. James Shepherd beside Katherine; Marcella
+		// Mittendorf Wainwright beside Stuyvesant III). Every card that already drew these bars is unchanged:
+		// the new anchor is only reached where both of the old ones were missing.
 		if (f.sp && hookerSpouse) {
+			const spouseAnchor = hookerSpouse.ab != null ? hookerSpouse.ab + GENERATION_YEARS : null;
 			return [
-				barFor(hookerSpouse, 0, f.by ?? f.dy ?? null),
-				barFor(f, 1, fallbackBirthYear())
+				barFor(hookerSpouse, 0, f.by ?? f.dy ?? spouseAnchor),
+				barFor(f, 1, fallbackBirthYear() ?? spouseAnchor)
 			].filter((b): b is Bar => !!b);
 		}
 
