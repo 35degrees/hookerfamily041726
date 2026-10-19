@@ -7108,3 +7108,100 @@ Sam wants kept: no photo may arrive late or change while looked at).
 - canonical.json size (70 MB; GitHub warns at 50): moving research fields to a sidecar file plus one person per
   line measures 49.6 MB. Sam's direction: nothing deleted, research moved to another JSON. Its own careful
   session — validate.py's silent-loss check must learn the sidecar first.
+
+## 61. OCTOBER 19, 2026 — THE SAFARI CC EXIT: "A JEEP OFFROADING OVER ROCKS" (session record; WebKit-only, Chrome untouched)
+
+The Kennedy port (`4c66c7e6`, Oct 17; the engine in `src/lib/transitions/webkit/`, its record in
+`docs/KENNEDY_PROJECT_ROADMAP.md` and `docs/HOOKER_PORT.md`) had already moved a lateral CC's leaving card
+onto the compositor at the click (`startEarlyCcExit`, flight.ts). Sam still saw the card leaving out the left
+edge "get shaky, not huge but like a jeep offroading in a slightly rugged area over rocks". Fixed in
+`1aaaf94a` (deployed); Sam on the live site: "looks like you fixed it".
+
+### 61.1 THE STRATEGY — measure the frame, not the card; then move the work, not the motion
+
+1. **Film it, and count holes, not pixels.** Real Safari, `screencapture -v` on display 2, frames pulled with
+   `scripts/safari/frames.swift`, the same click scripted ~30 times (Sarah Dwight Hooker → Josiah Dwight).
+   A take is BAD if any frame-to-frame gap during the exit is ≥ 50ms.
+2. **Calibrate the recorder first.** A plain WAAPI-moved box on an idle page also skips one frame every
+   250–330ms in these films (a single 33ms gap). So a single 33ms gap is the recorder, never the site; only
+   holes of 50ms and more count. Without this control, every take looked a little shaky.
+3. **Track the card's INSIDE, not its edge.** Edge tracking read the worn edge's texture as a 2–4px vertical
+   bounce. Matching a patch of the card's interior frame to frame showed the motion itself was perfect:
+   dx accelerating 1, 2, 3 … px per frame on the easeIn, dy exactly 0, in every take. The card's path was
+   never the problem.
+4. **So the problem was the whole page pausing.** In half the takes Safari stopped drawing for 50–230ms at
+   a time, mid-exit. The exit animates `transform` only and already runs on the compositor; a compositor
+   animation only stalls when something else holds up Safari's drawing.
+5. **Rule out, one variable at a time, 3–10 takes each.** No change from: the worn-edge canvases (bakeWear),
+   the blade retract, the `.featured-slot` layer, the old roster's removal (hidden at the click), both
+   drop-shadows off in flight. The main-thread log (rAF gaps plus a MutationObserver) put the next person's
+   board being built and first drawn at about 65ms after the click, right under the moving card.
+6. **The test that answered it: hold the board swap until the leaving card is offscreen.** 10 takes each:
+   as is, 5 of 10 bad (~1.8s frozen in all); shadows off, 4 of 10; **board held, 1 of 10 (one 50ms hole)**.
+
+### 61.2 THE FIX (`navigate.ts focusAfterEarlyExit`, used by the CC link path and `ccFlyTo`)
+
+- In Safari, when a lateral CC has an early exit, the payload is fetched at the click but `featured.set` waits
+  until `earlyExitRemaining()` reaches 0. Nothing of the next person is on screen before then anyway: the
+  roster is cut at the click and the arriving card waits for car 1 to be gone plus the empty beat.
+- **Arrival timing kept, measured in film.** The arriving card's wait is now counted from the exit's real end
+  (`earlyExitClock`, signed). Held, it arrived 2 frames late (+967ms after the exit began, 7 of 7 takes,
+  against +933). The cause: the old path never measured from the exit's real start. It counted from
+  `growFrom` running one or two frames BEFORE the exit animation existed, so the beat Sam approved was, on
+  average, 2 frames shorter than its own rule. `HELD_BOARD_LEAD_MS` (2 frames) restores it: +933 median, 10 takes.
+- A Back/forward during the hold wins (the pathname is checked before the swap).
+- The blade's stow now starts with the early exit (`retractBladeIn` once per departure, `data-stowed`), as
+  it did at the old swap.
+
+### 61.3 WHAT THE FIX BROKE, AND HOW EACH WAS PUT BACK (Sam: "keep your fixes surgical")
+
+- **The timeline bars froze on the old names** until the arriving card settled: the rail reads the featured
+  person, and it had moved with the board. Now `featured.setAhead()` hands the payload to the rail the moment
+  it is in hand (`featured.forRail`, cleared by `set()`). The bars change 19–72ms after the click, as before.
+- **Ghost shadows of the old children chips.** The cut row (opacity 0) now stays on the page through the whole
+  exit, and Safari drew a faint edge of each chip's shadow at opacity 0. The children chips are not on layers
+  of their own; the parents' chips are, and never did this. `html.webkit .children-slot.cc-hidden .flight`
+  is now `visibility: hidden` as well. Filmed: the edges are gone.
+- Final check with the rail restored: 10 takes, 1 bad (a take that ran slow from start to finish) plus one
+  single 50ms hole; arrival +933.
+
+### 61.4 ALSO SHIPPED IN `1aaaf94a`
+
+- The Cross Connections "?" tooltip waits 0.6s before fading in (both engines): a resting pointer no longer
+  flashes it when a CC flight slides the next card's blade under it. Leaving still hides it at once.
+
+### 61.5 LESSONS — read before the next Safari motion bug
+
+- **A smooth compositor animation can still look rough.** Before tuning a curve, film it and check whether
+  the frames are evenly spaced. Uneven frames mean work is landing under the motion; move that work.
+- **Moving work changes WHEN dependents see it.** Holding the swap also held the rail, the URL and the cut
+  roster's lifetime. List what reads the moved state (here `featured.current`) before shipping.
+- **"Timing unchanged" has to be measured against the film,** not the formula. The formula said equal; the
+  film said 2 frames late.
+- Takes that run slow from start to finish (70–100 frames in a 6s capture instead of ~130) still show holes
+  in every variant. Unattributed: the system or the recorder. Not the site's swap, which now happens after the exit.
+
+### 61.6 THE ZONE CARDS' QUIVER — FOUND AND FIXED THE SAME DAY
+
+Sam: the orbit and Hartford Founder cards "insanely wobbly… an uncomfortable quivering", Safari only. The card,
+its spouse chip and the CC blade quivered; Robert Lincoln's child chip did not.
+- **Measured:** filmed Lincoln at rest, 120 frames a take, tracked five spots with sub-pixel matching. The quiver
+  is VERTICAL ONLY: 0.24–0.41px RMS about the smooth drift on everything inside the featured slot; x smooth
+  everywhere; Robert 0.00–0.03 (he is not on a layer of his own).
+- **Not the port:** a build of `1d524971` (just before `4c66c7e6`) quivered the same. The worn-edge canvases
+  (zone cards have none) and the port's slot and chip layers made no difference.
+- **The cause:** the shadow twins' `will-change: filter` (October 3, so a flight re-blurs only the plain shape).
+  On their own layers inside the drifting slab, they made Safari re-place the card and its notch chips by a
+  pixel up and down, frame after frame. Twins off their layers: 0.00–0.04 in every take. The card's own layer
+  off instead: no change.
+- **The fix:** `.page-container.slab-drifting` (+page.svelte: zone, float enabled, slab resting) drops the
+  twins' `will-change`. Off from the click, so every flight keeps the layer. The shadows look the same (frames
+  compared). Sam: "you fixed the quiver."
+- **Tracker note:** Sam's window moves between takes; `quiver2.py` (scratch) finds the card by its photo before
+  tracking. Keep the second display awake while filming (`caffeinate -d -u`); the screen saver filmed hills
+  twice.
+
+### 61.7 OPEN
+
+- Sam: the zone cards "technically don't need a drop shadow at all", except the half shadow above the CC blade.
+  Not done; it is a visual change, and which shadow he means needs asking first.

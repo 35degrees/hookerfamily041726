@@ -2070,6 +2070,7 @@
 	bind:this={pageEl}
 	class:in-orbit={ascension.active}
 	class:in-founder={ascension.founder}
+	class:slab-drifting={FLOAT_ENABLED && ascension.active && slabFloat.resting}
 	class:phone={stage.phone}
 	class:tier-nav-close={tierClosingForNav}
 	class:tier-collapsed={tierCollapsed}

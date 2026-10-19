@@ -920,6 +920,17 @@ html.webkit .cc-twin {
 	filter: drop-shadow(0 calc(4px * var(--shadow-k, 1)) calc(12px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a1) * var(--shadow-fade, 1))))
 		drop-shadow(0 calc(1px * var(--shadow-k, 1)) calc(3px * var(--shadow-k, 1)) hsl(var(--shadow-ink) / calc(var(--shadow-a2) * var(--shadow-fade, 1))));
 }
+/* …BUT NOT WHILE THE ZONE'S SLAB DRIFTS (Oct 19, Sam: the orbit and founder cards "insanely wobbly… an
+   uncomfortable quivering", Safari only). On their own layers inside the drifting slab (slabFloat.svelte.ts),
+   the two shadows made Safari re-place the card and its notch chips by a pixel up and down, frame after frame.
+   Filmed on Lincoln at rest, 120 frames a take: vertical quiver 0.24–0.41px as is, 0.00–0.04 with the twins
+   drawn into the card instead (two takes; the card's own layer off instead changed nothing; Robert's child
+   chip, never on a layer, was still throughout). The class is on while the slab drifts and off from the click,
+   so every flight, in the zones too, keeps the layer it was built with. */
+html.webkit .page-container.slab-drifting .shadow-twin,
+html.webkit .page-container.slab-drifting .cc-twin {
+	will-change: auto;
+}
 html.webkit .featured-flight.flat:not(.notch-armed) .shadow-twin .twin-shape {
 	clip-path: var(--flat-shape) !important; /* the card flies flat, so its twin does */
 }
