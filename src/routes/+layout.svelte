@@ -29,7 +29,8 @@
 	import '@fontsource-variable/fraunces/wght.css';
 	import favicon from '#lib/assets/favicon.svg';
 	import SettleVeil from '#lib/components/SettleVeil.svelte';
-	import IntroOverlay from '#lib/components/IntroOverlay.svelte';
+	// The intro drawn on the GPU (Oct 19): ~12fps → 60 in Safari. It falls back to IntroOverlay itself without WebGL2.
+	import IntroGL from '#lib/components/IntroGL.svelte';
 	import { markEngine } from '#lib/state/engine.js';
 	import { pinFonts } from '#lib/state/pinFonts.js';
 	import { onMount } from 'svelte';
@@ -53,6 +54,6 @@
      to cover the first paint, and it must outlive `/` replacing itself with Thomas's page underneath.
      It renders on `/` itself, and then for as long as the intro is running. -->
 {#if page.url.pathname === '/' || intro.active}
-	<IntroOverlay />
+	<IntroGL />
 {/if}
 {@render children()}
