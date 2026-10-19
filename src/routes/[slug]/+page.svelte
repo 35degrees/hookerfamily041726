@@ -2884,6 +2884,14 @@
 		opacity: 0 !important;
 		transition: none !important;
 	}
+	/* SAFARI: the cut children leave no ghost (Oct 19, Sam on the preview: "the child chips drop shadows don't
+	   disappear"). Safari drew a faint edge of each chip's shadow around the cut row at opacity 0 (the parents'
+	   chips sit on layers of their own and never did); seen once the next board waited for the leaving card
+	   (navigate.ts focusAfterEarlyExit) and the cut row stayed on the page for the whole exit. Invisible, not
+	   just transparent: filmed, the edges gone. Same frame, same layout. */
+	:global(html.webkit) .children-slot.cc-hidden .flight {
+		visibility: hidden !important;
+	}
 	/* THE SIBLING PANEL IS PART OF THE ROSTER CUT (Oct 17, Sam): "her parent and child chips and the lines
 	   connecting them disappear right away… but sometimes the Sibling menu will sit and linger for a few
 	   beats… it should just disappear in the same way and same timing". It belongs to the card being left, so

@@ -34,7 +34,7 @@
  */
 import { featured } from './featured.svelte';
 import { dataUrl } from '#lib/paths.js';
-import { focusPerson } from './navigate';
+import { focusPerson, focusAfterEarlyExit } from './navigate';
 import { hideCcRoster, showCcRoster } from './ccRoster.svelte';
 import { publishCameraMove, type CameraMove } from './camera';
 import { lockFlight } from './flightLock';
@@ -286,7 +286,7 @@ export async function ccFlyTo(
 		// SAFARI: the leaving card starts its exit now, on the compositor (flight.ts startEarlyCcExit, which
 		// checks WebKit, lateral and non-arc itself) — the same as a CC link's click. Not in the zones.
 		if (!ascension.active && featured.current?.orbit !== true) startEarlyCcExit();
-		void focusPerson(target.slug).then(() => requestAnimationFrame(() => showCcRoster()));
+		void focusAfterEarlyExit(target.slug).then(() => requestAnimationFrame(() => showCcRoster()));
 		return;
 	}
 	void focusPerson(target.slug);

@@ -474,8 +474,12 @@
 		font-weight: 400;
 	}
 
+	/* AFTER A DELIBERATE HOVER (Oct 19, Sam): shown the instant the pointer touched the label, it flashed up
+	   whenever a CC flight carried the next card's blade under a pointer that had not moved. It waits a beat
+	   before fading in; leaving still hides it at once (the delay is on the hover rule only). */
 	.cc-label-wrapper:hover .cc-tooltip {
 		opacity: 1;
+		transition-delay: 0.6s;
 	}
 
 	/* NO SHADOW OF ITS OWN, deliberately. The blade is mounted INSIDE .featured-card-wrap, whose

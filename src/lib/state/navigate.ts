@@ -40,7 +40,8 @@ import {
 	relativeGrowMs,
 	resolveLateralDir,
 	captureAscend,
-	startEarlyCcExit
+	startEarlyCcExit,
+	earlyExitRemaining
 } from '#lib/transitions/flight.js';
 import { isWebKit } from './engine';
 import { motionOff } from './motion.svelte';
@@ -67,6 +68,39 @@ export async function focusPerson(slug: string): Promise<void> {
 		return;
 	}
 	focusWith(data, slug);
+}
+
+/**
+ * SAFARI: A CC's NEXT BOARD IS BUILT ONCE THE LEAVING CARD IS GONE (Oct 19). Sam: the card leaving out the
+ * left edge "like a jeep offroading… over rocks". Filmed in his Safari, 10 takes each: the exit itself already
+ * runs on the compositor and is clean, but in half the takes the whole page froze for 50–230ms holes at a time
+ * while the next person's board was built and first drawn under it (5 of 10 takes, ~1.8s frozen in all). Built
+ * after the card has left (startEarlyCcExit knows to the frame when that is), 1 of 10, one 50ms hole. Nothing
+ * of the next person is on screen until then: the roster is cut at the click and the arriving card waits for
+ * car 1 to be gone plus the empty beat, counted from when it really left (flight.ts earlyExitClock), so it
+ * lands when it did. The payload is fetched now, while the card leaves. Without an early exit (Chrome, arcs,
+ * the zones) this is focusPerson, unchanged.
+ */
+export function focusAfterEarlyExit(slug: string): Promise<void> {
+	const wait = earlyExitRemaining();
+	if (wait === null) return focusPerson(slug);
+	const from = window.location.pathname;
+	const ready = fetchFeatured(slug).catch(() => null);
+	// The rail moves at the payload, as it did when the board was built then (featured.svelte.ts forRail).
+	void ready.then((data) => {
+		if (data && window.location.pathname === from) featured.setAhead(data);
+	});
+	return new Promise((resolve) =>
+		setTimeout(() => {
+			// Back or forward during the exit took the page somewhere else: that navigation wins.
+			if (window.location.pathname !== from) return resolve();
+			void ready.then(async (data) => {
+				if (window.location.pathname !== from) return;
+				if (data) focusWith(data, slug);
+				else await focusPerson(slug); // its not-found path (a real navigation)
+			}).then(resolve);
+		}, wait)
+	);
 }
 
 /** focusPerson's swap, with the payload already in hand (the WebKit engine's fallback reuses it). */
@@ -420,7 +454,7 @@ export function warmPersonLinks(node: HTMLElement) {
 			// fetched (flight.ts startEarlyCcExit; it checks WebKit, lateral and non-arc itself). Not in the zones,
 			// whose cards float and recede on flights of their own.
 			if (!arc && !ascend && !ascension.active && featured.current?.orbit !== true) startEarlyCcExit();
-			void focusPerson(slug).then(() => {
+			void focusAfterEarlyExit(slug).then(() => {
 				if (arc && arcFrom && arcTo) startArc({ from: arcFrom, to: arcTo, scaleMin: scaleMin as number, duration: arcDuration });
 				requestAnimationFrame(() => showCcRoster());
 			});

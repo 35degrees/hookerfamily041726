@@ -1693,13 +1693,18 @@ export function growFrom(node: Element) {
 	// never on screen together; the empty gap between them IS the large-tree distance (Sam). heroDelay =
 	// car1ExitMs + beat.
 	// Safari's early exit (startEarlyCcExit): car 1 left at the click, so its remaining run is what is left of it.
-	const earlyLeft = cc && !arc ? earlyExitRemaining() : null;
+	// Built after car 1 has gone (navigate.ts focusAfterEarlyExit) the clock is at or below 0. The empty beat Sam
+	// approved was the one he saw with the board built at the click, whose wait was counted from a frame or two
+	// before the exit really began; counted from its real end, the arrival came 2 frames later (filmed, 7 of 7
+	// takes: +967ms after the exit began against +933). Those 2 frames come off, so it arrives as it did.
+	const earlyLeft = cc && !arc ? earlyExitClock() : null;
+	const heldLead = earlyLeft !== null && earlyLeft <= 0 ? HELD_BOARD_LEAD_MS : 0;
 	const ccDelay = arc
 		? 0
 		: sched
 			? DECK_GHOSTS
 				? sched.convoyHeroDelayMs
-				: (earlyLeft ?? car1ExitMs) + sched.phantomBeatMs
+				: Math.max(0, (earlyLeft ?? car1ExitMs) + sched.phantomBeatMs - heldLead)
 			: 0;
 	if (arc) {
 		duration = arcDur; // run the whole arc; opacity/scale are driven by the arc clock inside css
@@ -1830,6 +1835,31 @@ export function growFrom(node: Element) {
 		// (motion begins, car 1 long gone) reveals it, already offscreen and moving.
 		hero.style.opacity = '0';
 		hero.style.zIndex = '3'; // ABOVE car 1 (z 2) — belt for any cancellation edge case where they overlap
+		// SAFARI: THE SAME ARRIVAL, PLAYED BY THE COMPOSITOR, ITS WAIT WRITTEN INTO THE KEYFRAMES (Oct 19). The tick
+		// below moves the card from script every frame, so in Safari it stumbles whenever the main thread is busy
+		// (roadmap §58.3c). Here the identical curve, settle, lane and tilt are sampled into ONE keyframe animation
+		// (`css`) covering the wait AND the motion: through the wait (car 1's exit + the empty beat) it holds the
+		// offscreen pose at opacity 0, exactly as the tick's card does, then moves. Safari's compositor takes the
+		// animation over during that wait, so it already owns the card when it starts to move — the hand-off that
+		// made a delayed start lurch (Hooker §58.3f: Safari keeps a `delay` off its compositor) happens unseen.
+		// Same total time, so the landing and the blade's draw (heroSchedule) are where they were. Chrome keeps
+		// the tick, unchanged.
+		if (isWebKit()) {
+			const total = ccDelay + duration;
+			const restPose = `translate(${dx + lx}px, ${dy + ly}px) rotate(${rot}deg)`;
+			return {
+				duration: total,
+				easing: (x: number) => x,
+				css: (t: number) => {
+					const elapsed = t * total;
+					if (elapsed < ccDelay) return `opacity: 0; transform: ${restPose};`;
+					const k = Math.min(1, (elapsed - ccDelay) / duration);
+					const e = settleActive ? easeOutBack(k, settleS) : cubicOut(k);
+					const u = 1 - e;
+					return `opacity: 1; transform: translate(${u * (dx + lx)}px, ${u * (dy + ly)}px) rotate(${(u * rot).toFixed(2)}deg);`;
+				}
+			};
+		}
 		return {
 			duration,
 			delay: ccDelay,
@@ -1969,8 +1999,8 @@ function car1Plan(card: PinRect, arcM: CameraMove | null): Car1Plan {
 // the swap lurched worse (its clock starts at creation, its first drawn frame comes after that heavy frame).
 // Nothing about this exit depends on the next person: direction, path, tilt and duration are all known at the
 // click. So in Safari it starts THEN, on the compositor, while the next card is still being fetched and the
-// main thread is idle; by the time the heavy swap frame comes the compositor owns the motion and rides through
-// it. The arriving card still waits for car 1 to be fully gone plus the empty-stage beat, counted from when it
+// main thread is idle. (Oct 19: even on the compositor the heavy swap frame froze the page in half the takes,
+// so the swap now waits until this card is gone — navigate.ts focusAfterEarlyExit.) The arriving card still waits for car 1 to be fully gone plus the empty-stage beat, counted from when it
 // really left (growFrom). Same curve, tilt, lane and duration as the tick. Chrome never comes here.
 type EarlyExit = { el: HTMLElement; startedAt: number | null; runMs: number; notch: HTMLElement[] };
 let earlyExit: EarlyExit | null = null;
@@ -2024,16 +2054,24 @@ export function startEarlyCcExit(): boolean {
 		requestAnimationFrame(() => {
 			if (token !== earlyExitToken || !el.isConnected) return;
 			el.animate(frames, { duration: total, easing: 'linear', fill: 'forwards' });
+			retractBladeIn(el); // the blade stows as the card starts to leave, as at the swap it no longer rides with
 			exit.startedAt = performance.now();
 		})
 	);
 	return true;
 }
 /** ms until the early-exiting card is fully offscreen (0 if it already is, null if there is no early exit). */
-function earlyExitRemaining(el?: Element): number | null {
+export function earlyExitRemaining(el?: Element): number | null {
+	const left = earlyExitClock(el);
+	return left === null ? null : Math.max(0, left);
+}
+/** The same, signed: below 0 once the card has been offscreen that long. The arriving card's wait counts from the
+ *  moment car 1 really left, so a board built after it (navigate.ts focusAfterEarlyExit) arrives on time. */
+const HELD_BOARD_LEAD_MS = 2 * (1000 / 60);
+function earlyExitClock(el?: Element): number | null {
 	if (!earlyExit || (el && earlyExit.el !== el)) return null;
 	if (earlyExit.startedAt === null) return earlyExit.runMs + 2 * (1000 / 60); // not started yet: two frames away
-	return Math.max(0, earlyExit.startedAt + earlyExit.runMs - performance.now());
+	return earlyExit.startedAt + earlyExit.runMs - performance.now();
 }
 /** After the swap: a notch chip still on the new card (not leaving) is shown again; the record is dropped. */
 function endEarlyCcExit(): void {
@@ -3752,7 +3790,8 @@ export function unsheathBlade(node: HTMLElement): void {
  */
 export function retractBladeIn(node: HTMLElement): void {
 	const mount = node.querySelector<HTMLElement>('.cc-blade-mount');
-	if (!mount || motionOff()) return;
+	if (!mount || motionOff() || mount.dataset.stowed !== undefined) return;
+	mount.dataset.stowed = ''; // once per departure: Safari's early exit stows it at the click, the outro finds it done
 	mount.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }], {
 		duration: BLADE_RETRACT_MS,
 		easing: 'cubic-bezier(0.32, 0, 0.67, 0)', // cubicIn — accelerating INTO the case, the draw's mirror

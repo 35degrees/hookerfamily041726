@@ -80,7 +80,27 @@ class FeaturedManager {
 	}
 
 	set(data: FeaturedData): void {
+		this.#ahead = null;
 		this.#current = data;
+	}
+
+	/**
+	 * THE RAIL'S EARLY LOOK AT THE NEXT PERSON (Oct 19). In Safari a CC's next board is built only once the
+	 * leaving card is offscreen (navigate.ts focusAfterEarlyExit), ~0.7s after the click. The timeline rail
+	 * reads the person too, and its bars used to start moving as soon as the payload arrived; held with the
+	 * board, they froze on the old names until the arriving card had settled (Sam). So the payload is handed
+	 * to the rail the moment it is in hand, as before, and to everything else at the swap. Cleared by set().
+	 */
+	#ahead = $state<FeaturedData | null>(null);
+	get ahead(): FeaturedData | null {
+		return this.#ahead;
+	}
+	setAhead(data: FeaturedData): void {
+		this.#ahead = data;
+	}
+	/** What the rail draws: the person on their way in, else the featured one. */
+	get forRail(): FeaturedData | null {
+		return this.#ahead ?? this.#current;
 	}
 }
 

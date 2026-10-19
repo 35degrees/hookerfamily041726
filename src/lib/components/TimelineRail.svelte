@@ -502,7 +502,7 @@
 	 */
 	const GENERATION_YEARS = 28;
 	function fallbackBirthYear(): number | null {
-		const nb = featured.current?.neighborhood;
+		const nb = featured.forRail?.neighborhood;
 		if (!nb) return null;
 		for (const s of nb.spouses ?? []) {
 			const sp = s.spouse;
@@ -552,7 +552,7 @@
 		return first;
 	}
 
-	const focus = $derived(featured.current?.neighborhood?.focus ?? null);
+	const focus = $derived(featured.forRail?.neighborhood?.focus ?? null);
 
 	/**
 	 * ── A BAR IS A NAVIGATION LINK ──────────────────────────────────────────────────────────────────
@@ -598,7 +598,7 @@
 	 */
 	const spouseIds = $derived(
 		new Set(
-			(featured.current?.neighborhood?.spouses ?? [])
+			(featured.forRail?.neighborhood?.spouses ?? [])
 				.map((s) => s.spouse?.id)
 				.filter((id): id is string => !!id)
 		)
@@ -726,7 +726,7 @@
 		// Hooker person, the one who married in, and the focus's own nearest relative — so the middle is
 		// what gives way. The elision is invisible on the rail (lanes are positions, not generations),
 		// which is the cost; the card itself is where a full lineage belongs.
-		const full = featured.current?.lineAnchors ?? [];
+		const full = featured.forRail?.lineAnchors ?? [];
 		const chain = full.length > 3 ? [full[0], full[1], full[full.length - 1]] : full;
 		if (chain.length) {
 			// A LIVING LINK IN THE ROUTE GETS AN ANCHOR TOO, for the same reason the bloodline spouse
@@ -754,7 +754,7 @@
 		}
 
 		// MARRIED IN — the bloodline spouse is right here in the payload.
-		const spouses = featured.current?.neighborhood?.spouses ?? [];
+		const spouses = featured.forRail?.neighborhood?.spouses ?? [];
 		const hookerSpouse = spouses.map((s) => s.spouse).find((s) => s && s.hd) ?? null;
 		// THE BLOODLINE SPOUSE GETS AN ANCHOR TOO, and it is the focus's own year. Without it this
 		// branch silently dropped its first bar for 46 cards: a LIVING bloodline spouse is `pv`, `pv`
