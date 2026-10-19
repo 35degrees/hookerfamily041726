@@ -1475,7 +1475,14 @@ export function growFrom(node: Element) {
 			// an ordinary flight: a CC arrival hides the old roster at the click, so nothing launches from a
 			// measured rect that a drifting slab could throw off; the departing card and the spouse ghosts
 			// track their elements, not captured rects. A click before then still flattens it (floatPause).
-			if (ascendDir === 1) setTimeout(floatResume, ENTER_GLIDE_FROM * ASCEND_ENTER_MS);
+			// SAFARI WAITS FOR THE LANDING (Oct 19, Sam: the orbit and founder cards "still have the quiver during
+			// overshoot… only a beat or two… just the entrance"). Filmed: the settling card's top edge stepped
+			// up and down by half a pixel to a pixel while its left edge moved smoothly; the card settles under
+			// a main-thread clock inside a slab Safari is already moving on its own, and the two disagree by a
+			// pixel. In Safari the drift starts at the landing instead (onIncomingLand's floatResume), ~600ms
+			// later. It comes loose from flat over LOOSEN_MS, so 600ms in it had moved the slab half a pixel:
+			// nothing to see. Chrome keeps the drift building while the card settles.
+			if (ascendDir === 1 && !isWebKit()) setTimeout(floatResume, ENTER_GLIDE_FROM * ASCEND_ENTER_MS);
 			// ── DEPTH DECIDES WHO IS IN FRONT, NOT WHO IS ARRIVING ───────────────────────────────────
 			// Ascending, the incoming card is the near one all the way (1.55 down to 1, against a departure
 			// shrinking from 1 to 0.34), so it sits on top. DESCENDING it is the FAR one — it grows from

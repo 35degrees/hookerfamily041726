@@ -7201,6 +7201,17 @@ its spouse chip and the CC blade quivered; Robert Lincoln's child chip did not.
   tracking. Keep the second display awake while filming (`caffeinate -d -u`); the screen saver filmed hills
   twice.
 
+### 61.6b THE ENTRANCE'S QUIVER — the overshoot (same day)
+
+Sam: "it still has the quiver during overshoot… only a beat or two… just the entrance." The zone's drift is let
+loose ~600ms after the click (flight.ts, `ENTER_GLIDE_FROM`; Sam's 100526 design: "there is never a rigid
+lock"), so the card overshoots and settles under its main-thread clock inside a slab Safari is already moving.
+Filmed (the card's edges against the dark ground): the top edge reversed up/down 2–6 times through the settle,
+and the left edge was smooth. Taking the twins off their layers for the whole zone did NOT help. **Safari now
+lets the drift loose at the landing** (`onIncomingLand`'s `floatResume`); 600ms into its LOOSEN_MS rise it
+had only moved the slab ~0.5px, so the drift looks the same. 0 reversals in 3 takes. Chrome is unchanged.
+Sam: "resolved."
+
 ### 61.7 OPEN
 
 - Sam: the zone cards "technically don't need a drop shadow at all", except the half shadow above the CC blade.
