@@ -7323,6 +7323,19 @@ which makes Safari regroup the row's drawing (Kennedy §3.3b). Two cures measure
 General rule worth keeping: **in Safari, a DOM removal near an element regroups its drawing; schedule removals while
 things are still moving, never just after they come to rest.**
 
+### 62.5c THE ZONE ON A SHORT WINDOW (October 20, just after midnight)
+
+Sam: Alexander Hamilton's orbit card "really shaky" in a 1225×979 Safari window, calm when the window is larger.
+Below a 900px-tall page the short-window frame (stage.svelte.ts, §59) scales the card, its type and the chips by a
+fraction, so every piece rests at fractional pixels, and every piece on a layer of its own inside the drifting slab is
+rounded separately each frame. §61.6 had taken only the shadow twins off their layers while drifting; tonight's chip and
+connector layers (§62.3.4) added more. Fix: while `.slab-drifting`, every layer hint inside the slab is dropped (card,
+slots, notch, parent/child/sibling chips, connectors); from the click every flight has them back. Sam: "yes it's gone".
+
+**Rule for the future: any new `will-change` layer added for a flight must also be listed under `.slab-drifting`**, or
+the zones quiver again, worst on short windows. Test zones at a sub-900px page height (Web Inspector docked at the
+bottom gives a 356px page, the most squeezed case).
+
 ### 62.6 OPEN
 
 - **The demoted card's inner content grows on settling into a child chip** (Sam: "the inner text jerks larger on
