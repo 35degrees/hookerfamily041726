@@ -931,6 +931,22 @@ html.webkit .page-container.slab-drifting .shadow-twin,
 html.webkit .page-container.slab-drifting .cc-twin {
 	will-change: auto;
 }
+/* …AND EVERYTHING ELSE INSIDE THE SLAB (Oct 19, later; Sam: Hamilton's orbit card "really shaky" in a 1225×979
+   window, still when the window is larger). Below a 900px-tall page the short-window frame scales the card, its
+   type and the chips by a fraction (stage.svelte.ts), so every piece rests at fractional pixels, and each one on
+   a layer of its own is rounded separately as the slab drifts — the same quiver the twins had, now from the
+   card's layer, the slots', the chips' and the connectors' (the last two added today for landings). While the
+   slab drifts the whole slab is one picture; from the click every flight has its layers back. */
+html.webkit .page-container.slab-drifting .featured-flight,
+html.webkit .page-container.slab-drifting .featured-slot,
+html.webkit .page-container.slab-drifting .parents-slot,
+html.webkit .page-container.slab-drifting .spouse-notch .flight,
+html.webkit .page-container.slab-drifting .parents-slot .flight,
+html.webkit .page-container.slab-drifting .children-slot .flight,
+html.webkit .page-container.slab-drifting .sib-item,
+html.webkit .page-container.slab-drifting .connector {
+	will-change: auto;
+}
 html.webkit .featured-flight.flat:not(.notch-armed) .shadow-twin .twin-shape {
 	clip-path: var(--flat-shape) !important; /* the card flies flat, so its twin does */
 }
