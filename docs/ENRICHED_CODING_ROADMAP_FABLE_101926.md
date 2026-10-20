@@ -7216,3 +7216,103 @@ Sam: "resolved."
 
 - Sam: the zone cards "technically don't need a drop shadow at all", except the half shadow above the CC blade.
   Not done; it is a visual change, and which shadow he means needs asking first.
+
+
+## 62. OCTOBER 19, 2026 (EVENING, ~18:30 PDT) — SAFARI: THE CHILDREN ROW ON A PROMOTION (session record; WebKit-only, Chrome untouched)
+
+Shipped in `7c350441` (deployed to hookerverse.com and hooker-test). Sam, comparing the two Safari paths side by side: the
+engine path is "so much better, much smoother… I wouldn't call it buggy"; after deploy: "much better".
+
+### 62.1 THE COMPLAINT, AND WHY IT TOOK SEVERAL ROUNDS
+
+Sam, across the evening: every arriving child chip in Safari "overshooting as a unit… only one is really flying like a
+discrete baseball card"; "very choppy… wobbly"; "no graceful slide, jerky at the end"; "baby giraffe being born
+jerkiness"; "is the child chip overshoot even there?"; and on a spouse toggle, the "One child" connector line moving.
+It is the core gesture of the site (every parent click builds a new children row), so it matters more than any one card.
+
+It took several rounds because of three process failures, recorded so they are not repeated:
+1. **Sam was testing the live site while the fixes existed only locally.** Every local fix looked "still awful" because
+   hookerverse.com had none of them. **Before asking Sam to judge, say which address carries which change, and deploy or
+   point him at `localhost:4173` explicitly.**
+2. **The recorder lied about slow motion.** `screencapture` saves a frame only when the screen changes, so a decelerating
+   tail looks like 50–180ms "holes". Several conclusions were built on that before a moving marker (§62.4) separated real
+   drops from skipped frames.
+3. **Tuning before measuring the reference.** The first fixes were inferred from reading code. The answer came from
+   MEASURING Chrome frame by frame and holding Safari to it.
+
+### 62.2 THE METHOD THAT WORKED — Chrome is the reference, so measure it
+
+`scripts/safari/promotion-sampler.js` runs in the page and records, every frame, each arriving child's top and opacity,
+the demoted card's rect, and its seat. `scripts/safari/chrome-sample.mjs` runs it in headless Chromium at Sam's Safari
+viewport; AppleScript runs the same file in Sam's Safari. Same click, two tables, compared row by row. John Hooker
+(1791) → his mother Sarah Dwight Hooker:
+
+| | Chrome | Safari before | Safari after |
+|---|---|---|---|
+| children's travel | 176px (139 march + 37 card-slot height glide) | 139px | 176px |
+| children's clock | `rowClockMs` (the demote's tempo), ~340ms | the arriving card's longer H, ~370ms, finishing after the card landed | `rowMs` (the same formula), ~316ms |
+| children vs the card's carry | 0.6–1.2px from rest when the card's settle peaks | 4.9px from rest, still sliding | 1.7px from rest |
+| row overshoot | none (`revealPending`, cubic-bezier .33,1,.68,1) | the card's own settle on every chip | none |
+| demoted card's settle | 5.0px past the seat | 4.3px | 4.3px (Sam's 10% Safari reduction) |
+
+The decisive row is the third. **In Chrome the row is still when the demoted card swings past its seat, so the carry
+reads as the card's weight. In Safari the row was still sliding, so the carry vanished into the neighbours' motion** —
+design §20.1, verbatim: "the child settle read as 'theatrical swooping' only because it was landing on a row still sliding
+beneath it… Fix the ground, then re-judge."
+
+### 62.3 THE FIXES (all in `src/lib/transitions/webkit/flight.ts` §4 and `layout.css`, `html.webkit` only)
+
+1. **Arriving rows: Chrome's curve, Chrome's clock.** `cubicOut` on `rowMs`, no settle. The engine had given every
+   arriving chip the card's own `easeOutBack` (a Kennedy rule of Oct 14, "the card and the parent chips overshoot"),
+   which Chrome never had; Sam overruled it today. Only two things carry a settle, each on its own path: the demoted
+   card, and a person morphing from their old chip.
+2. **The children row rides the slot's height change.** In Chrome the row is carried by `.featured-slot`'s height glide
+   (layout) on top of its march; Safari's flights switch that glide off (`.wk-flight`), so the engine adds
+   `slotGrow` (new slot bottom − captured slot bottom) to the children's travel.
+3. **A person already on the board morphs from there** (Chrome's `morphIn`): the hero's spouse on a child click leaves
+   the notch and flies to the parent seat on their own vector, `demoteSettleBackFor` (factor 1) with `lessCarry`, on
+   morphIn's 360ms clock. The engine had slid them up from below like a row chip ("the overshoot direction and angle is
+   not right").
+4. **Child chips and connectors on their own layers** (`will-change: opacity`). Without them every arriving chip sat
+   ~1px past its seat for ~250ms and stepped home; the connector did the same at every landing and on every spouse
+   toggle. This is Kennedy's rule 3.2, which §61's era removed together with the children ROW's layer (Oct 17, for a
+   hover wobble). Measured today: the hover wobble came from the row's layer, not the chips' — chips on layers, the
+   grandchild-reveal hover is still steady (0 frames off by ≥0.5px; 2–3 without). **The row itself stays off its layer.**
+
+### 62.4 TOOLS AND MEASUREMENTS FOR NEXT TIME
+
+- **`marker.py`** — a magenta square moving every frame, filmed with the click. A gap in the square's motion is a frame
+  Safari really dropped; a gap without one is the recorder. With it: Safari draws the glide at a steady 60fps; one real
+  ~67ms freeze recurs at the hand-off at landing (open, §62.6).
+- **Shadows were ruled out** for the rockiness (5 takes each: chip shadows off, flying cards' twin shadows off): identical.
+- **The main thread is idle through the glide** (rAF and MutationObserver log, `probe10` pattern): nothing of ours runs
+  between ~100ms and the landing, so any remaining stall is Safari's drawing, not script.
+- **An A/B switch beats a film for a verdict.** A temporary `?engine=off|on` (sessionStorage) let Sam flip the same click
+  between the engine and Hooker's own path in Safari; his eye settled in one try what films had not. Removed before
+  shipping; worth rebuilding for the next "which path is worse" question.
+- **Delete frames after each take** (memory `safari-films-fill-the-disk`).
+
+### 62.5 THE BIG PICTURE FOR FUTURE SAFARI WORK
+
+- **Two Safari paths exist.** The engine (`src/lib/transitions/webkit/`) flies parent, child, sibling and spouse promotions
+  on the stage. Hooker's own transitions still fly everything the engine refuses (`engineCanFly`): cross-connections and
+  the deck, the orbit/founder zones, clicks with the grandparent or grandchild tier open, more than three spouses (the
+  carousel), the phone, reduced motion. **Sam's verdict today: the engine path is the smooth one in Safari; Hooker's path
+  in Safari is the one that looks buggy.** Moving more gestures onto the engine is the direction; patching the old path in
+  Safari is not (memory `no-safari-patches`).
+- **The rule that produced every fix today: hold Safari to Chrome's measured choreography** — the same distances, clocks,
+  curves and, above all, the same ORDER (rows land before the demoted card's carry peaks). Chrome's files are never
+  touched.
+- **Layers decide pixel snaps.** Anything that animates and then rests in Safari needs to rest on the same kind of layer
+  it moved on, or it steps ~1 device px when Safari folds it back (cards: §58.8's hold; chips and connectors: §62.3.4;
+  zone twins: §61.6). And a layer inside a moving layer can quiver (§61.6) — so per element, measure both.
+
+### 62.6 OPEN
+
+- **The demoted card's inner content grows on settling into a child chip** (Sam: "the inner text jerks larger on
+  settling… the chip overshoots, not the inner content"). Seen on Hooker's path in Safari (`?engine=off`); still to check
+  whether the engine shows it. If only the old path: it matters wherever Safari still uses that path (§62.5).
+- **The ~67ms freeze at landing** (§62.4): the hand-off (class flips, `.flat` off the hero, the notch carved, twins
+  re-shaped) costs Safari ~3 frames while the last pixels of the settle are still moving. Candidate: make the heavy flips
+  after all motion has stopped. Not started; Sam called the result "much better" without it.
+- Zone-card drop shadows (§61.7).

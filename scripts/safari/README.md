@@ -47,3 +47,14 @@ Added October 5 for the landing tick (roadmap §58.8):
 | `landprobe.js` | Logs the arriving card's layout every frame across a landing (name/NB offsets, card top, transform, `.flat`). Proved layout never moves. |
 | `toggleflat.js` | Toggles `.flat` on a RESTING card 8×; proved the outline switch moves nothing. |
 | `holdland-inject.js` | The landing hold as an injected experiment (what became `holdLanding` in flight.ts). |
+
+Added October 19 for the promotion children and the CC exit (roadmap §61, §62):
+
+| File | What it does |
+|---|---|
+| `promotion-sampler.js` | One parent-chip promotion: every frame, the arriving children's top and opacity, the demoted card's rect, its seat. Runs identically in Chrome and Safari, so the two can be compared curve for curve. Edit the three `EDIT` marks for another click. |
+| `chrome-sample.mjs` | Chrome's reference for the same click: headless Chromium at Sam's Safari viewport (1215×1387 @2x), runs the sampler, writes JSON. Chrome is the gold standard; measure it, never assume it. |
+| `marker.py` | Real dropped frames. The recorder only saves changed frames, so a slow tail looks like holes; a magenta square moving every frame (pre-JS in the file) shows which gaps Safari really missed. |
+
+**Delete each take's extracted frames right after analysing it** (`rm -rf <take>f`). On Oct 19 a day of films
+left 121 GB of PNGs and filled Sam's disk to 126 MB free.
