@@ -321,10 +321,22 @@ export function depart(node: Element, params: { key: string; card?: boolean }) {
 		: params.key === cap.clickedId || dir === 'lateral'
 			? 0 // hidden the instant the clock starts (launch)
 			: (dir === 'up' || dir === 'down') && cap.pan !== 'lateral'
-				? cap.rowMs
+				? cap.rowMs * ROW_LEAVER_GONE_AT
 				: FADE_OUT_MS;
 	return { duration: own + holdMs() + START_SLACK_MS }; // the hidden ones too: they stay for the painted frame
 }
+
+/**
+ * A LEAVING ROW CHIP IS REMOVED WHILE THE NEW ROW IS STILL MOVING (Oct 19). Sam: the children "settle into
+ * position, then up a pixel then down a pixel". Filmed (Alexander Morgan → Junius Morgan II): the arriving
+ * chips finished their glide drawn ~1px high and dropped ~150ms later, the moment the leaving chips were taken
+ * out of the row — Safari regroups the row's drawing when they go (the Kennedy finding behind its row layers,
+ * §3.3b). The row's own layer cures it but brings back the grandchild-hover wobble (measured again today), so
+ * instead the leavers go earlier: a row leaver is fully transparent from ~33% of its run (ROW_GONE under the
+ * march's cubicOut), so it is removed at half the row clock, and the regroup lands inside the arrivals' glide
+ * where it is absorbed. Filmed: the arrivals land at their seat and stay (two takes; the baseline still steps).
+ */
+const ROW_LEAVER_GONE_AT = 0.5;
 
 /**
  * A REVIVED LEAVER. When a person whose element is still leaving comes back onto the board, Svelte

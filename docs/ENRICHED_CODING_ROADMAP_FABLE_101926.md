@@ -7307,6 +7307,22 @@ beneath it… Fix the ground, then re-judge."
   it moved on, or it steps ~1 device px when Safari folds it back (cards: §58.8's hold; chips and connectors: §62.3.4;
   zone twins: §61.6). And a layer inside a moving layer can quiver (§61.6) — so per element, measure both.
 
+### 62.5b THE LAST PIXEL — leavers leave while the row still moves (same evening)
+
+Sam, on the deployed fix: the children "settle into position, then up a pixel then down a pixel" (Junius Morgan II
+from his son Alexander). The layout never moved (row top 914.59 every frame). Filmed: the arriving chips finished drawn
+~1px high and dropped ~150ms later — the moment the engine took the old row's (already invisible) chips out of the row,
+which makes Safari regroup the row's drawing (Kennedy §3.3b). Two cures measured:
+- the children ROW on its own layer: clean landing, but the grandchild-hover wobble returns (2–3 frames off by up to
+  0.9px; 0 without) — rejected, the October 17 trade again;
+- **the row leavers removed at half the row clock** (`ROW_LEAVER_GONE_AT`, webkit/flight.ts `depart`): they are fully
+  transparent from ~33% of their run, so nothing visible goes, and the regroup lands inside the arrivals' glide where it
+  is absorbed. Filmed: arrivals land at their seat and stay (Morgan, Edwards); baseline still stepped. Shipped. Sam:
+  "much better".
+
+General rule worth keeping: **in Safari, a DOM removal near an element regroups its drawing; schedule removals while
+things are still moving, never just after they come to rest.**
+
 ### 62.6 OPEN
 
 - **The demoted card's inner content grows on settling into a child chip** (Sam: "the inner text jerks larger on
