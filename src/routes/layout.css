@@ -1016,7 +1016,23 @@ html.webkit .parents-slot {
    own, before, during and after: 0.0 throughout. */
 html.webkit .spouse-notch .flight,
 html.webkit .parents-slot .flight,
+html.webkit .children-slot .flight,
 html.webkit .sib-item {
+	will-change: opacity;
+}
+/* THE CHILD CHIPS ARE BACK ON THEIR LAYERS, THE ROW IS NOT (Oct 19). With the October 17 change above the
+   chips lost their layers along with the row's, and every arriving child chip then sat ~1px past its seat
+   for ~250ms after a parent click and stepped back (Sam: "the child chips settling and gliding into
+   position is very choppy… wobbly"): the row sits at a fractional pixel, and Safari draws a chip on its
+   animation layer and on the page a pixel apart. Filmed, chips on layers: lands at its seat and stays
+   (two takes); off: +1 then a step, every take. And the grandchild-reveal hover the row's layer broke stays
+   still with the chips' layers: 0 frames off by half a pixel, against 2–3 with none. The row itself stays
+   off its layer. */
+/* …AND THE CONNECTORS (Oct 19, Sam on a spouse toggle: "the vertical line with One child adjusting… seems
+   to move too"). The engine fades a connector out at the click and back in at landing; filmed, it came back
+   ~1 device px off and stepped home ~120ms later, every take, on the live site and locally. On a layer of its
+   own it lands where it rests (two takes, both directions). */
+html.webkit .connector {
 	will-change: opacity;
 }
 

@@ -147,6 +147,8 @@ const SAFARI_SETTLE_BOOST = 1.75;
  * travel, g(s) = 4s³ / 27(1+s)², and the curve is re-solved for 0.9 × g(s).
  */
 const SAFARI_CARRY = 0.9;
+/** Hooker morphIn's fixed clock for a person moving from their old chip into a parent seat. */
+const MORPH_IN_MS = 360;
 function lessCarry(s: number): number {
 	if (s <= 0) return 0;
 	const g = (4 * s * s * s) / (27 * (1 + s) * (1 + s));
@@ -782,6 +784,9 @@ function fly(
 	}
 
 	// ── 4. THE ARRIVING CHIPS. ──
+	// How much the card slot grew between the boards (its height glide in Chrome, off in Safari's flights).
+	const slotNow = slot?.getBoundingClientRect();
+	const slotGrow = cap.slot && slotNow ? slotNow.bottom - (cap.slot.top + cap.slot.height) : 0;
 	for (const el of arrivals) {
 		const id = el.dataset.flightId;
 		if (id === cap.pivotId || inline.some((p) => p.el === el)) continue; // already held above
@@ -792,21 +797,63 @@ function fly(
 			tracks.push(revealAt(el, H, CHIP_REVEAL_MS));
 			continue;
 		}
-		// Rows enter from the camera's trailing edge, so they can never cross the rows leaving.
+		// A PERSON WHO WAS ALREADY ON THE BOARD MORPHS FROM THERE (Hooker morphIn; most visibly the hero's spouse
+		// becoming a parent on a child click). Sam, Oct 19: in Safari "the overshoot direction and angle is not
+		// right" — the engine slid them up as a row chip. Chrome flies them as one discrete card from the chip
+		// they were, along their own path, and only they carry the demote settle on that path: the same
+		// `demoteSettleBackFor` (factor 1) on their own vector and seat, on morphIn's 360ms clock. Their old chip
+		// goes at the start (the leaving loop's `goneAtStart`), in the frame this one takes its place.
+		const was = id ? cap.snaps.get(id) : undefined;
+		const seat = arrivalRect.get(el);
+		if (dir === 'up' && was && seat && seat.width && seat.height) {
+			const dx = was.left - seat.left;
+			const dy = was.top - seat.top;
+			const sx = was.width / seat.width;
+			const sy = was.height / seat.height;
+			const morphS = lessCarry(demoteSettleBackFor(Math.hypot(dx, dy), Math.hypot(seat.width, seat.height)));
+			const morphPose = (t: number): Keyframe => {
+				const u = 1 - easeOutBack(t, morphS);
+				return {
+					transform: `translate(${u * dx}px, ${u * dy}px) scale(${1 - u * (1 - sx)}, ${1 - u * (1 - sy)})`,
+					opacity: 1
+				};
+			};
+			el.style.transformOrigin = 'top left';
+			el.style.zIndex = '1'; // above the leaving chips, below the arriving card (Hooker morphIn)
+			cleanup.push(() => {
+				el.style.removeProperty('transform-origin');
+				el.style.removeProperty('z-index');
+			});
+			pose(el, { transform: morphPose(0).transform as string, opacity: '1' });
+			tracks.push(sampled(el, 0, MORPH_IN_MS, morphPose));
+			continue;
+		}
+		// Rows enter from the camera's trailing edge, so they can never cross the rows leaving. A row BELOW the
+		// card also rides the card slot's height change, as Chrome's does: there the children row is carried by
+		// `.featured-slot`'s height glide (layout) on top of its march, and Safari's flights switch that glide
+		// off (`.wk-flight`), so the travel is added here instead. Measured on John Hooker → Sarah, Chrome's
+		// children came 176px (139 march + 37 slot) and Safari's 139.
+		const ride = dir === 'down' ? slotGrow : 0;
 		const fromY =
-			cap.pan === 'down' ? -pitch : cap.pan === 'up' ? pitch : dir === 'down' ? -pitch : pitch;
-		// THE ENTERING CHIPS SETTLE WITH THE CARD (Sam, 14 Oct: the card and the parent chips overshoot, the new
-		// children "just slide into fixed position"; and the settle must be the card's own, not a new one).
-		// The arriving card's exact overshoot: the same `settleBackFor` (with Safari's boost) for the chip's
-		// travel, on the card's clock H, so the chips carry past and come back in step with the card. Hooker's
-		// rows entered with a plain cubicOut on the row clock.
-		const rowS = lessCarry(settleBackFor(Math.abs(fromY), SAFARI_SETTLE_BOOST));
+			(cap.pan === 'down' ? -pitch : cap.pan === 'up' ? pitch : dir === 'down' ? -pitch : pitch) - ride;
+		// THE ENTERING ROWS DO NOT OVERSHOOT (Sam, Oct 19, after reviewing Chrome: "the only child chip that
+		// overshoots is the featured hero card that's been demoted… your parent chips are trying to do the same
+		// thing"). In Safari every arriving chip carried the card's own settle, so a whole row overshot as one
+		// unit — the Kennedy rule of 14 Oct ("the card and the parent chips overshoot"), which Hooker's Chrome
+		// never had: its rows arrive on a plain cubicOut (+page revealPending, morphIn without an origin). Only
+		// the demoted card and a person morphing from their old chip (above) carry a settle, each on their own
+		// path, like a discrete baseball card. Same clock and travel as before; the curve is Chrome's.
 		const rowPose = (t: number): Keyframe => {
-			const e = easeOutBack(t, rowS);
+			const e = cubicOut(t);
 			return { transform: `translateY(${(1 - e) * fromY}px)`, opacity: cubicOut(t) };
 		};
 		pose(el, { transform: rowPose(0).transform as string, opacity: '0' });
-		tracks.push(sampled(el, 0, H, rowPose));
+		// ON THE ROW CLOCK, as in Chrome (rowClockMs: the demote's tempo), not the arriving card's longer H. On H
+		// the children were still sliding when the demoted card overshot its seat beside them (Sam: "jerky at
+		// the end… I don't even think the overshoot on the demoted featured card is working right"), so the
+		// settle read against a moving row. Chrome's row lands first (385ms) and the card's carry peaks against
+		// a still row: design §20.1, "fix the ground, then re-judge".
+		tracks.push(sampled(el, 0, rowMs, rowPose));
 	}
 
 	// ── 4b. THE SURVIVORS: people on both boards (the children a couple shares on a spouse swap) stay, and
