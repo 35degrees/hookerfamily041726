@@ -824,7 +824,12 @@ function deckTempo(): number {
  */
 const NARROW_W = 1150;
 const NARROW_TEMPO = 1.15;
+/** THE PHONE (Oct 20, Sam: the CC "screaming fast"). Measured in Chrome: a CC took ~1.06s at 393×852 against
+ *  ~1.86s at 1440×900, because the deck's speeds are px/ms and a phone has a third of the width to cross. On a
+ *  phone the deck takes the desktop's time instead of 15% more than its own. TIME only, like NARROW_TEMPO. */
+const PHONE_DECK_TEMPO = 1.9;
 function narrowTempo(): number {
+	if (stage.phone) return PHONE_DECK_TEMPO;
 	return stage.vw <= NARROW_W ? NARROW_TEMPO : 1;
 }
 /** Marks the launching flight as a carousel draw. Paired with setCarouselLateral at shuffle's call site. */
@@ -1287,8 +1292,19 @@ const SPOUSE_DEMOTE_V_CEIL = 1.85;
 // duration: −20% velocity is +20% duration on BOTH sides of the navigation, because both derive from
 // siblingBaseMs. The promotion keeps its extra 8% on top (SIBLING_PROMOTE_TEMPO).
 const SIBLING_V_CEIL = 1.0; // px/ms — sibling arrival dial
+/**
+ * PHONE TEMPO FOR PROMOTIONS (Oct 20, Sam on a phone: "screaming fast… this includes parent chip promotions…
+ * just for phones can we slow the timing down? nothing else about transitions change"). Measured in Chrome at
+ * 393×852 a promotion takes the same ~0.5–0.6s as on a 1440 desktop, but on a stage a third the size, so it
+ * reads as a dart. TIME only, on the phone only: every promotion clock (parent/child, sibling, spouse) and the
+ * rows and demotes derived from them; the curves, the settles and the order are untouched.
+ */
+const PHONE_PROMOTION_TEMPO = 1.25;
+function phoneTempo(): number {
+	return stage.phone ? PHONE_PROMOTION_TEMPO : 1;
+}
 export function relativeGrowMs(distance: number): number {
-	return Math.min(1000, Math.max(410, distance / RELATIVE_V_CEIL));
+	return Math.min(1000, Math.max(410, distance / RELATIVE_V_CEIL)) * phoneTempo();
 }
 /**
  * The sibling clock at its base velocity — the reference BOTH sides of the navigation are derived from.
@@ -1301,7 +1317,7 @@ export function relativeGrowMs(distance: number): number {
  * NOT two clocks, which is the §18.2 defect this replaced.
  */
 export function siblingBaseMs(centerDist: number): number {
-	return Math.min(1000, Math.max(410, centerDist / SIBLING_V_CEIL));
+	return Math.min(1000, Math.max(410, centerDist / SIBLING_V_CEIL)) * phoneTempo();
 }
 const SIBLING_PROMOTE_TEMPO = 1.08; // +8% on the arriving card only — see siblingBaseMs
 export function siblingGrowMs(centerDist: number): number {
@@ -1315,7 +1331,7 @@ export function siblingGrowMs(centerDist: number): number {
 // for the hero; spouseHeroDurationMs below may EXTEND it so the demote can travel at honest velocity.
 const SPOUSE_FLOOR_MS = 420;
 export function spouseGrowMs(distance: number): number {
-	return Math.min(1000, Math.max(SPOUSE_FLOOR_MS, distance / RELATIVE_V_CEIL));
+	return Math.min(1000, Math.max(SPOUSE_FLOOR_MS, distance / RELATIVE_V_CEIL)) * phoneTempo();
 }
 
 // HONEST VELOCITY (the photo-whiplash fix). With transform-origin top-left, a card shrinking into its

@@ -1034,9 +1034,12 @@
 	// PersonBox, which rounds each box independently. Rounding the sum instead would leave the mask up
 	// to a pixel adrift from the chips it clips, which is exactly the kind of hairline that shows as a
 	// sliver of the next chip at some widths and not others.
-	const CHIP_W = $derived(Math.round(160 * stage.u)); // matches FeaturedCard's CHIP_W_COMPACT
+	// THE PHONE'S NOTCH HOLDS ONE SPOUSE, at full chip size (Sam, Oct 20: "I wanted the spouse notch to exist, not
+	// the random spouse card floating above it"), so its carousel windows one chip and pages from the second
+	// spouse on. Matches FeaturedCard's notchChipCount (1 on a phone) and CHIP_W_NORMAL.
+	const CHIP_W = $derived(Math.round((stage.phone ? 220 : 160) * stage.u)); // FeaturedCard CHIP_W_NORMAL / _COMPACT
 	const CHIP_GAP = $derived(Math.round(8 * stage.u)); // matches FeaturedCard's CHIP_GAP
-	const WINDOW = 3;
+	const WINDOW = $derived(stage.phone ? 1 : 3);
 	const STRIP_STEP = $derived(CHIP_W + CHIP_GAP); // one page of pitch
 	const NOTCH_W = $derived(WINDOW * CHIP_W + (WINDOW - 1) * CHIP_GAP); // the visible window
 	const CARET_W = $derived(Math.round(22 * stage.u));
@@ -1257,6 +1260,11 @@
 	const TIER_CURVE = cubicBezier(0.32, 0, 0.22, 1);
 	let revealedParentId = $state<string | null>(null);
 	let gpOffsetX = $state(0);
+	/** THE PHONE'S TIER STAYS IN THE PARENTS' COLUMNS and only its connector moves (Oct 20, Sam on his iPhone: the
+	 *  revealed grandparents "can be centered over the two existing parent chips and aligned with them, but the line
+	 *  of 'Isabella's Parents' can come down closer to that spouse whose parents they are and the line comes out of
+	 *  him"). Centring the pair on one parent pushed the second grandparent off a phone's edge. */
+	let gpConnectorX = $state(0);
 	// A NAVIGATION CLOSES THE TIER ON THE FLIGHT'S CLOCK; a hover dismissal closes it on its own.
 	//
 	// This flag was `tierInstant` and the close really was instant, because the first attempt at animating
@@ -1340,12 +1348,14 @@
 		// The .flight wrapper, not the button — the tier centres on the CHIP, and the trigger sits off at
 		// its right edge. Centring on the trigger would put the row a half-chip out.
 		const chip = (e.currentTarget as HTMLElement).closest('.flight') as HTMLElement | null;
-		const stage = document.querySelector('.page-container');
-		if (chip && stage) {
+		const stageEl = document.querySelector('.page-container');
+		if (chip && stageEl) {
 			// Measured at open rather than stored, so a reflow cannot leave it pointing at a stale seat.
 			const c = chip.getBoundingClientRect();
-			const st = stage.getBoundingClientRect();
-			gpOffsetX = Math.round(c.left + c.width / 2 - (st.left + st.width / 2));
+			const st = stageEl.getBoundingClientRect();
+			const off = Math.round(c.left + c.width / 2 - (st.left + st.width / 2));
+			gpOffsetX = stage.phone ? 0 : off;
+			gpConnectorX = stage.phone ? off : 0;
 		}
 		// Both cleared HERE, where any previous tier is provably gone and a fresh one is about to be built
 		// — never on enter. See the tierCollapsed comment above for what restoring `display` too early did.
@@ -1954,11 +1964,6 @@
 		return card?.neighborhood?.focus?.dy_young ? 'child' : 'parent';
 	}
 	const childrenTotal = $derived(roster.children.length);
-	// THE PHONE'S SPOUSE ROW sits in the slot above the card (see `.page-container.phone .spouse-notch`), so the
-	// slot's explicit height has to pay for it — left out, the grid shared the slack out as a gap above the card
-	// and the slot ended early enough for the blade to run over the children. Row height + its bottom margin.
-	let phoneSpouseRowRaw = $state(0);
-	const phoneSpouseRowH = $derived(phoneSpouseRowRaw ? phoneSpouseRowRaw + Math.round(8 * stage.u) : 0);
 	// WHERE THE CHILDREN ROW BREAKS — Sam's rules, Aug 9. See $lib/state/childRows.ts for the two rules
 	// (four per row maximum, never strand a single child) and for every count worked through.
 	// Two to a row on a phone (stage.phone) — the grid below is four half-tracks there instead of eight.
@@ -2126,7 +2131,10 @@
 					</div>
 				{/each}
 			</div>
-			<div class="connector connector-parents landed">
+			<div
+				class="connector connector-parents landed"
+				style:transform={stage.phone ? `translate(${gpConnectorX}px, ${Math.round(14 * stage.u)}px)` : undefined}
+			>
 				<div class="connector-line"></div>
 				<span class="connector-label">{possessive(parentFirstName(revealedParentId))} parents</span>
 				<div class="connector-line"></div>
@@ -2195,7 +2203,7 @@
 	     featured→parent), giving the card↔box content cross-dissolve. -->
 	<div
 		class="featured-slot"
-		style={mounted && cardHeight ? `height: ${cardHeight + bladeHeight + (stage.phone ? phoneSpouseRowH : 0)}px` : ''}
+		style={mounted && cardHeight ? `height: ${cardHeight + bladeHeight}px` : ''}
 		class:phone-slot={stage.phone}
 		class:cc-hidden={ccRoster.hidden}
 	>
@@ -2233,7 +2241,6 @@
 		<div
 			class="spouse-notch"
 			data-spouse-offset={hasCarousel ? spouseOffset : 0}
-			bind:offsetHeight={phoneSpouseRowRaw}
 		>
 			<div
 				class="spouse-mask"
@@ -2351,6 +2358,7 @@
 					settled={featuredLanded && cur.person.id === landedPersonId}
 					pathsToThomas={cur.pathsToThomas}
 					firstName={cur.neighborhood.focus?.cf ?? focalFirstName}
+					chipName={cur.neighborhood.focus?.nk ?? cur.neighborhood.focus?.sn ?? null}
 					orbit={cur.orbit === true}
 					founderSpouse={ascension.founderSpouse}
 				/>
@@ -2729,28 +2737,19 @@
 		right: 0;
 		z-index: 1;
 	}
-	/* THE PHONE'S SPOUSES (stage.phone): out of the corner — the card has no notch there — and into a row of
-	   their own ABOVE the card, right-aligned, the way the notch sat. Under the card they landed on the
-	   cross-connections blade, which hangs off the card's bottom edge. Row 1 is theirs; the card (and any
-	   card in flight) moves to row 2. */
-	.page-container.phone .spouse-notch {
-		position: static;
-		grid-row: 1;
-		justify-self: end;
-		margin-bottom: calc(8px * var(--stage-u, 1));
+	/* THE PHONE'S SLOT FOLLOWS ITS CARD ON THE CARD'S OWN CLOCK (Oct 20, Sam on his iPhone: "when i try to expand
+	   the NB1 header the whole featured chip has a vibration up and down"). A phone card is auto-height, so opening a
+	   narrative block resizes it over the block's 220ms while the slot's own 300ms height glide trailed behind it
+	   (measured ~200ms against ~400ms): two clocks on one object, the jello pattern of design §20.1. On a phone the
+	   slot takes the card's height as it comes. */
+	.page-container.phone .featured-slot {
+		transition: none;
 	}
-	.page-container.phone .featured-slot > .featured-flight {
-		grid-area: 2 / 1;
-	}
-	.featured-slot.phone-slot {
-		align-content: start;
-	}
-	.page-container.phone .spouse-strip {
-		flex-wrap: wrap;
-		justify-content: flex-end;
-		max-width: calc(100vw - 64px * var(--stage-u, 1));
-		row-gap: calc(8px * var(--stage-u, 1));
-	}
+	/* THE PHONE'S SPOUSE IS BACK IN THE NOTCH (Oct 20). From Oct 6 the phone moved its spouses into a row ABOVE
+	   the card (design §53.4/§53.6j); Sam: "I wanted the spouse notch to exist, not the random spouse card
+	   floating above it… you can see the ugly transition details and changes that all should happen in
+	   background". The phone card carves a one-chip notch (FeaturedCard notchChipCount) and the carousel pages
+	   the rest one at a time, so the spouse swap is the desktop's corner swap, hidden by the card. */
 	.page-container.phone .children-slot {
 		grid-template-columns: repeat(4, calc(93px * var(--stage-u, 1)));
 	}
@@ -3072,6 +3071,14 @@
 	   to the top of the screen, which is the same move for the same reason. */
 	.grandparent-tier .parents-slot {
 		min-height: 75px;
+	}
+	/* …and on a phone its connector is short and drawn down to the parent it belongs to (Oct 20; the 14u drop is
+	   the connector's transform in the markup — Sam: "can the show parents vertical line be closer to her?"). */
+	.page-container.phone .grandparent-tier .connector {
+		padding-bottom: 0;
+	}
+	.page-container.phone .grandparent-tier .connector-line:last-child {
+		height: calc(4px * var(--stage-air, 1));
 	}
 	.parents-slot.tier-above {
 		/* 75px — the chip's own height — NOT 0, though the two look identical while the row is at rest:

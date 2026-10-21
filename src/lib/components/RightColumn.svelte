@@ -42,6 +42,9 @@
 	let documents = $derived(person.documentsResolved ?? []);
 	let statues = $derived(person.statuesResolved ?? []);
 	let videos = $derived(person.videosResolved ?? []);
+	// THE PHONE SHOWS NONE OF THIS COLUMN (Oct 20, Sam: "remove all educ/career details", then "remove all
+	// ART/LMK/STATUE/DOC"; one media item was tried in between). The cemetery went first. Every section below is
+	// `!stage.phone`.
 	// The type step, as FeaturedCard rounds it — shrinkToFit takes px, so the --type-k sizes become numbers.
 	const k = $derived(stage.k);
 	const t = (px: number) => Math.round(px * k * 10) / 10;
@@ -392,7 +395,7 @@
 		style="min-height: 0; padding-bottom: {burialCemetery?.name ? burialHeight + 12 : 0}px;{burialMask}"
 	>
 		<!-- 1. EDUCATION (education[], capped at EDU_LIMIT) -->
-		{#if eduEntries.length}
+		{#if eduEntries.length && !stage.phone}
 			<section class="space-y-1">
 				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Education
@@ -416,7 +419,7 @@
 		{/if}
 
 		<!-- 2. CAREER (career[]) — notes hidden, carried in title tooltip -->
-		{#if careerEntries.length}
+		{#if careerEntries.length && !stage.phone}
 			<section class="space-y-1">
 				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Career
@@ -435,7 +438,7 @@
 		{/if}
 
 		<!-- 3. LANDMARKS (landmarksResolved[]) -->
-		{#if landmarks.length}
+		{#if landmarks.length && !stage.phone}
 			<section class="space-y-1">
 				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Landmarks
@@ -447,7 +450,7 @@
 		{/if}
 
 		<!-- 4. ART (artworksResolved[]) -->
-		{#if artworks.length}
+		{#if artworks.length && !stage.phone}
 			<section class="space-y-1">
 				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Art
@@ -459,7 +462,7 @@
 		{/if}
 
 		<!-- 5. DOCUMENTS (documentsResolved[]) — text rows, no thumbnail -->
-		{#if documents.length}
+		{#if documents.length && !stage.phone}
 			<section class="space-y-1">
 				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Documents
@@ -471,7 +474,7 @@
 		{/if}
 
 		<!-- 6. STATUES (statuesResolved[]) -->
-		{#if statues.length}
+		{#if statues.length && !stage.phone}
 			<section class="space-y-1">
 				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Statues
@@ -485,7 +488,7 @@
 		<!-- 7. VIDEO (videosResolved[]) — text rows (no thumbnail: the 34px YouTube thumb is
 		     illegible under the play badge). Same whole-row link as documents. Duration would go on
 		     the subtitle line later — it needs the YouTube Data API, not in the URL (data-chat task). -->
-		{#if videos.length}
+		{#if videos.length && !stage.phone}
 			<section class="space-y-1">
 				<div class="mb-[2.4px] text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none">
 					Video
@@ -500,7 +503,8 @@
 	<!-- BURIAL — pinned to the bottom-right corner, absolute (decoupled from flow), always open.
 	     Suppressed entirely when the cemetery doesn't resolve to a name (no corner, never a raw ID).
 	     bind:clientHeight feeds the scroll group's reserved padding so the stack can't overlap it. -->
-	{#if burialCemetery?.name}
+	<!-- Not on a phone (Oct 20, Sam: "we are removing CEM totally"). -->
+	{#if burialCemetery?.name && !stage.phone}
 		<!-- Pin geometry:
 		     • bottom-[-12px]: the content zone (FeaturedCard's .content) has 24px of p-6 bottom padding,
 		       so bottom-0 anchors ~24px above the card's visual floor; nudge down 12px (~half) to sit

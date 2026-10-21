@@ -86,7 +86,7 @@
 	.top-right-chrome {
 		position: fixed;
 		right: 16px;
-		top: 16px;
+		top: calc(16px + env(safe-area-inset-top, 0px)); /* below an iPhone's status bar (viewport-fit=cover) */
 		z-index: 10;
 		display: flex;
 		align-items: center;
@@ -97,7 +97,7 @@
 	.top-right-chrome.phone {
 		gap: 12px;
 		right: 12px;
-		top: 12px;
+		top: calc(12px + env(safe-area-inset-top, 0px));
 	}
 	.top-right-chrome.phone :global(.nav-label) {
 		display: none;

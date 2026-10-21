@@ -495,6 +495,8 @@
 	.ascend-veil {
 		position: fixed;
 		inset: 0;
+		bottom: auto;
+		height: 100lvh; /* under Safari's floating toolbar, as the Field (Oct 20) */
 		z-index: 0;
 		pointer-events: none;
 		/* MIDDLE STOP IS THE TOKEN, exactly as the founder gradient below already does — search's Major
@@ -540,6 +542,8 @@
 	.sprite-field {
 		position: fixed;
 		inset: 0;
+		bottom: auto;
+		height: 100lvh; /* under Safari's floating toolbar, as the Field (Oct 20) */
 		z-index: 0;
 		pointer-events: none;
 		overflow: hidden;

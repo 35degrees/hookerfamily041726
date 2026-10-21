@@ -4,6 +4,9 @@
 	import { untrack } from 'svelte';
 	import type { NarrativeBlock } from '#lib/types/person.js';
 	import { stage } from '#lib/state/stage.svelte.js';
+	import { shrinkToFit } from '#lib/actions/shrinkToFit.js';
+	/** The phone's narrative-header floor, px (Oct 20): ~89% of the phone header's 13.5px. */
+	const PHONE_NB_HEAD_MIN = 12;
 	import { isWebKit } from '#lib/state/engine.js';
 	import { openModal, type ModalKind } from '#lib/state/modal.svelte.js';
 
@@ -145,15 +148,36 @@
 							{block.category}
 						</div>
 					{/if}
-					<h3 class="font-semibold text-blue-900 transition-colors select-none {headerClass}">
-						{block.header}<span
-							class="ml-2 inline-flex align-baseline text-[calc(18px*var(--type-k,1))] leading-none text-slate-500"
-							aria-hidden="true">{openKey === key ? '−' : '+'}</span
+					{#if stage.phone}
+						<!-- THE PHONE'S HEADER FITS ITS LINE, toggle included, down to a floor (Oct 20, Sam: "NB2 header
+						     wraps, we should have a min clamp fontsize on headers to prevent this"). Only a header still
+						     too long at the floor wraps. -->
+						<h3
+							class="min-w-0 font-semibold text-blue-900 transition-colors select-none {headerClass}"
+							use:shrinkToFit={{
+								max: (fontClass ? 18 : 15) * stage.k,
+								min: PHONE_NB_HEAD_MIN,
+								key: `${block.header}|${stage.k}|${openKey === key}`
+							}}
 						>
-					</h3>
+							<span data-fit class="inline-block whitespace-nowrap"
+								>{block.header}<span
+									class="ml-2 inline-flex align-baseline text-[calc(18px*var(--type-k,1))] leading-none text-slate-500"
+									aria-hidden="true">{openKey === key ? '−' : '+'}</span
+								></span
+							>
+						</h3>
+					{:else}
+						<h3 class="font-semibold text-blue-900 transition-colors select-none {headerClass}">
+							{block.header}<span
+								class="ml-2 inline-flex align-baseline text-[calc(18px*var(--type-k,1))] leading-none text-slate-500"
+								aria-hidden="true">{openKey === key ? '−' : '+'}</span
+							>
+						</h3>
+					{/if}
 				</button>
 				{#if openKey === key}
-					<div class="pt-1 pr-8 pb-1.5" transition:blockSlide={{ duration: 220, axis: 'y' }}>
+					<div class="nb-body pt-1 pr-8 pb-1.5" transition:blockSlide={{ duration: 220, axis: 'y' }}>
 						<!-- whitespace-pre-line so a body that contains real newlines renders as lines — the
 						     verse blocks (Edward Taylor, 091626). Prose bodies are unaffected: pre-line still
 						     collapses runs of spaces and wraps normally, it only honours an explicit \n. -->

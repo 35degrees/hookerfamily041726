@@ -88,6 +88,8 @@
 		 *  fallbacks (bio, name, the compact's `fn`, then the display name's first token) because two of
 		 *  them are routinely absent, and a second derivation here would eventually disagree with it. */
 		firstName?: string | null;
+		/** The focus's chip name (nk → sn), which the PHONE card shows instead of the full display name. */
+		chipName?: string | null;
 		spouses: SpouseEntry[];
 		generationLabels?: string[];
 		burialCemetery?: Cemetery | null;
@@ -138,6 +140,7 @@
 		person,
 		pathsToThomas,
 		firstName = null,
+		chipName = null,
 		spouses,
 		generationLabels = [],
 		burialCemetery = null,
@@ -181,6 +184,17 @@
 	// eager + high-priority; the zoom reuses it verbatim (same URL → no second fetch).
 	let portraitSrc = $derived(cldSize(photoUrl, PHOTO_TRANSFORM));
 	let displayName = $derived(person.bio?.display_name ?? person.name?.display_name ?? '');
+	/**
+	 * THE PHONE CARD'S NAME IS THE CHIP NAME (Oct 20, Sam: "the phone should not have full display name but chip
+	 * name"), and its size has a floor: the size at which "Rev. Thomas Hooker" just fits beside the notch ("size
+	 * down… so that [it] would fit on a single line but clamp it no smaller than that font size").
+	 * Measured with the card name's own face, against the header's real text width, once the font is loaded.
+	 */
+	let cardName = $derived(stage.phone && chipName ? chipName : displayName);
+	// Sam, Oct 20: "Rev. Thomas Hooker needs to fit on one line too", then "Timothy Woodbridge" (was 'Grace A Sims
+	// Pope'). The floor is the size at which the WIDEST of these fits.
+	const PHONE_NAME_REFERENCES = ['Rev. Thomas Hooker', 'Timothy Woodbridge'];
+	let phoneNameFloor = $state<number | null>(null);
 	// Per-person typeface (bio.display_font) — allow-list, never a passthrough. Lands on this card's
 	// NAME and its NB headers; the same key rides the compacts as `df` so the person's CHIP matches.
 	const NAME_FONTS: Record<string, string> = { rokkitt: 'font-rokkitt' };
@@ -358,6 +372,26 @@
 	// Header blurb: notable people use notable_blurb; non-notable people fall back to
 	// bio_blurb (e.g. HD3249 "Documentary artist of the Tuskegee Airmen").
 	let blurb = $derived(person.notable?.notable_blurb ?? person.bio?.bio_blurb ?? null);
+	/**
+	 * THE PHONE'S SHORT TITLE (Oct 20, Sam: "the title can be changed to '6th Gen Hooker'"). The generated descent
+	 * lines ("Sixth Generation Descendant of Thomas Hooker", "Husband of Twelfth Generation Hooker Descendant",
+	 * "Wife of Sixth Generation Hooker") become "6th Gen Hooker" / "Husband of 12th Gen Hooker" / "Wife of 6th Gen
+	 * Hooker". Any line without a generation (Thomas's own, the orbit and founder titles, a hand-written override)
+	 * is shown as written. Display only, phone only: the labels themselves are graph-derived (generation.ts).
+	 */
+	const ORDINALS: Record<string, string> = {
+		First: '1st', Second: '2nd', Third: '3rd', Fourth: '4th', Fifth: '5th', Sixth: '6th', Seventh: '7th',
+		Eighth: '8th', Ninth: '9th', Tenth: '10th', Eleventh: '11th', Twelfth: '12th', Thirteenth: '13th',
+		Fourteenth: '14th', Fifteenth: '15th', Sixteenth: '16th', Seventeenth: '17th', Eighteenth: '18th',
+		Nineteenth: '19th', Twentieth: '20th'
+	};
+	function phoneLabel(label: string): string {
+		if (!stage.phone) return label;
+		return label.replace(
+			/\b([A-Z][a-z]+) Generation (?:Descendant of Thomas Hooker|Hooker Descendant|Hooker)\b/g,
+			(m, w: string) => (ORDINALS[w] ? `${ORDINALS[w]} Gen Hooker` : m)
+		);
+	}
 
 	// True when the header has 4 lines (name + 2 generation labels + blurb).
 	// In that case, use tighter spacing so the extra line doesn't bulldoze.
@@ -582,9 +616,10 @@
 	// cap ALL notch geometry (width, height, clip-path, header padding) at 3. Without this
 	// a 4+-spouse card (Michael HD3384) runs the notch, hence the whole card-top, off its
 	// 925px frame. This is the geometry invariant the carousel build sits on top of.
-	// A PHONE HAS NO NOTCH (stage.phone): its spouses sit in a row under the card (+page.svelte), so the card is
-	// a plain rectangle and its header gets the full width.
-	let notchChipCount = $derived(stage.phone ? 0 : Math.min(chipCount, 3));
+	// A PHONE'S NOTCH HOLDS ONE CHIP (Oct 20, Sam: "I wanted the spouse notch to exist"): one full-size spouse
+	// chip carved into the corner, the rest paged by the carousel (+page.svelte WINDOW). From Oct 6 to Oct 20 the
+	// phone had no notch and its spouses sat in a row above the card.
+	let notchChipCount = $derived(Math.min(chipCount, stage.phone ? 1 : 3));
 	// × stage.cardWK: 15% narrower on a short window (stage.svelte.ts SHORT_CARD_W_K), taken out of the NB column.
 	// EXCEPT with THREE spouse chips in the notch: they take ~520px of a 786px card and the header was left a
 	// column — the name wrapped and "Hooker" fell onto its own line (Rev. Jared Bradley Flagg, 100626). Those
@@ -604,11 +639,40 @@
 	});
 	let useCompact = $derived(notchChipCount >= 3);
 	let chipWidth = $derived(useCompact ? CHIP_W_COMPACT : CHIP_W_NORMAL);
-	let chipZoneHeight = $derived(useCompact ? CHIP_ZONE_HEIGHT_COMPACT : CHIP_ZONE_HEIGHT_NORMAL);
+	// THE PHONE'S NOTCH IS AS DEEP AS ITS CHIP PLUS THE SAME INSET AS ITS SIDE (Oct 20, Sam on his iPhone:
+	// "a bigger gap of space under the spouse chip than to the left of spouse chip"). The desktop zone is a fixed
+	// 90u for a 75u chip; on a phone the short-window ladder can also shorten the chip (stage.chipH), so the gap
+	// under it grew while the side stayed CHIP_INSET. On a phone the depth follows the chip: equal on both sides.
+	let chipZoneHeight = $derived(
+		stage.phone
+			? Math.round(75 * u * stage.chipH) + CHIP_INSET
+			: useCompact
+				? CHIP_ZONE_HEIGHT_COMPACT
+				: CHIP_ZONE_HEIGHT_NORMAL
+	);
 
 	let chipZoneWidth = $derived.by(() => {
 		if (notchChipCount === 0) return 0;
 		return notchChipCount * chipWidth + (notchChipCount - 1) * CHIP_GAP + CHIP_INSET;
+	});
+	$effect(() => {
+		if (!stage.phone || typeof document === 'undefined') {
+			phoneNameFloor = null;
+			return;
+		}
+		// the header's text width: the card less its left padding (24u) and its right padding (the notch + 16u)
+		const avail = cardW - 24 * u - (notchChipCount > 0 ? chipZoneWidth + 16 * u : 24 * u);
+		let live = true;
+		void document.fonts.ready.then(() => {
+			const ctx = document.createElement('canvas').getContext('2d');
+			if (!ctx || !live) return;
+			ctx.font = `500 100px ${getComputedStyle(document.documentElement).getPropertyValue('--font-outfit') || 'sans-serif'}`;
+			const w = Math.max(...PHONE_NAME_REFERENCES.map((r) => ctx.measureText(r).width));
+			if (w > 0) phoneNameFloor = Math.floor(((100 * avail) / w) * 10) / 10;
+		});
+		return () => {
+			live = false;
+		};
 	});
 
 	// The FLAT silhouette: a plain rounded rectangle, no notch (4 rounded outer corners).
@@ -896,6 +960,10 @@
 				style="padding-right: {Math.round(notchChipCount > 0 ? chipZoneWidth + 16 * u : 24 * u)}px;"
 			>
 				<div class="name-block min-w-0" class:tight-stack={headerIsCrowded}>
+					<!-- THE PHONE'S NAME AND TITLE SIT BESIDE THE NOTCH, the blurb runs the full width under it (Oct 20,
+					     Sam: "the blurb should not wrap but should be set to extend full width"). This wrapper is as
+					     tall as the notch, so the blurb always starts below the chip. -->
+					<div class="name-and-title min-w-0" style={stage.phone && notchChipCount > 0 ? `min-height: ${Math.max(0, chipZoneHeight - Math.round(16 * u))}px;` : ''}>
 					<!-- min-w-0 + [data-fit] inline span: shrinkToFit measures the wrapper's real
 					     available width against the span's natural text width. Without min-w-0 up the
 					     chain the wrapper grows to the text and nothing ever shrinks (the HD3384 blowup). -->
@@ -914,12 +982,15 @@
 							: NAME_WEIGHT_CLASS} {nameFontClass || NAME_FACE}"
 						use:shrinkToFit={{
 							max: t(nameFontClass ? 28 : NAME_SIZE) * stage.nameK, // 85% at 745px tall and below
-							min: Math.min(t(nameFontClass ? 20 : NAME_MIN), t(nameFontClass ? 28 : NAME_SIZE) * stage.nameK),
-							key: `${displayName}|${u}|${k}|${stage.nameK}`
+							min:
+								stage.phone && phoneNameFloor
+									? Math.min(phoneNameFloor, t(nameFontClass ? 28 : NAME_SIZE) * stage.nameK)
+									: Math.min(t(nameFontClass ? 20 : NAME_MIN), t(nameFontClass ? 28 : NAME_SIZE) * stage.nameK),
+							key: `${cardName}|${u}|${k}|${stage.nameK}|${phoneNameFloor}`
 						}}
 					>
 						<span data-fit class="inline-block whitespace-nowrap"
-							>{displayName}{#if SHOW_ID}<span
+							>{cardName}{#if SHOW_ID}<span
 									class="ml-2 align-middle font-mono text-[calc(14px*var(--type-k,1))] font-normal text-stone-400"
 									>{person.id}</span
 								>{/if}</span
@@ -933,9 +1004,9 @@
 								     "…Hooker Descendant & Wife of Hooker Descendant" stays one line. -->
 								<div
 									class="descent-line min-w-0 leading-tight font-medium {lineClass(i)}"
-									use:shrinkToFit={{ max: t(14), min: t(10), key: `${label}|${u}|${k}` }}
+									use:shrinkToFit={{ max: t(14), min: t(10), key: `${phoneLabel(label)}|${u}|${k}` }}
 								>
-									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
+									<span data-fit class="inline-block whitespace-nowrap">{phoneLabel(label)}</span>
 								</div>
 							{:else if allLabels.length >= 2}
 								<!-- Dual-descent (Hooker + Talcott) line: ~5% smaller than the ordinary line. Rare;
@@ -944,9 +1015,9 @@
 								     and the floor sits proportionally under the ordinary one. -->
 								<div
 									class="descent-line min-w-0 leading-tight font-medium {lineClass(i)}"
-									use:shrinkToFit={{ max: t(13), min: t(9.5), key: `${label}|${u}|${k}` }}
+									use:shrinkToFit={{ max: t(13), min: t(9.5), key: `${phoneLabel(label)}|${u}|${k}` }}
 								>
-									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
+									<span data-fit class="inline-block whitespace-nowrap">{phoneLabel(label)}</span>
 								</div>
 							{:else}
 								<!-- Ordinary single descent / spouse-only / in-law line.
@@ -969,14 +1040,15 @@
 								     descent branches now behave identically and only their ceilings differ. -->
 								<div
 									class="descent-line min-w-0 leading-tight font-medium {lineClass(i)}"
-									use:shrinkToFit={{ max: t(14), min: t(10), key: `${label}|${u}|${k}` }}
+									use:shrinkToFit={{ max: t(14), min: t(10), key: `${phoneLabel(label)}|${u}|${k}` }}
 								>
-									<span data-fit class="inline-block whitespace-nowrap">{label}</span>
+									<span data-fit class="inline-block whitespace-nowrap">{phoneLabel(label)}</span>
 								</div>
 							{/if}
 						{/each}
 					{/if}
-					{#if blurb}
+					</div>
+					{#if blurb && !stage.phone}
 						<!-- NOT clamped, and deliberately so (Sam, Aug 4): "let's not even clamp bio blurb, the
 						     long ones just need to be cut — even with a three spouse notch all blurbs should
 						     fit the existing space at the existing font size." The schema already agrees: 8
@@ -1076,6 +1148,13 @@
 						changes to this section that Sam has not asked for. `scripts/probe-connect-fit.mjs`
 						reports it every run rather than letting it pass quietly.
 					-->
+					{#if stage.phone && blurb}
+						<!-- THE PHONE'S BLURB SITS ABOVE THE DATES, on their left edge, a little below the photo's top, two
+						     lines at most (Oct 20, Sam: "try blurb again above birth information, align the left edge of
+						     birth and death and blurb… start a little lower than exact top edge of photo"). Tried in turn
+						     at the photo's top, under the photo, and between the dates and the button. -->
+						<div class="phone-blurb font-source leading-tight text-blue-900 opacity-60">{blurb}</div>
+					{/if}
 					<div class="vitals pl-1" class:tight={stage.tightVitals}>
 						{#snippet vital(
 							label: string,
@@ -1211,7 +1290,7 @@
 				</div>
 
 				<div class="narrative min-h-0 min-w-0 overflow-hidden pr-4 pl-4">
-					<div class="max-w-[60ch]">
+					<div class="nb-measure max-w-[60ch]">
 						<NarrativeBlocks
 							blocks={person.narrative_blocks ?? []}
 							font={person.bio?.display_font}
@@ -1224,9 +1303,14 @@
 				     scrolls. Without min-h-0 the cell's default min-height:auto grows to the full stack
 				     height, un-scrolling the column and pushing the burial pin below the fold. No
 				     overflow-hidden here — it would clip the pin's intentional bottom-[-12px] overhang. -->
-				<div class="h-full min-h-0">
-					<RightColumn {person} {institutionsById} {burialCemetery} />
-				</div>
+				<!-- NOT ON A PHONE (Oct 20): everything in it is gone there (education, career, media, cemetery), and the
+				     empty column's h-full stretched the phone card in Safari — Sam: "why all the space below the NB2
+				     header? the end of the card should come immediately after". -->
+				{#if !stage.phone}
+					<div class="h-full min-h-0">
+						<RightColumn {person} {institutionsById} {burialCemetery} />
+					</div>
+				{/if}
 			</div>
 		</div>
 
@@ -1484,27 +1568,68 @@
 	.featured-card.phone .portrait-column {
 		display: grid;
 		grid-template-columns: 36% minmax(0, 1fr); /* 40% left a ~100px white band between dates and button */
-		grid-template-rows: auto 1fr;
+		/* the blurb, the dates, the slack, the button on the photo's foot */
+		grid-template-rows: auto auto 1fr auto;
 		column-gap: 14px;
 		height: auto;
 	}
 	.featured-card.phone .portrait-column > img,
-	.featured-card.phone .portrait-column > div:first-child {
+	.featured-card.phone .portrait-column > div:first-child:not(.phone-blurb) {
 		width: 100%;
-		grid-row: 1 / 3;
+		grid-row: 1 / -1;
+		grid-column: 1;
+	}
+	.featured-card.phone .phone-blurb {
+		grid-column: 2;
+		grid-row: 1;
+		min-width: 0;
+		padding-left: 0.25rem; /* the vitals' pl-1, so the blurb, birth and death share one left edge */
+		margin-top: calc(6px * var(--stage-u, 1));
+		margin-bottom: calc(8px * var(--stage-u, 1));
+		font-size: calc(14px * var(--type-k, 1));
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
 	}
 	.featured-card.phone .vitals {
 		grid-column: 2;
-		grid-row: 1;
+		grid-row: 2;
 		min-width: 0;
 		margin-top: 0;
 		padding-top: 0;
 	}
+	/* …and the button sits on the photo's foot, always (Oct 20, Sam: "the Connect to Thomas button should always
+	   align with the bottom of the photo"). */
 	.featured-card.phone .connect-stack {
 		grid-column: 2;
-		grid-row: 2;
+		grid-row: 4;
 		align-self: end;
+		margin-top: calc(10px * var(--stage-u, 1));
 		margin-bottom: 0;
+	}
+	/* A WRAPPED TITLE BALANCES ITS LINES on a phone (Oct 20, Sam: "the title wraps a lot, can we do wrap pretty so
+	   there aren't just orphaned one words on the second line"). */
+	.featured-card.phone .descent-line [data-fit] {
+		text-wrap: balance;
+	}
+	/* THE NARRATIVE BLOCK RUNS THE CARD'S FULL WIDTH on a phone (Oct 20, Sam: "the NB component can be full width,
+	   right now it has margin"): no side padding, no reading measure. */
+	.featured-card.phone .narrative {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.featured-card.phone .nb-measure {
+		max-width: none;
+	}
+	.featured-card.phone :global(.narrative-blocks .nb-body) {
+		padding-right: 0;
+	}
+	/* THE PHOTO COMES UP (Oct 20): the header now only has to clear the notch, so the content row's top padding
+	   on a phone is a third of the desktop's. */
+	.featured-card.phone .content {
+		padding-top: calc(8px * var(--stage-u, 1));
 	}
 	.connect-stack {
 		/* FULL COLUMN WIDTH, which a flex item in a column gets for free — it ran at 95% for a while,

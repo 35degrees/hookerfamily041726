@@ -456,6 +456,8 @@
 	.intro {
 		position: fixed;
 		inset: 0;
+		bottom: auto;
+		height: 100lvh; /* under iPhone Safari's floating toolbar too (Oct 20; app.html viewport-fit=cover) */
 		z-index: 100;
 		display: grid;
 		place-items: center;

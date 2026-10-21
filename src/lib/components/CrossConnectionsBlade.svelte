@@ -46,6 +46,8 @@
 	// extension of the card's narrative blocks rather than as a footnote to them (Sam). The ceiling is
 	// what keeps the blade subordinate; it was 13.
 	export const CC_FONT_MAX = 11.5;
+	/** The phone's ceiling (Oct 20): higher than the desktop's, so a narrow sheet's lines can fill. */
+	export const CC_FONT_PHONE_MAX = 13;
 
 	// The gap between the label and the slanted edge is the SAME gap the card puts between the portrait
 	// column and the narrative column (.narrative's pl-4). Sam named that gap specifically; it is a
@@ -209,6 +211,10 @@
 	// On a phone the blade is a plain box whose height its text decides (see `.phone` below), so it reports what
 	// it MEASURES rather than the slanted geometry's computed height.
 	let phoneBladeH = $state(0);
+	/** The phone sheet's 10° left edge, as a run over its measured height (tan 10° ≈ 0.176). */
+	const phoneSlant = $derived(Math.round(phoneBladeH * 0.176));
+	/** The same 10° over the text block's height, for the float the lines step along. */
+	const textSlant = $derived(Math.round((textH || 0) * 0.176));
 	let reportedH = $derived(
 		crossConnections.length === 0
 			? 0
@@ -323,7 +329,11 @@
 
 {#if crossConnections.length > 0}
 	<!-- One row spanning the card's width: the label sits left and outside, the blade to its right. -->
-	<div class="cc-blade-row" class:phone={stage.phone} style="--tang: {tang}px;">
+	<div
+		class="cc-blade-row"
+		class:phone={stage.phone}
+		style="--tang: {tang}px;{stage.phone ? ` --slant: ${phoneSlant}px;` : ''}"
+	>
 		<!-- The label moved out of the card with the CCs, and its HOVER TOOLTIP came with it — it is the
 		     only place the site ever explains what a cross connection is, so it survives the redesign
 		     verbatim. Two fixed rows always, per the drawing, so it never reflows with content. -->
@@ -370,8 +380,12 @@
 			bind:clientHeight={phoneBladeH}
 			style:clip-path={clip}
 			use:fitBlade={{
-				minFont: CC_FONT_MIN * bk,
-				maxFont: CC_FONT_MAX * bk,
+				// THE PHONE'S TYPE HAS ROOM TO GROW (Oct 20, Sam: "why so much right margin in CC blade words…
+				// a min/max clamp font size in CC to ensure better wrapping"). The fitter takes the fewest lines
+				// at the floor, then the LARGEST size that keeps that count, so the lines run out to the edge; on
+				// a phone the blade's width is the card's, so that is the only lever it has.
+				minFont: CC_FONT_MIN * bk * (stage.phone ? 0.95 : 1),
+				maxFont: (stage.phone ? CC_FONT_PHONE_MAX : CC_FONT_MAX) * bk,
 				// narrower card, narrower blade — and on a phone, the phone card's own width (stage.phoneCardW)
 				maxWidth: stage.phone
 					? Math.round(stage.phoneCardW - BLADE_RIGHT_INSET * bu)
@@ -388,10 +402,21 @@
 				     right as it descends and never crosses the slanted edge. In two-column mode it lives
 				     in the LEFT column, which is the only one the slant cuts — the right column is a
 				     plain rectangle. -->
-				<div
-					class="cc-gutter"
-					style="shape-outside: {shape}; width: {SHAPE_W}px; height: {SHAPE_RUN}px;"
-				></div>
+				{#if stage.phone}
+					<!-- THE PHONE'S TEXT FOLLOWS ITS SLANT (Oct 20, Sam: "the left edge of text is still vertical,
+					     defeats purpose of slant"): a float as tall as the sheet whose shape is the 10° edge. -->
+					<!-- Sized from the TEXT's height, never the sheet's: a float as tall as the sheet makes the sheet
+					     taller and it grew without end. The text can never be shorter than its own float. -->
+					<div
+						class="cc-gutter-phone"
+						style="height: {textH}px; width: {textSlant + 2}px; shape-outside: polygon(0 0, 0 0, {textSlant}px {textH}px, 0 {textH}px);"
+					></div>
+				{:else}
+					<div
+						class="cc-gutter"
+						style="shape-outside: {shape}; width: {SHAPE_W}px; height: {SHAPE_RUN}px;"
+					></div>
+				{/if}
 				<p class="cc-text" class:solo bind:clientHeight={textH}>
 					<!-- ONE continuous string, not a grid: each connection reads as a sentence and a middot
 					     separates them. Index-keyed because a CC id can legitimately recur as two distinct
@@ -501,15 +526,41 @@
 	.cc-blade-row.phone .cc-gutter {
 		display: none;
 	}
+	/* A 10° SLANT ON THE LEFT EDGE, the desktop blade's gesture at phone size (Oct 20, Sam: "can the left edge of
+	   the CC blade have a slight tilt to sorta resemble desktop… even 10 degree angle"). --slant is the edge's run
+	   over the sheet's measured height (tan 10° ≈ 0.176), so the angle holds however many lines it carries; the
+	   text clears it. The bottom-right corner keeps the card's radius. */
 	.cc-blade-row.phone .cc-blade {
-		clip-path: none !important;
 		width: auto !important;
 		margin: 0 calc(10px * var(--stage-u, 1));
-		border-radius: 0 0 8px 8px;
+		clip-path: shape(
+			from 0 0,
+			line to 100% 0,
+			line to 100% calc(100% - 8px),
+			arc to calc(100% - 8px) 100% of 8px cw,
+			line to var(--slant, 0px) 100%,
+			close
+		) !important;
 	}
 	.cc-blade-row.phone .cc-body {
 		height: auto !important;
-		padding-left: calc(14px * var(--stage-u, 1));
+		padding-left: calc(10px * var(--stage-u, 1));
+		padding-right: calc(10px * var(--stage-u, 1));
+	}
+	.cc-gutter-phone {
+		float: left;
+		shape-margin: calc(4px * var(--stage-u, 1));
+	}
+	/* `pretty` pulls words down to avoid a short last line, which on a phone's narrow sheet left every line short
+	   (the ragged right Sam saw). Plain wrapping fills each line. */
+	.cc-blade-row.phone .cc-text {
+		text-wrap: wrap;
+	}
+	/* ITS OWN SHADOW IN SAFARI (Oct 20, Sam: "the CC blade needs a drop shadow to stand out from background on
+	   bottom"). Chrome draws card and blade as one silhouette through the wrap's filter; Safari's card shadow is a
+	   twin with no blade in it. On the row, not the sheet, so the slant's clip does not cut it away. */
+	:global(html.webkit) .cc-blade-row.phone {
+		filter: drop-shadow(0 3px 6px hsl(var(--shadow-ink) / 0.45));
 	}
 	.cc-blade {
 		/* Sam's --light-greyish-blue. The blade used to be pure #fff, the same sheet as the card above

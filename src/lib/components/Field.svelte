@@ -276,6 +276,10 @@
 	.field {
 		position: fixed;
 		inset: 0;
+		/* to the bottom of Safari's LARGE viewport, under its floating toolbar (Oct 20; see layout.css
+		   html[data-exhibit]). The same as inset: 0 wherever the toolbar does not float. */
+		bottom: auto;
+		height: 100lvh;
 		overflow: hidden;
 		pointer-events: none;
 		z-index: 0;

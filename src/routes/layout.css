@@ -204,7 +204,25 @@ html[data-exhibit] body {
 	height: 100%;
 	overscroll-behavior: none;
 }
+/* THE PAGE'S OWN BACKGROUND IS THE FIELD'S COLOUR (Oct 20, Sam on his iPhone: "the background image clips off at
+   the top and bottom but the child chip can extend over the area with no background image… the background is
+   critical"). Safari paints the page background, not the fixed Field, behind its floating toolbar, in the status-bar
+   strip and wherever the page outruns the window; it was white. Manuscript's mean tone, and the zones' own grounds
+   while one is on screen. */
+html[data-exhibit] {
+	background-color: #f7f1e6; /* ground.svelte.ts Manuscript `ground` */
+}
+html[data-exhibit]:has(.page-container.in-orbit) {
+	background-color: var(--color-ascendmidnight);
+}
+html[data-exhibit]:has(.page-container.in-founder) {
+	background-color: var(--color-foundergreen);
+}
 html[data-exhibit] body {
+	/* the stage starts below an iPhone's status bar and ends above its toolbar (viewport-fit=cover, app.html);
+	   0 everywhere else */
+	padding-top: env(safe-area-inset-top, 0px);
+	padding-bottom: env(safe-area-inset-bottom, 0px);
 	min-height: 100dvh;
 	/* overflow: clip;  <- ARM THIS WHEN probe-fit IS GREEN, AND ONLY WHEN NEITHER TIER IS OPEN (see the
 	   two-tier note above). `clip`, never `hidden`: hidden still creates a scroll container, so focus
@@ -644,6 +662,17 @@ a.person-box.orbit-chip:hover {
 	clip-path: var(--ring-outer);
 	pointer-events: none;
 }
+/* …EXCEPT ON A CARD DEMOTING INTO A CHIP (Oct 20, Sam: "when i do an orbit or hartford founder spouse chip
+   promotion, the background of the midnight blue on the reverse card shows through"; roadmap §41.4's open
+   "demote flash"). The rule is a whole navy sheet that the face covers; a demote fades the face out for the chip
+   face to come in, and the whole sheet showed through as a navy card. The sheet fades with the face, on the
+   chip-face cross-fade's 110ms, so the card shows its own wax underneath; the chip it lands as carries its own
+   rule (.person-box.orbit-chip). `.demoting` is set only on a demote into a seat (+page.svelte onOutgoingStart),
+   never on a CC exit, so a card leaving the stage keeps its stripe as Sam asked. */
+.featured-flight.demoting .featured-card.orbit-card::before {
+	opacity: 0;
+	transition: opacity 110ms ease-out;
+}
 /* The card's own surface, clipped 3px further in — it covers the middle of the navy sheet and leaves
    only the 3px band showing. Same paper as the card so the two cannot drift. */
 /* THE FOUNDER CARD'S NAME, IN THE ROOM'S GREEN (Sam, 100526: "the display name in the same forest
@@ -1019,6 +1048,12 @@ html.webkit {
 html.webkit .featured-slot,
 html.webkit .parents-slot {
 	will-change: opacity;
+}
+/* NOT THE PHONE'S SLOT (Oct 20): on a phone the slot resizes with its auto-height card every frame a narrative
+   block opens, and a layer resized every frame is redrawn and re-placed every frame (Sam: "a vibration up and
+   down"). */
+html.webkit .page-container.phone .featured-slot {
+	will-change: auto;
 }
 /* NOT THE CHILDREN ROW (Oct 17, filmed in Sam's Safari). Hovering a child to reveal the grandchildren made the
    whole children row wobble ±1px through the reveal opening and closing (the row's dimming and height glide

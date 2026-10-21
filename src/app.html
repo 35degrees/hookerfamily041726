@@ -2,7 +2,10 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- viewport-fit=cover (Oct 20): iPhone Safari draws the page under its status bar and floating toolbar instead
+		     of leaving grey strips there (Sam: "why grey at top and bottom, and not full experience bg image?"). The
+		     corner nav and the stage keep clear of the status bar with env(safe-area-inset-top). -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<meta name="text-scale" content="scale" />
 		%sveltekit.head%
 		<!--

@@ -941,6 +941,7 @@
 
 	<div
 		bind:this={ladderEl}
+		class:phone={stage.phone}
 		class="ladder"
 		style="--ladder-fit: {fit.toFixed(4)}"
 		role="dialog"
@@ -1011,7 +1012,11 @@
 			     run out the left. -->
 			{#each rows as p, i (p.id)}
 				{@const paired = viaSpouse && i === rows.length - 1}
-				{@const yearsBelow = paired && !p.bl}
+				<!-- On a phone the paired Hooker rung keeps its photo and drops its blurb; it takes two thirds of the
+				     row and the married-in partner the other third (Oct 20, Sam: "the hooker descendant gets better
+				     treatment, 2/3 width + photo, not blurb though"). -->
+				{@const phonePair = stage.phone && paired}
+				{@const yearsBelow = paired && (!p.bl || phonePair)}
 				<!-- `|global` IS LOAD-BEARING, not a flourish. A `transition:` is LOCAL by default — it plays
 				     only when the element's OWN block changes, not when an ancestor block mounts. These
 				     rungs live inside the `{#if open}`, so on open the whole ladder is created at once and
@@ -1114,7 +1119,9 @@
 							}}
 						>
 							<span data-fit class="inline-block whitespace-nowrap">
-								<span class="rung-n">{p.n}</span>{#if !yearsBelow}<span class="rung-y"
+								<!-- On a phone the PAIRED rung takes the chip name too (Oct 20, Sam: "use chip first name
+								     and last name, not full display"): it is half the screen wide. -->
+								<span class="rung-n">{stage.phone && paired ? (p.nk ?? p.sn ?? p.n) : p.n}</span>{#if !yearsBelow}<span class="rung-y"
 										>{yearsOf(p)}</span
 									>{/if}
 							</span>
@@ -1133,7 +1140,7 @@
 						     pathsToThomasFor for the derivation, which is cheap to restore. -->
 						<!-- The second line is the blurb when there is one, and the YEARS when there is not and the
 						     row is paired — which is what buys the name the whole of the line above. -->
-						{#if p.bl}
+						{#if p.bl && !phonePair}
 							<div
 								class="rung-line2"
 								use:shrinkToFit={{
@@ -1506,6 +1513,21 @@
 	   the spouse." */
 	.rung.paired {
 		width: 76%;
+	}
+	/* ON A PHONE THE PAIR IS TWO EQUAL CHIPS SIDE BY SIDE, inside the ladder (Oct 20, Sam: "the husband gets cut
+	   off… bring the spouse chip in mint green into the same alignment so there are two chips side by side…
+	   like parent chips, same width"). The desktop's overhang ran off a phone's edge. */
+	/* …then the Hooker rung two thirds with its photo and no blurb, the mint partner one third with no photo
+	   (Oct 20, Sam: "the spouse is the 1/3, and the spouse gets no photo"). */
+	.ladder.phone .rung.paired {
+		width: calc(66.667% - 4px);
+	}
+	.ladder.phone .rung-spouse {
+		left: calc(66.667% + 4px);
+		width: calc(33.333% - 4px);
+	}
+	.ladder.phone .rung-spouse .rung-photo {
+		display: none;
 	}
 	/* Positioned against `.ladder-rows` (which is already `position: relative` for the leavers), and
 	   anchored to its BOTTOM — the paired rung is always the last one, so the bottom edge is the same

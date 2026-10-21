@@ -721,6 +721,7 @@ const shiftX = $derived.by(() => {
  * and neither ladder can quietly override the other.
  */
 function nbCapForWidth(w: number): number {
+	if (w <= 600) return 2; // a phone (PHONE_W): two narrative blocks (Sam, Oct 20: "lets add an NB2 and that's it")
 	if (w <= 700) return 2;
 	if (w <= 800) return 3;
 	return 7; // the roomy maximum — NarrativeBlocks' own MAX_DISPLAYED
