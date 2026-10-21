@@ -599,7 +599,15 @@ const layoutW = $derived.by(() => {
  */
 /** Are the lifespan bars drawn at all? See TIMELINE_BARS_MIN_W. The stage owns this because it is a
  *  question about the WINDOW, and §33.1 says nothing else may ask one. */
-const timelineBars = $derived(vw >= TIMELINE_BARS_MIN_W);
+/**
+ * IPAD PORTRAIT (700–900 wide: iPad mini 744, iPad / Air 820, Pro 11 834; Oct 21, Sam). The composition is the
+ * desktop's, unchanged in size; what changes here is small and named where it happens: the rail moves 10% toward
+ * the window's edge and draws its bars (TimelineRail), the spouse chip keeps its marriage year on its own line
+ * (mergeChipUnion), places fit one line, narrative bodies are 5% smaller and as many blocks show as fit
+ * (FeaturedCard / NarrativeBlocks), and the card may grow for its photo column.
+ */
+const ipadPortrait = $derived(vw > PHONE_W && vw >= 700 && vw < TIMELINE_BARS_MIN_W);
+const timelineBars = $derived(vw >= TIMELINE_BARS_MIN_W || ipadPortrait);
 /**
  * A COLUMN-LESS RUNG IS CLAMPED AGAINST THE REAL BOX, NOT THE WINDOW (083026).
  *
@@ -620,7 +628,14 @@ const uFloor = $derived(
 const uBars = $derived(
 	rung.siblingColumn ? uFloor : (layoutW - TIMELINE_BARS_W - 2) / (CARD_W_BASE + STAGE_PAD_BASE)
 );
-const clampedU = $derived(Math.min(rung.uMax ?? rung.u, Math.max(uFloor, uBars)));
+// AN IPAD HELD UPRIGHT IS SIZED LIKE THE MINI, whatever its width (Oct 21, Sam: "I'd rather have the ipad mini
+// sizing be exactly the same on the ipad air portrait"): the tablet-portrait rung's own u, 0.7 — what the 768 mini
+// lands on. The Air's extra width becomes margin instead of a wider card. Type is pinned the same way (IPAD_PORTRAIT_K).
+const IPAD_PORTRAIT_K = 0.87; // …and its k
+const IPAD_PORTRAIT_U = 0.7; // the tablet-portrait rung's u; 820+ windows fall on another rung, so it is stated here
+const clampedU = $derived(
+	ipadPortrait ? IPAD_PORTRAIT_U : Math.min(rung.uMax ?? rung.u, Math.max(uFloor, uBars))
+);
 /** The short-window squeeze as a multiplier on clampedU: 1 at SHORT_H (900px) tall and up, then "take the smaller" of
  *  the width's u and the height's, eased in over SHORT_RAMP. Never above 1 — height can only shrink. */
 // RETIRED AS A SHRINK (Sam, 100626, at 750px tall: "the names and text is too small to read… you may as well
@@ -840,6 +855,7 @@ export const stage = {
 	/** the TYPE step — type multiplier, always >= u; squeezed with the frame on a short window, floored */
 	get k(): number {
 		if (phone) return PHONE_K;
+		if (ipadPortrait) return IPAD_PORTRAIT_K; // the mini's type on every upright iPad (see clampedU)
 		return heightS === 1 ? rung.k : Math.max(Math.min(rung.k, SHORT_K_FLOOR), rung.k * heightS);
 	},
 	/**
@@ -963,6 +979,10 @@ export const stage = {
 	get tightRail(): boolean {
 		return tightRail;
 	},
+	/** 700–900 wide, not a phone — see `ipadPortrait`. */
+	get ipadPortrait(): boolean {
+		return ipadPortrait;
+	},
 	get coarse(): boolean {
 		return coarsePointer;
 	},
@@ -1023,7 +1043,9 @@ export function sk(): number {
 export function mergeChipUnion(): boolean {
 	// Not on a phone: there the spouse chips are full size with bigger type (stage.chipK), and the folded
 	// "1823–1844  m. 1841" wrapped its year onto a third line anyway — its own line reads cleaner.
-	return stage.vw <= 850 && !stage.phone;
+	// …nor on an iPad held upright (Oct 21, Sam: "you definitely have room for three lines on spouse chips for the
+	// m. xxx to be always on a third line, not wrapping").
+	return stage.vw <= 850 && !stage.phone && !stage.ipadPortrait;
 }
 
 /**

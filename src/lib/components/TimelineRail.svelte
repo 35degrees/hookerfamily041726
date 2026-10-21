@@ -54,6 +54,7 @@
 	import type { PersonCompact } from '#lib/types/neighborhood.js';
 	import { ageAtDeath } from '#lib/utils/dates.js';
 	import { motionOff } from '#lib/state/motion.svelte.js';
+	import { getHeroSchedule, getCcScheduledAt } from '#lib/transitions/flight.js';
 	import { fade } from 'svelte/transition';
 	import { cubicOut, cubicInOut } from 'svelte/easing';
 	import { onMount } from 'svelte';
@@ -143,8 +144,14 @@
 		// it by the overlap table below, so the whole group shifts together and the spacing is untouched.
 		let x = LABEL_W + 8.25; // 87.25: 3.75px left of the old 91 (Sam, 100626), the whole group moving together
 		for (let i = 1; i <= lane; i++) x += LANE_W - (OVERLAP[i] ?? OVERLAP[OVERLAP.length - 1]);
-		return x;
+		// ON AN IPAD HELD UPRIGHT the bars sit just clear of the year text, which ends further left on the narrower
+		// iPads (the tight rail, ≤780px) than on the Air (Oct 21, Sam: on the mini "a little bit of room to move
+		// left", on the Air "need to be moved a little right otherwise they overlap year text").
+		return x * (stage.ipadPortrait ? (stage.tightRail ? 0.77 : 0.92) : 1);
 	}
+	/** IPAD PORTRAIT (Oct 21, Sam): headshots, rule ends, years and the bars 10% closer to the window's left edge,
+	 *  which is what makes room for the bars there. Sizes do not change. */
+	const railX = $derived(stage.ipadPortrait ? 0.9 : 1);
 
 	/**
 	 * COLOUR IS THE PERSON'S CLASS; LANE IS THEIR POSITION. Keeping the two apart is what lets a chain
@@ -909,6 +916,24 @@
 			if (m.ascend) return;
 			if (!RAIL_OVER_FLIGHT || !isCc) return;
 			overFlight = true;
+			// ON AN IPAD HELD UPRIGHT THE CARD RESTS OVER THE RAIL'S GROUND, so the arriving card must fly ABOVE the
+			// rail the whole way (Oct 21, Sam: "the entering hero card lands under the brown… then flashes above
+			// it"). The leaving card still passes under it; the lift steps down the moment the new card starts
+			// to enter, which is after the old one is gone (the deck never has two cards on screen).
+			if (stage.ipadPortrait) {
+				const clickedAt = performance.now();
+				const watch = () => {
+					if (!overFlight) return;
+					const at = getCcScheduledAt();
+					if (at < clickedAt) {
+						if (performance.now() - clickedAt < 3000) requestAnimationFrame(watch);
+						return;
+					}
+					const wait = at + getHeroSchedule().delay - performance.now();
+					setTimeout(() => (overFlight = false), Math.max(0, wait));
+				};
+				requestAnimationFrame(watch);
+			}
 			// THE LIFT ENDS WHEN THE FLIGHT ENDS — the flight lock releases at landing, and the subscriber
 			// above drops `overFlight` then. This timer is only a backstop for a flight that never locks
 			// (reduced motion takes that path) or never lands.
@@ -1725,7 +1750,7 @@
 	   they sit beside rather than staying put while it narrows. A derived and not a second constant,
 	   because anchorOrigin reads this too: it picks which corner a portrait grows from off the room it
 	   has to the window edge, and that room just changed. */
-	const anchorInset = $derived(stage.tightRail ? ANCHOR_INSET - 2.5 : ANCHOR_INSET);
+	const anchorInset = $derived((stage.tightRail ? ANCHOR_INSET - 2.5 : ANCHOR_INSET) * railX);
 	/** Hover growth: +200%, then 10% more, then 5% more again (091426) — 3.3 x 1.05. The expanded
 	    DIAMETER is what Sam sizes by eye, so the 5% is applied here and backed out of the hover
 	    border below, keeping the painted ring at the width he set when it was 3.3. */
@@ -2034,6 +2059,7 @@
 	class:founder={ascension.founder}
 	class:over-flight={overFlight}
 	class:tight-rail={stage.tightRail}
+	class:nudge-left={stage.ipadPortrait}
 	style="--rail-w: {RAIL_W}px; --move-ms: {moveMs}ms; --tip-ms: {barFadeMs}ms;
 	       --bar-ease: {barEase}"
 	aria-hidden="true"
@@ -2124,7 +2150,7 @@
 			data-gen-delta={link && !link.spouse ? String(link.gd) : undefined}
 			data-tx={link && b.tx != null ? String(b.tx) : undefined}
 			data-ty={link && b.ty != null ? String(b.ty) : undefined}
-			style="top: {b.top}px; height: {b.height}px; left: {laneX(b.lane)}px; width: {BAR_W}px;
+			style="top: {b.top}px; height: {b.height}px; left: {laneX(b.lane)}px; width: {BAR_W * (stage.ipadPortrait ? 0.9 : 1)}px;
 			       --bar-bg: {b.style.bg}; --bar-bd: {b.style.border}; color: {b.style.ink};
 			       --bar-mask: {b.mask || 'none'}; --bar-z: {2 + b.lane};"
 			in:barArrive={{ from: spawnTop, to: b.top, ms: moveMs }}
@@ -2268,6 +2294,24 @@
 	.rail.tight-rail {
 		--tick-len: 75px;
 		--year-size: 10.4px; /* 13 − 20% */
+	}
+	/* IPAD PORTRAIT: the rules' ends and the years 10% further left (see railX). */
+	.rail.nudge-left {
+		--tick-len: 85.5px;
+	}
+	.rail.tight-rail.nudge-left {
+		--tick-len: 67.5px;
+	}
+	/* THE GOLD GROUND'S FADE ENDS 19% NEARER THE EDGE on an iPad held upright (Oct 21, Sam: right edge 10% left,
+	   then "another 10%"). Its colour and mask stops are fixed px, so the ground itself is drawn narrower rather
+	   than the rail's box: scaled from the window's edge. */
+	.rail.nudge-left::before {
+		transform: scaleX(0.81);
+		transform-origin: left center;
+	}
+	/* …and the bars' names 10% smaller with the bars 10% narrower (Oct 21, Sam). */
+	.rail.nudge-left .bar-label {
+		font-size: 11.7px;
 	}
 	/* THE PARCHMENT GRAIN, over the gold. Sam: "the background color and fade of gold timeline background
 	   looking a little like a pee stain... can you add the texture of the background you added to the

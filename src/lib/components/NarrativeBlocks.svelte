@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import type { SlideParams, TransitionConfig } from 'svelte/transition';
-	import { untrack } from 'svelte';
+	import { untrack, tick } from 'svelte';
 	import type { NarrativeBlock } from '#lib/types/person.js';
 	import { stage } from '#lib/state/stage.svelte.js';
 	import { shrinkToFit } from '#lib/actions/shrinkToFit.js';
 	/** The phone's narrative-header floor, px (Oct 20): ~89% of the phone header's 13.5px. */
 	const PHONE_NB_HEAD_MIN = 12;
+	/** …and on an iPad or a narrower window, where the narrative column is narrower than a phone's card (Oct 21). */
+	const NB_HEAD_MIN = 11;
 	import { isWebKit } from '#lib/state/engine.js';
 	import { openModal, type ModalKind } from '#lib/state/modal.svelte.js';
 
@@ -30,9 +32,17 @@
 		/** Optional per-person typeface key from bio.display_font. Resolved through FONTS below;
 		    anything unrecognised falls through to the card default. */
 		font?: string | null;
-	};
+		/** IPAD PORTRAIT: the height the blocks may fill (first one open). As many blocks show as fit, up to 7,
+		    instead of a fixed count (Oct 21, Sam: "intelligently count how many NBs are valid in the given space"). */
+		fitHeight?: number | null;
+		/** The card's narrowed-header factor (FeaturedCard's --nb-head-k), so a fitted header starts at its real size. */
+		headK?: number;
+};
 
-	let { blocks, font = null }: Props = $props();
+	let { blocks, font = null, headK = 1, fitHeight = null }: Props = $props();
+	/** HEADERS FIT THEIR LINE at iPad sizes and narrower windows as on a phone (Oct 21, Sam: "NB headers need a
+	 *  lower min clamped font size so it doesn't wrap a long one"): toggle included, down to a floor. */
+	const fitHeaders = $derived(stage.phone || stage.vw <= 1100);
 
 	// Allow-list, not a passthrough: canonical.json supplies a KEY, never a class or CSS.
 	// The token itself lives in layout.css @theme (--font-rokkitt).
@@ -54,7 +64,55 @@
 	// takes fewer, because the hybrid means the type does NOT shrink as fast as the card does and the
 	// block list would otherwise run past the card's bottom edge. See stage.svelte.ts's `nbCap`, and the
 	// note there on why this is the cost of stepping type separately from the frame.
-	const MAX_DISPLAYED = $derived(stage.nbCap ?? 7);
+	const MAX_DISPLAYED = $derived(fitHeight != null ? 7 : (stage.nbCap ?? 7));
+	/** How many of the rendered blocks fit fitHeight — measured once per person and budget (see the effect below). */
+	let fitCount = $state(Infinity);
+	let listEl = $state<HTMLElement | null>(null);
+	$effect(() => {
+		const budget = fitHeight;
+		void blocks;
+		if (budget == null || !listEl) {
+			fitCount = Infinity;
+			return;
+		}
+		fitCount = Infinity; // show them all to measure
+		const el = listEl;
+		void tick().then(() => {
+			// THE WORST CASE MUST FIT, because any block can be opened: n blocks fit when their headers, the gaps
+			// and the LONGEST of their bodies fit the budget — so opening any of them never changes the card's
+			// height. Headers are measured; the open first body is measured and gives the line length, and every
+			// other body is estimated from its character count at that line length (Sam, Oct 21: "count cumulative
+			// characters of NB bodies… given the fixed height of the card").
+			const items = [...el.children] as HTMLElement[];
+			if (!items.length) return;
+			const gap = items.length > 1 ? items[1].offsetTop - items[0].offsetTop - items[0].offsetHeight : 0;
+			const heads = items.map((it) => (it.querySelector('.header-button') as HTMLElement | null)?.offsetHeight ?? it.offsetHeight);
+			const openBody = items[0].querySelector('.nb-body') as HTMLElement | null;
+			const para = openBody?.querySelector('p') as HTMLElement | null;
+			const lineH = para ? parseFloat(getComputedStyle(para).lineHeight) || 20 : 20;
+			const bodyPad = openBody && para ? openBody.offsetHeight - para.offsetHeight : 0;
+			const firstChars = sortedBlocks[0]?.block.body?.length ?? 0;
+			const firstLines = para ? Math.max(1, Math.round(para.offsetHeight / lineH)) : 1;
+			const perLine = Math.max(20, firstChars / firstLines);
+			const bodyH = sortedBlocks.map(({ block }, i) =>
+				i === 0 && openBody
+					? openBody.offsetHeight
+					: Math.ceil((block.body?.length ?? 0) / perLine) * lineH + bodyPad + lineH * 0.5
+			);
+			let n = 0;
+			let headsSum = 0;
+			let maxBody = 0;
+			for (let i = 0; i < items.length; i++) {
+				const nextHeads = headsSum + heads[i] + (i > 0 ? gap : 0);
+				const nextMax = Math.max(maxBody, bodyH[i] ?? 0);
+				if (i > 0 && nextHeads + nextMax > budget) break;
+				headsSum = nextHeads;
+				maxBody = nextMax;
+				n++;
+			}
+			fitCount = Math.max(1, n);
+		});
+	});
 
 	let sortedBlocks = $derived(
 		[...blocks]
@@ -133,9 +191,9 @@
 </script>
 
 {#if sortedBlocks.length > 0}
-	<div class="narrative-blocks space-y-2">
-		{#each sortedBlocks as { block, key } (key)}
-			<div class="block">
+	<div class="narrative-blocks space-y-2" bind:this={listEl}>
+		{#each sortedBlocks as { block, key }, bi (key)}
+			<div class="block" class:hidden={bi >= fitCount}>
 				<button
 					type="button"
 					onclick={() => toggle(key)}
@@ -148,15 +206,15 @@
 							{block.category}
 						</div>
 					{/if}
-					{#if stage.phone}
+					{#if fitHeaders}
 						<!-- THE PHONE'S HEADER FITS ITS LINE, toggle included, down to a floor (Oct 20, Sam: "NB2 header
 						     wraps, we should have a min clamp fontsize on headers to prevent this"). Only a header still
 						     too long at the floor wraps. -->
 						<h3
 							class="min-w-0 font-semibold text-blue-900 transition-colors select-none {headerClass}"
 							use:shrinkToFit={{
-								max: (fontClass ? 18 : 15) * stage.k,
-								min: PHONE_NB_HEAD_MIN,
+								max: (fontClass ? 18 : 15) * stage.k * headK,
+								min: stage.phone ? PHONE_NB_HEAD_MIN : NB_HEAD_MIN,
 								key: `${block.header}|${stage.k}|${openKey === key}`
 							}}
 						>
@@ -177,7 +235,7 @@
 					{/if}
 				</button>
 				{#if openKey === key}
-					<div class="nb-body pt-1 pr-8 pb-1.5" transition:blockSlide={{ duration: 220, axis: 'y' }}>
+					<div class="nb-body pt-1 pb-1.5 {fitHeight != null ? 'pr-2' : 'pr-8'}" transition:blockSlide={{ duration: 220, axis: 'y' }}>
 						<!-- whitespace-pre-line so a body that contains real newlines renders as lines — the
 						     verse blocks (Edward Taylor, 091626). Prose bodies are unaffected: pre-line still
 						     collapses runs of spaces and wraps normally, it only honours an explicit \n. -->

@@ -191,6 +191,9 @@
 	 * Measured with the card name's own face, against the header's real text width, once the font is loaded.
 	 */
 	let cardName = $derived(stage.phone && chipName ? chipName : displayName);
+	/** IPAD PORTRAIT (700–900 wide; Oct 21): places fit one line, bodies 5% smaller, as many blocks as fit. */
+	const ipadPortrait = $derived(stage.ipadPortrait);
+
 	// Sam, Oct 20: "Rev. Thomas Hooker needs to fit on one line too", then "Timothy Woodbridge" (was 'Grace A Sims
 	// Pope'). The floor is the size at which the WIDEST of these fits.
 	const PHONE_NAME_REFERENCES = ['Rev. Thomas Hooker', 'Timothy Woodbridge'];
@@ -583,6 +586,9 @@
 	const HEADER_PAD = 28;
 	const HEADER_TEXT = HEADER_H_BASE - HEADER_PAD;
 	const HEADER_H = $derived(Math.round(HEADER_PAD * u + HEADER_TEXT * k));
+	/** IPAD PORTRAIT: the narrative's height budget — the card's fixed content height (NarrativeBlocks fitHeight). The
+	 *  card never changes height (Sam, Oct 21: "a hard NO to having a dynamic bottom border"). */
+	const nbFitHeight = $derived(ipadPortrait ? cardTopH - HEADER_H - Math.round(48 * u) : null);
 
 	// === Carved card geometry ===
 	// THESE FEED A clip-path, so they are ROUNDED TO INTEGERS after scaling rather than left as floats.
@@ -1073,9 +1079,10 @@
 			<div
 				style:grid-template-columns={stage.phone ? 'minmax(0, 1fr)' : contentCols}
 				style:--nb-head-k={contentCols ? 0.9 : null}
-				style:--nb-body-k={contentCols ? 0.95 : null}
-				style:--nb-lead-k={contentCols ? 0.92 : null}
-				style:--vital-k={contentCols ? 0.9 : null}
+				style:--nb-body-k={contentCols || ipadPortrait ? 0.95 : null}
+				style:--nb-lead-k={contentCols ? 0.92 : ipadPortrait ? 0.95 : null}
+				style:--vital-k={contentCols || ipadPortrait ? 0.9 : null}
+				style:--burial-k={ipadPortrait ? 0.9 : null}
 				class="content grid grid-cols-[23%_1fr_21%] overflow-hidden py-(--card-pad-y) pr-[calc(12px*var(--stage-u,1))] pl-[calc(24px*var(--stage-u,1))]"
 			>
 				<!-- space-y: photo->vitals is the original 16 less 5% then a further 20% (15.2 -> 12.16);
@@ -1165,30 +1172,52 @@
 						)}
 							<div>
 								<div
-									class="text-[calc(10px*var(--type-k,1))] font-semibold tracking-wider text-stone-500 uppercase"
+									class="text-[calc(10px*var(--type-k,1)*var(--burial-k,1))] font-semibold tracking-wider text-stone-500 uppercase"
 								>
 									{label}
 								</div>
 								<!-- The age rides the date line at a lighter weight so the DATE stays primary and the
 								     derived figure reads as an annotation on it, not a second fact. -->
-								<div
-									class="font-opensans text-[calc(12.45px*var(--type-k,1)*var(--vital-k,1))] leading-snug font-normal text-inkblue"
-								>
-									{date}{#if age}<span class="ml-1.5 font-normal opacity-70"
+								{#snippet dateLine()}{date}{#if age}<span class="ml-1.5 font-normal opacity-70"
 											>({age.approx ? '~' : ''}Age {age.years})</span
-										>{/if}
-								</div>
-								{#if loc || mapUrl}
+										>{/if}{/snippet}
+								{#if ipadPortrait}
+									<!-- IPAD PORTRAIT: the date line never wraps (Oct 21, Sam: "this date line can't wrap") — it fits
+									     one line down to a floor, like the place under it. -->
+									<div
+										class="min-w-0 font-opensans leading-snug font-normal text-inkblue"
+										use:shrinkToFit={{ max: t(12.45) * 0.9, min: 9.5, key: `${date}|${age?.years}|${u}|${k}` }}
+									>
+										<span data-fit class="inline-block whitespace-nowrap">{@render dateLine()}</span>
+									</div>
+								{:else}
+									<div
+										class="font-opensans text-[calc(12.45px*var(--type-k,1)*var(--vital-k,1))] leading-snug font-normal text-inkblue"
+									>
+										{@render dateLine()}
+									</div>
+								{/if}
+								{#snippet place()}{loc ?? ''}{#if mapUrl}<a
+										href={mapUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="ml-1.5 align-baseline font-opensans text-[calc(9px*var(--type-k,1))] font-normal tracking-wider text-blue-700 uppercase hover:underline"
+										>Map</a
+									>{/if}{/snippet}
+								{#if (loc || mapUrl) && ipadPortrait}
+									<!-- IPAD PORTRAIT: the place fits one line, down to a floor (Oct 21, Sam: "min clamped font size
+									     for birth and death locations, it's the double NY causing issues"). -->
+									<div
+										class="mt-[0.5px] min-w-0 font-opensans leading-snug font-light text-slate-600"
+										use:shrinkToFit={{ max: t(12.08) * 0.9, min: 9, key: `${loc}|${u}|${k}` }}
+									>
+										<span data-fit class="inline-block whitespace-nowrap">{@render place()}</span>
+									</div>
+								{:else if loc || mapUrl}
 									<div
 										class="mt-[0.5px] font-opensans text-[calc(12.08px*var(--type-k,1)*var(--vital-k,1))] leading-snug font-light text-slate-600"
 									>
-										{loc ?? ''}{#if mapUrl}<a
-												href={mapUrl}
-												target="_blank"
-												rel="noopener noreferrer"
-												class="ml-1.5 align-baseline font-opensans text-[calc(9px*var(--type-k,1))] font-normal tracking-wider text-blue-700 uppercase hover:underline"
-												>Map</a
-											>{/if}
+										{@render place()}
 									</div>
 								{/if}
 							</div>
@@ -1294,6 +1323,8 @@
 						<NarrativeBlocks
 							blocks={person.narrative_blocks ?? []}
 							font={person.bio?.display_font}
+							headK={contentCols ? 0.9 : 1}
+							fitHeight={nbFitHeight}
 						/>
 					</div>
 				</div>

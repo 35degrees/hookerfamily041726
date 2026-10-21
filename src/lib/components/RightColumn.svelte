@@ -524,12 +524,12 @@
 			<!-- The rows under this pin are faded out by a MASK on the scroll group (burialMask), not by a
 			     slab of card colour painted here — see burialMask for why the slab had to go. -->
 			<div
-				class="relative z-10 text-[calc(10px*var(--type-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none"
+				class="relative z-10 text-[calc(10px*var(--type-k,1)*var(--burial-k,1))] font-bold tracking-wider text-blue-900/50 uppercase select-none"
 			>
 				Burial
 			</div>
 			<div
-				class="relative z-10 mt-0.5 line-clamp-2 font-opensans text-[calc(10.9px*var(--type-k,1))] leading-snug font-medium text-slate-800"
+				class="relative z-10 mt-0.5 line-clamp-2 font-opensans text-[calc(10.9px*var(--type-k,1)*var(--burial-k,1))] leading-snug font-medium text-slate-800"
 				title={burialCemetery.name}
 			>
 				{burialCemetery.name}
@@ -538,12 +538,12 @@
 			     no location text and no resolvable map destination (name-only degrade). -->
 			<!-- Not on a short window: the place goes, the cemetery stays — as birth and death (Sam, 100626). -->
 			{#if (!stage.shortH || stage.phone) && (burialLocation || burialMapUrl)}
-				<div class="relative z-10 mt-px font-opensans text-[calc(11px*var(--type-k,1))] leading-snug font-light text-slate-500">
+				<div class="relative z-10 mt-px font-opensans text-[calc(11px*var(--type-k,1)*var(--burial-k,1))] leading-snug font-light text-slate-500">
 					{#if burialLocation}<span>{burialLocation}</span>{/if}{#if burialMapUrl}<a
 							href={burialMapUrl}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="pointer-events-auto inline align-baseline font-opensans text-[calc(9px*var(--type-k,1))] font-normal tracking-wider text-blue-700 uppercase hover:text-blue-900 hover:underline {burialLocation
+							class="pointer-events-auto inline align-baseline font-opensans text-[calc(9px*var(--type-k,1)*var(--burial-k,1))] font-normal tracking-wider text-blue-700 uppercase hover:text-blue-900 hover:underline {burialLocation
 								? 'ml-1.5'
 								: ''}"
 							>Map</a

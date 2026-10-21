@@ -642,6 +642,12 @@ let heroSchedule: HeroSchedule = { duration: 0, delay: 0, kind: 'relative', axis
 export function getHeroSchedule(): HeroSchedule {
 	return heroSchedule;
 }
+/** When a CC's arriving card was scheduled (performance.now()), so its entry time is `at + delay`. The timeline
+ *  rail reads it on an iPad held upright to step down under the arriving card (TimelineRail, Oct 21). */
+let ccScheduledAt = 0;
+export function getCcScheduledAt(): number {
+	return ccScheduledAt;
+}
 /** The WebKit engine's flights (transitions/webkit/) publish their clock here, as growFrom does, so the blade
  *  draws on it (unsheathBlade) and fitBlade knows whether a card is mounting mid-flight. */
 export function publishHeroSchedule(s: HeroSchedule): void {
@@ -1801,6 +1807,7 @@ export function growFrom(node: Element) {
 		kind: flightKind,
 		axis: Math.abs(ccDir.y) > Math.abs(ccDir.x) ? 'vertical' : 'lateral'
 	};
+	ccScheduledAt = performance.now();
 	// FIRST-FRAME FLASH FIX: Svelte applies a css-transition's keyframes one frame LATE, so frame 0 paints
 	// the card at its DESTINATION (natural layout) before the animation jumps it to the origin — a visible
 	// flash with a photo. Set the t=0 (origin) transform INLINE now, so frame 0 is already at the clicked
