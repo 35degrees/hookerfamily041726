@@ -165,7 +165,10 @@ export const auth = betterAuth({
 			'localhost:5174',
 			'localhost:5175',
 			'localhost:4173', // vite preview
-			'*.vercel.app'
+			'*.vercel.app',
+			// THE PRODUCTION DOMAIN (Oct 21, 2026). The canonical host: the OAuth redirect URIs are registered
+			// for it alone, and www is 308'd to it at Vercel's edge (vercel.json), never in app code.
+			'hookerverse.com'
 		],
 		protocol: dev ? 'http' : 'https'
 	},

@@ -408,8 +408,27 @@ const coarsePointer = $derived(
 	typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches === true
 );
 
-const vw = $derived(innerWidth.current ?? SSR_W);
-const vh = $derived(innerHeight.current ?? SSR_H);
+/**
+ * ── A PHONE ON ITS SIDE IS STILL A PHONE (Oct 20, Sam: "Landscape uses the phone layout… go for it") ──────────
+ * An iPhone in landscape is ~852×393: wider than PHONE_W, so it used to get the desktop composition crammed into
+ * 393px of height (rail, footer, a three-column card cut off at the bottom). A TOUCH screen under
+ * PHONE_LANDSCAPE_H tall is now a phone too, and the stage is laid out for a portrait phone's frame — the widest
+ * portrait phone's width and a portrait phone's height — so the column, the type, the caps and the flights are
+ * exactly the portrait ones, centred on the wider screen, scrolling as in portrait. A short DESKTOP window
+ * (fine pointer) keeps the desktop ladder.
+ */
+const PHONE_W = 600;
+const PHONE_LANDSCAPE_H = 500;
+const PHONE_FRAME_W = 430; // the widest portrait phone (iPhone Pro Max / Plus)
+const PHONE_FRAME_H = 852;
+const rawVw = $derived(innerWidth.current ?? SSR_W);
+const rawVh = $derived(innerHeight.current ?? SSR_H);
+const phoneLandscape = $derived(
+	coarsePointer && rawVw > PHONE_W && rawVh <= PHONE_LANDSCAPE_H && rawVw <= 1000
+);
+/** The window the LAYOUT sees: the real one, or on a phone in landscape a portrait phone's frame. */
+const vw = $derived(phoneLandscape ? PHONE_FRAME_W : rawVw);
+const vh = $derived(phoneLandscape ? PHONE_FRAME_H : rawVh);
 const rung = $derived(rungFor(vw, vh));
 
 /**
@@ -552,7 +571,7 @@ const airK = $derived(mid ? Math.min(MID_AIR, 1 - AIR_SQUEEZE * hT) : 1);
  */
 const layoutW = $derived.by(() => {
 	void vw; // `vw` is the dependency that makes this re-measure on resize
-	if (typeof document === 'undefined') return vw;
+	if (typeof document === 'undefined' || phoneLandscape) return vw;
 	return document.body?.clientWidth || document.documentElement.clientWidth || vw;
 });
 
@@ -621,11 +640,11 @@ const heightS = $derived(1);
  * a 16u gap) plus the stage's own 32u padding either side: 520u. That keeps chip names readable (~10px at a
  * 393px iPhone) where width alone would have given 7. Reading type gets its own floor (PHONE_K).
  */
-const PHONE_W = 600;
+
 const CHIP_K_FLOOR = 0.82;
 const PHONE_CHIP_K = 0.95;
 const PHONE_K = 0.9;
-const phone = $derived(vw <= PHONE_W);
+const phone = $derived(vw <= PHONE_W); // includes a phone in landscape: its layout vw is PHONE_FRAME_W
 const phoneU = $derived(Math.min(0.85, Math.max(0.66, layoutW / 520)));
 void fitU;
 

@@ -42,6 +42,7 @@
 	 * Set to 0 to have them arrive exactly together.
 	 */
 	import { ascension } from '#lib/state/ascension.svelte.js';
+	import { stage } from '#lib/state/stage.svelte.js';
 	import { ASCEND_MS } from '#lib/transitions/flight.js';
 	import { motionOff } from '#lib/state/motion.svelte.js';
 	import { fade } from 'svelte/transition';
@@ -98,7 +99,10 @@
 		if (!c) return;
 		const b = c.getBoundingClientRect();
 		if (b.width < 40) return; // still flying — a shrunken clone is not the parked card
-		anchor = { x: b.right + GAP, y: b.top - GAP };
+		// ON A PHONE THE X SITS OVER THE CARD'S RIGHT EDGE, not past it (Oct 21, Sam: "the X should be aligned
+		// with the right edge of main content… it currently gets cut off"): the card fills the screen, so 32px
+		// beyond its corner is off the glass. The cross's strokes span 12 of its 24px, so its centre goes 6px in.
+		anchor = stage.phone ? { x: b.right - 6, y: b.top - 22 } : { x: b.right + GAP, y: b.top - GAP };
 	}
 	$effect(() => {
 		if (!active) {
