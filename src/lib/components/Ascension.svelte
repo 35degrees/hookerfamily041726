@@ -102,7 +102,10 @@
 		// ON A PHONE THE X SITS OVER THE CARD'S RIGHT EDGE, not past it (Oct 21, Sam: "the X should be aligned
 		// with the right edge of main content… it currently gets cut off"): the card fills the screen, so 32px
 		// beyond its corner is off the glass. The cross's strokes span 12 of its 24px, so its centre goes 6px in.
-		anchor = stage.phone ? { x: b.right - 6, y: b.top - 22 } : { x: b.right + GAP, y: b.top - GAP };
+		// …and on the iPad mini and Air, upright or on their side (Oct 21, Sam: "on ipad mini and air only, not desktop…
+		// aligned with and over right edge of card").
+		const overEdge = stage.phone || stage.ipadPortrait || stage.tabletLandscape;
+		anchor = overEdge ? { x: b.right - 6, y: b.top - 22 } : { x: b.right + GAP, y: b.top - GAP };
 	}
 	$effect(() => {
 		if (!active) {
