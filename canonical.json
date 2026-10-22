@@ -712266,7 +712266,7 @@
    "death": {
     "year": 2018,
     "month": 1,
-    "day": 23,
+    "day": 18,
     "city": "Pacific Grove",
     "county": "Monterey",
     "state": "California",
@@ -712314,52 +712314,71 @@
    "narrative_blocks": [
     {
      "number": 1,
-     "category": "character",
-     "header": "Flew anti-war banner over Pebble Beach golf tournament",
-     "body": "During the Iraq War years, Tony hired a small plane to circle the AT&T Pebble Beach Pro-Am tournament trailing a banner that read 'Play Golf, Not War'. He had moved west from a Manhattan advertising career to live in Pacific Grove after two years at the Esalen Institute."
+     "category": "education",
+     "header": "Student body president at St. Mark's and Stanford",
+     "body": "Tony was student body president at St. Mark's School in Southborough, and held the same office again at Stanford, where he graduated with the class of 1979."
     },
     {
      "number": 2,
-     "category": "character",
-     "header": "Left Manhattan advertising for two Esalen years",
-     "body": "Tony left a Manhattan advertising career in mid-life for two years at the Esalen Institute in Big Sur — the alternative-spirituality retreat that had been the institutional heart of the human potential movement. He emerged committed to Pacific Grove on the Monterey Peninsula, where his daily walks on Asilomar Beach anchored the rest of his life through advertising work, environmental advocacy, and Democratic campaigns."
+     "category": "politics",
+     "header": "“Play Golf, Not War” over Pebble Beach",
+     "body": "Tony sat on the LandWatch board in Monterey County and worked in Democratic presidential campaigns. During the Iraq War he hired a small plane to circle the AT&T Pebble Beach Pro-Am trailing a banner that read “Play Golf, Not War.”"
     },
     {
      "number": 3,
+     "category": "career",
+     "header": "Advertising in New York, then Esalen",
+     "body": "After some years in advertising in New York, Tony came home to San Francisco, then went down the coast to live at the Esalen Institute in Big Sur for almost three years. Psychotherapy and spirituality held him from then on."
+    },
+    {
+     "number": 4,
      "category": "character",
-     "header": "Daily Asilomar Beach walks sustained him",
-     "body": "Through long depressive periods Tony's morning walks on Asilomar Beach in Pacific Grove sustained him daily — the ocean, the dunes, and the small Monterey Peninsula community he had chosen. Friends from Breakthrough Men's Community and the Center for Spiritual Awakening supported him through his last years; he died in Pacific Grove on 23 January 2018."
+     "header": "Morning walks on Asilomar Beach",
+     "body": "In Pacific Grove, Tony's morning walks on Asilomar Beach carried him through long spells of depression, with friends from the Breakthrough Men's Community and the Center for Spiritual Awakening beside him. He died there in January 2018."
     }
    ],
-   "cross_connections": [],
-   "education": [
+   "cross_connections": [
     {
-     "school_name": "Town School for Boys",
-     "type": "primary",
-     "notes": "San Francisco."
-    },
+     "related_id": "I03786",
+     "type": "connection",
+     "link_text": "Richard Lyman",
+     "display_label": "was president of Stanford while he led its student body"
+    }
+   ],
+   "education": [
     {
      "school_name": "Cathedral School",
      "type": "primary",
-     "notes": "San Francisco."
+     "notes": "San Francisco.",
+     "institution_id": null,
+     "dates": null
     },
     {
      "school_name": "St. Mark's School",
-     "dates": "graduated 1975",
      "type": "secondary",
-     "notes": "Southborough, Massachusetts."
+     "notes": "Student body president",
+     "institution_id": "INST132",
+     "dates": "graduated 1975"
     },
     {
      "school_name": "Stanford University",
      "dates": "1975-1979",
      "type": "undergraduate",
-     "notes": "Class of 1979; Senior Class President."
+     "notes": "Class of 1979; student body president",
+     "institution_id": "INST194"
+    },
+    {
+     "school_name": "Town School for Boys",
+     "dates": null,
+     "type": "primary",
+     "notes": "San Francisco.",
+     "institution_id": null
     }
    ],
    "career": [
     {
      "role": "Advertising creative",
-     "organization": "private",
+     "organization": "New York City",
      "location": "New York and San Francisco",
      "start_year": 1979,
      "notes": "Advertising career; later left to spend two years at the Esalen Institute in Big Sur, then settled in Pacific Grove, California."
@@ -1899069,6 +1899088,12 @@
      "link_text": "Ethan Allen Hitchcock Shepley Sr.",
      "display_label": "was his chancellor at Washington University from 1954 to 1958",
      "lateral": true
+    },
+    {
+     "related_id": "TD0108",
+     "type": "connection",
+     "link_text": "Tony Peet",
+     "display_label": "was Stanford's student body president under him, class of 1979"
     }
    ],
    "bio": {
