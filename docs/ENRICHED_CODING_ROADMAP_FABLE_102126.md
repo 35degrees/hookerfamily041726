@@ -7345,3 +7345,109 @@ bottom gives a 356px page, the most squeezed case).
   re-shaped) costs Safari ~3 frames while the last pixels of the settle are still moving. Candidate: make the heavy flips
   after all motion has stopped. Not started; Sam called the result "much better" without it.
 - Zone-card drop shadows (§61.7).
+
+## 63. OCTOBER 20–21, 2026 — THE SIZES: PHONE, PHONE LANDSCAPE, IPAD UPRIGHT, TABLET LANDSCAPE (session record; written Oct 21, ~20:55 PDT)
+
+Everything here is live on hookerverse.com (commits 9c289093 → ab6af5dc). Sam's verdicts along the way: phone "all is
+looking very good"; iPad "it's coming together"; tablet landscape "works much better". Design §53 (Oct 6) is the
+earlier phone record; this section supersedes it where they differ. **Read §63.6 (the mistakes) before touching any
+size.**
+
+### 63.1 THE MAP OF SIZES — which rule applies where (all in `src/lib/state/stage.svelte.ts`)
+
+| Window | Flag | What it gets |
+|---|---|---|
+| ≤600 wide | `stage.phone` | the phone composition (§63.2) |
+| touch, wider than 600, ≤500 tall, ≤1000 wide (a phone on its side) | `phoneLandscape` → `phone` | laid out in a PORTRAIT phone's frame (`vw` 430, `vh` 852), centred, scrolling |
+| 700–900 wide, not phone | `stage.ipadPortrait` | the iPad mini's sizing on EVERY upright iPad (u 0.7, k 0.87 pinned) + small named changes (§63.3) |
+| touch, landscape, 1000–1400 wide, 501–899 tall (mini 1024×768, Air 1180×820, Pro 11) | `stage.tabletLandscape` | the DEFAULT desktop card: `vh` read as ≥1080 so the short-window ladder never fires (§63.4) |
+| everything else | — | unchanged desktop, including the 13" iPad Pro (1366×1024) |
+
+Two rules that make this hold: (1) `vw`/`vh` in the stage are the LAYOUT's reading of the window, and some branches
+override them; anything that must fill the REAL window (the timeline rail) reads `stage.windowH` (raw height).
+(2) `coarsePointer` is read once at load — in Chrome DevTools, switching device needs a reload.
+
+### 63.2 THE PHONE (Oct 20)
+
+- Spouse back in a REAL notch (FeaturedCard `notchChipCount` = 1 on a phone; +page carousel `WINDOW` 1, full-size
+  chip). The Oct 6 "spouse row above the card" showed the swap's back-stage motion ("ugly transition details").
+- Card: chip name (`nk → sn`, passed as `chipName`) with a size FLOOR measured on canvas so "Rev. Thomas Hooker" and
+  "Timothy Woodbridge" fit one line; short titles ("6th Gen Hooker", `phoneLabel`), balanced wraps; blurb above the
+  dates on their left edge, two lines; Connect to Thomas on the photo's foot; two NBs full width, headers fitted to one
+  line (`shrinkToFit`, floor 12px); no education/career/media/cemetery (RightColumn not rendered at all — its empty
+  `h-full` stretched the Safari card).
+- CC blade: 10° slanted left edge with a `shape-outside` float sized from the TEXT height (sizing it from the blade's
+  own height grew the blade without end), its own drop-shadow in Safari, type 0.95–13px.
+- Tempo: promotions ×1.25, deck ×1.9 on a phone (flight.ts `phoneTempo`, `PHONE_DECK_TEMPO`) — time only. Sam: "human
+  scale".
+- iPhone Safari edge-to-edge: `viewport-fit=cover` (app.html), Field/intro `height: 100lvh`, `html[data-exhibit]`
+  background = the ground's colour (midnight/green in zones), nav and body padded by `env(safe-area-inset-*)`.
+- Zones (both engines): a demoting orbit/founder card fades its navy rule sheet with the face (`.demoting`), fixing
+  the midnight flash (§41.4). Zone X sits over the card's right edge on a phone (Ascension anchor).
+- Path to Thomas on a phone: the married-in pair inside the ladder — Hooker rung 2/3 with photo, no blurb; partner 1/3,
+  no photo.
+
+### 63.3 IPAD UPRIGHT, 700–900 (Oct 21)
+
+- **Sized like the mini everywhere** (Sam: "I'd rather have the ipad mini sizing be exactly the same on the ipad air").
+  `IPAD_PORTRAIT_U` 0.7 / `IPAD_PORTRAIT_K` 0.87 pinned — 820+ fall on another rung, so they must be stated. Extra width
+  on the Air is margin. Siblings do NOT fit at this size (~100px needed, ~29–75 available) — left out on purpose.
+- Timeline keeps its bars: headshots/rule ends/years 10% toward the edge (`railX`, `.nudge-left`), gold ground's fade
+  scaled 0.81 from the left (`::before` scaleX — its stops are fixed px), bars 10% narrower, names 11.7px, bars placed
+  just clear of the years (lanes ×0.77 on the tight rail ≤780, ×0.92 above). The arriving CC/shuffle/headshot card flies
+  ABOVE the rail (the rail's lift steps down exactly when the hero enters: flight.ts `getCcScheduledAt`).
+- Card: FIXED height (Sam, emphatically: "a hard NO to having a dynamic bottom border"). Dates, places and NB headers
+  fitted to one line with floors; vitals/burial 10% smaller (`--vital-k`, `--burial-k`); NB bodies 5% smaller, full
+  width; the spouse chip's marriage year on its own line (`mergeChipUnion` off).
+- **NB COUNT IS MEASURED, NOT CAPPED** (NarrativeBlocks `fitHeight`): headers measured, the open body measured, other
+  bodies estimated from characters × the measured line length; fit = all headers + the OPEN body; a rest-state check
+  drops one block if anything would scroll; opening a longer block scrolls the narrative column (`.nb-scroll`).
+  Jonathan Edwards 4 → 7 (mini landscape), 4 → 5 (upright).
+- "Cross Connections" label clipped where a rail bar crosses it — it cannot truly go under (two stacking contexts; the
+  stage must paint over the rail) — re-measured for 2s after a navigation.
+
+### 63.4 TABLET LANDSCAPE (Oct 21)
+
+- The mini/Air on their side are under 900 tall, so they fell into the short-window ladder (card ×0.85 width, ×0.80
+  height). The fix is NOT to widen the card (that made the "pancake" — §63.6) but to read the window as a normal-height
+  one (`vh` ≥ 1080): the default card, the page scrolls for the children (Sam is fine with that, as on the MacBook Neo).
+- Tightened a little: lead under the nav −30px, connectors ×0.8 (`--stage-air`), 6 CCs, the blade's MAXIMUM width −20px
+  (it still sizes itself to its text), the footer stacked one item per line at one size (`SiteFooter .stacked`).
+- The timeline reads the REAL height (`stage.windowH`) — it had been drawn for the pretend 1080 and stopped at 1900.
+
+### 63.5 HOW TO WORK ON SIZES (method that worked)
+
+1. **Show Sam the current state first, as screenshots on his Desktop** (`~/Desktop/hookerverse-ipad-portrait/`), then
+   agree changes. A "mockup" means a picture, never code (memory `mockup-means-picture-not-code`).
+2. Measure with Playwright at Chrome's own presets (iPad Mini 768×1024, Air 820×1180, Pro 1024×1366, iPhone 393×852,
+   375×667, 430×932), `hasTouch/isMobile` true, and record numbers (card width, gaps, line counts) before and after.
+3. For each change, check the neighbour sizes it might touch (the 13" Pro and desktop are signed off — guard them).
+4. Sam tests on a real iPhone/iPad over the LAN: `npx vite preview --host 0.0.0.0` → http://<mac-ip>:4173.
+
+### 63.6 MISTAKES MADE, AND HOW THEY WERE PUT RIGHT
+
+- **Built instead of mocking up** (iPad portrait): Sam asked for a mockup; I started editing src/. Reverted; rule saved.
+- **Squeezed what Sam likes**: narrowed the Air's card and shrank the rail ("you smooshed everything… UX is #1"). Reverted
+  to "size like the mini". Lesson: on this site, more information on screen is never the goal; looks are.
+- **Dynamic card height**: let the card grow for its content; children bobbed as NBs opened. Reverted to fixed height and
+  moved the flexibility into the NB COUNT.
+- **The pancake**: widened the short-window card without its height; long, flat, white. Replaced by reading tablet
+  landscape as a normal-height window.
+- **Pretend height leaked**: the timeline used the overridden `vh`. Fixed with `stage.windowH`.
+- **Blade over-corrected twice**: "max 20px further in" became a FIXED width; Sam: "the CC blade was already flexible".
+  Only the maximum moves now.
+- **Commits missing their code**: `git add` with a renamed doc's old path stages nothing (twice). Check
+  `git show --stat` before pushing (memory `git-add-aborts-on-missing-path`).
+- **Filled the disk**: Safari films left 121 GB of frames; delete each take's frames (memory `safari-films-fill-the-disk`).
+- A "regression" Sam saw in the blade's Chrome shadow was NOT code: four builds (Oct 19 → now) were pixel-identical; it
+  cleared on reload.
+
+### 63.7 OPEN
+
+- Photos hot-linked off Wikimedia (21), Find a Grave (54), WikiTree (17) load slowly (Alphonso Taft's is a 919 KB
+  original); move them to Cloudinary (`notable-photos-to-cloudinary.tsv` exists) — a Stream A job.
+- Person pages are server-rendered on every request (Vercel function). Before a public launch: cache each rendered page
+  at the edge (e.g. `Cache-Control: s-maxage=3600, stale-while-revalidate`) or prerender them (DEPLOYMENT Option A) —
+  both cut function invocations to almost nothing. Pairs with the SEO session.
+- Google sign-in is in TESTING (only listed users); publishing needs a public /privacy page.
+- noindex stays on until the SEO launch (vercel.json).
