@@ -588,7 +588,10 @@
 	const HEADER_H = $derived(Math.round(HEADER_PAD * u + HEADER_TEXT * k));
 	/** IPAD PORTRAIT: the narrative's height budget — the card's fixed content height (NarrativeBlocks fitHeight). The
 	 *  card never changes height (Sam, Oct 21: "a hard NO to having a dynamic bottom border"). */
-	const nbFitHeight = $derived(ipadPortrait ? cardTopH - HEADER_H - Math.round(48 * u) : null);
+	// …and on a tablet in landscape (Oct 21, Sam: "the rule of max 4 NBs… leads to so much white space").
+	const nbFitHeight = $derived(
+		ipadPortrait || stage.tabletLandscape ? cardTopH - HEADER_H - Math.round(48 * u) : null
+	);
 
 	// === Carved card geometry ===
 	// THESE FEED A clip-path, so they are ROUNDED TO INTEGERS after scaling rather than left as floats.

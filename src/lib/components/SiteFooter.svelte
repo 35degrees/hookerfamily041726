@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { stage } from '#lib/state/stage.svelte.js';
 	/**
 	 * SiteFooter — the bottom-right corner (Sam, Oct 9): "About / Contact", "Sources", "Privacy" (signed in only)
 	 * and "© 2026".
@@ -39,7 +40,7 @@
      height with the children row, so the footer grows UP into empty paper rather than LEFT into the chips:
      the primary row (About / Contact and the year) at 11px, 8% under the corner chrome's 12, nearest the corner;
      the secondary links above it, smaller again. Narrower than the one-row footer was with half the links. -->
-<footer class="site-footer" class:on-dark={onDark} class:in-zone={inZone}>
+<footer class="site-footer" class:on-dark={onDark} class:in-zone={inZone} class:stacked={stage.tabletLandscape}>
 	<!-- THE SMALL ROW ON TOP (Sam, Oct 9): Privacy then Sources, right-aligned, so Sources holds the corner's edge and
 	     Privacy appears beside it only for a signed-in reader (it is about what an account stores, and holds the delete). -->
 	<div class="row secondary">
@@ -72,6 +73,23 @@
 	.row {
 		display: flex;
 		align-items: center;
+	}
+	/* STACKED, one item to a line, on an iPad mini or Air in landscape (Oct 21, Sam): the corner beside the blade is
+	   narrow there. Privacy, Sources, About / Contact, © — right-aligned as before. */
+	.site-footer.stacked .row {
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 0;
+	}
+	/* …all four lines one size, evenly spaced, About / Contact a step smaller so it clears the blade (Oct 21, Sam). */
+	.site-footer.stacked {
+		gap: 0;
+	}
+	.site-footer.stacked .row,
+	.site-footer.stacked .row.primary,
+	.site-footer.stacked .row.secondary {
+		font-size: 10px;
+		line-height: 15px;
 	}
 	.row.primary {
 		gap: 12px;

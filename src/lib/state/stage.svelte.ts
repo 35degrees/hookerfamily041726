@@ -427,8 +427,26 @@ const phoneLandscape = $derived(
 	coarsePointer && rawVw > PHONE_W && rawVh <= PHONE_LANDSCAPE_H && rawVw <= 1000
 );
 /** The window the LAYOUT sees: the real one, or on a phone in landscape a portrait phone's frame. */
+/**
+ * A TOUCH TABLET IN LANDSCAPE GETS THE DEFAULT VIEW (Oct 21, Sam on an iPad Air at 1180×820: "can we just make this more
+ * like the default view, not this frankenstein beast"). Under 900px tall it fell into the short-window ladder — a
+ * narrower card, then (widened alone) a long flat "pancake" with white space in it and in the blade. Here the layout is
+ * read as a desktop window of normal height: the card's own proportions, type and content, the page scrolling for the
+ * children. Desktop windows of the same size (fine pointer) keep the short-window ladder.
+ */
+const TABLET_LANDSCAPE_H = 1080;
+/** …tightened a little so more of the family is in view (Oct 21, Sam): the lead under the corner nav 30px shorter,
+ *  the connectors ("Benjamin's parents", "Seven children") 20% shorter, at most six cross-connections. */
+const TABLET_LANDSCAPE_LEAD_TRIM = 30;
+const TABLET_LANDSCAPE_AIR = 0.8;
+const TABLET_LANDSCAPE_CC_CAP = 6;
+const tabletLandscape = $derived(
+	// under SHORT_H tall: the iPad mini and Air (1024×768, 1180×820, Pro 11 1194×834), not the 13" Pro (1366×1024),
+	// which already gets the default view and stays exactly as it was
+	coarsePointer && rawVw > rawVh && rawVw >= 1000 && rawVw <= 1400 && rawVh > PHONE_LANDSCAPE_H && rawVh < 900
+);
 const vw = $derived(phoneLandscape ? PHONE_FRAME_W : rawVw);
-const vh = $derived(phoneLandscape ? PHONE_FRAME_H : rawVh);
+const vh = $derived(phoneLandscape ? PHONE_FRAME_H : tabletLandscape ? Math.max(rawVh, TABLET_LANDSCAPE_H) : rawVh);
 const rung = $derived(rungFor(vw, vh));
 
 /**
@@ -532,6 +550,7 @@ const SHORT_CARD_K = 0.78;
  * width, and the narrative column takes the rest of the cut.
  */
 const SHORT_CARD_W_K = 0.85;
+
 // 0.93 first, and the NB column paid for nearly all of the cut (Sam: "i took too much from NB column and kept
 // photo column too big… take from the photo column to keep overall card width the same"). 0.80 gives the
 // narrative ~26px back; the vitals under the photo step down 10% to fit it (FeaturedCard --vital-k).
@@ -838,6 +857,16 @@ export const stage = {
 	get vh() {
 		return vh;
 	},
+	/** The window's REAL height. `vh` is the layout's reading of it, which a tablet in landscape overrides; anything
+	 *  that must fill the actual window (the timeline rail) reads this (Oct 21, Sam: the rail "cuts off the last 100
+	 *  years" on the iPad mini and Air in landscape). */
+	get windowH() {
+		return rawVh;
+	},
+	/** A touch tablet in landscape under 900px tall (see `tabletLandscape`). */
+	get tabletLandscape(): boolean {
+		return tabletLandscape;
+	},
 	get tier(): Tier {
 		return rung.tier;
 	},
@@ -896,7 +925,7 @@ export const stage = {
 	},
 	/** The AIR factor — the connectors. 1 except on a short window. */
 	get air(): number {
-		return airK;
+		return tabletLandscape ? TABLET_LANDSCAPE_AIR : airK;
 	},
 	/** How far into the short-window squeeze, 0 (800px tall and up) → 1 (SHORT_RAMP below). `--stage-short`. */
 	get short(): number {
@@ -908,7 +937,7 @@ export const stage = {
 	},
 	/** px taken off the lead above the parents under MID_H (only while the short squeeze is not in charge). */
 	get leadTrim(): number {
-		return mid ? MID_LEAD_TRIM : 0;
+		return tabletLandscape ? TABLET_LANDSCAPE_LEAD_TRIM : mid ? MID_LEAD_TRIM : 0;
 	},
 	/** Birth and death places hidden (under NO_PLACES_H). */
 	get noPlaces(): boolean {
@@ -946,7 +975,7 @@ export const stage = {
 	},
 	/** Cross-connections shown in the blade; null = all. */
 	get ccCap(): number | null {
-		return ccCapForHeight(vh);
+		return tabletLandscape ? TABLET_LANDSCAPE_CC_CAP : ccCapForHeight(vh);
 	},
 	/** Career and education rows each; null = the column's own limit. */
 	get rowCap(): number | null {

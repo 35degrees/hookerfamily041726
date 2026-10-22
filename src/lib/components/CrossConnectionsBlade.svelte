@@ -389,12 +389,14 @@
 				// narrower card, narrower blade — and on a phone, the phone card's own width (stage.phoneCardW)
 				maxWidth: stage.phone
 					? Math.round(stage.phoneCardW - BLADE_RIGHT_INSET * bu)
-					: Math.round((CARD_W * stage.cardWK - BLADE_RIGHT_INSET) * bu),
+					: Math.round((CARD_W * stage.cardWK - BLADE_RIGHT_INSET) * bu) -
+						// a tablet in landscape: the blade stops ~30px shorter so it clears the stacked footer (Oct 21)
+						(stage.tabletLandscape ? 30 : 0),
 				// `key` carries the dials so a resize RE-FITS. fitBlade caches on this string; without
 				// them a narrowed window kept the width and font size solved for the wide card.
 				key: `${crossConnections
 					.map((c) => c.link_text + (c.co?.link_text ?? '') + c.display_label)
-					.join('|')}|${bu}|${bk}|${stage.cardWK}|${stage.phone}`
+					.join('|')}|${bu}|${bk}|${stage.cardWK}|${stage.phone}|${stage.tabletLandscape}`
 			}}
 		>
 			<div class="cc-body" style="height: {bladeH}px;">

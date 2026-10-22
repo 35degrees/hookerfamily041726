@@ -86,7 +86,7 @@
 	// what they say. The headroom the progenitor needs comes from START_YEAR instead, where it is a
 	// statement about the SCALE rather than an unexplained inset.
 	const PAD_Y = 0;
-	const railH = $derived(Math.max(240, stage.vh - PAD_Y * 2));
+	const railH = $derived(Math.max(240, stage.windowH - PAD_Y * 2));
 	const span = $derived(Math.max(1, endYear - START_YEAR));
 	/** year → px from the top of the viewport. The whole instrument is this one function. */
 	const yFor = (year: number) => PAD_Y + ((year - START_YEAR) / span) * railH;
@@ -1631,7 +1631,7 @@
 	const SHORT_VH = 1070;
 	const ANCHOR_SHORT_CAP = 1.25;
 	const anchorBoost = $derived(
-		stage.vh > 0 ? Math.min(ANCHOR_SHORT_CAP, Math.max(1, SHORT_VH / stage.vh)) : 1
+		stage.windowH > 0 ? Math.min(ANCHOR_SHORT_CAP, Math.max(1, SHORT_VH / stage.windowH)) : 1
 	);
 	/**
 	 * EVERY PORTRAIT IS THE SAME SIZE (091426, Sam: "i swear the diameter for henry is bigger than
@@ -1778,7 +1778,7 @@
 		const oy =
 			top - grow < EDGE_MARGIN
 				? 'top'
-				: top + d + grow > stage.vh - EDGE_MARGIN
+				: top + d + grow > stage.windowH - EDGE_MARGIN
 					? 'bottom'
 					: 'center';
 		return `${ox} ${oy}`;
