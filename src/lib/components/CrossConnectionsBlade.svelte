@@ -142,6 +142,39 @@
 	// edge with the rest of the blade empty.
 	let solo = $derived(crossConnections.length === 1);
 
+	/**
+	 * THE LABEL READS AS BEING UNDER THE TIMELINE'S BARS (Oct 21, Sam: "Cross Connections text should have a z-index
+	 * below vertical bars"). It cannot really go under them: the rail and the stage are two stacking contexts and the
+	 * stage paints over the rail by design (the card must). So where a bar crosses the label, the label is CLIPPED to
+	 * the part right of the bars — which is exactly what it would look like underneath them. Re-measured while the
+	 * bars glide after a navigation (~1.4s) and on resize.
+	 */
+	let labelEl = $state<HTMLElement | null>(null);
+	function clipUnderBars() {
+		const el = labelEl;
+		if (!el) return;
+		const r = el.getBoundingClientRect();
+		let right = -Infinity;
+		for (const b of document.querySelectorAll<HTMLElement>('.rail .bar')) {
+			const br = b.getBoundingClientRect();
+			if (br.bottom > r.top && br.top < r.bottom && br.right > r.left && br.left < r.right) right = Math.max(right, br.right);
+		}
+		el.style.clipPath = right > r.left ? `inset(-4px -40px -4px ${Math.ceil(right - r.left + 3)}px)` : '';
+	}
+	$effect(() => {
+		void crossConnections;
+		void stage.vw;
+		if (!labelEl) return;
+		let raf = 0;
+		const until = performance.now() + 2000;
+		const tick = () => {
+			clipUnderBars();
+			if (performance.now() < until) raf = requestAnimationFrame(tick);
+		};
+		raf = requestAnimationFrame(tick);
+		return () => cancelAnimationFrame(raf);
+	});
+
 	// The label reads on TWO ROWS always — "the header Cross Connections will be on two rows even if
 	// there's only one row of Cross Connections in a given entry" — so it never reflows with content.
 	// It sits OUTSIDE the blade, tucked into the wedge the slant opens up on the left.
@@ -342,7 +375,7 @@
 		     percentage, and a percentage only matches the blade's travel if the box it resolves against is
 		     the same height. See unsheathBlade. -->
 		<div class="cc-label-layer">
-			<div class="cc-label-wrapper" style="width: {labelRight}px;">
+			<div class="cc-label-wrapper" style="width: {labelRight}px;" bind:this={labelEl}>
 				<span class="cc-label"
 					><span style="margin-right: {row0Inset}px">Cross</span><span>Connections</span></span
 				>
