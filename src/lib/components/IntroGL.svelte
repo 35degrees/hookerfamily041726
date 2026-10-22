@@ -77,12 +77,18 @@
 	let hover = $state(false);
 	let h = $state(0);
 	let failed = $state(false); // no WebGL2: the page shows the plain painting and title, still
-	// THE TITLE'S OWN GOLD (Oct 21): sampled off the rendered plate — letters average rgb(227 194 121), highlights
-	// rgb(252 223 152) — so this base, under the gilt filter's grain (~0.9 on average), lands on the same colour.
-	// Hover lifts it well past the letters' brightest (Sam: "lighten it more on hover").
-	const GOLD = [250, 216, 145];
-	const GOLD_LIT = [255, 246, 214];
+	// THE TITLE'S OWN GOLD (Oct 22): matched to the letters' solid faces on the rendered plate — rgb(245 214 118),
+	// saturation ~0.5 — not to their averaged edges, which read pale on a thin stroke. Hover is the same lemon,
+	// a step brighter, never cream (Sam: the cream "almost turns white").
+	const GOLD = [255, 222, 110];
+	const GOLD_LIT = [255, 236, 126];
 	const gold = $derived(`rgb(${GOLD.map((c, i) => Math.round(c + (GOLD_LIT[i] - c) * h)).join(' ')})`);
+	// the gilt's grain floor: the flood is already at full red, so hover brightens by lifting the grain's dark
+	// end (0.62 → 0.8) — the same lemon, lit, not paled toward white
+	const grainLift = $derived((0.62 + 0.18 * h).toFixed(3));
+	const grainValues = $derived(
+		`0.55 0 0 0 ${grainLift}  0.55 0 0 0 ${grainLift}  0.55 0 0 0 ${grainLift}  0 0 0 0 1`
+	);
 
 	const ph = [Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28];
 	const flameAt = (t: number) =>
@@ -428,10 +434,10 @@
 							     letters'. Every layer below reads `rough`, not SourceAlpha. -->
 							<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="2" seed="3" result="warp" />
 							<feDisplacementMap in="SourceAlpha" in2="warp" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="rough" />
-							<!-- THE GRAIN: brightness 0.62–1.17 across the surface -->
+							<!-- THE GRAIN: brightness 0.62–1.17 across the surface at rest, lifted on hover (grainValues) -->
 							<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" seed="11" result="noise" />
-							<feColorMatrix in="noise" type="matrix" values="0.55 0 0 0 0.62  0.55 0 0 0 0.62  0.55 0 0 0 0.62  0 0 0 0 1" result="grain" />
-							<feFlood style="flood-color: var(--gold, #fad891)" result="goldFlat" />
+							<feColorMatrix in="noise" type="matrix" values={grainValues} result="grain" />
+							<feFlood style="flood-color: var(--gold, #ffde6e)" result="goldFlat" />
 							<feBlend in="goldFlat" in2="grain" mode="multiply" result="goldGrain" />
 							<feComposite in="goldGrain" in2="rough" operator="in" result="metal" />
 							<!-- PITS: small dark flecks where the gilt has worn through -->
@@ -442,7 +448,7 @@
 							<feComposite in="rough" in2="down" operator="out" result="topBand" />
 							<feGaussianBlur in="topBand" stdDeviation="0.9" result="topSoft" />
 							<feComposite in="topSoft" in2="rough" operator="in" result="topIn" />
-							<feFlood flood-color="#fff6c8" flood-opacity="0.55" />
+							<feFlood flood-color="#fff0a8" flood-opacity="0.4" />
 							<feComposite in2="topIn" operator="in" result="topLight" />
 							<feOffset in="rough" dy="-2" result="up" />
 							<feComposite in="rough" in2="up" operator="out" result="botBand" />
