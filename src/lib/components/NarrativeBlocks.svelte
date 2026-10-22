@@ -104,13 +104,26 @@
 			let maxBody = 0;
 			for (let i = 0; i < items.length; i++) {
 				const nextHeads = headsSum + heads[i] + (i > 0 ? gap : 0);
-				const nextMax = Math.max(maxBody, bodyH[i] ?? 0);
+				// THE OPEN BODY ONLY, not the longest (Oct 21, Sam: "what are we protecting people from?… all this
+				// white space and there are NBs to fill it"). What shows at rest is the headers plus the first block
+				// open; opening a longer one scrolls the narrative column (FeaturedCard), as the record column does.
+				const nextMax = i === 0 ? (bodyH[0] ?? 0) : maxBody;
 				if (i > 0 && nextHeads + nextMax > budget) break;
 				headsSum = nextHeads;
 				maxBody = nextMax;
 				n++;
 			}
 			fitCount = Math.max(1, n);
+			// …then CHECK what was drawn: at rest nothing may scroll, so drop a block while the shown list is taller
+			// than the budget (the header estimate can be a few px out).
+			const trim = () =>
+				void tick().then(() => {
+					if (fitCount > 1 && el.getBoundingClientRect().height > budget + 0.5) {
+						fitCount -= 1;
+						trim();
+					}
+				});
+			trim();
 		});
 	});
 

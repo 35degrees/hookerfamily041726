@@ -1321,7 +1321,7 @@
 					{/if}
 				</div>
 
-				<div class="narrative min-h-0 min-w-0 overflow-hidden pr-4 pl-4">
+				<div class="narrative min-h-0 min-w-0 overflow-hidden pr-4 pl-4" class:nb-scroll={nbFitHeight != null}>
 					<div class="nb-measure max-w-[60ch]">
 						<NarrativeBlocks
 							blocks={person.narrative_blocks ?? []}
@@ -1647,6 +1647,13 @@
 	   there aren't just orphaned one words on the second line"). */
 	.featured-card.phone .descent-line [data-fit] {
 		text-wrap: balance;
+	}
+	/* WHERE THE BLOCK COUNT IS FITTED (iPad portrait, tablet landscape), opening a block longer than the open one
+	   scrolls the narrative column instead of clipping it — the card never changes height (Oct 21). */
+	.narrative.nb-scroll {
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		scrollbar-width: thin;
 	}
 	/* THE NARRATIVE BLOCK RUNS THE CARD'S FULL WIDTH on a phone (Oct 20, Sam: "the NB component can be full width,
 	   right now it has margin"): no side padding, no reading measure. */
