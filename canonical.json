@@ -705736,8 +705736,9 @@
     "married_names": [],
     "nickname": "Fan",
     "gender": "male",
-    "display_name": "Faneuil \"Fan\" Adams Jr.",
-    "bio_blurb": "Mobil executive; Chess-in-the-Schools founder"
+    "display_name": "Faneuil Adams Jr.",
+    "bio_blurb": "Mobil executive; Chess-in-the-Schools founder",
+    "chip_first_name": "Fan"
    },
    "birth": {
     "year": 1923,
@@ -705945,7 +705946,8 @@
    "sources": [],
    "research_sources": [],
    "research_notes": "b. Jul 20, 1923 Boston MA; d. Mar 22, 1999 Manhattan NY age 75. Buried Mayflower Cemetery, Duxbury MA. Only documented son of Benjamin Faneuil Dunkin Adams II (HD3350) and his first wife Rose Bradley (I00306) — born the same day Rose died. ANCESTRY: Per FindAGrave note, 'direct descendant of Samuel Adams and Peter Faneuil' (the Faneuil line through paternal ancestor Ann Bethune Dunkin, mother of BFD Adams Sr.). MILITARY: Army First Lieutenant in paratroops in WWII (Bronze Star) + Korean War. CAREER: Mobil Oil executive 1947-1975 (during marriage to Joan) — postings Germany, Switzerland, Italy, Japan. Later devoted to chess — President of Chess in Schools (inner-city programs); Treasurer Manhattan Chess Club; US Chess Federation Policy Board; Delegate to FIDE. 1994 FIDE MOSCOW CONGRESS: Resigned on the spot rather than reverse position under USCF Board pressure to support FIDE leadership's heavy-handed tactics; vindicated within a year by his overwhelming election back to the same Board. EULOGY by Don Schultz, NYC April 1, 1999. m1. 1947 Joan Adams Purves Bertaccini (I00310, 1928-2020) — divorced 1975; 2 daughters Susannah Austin Kaley (HD3354) + Ellen Rebecca 'Becky' Adams (HD3355). m2. Emiko Adams (I00311) — date unknown; per Schultz eulogy: 'Fan loved Emiko and Emiko loved Fan.'",
-   "documents": []
+   "documents": [],
+   "last_updated": "2026-10-22"
   },
   {
    "id": "I00310",
@@ -1607937,6 +1607939,9 @@
     {
      "landmark_id": "LM353",
      "landmark_blurb": "Grove Street Cemetery, New Haven — the granite cross he asked his mother for."
+    },
+    {
+     "landmark_id": "LM555"
     }
    ],
    "artworks": [],
@@ -1608074,7 +1608079,8 @@
      "body": "The Canoe and the Saddle, his account of riding through Washington Territory, sold so well after his death that the town of Winthrop, Washington, and the Winthrop Hotel in Tacoma were both named for him."
     }
    ],
-   "primary_url": "https://en.wikipedia.org/wiki/Theodore_Winthrop"
+   "primary_url": "https://en.wikipedia.org/wiki/Theodore_Winthrop",
+   "last_updated": "2026-10-22"
   },
   {
    "id": "HD8548",
@@ -2525925,6 +2525931,24 @@
     "HD04832"
    ],
    "notes": "Italian villa by Henry A. Sykes, built 1849-51 for attorney John Mills (d. 1861); afterwards owned by John Stebbins, banker, developer and local politician. NRHP 1973."
+  },
+  {
+   "id": "LM555",
+   "primary_name": "Winthrop Hotel",
+   "person_ids": [
+    "HD8547"
+   ],
+   "type": "hotel",
+   "location": {
+    "city": "Tacoma",
+    "state": "Washington",
+    "country": "United States"
+   },
+   "url": "https://www.historylink.org/File/11176",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792681659/WinthropHotel_Tacoma_1925_ms7xhu.jpg",
+   "dates": {
+    "built": 1922
+   }
   }
  ],
  "compiler": {
