@@ -438450,6 +438450,12 @@
      "related_id": "HD5059",
      "display_label": "ran the army fever wards outside Santiago in 1898",
      "link_text": "Dr. Hamilton Polk Jones"
+    },
+    {
+     "related_id": "HD8547",
+     "type": "connection",
+     "link_text": "Theodore Winthrop",
+     "display_label": "framed Butler's policy that freed slaves reaching Union lines"
     }
    ],
    "bio": {
@@ -1263153,6 +1263159,12 @@
      "related_id": "X3158",
      "link_text": "Dr. Richard Henry Derby",
      "display_label": "was grandfather to his son's wife, and a pioneer of eye surgery"
+    },
+    {
+     "related_id": "HD8547",
+     "type": "connection",
+     "link_text": "Theodore Winthrop",
+     "display_label": "was aide-de-camp to his grandfather, Gen. Benjamin Butler, in 1861"
     }
    ],
    "quotes": [],
@@ -1608004,6 +1608016,18 @@
      "link_text": "Winston Churchill",
      "display_label": ", a Dwight cousin, wrote Richard Carvel, which sold two million copies",
      "lateral": true
+    },
+    {
+     "related_id": "X00809",
+     "type": "connection",
+     "link_text": "George Dod Armstrong",
+     "display_label": "was jailed in occupied Norfolk under Gen. Benjamin Butler"
+    },
+    {
+     "related_id": "X3160",
+     "type": "connection",
+     "link_text": "Adelbert Ames Jr.",
+     "display_label": "was a grandson of Gen. Benjamin Butler, the general he served"
     }
    ],
    "narrative_blocks": [
@@ -1608034,7 +1608058,7 @@
     {
      "number": 5,
      "category": "literature",
-     "header": "Nothing he wrote came out while he lived",
+     "header": "His novels all appeared after Big Bethel",
      "body": "Cecil Dreeme, John Brent, Edwin Brothertoft and The Canoe and the Saddle all appeared after Big Bethel. James Russell Lowell started the run at the Atlantic Monthly with his march-to-Washington piece, printed the month he was killed."
     },
     {
@@ -1608042,6 +1608066,12 @@
      "category": "character",
      "header": "He refused to call it Mount Rainier",
      "body": "He guarded bullion for the Pacific Mail, caught smallpox on the northwest coast and rode three hundred miles over the shoulder of the mountain. Mountains should not be insulted by being named after undistinguished bipeds, he wrote; he used the name Tacoma."
+    },
+    {
+     "number": 7,
+     "category": "legacy",
+     "header": "A Washington town took his name",
+     "body": "The Canoe and the Saddle, his account of riding through Washington Territory, sold so well after his death that the town of Winthrop, Washington, and the Winthrop Hotel in Tacoma were both named for him."
     }
    ],
    "primary_url": "https://en.wikipedia.org/wiki/Theodore_Winthrop"
