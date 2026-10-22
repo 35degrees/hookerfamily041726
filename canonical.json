@@ -691758,6 +691758,12 @@
      "type": "connection",
      "link_text": "Maxey Neal Morrison",
      "display_label": "was his Princeton classmate of 1929, and a varsity football player"
+    },
+    {
+     "related_id": "I02829",
+     "type": "connection",
+     "link_text": "Stacy French",
+     "display_label": "was at Loomis from 1921 to 1925, and failed his first year there"
     }
    ],
    "research_notes": "Per Wikipedia + RAC: b. March 21, 1906 NYC; d. July 10, 1978 Mt Pleasant Westchester Co NY age 72 (automobile accident en route to Pocantico Hills). Eldest of John D. Rockefeller Jr. + Abby Aldrich Rockefeller's six children (third-generation Rockefeller). Founded the Asia Society 1956; major philanthropist for Asian arts + population studies. m.1932 Riverside Church NYC Blanchette Ferry Hooker (HD3284). 4 children incl. John 'Jay' Rockefeller IV (US Senator from West Virginia 1985-2015). The 1932 marriage joined the Hooker industrialist family (chemicals) with the Rockefeller petroleum dynasty — Blanchette's MoMA presidency was enabled by both her own mother's arts-patron upbringing (via the Ferrys + Detroit Institute of Arts) AND her mother-in-law Abby Aldrich Rockefeller's MoMA co-founder legacy. Sam's Hooker-Rockefeller in-law connection documented in NYT obit + Political Graveyard for father-in-law Elon Hooker.",
@@ -1610356,7 +1610362,10 @@
    "quotes": [],
    "military_service": [],
    "naming_inspiration": [],
-   "tags": [],
+   "tags": [
+    "inventor",
+    "scientist"
+   ],
    "career": [
     {
      "role": "Research fellow",
@@ -1610421,47 +1610430,60 @@
      "type": "connection",
      "link_text": "Ellis Fisher",
      "display_label": "was a regular contributor to the Appalachian Mountain Club journal"
+    },
+    {
+     "related_id": "X02324",
+     "type": "connection",
+     "link_text": "John D. Rockefeller III",
+     "display_label": "was at Loomis with him, and graduated in the Class of 1925"
     }
    ],
    "narrative_blocks": [
     {
      "number": 1,
      "category": "science",
-     "header": "He threaded a needle valve into a cylinder",
-     "body": "To break open chloroplasts he forced the suspension past an ammonia needle valve under a piston, and the shear tore the cells apart. The American Instrument Company put his name on it, and the French press is still in laboratories everywhere."
+     "header": "The French press in every protein lab",
+     "body": "Vannevar Bush, head of the Carnegie Institution, suggested forcing cells through a fixed hole; Stacy used an ammonia needle valve instead, driving chloroplasts through it with a piston so the shear at the valve tore them open. Labs still crack bacteria that way."
     },
     {
      "number": 2,
+     "category": "science",
+     "header": "His name on the press was Bush's idea",
+     "body": "When the American Instrument Company began making the press, Bush told Stacy to ask for his name on it and a free one for the lab. The name went on at once; the free press came twenty years later, and he drove it with an old car jack."
+    },
+    {
+     "number": 3,
      "category": "science",
      "header": "A year of Warburg saved his career",
      "body": "Barely on speaking terms with his Caltech chief, he was sent instead to Otto Warburg in Berlin, lived in the laboratory building and worked without distraction. He said he was grateful to Warburg for refusing to speak English, though he could do it better."
     },
     {
-     "number": 3,
+     "number": 4,
      "category": "character",
      "header": "He failed his first year at Loomis",
      "body": "He repeated it, and the school later refused him permission to sit the Harvard entrance so as not to spoil its record. His mother put him through a year of Lowell High School and a summer course in botany got him in."
     },
     {
-     "number": 4,
+     "number": 5,
      "category": "character",
      "header": "A mouse in the monochromator",
      "body": "When the readings came out wrong he found a mouse had moved into one of his big homemade monochromators. Afterwards he liked to blame an odd result on the mouse peering out the slit."
     },
     {
-     "number": 5,
+     "number": 6,
      "category": "sports",
      "header": "He climbed the Matterhorn in the twenties",
      "body": "He went up it before that was a common thing to do, helped build the Appalachian Mountain Club hut at Franconia Notch, and took Whitney, Shasta, Hood and Rainier. In 1934 he was with Norman Clyde's party that opened a new route on Shasta's Hotlum Glacier."
     },
     {
-     "number": 6,
+     "number": 7,
      "category": "character",
      "header": "He grew penicillin from grapefruit rinds",
      "body": "To stay out of the draft he collected his Minnesota neighbours' rinds and grew penicillin on them for war use, and worked up a chlorophyll paint for camouflage. He mended his own trousers once with a stapler."
     }
    ],
-   "primary_url": "https://publications.americanalpineclub.org/articles/12199637400/Charles-Stacy-French-1907-1995"
+   "primary_url": "https://publications.americanalpineclub.org/articles/12199637400/Charles-Stacy-French-1907-1995",
+   "last_updated": "2026-10-22"
   },
   {
    "id": "HD8568",
