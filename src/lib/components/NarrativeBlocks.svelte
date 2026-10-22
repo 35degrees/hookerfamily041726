@@ -118,7 +118,9 @@
 			// than the budget (the header estimate can be a few px out).
 			const trim = () =>
 				void tick().then(() => {
-					if (fitCount > 1 && el.getBoundingClientRect().height > budget + 0.5) {
+					// offsetHeight, NOT getBoundingClientRect: the card may be mid-flight and scaled (an orbit entry
+					// arrives at 1.55×), and a transformed height trimmed Morse to 2 blocks (Oct 21).
+					if (fitCount > 1 && el.offsetHeight > budget + 0.5) {
 						fitCount -= 1;
 						trim();
 					}
