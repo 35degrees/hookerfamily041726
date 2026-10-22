@@ -188,8 +188,8 @@
 				     but minimal." A reader deciding whether to hand over an identity is owed the reason,
 				     and the reason is small enough to state exactly rather than sell. -->
 				<p class="why">
-					Save entries you want to come back to, and choose whose card greets you instead of
-					Thomas Hooker.
+					Create an account to bookmark cards you want to come back to, and to choose a personal
+					home card.
 				</p>
 				<button
 					type="button"

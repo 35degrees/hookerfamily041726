@@ -77,8 +77,11 @@
 	let hover = $state(false);
 	let h = $state(0);
 	let failed = $state(false); // no WebGL2: the page shows the plain painting and title, still
-	const GOLD = [248, 214, 103];
-	const GOLD_LIT = [255, 236, 158];
+	// THE TITLE'S OWN GOLD (Oct 21): sampled off the rendered plate — letters average rgb(227 194 121), highlights
+	// rgb(252 223 152) — so this base, under the gilt filter's grain (~0.9 on average), lands on the same colour.
+	// Hover lifts it well past the letters' brightest (Sam: "lighten it more on hover").
+	const GOLD = [250, 216, 145];
+	const GOLD_LIT = [255, 246, 214];
 	const gold = $derived(`rgb(${GOLD.map((c, i) => Math.round(c + (GOLD_LIT[i] - c) * h)).join(' ')})`);
 
 	const ph = [Math.random() * 6.28, Math.random() * 6.28, Math.random() * 6.28];
@@ -415,30 +418,53 @@
 							<feFlood flood-color="#140d06" />
 							<feComposite in2="soft" operator="in" />
 						</filter>
-						<filter id="introgl-deboss-soft" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
-							<feOffset in="SourceAlpha" dy="3.5" result="down" />
-							<feComposite in="SourceAlpha" in2="down" operator="out" result="topBand" />
-							<feGaussianBlur in="topBand" stdDeviation="1.25" result="topSoft" />
-							<feComposite in="topSoft" in2="SourceAlpha" operator="in" result="topIn" />
-							<feFlood flood-color="#1e1408" flood-opacity="0.36" />
-							<feComposite in2="topIn" operator="in" result="shade" />
-							<feOffset in="SourceAlpha" dy="-2.5" result="up" />
-							<feComposite in="SourceAlpha" in2="up" operator="out" result="botBand" />
-							<feGaussianBlur in="botBand" stdDeviation="1" result="botSoft" />
-							<feComposite in="botSoft" in2="SourceAlpha" operator="in" result="botIn" />
-							<feFlood flood-color="#fff6c8" flood-opacity="0.25" />
-							<feComposite in2="botIn" operator="in" result="glint" />
-							<feMerge><feMergeNode in="SourceGraphic" /><feMergeNode in="shade" /><feMergeNode in="glint" /></feMerge>
+						<!-- THE ARROW IN THE TITLE'S OWN METAL (Oct 21, Sam: "match the color and font and embossed and
+						     authentic style of the text above it"). The title is gilt: warm gold with a fine grain, RAISED
+						     relief (light along the top edge, shade along the bottom — IntroOverlay's deboss at relief 1,
+						     EMBOSS_LIGHT 0.4 / EMBOSS_SHADE 0.5) and the painting shadow under it. The strokes are only an
+						     alpha mask here; this filter paints them. -->
+						<filter id="introgl-gilt" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+							<!-- WORN EDGES: the stroke's own alpha nudged by a slow noise, so its outline is uneven like the cut
+							     letters'. Every layer below reads `rough`, not SourceAlpha. -->
+							<feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="2" seed="3" result="warp" />
+							<feDisplacementMap in="SourceAlpha" in2="warp" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="rough" />
+							<!-- THE GRAIN: brightness 0.62–1.17 across the surface -->
+							<feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" seed="11" result="noise" />
+							<feColorMatrix in="noise" type="matrix" values="0.55 0 0 0 0.62  0.55 0 0 0 0.62  0.55 0 0 0 0.62  0 0 0 0 1" result="grain" />
+							<feFlood style="flood-color: var(--gold, #fad891)" result="goldFlat" />
+							<feBlend in="goldFlat" in2="grain" mode="multiply" result="goldGrain" />
+							<feComposite in="goldGrain" in2="rough" operator="in" result="metal" />
+							<!-- PITS: small dark flecks where the gilt has worn through -->
+							<feTurbulence type="turbulence" baseFrequency="0.42" numOctaves="2" seed="5" result="speck" />
+							<feColorMatrix in="speck" type="matrix" values="0 0 0 0 0.36  0 0 0 0 0.25  0 0 0 0 0.11  9 0 0 0 -5.6" result="pitsAll" />
+							<feComposite in="pitsAll" in2="rough" operator="in" result="pits" />
+							<feOffset in="rough" dy="2.6" result="down" />
+							<feComposite in="rough" in2="down" operator="out" result="topBand" />
+							<feGaussianBlur in="topBand" stdDeviation="0.9" result="topSoft" />
+							<feComposite in="topSoft" in2="rough" operator="in" result="topIn" />
+							<feFlood flood-color="#fff6c8" flood-opacity="0.55" />
+							<feComposite in2="topIn" operator="in" result="topLight" />
+							<feOffset in="rough" dy="-2" result="up" />
+							<feComposite in="rough" in2="up" operator="out" result="botBand" />
+							<feGaussianBlur in="botBand" stdDeviation="0.8" result="botSoft" />
+							<feComposite in="botSoft" in2="rough" operator="in" result="botIn" />
+							<feFlood flood-color="#1e1408" flood-opacity="0.55" />
+							<feComposite in2="botIn" operator="in" result="botShade" />
+							<feMerge
+								><feMergeNode in="metal" /><feMergeNode in="pits" /><feMergeNode in="topLight" /><feMergeNode
+									in="botShade"
+								/></feMerge
+							>
 						</filter>
 					</defs>
-					<g filter="url(#introgl-shadow)" opacity={SHADOW * 0.5}>
+					<g filter="url(#introgl-shadow)" opacity={SHADOW}>
 						<circle class="ring" r="50" />
 						<g transform="translate({h * 5} 0)">
 							<path class="arrow" d="M-23 0 H23" />
 							<path class="arrow" d="M9 -14 L24 0 L9 14" />
 						</g>
 					</g>
-					<g filter="url(#introgl-deboss-soft)">
+					<g filter="url(#introgl-gilt)">
 						<circle class="ring" r="50" />
 						<g transform="translate({h * 5} 0)">
 							<path class="arrow" d="M-23 0 H23" />
@@ -508,16 +534,17 @@
 		outline-offset: 2px;
 		border-radius: 4px;
 	}
+	/* Weighted like the title's strokes (Oct 21) — the old 6/4.8 read as a thin line drawing beside cast letters. */
 	.arrow {
 		fill: none;
 		stroke: var(--gold, #f8d667);
-		stroke-width: 6;
+		stroke-width: 8.5;
 		stroke-linecap: round;
 		stroke-linejoin: round;
 	}
 	.ring {
 		fill: none;
 		stroke: var(--gold, #f8d667);
-		stroke-width: 4.8;
+		stroke-width: 6.5;
 	}
 </style>
