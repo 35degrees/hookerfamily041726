@@ -390,8 +390,10 @@
 				maxWidth: stage.phone
 					? Math.round(stage.phoneCardW - BLADE_RIGHT_INSET * bu)
 					: Math.round((CARD_W * stage.cardWK - BLADE_RIGHT_INSET) * bu) -
-						// a tablet in landscape: the blade stops ~30px shorter so it clears the stacked footer (Oct 21)
-						(stage.tabletLandscape ? 30 : 0),
+						// a tablet in landscape: the blade stops 20px shorter so it clears the stacked footer, and keeps
+						// that width (fixedWidth) rather than shrinkwrapping (Oct 21, Sam)
+						(stage.tabletLandscape ? 20 : 0),
+				fixedWidth: stage.tabletLandscape,
 				// `key` carries the dials so a resize RE-FITS. fitBlade caches on this string; without
 				// them a narrowed window kept the width and font size solved for the wide card.
 				key: `${crossConnections

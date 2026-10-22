@@ -36,6 +36,9 @@ export type BladeFitParams = {
 	maxWidth: number;
 	/** Change this (e.g. the text) to force a refit for a new person. */
 	key?: unknown;
+	/** Keep the full maxWidth — no shrinkwrap (a tablet in landscape, Oct 21: Sam saw the blade pulled in to about
+	 *  half the card and wanted only "the right edge max to the left by 20px"). */
+	fixedWidth?: boolean;
 };
 
 const FONT_STEPS = 7;
@@ -87,6 +90,7 @@ export function fitBlade(node: HTMLElement, params: BladeFitParams) {
 		// blade got a whole extra row out of a hundredth of a pixel.
 		t.style.fontSize = `${(Math.floor(size * 100) / 100).toFixed(2)}px`;
 
+		if (current.fixedWidth) return; // the width stays maxWidth
 		// ── 2. WIDTH, at that type ──────────────────────────────────────────────────────────────────
 		// min-content is the honest floor: the width at which the longest unbreakable run still fits, so
 		// a bound name cannot be forced to overflow.
