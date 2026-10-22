@@ -1099041,6 +1099041,18 @@
      "type": "colleague",
      "link_text": "Harry Payne Whitney",
      "display_label": "captained America at polo and led the owners eight times"
+    },
+    {
+     "related_id": "X04315",
+     "type": "connection",
+     "link_text": "Charles von Stade",
+     "display_label": "won polo's U.S. Open at Meadow Brook in 1941, at twenty-one"
+    },
+    {
+     "related_id": "HD16730",
+     "type": "connection",
+     "link_text": "Red Armour",
+     "display_label": "reached nine goals in the 1970s and polo's Hall of Fame in 1999"
     }
    ],
    "bio": {
@@ -1099096,21 +1099108,21 @@
      "number": 2
     },
     {
+     "category": "sports",
+     "header": "Two U.S. Opens with the Templeton team",
+     "body": "Raymond and his brother Winston both played polo, and Raymond won the U.S. Open twice with the Templeton team. The Museum of Polo and Hall of Fame inducted him posthumously in 2006.",
+     "number": 3
+    },
+    {
      "category": "military",
      "header": "He ran the OSS navy section in London",
      "body": "He joined the naval reserve in 1940 and served on minesweepers before taking charge of the Navy Section of the Office of Strategic Services in London under Ambassador Winant. He came out a commander with the Legion of Merit, the Bronze Star and the Croix de guerre.",
-     "number": 3
+     "number": 4
     },
     {
      "category": "politics",
      "header": "He gave back part of an ambassador’s pay",
      "body": "Johnson sent him to Dublin in 1965, and he returned a good share of the salary to the State Department to pay for training Foreign Service officers.",
-     "number": 4
-    },
-    {
-     "category": "career",
-     "header": "Six years in the Senate of Virginia",
-     "body": "He sat for six years in the Senate of Virginia from 1947, arguing for conservation and farming, and spent six more on the state fish and game commission.",
      "number": 5
     },
     {
@@ -1099160,7 +1099172,8 @@
      "start_year": 1947,
      "end_year": 1953
     }
-   ]
+   ],
+   "last_updated": "2026-10-22"
   },
   {
    "id": "X02880",
@@ -2415026,6 +2415039,12 @@
      "type": "connection",
      "link_text": "Thomas LeBoutillier III",
      "display_label": "lost his father to a heart attack mid-match at Meadow Brook"
+    },
+    {
+     "related_id": "X02879",
+     "type": "connection",
+     "link_text": "Raymond Guest",
+     "display_label": "won the polo U.S. Open twice with the Templeton team"
     }
    ],
    "quotes": [],
@@ -2501064,6 +2501083,12 @@
      "type": "connection",
      "link_text": "Harry Cushing",
      "display_label": "kept his own polo team in Rome for thirty years"
+    },
+    {
+     "related_id": "X02879",
+     "type": "connection",
+     "link_text": "Raymond Guest",
+     "display_label": "was voted into polo's Hall of Fame in 2006, posthumously"
     }
    ],
    "classification": {
