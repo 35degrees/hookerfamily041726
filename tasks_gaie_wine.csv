@@ -1,0 +1,4 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD16701,field_set,bio.chip_first_name=Gaie,OK set bio.chip_first_name = 'Gaie',/person/abigail-alling-1959,,
+HD14929,cc,"related=X03943 link=""Allan Taylor"" label=""wrote What Everybody Wants to Know About Wine""",OK cc->X03943 added; FLAG needs reciprocal cc row on X03943,/person/james-churchill-1912,,
+X03943,cc,"related=HD14929 link=""Creighton Churchill"" label=""wrote The Great Wine Rivers, and chose the wine for U.S. embassies""",OK cc->HD14929 added (reciprocal present),/person/turney-taylor-1897,,

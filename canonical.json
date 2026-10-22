@@ -1804808,7 +1804808,14 @@
    "landmarks": [],
    "artworks": [],
    "research_tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD14929",
+     "type": "connection",
+     "link_text": "Creighton Churchill",
+     "display_label": "wrote The Great Wine Rivers, and chose the wine for U.S. embassies"
+    }
+   ],
    "quotes": [],
    "research_sources": [],
    "documents": [],
@@ -2320842,7 +2320849,14 @@
      "notes": "Army Intelligence, World War II"
     }
    ],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "X03943",
+     "type": "connection",
+     "link_text": "Allan Taylor",
+     "display_label": "wrote What Everybody Wants to Know About Wine"
+    }
+   ],
    "research_tags": [],
    "research_sources": [],
    "sources": [
@@ -2497718,7 +2497732,8 @@
     "middle_name": "Kingsley",
     "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1791404067/Abigail-Alling-formal-250_kdm26m.jpg",
     "bio_blurb": "Biospherian, marine biologist and expedition leader",
-    "gender": "female"
+    "gender": "female",
+    "chip_first_name": "Gaie"
    },
    "gender": "female",
    "birth": {
