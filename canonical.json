@@ -2521135,7 +2521135,8 @@
     "last_name": "Cavers",
     "display_name": "William Cavers",
     "chip_first_name": "Bill",
-    "bio_blurb": "Bedford Audubon executive director"
+    "bio_blurb": "Bedford Audubon executive director",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792772308/IMG_2229-1-resized_qo2bjo.jpg"
    },
    "gender": "male",
    "birth": {},
@@ -2521300,7 +2521301,8 @@
     "display_name": "Laura Woodward Cavers",
     "first_name": "Laura",
     "maiden_name": "Woodward",
-    "last_name": "Cavers"
+    "last_name": "Cavers",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792772365/Donor-Profile-Bill-Cavers--resized_adbbmo.png"
    },
    "gender": "female",
    "birth": {},
@@ -2562631,6 +2562633,11 @@
    "person_id": "HD6098",
    "url": "https://anth.uic.edu/profiles/roosevelt-anna-c/",
    "note": "Anna Curtenius Roosevelt's UIC faculty page (Distinguished Professor of Anthropology). A pupil of Langdon Gilbert Rankin (HD16947) at East Woods School, Oyster Bay, who wrote of him warmly in 2026; could tell more about East Woods and the Rankins, and about her own Roosevelt line."
+  },
+  {
+   "person_id": "HD16987",
+   "url": "mailto:executivedirector@bedfordaudubon.org",
+   "note": "Bill Cavers, executive director of Bedford Audubon (914-232-1999). Son of Diane Langdon Weeks Cavers (HD16983) and David Farquhar Cavers Jr.; could confirm his siblings' families, his children, and the Weeks and Watkins lines behind his mother."
   }
  ]
 }
