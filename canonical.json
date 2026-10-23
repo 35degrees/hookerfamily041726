@@ -35923,6 +35923,22 @@
     "HD2616",
     "X02868"
    ]
+  },
+  {
+   "id": "CEM2024",
+   "name": "Woodland Cemetery and Arboretum",
+   "hooker_connections": [
+    "H00931",
+    "I06076"
+   ],
+   "city": "Dayton",
+   "county": "Montgomery County",
+   "state": "Ohio",
+   "country": "United States",
+   "gps": {
+    "latitude": 39.74288,
+    "longitude": -84.17732
+   }
   }
  ],
  "institutions": [
@@ -166546,11 +166562,14 @@
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Lucy Edwards",
+    "display_name": "Lucy Edwards Woodbridge",
     "first_name": "Lucy",
     "maiden_name": "Edwards",
-    "married_names": [],
-    "bio_blurb": "Edwards daughter who worked to support orphans"
+    "married_names": [
+     "Woodbridge"
+    ],
+    "bio_blurb": "Edwards daughter who worked to support orphans",
+    "last_name": "Woodbridge"
    },
    "residence": {},
    "baptism": {},
@@ -166591,7 +166610,10 @@
    ],
    "burial": {
     "cemetery_id": "CEM950"
-   }
+   },
+   "former_ids": [
+    "lucy-edwards-1736"
+   ]
   },
   {
    "id": "H00381",
@@ -401373,21 +401395,48 @@
     "state": "Massachusetts"
    },
    "death": {
-    "year": 1854
+    "year": 1863,
+    "month": 11,
+    "day": 4,
+    "date_precision": "exact",
+    "city": "Dayton",
+    "county": "Montgomery County",
+    "state": "Ohio",
+    "country": "United States"
    },
    "gender": "female",
    "research_notes": "b. Apr 14, 1773 Stockbridge MA; d. 1854. EH #931. (EH 1909; FindAGrave)",
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06076",
+     "children_ids": [
+      "HD16937",
+      "HD16938",
+      "HD16939",
+      "HD16940",
+      "HD16941",
+      "HD16942",
+      "HD16943",
+      "HD16944",
+      "HD16945"
+     ]
+    }
+   ],
    "notable": {
     "is_notable": false,
     "notable_category": []
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Elizabeth Woodbridge",
+    "display_name": "Elizabeth Woodbridge Brown",
     "first_name": "Elizabeth",
     "maiden_name": "Woodbridge",
-    "married_names": []
+    "married_names": [
+     "Brown"
+    ],
+    "last_name": "Brown",
+    "chip_first_name": "Bessie"
    },
    "residence": {},
    "baptism": {},
@@ -401400,7 +401449,13 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "number_of_marriages": 0
+   "number_of_marriages": 1,
+   "former_ids": [
+    "elizabeth-woodbridge-1773"
+   ],
+   "burial": {
+    "cemetery_id": "CEM2024"
+   }
   },
   {
    "id": "H00932",
@@ -2515320,6 +2515375,462 @@
    },
    "is_placeholder": false,
    "number_of_marriages": 0
+  },
+  {
+   "id": "HD16937",
+   "bio": {
+    "married_names": [],
+    "first_name": "Elizabeth",
+    "last_name": "Brown",
+    "display_name": "Elizabeth Brown"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1797,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1863,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06076",
+    "mother_id": "H00931"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16938",
+   "bio": {
+    "married_names": [],
+    "first_name": "Mary",
+    "last_name": "Brown",
+    "display_name": "Mary Brown"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1799,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1887,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06076",
+    "mother_id": "H00931"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16939",
+   "bio": {
+    "married_names": [],
+    "first_name": "Robert",
+    "last_name": "Brown",
+    "display_name": "Robert Brown"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1805,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1883,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06076",
+    "mother_id": "H00931"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16940",
+   "bio": {
+    "married_names": [],
+    "first_name": "John",
+    "middle_name": "W.",
+    "last_name": "Brown",
+    "display_name": "John W. Brown"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1808,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1832,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06076",
+    "mother_id": "H00931"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16941",
+   "bio": {
+    "married_names": [],
+    "first_name": "George",
+    "middle_name": "H.",
+    "last_name": "Brown",
+    "display_name": "George H. Brown"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1808,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1843,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06076",
+    "mother_id": "H00931"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16942",
+   "bio": {
+    "married_names": [],
+    "first_name": "Samuel",
+    "middle_name": "Bartlett",
+    "last_name": "Brown",
+    "display_name": "Samuel Bartlett Brown"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1811,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1887,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06076",
+    "mother_id": "H00931"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16943",
+   "bio": {
+    "married_names": [
+     "Kimball"
+    ],
+    "first_name": "Nancy",
+    "middle_name": "Woodbridge",
+    "maiden_name": "Brown",
+    "last_name": "Kimball",
+    "display_name": "Nancy Woodbridge Brown Kimball"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1813,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1906,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06076",
+    "mother_id": "H00931"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16944",
+   "bio": {
+    "married_names": [
+     "Cochran"
+    ],
+    "first_name": "Jeannette",
+    "maiden_name": "Brown",
+    "last_name": "Cochran",
+    "chip_first_name": "Jane",
+    "display_name": "Jeannette Brown Cochran"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1814,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1835,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06076",
+    "mother_id": "H00931"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16945",
+   "bio": {
+    "married_names": [],
+    "first_name": "Elisha",
+    "last_name": "Brown",
+    "suffix": "Jr.",
+    "display_name": "Elisha Brown Jr."
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1815,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1848,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06076",
+    "mother_id": "H00931"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06076",
+   "bio": {
+    "display_name": "Elisha Brown Sr.",
+    "first_name": "Elisha",
+    "last_name": "Brown",
+    "suffix": "Sr.",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1770,
+    "date_precision": "year_only",
+    "city": "Stockbridge",
+    "county": "Berkshire County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1853,
+    "month": 2,
+    "day": 9,
+    "date_precision": "exact",
+    "city": "Dayton",
+    "county": "Montgomery County",
+    "state": "Ohio",
+    "country": "United States"
+   },
+   "burial": {
+    "cemetery_id": "CEM2024"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H00931",
+     "children_ids": [
+      "HD16937",
+      "HD16938",
+      "HD16939",
+      "HD16940",
+      "HD16941",
+      "HD16942",
+      "HD16943",
+      "HD16944",
+      "HD16945"
+     ]
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
   }
  ],
  "landmarks": [
