@@ -673854,14 +673854,23 @@
     "display_name": "Rebecca Rodman Nichols Creamer Shreve"
    },
    "birth": {
-    "year": 1829,
+    "year": 1828,
     "city": "Salem",
     "county": "Essex County",
     "state": "Massachusetts",
     "country": "United States",
-    "date_precision": "approximate"
+    "date_precision": "exact",
+    "month": 5,
+    "day": 5
    },
-   "death": {},
+   "death": {
+    "year": 1897,
+    "month": 6,
+    "day": 7,
+    "state": "California",
+    "country": "United States",
+    "date_precision": "exact"
+   },
    "parents": {
     "father_research_notes": "Nathan Nichols",
     "mother_research_notes": "Elizabeth Rodman"
@@ -673900,8 +673909,23 @@
     "is_notable": false,
     "notable_category": []
    },
-   "narrative_blocks": [],
-   "cross_connections": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Rodman, to a son and two grandsons",
+     "body": "Rebecca carried her mother Elizabeth Rodman's surname as her middle name and passed it on, to her son George Rodman Shreve and to her grandsons John Rodman Hooker and Rodman Lent Hooker."
+    }
+   ],
+   "cross_connections": [
+    {
+     "related_id": "HD3246",
+     "type": "connection",
+     "link_text": "Rodman Lent Hooker",
+     "display_label": ", her grandson, was named for her",
+     "lineal_gap": 2
+    }
+   ],
    "research_notes": "Mother of Elizabeth Lawton Shreve (X02253). Per Tony Hooker pedigree + Findagrave: b. May 12, 1846 (likely MA); d. unknown to current sources. Daughter of Nathan Nichols + Elizabeth Rodman. m. Jun 16, 1858 Salem MA George Choate Shreve. After George's 1893 death she remarried to a Creamer (per Findagrave note for son George Rodman Shreve listing her as 'Rebecca Rodman Nichols Creamer'). Multiple children including Elizabeth Lawton Shreve (1868, m. Robert Gay Hooker) and George Rodman Shreve (1861-1914, jewelry firm successor).",
    "residence": {},
    "baptism": {},
@@ -674517,6 +674541,13 @@
      "related_id": "X02345",
      "display_label": ", his father-in-law, founded Pebble Beach",
      "link_text": "Samuel Finley Brown Morse"
+    },
+    {
+     "related_id": "X02260",
+     "type": "connection",
+     "link_text": "Rebecca Rodman Shreve",
+     "display_label": ", his maternal grandmother, gave him his first name",
+     "lineal_gap": -2
     }
    ],
    "research_notes": "Sam Talcott Hooker's grandfather. Per Sam's direct family knowledge + Tony Hooker pedigree + family records: b.1909, d.1994 age 85. Youngest of three sons of Robert Gay Hooker (H04266) and Elizabeth Lawton Shreve (X02253). Older brothers: Robert Gay Hooker Jr. (HD3248, 1901-1984, m. Marion Sabina Kuhn) and John Rodman Hooker (HD3243, 1903-1983, m. Josephine Dunham, father of Tony Hooker HD3249). TWO MARRIAGES: (1) Jane Austin (1915-1969), m.1956 — Rodman was 47 at marriage; Jane d.1969 age 54 leaving Rodman widowed. (2) Nancy A Morse (1915-2005) — likely remarried after Jane's 1969 death; Nancy survived Rodman by 11 years. Sam's father (gen 11, living, not built per privacy convention) is one of Rodman Lent's children. Mother of Sam's father (Jane Austin or Nancy Morse?) not yet confirmed by Sam — pending direct family clarification. His name 'Rodman' echoes his maternal-grandmother Rebecca Rodman Nichols Shreve and his uncle George Rodman Shreve (the SF jeweler); 'Lent' echoes Robert Lent / George H. Lent — Robert Gay's real estate partner and Bessie Augusta Hooker's husband. The two names carry forward both the Shreve maternal heritage and the Hooker-Lent business partnership that defined Robert Gay's career. THROUGH RODMAN LENT, THE HOOKER LINE CONTINUES TO SAM TALCOTT HOOKER (curator of this database). Sam's father and Sam are intentionally not built (living).\n[pilot79]: Children of marriage 1 (to Nancy Borland Morse I00288) updated — now wired: HD3315 Rodman L. Hooker Jr. (1940-2016), HD3384 Michael Gay Hooker (1935-c.2017), HD3385 Anne Stewart Hooker Walker.\n[pilot80 CORRECTION]: Anne Stewart Walker (HD3385) was wrongly added to marriage[0] children_ids in pilot79. She is Nancy's daughter from a different marriage (to Kenneth Stewart Walker, X02349), not Rod Sr.'s biological child. Removed.",
