@@ -410339,7 +410339,9 @@
      ],
      "marriage_number": 1,
      "date_year": 1821,
-     "location_country": "United States"
+     "location_country": "United States",
+     "date_month": 10,
+     "date_day": 10
     },
     {
      "spouse_id": "X00712",
@@ -410351,6 +410353,14 @@
      "location_city": "Norwich",
      "location_state": "Connecticut",
      "location_country": "United States"
+    },
+    {
+     "marriage_number": 3,
+     "spouse_id": "I06073",
+     "children_ids": [],
+     "date_year": 1857,
+     "date_month": 12,
+     "date_day": 28
     }
    ],
    "gender": "male",
@@ -410387,7 +410397,7 @@
     }
    ],
    "research_notes": "b. Nov 24, 1794 Goshen CT; d. Mar 31, 1875 Fort Atkinson, Jefferson County WI age 80. DOUBLE HOOKER DESCENDANT: father H00514 = gen 5 Hooker through surname line; mother H00940 Phebe Edwards = gen 5 Hooker through Pierpont-Edwards line. Middlebury College 1814. Andover Theological Seminary 1817. Ordained at Green's Farms CT August 15, 1821; pastor until 1829. American Temperance Society, associate general agent + editor Journal of Humanity 1829. Installed First Congregational Church Bennington VT February 22, 1832; dismissed 1844. Professor of sacred rhetoric and ecclesiastical history, Theological Institute of Connecticut, East Windsor Hill 1844-1848. Pastor, South Windsor CT 1849-1856; Fair Haven VT 1856-1862. Trustee, Middlebury College 1834-1844. Corporate member, American Board of Commissioners for Foreign Missions 1840. MAJOR PUBLICATION: \"The Life of Thomas Hooker\" (1849) — the foundational biography of Thomas Hooker that Edward Hooker cited as a primary authority in compiling the 1909 Descendants book. He was Thomas Hooker's great-great-great-great-grandson. m.(1) Faith Trumbull Huntington (1796-1850) 1821. m.(2) Elizabeth Hunt Sheldon (1811-1856), widow of Charles Lyman 1850. Children with Faith: Mary Lanman Hooker Clark, Faith Huntington Hooker Montague, Elizabeth Peck Hooker, Elias Cornelius Hooker, Sarah Huntington Hooker, Rev. Edward Turnbull Hooker. Buried Evergreen Cemetery, Fort Atkinson WI. (EH 1909; Wikipedia on Edward William Hooker; Middlebury; FindAGrave) His son Elias Cornelius Hooker (HD2244, 1832-1873) was named for his uncle-by-marriage Elias Cornelius (X00724, 1794-1832) — the ABCFM missionary who married his sister Mary Ann Hooker (H01355).",
-   "number_of_marriages": 2,
+   "number_of_marriages": 3,
    "institutions": [
     {
      "institution_id": "INST054",
@@ -410797,7 +410807,10 @@
       "HD2244",
       "HD2245",
       "HD2246"
-     ]
+     ],
+     "date_year": 1821,
+     "date_month": 10,
+     "date_day": 10
     }
    ],
    "notable": {
@@ -410844,7 +410857,10 @@
     "year": 1811
    },
    "death": {
-    "year": 1856
+    "year": 1856,
+    "month": 9,
+    "day": 4,
+    "date_precision": "exact"
    },
    "gender": "female",
    "research_notes": "b. 1811; d. 1856. Widow of Charles Lyman. m. Rev. Edward William Hooker (H01354) Nov 19, 1850 Norwich CT. (EH 1909)",
@@ -410854,7 +410870,10 @@
      "marriage_number": 1,
      "spouse_id": "H01354",
      "location_country": "United States",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1850,
+     "date_month": 11,
+     "date_day": 19
     }
    ],
    "parents": {},
@@ -411134,14 +411153,50 @@
    "tags": [],
    "sources": [],
    "birth": {
-    "year": 1832
+    "year": 1832,
+    "month": 7,
+    "day": 9,
+    "date_precision": "exact",
+    "city": "Bennington",
+    "county": "Bennington County",
+    "state": "Vermont",
+    "country": "United States"
    },
    "death": {
-    "year": 1873
+    "year": 1873,
+    "month": 12,
+    "day": 23,
+    "date_precision": "exact",
+    "city": "Stockbridge",
+    "county": "Berkshire County",
+    "state": "Massachusetts",
+    "country": "United States"
    },
    "gender": "male",
    "research_notes": "b. 1832; d. 1873. Rev. Edward William Hooker wrote his memorial. (EH; FindAGrave)",
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06071",
+     "children_ids": [],
+     "date_year": 1861,
+     "date_month": 6,
+     "date_day": 19,
+     "end_type": "death_of_spouse",
+     "end_year": 1862
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06072",
+     "children_ids": [
+      "HD16925",
+      "HD16926"
+     ],
+     "date_year": 1865,
+     "date_month": 12,
+     "date_day": 20
+    }
+   ],
    "notable": {
     "is_notable": false,
     "notable_category": []
@@ -411185,7 +411240,7 @@
      "number": 1
     }
    ],
-   "number_of_marriages": 0
+   "number_of_marriages": 2
   },
   {
    "id": "HD2245",
@@ -2514337,6 +2514392,284 @@
    "burial": {
     "cemetery_id": "CEM291"
    }
+  },
+  {
+   "id": "I06071",
+   "bio": {
+    "display_name": "Margaret Cecelia De Bevoise Hooker",
+    "first_name": "Margaret",
+    "last_name": "Hooker",
+    "married_names": [
+     "Hooker"
+    ],
+    "middle_name": "Cecelia",
+    "maiden_name": "De Bevoise"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1836,
+    "month": 11,
+    "day": 28,
+    "date_precision": "exact",
+    "city": "Brooklyn",
+    "county": "Kings County",
+    "state": "New York",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1862,
+    "month": 4,
+    "day": 25,
+    "date_precision": "exact",
+    "city": "Newburyport",
+    "county": "Essex County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD2244",
+     "children_ids": [],
+     "date_year": 1861,
+     "date_month": 6,
+     "date_day": 19,
+     "end_type": "death_of_spouse",
+     "end_year": 1862
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06072",
+   "bio": {
+    "display_name": "Sarah Balch Moody Williams",
+    "first_name": "Sarah",
+    "last_name": "Williams",
+    "married_names": [
+     "Hooker"
+    ],
+    "middle_name": "Balch Moody"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1845,
+    "month": 5,
+    "day": 3,
+    "date_precision": "exact",
+    "city": "Newburyport",
+    "county": "Essex County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1934,
+    "date_precision": "year_only",
+    "city": "Boston",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 2,
+     "spouse_id": "HD2244",
+     "children_ids": [
+      "HD16925",
+      "HD16926"
+     ],
+     "date_year": 1865,
+     "date_month": 12,
+     "date_day": 20,
+     "end_type": "death_of_spouse",
+     "end_year": 1873
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06073",
+   "bio": {
+    "display_name": "Lucy Bagley Hooker",
+    "first_name": "Lucy",
+    "last_name": "Hooker",
+    "married_names": [
+     "Hooker"
+    ],
+    "maiden_name": "Bagley"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {
+    "year": 1870,
+    "month": 11,
+    "day": 11,
+    "date_precision": "exact",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 3,
+     "spouse_id": "H01354",
+     "children_ids": [],
+     "date_year": 1857,
+     "date_month": 12,
+     "date_day": 28,
+     "end_type": "death_of_spouse",
+     "end_year": 1870
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD16925",
+   "bio": {
+    "display_name": "Mabel Hooker",
+    "first_name": "Mabel",
+    "last_name": "Hooker",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1866,
+    "month": 10,
+    "day": 13,
+    "date_precision": "exact",
+    "city": "Nashua",
+    "county": "Hillsborough County",
+    "state": "New Hampshire",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1884,
+    "month": 11,
+    "day": 29,
+    "date_precision": "exact",
+    "city": "Boston",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD2244",
+    "mother_id": "I06072"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16926",
+   "bio": {
+    "display_name": "Richard Hooker",
+    "first_name": "Richard",
+    "last_name": "Hooker",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1868,
+    "month": 7,
+    "day": 24,
+    "date_precision": "exact",
+    "city": "Nashua",
+    "county": "Hillsborough County",
+    "state": "New Hampshire",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1934,
+    "date_precision": "year_only",
+    "city": "Boston",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD2244",
+    "mother_id": "I06072"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
   }
  ],
  "landmarks": [
