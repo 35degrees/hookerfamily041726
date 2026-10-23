@@ -43005,8 +43005,10 @@
    "subject_id": "I01569",
    "name": "Chandler and Frank Lloyd Wright (bronze)",
    "type": "statue",
-   "location": "Downtown Chandler, Arizona",
-   "url": "https://en.wikipedia.org/wiki/Alexander_J._Chandler"
+   "location": "Chandler, Arizona",
+   "url": "https://streetartcities.com/markers/0f6ad998-bbfc-42c7-bdb1-9b76e8cad456",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792763761/orig-resized_fi03vq.png",
+   "url_notes": "Previous url (Chandler biography, replaced 23 Oct 2026): https://en.wikipedia.org/wiki/Alexander_J._Chandler"
   }
  ],
  "people": [
@@ -2517871,7 +2517873,7 @@
   },
   {
    "id": "LM058",
-   "name": "Chelmsford (Hooker family Greenwich estate)",
+   "name": "Chelmsford Estate",
    "type": "estate_garden",
    "city": "Greenwich",
    "county": "Fairfield County",
@@ -2517899,11 +2517901,12 @@
     "H04641",
     "HD3284"
    ],
-   "primary_name": "Chelmsford (Hooker family Greenwich estate)"
+   "primary_name": "Chelmsford Estate",
+   "primary_url": "https://www.gardenconservancy.org/garden-directory/open-days/chelmsford-84346906-f779-45a4-8b86-d27bb9564ee4"
   },
   {
    "id": "LM059",
-   "name": "Rockefeller Guest House (Blanchette Hooker Rockefeller Guest House)",
+   "name": "Rockefeller Guest House",
    "type": "historic_residence",
    "city": "New York",
    "county": "New York County",
@@ -2517924,7 +2517927,8 @@
    "person_ids": [
     "HD3284"
    ],
-   "primary_name": "Rockefeller Guest House (Blanchette Hooker Rockefeller Guest House)"
+   "primary_name": "Rockefeller Guest House",
+   "primary_url": "https://en.wikipedia.org/wiki/Rockefeller_Guest_House"
   },
   {
    "id": "LM060",
