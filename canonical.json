@@ -2524485,7 +2524485,8 @@
      "Borchard"
     ],
     "middle_name": "Geer",
-    "bio_blurb": "St. Paul's School teacher"
+    "bio_blurb": "Episcopal school chaplain and teacher",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792792366/1737313536315_k6af9q.jpg"
    },
    "gender": "female",
    "birth": {},
@@ -2524507,7 +2524508,14 @@
      "location_country": "United States"
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "religion",
+     "header": "Twenty-five years a school chaplain",
+     "body": "After Harvard Divinity School, Barbara spent twenty-five years as chaplain, pastor and teacher at Episcopal boarding schools with many students from abroad, teaching philosophy and world religions. She works in French and some Arabic."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2524544,6 +2524552,9 @@
      "dates": null,
      "type": null,
      "notes": "Cum laude"
+    },
+    {
+     "school_name": "Harvard Divinity School"
     }
    ],
    "career": [
@@ -2524562,6 +2524573,14 @@
      "start_year": null,
      "end_year": null,
      "notes": null
+    },
+    {
+     "role": "Chaplain, pastor and teacher",
+     "organization": "Episcopal boarding schools"
+    },
+    {
+     "role": "Member",
+     "organization": "National Association of Episcopal Schools"
     }
    ]
   },

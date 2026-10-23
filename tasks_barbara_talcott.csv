@@ -1,0 +1,7 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+T02324,field_set,bio.photo_url=https://res.cloudinary.com/dc5clrqtw/image/upload/v1792792366/1737313536315_k6af9q.jpg,OK set bio.photo_url = 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1792792366/1737313536315_k6af9q.jpg',/person/barbara-talcott,,
+T02324,field_set,bio.bio_blurb=Episcopal school chaplain and teacher,OK set bio.bio_blurb = 'Episcopal school chaplain and teacher',/person/barbara-talcott,,
+T02324,education,"school_name=""Harvard Divinity School""",OK education record appended,/person/barbara-talcott,,
+T02324,career,"role=""Chaplain, pastor and teacher"" organization=""Episcopal boarding schools""","OK career appended (no year -- renders without a date, sorts last)",/person/barbara-talcott,,
+T02324,career,"role=""Member"" organization=""National Association of Episcopal Schools""","OK career appended (no year -- renders without a date, sorts last)",/person/barbara-talcott,,
+T02324,nb_approved,"header=""Twenty-five years a school chaplain"" body=""After Harvard Divinity School, Barbara spent twenty-five years as chaplain, pastor and teacher at Episcopal boarding schools with many students from abroad, teaching philosophy and world religions. She works in French and some Arabic."" category=religion",OK nb_approved appended verbatim: 'Twenty-five years a school chaplain',/person/barbara-talcott,,
