@@ -966630,7 +966630,14 @@
     "wisconsin_migration"
    ],
    "research_tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "I06102",
+     "type": "connection",
+     "link_text": "Frank Weeks",
+     "display_label": "was buried in Forest Home, the Milwaukee cemetery he helped found"
+    }
+   ],
    "narrative_blocks": [
     {
      "number": 1,
@@ -1287531,6 +1287538,12 @@
      "type": "connection",
      "link_text": "Anna Sedgwick Minot",
      "display_label": "learned theatre from Hallie Flanagan at Vassar a decade after her"
+    },
+    {
+     "related_id": "I06098",
+     "type": "connection",
+     "link_text": "William Larned",
+     "display_label": "adapted Molnár's The Devil for George Arliss"
     }
    ],
    "burial": {
@@ -1902665,6 +1902678,12 @@
      "type": "parallel_careers",
      "link_text": "Marie Arana",
      "display_label": "also spent a career deciding which books a house would publish"
+    },
+    {
+     "related_id": "HD16984",
+     "type": "connection",
+     "link_text": "Charles Weeks",
+     "display_label": "was president of the Jazz Institute of Chicago"
     }
    ],
    "classification": {
@@ -2519218,7 +2519237,14 @@
      "end_year": 1890
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Fifty-three years a widow",
+     "body": "Florence married Job Clark Crane of Elizabeth in March 1876. He died in November 1890, with their four children still young, the eldest thirteen, and she outlived him by fifty-three years, to 1943."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2520028,7 +2520054,8 @@
     "middle_name": "Trowbridge",
     "last_name": "Larned",
     "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792771551/197554628_0f724268-8082-4d25-9a07-c6055881c876_aupclk.png",
-    "display_name": "William Trowbridge Larned"
+    "display_name": "William Trowbridge Larned",
+    "bio_blurb": "Fairy-tale author and newspaper editor"
    },
    "gender": "male",
    "birth": {
@@ -2520061,9 +2520088,35 @@
      "date_day": 19
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "literature",
+     "header": "Schoolcraft's legends, retold for children",
+     "body": "William retold Henry Schoolcraft's Native American legends as American Indian Fairy Tales and put La Fontaine into Fables in Rhyme for Little Folks, the children's books he is remembered for."
+    },
+    {
+     "number": 2,
+     "category": "arts",
+     "header": "He adapted Molnár's The Devil for George Arliss",
+     "body": "Night editor of the St. Louis Republic in his newspaper years, William later adapted Ferenc Molnár's play The Devil for the actor George Arliss."
+    },
+    {
+     "number": 3,
+     "category": "family",
+     "header": "His grandfather gave Fort Larned its name",
+     "body": "William's grandfather, Col. Benjamin Franklin Larned, was Paymaster General of the Army from 1854 until he died in 1862, and Fort Larned in Kansas, and the town beside it, were named for him. His father was a deputy paymaster general."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD6281",
+     "type": "connection",
+     "link_text": "Eleanor Phelps",
+     "display_label": "toured in George Arliss's Merchant of Venice for Winthrop Ames"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
@@ -2520311,7 +2520364,14 @@
      "date_month": 5
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Seventeen days short of a hundred and one",
+     "body": "Elsie was born at Elizabeth, New Jersey, on 23 April 1877 and died at Highland Park, Illinois, on 6 April 1978, seventeen days short of her hundred-and-first birthday."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2520645,7 +2520705,8 @@
     "middle_name": "Dickin",
     "last_name": "Weeks",
     "chip_first_name": "Frank",
-    "display_name": "Francis Dickin Weeks"
+    "display_name": "Francis Dickin Weeks",
+    "bio_blurb": "Electrical engineer and photographer"
    },
    "gender": "male",
    "birth": {
@@ -2520680,9 +2520741,29 @@
      ]
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "arts",
+     "header": "His slides are in the Metropolitan",
+     "body": "Frank became an outstanding photographer, and his slides went into the collections of the Metropolitan Museum and the National Gallery. He was also archivist of Chicago's University Club."
+    },
+    {
+     "number": 2,
+     "category": "military",
+     "header": "Fire control in the war, retired a commander",
+     "body": "A Dartmouth physics man who took his electrical engineering at MIT in 1931, Frank worked for Commonwealth Edison, General Cable and the Joslyn Manufacturing Company, and in the war on fire control, retiring a commander."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "H02018",
+     "type": "connection",
+     "link_text": "Robert Hunter Strong",
+     "display_label": "helped find the land for Forest Home, where he is buried"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
@@ -2520842,7 +2520923,14 @@
    "marriages": [],
    "narrative_blocks": [],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD11102",
+     "type": "connection",
+     "link_text": "Sheldon Meyer",
+     "display_label": "argued jazz onto Oxford University Press's list"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
