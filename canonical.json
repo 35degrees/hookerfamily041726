@@ -2517107,7 +2517107,14 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "career": [
+    {
+     "role": "Headmaster",
+     "organization": "East Woods School, Oyster Bay",
+     "end_year": 1967
+    }
+   ]
   },
   {
    "id": "I06082",
@@ -2517189,7 +2517196,19 @@
     "father_id": "HD16947",
     "mother_id": "I06082"
    },
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06091",
+     "children_ids": [],
+     "date_year": 1968,
+     "date_month": 3,
+     "date_day": 30,
+     "location_city": "Essex",
+     "location_state": "Connecticut",
+     "location_country": "United States"
+    }
+   ],
    "narrative_blocks": [],
    "tags": [],
    "cross_connections": [],
@@ -2517206,7 +2517225,19 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0
+   "number_of_marriages": 1,
+   "education": [
+    {
+     "school_name": "St. Agnes School",
+     "notes": "Albany, New York"
+    },
+    {
+     "school_name": "Endicott Junior College"
+    },
+    {
+     "school_name": "Columbia University"
+    }
+   ]
   },
   {
    "id": "HD16951",
@@ -2517527,7 +2517558,8 @@
    "death": {
     "year": 2023,
     "month": 7,
-    "date_precision": "month_year",
+    "day": 9,
+    "date_precision": "exact",
     "country": "United States",
     "cause": "cancer"
    },
@@ -2517572,7 +2517604,13 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "education": [
+    {
+     "school_name": "Westtown School",
+     "dates": "1972"
+    }
+   ]
   },
   {
    "id": "I06086",
@@ -2518493,6 +2518531,53 @@
    },
    "is_placeholder": false,
    "number_of_marriages": 0
+  },
+  {
+   "id": "I06091",
+   "bio": {
+    "display_name": "John J. Codella",
+    "first_name": "John",
+    "middle_name": "J.",
+    "last_name": "Codella",
+    "married_names": [],
+    "bio_blurb": "New York advertising executive"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16950",
+     "children_ids": [],
+     "date_year": 1968,
+     "date_month": 3,
+     "date_day": 30
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "career": [
+    {
+     "role": "President",
+     "organization": "Codella Duffus, Baker, Inc., New York"
+    }
+   ]
   }
  ],
  "landmarks": [
