@@ -354228,8 +354228,17 @@
      "relationship": "faculty"
     }
    ],
-   "landmarks": [],
-   "artworks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM560"
+    }
+   ],
+   "artworks": [
+    {
+     "artwork_id": "ART409",
+     "artwork_blurb": "Wilder Observatory, Amherst (1848)"
+    }
+   ],
    "quotes": [],
    "military_service": [],
    "burial": {
@@ -354444,7 +354453,13 @@
     }
    ],
    "landmarks": [],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART408",
+     "artwork_title": "Loomis Portrait",
+     "artwork_blurb": "Edwin Burrage Child"
+    }
+   ],
    "quotes": [],
    "military_service": [],
    "education": [
@@ -2535564,6 +2535579,21 @@
    "person_ids": [
     "H02979"
    ]
+  },
+  {
+   "id": "LM560",
+   "name": "Wilder Observatory",
+   "primary_name": "Wilder Observatory",
+   "type": "observatory",
+   "location": {
+    "city": "Amherst College, “The Octagon”",
+    "country": "United States"
+   },
+   "primary_url": "https://www.amherst.edu/museums/wilder",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792779185/725Dome_czsrop.jpg",
+   "person_ids": [
+    "HD1758"
+   ]
   }
  ],
  "compiler": {
@@ -2559728,13 +2559758,25 @@
    "type": "painting",
    "person_ids": [
     "X03127",
-    "X03128"
+    "X03128",
+    "HD1759"
    ],
    "url": "https://www.si.edu/object/eben-jenks-loomis%3Anpg_S_NPG.69.39",
    "primary_url": "https://www.si.edu/object/eben-jenks-loomis%3Anpg_S_NPG.69.39",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792778356/NPG-S_NPG_69_39_ext_bjyhlu.jpg",
    "credit_line": "National Portrait Gallery, Smithsonian Institution; bequest of Millicent Todd Bingham",
    "artist": "Edwin Burrage Child"
+  },
+  {
+   "id": "ART409",
+   "title": "7¼-inch Alvan Clark refractor",
+   "type": "telescope",
+   "person_ids": [
+    "HD1758"
+   ],
+   "url": "https://sherwords.blogspot.com/2009/08/love-and-observatory.html",
+   "primary_url": "https://sherwords.blogspot.com/2009/08/love-and-observatory.html",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792779105/7.25LongView_dg8ngk.jpg"
   }
  ],
  "wars": [
