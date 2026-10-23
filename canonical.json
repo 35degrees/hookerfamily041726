@@ -159840,8 +159840,9 @@
     {
      "type": "parallel_careers",
      "related_id": "HD1395",
-     "display_label": "co-founded Skull and Bones at the college his ancestor founded",
-     "link_text": "Gen. William Huntington Russell"
+     "display_label": ", his great-great-grandson, co-founded Skull and Bones at Yale in 1832",
+     "link_text": "Gen. William Huntington Russell",
+     "lineal_gap": 4
     },
     {
      "type": "historical_connection",
@@ -305507,8 +305508,9 @@
     {
      "type": "parallel_careers",
      "related_id": "X00126",
-     "display_label": "founded the college where his descendant started Skull and Bones",
-     "link_text": "Rev. James Pierpont"
+     "display_label": ", his great-great-grandfather, was a founder of Yale",
+     "link_text": "Rev. James Pierpont",
+     "lineal_gap": -4
     },
     {
      "related_id": "X03493",

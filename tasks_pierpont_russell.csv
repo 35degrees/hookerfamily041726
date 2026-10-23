@@ -1,0 +1,5 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD1395,field_set,"cross_connections[7].display_label=, his great-great-grandfather, was a founder of Yale","OK set cross_connections[7].display_label = ', his great-great-grandfather, was a founder of Yale'",/person/william-russell-1809,,
+HD1395,field_set,cross_connections[7].lineal_gap=-4,OK set cross_connections[7].lineal_gap = -4,/person/william-russell-1809,,
+X00126,field_set,"cross_connections[7].display_label=, his great-great-grandson, co-founded Skull and Bones at Yale in 1832","OK set cross_connections[7].display_label = ', his great-great-grandson, co-founded Skull and Bones at Yale in 1832'",/person/james-pierpont-1659,,
+X00126,field_set,cross_connections[7].lineal_gap=4,OK set cross_connections[7].lineal_gap = 4,/person/james-pierpont-1659,,
