@@ -5213,7 +5213,10 @@
     "I00916",
     "HD4626",
     "HD4628",
-    "HD4648"
+    "HD4648",
+    "HD16981",
+    "I06102",
+    "HD16983"
    ],
    "gps": {
     "latitude": 42.9978,
@@ -7308,7 +7311,9 @@
     "HD12136",
     "HD1991",
     "HD6636",
-    "I05376"
+    "I05376",
+    "HD16977",
+    "I06101"
    ],
    "notes": "Founded 1860 Chicago. Hooker-tree connections wired in 6W-2 + 6W-4: Sarah Frances Cowles Badger family plot in Fairlawn Section."
   },
@@ -15487,7 +15492,8 @@
     "X03080",
     "HD16965",
     "I06094",
-    "HD16972"
+    "HD16972",
+    "HD16973"
    ]
   },
   {
@@ -2519162,28 +2519168,56 @@
   {
    "id": "HD16966",
    "bio": {
-    "married_names": [],
+    "married_names": [
+     "Crane"
+    ],
     "first_name": "Florence",
     "middle_name": "Woodruff",
-    "last_name": "Langdon",
-    "display_name": "Florence Woodruff Langdon"
+    "last_name": "Crane",
+    "display_name": "Florence Woodruff Langdon Crane",
+    "maiden_name": "Langdon"
    },
    "gender": "female",
    "birth": {
     "year": 1850,
-    "date_precision": "year_only",
+    "month": 9,
+    "day": 4,
+    "date_precision": "exact",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
     "country": "United States"
    },
    "death": {
     "year": 1943,
-    "date_precision": "year_only",
+    "month": 11,
+    "day": 16,
+    "date_precision": "exact",
+    "county": "Union County",
+    "state": "New Jersey",
     "country": "United States"
    },
    "parents": {
     "father_id": "HD10234",
     "mother_id": "I06092"
    },
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06100",
+     "children_ids": [
+      "HD16977",
+      "HD16978",
+      "HD16979",
+      "HD16980"
+     ],
+     "date_year": 1876,
+     "date_month": 3,
+     "date_day": 1,
+     "end_type": "death_of_spouse",
+     "end_year": 1890
+    }
+   ],
    "narrative_blocks": [],
    "tags": [],
    "cross_connections": [],
@@ -2519200,7 +2519234,7 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0
+   "number_of_marriages": 1
   },
   {
    "id": "HD16967",
@@ -2519866,26 +2519900,462 @@
   {
    "id": "HD16973",
    "bio": {
-    "married_names": [],
+    "married_names": [
+     "Larned"
+    ],
     "first_name": "Marguerite",
     "middle_name": "Langdon",
-    "last_name": "Younglove",
-    "display_name": "Marguerite Langdon Younglove"
+    "last_name": "Larned",
+    "display_name": "Marguerite Langdon Younglove Larned",
+    "maiden_name": "Younglove"
    },
    "gender": "female",
    "birth": {
     "year": 1876,
-    "date_precision": "year_only",
+    "month": 5,
+    "day": 28,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
     "country": "United States"
    },
    "death": {
     "year": 1961,
-    "date_precision": "year_only",
+    "month": 12,
+    "day": 24,
+    "date_precision": "exact",
     "country": "United States"
    },
    "parents": {
     "father_id": "I06094",
     "mother_id": "HD16965"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06098",
+     "children_ids": [],
+     "date_year": 1909,
+     "date_month": 1,
+     "date_day": 19
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM719"
+   }
+  },
+  {
+   "id": "HD16974",
+   "bio": {
+    "married_names": [],
+    "first_name": "Herbert",
+    "middle_name": "Beverly",
+    "last_name": "Younglove",
+    "display_name": "Herbert Beverly Younglove"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1878,
+    "month": 8,
+    "day": 29,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1953,
+    "month": 11,
+    "day": 3,
+    "date_precision": "exact",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06094",
+    "mother_id": "HD16965"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06099",
+     "children_ids": [
+      "HD16976"
+     ]
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06098",
+   "bio": {
+    "married_names": [],
+    "first_name": "William",
+    "middle_name": "Trowbridge",
+    "last_name": "Larned",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792771551/197554628_0f724268-8082-4d25-9a07-c6055881c876_aupclk.png",
+    "display_name": "William Trowbridge Larned"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1865,
+    "month": 3,
+    "day": 26,
+    "date_precision": "exact",
+    "city": "St. Louis",
+    "state": "Missouri",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1928,
+    "month": 2,
+    "day": 9,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16973",
+     "children_ids": [],
+     "date_year": 1909,
+     "date_month": 1,
+     "date_day": 19
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "plot_notes": "Cremated"
+   },
+   "career": [
+    {
+     "role": "Night editor",
+     "organization": "St. Louis Republic"
+    },
+    {
+     "role": "Author",
+     "organization": "American Indian Fairy Tales; Fables in Rhyme for Little Folks"
+    }
+   ]
+  },
+  {
+   "id": "I06099",
+   "bio": {
+    "married_names": [
+     "Younglove"
+    ],
+    "display_name": "Clara Plumb Younglove",
+    "first_name": "Clara",
+    "maiden_name": "Plumb",
+    "last_name": "Younglove"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1881,
+    "date_precision": "year_only",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1977,
+    "month": 10,
+    "date_precision": "month_year",
+    "county": "Ocean County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16974",
+     "children_ids": [
+      "HD16976"
+     ]
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD16976",
+   "bio": {
+    "married_names": [],
+    "first_name": "Barbara",
+    "middle_name": "Plumb",
+    "last_name": "Younglove",
+    "display_name": "Barbara Plumb Younglove"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1914,
+    "month": 5,
+    "day": 4,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1929,
+    "month": 1,
+    "day": 6,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD16974",
+    "mother_id": "I06099"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06100",
+   "bio": {
+    "married_names": [],
+    "first_name": "Job",
+    "middle_name": "Clark",
+    "last_name": "Crane",
+    "display_name": "Job Clark Crane"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1848,
+    "month": 2,
+    "day": 21,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1890,
+    "month": 11,
+    "day": 9,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16966",
+     "children_ids": [
+      "HD16977",
+      "HD16978",
+      "HD16979",
+      "HD16980"
+     ],
+     "date_year": 1876,
+     "date_month": 3,
+     "date_day": 1,
+     "end_type": "death_of_spouse",
+     "end_year": 1890
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD16977",
+   "bio": {
+    "married_names": [
+     "Watkins"
+    ],
+    "display_name": "Elsie Langdon Crane Watkins",
+    "first_name": "Elsie",
+    "middle_name": "Langdon",
+    "maiden_name": "Crane",
+    "last_name": "Watkins"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1877,
+    "month": 4,
+    "day": 23,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1978,
+    "month": 4,
+    "day": 6,
+    "date_precision": "exact",
+    "city": "Highland Park",
+    "county": "Lake County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06100",
+    "mother_id": "HD16966"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06101",
+     "children_ids": [
+      "HD16981",
+      "HD16982"
+     ],
+     "date_year": 1907,
+     "date_month": 5
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM268",
+    "plot_notes": "Section Lakeside, Lot 72, Space 7"
+   }
+  },
+  {
+   "id": "HD16978",
+   "bio": {
+    "married_names": [],
+    "first_name": "Nellie",
+    "middle_name": "Clark",
+    "last_name": "Crane",
+    "display_name": "Nellie Clark Crane"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1879,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1977,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06100",
+    "mother_id": "HD16966"
    },
    "marriages": [],
    "narrative_blocks": [],
@@ -2519907,28 +2520377,28 @@
    "number_of_marriages": 0
   },
   {
-   "id": "HD16974",
+   "id": "HD16979",
    "bio": {
     "married_names": [],
-    "first_name": "Herbert",
-    "middle_name": "Beverly",
-    "last_name": "Younglove",
-    "display_name": "Herbert Beverly Younglove"
+    "first_name": "Marjorie",
+    "middle_name": "Ives",
+    "last_name": "Crane",
+    "display_name": "Marjorie Ives Crane"
    },
-   "gender": "male",
+   "gender": "female",
    "birth": {
-    "year": 1878,
+    "year": 1886,
     "date_precision": "year_only",
     "country": "United States"
    },
    "death": {
-    "year": 1953,
+    "year": 1967,
     "date_precision": "year_only",
     "country": "United States"
    },
    "parents": {
-    "father_id": "I06094",
-    "mother_id": "HD16965"
+    "father_id": "I06100",
+    "mother_id": "HD16966"
    },
    "marriages": [],
    "narrative_blocks": [],
@@ -2519948,6 +2520418,769 @@
    },
    "is_placeholder": false,
    "number_of_marriages": 0
+  },
+  {
+   "id": "HD16980",
+   "bio": {
+    "married_names": [],
+    "first_name": "Charles",
+    "middle_name": "William",
+    "last_name": "Crane",
+    "display_name": "Charles William Crane"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1887,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1963,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06100",
+    "mother_id": "HD16966"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06101",
+   "bio": {
+    "married_names": [],
+    "first_name": "Frederick",
+    "middle_name": "Arthur",
+    "last_name": "Watkins",
+    "display_name": "Frederick Arthur Watkins"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1875,
+    "month": 3,
+    "day": 9,
+    "date_precision": "exact",
+    "city": "Chicago",
+    "county": "Cook County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1961,
+    "month": 9,
+    "day": 28,
+    "date_precision": "exact",
+    "city": "Highland Park",
+    "county": "Lake County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16977",
+     "children_ids": [
+      "HD16981",
+      "HD16982"
+     ],
+     "date_year": 1907,
+     "date_month": 5
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM268"
+   }
+  },
+  {
+   "id": "HD16981",
+   "bio": {
+    "married_names": [
+     "Weeks"
+    ],
+    "display_name": "Elsie Crane Watkins Weeks",
+    "first_name": "Elsie",
+    "middle_name": "Crane",
+    "maiden_name": "Watkins",
+    "last_name": "Weeks"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1909,
+    "month": 2,
+    "day": 24,
+    "date_precision": "exact",
+    "city": "Summit",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2001,
+    "month": 6,
+    "day": 22,
+    "date_precision": "exact",
+    "city": "Highland Park",
+    "county": "Lake County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06101",
+    "mother_id": "HD16977"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06102",
+     "children_ids": [
+      "HD16983",
+      "HD16984",
+      "HD16985"
+     ]
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM158"
+   }
+  },
+  {
+   "id": "HD16982",
+   "bio": {
+    "married_names": [],
+    "first_name": "Florence",
+    "middle_name": "Langdon",
+    "last_name": "Watkins",
+    "display_name": "Florence Langdon Watkins"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1911,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1933,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06101",
+    "mother_id": "HD16977"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06102",
+   "bio": {
+    "married_names": [],
+    "first_name": "Francis",
+    "middle_name": "Dickin",
+    "last_name": "Weeks",
+    "chip_first_name": "Frank",
+    "display_name": "Francis Dickin Weeks"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1907,
+    "month": 5,
+    "day": 8,
+    "date_precision": "exact",
+    "city": "Milwaukee",
+    "county": "Milwaukee County",
+    "state": "Wisconsin",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1990,
+    "month": 11,
+    "day": 6,
+    "date_precision": "exact",
+    "city": "Highland Park",
+    "county": "Lake County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16981",
+     "children_ids": [
+      "HD16983",
+      "HD16984",
+      "HD16985"
+     ]
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM158"
+   },
+   "education": [
+    {
+     "school_name": "Dartmouth College",
+     "dates": "1929",
+     "notes": "Physics"
+    },
+    {
+     "school_name": "Massachusetts Institute of Technology",
+     "dates": "1931",
+     "notes": "B.S., electrical engineering"
+    }
+   ],
+   "career": [
+    {
+     "role": "Engineer",
+     "organization": "Joslyn Manufacturing Company, Chicago"
+    },
+    {
+     "role": "Engineer",
+     "organization": "General Cable"
+    },
+    {
+     "role": "Engineer",
+     "organization": "Commonwealth Edison"
+    }
+   ],
+   "military_service": [
+    {
+     "war": "World War II",
+     "branch": "United States Navy",
+     "rank": "Commander",
+     "notes": "Fire control"
+    }
+   ]
+  },
+  {
+   "id": "HD16983",
+   "bio": {
+    "married_names": [
+     "Cavers"
+    ],
+    "display_name": "Diane Langdon Weeks Cavers",
+    "first_name": "Diane",
+    "middle_name": "Langdon",
+    "maiden_name": "Weeks",
+    "last_name": "Cavers",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792771919/CN13726793_20180919.jpgx_mgunrw.jpg"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1934,
+    "month": 12,
+    "day": 1,
+    "date_precision": "exact",
+    "city": "Evanston",
+    "county": "Cook County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2018,
+    "month": 8,
+    "day": 14,
+    "date_precision": "exact",
+    "city": "Greenwich",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06102",
+    "mother_id": "HD16981"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06104",
+     "children_ids": [
+      "HD16986",
+      "HD16987",
+      "HD16988"
+     ],
+     "date_year": 1955
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM158"
+   },
+   "education": [
+    {
+     "institution_id": "INST209",
+     "school_name": "Wellesley College"
+    }
+   ]
+  },
+  {
+   "id": "HD16984",
+   "bio": {
+    "married_names": [],
+    "first_name": "Charles",
+    "middle_name": "Bryant Frederick",
+    "last_name": "Weeks",
+    "bio_blurb": "President of the Jazz Institute of Chicago",
+    "display_name": "Charles Bryant Frederick Weeks"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1937,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2004,
+    "date_precision": "year_only",
+    "city": "Lake Forest",
+    "county": "Lake County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06102",
+    "mother_id": "HD16981"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "career": [
+    {
+     "role": "President",
+     "organization": "Jazz Institute of Chicago"
+    }
+   ]
+  },
+  {
+   "id": "HD16985",
+   "bio": {
+    "married_names": [
+     "Waxter"
+    ],
+    "display_name": "Nancy Weeks Waxter",
+    "first_name": "Nancy",
+    "maiden_name": "Weeks",
+    "last_name": "Waxter"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1941,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06102",
+    "mother_id": "HD16981"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06103",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06103",
+   "bio": {
+    "married_names": [],
+    "first_name": "Tom",
+    "last_name": "Waxter",
+    "display_name": "Tom Waxter"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16985",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06104",
+   "bio": {
+    "married_names": [],
+    "display_name": "David Farquhar Cavers Jr.",
+    "first_name": "David",
+    "middle_name": "Farquhar",
+    "last_name": "Cavers",
+    "suffix": "Jr."
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16983",
+     "children_ids": [
+      "HD16986",
+      "HD16987",
+      "HD16988"
+     ],
+     "date_year": 1955
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD16986",
+   "bio": {
+    "married_names": [
+     "Dougherty"
+    ],
+    "display_name": "Nancy Cavers Dougherty",
+    "first_name": "Nancy",
+    "maiden_name": "Cavers",
+    "last_name": "Dougherty"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06104",
+    "mother_id": "HD16983"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06105",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD16987",
+   "bio": {
+    "married_names": [],
+    "first_name": "William",
+    "last_name": "Cavers",
+    "display_name": "William Cavers"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06104",
+    "mother_id": "HD16983"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06106",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD16988",
+   "bio": {
+    "married_names": [],
+    "first_name": "Thomas",
+    "last_name": "Cavers",
+    "display_name": "Thomas Cavers"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06104",
+    "mother_id": "HD16983"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06105",
+   "bio": {
+    "married_names": [],
+    "first_name": "Dale",
+    "last_name": "Dougherty",
+    "display_name": "Dale Dougherty"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16986",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06106",
+   "bio": {
+    "married_names": [
+     "Cavers"
+    ],
+    "display_name": "Laura Woodward Cavers",
+    "first_name": "Laura",
+    "maiden_name": "Woodward",
+    "last_name": "Cavers"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16987",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
   }
  ],
  "landmarks": [
