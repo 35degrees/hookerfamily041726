@@ -693719,7 +693719,8 @@
     },
     {
      "artwork_id": "ART401",
-     "artwork_blurb": "Gifford (1879)"
+     "artwork_blurb": "Gifford (1879)",
+     "title_scale": 0.75
     }
    ],
    "quotes": [],
