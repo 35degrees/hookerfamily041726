@@ -2085883,6 +2085883,10 @@
      "artwork_id": "ART320",
      "role": "subject",
      "artwork_blurb": "Sacramento, California"
+    },
+    {
+     "artwork_id": "ART410",
+     "artwork_blurb": "18 karat gold with rose cut diamonds and black enamel"
     }
    ],
    "last_updated": "2026-09-15"
@@ -2086042,6 +2086046,10 @@
     {
      "artwork_id": "ART320",
      "artwork_blurb": "Her husband, painted at Sacramento"
+    },
+    {
+     "artwork_id": "ART410",
+     "artwork_blurb": "18 karat gold with rose cut diamonds and black enamel"
     }
    ],
    "last_updated": "2026-09-15"
@@ -2559795,6 +2559803,18 @@
    "url": "https://sherwords.blogspot.com/2009/08/love-and-observatory.html",
    "primary_url": "https://sherwords.blogspot.com/2009/08/love-and-observatory.html",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792779105/7.25LongView_dg8ngk.jpg"
+  },
+  {
+   "id": "ART410",
+   "title": "Patek Philippe Pocket Watch",
+   "type": "artifact",
+   "person_ids": [
+    "X04140",
+    "X04139"
+   ],
+   "url": "https://cprr.org/Museum/Ephemera/Stanford_Jewelry.html",
+   "primary_url": "https://cprr.org/Museum/Ephemera/Stanford_Jewelry.html",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792781000/Stanford_Watch_2_y7osxz.jpg"
   }
  ],
  "wars": [
