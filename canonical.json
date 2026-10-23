@@ -576218,6 +576218,12 @@
      "type": "connection",
      "link_text": "Yvonne Howell Stevens",
      "display_label": "was the daughter of the comedienne billed as the girl Charlie Chaplin"
+    },
+    {
+     "related_id": "HD3011",
+     "type": "connection",
+     "link_text": "Florence Nichols",
+     "display_label": ", his niece, kept a summer home, Pointed Firs, at East Haddam"
     }
    ],
    "research_notes": "b. Jul 24, 1853 Hartford CT; d. Apr 29, 1937 Hartford CT. Named 'Hooker' for his mother's family — 7th-generation Hooker descendant. Grew up at Nook Farm; childhood neighbors included Harriet Beecher Stowe and Mark Twain. Actor and playwright; defined the stage role of Sherlock Holmes in his 1899 play. Built Gillette Castle, East Haddam CT (now state park). m. Jun 1, 1882 Helen Nickles (X02047; b.Aug 3, 1860 Detroit MI; d.Sep 1, 1888 Cos Cob CT), buried Farmington CT. (EH 2979; Wikipedia) NB CONTENT PRE-REWRITE (Apr 2026 schema compliance pass): Original NB bodies preserved here. NB1: 'William Hooker Gillette grew up at Nook Farm, where Mark Twain was his parents' neighbor. At 20, after leaving a New Orleans stock company unpaid, he returned to Hartford. Twain encouraged him and secured him an engagement at the Globe Theatre in Boston; he made his debut on September 15, 1875.' NB2: detailed history of calabash pipe origin in 1898 rewrite of Conan Doyle play, replacing Sidney Paget's straight pipe. NB3: '24-room fieldstone castle above the Connecticut River in East Haddam between 1914 and 1919, designing every detail himself — 47 unique doors with trick locks, secret passages, mirrors above the great hall to spy on arriving guests, a spring-loaded bar that appeared and disappeared.'",
@@ -576924,7 +576930,14 @@
    "burial": {
     "cemetery_id": "CEM075"
    },
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "H02979",
+     "type": "connection",
+     "link_text": "William Gillette",
+     "display_label": ", her uncle, built his castle at East Haddam, where she summered"
+    }
+   ],
    "bio": {
     "display_name": "Florence Gillette Nichols",
     "first_name": "Florence",
@@ -576932,7 +576945,8 @@
     "maiden_name": "Gillette",
     "married_names": [
      "Nichols"
-    ]
+    ],
+    "bio_blurb": "New York interior decorator"
    },
    "residence": {},
    "baptism": {},
@@ -576944,7 +576958,21 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "Pointed Firs, in her uncle's river town",
+     "body": "For many years Florence was an interior decorator in New York. Her summer home, Pointed Firs, was at East Haddam, the Connecticut River town where her uncle William Gillette built his castle, and she died there in 1948."
+    }
+   ],
+   "career": [
+    {
+     "role": "Interior decorator",
+     "organization": "New York"
+    }
+   ]
   },
   {
    "id": "X02048",

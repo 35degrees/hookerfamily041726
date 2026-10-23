@@ -1,0 +1,6 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD3011,nb_approved,"header=""Pointed Firs, in her uncle's river town"" body=""For many years Florence was an interior decorator in New York. Her summer home, Pointed Firs, was at East Haddam, the Connecticut River town where her uncle William Gillette built his castle, and she died there in 1948."" category=career","OK nb_approved appended verbatim: 'Pointed Firs, in her uncle's river town'",/person/florence-nichols-1868,,
+HD3011,field_set,bio.bio_blurb=New York interior decorator,OK set bio.bio_blurb = 'New York interior decorator',/person/florence-nichols-1868,,
+HD3011,career,"role=""Interior decorator"" organization=""New York""","OK career appended (no year -- renders without a date, sorts last)",/person/florence-nichols-1868,,
+HD3011,cc,"related=H02979 link=""William Gillette"" label="", her uncle, built his castle at East Haddam, where she summered""",OK cc->H02979 added; FLAG needs reciprocal cc row on H02979,/person/florence-nichols-1868,,
+H02979,cc,"related=HD3011 link=""Florence Nichols"" label="", his niece, kept a summer home, Pointed Firs, at East Haddam""",OK cc->HD3011 added (reciprocal present),/person/william-gillette-1853,,
