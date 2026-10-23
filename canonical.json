@@ -1267798,6 +1267798,12 @@
      "type": "connection",
      "link_text": "Leopold Stokowski",
      "display_label": "led the Philadelphia Orchestra she represented in Vienna in 1927"
+    },
+    {
+     "related_id": "HD15331",
+     "type": "connection",
+     "link_text": "Fortune Fulweiler",
+     "display_label": "took his M.F.A. at the Tyler School of Art she founded in 1935"
     }
    ]
   },
@@ -2375332,6 +2375338,12 @@
      "type": "connection",
      "link_text": "Julia Talcott",
      "display_label": "carves relief prints and drew holiday stamps for the Postal Service"
+    },
+    {
+     "related_id": "I01685",
+     "type": "connection",
+     "link_text": "Stella Elkins Tyler",
+     "display_label": "founded the Tyler School of Art, where he took his M.F.A."
     }
    ],
    "narrative_blocks": [

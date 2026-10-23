@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD15331,cc,"related=I01685 link=""Stella Elkins Tyler"" label=""founded the Tyler School of Art, where he took his M.F.A.""",OK cc->I01685 added; FLAG needs reciprocal cc row on I01685,/person/john-fulweiler-1939,,
+I01685,cc,"related=HD15331 link=""Fortune Fulweiler"" label=""took his M.F.A. at the Tyler School of Art she founded in 1935""",OK cc->HD15331 added (reciprocal present),/person/stella-elkins-1884,,
