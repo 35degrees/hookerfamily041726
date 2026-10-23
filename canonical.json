@@ -2524593,7 +2524593,10 @@
     "married_names": [],
     "middle_name": "Charles",
     "suffix": "III",
-    "bio_blurb": "New Profit chief operating officer"
+    "bio_blurb": "New Profit chief operating officer",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792792428/Screenshot_2026-10-23_at_2-resized_ihdw03.png",
+    "chip_first_name": "Doug",
+    "nickname": "Doug"
    },
    "gender": "male",
    "birth": {},
@@ -2524618,6 +2524621,18 @@
      "category": "career",
      "header": "Twenty-one years building New Profit",
      "body": "Douglas joined New Profit, the Boston venture philanthropy, in 2005, when it had ten staff and six grantees. When he retired as chief operating officer at the end of 2025, its staff was six times larger and it backed nearly a hundred."
+    },
+    {
+     "number": 2,
+     "category": "social_reform",
+     "header": "Board chair at Equal Opportunity Schools",
+     "body": "Doug joined the board of Equal Opportunity Schools, which works to bring overlooked students into advanced courses, in July 2020. He became its treasurer in 2022 and its board chair in October 2025."
+    },
+    {
+     "number": 3,
+     "category": "business",
+     "header": "He launched zapdata.com from iMarket",
+     "body": "Before New Profit, Doug was president of iMarket, a business-data company, and launched its internet spinoff, zapdata.com. He went on to run the prospecting solutions unit at Dun & Bradstreet as a vice president."
     }
    ],
    "tags": [],
@@ -2524678,6 +2524693,15 @@
      "start_year": null,
      "end_year": null,
      "notes": null
+    },
+    {
+     "role": "Board Chair",
+     "organization": "Equal Opportunity Schools",
+     "start_year": "2025"
+    },
+    {
+     "role": "Vice President, Prospecting Solutions",
+     "organization": "Dun & Bradstreet"
     }
    ]
   },

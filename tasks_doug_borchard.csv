@@ -1,0 +1,8 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+I06119,field_set,bio.photo_url=https://res.cloudinary.com/dc5clrqtw/image/upload/v1792792428/Screenshot_2026-10-23_at_2-resized_ihdw03.png,OK set bio.photo_url = 'https://res.cloudinary.com/dc5clrqtw/image/upload/v1792792428/Screenshot_2026-10-23_at_2-resized_ihdw03.png',/person/douglas-borchard-iii,,
+I06119,field_set,bio.chip_first_name=Doug,OK set bio.chip_first_name = 'Doug',/person/douglas-borchard-iii,,
+I06119,field_set,bio.nickname=Doug,OK set bio.nickname = 'Doug',/person/douglas-borchard-iii,,
+I06119,career,"role=""Board Chair"" organization=""Equal Opportunity Schools"" start_year=2025",OK career record appended,/person/douglas-borchard-iii,,
+I06119,career,"role=""Vice President, Prospecting Solutions"" organization=""Dun & Bradstreet""","OK career appended (no year -- renders without a date, sorts last)",/person/douglas-borchard-iii,,
+I06119,nb_approved,"header=""Board chair at Equal Opportunity Schools"" body=""Doug joined the board of Equal Opportunity Schools, which works to bring overlooked students into advanced courses, in July 2020. He became its treasurer in 2022 and its board chair in October 2025."" category=social_reform",OK nb_approved appended verbatim: 'Board chair at Equal Opportunity Schools',/person/douglas-borchard-iii,,
+I06119,nb_approved,"header=""He launched zapdata.com from iMarket"" body=""Before New Profit, Doug was president of iMarket, a business-data company, and launched its internet spinoff, zapdata.com. He went on to run the prospecting solutions unit at Dun & Bradstreet as a vice president."" category=business",OK nb_approved appended verbatim: 'He launched zapdata.com from iMarket',/person/douglas-borchard-iii,,
