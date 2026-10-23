@@ -1,0 +1,4 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+X02259,cc,"related=HD1917 link=""Aaron Columbus Burr"" label="", Aaron Burr's son, ran a New York jewelry house at 167 Broadway""",OK cc->HD1917 added; FLAG needs reciprocal cc row on HD1917,/person/george-shreve-1829,,
+HD1917,cc,"related=X02259 link=""George Shreve"" label=""built the West's largest jewelry house in gold-rush San Francisco""",OK cc->X02259 added (reciprocal present),/person/aaron-burr-1808,,
+X04140,nb_approved,"header=""A watch from Leland, New Year's Day 1868"" body=""Leland bought a gold Patek Philippe in San Francisco in October 1867 and gave it to Jane on New Year's Day, engraved J. Lathrop Stanford from Leland. Their only child, Leland Jr., was born that May."" category=marriage","OK nb_approved appended verbatim: 'A watch from Leland, New Year's Day 1868'",/person/jane-lathrop-1828,,
