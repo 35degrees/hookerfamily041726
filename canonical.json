@@ -298347,6 +298347,12 @@
      "type": "connection",
      "link_text": "Rev. Samuel Terry III",
      "display_label": "was his grandfather Ephraim’s half-brother, born at Enfield in 1690"
+    },
+    {
+     "related_id": "HD10234",
+     "type": "connection",
+     "link_text": "Charles Langdon",
+     "display_label": "was elected a lieutenant of Hartford's Foot Guard in 1845"
     }
    ],
    "education": [
@@ -1783624,7 +1783630,7 @@
      "number": 3,
      "category": "military",
      "header": "A Foot Guard officer to the end",
-     "body": "As a young man Joseph was an officer of the First Company, Governor's Foot Guard, and he kept his place in its Veteran Corps, and his enthusiasm for the company, until he died."
+     "body": "As a young man Joseph was an officer of the First Company, Governor's Foot Guard, as his younger brother Charles was, and he kept his place in its Veteran Corps, and his enthusiasm for the company, until he died."
     },
     {
      "number": 4,
@@ -1783910,8 +1783916,8 @@
     {
      "number": 3,
      "category": "military",
-     "header": "Second lieutenant of the Foot Guard, 1845",
-     "body": "Charles was elected second lieutenant of the First Company, Governor's Foot Guard of Hartford, on 2 October 1845, and Governor Isaac Toucey signed his commission the next June. That December he married Augusta Ives of Hamden."
+     "header": "Two Langdon brothers in the Foot Guard",
+     "body": "Charles was made second lieutenant of the First Company, Governor's Foot Guard, in 1845, on Governor Isaac Toucey's commission. His elder brother Joseph, who kept their father's Hartford dry-goods store, was a Foot Guard officer too."
     }
    ],
    "sources": [],
@@ -1783919,7 +1783925,14 @@
    "landmarks": [],
    "artworks": [],
    "research_tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "X00421",
+     "type": "connection",
+     "link_text": "Nathaniel Terry Jr.",
+     "display_label": "commanded Hartford's Governor's Foot Guard from 1802 to 1813"
+    }
+   ],
    "quotes": [],
    "research_sources": [],
    "documents": [],
