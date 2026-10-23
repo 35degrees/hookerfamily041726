@@ -2669,15 +2669,15 @@
    "county": "Polk County",
    "state": "Iowa",
    "country": "United States",
-   "lat": 41.6062,
-   "lng": -93.5864,
+   "lat": 41.60087,
+   "lng": -93.68501,
    "visitable": true,
    "hooker_connections": [
     "H02976"
    ],
    "gps": {
-    "latitude": 41.6062,
-    "longitude": -93.5864
+    "latitude": 41.60087,
+    "longitude": -93.68501
    }
   },
   {
