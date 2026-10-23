@@ -2521055,9 +2521055,7 @@
    "gender": "male",
    "birth": {},
    "death": {},
-   "parents": {
-    "father_id": "X04351"
-   },
+   "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
@@ -2521354,97 +2521352,6 @@
    },
    "is_placeholder": false,
    "number_of_marriages": 1
-  },
-  {
-   "id": "X04351",
-   "bio": {
-    "display_name": "David Farquhar Cavers",
-    "first_name": "David",
-    "middle_name": "Farquhar",
-    "last_name": "Cavers",
-    "suffix": "Sr.",
-    "married_names": [],
-    "bio_blurb": "Fessenden Professor of Law at Harvard",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792772459/cavers_cb7shd.jpg"
-   },
-   "gender": "male",
-   "birth": {
-    "year": 1902,
-    "date_precision": "year_only",
-    "country": "United States"
-   },
-   "death": {
-    "year": 1988,
-    "month": 3,
-    "day": 4,
-    "date_precision": "exact",
-    "city": "Cambridge",
-    "county": "Middlesex County",
-    "state": "Massachusetts",
-    "country": "United States"
-   },
-   "parents": {},
-   "marriages": [
-    {
-     "marriage_number": 1,
-     "children_ids": [
-      "I06104"
-     ]
-    }
-   ],
-   "narrative_blocks": [],
-   "tags": [],
-   "cross_connections": [],
-   "classification": {
-    "is_thomas_descendant": false,
-    "is_talcott_descendant": false,
-    "is_thomas_spouse": false,
-    "is_talcott_spouse": false,
-    "is_easter_egg": true,
-    "include_in_path_calculation": false
-   },
-   "notable": {
-    "is_notable": false
-   },
-   "is_placeholder": false,
-   "number_of_marriages": 1,
-   "education": [
-    {
-     "school_name": "Wharton School, University of Pennsylvania",
-     "dates": "1923",
-     "notes": "B.S., economics"
-    },
-    {
-     "institution_id": "INST165",
-     "school_name": "Harvard Law School",
-     "dates": "1926",
-     "notes": "LL.B."
-    }
-   ],
-   "career": [
-    {
-     "role": "Professor of Law",
-     "organization": "Duke University",
-     "start_year": 1931,
-     "end_year": 1945
-    },
-    {
-     "role": "Associate general counsel",
-     "organization": "Office of Price Administration"
-    },
-    {
-     "role": "Associate Dean",
-     "organization": "Harvard Law School",
-     "start_year": 1951,
-     "end_year": 1959
-    },
-    {
-     "role": "Fessenden Professor of Law",
-     "organization": "Harvard Law School",
-     "start_year": 1952,
-     "end_year": 1969
-    }
-   ]
   }
  ],
  "landmarks": [
