@@ -674960,7 +674960,7 @@
     "historical_notes": "Per Sam family knowledge: only child of Bessie Augusta Hooker (H04268) and George H. Lent. Born 1914 — likely SF given parents' SF residence."
    },
    "death": {
-    "note": "Deceased per Tony Hooker pedigree (\"1914-Deceased\"); specific year not yet documented in available sources. Predeceased her son Lent Howard (d.2023) per his obituary which lists her as \"predeceased by his mother.\""
+    "note": "Deceased by November 2012: her son George Lent Howard's obituary calls both his parents deceased. Year not yet documented."
    },
    "parents": {
     "father_id": "X02298",
@@ -674975,7 +674975,9 @@
      "location_country": "United States",
      "children_ids": [
       "HD3250",
-      "HD3251"
+      "HD3251",
+      "HD17012",
+      "HD17013"
      ],
      "notes": "At least 4 children: TWIN SONS Duncan Lent Howard (HD3250, b.1940 LIVING — previously misreported as deceased 2012, that was wrong) and George Lent Howard (HD3251, 1940-2012); plus daughters Pamela Howard (m. Castle) and Tracey Howard Pullen (m. Pullen) — both daughters intentionally not built (status uncertain).",
      "location_city": "Atherton",
@@ -675106,7 +675108,9 @@
      "location_country": "United States",
      "children_ids": [
       "HD3250",
-      "HD3251"
+      "HD3251",
+      "HD17012",
+      "HD17013"
      ],
      "notes": "At least 4 children: Duncan Lent Howard (HD3250, LIVING b.1940), George Lent Howard (HD3251, 1940-2012), and daughters Pamela Howard Castle + Tracey Howard Pullen (not built).",
      "date_year": 1936,
@@ -676156,7 +676160,10 @@
      "location_state": "California",
      "location_country": "United States",
      "end_type": "divorce",
-     "children_ids": [],
+     "children_ids": [
+      "HD17010",
+      "HD17011"
+     ],
      "notes": "First marriage to Diane Nickerson. Two sons George L. Howard Jr. and Timothy L. Howard."
     },
     {
@@ -757193,7 +757200,10 @@
      "location_state": "California",
      "location_country": "United States",
      "end_type": "divorce",
-     "children_ids": []
+     "children_ids": [
+      "HD17010",
+      "HD17011"
+     ]
     }
    ],
    "education": [],
@@ -2523789,6 +2523799,232 @@
    },
    "is_placeholder": false,
    "number_of_marriages": 0
+  },
+  {
+   "id": "HD17010",
+   "bio": {
+    "display_name": "George Lent Howard Jr.",
+    "first_name": "George",
+    "last_name": "Howard",
+    "married_names": [],
+    "middle_name": "Lent",
+    "suffix": "Jr."
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "HD3251",
+    "mother_id": "X02520"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17011",
+   "bio": {
+    "display_name": "Timothy L. Howard",
+    "first_name": "Timothy",
+    "last_name": "Howard",
+    "married_names": [],
+    "middle_name": "L."
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "HD3251",
+    "mother_id": "X02520"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17012",
+   "bio": {
+    "display_name": "Pamela Howard",
+    "first_name": "Pamela",
+    "last_name": "Howard",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "X02264",
+    "mother_id": "HD3247"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06116",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06116",
+   "bio": {
+    "display_name": "Tom Castle",
+    "first_name": "Tom",
+    "last_name": "Castle",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17012",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17013",
+   "bio": {
+    "display_name": "Tracey Howard Pullen",
+    "first_name": "Tracey",
+    "last_name": "Pullen",
+    "married_names": [
+     "Pullen"
+    ],
+    "maiden_name": "Howard"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "X02264",
+    "mother_id": "HD3247"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06117",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06117",
+   "bio": {
+    "display_name": "Jerry Pullen",
+    "first_name": "Jerry",
+    "last_name": "Pullen",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17013",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
   }
  ],
  "landmarks": [
