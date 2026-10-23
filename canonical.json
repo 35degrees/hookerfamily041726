@@ -350940,6 +350940,12 @@
      "type": "connection",
      "link_text": "Helen Yardley",
      "display_label": ", his niece, was in Bennington's first graduating class"
+    },
+    {
+     "related_id": "I06091",
+     "type": "connection",
+     "link_text": "John Codella",
+     "display_label": "used public relations to grow American Mensa from 121 members"
     }
    ],
    "bio": {
@@ -352192,6 +352198,12 @@
      "type": "connection",
      "link_text": "Frederic Mather Lord",
      "display_label": "built the item response theory behind modern SAT and GRE scoring"
+    },
+    {
+     "related_id": "I06091",
+     "type": "connection",
+     "link_text": "John Codella",
+     "display_label": "built American Mensa, open only to the top 2% on such tests"
     }
    ],
    "bio": {
@@ -2518577,29 +2518589,60 @@
      "number": 1,
      "category": "social_reform",
      "header": "He found American Mensa with 121 members",
-     "body": "On a 1961 visit to England John became intrigued by Mensa, and he found its new American chapter with 121 members. He volunteered as its first selection officer and fiscal officer, and by 1967 it had 12,000."
+     "body": "On a 1961 visit to England John became intrigued by Mensa, and he found its new American chapter with 121 members. He became its first selection officer; by 1967 it had 12,000 members, and by his death in 1993, fifty-five thousand."
     },
     {
      "number": 2,
+     "category": "career",
+     "header": "Press, radio and television in one week, 1961",
+     "body": "When Victor Serebriakoff came from London in November 1961, two days by prop plane through Reykjavik and Gander, John met him and had him interviewed by newspapers, radio and television all week."
+    },
+    {
+     "number": 3,
      "category": "career",
      "header": "First chairman of American Mensa, 1961 to 1966",
      "body": "John chaired American Mensa from 1961 to 1966; Victor Serebriakoff, who had rebuilt Mensa in England, called him its most effective builder in North America. Critics who called him an autocrat eventually pushed him out."
     },
     {
-     "number": 3,
+     "number": 4,
+     "category": "character",
+     "header": "He had just sold his publicity firm",
+     "body": "John had just sold his interest in a successful publicity company at a fashionable Manhattan address when he joined Mensa in 1961, and with no need to earn a living he took on the unpaid work of building it in America."
+    },
+    {
+     "number": 5,
      "category": "education",
      "header": "Metallography at Stevens, sculpture at the League",
      "body": "A New Rochelle native, John went to Cooper Union, studied metallography at the Stevens Institute of Technology and sculpture at the Art Students League, and spent most of his working life in advertising and public relations."
     },
     {
-     "number": 4,
+     "number": 6,
      "category": "career",
      "header": "Consulting at Basking Ridge until 1991",
-     "body": "In 1977 John joined Science Management Corporation, consultants at Basking Ridge, New Jersey, and retired as a vice-president in 1991. He died at Philadelphia in July 1993, at sixty-four."
+     "body": "In 1977 John joined Science Management Corporation at Basking Ridge, New Jersey, and retired as a vice-president in 1991, the year after American Mensa gave him its Lifetime Membership Award. He died in July 1993, at sixty-four."
+    },
+    {
+     "number": 7,
+     "category": "character",
+     "header": "One more lady to interview, 1961",
+     "body": "Margot Seitelman ran American Mensa's office from her Brooklyn home from 1961 to 1990. She got the job because, on Serebriakoff's last day in New York, John phoned: “Don't decide yet. I have one more lady I'd like you to talk to.”"
     }
    ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "X00569",
+     "type": "connection",
+     "link_text": "Walter Van Dyke Bingham",
+     "display_label": "helped make the Army Alpha intelligence test, taken by two million men"
+    },
+    {
+     "related_id": "HD1732",
+     "type": "connection",
+     "link_text": "William Harrison Ingersoll",
+     "display_label": "was one of the founders of modern public relations"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
@@ -2518609,7 +2518652,13 @@
     "is_easter_egg": false
    },
    "notable": {
-    "is_notable": false
+    "is_notable": true,
+    "notable_blurb": "First chairman of American Mensa",
+    "primary_url": "https://www.us.mensa.org/recognize/national-awards/lifetime-membership/",
+    "notable_url": "https://www.us.mensa.org/recognize/national-awards/lifetime-membership/",
+    "notable_category": [
+     "business"
+    ]
    },
    "is_placeholder": false,
    "number_of_marriages": 1,
