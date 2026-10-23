@@ -1,0 +1,7 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+X02320,cc,"related=HD3285 link=""Sandra Ferry Rockefeller"" label="", his great-granddaughter, carries his surname as her middle name""",OK cc->HD3285 added; FLAG needs reciprocal cc row on HD3285,/person/dexter-ferry-1833,,
+HD3285,cc,"related=X02320 link=""Dexter Mason Ferry"" label="", her great-grandfather, built the seed company whose name she carries""",OK cc->X02320 added (reciprocal present),/person/sandra-rockefeller-1935,,
+X02320,field_set,cross_connections[0].lineal_gap=3,OK set cross_connections[0].lineal_gap = 3,/person/dexter-ferry-1833,,
+HD3285,field_set,cross_connections[0].lineal_gap=-3,OK set cross_connections[0].lineal_gap = -3,/person/sandra-rockefeller-1935,,
+X03153,field_set,bio.bio_blurb=Modernist American poet,OK set bio.bio_blurb = 'Modernist American poet',/person/edward-cummings-1894,,
+X03153,field_set,notable.notable_blurb=Modernist American poet,OK set notable.notable_blurb = 'Modernist American poet',/person/edward-cummings-1894,,
