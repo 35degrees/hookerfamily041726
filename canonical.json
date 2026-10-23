@@ -15486,7 +15486,8 @@
    "hooker_connections": [
     "X03080",
     "HD16965",
-    "I06094"
+    "I06094",
+    "HD16972"
    ]
   },
   {
@@ -35972,6 +35973,22 @@
    "county": "Cass County",
    "state": "Nebraska",
    "country": "United States"
+  },
+  {
+   "id": "CEM2027",
+   "name": "Glenwood Cemetery",
+   "hooker_connections": [
+    "HD16975",
+    "I06097"
+   ],
+   "city": "West Long Branch",
+   "county": "Monmouth County",
+   "state": "New Jersey",
+   "country": "United States",
+   "gps": {
+    "latitude": 40.2947,
+    "longitude": -74.0269
+   }
   }
  ],
  "institutions": [
@@ -1257236,7 +1257253,12 @@
    "sources": [],
    "institutions": [],
    "landmarks": [],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART063",
+     "artwork_blurb": "In the Heye collection she curated"
+    }
+   ],
    "research_tags": [],
    "cross_connections": [
     {
@@ -2519090,7 +2519112,12 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06094",
-     "children_ids": [],
+     "children_ids": [
+      "HD16971",
+      "HD16972",
+      "HD16973",
+      "HD16974"
+     ],
      "date_year": 1870,
      "date_month": 9,
      "date_day": 21,
@@ -2519373,7 +2519400,12 @@
     {
      "marriage_number": 1,
      "spouse_id": "HD16965",
-     "children_ids": [],
+     "children_ids": [
+      "HD16971",
+      "HD16972",
+      "HD16973",
+      "HD16974"
+     ],
      "date_year": 1870,
      "date_month": 9,
      "date_day": 21
@@ -2519450,6 +2519482,459 @@
      "notes": "Later surgeon in the regular army; brevet major by Gov. Reuben Fenton"
     }
    ]
+  },
+  {
+   "id": "HD16971",
+   "bio": {
+    "married_names": [
+     "Everett"
+    ],
+    "display_name": "Florence Clemens Younglove Everett",
+    "first_name": "Florence",
+    "middle_name": "Clemens",
+    "maiden_name": "Younglove",
+    "last_name": "Everett"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1871,
+    "month": 7,
+    "day": 17,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06094",
+    "mother_id": "HD16965"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06095",
+     "children_ids": [],
+     "date_year": 1926,
+     "date_month": 5,
+     "date_day": 20
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "is_living": false
+  },
+  {
+   "id": "I06095",
+   "bio": {
+    "married_names": [],
+    "first_name": "Herbert",
+    "middle_name": "Ernest",
+    "last_name": "Everett",
+    "display_name": "Herbert Ernest Everett"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1886,
+    "month": 12,
+    "day": 7,
+    "date_precision": "exact",
+    "city": "Terre Haute",
+    "county": "Vigo County",
+    "state": "Indiana",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1965,
+    "month": 10,
+    "day": 31,
+    "date_precision": "exact",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16971",
+     "children_ids": [],
+     "date_year": 1926,
+     "date_month": 5,
+     "date_day": 20
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD16972",
+   "bio": {
+    "married_names": [
+     "Whitehead"
+    ],
+    "display_name": "Helen Augusta Younglove Whitehead",
+    "first_name": "Helen",
+    "middle_name": "Augusta",
+    "maiden_name": "Younglove",
+    "last_name": "Whitehead"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1873,
+    "month": 4,
+    "day": 14,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1949,
+    "month": 2,
+    "day": 26,
+    "date_precision": "exact",
+    "city": "Ocean Grove",
+    "county": "Monmouth County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06094",
+    "mother_id": "HD16965"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06096",
+     "children_ids": [
+      "HD16975"
+     ],
+     "date_year": 1900,
+     "date_month": 12,
+     "date_day": 27
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM719"
+   }
+  },
+  {
+   "id": "I06096",
+   "bio": {
+    "married_names": [],
+    "first_name": "Edward",
+    "middle_name": "W.",
+    "last_name": "Whitehead",
+    "display_name": "Edward W. Whitehead"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1854,
+    "month": 11,
+    "day": 27,
+    "date_precision": "exact",
+    "city": "Newark",
+    "county": "Essex County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1914,
+    "month": 1,
+    "day": 1,
+    "date_precision": "exact",
+    "city": "Newark",
+    "county": "Essex County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16972",
+     "children_ids": [
+      "HD16975"
+     ],
+     "date_year": 1900,
+     "date_month": 12,
+     "date_day": 27
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD16975",
+   "bio": {
+    "married_names": [],
+    "first_name": "Donald",
+    "middle_name": "Langdon",
+    "last_name": "Whitehead",
+    "display_name": "Donald Langdon Whitehead"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1903,
+    "month": 11,
+    "day": 1,
+    "date_precision": "exact",
+    "city": "Newark",
+    "county": "Essex County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1982,
+    "month": 11,
+    "day": 7,
+    "date_precision": "exact",
+    "county": "Dade County",
+    "state": "Florida",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06096",
+    "mother_id": "HD16972"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06097",
+     "children_ids": [],
+     "date_year": 1930,
+     "date_month": 12,
+     "date_day": 30
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2027"
+   }
+  },
+  {
+   "id": "I06097",
+   "bio": {
+    "married_names": [
+     "Whitehead"
+    ],
+    "display_name": "Mildred R. Castles Whitehead",
+    "first_name": "Mildred",
+    "middle_name": "R.",
+    "maiden_name": "Castles",
+    "last_name": "Whitehead"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1904,
+    "month": 7,
+    "day": 25,
+    "date_precision": "exact",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1988,
+    "month": 8,
+    "day": 4,
+    "date_precision": "exact",
+    "county": "Broward County",
+    "state": "Florida",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16975",
+     "children_ids": [],
+     "date_year": 1930,
+     "date_month": 12,
+     "date_day": 30
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2027"
+   }
+  },
+  {
+   "id": "HD16973",
+   "bio": {
+    "married_names": [],
+    "first_name": "Marguerite",
+    "middle_name": "Langdon",
+    "last_name": "Younglove",
+    "display_name": "Marguerite Langdon Younglove"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1876,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1961,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06094",
+    "mother_id": "HD16965"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16974",
+   "bio": {
+    "married_names": [],
+    "first_name": "Herbert",
+    "middle_name": "Beverly",
+    "last_name": "Younglove",
+    "display_name": "Herbert Beverly Younglove"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1878,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1953,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06094",
+    "mother_id": "HD16965"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
   }
  ],
  "landmarks": [
@@ -2550124,7 +2550609,8 @@
     "X00877",
     "HD5059",
     "HD5060",
-    "HD5061"
+    "HD5061",
+    "HD6098"
    ],
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1787184738/ark__65665_om83c43140db32a480da48a636cbce0ddda_zyen4t.jpg"
   },
