@@ -11001,12 +11001,18 @@
    },
    "url": "https://www.findagrave.com/cemetery/9261/mountain-view-cemetery",
    "hooker_connections": [
-    "HD4677"
+    "HD4677",
+    "HD1716",
+    "HD1729"
    ],
    "city": "San Bernardino",
    "county": "San Bernardino County",
    "state": "California",
-   "country": "United States"
+   "country": "United States",
+   "gps": {
+    "latitude": 34.1392,
+    "longitude": -117.275
+   }
   },
   {
    "id": "CEM467",
@@ -35939,6 +35945,28 @@
     "latitude": 39.74288,
     "longitude": -84.17732
    }
+  },
+  {
+   "id": "CEM2025",
+   "name": "Cayucos Morro Bay Cemetery",
+   "hooker_connections": [
+    "HD16946"
+   ],
+   "city": "Cayucos",
+   "county": "San Luis Obispo County",
+   "state": "California",
+   "country": "United States"
+  },
+  {
+   "id": "CEM2026",
+   "name": "Oak Hill Cemetery",
+   "hooker_connections": [
+    "I06077"
+   ],
+   "city": "Plattsmouth",
+   "county": "Cass County",
+   "state": "Nebraska",
+   "country": "United States"
   }
  ],
  "institutions": [
@@ -343548,12 +343576,21 @@
    "birth": {
     "year": 1856,
     "month": 8,
-    "day": 26
+    "day": 26,
+    "date_precision": "exact",
+    "city": "Cleveland",
+    "county": "Cuyahoga County",
+    "state": "Ohio",
+    "country": "United States"
    },
    "death": {
     "year": 1940,
     "month": 8,
-    "day": 23
+    "day": 23,
+    "date_precision": "exact",
+    "city": "Orange",
+    "state": "California",
+    "country": "United States"
    },
    "tags": [],
    "sources": [],
@@ -343561,6 +343598,7 @@
     {
      "spouse_id": "HD1716",
      "children_ids": [
+      "HD16946",
       "HD1729",
       "HD1730"
      ],
@@ -343568,8 +343606,9 @@
      "date_year": 1879,
      "date_month": 3,
      "date_day": 24,
-     "location_city": "Wayne",
-     "location_state": "Michigan"
+     "location_city": "Detroit",
+     "location_state": "Michigan",
+     "location_county": "Wayne County"
     }
    ],
    "gender": "female",
@@ -350183,12 +350222,22 @@
    "birth": {
     "year": 1856,
     "month": 11,
-    "day": 6
+    "day": 6,
+    "date_precision": "exact",
+    "city": "Watertown Township",
+    "county": "Clinton County",
+    "state": "Michigan",
+    "country": "United States"
    },
    "death": {
     "year": 1954,
     "month": 10,
-    "day": 9
+    "day": 9,
+    "date_precision": "exact",
+    "city": "San Bernardino",
+    "county": "San Bernardino County",
+    "state": "California",
+    "country": "United States"
    },
    "parents": {
     "father_id": "HD1701",
@@ -350198,6 +350247,7 @@
     {
      "spouse_id": "X00556",
      "children_ids": [
+      "HD16946",
       "HD1729",
       "HD1730"
      ],
@@ -350205,8 +350255,9 @@
      "date_year": 1879,
      "date_month": 3,
      "date_day": 24,
-     "location_city": "Wayne",
-     "location_state": "Michigan"
+     "location_city": "Detroit",
+     "location_state": "Michigan",
+     "location_county": "Wayne County"
     }
    ],
    "tags": [
@@ -350241,7 +350292,10 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "burial": {
+    "cemetery_id": "CEM466"
+   }
   },
   {
    "id": "HD1717",
@@ -350583,10 +350637,20 @@
    "birth": {
     "year": 1884,
     "month": 4,
-    "day": 1
+    "day": 1,
+    "date_precision": "exact",
+    "city": "Lansing",
+    "county": "Ingham County",
+    "state": "Michigan",
+    "country": "United States"
    },
    "death": {
-    "year": 1953
+    "year": 1953,
+    "date_precision": "year_only",
+    "city": "San Bernardino",
+    "county": "San Bernardino County",
+    "state": "California",
+    "country": "United States"
    },
    "parents": {
     "father_id": "HD1716",
@@ -350629,7 +350693,10 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "burial": {
+    "cemetery_id": "CEM466"
+   }
   },
   {
    "id": "HD1730",
@@ -350644,10 +350711,23 @@
     "is_easter_egg": false
    },
    "birth": {
-    "year": 1889
+    "year": 1889,
+    "month": 5,
+    "day": 6,
+    "date_precision": "exact",
+    "city": "Redlands",
+    "county": "San Bernardino County",
+    "state": "California",
+    "country": "United States"
    },
    "death": {
-    "year": 1981
+    "year": 1981,
+    "month": 2,
+    "day": 6,
+    "date_precision": "exact",
+    "city": "San Luis Obispo",
+    "state": "California",
+    "country": "United States"
    },
    "parents": {
     "father_id": "HD1716",
@@ -350655,9 +350735,15 @@
    },
    "marriages": [
     {
+     "marriage_number": 1,
+     "spouse_id": "I06077",
+     "children_ids": [],
+     "date_year": 1911
+    },
+    {
      "spouse_id": "X01516",
      "children_ids": [],
-     "marriage_number": 1
+     "marriage_number": 2
     }
    ],
    "tags": [
@@ -350666,7 +350752,7 @@
    "sources": [],
    "gender": "unknown",
    "research_notes": "b. 1889; d. 1981 age ~91. m. Crosier. Stub.",
-   "number_of_marriages": 1,
+   "number_of_marriages": 2,
    "notable": {
     "is_notable": false,
     "notable_category": []
@@ -350677,6 +350763,7 @@
     "first_name": "Lozie",
     "last_name": "Ingersoll",
     "married_names": [
+     "Patterson",
      "Crosier"
     ]
    },
@@ -517063,12 +517150,12 @@
    },
    "tags": [],
    "sources": [],
-   "gender": "unknown",
+   "gender": "male",
    "research_notes": "Spouse 1 of Lozie Ingersoll (HD1730). Name extracted from notes. (EH 1909)",
    "number_of_marriages": 1,
    "marriages": [
     {
-     "marriage_number": 1,
+     "marriage_number": 2,
      "spouse_id": "HD1730",
      "children_ids": []
     }
@@ -517078,13 +517165,22 @@
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 1957,
+    "month": 2,
+    "day": 27,
+    "date_precision": "exact",
+    "city": "Orange",
+    "state": "California",
+    "country": "United States"
+   },
    "cross_connections": [],
    "bio": {
-    "display_name": "Crosier",
-    "first_name": null,
+    "display_name": "Fred Jefferson Crosier",
+    "first_name": "Fred",
     "married_names": [],
-    "last_name": "Crosier"
+    "last_name": "Crosier",
+    "middle_name": "Jefferson"
    },
    "residence": {},
    "baptism": {},
@@ -517097,8 +517193,20 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "birth": {},
-   "is_placeholder": true
+   "birth": {
+    "year": 1890,
+    "month": 2,
+    "day": 10,
+    "date_precision": "exact",
+    "city": "Los Angeles",
+    "county": "Los Angeles County",
+    "state": "California",
+    "country": "United States"
+   },
+   "is_placeholder": false,
+   "former_ids": [
+    "crosier"
+   ]
   },
   {
    "id": "X01517",
@@ -2515837,6 +2515945,183 @@
    },
    "is_placeholder": false,
    "number_of_marriages": 1
+  },
+  {
+   "id": "HD16946",
+   "bio": {
+    "married_names": [
+     "Balzhiser"
+    ],
+    "display_name": "Sarah E. Ingersoll Balzhiser",
+    "first_name": "Sarah",
+    "middle_name": "E.",
+    "maiden_name": "Ingersoll",
+    "last_name": "Balzhiser"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1882,
+    "month": 4,
+    "day": 1,
+    "date_precision": "exact",
+    "city": "Lansing",
+    "county": "Ingham County",
+    "state": "Michigan",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1966,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD1716",
+    "mother_id": "X00556"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06078",
+     "children_ids": [],
+     "date_year": 1936,
+     "date_month": 10,
+     "date_day": 27
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2025",
+    "plot_notes": "Buried 1966"
+   }
+  },
+  {
+   "id": "I06078",
+   "bio": {
+    "married_names": [],
+    "display_name": "William Balzhiser",
+    "first_name": "William",
+    "last_name": "Balzhiser"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1880,
+    "month": 2,
+    "day": 8,
+    "date_precision": "exact",
+    "city": "New Town",
+    "county": "Guernsey County",
+    "state": "Ohio",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1945,
+    "date_precision": "year_only",
+    "county": "Lincoln County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16946",
+     "children_ids": [],
+     "date_year": 1936,
+     "date_month": 10,
+     "date_day": 27
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06077",
+   "bio": {
+    "married_names": [],
+    "display_name": "James Benjamin Patterson",
+    "first_name": "James",
+    "middle_name": "Benjamin",
+    "last_name": "Patterson"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1889,
+    "month": 1,
+    "day": 3,
+    "date_precision": "exact",
+    "city": "Plattsmouth",
+    "county": "Cass County",
+    "state": "Nebraska",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1955,
+    "month": 11,
+    "day": 8,
+    "date_precision": "exact",
+    "city": "Walnut Creek",
+    "county": "Contra Costa County",
+    "state": "California",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD1730",
+     "children_ids": [],
+     "date_year": 1911
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2026"
+   }
   }
  ],
  "landmarks": [
