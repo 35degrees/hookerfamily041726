@@ -151546,10 +151546,13 @@
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Ruth Hooker",
+    "display_name": "Ruth Hooker Langdon",
     "first_name": "Ruth",
     "maiden_name": "Hooker",
-    "married_names": []
+    "married_names": [
+     "Langdon"
+    ],
+    "last_name": "Langdon"
    },
    "residence": {},
    "baptism": {},
@@ -151575,6 +151578,9 @@
      "body": "Abigail Hooker Langdon died at two in 1775, and James Hooker Langdon and Ruth Hooker Langdon carried it on. She died at Farmington in December 1803 and lies at Memento Mori, where Joseph joined her nine years later.",
      "number": 2
     }
+   ],
+   "former_ids": [
+    "ruth-hooker-1744"
    ]
   },
   {
