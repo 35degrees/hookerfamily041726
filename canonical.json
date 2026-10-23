@@ -414067,7 +414067,11 @@
    "documents": [],
    "naming_inspiration": [],
    "institutions": [],
-   "landmarks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM561"
+    }
+   ],
    "artworks": [],
    "quotes": [],
    "military_service": [],
@@ -414507,6 +414511,9 @@
    "landmarks": [
     {
      "landmark_id": "LM328"
+    },
+    {
+     "landmark_id": "LM561"
     }
    ],
    "artworks": [],
@@ -2535960,7 +2535967,9 @@
    "primary_url": "https://library.columbia.edu/libraries/butler/about.html",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792786552/butler_cnhb9r.jpg",
    "person_ids": [
-    "X00721"
+    "X00721",
+    "HD2270",
+    "HD2272"
    ]
   },
   {
