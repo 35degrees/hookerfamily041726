@@ -575506,12 +575506,16 @@
     "month": 12,
     "day": 7,
     "city": "Bloomfield",
-    "state": "Connecticut"
+    "state": "Connecticut",
+    "county": "Hartford County",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "death": {
     "year": 1915,
     "month": 8,
-    "day": 30
+    "day": 30,
+    "date_precision": "exact"
    },
    "parents": {
     "father_id": "I00173",
@@ -575568,7 +575572,8 @@
      "Warner"
     ],
     "middle_name": "Hooker",
-    "nickname": "Lilly"
+    "nickname": "Lilly",
+    "chip_first_name": "Lilly"
    },
    "residence": {},
    "baptism": {},
@@ -575601,14 +575606,20 @@
     "month": 10,
     "day": 1,
     "city": "Bloomfield",
-    "state": "Connecticut"
+    "state": "Connecticut",
+    "county": "Hartford County",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "death": {
     "year": 1918,
     "month": 8,
     "day": 14,
     "city": "Valley Junction",
-    "state": "Iowa"
+    "state": "Iowa",
+    "county": "Polk County",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "parents": {
     "father_id": "I00173",
@@ -575664,7 +575675,7 @@
     "notable_category": [
      "politics"
     ],
-    "notable_blurb": "U.S. Congressman Iowa 1879-1881",
+    "notable_blurb": "Greenback congressman, Populist editor, Iowa Humane Society officer",
     "primary_url": "https://en.wikipedia.org/wiki/Edward_H._Gillette",
     "primary_url_label": "Wikipedia",
     "notable_url": "https://en.wikipedia.org/wiki/Edward_H._Gillette"
@@ -575672,15 +575683,45 @@
    "narrative_blocks": [
     {
      "category": "politics",
-     "header": "He ran for Congress with no money",
-     "body": "Edward Hooker Gillette moved to Iowa in 1863 to manage land his father, Senator Francis Gillette, and uncle John Hooker had bought there. In 1878 he ran for Congress on the Greenback ticket in a district with a six-thousand-vote Republican majority, funding the campaign by selling newspapers from the platform at ten cents each. He won.",
+     "header": "Ten-cent papers paid for his campaign",
+     "body": "In 1878 Edward ran for Congress as a Greenbacker in a district that had gone Republican by six thousand votes. He had no campaign money, sold papers from the platform at ten cents each, and won by about a thousand.",
      "number": 1
     },
     {
-     "category": "career",
-     "header": "He led the Greenback Party's national committee",
-     "body": "Beyond his single term in Congress, Gillette chaired the Greenback Party's national committee and edited the Iowa Tribune for a decade. He later ran, without success, for Iowa secretary of state on the People's Party ticket.",
+     "category": "social_reform",
+     "header": "In court for children and drunkards' wives",
+     "body": "For more than twenty-seven years Edward was an officer of the Iowa Humane Society. He appeared in court for mistreated animals, children and the wives of drunkards, and missed almost no board meeting until his last years.",
      "number": 2
+    },
+    {
+     "number": 3,
+     "category": "marriage",
+     "header": "He married his fallen brother's fiancée",
+     "body": "Sophia Stoddard had been engaged to Edward's brother Robert, killed at Fort Fisher on 16 January 1865, the morning after the fort fell. Edward married her at Milford on 26 June 1866 and took her home to Iowa."
+    },
+    {
+     "number": 4,
+     "category": "career",
+     "header": "He left college to run the Iowa land",
+     "body": "In 1863 Edward left the agricultural college at Ovid to look after Iowa land his father, Senator Francis Gillette, and his uncle John Hooker had bought. Outside Des Moines he raised high-bred stock and sheep, built, and made brick."
+    },
+    {
+     "number": 5,
+     "category": "politics",
+     "header": "Ten years editing the Populists' paper",
+     "body": "Edward was a delegate to the 1876 Indianapolis convention that formed the Greenback Party and later chaired its national committee. For ten years he edited the Iowa Tribune, and in 1893 he lost a run for Iowa secretary of state."
+    },
+    {
+     "number": 6,
+     "category": "politics",
+     "header": "In 1880 the Democrats ran their own man",
+     "body": "Edward sat in the 46th Congress beside Iowa's other Greenbacker, James B. Weaver. In 1880 the Democrats put up their own candidate, the vote split, and the Republican John A. Kasson took the seat back."
+    },
+    {
+     "number": 7,
+     "category": "character",
+     "header": "A library building beside his farmhouse",
+     "body": "Edward gathered one of the most valuable libraries in Iowa and put up a building for it near the house at Clover Hills, his farm by Valley Junction. He died there in 1918, the one Gillette not buried at Farmington."
     }
    ],
    "research_notes": "b. Oct 1, 1840 Bloomfield CT; d. Aug 14, 1918 Valley Junction IA age 77. Educated Hartford High School and NY State Agricultural College Ovid NY. Moved to Iowa 1863; farmer and sheep raiser; later building and manufacturing Des Moines. Elected US Rep Iowa 7th District (Greenback Party) 1878, 46th Congress 1879-1881. Editor Iowa Tribune 10 years; chairman Greenback Party National Committee; delegate Greenback National Convention Indianapolis 1876. People's Party candidate IA Secretary of State 1893 (lost). Director Iowa Humane Society. Resided Clover Hills Place farm near Valley Junction IA. m.(1) Jun 26, 1866 Milford CT, Sophia Theresa Stoddard (X02046); divorced Feb 7, 1894 Des Moines. m.(2) Feb 28, 1907 Jennie Isabel Apple (X02049). Buried Glendale Cemetery Des Moines IA, Block 21 Lot 00001. (Wikipedia; EH 2976; Hartford Times Oct 10, 1878) [Stage 6Y-264 schema cleanup]: notable_blurb trimmed from [9w] 'U.S. Congressman Iowa 1879-1881; Greenback Party; editor Iowa Tribune' → 'U.S. Congressman Iowa 1879-1881'.\n[Stage 6Y-264 NB#1 header trim]: 'He ran for Congress with no money — selling newspapers from the stage at 10 cents each' → 'He ran for Congress with no money'.",
@@ -575689,7 +575730,9 @@
     "city": "Des Moines",
     "county": "Polk",
     "state": "Iowa",
-    "country": "United States"
+    "country": "United States",
+    "cemetery_id": "CEM074",
+    "plot_notes": "Block 21, Lot 1"
    },
    "cross_connections": [
     {
@@ -575730,7 +575773,8 @@
     "last_name": "Gillette",
     "married_names": [],
     "middle_name": "Hooker",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1780803364/Gillette-234-resized_anryna.png"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1780803364/Gillette-234-resized_anryna.png",
+    "chip_first_name": "Edward Hooker"
    },
    "residence": {},
    "baptism": {},
@@ -575748,7 +575792,36 @@
    ],
    "quotes": [],
    "military_service": [],
-   "last_updated": "2026-09-19"
+   "last_updated": "2026-09-19",
+   "education": [
+    {
+     "school_name": "Hartford High School"
+    },
+    {
+     "school_name": "New York State Agricultural College, Ovid",
+     "dates": "1863"
+    }
+   ],
+   "career": [
+    {
+     "role": "Representative, Iowa 7th District",
+     "organization": "U.S. House of Representatives",
+     "start_year": "1879",
+     "end_year": "1881"
+    },
+    {
+     "role": "Chairman, National Committee",
+     "organization": "Greenback Party"
+    },
+    {
+     "role": "Editor",
+     "organization": "Iowa Tribune"
+    },
+    {
+     "role": "Officer",
+     "organization": "Iowa Humane Society"
+    }
+   ]
   },
   {
    "id": "H02977",
@@ -576198,7 +576271,8 @@
     "last_name": "Gillette",
     "married_names": [],
     "middle_name": "Hooker",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1791311324/images_25_zcdsya.jpg"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1791311324/images_25_zcdsya.jpg",
+    "chip_first_name": "William Hooker"
    },
    "residence": {},
    "baptism": {},
