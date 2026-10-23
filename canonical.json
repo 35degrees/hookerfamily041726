@@ -716850,13 +716850,13 @@
     {
      "school_name": "University of California, Berkeley",
      "type": "undergraduate",
-     "notes": "B.A., economics"
+     "notes": "B.A. in economics"
     },
     {
      "institution_id": "INST143",
      "school_name": "Wharton School, University of Pennsylvania",
      "type": "graduate",
-     "notes": "M.B.A., finance"
+     "notes": "Wharton, M.B.A. in finance"
     }
    ],
    "career": [

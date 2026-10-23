@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+TD0115,field_set,"education[1].notes=Wharton, M.B.A. in finance","OK set education[1].notes = 'Wharton, M.B.A. in finance'",/person/michael-page,,
+TD0115,field_set,education[0].notes=B.A. in economics,OK set education[0].notes = 'B.A. in economics',/person/michael-page,,
