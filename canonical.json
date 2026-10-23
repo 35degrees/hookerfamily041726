@@ -2524207,13 +2524207,16 @@
   {
    "id": "T02323",
    "bio": {
-    "display_name": "Julia Talcott Meigs",
+    "display_name": "Julia Means Talcott",
     "first_name": "Julia",
-    "last_name": "Meigs",
+    "last_name": "Talcott",
     "maiden_name": "Talcott",
     "married_names": [
      "Meigs"
-    ]
+    ],
+    "middle_name": "Means",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792791703/Screenshot_2026-10-23_at_2-resized_won80y.png",
+    "bio_blurb": "Painter and printmaker"
    },
    "gender": "female",
    "birth": {},
@@ -2524226,7 +2524229,13 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06118",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1985,
+     "date_month": 8,
+     "date_day": 24,
+     "location_city": "Waterford",
+     "location_state": "Vermont",
+     "location_country": "United States"
     }
    ],
    "narrative_blocks": [],
@@ -2524248,15 +2524257,54 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "former_ids": [
+    "julia-meigs"
+   ],
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "Milton Academy",
+     "dates": null,
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": null,
+     "school_name": "Williams College",
+     "dates": "1980",
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": null,
+     "school_name": "Cranbrook Academy of Art",
+     "dates": null,
+     "type": null,
+     "notes": "M.F.A."
+    }
+   ],
+   "career": [
+    {
+     "role": "Painter and printmaker",
+     "organization": null,
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "I06118",
    "bio": {
-    "display_name": "James Meigs",
+    "display_name": "Dr. James Benjamin Meigs",
     "first_name": "James",
     "last_name": "Meigs",
-    "married_names": []
+    "married_names": [],
+    "title": "Dr.",
+    "middle_name": "Benjamin",
+    "bio_blurb": "Harvard diabetes epidemiologist"
    },
    "gender": "male",
    "birth": {},
@@ -2524266,7 +2524314,13 @@
     {
      "marriage_number": 1,
      "spouse_id": "T02323",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1985,
+     "date_month": 8,
+     "date_day": 24,
+     "location_city": "Waterford",
+     "location_state": "Vermont",
+     "location_country": "United States"
     }
    ],
    "narrative_blocks": [],
@@ -2524284,18 +2524338,68 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "Catlin Gabel School",
+     "dates": null,
+     "type": null,
+     "notes": "Portland, Oregon"
+    },
+    {
+     "institution_id": null,
+     "school_name": "Williams College",
+     "dates": null,
+     "type": null,
+     "notes": "Phi Beta Kappa"
+    },
+    {
+     "institution_id": null,
+     "school_name": "Harvard Medical School",
+     "dates": null,
+     "type": null,
+     "notes": "M.D."
+    }
+   ],
+   "career": [
+    {
+     "role": "Professor of Medicine",
+     "organization": "Harvard Medical School",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Co-director, Clinical Effectiveness Research Group",
+     "organization": "Massachusetts General Hospital",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Primary care internist",
+     "organization": "Massachusetts General Hospital",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "T02324",
    "bio": {
-    "display_name": "Barbara Talcott Borchard",
+    "display_name": "Barbara Geer Talcott",
     "first_name": "Barbara",
-    "last_name": "Borchard",
+    "last_name": "Talcott",
     "maiden_name": "Talcott",
     "married_names": [
      "Borchard"
-    ]
+    ],
+    "middle_name": "Geer"
    },
    "gender": "female",
    "birth": {},
@@ -2524308,7 +2524412,13 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06119",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1983,
+     "date_month": 12,
+     "date_day": 3,
+     "location_city": "Chestnut Hill",
+     "location_state": "Massachusetts",
+     "location_country": "United States"
     }
    ],
    "narrative_blocks": [],
@@ -2524330,15 +2524440,46 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "former_ids": [
+    "barbara-borchard"
+   ],
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "St. Paul's School",
+     "dates": null,
+     "type": null,
+     "notes": "Magna cum laude"
+    },
+    {
+     "institution_id": "INST023",
+     "school_name": "Princeton University",
+     "dates": null,
+     "type": null,
+     "notes": "Cum laude"
+    }
+   ],
+   "career": [
+    {
+     "role": "Assistant to the director of development",
+     "organization": "Milton Academy",
+     "location": null,
+     "start_year": 1983,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "I06119",
    "bio": {
-    "display_name": "Douglas Borchard",
+    "display_name": "Douglas Charles Borchard III",
     "first_name": "Douglas",
     "last_name": "Borchard",
-    "married_names": []
+    "married_names": [],
+    "middle_name": "Charles",
+    "suffix": "III"
    },
    "gender": "male",
    "birth": {},
@@ -2524348,7 +2524489,13 @@
     {
      "marriage_number": 1,
      "spouse_id": "T02324",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1983,
+     "date_month": 12,
+     "date_day": 3,
+     "location_city": "Chestnut Hill",
+     "location_state": "Massachusetts",
+     "location_country": "United States"
     }
    ],
    "narrative_blocks": [],
@@ -2524366,7 +2524513,36 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "former_ids": [
+    "douglas-borchard"
+   ],
+   "education": [
+    {
+     "institution_id": "INST023",
+     "school_name": "Princeton University",
+     "dates": null,
+     "type": null,
+     "notes": "Cum laude"
+    },
+    {
+     "institution_id": null,
+     "school_name": "University of Cologne",
+     "dates": null,
+     "type": null,
+     "notes": "Rotary Scholar"
+    }
+   ],
+   "career": [
+    {
+     "role": "Research assistant",
+     "organization": "Bain & Company, Boston",
+     "location": null,
+     "start_year": 1983,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "T02325",
