@@ -151552,7 +151552,8 @@
     "married_names": [
      "Langdon"
     ],
-    "last_name": "Langdon"
+    "last_name": "Langdon",
+    "bio_blurb": "Revolutionary captain's wife, mother of thirteen"
    },
    "residence": {},
    "baptism": {},
@@ -1317439,6 +1317440,12 @@
      "related_id": "HD6111",
      "link_text": "Antonia Palfrey",
      "display_label": "was a later kinswoman who loved the same American West and ranches"
+    },
+    {
+     "related_id": "I06098",
+     "type": "connection",
+     "link_text": "William Larned",
+     "display_label": "retold Schoolcraft's legends as American Indian Fairy Tales"
     }
    ],
    "gender": "female",
@@ -2520214,6 +2520221,12 @@
      "type": "connection",
      "link_text": "Eleanor Phelps",
      "display_label": "toured in George Arliss's Merchant of Venice for Winthrop Ames"
+    },
+    {
+     "related_id": "I01818",
+     "type": "connection",
+     "link_text": "Forrestine Hooker",
+     "display_label": "wrote Star, the Story of an Indian Pony, for young readers"
     }
    ],
    "classification": {

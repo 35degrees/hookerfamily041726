@@ -1,0 +1,4 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+H00290,field_set,"bio.bio_blurb=Revolutionary captain's wife, mother of thirteen","OK set bio.bio_blurb = ""Revolutionary captain's wife, mother of thirteen""",/person/ruth-langdon-1744,,
+I06098,cc,"related=I01818 link=""Forrestine Hooker"" label=""wrote Star, the Story of an Indian Pony, for young readers""",OK cc->I01818 added; FLAG needs reciprocal cc row on I01818,/person/william-larned-1865,,
+I01818,cc,"related=I06098 link=""William Larned"" label=""retold Schoolcraft's legends as American Indian Fairy Tales""",OK cc->I06098 added (reciprocal present),/person/forrestine-cooper-1867,,
