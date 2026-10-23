@@ -691342,7 +691342,9 @@
      "children_ids": [
       "X02319"
      ],
-     "date_year": 1867
+     "date_year": 1867,
+     "date_month": 10,
+     "date_day": 1
     }
    ],
    "careers": [
@@ -691436,33 +691438,45 @@
    "narrative_blocks": [
     {
      "number": 1,
-     "category": "career",
-     "header": "Built world's largest seed company in Detroit",
-     "body": "He went from errand boy in 1852 to renaming the firm D.M. Ferry & Co. in 1867 — by 1900 the largest seed company in the world, doing over $2M annually through 160,000 retail outlets. He pioneered fresh-seed quality control and small consumer packets."
+     "category": "business",
+     "header": "Fresh seed in bright packets on every counter",
+     "body": "Dexter sold only fresh seed, tested to sprout, and was among the first to sell it in small, bright packets. His commission box, a seed rack for the shop counter, put Ferry seeds in 160,000 stores and made his the world's largest seed house."
     },
     {
      "number": 2,
-     "category": "legacy",
-     "header": "Founding subscriber to the Detroit Institute of Arts",
-     "body": "He was a founding subscriber to the Detroit Museum of Art in 1884 — predecessor to the Detroit Institute of Arts. His son Dexter Jr. served as its president 1914-1917, and his granddaughter Blanchette Hooker Rockefeller would later become MoMA president."
+     "category": "career",
+     "header": "Fatherless at three, an errand boy at nineteen",
+     "body": "Dexter's father, a Lowville wagonmaker, died when Dexter was three. At sixteen he was a farm hand who went to school in winter; at nineteen, an errand boy for a Detroit stationer; at twenty-two, a partner in a seed firm."
     },
     {
      "number": 3,
-     "category": "family",
-     "header": "His daughter Blanche married Elon Huntington Hooker",
-     "body": "His daughter Blanche Ferry married Elon Huntington Hooker, the Niagara Electrochemical Company founder. The seed-empire fortune flowed through her into the Hooker line and eventually to her granddaughter Blanchette Ferry Hooker Rockefeller."
+     "category": "business",
+     "header": "New Year's Day 1886, the warehouse burned",
+     "body": "Fire took the company's Detroit warehouse and nearly all its stock on the first day of 1886. Dexter bought seed from other growers, took over two smaller firms, filled the season's orders, and built again."
     },
     {
      "number": 4,
-     "category": "death",
-     "header": "Died eight days after his wife",
-     "body": "Addie Miller Ferry died first in late 1906; Dexter followed just eight days later. They had been married thirty-nine years."
+     "category": "business",
+     "header": "Ferry money behind Chandler, Arizona",
+     "body": "In 1882 a young veterinarian, Alexander Chandler, worked for Dexter's seed company in Detroit. When Chandler later gathered desert land and canals south of the Salt River, Dexter's money stood behind him."
     },
     {
      "number": 5,
-     "category": "character",
-     "header": "$1M warehouse fire on New Year's Day 1886",
-     "body": "On January 1, 1886, his Detroit warehouse burned to the ground in a near-total $1M loss. He absorbed two competitors and filled all outstanding orders without interruption."
+     "category": "politics",
+     "header": "No beer on Belle Isle, 1884",
+     "body": "On Detroit's park board in 1884 Dexter fought the sale of beer and spirits on Belle Isle. He chaired Michigan's Republicans through Bryan's free-silver year, and in 1900 lost the governorship nomination in a three-way fight."
+    },
+    {
+     "number": 6,
+     "category": "death",
+     "header": "Eight Ferry company men carried his coffin",
+     "body": "Addie, his wife since October 1867, died in November 1906, and Dexter died at home in Detroit a year and eight days later. Eight of his co-workers at D. M. Ferry & Company carried him to his grave at Woodmere."
+    },
+    {
+     "number": 7,
+     "category": "family",
+     "header": "From the Detroit museum to MoMA",
+     "body": "Dexter was a founding subscriber to the Detroit Museum of Art in 1884, which his son Dexter Jr. later led. His daughter Blanche married Elon Huntington Hooker, and her daughter Blanchette became president of the Museum of Modern Art."
     }
    ],
    "cross_connections": [
@@ -691472,6 +691486,12 @@
      "link_text": "Sandra Ferry Rockefeller",
      "display_label": ", his great-granddaughter, was named for him",
      "lineal_gap": 3
+    },
+    {
+     "related_id": "I01569",
+     "type": "connection",
+     "link_text": "Alexander Chandler",
+     "display_label": "worked for his seed company in 1882, then founded Chandler, Arizona"
     }
    ],
    "research_notes": "Per Wikipedia + Findagrave: b. August 8, 1833 (Wikipedia article body; infobox says Aug 3) Lowville Lewis Co NY; d. November 10, 1907 (sources also give 1906) Detroit Wayne Co MI age 74. Buried Woodmere Cemetery Detroit. FATHER: Joseph N. Ferry (wagonmaker, d. when Dexter was 3). MOTHER: Lucy Mason Ferry (moved family to Penfield NY after husband's death). EDUCATION: Penfield NY public schools + winter school sessions while farm laboring (age 16+). CAREER ARC: Errand boy (1852) → S.D. Elwood salesman → bookkeeper → seed business junior partner 1856 → bought out partner 1865 → renamed D.M. Ferry & Co. 1867 → world's largest seed company by ~1900. MARRIAGE: m. Oct 1, 1867 Addie Elizabeth Miller (1841-1906). Three surviving children: Dexter M. Ferry Jr. (1873-?), Blanche Ferry Hooker (1871-1956), Queene Ferry Coonley. CIVIC: First National Bank Detroit president, Union Trust Co president, multiple insurance and industrial presidencies, Harper Hospital trustee 40 yrs, Grace Hospital founder, Olivet College trustee, Detroit Park Commissioner 1884, Republican State Central Committee Chair 1896-1898, RNC delegate 1892+1904, candidate for Michigan governor nomination 1900. ART: Founding subscriber Detroit Museum of Art 1884 (predecessor to DIA). Son Dexter Jr. presided over DIA 1914-1917. Granddaughter Blanchette Rockefeller would later be MoMA president. EASTER_EGG: Notable parent of Hooker descendant's spouse (Blanche Ferry Hooker, X-prefix above). Per Sam's rule for easter_egg eligibility. NAMESAKE: Ferry Field at University of Michigan Ann Arbor. === Migrated NB content (pre-schema-v12-rewrite, kept for reference) === [career] Built world's largest seed company from Detroit\nDexter Mason Ferry rose from humble origins — son of a wagonmaker who died when he was 3, raised by his widowed mother in Penfield NY, working farms for $10/month at age 16 — to build at one time the LARGEST SEED COMPANY IN THE WORLD. Starting as an errand boy in Detroit's S.D. Elwood & Company stationery firm in 1852, he joined the seed-growing business in 1856, bought out his senior partner in 1865, and renamed the firm D.M. Ferry & Co. in 1867. Two innovations defined his approach: he sold only fresh seed (raising germination rates and reputation) and he was among the first to sell seeds in small packets (making seeds accessible to home gardeners). By the 1890s the firm was doing $1.5M annually; by the early 1900s, $2M+ annually serving 160,000 retail outlets. He survived a near-total $1M warehouse fire on January 1, 1886 by absorbing two competitors and filling orders without interruption. The firm became the predecessor of the Ferry-Morse Seed Company. [civic_action] Detroit Institute of Arts founding subscriber\nBeyond seeds, Dexter Ferry was one of Detroit's most active civic leaders. He was president of First National Bank of Detroit, Union Trust Company, Standard Accident Insurance, Michigan Fire & Marine Insurance, American Harrow Company, and National Pin Company. He helped manage Harper Hospital for nearly 40 years and was a founder of Grace Hospital. He was a trustee of Olivet College and the First Congregational Church of Detroit. Most consequentially for his daughter Blanche's family — and ultimately for her granddaughter Blanchette Hooker Rockefeller's MoMA legacy — Dexter was a FOUNDING SUBSCRIBER to the Detroit Museum of Art (predecessor to the Detroit Institute of Arts) in 1884. The Ferry family's commitment to art passed to his son Dexter Jr. (DIA president 1914-1917) and to Blanche, who instilled art appreciation in her four Hooker daughters — most notably Helen (sculptor) and Blanchette (MoMA president 1959-1962, 1972-1985). [family] Married Addie Miller; died 8 days after her\nDexter married Addie Elizabeth Miller on October 1, 1867 in Detroit. They had three children who outlived them: Dexter M. Ferry Jr. (1873-?), Blanche Ferry Hooker (1871-1956 — our Hooker-tree connection), and Queene Ferry Coonley. After 39 years of marriage, Addie died November 2, 1906; Dexter followed her just 8 days later on November 10, 1907 (note Wikipedia gives 1907 for both deaths and 1906 for Addie alone — the 1906 vs 1907 puzzle appears in primary sources). Buried Woodmere Cemetery Detroit. He was the namesake of Ferry Field at the University of Michigan in Ann Arbor — a major athletics facility honoring his civic generosity.",
@@ -1228891,7 +1228911,7 @@
      "number": 6,
      "category": "business",
      "header": "Dummy owners beat the 160-acre water cap",
-     "body": "The Salt River Project's charter gave each landowner water for only 160 acres. Chandler got around it with dummy owners who took up land and mortgaged it to him, backed by the money of D. W. Ferry, his old employer from Detroit."
+     "body": "The Salt River Project's charter gave each landowner water for only 160 acres. Chandler got around it with dummy owners who took up land and mortgaged it to him, backed by the money of Dexter Ferry, his old employer from Detroit."
     },
     {
      "number": 7,
@@ -1228911,6 +1228931,12 @@
      "type": "connection",
      "link_text": "Henry Clay Hooker",
      "display_label": "drove ten thousand Texas longhorns into Arizona in 1872"
+    },
+    {
+     "related_id": "X02320",
+     "type": "connection",
+     "link_text": "Dexter Mason Ferry",
+     "display_label": "employed him in Detroit in 1882, and later backed his Arizona land"
     }
    ],
    "quotes": [],
@@ -1228942,7 +1228968,7 @@
    "career": [
     {
      "role": "Employee",
-     "organization": "D. W. Ferry Seed Company, Detroit",
+     "organization": "D. M. Ferry & Company, Detroit",
      "start_year": 1882
     },
     {
@@ -1517951,7 +1517977,8 @@
     "married_names": [
      "Ferry"
     ],
-    "photo_url": null
+    "photo_url": null,
+    "chip_first_name": "Addie"
    },
    "gender": "female",
    "birth": {
@@ -1517990,7 +1518017,9 @@
      "children_ids": [
       "X02319"
      ],
-     "date_year": 1867
+     "date_year": 1867,
+     "date_month": 10,
+     "date_day": 1
     }
    ],
    "classification": {
@@ -1518023,7 +1518052,26 @@
    "tags": [],
    "research_tags": [],
    "cross_connections": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "marriage",
+     "header": "From Unadilla to Detroit, 1867",
+     "body": "Addie Miller left Unadilla, in Otsego County, New York, to marry Dexter Ferry in October 1867. In Detroit the two of them belonged to the Woodward Avenue Congregational Church, and gave generously to its work."
+    },
+    {
+     "number": 2,
+     "category": "family",
+     "header": "She took Blanche to Rome in 1895",
+     "body": "Touring Europe with her daughter Blanche in 1895, Addie was in Rome when Blanche ran into Elon Hooker again, two years after they had first met at Vassar. Blanche married him in Detroit in 1901."
+    },
+    {
+     "number": 3,
+     "category": "death",
+     "header": "She died back in Unadilla",
+     "body": "Addie died at Unadilla, the town where she was born, on 2 November 1906, five days short of sixty-five, and was buried with the Ferrys at Woodmere in Detroit. Dexter died a year and eight days after her."
+    }
+   ],
    "quotes": [],
    "sources": [],
    "research_sources": [],
