@@ -576135,7 +576135,11 @@
    "landmarks": [
     {
      "landmark_id": "LM036",
-     "landmark_blurb": "Built Gillette Castle 1914-1919 as his home; designed it himself including 47 unique locks, secret passages, and a miniature railway."
+     "landmark_blurb": "Built Gillette Castle 1914-1919 as his home; designed it himself including 47 unique locks, secret passages, and a miniature railway.",
+     "title_scale": 0.92
+    },
+    {
+     "landmark_id": "LM559"
     }
    ],
    "institutions": [
@@ -576202,7 +576206,16 @@
    "research_sources": [],
    "documents": [],
    "naming_inspiration": [],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART406",
+     "artwork_blurb": "Written by Gillette"
+    },
+    {
+     "artwork_id": "ART407",
+     "artwork_blurb": "Library of Congress Collection"
+    }
+   ],
    "quotes": [],
    "military_service": [],
    "last_updated": "2026-09-17"
@@ -2524009,10 +2524022,11 @@
    "person_ids": [
     "H02979"
    ],
-   "primary_url": "https://en.wikipedia.org/wiki/Gillette_Castle_State_Park",
-   "primary_url_label": "Wikipedia",
+   "primary_url": "https://ctparks.com/parks/gillette-castle-state-park",
+   "primary_url_label": "CT State Parks",
    "notes": "24-room fieldstone castle built 1914-1919 by William Hooker Gillette (H02979). Features 47 unique door locks, secret passages, trap doors, and a miniature railway. Purchased by CT 1943 for $29,000. 184 acres. Added to National Register of Historic Places 1986.",
-   "hooker_connections": []
+   "hooker_connections": [],
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792776451/unnamed-7-resized_vbpnds.jpg"
   },
   {
    "id": "LM037",
@@ -2534975,6 +2534989,22 @@
     "X02259",
     "X02260",
     "X02253"
+   ]
+  },
+  {
+   "id": "LM559",
+   "name": "Gillette Castle",
+   "primary_name": "Gillette Castle",
+   "type": "historic_house",
+   "location": {
+    "city": "East Haddam",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "primary_url": "https://en.wikipedia.org/wiki/William_Gillette#/media/File:Castle_Front_1.jpg",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792776829/Castle_Front_1-resized_xqzrqn.jpg",
+   "person_ids": [
+    "H02979"
    ]
   }
  ],
@@ -2559111,6 +2559141,28 @@
    "url": "https://www.moonshineink.com/opinion/double-take/",
    "primary_url": "https://www.moonshineink.com/opinion/double-take/",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792773954/spout_inthemomentdec_web_2_dlqhxv.jpg"
+  },
+  {
+   "id": "ART406",
+   "title": "Secret Service Poster",
+   "type": "poster",
+   "person_ids": [
+    "H02979"
+   ],
+   "url": "https://loc.gov/pictures/resource/var.0871/",
+   "primary_url": "https://loc.gov/pictures/resource/var.0871/",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792776597/service-pnp-var-0800-0871-0871r_iclp5b.jpg"
+  },
+  {
+   "id": "ART407",
+   "title": "Sherlock Holmes Lithograph",
+   "type": "lithograph",
+   "person_ids": [
+    "H02979"
+   ],
+   "url": "https://en.wikipedia.org/wiki/William_Gillette#/media/File:Charles_Frohman_presents_William_Gillette_in_his_new_four_act_drama,_Sherlock_Holmes_(LOC_var_1364)_(edit).jpg",
+   "primary_url": "https://en.wikipedia.org/wiki/William_Gillette#/media/File:Charles_Frohman_presents_William_Gillette_in_his_new_four_act_drama,_Sherlock_Holmes_(LOC_var_1364)_(edit).jpg",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792776633/Charles_Frohman_presents_William_Gillette_in_his_new_four_act_drama__Sherlock_Holmes__LOC_var_1364___edit_qe1ogu.jpg"
   }
  ],
  "wars": [
