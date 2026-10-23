@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD14140,photo_url,https://res.cloudinary.com/dc5clrqtw/image/upload/v1792773202/spout_inthemoment_apr13_web_2_gmkbdy.jpg,OK photo set: https://res.cloudinary.com/dc5clrqtw/image/uploa,/person/pamela-mcadoo,,
+HD14140,field_set,bio.photo_position=left center,OK set bio.photo_position = 'left center',/person/pamela-mcadoo,,

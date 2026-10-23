@@ -2231091,7 +2231091,9 @@
     "married_names": [],
     "gender": "female",
     "display_name": "Pamela McAdoo",
-    "bio_blurb": "Sierra artist and printmaker"
+    "bio_blurb": "Sierra artist and printmaker",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792773202/spout_inthemoment_apr13_web_2_gmkbdy.jpg",
+    "photo_position": "left center"
    },
    "birth": {
     "country": "United States"
