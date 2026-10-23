@@ -2520939,18 +2520939,27 @@
     "first_name": "Charles",
     "middle_name": "Bryant Frederick",
     "last_name": "Weeks",
-    "bio_blurb": "President of the Jazz Institute of Chicago",
-    "display_name": "Charles Bryant Frederick Weeks"
+    "bio_blurb": "Jazz drummer, banker and Jazz Institute president",
+    "display_name": "Charles Bryant Frederick Weeks",
+    "chip_first_name": "Charlie",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792773737/Screenshot_2026-10-23_at_9.41.54_AM_walfra.png"
    },
    "gender": "male",
    "birth": {
     "year": 1937,
-    "date_precision": "year_only",
+    "month": 6,
+    "day": 15,
+    "date_precision": "exact",
+    "city": "Highland Park",
+    "county": "Lake County",
+    "state": "Illinois",
     "country": "United States"
    },
    "death": {
     "year": 2004,
-    "date_precision": "year_only",
+    "month": 11,
+    "day": 2,
+    "date_precision": "exact",
     "city": "Lake Forest",
     "county": "Lake County",
     "state": "Illinois",
@@ -2520960,7 +2520969,14 @@
     "father_id": "I06102",
     "mother_id": "HD16981"
    },
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "children_ids": [
+      "HD16989"
+     ]
+    }
+   ],
    "narrative_blocks": [],
    "tags": [],
    "cross_connections": [
@@ -2520988,7 +2521004,33 @@
    "career": [
     {
      "role": "President",
-     "organization": "Jazz Institute of Chicago"
+     "organization": "Jazz Institute of Chicago",
+     "start_year": 1999,
+     "end_year": 2004
+    },
+    {
+     "role": "President",
+     "organization": "Jazz Institute of Chicago",
+     "start_year": 1980,
+     "end_year": 1982
+    },
+    {
+     "role": "Banker",
+     "organization": "National Boulevard Bank of Chicago",
+     "start_year": 1959
+    },
+    {
+     "role": "Founding member",
+     "organization": "Chicago Jazz Festival",
+     "start_year": 1979
+    }
+   ],
+   "education": [
+    {
+     "institution_id": "INST076",
+     "school_name": "Trinity College",
+     "dates": "1959",
+     "notes": "B.A., English"
     }
    ]
   },
@@ -2521504,6 +2521546,39 @@
    },
    "is_placeholder": false,
    "number_of_marriages": 1
+  },
+  {
+   "id": "HD16989",
+   "bio": {
+    "display_name": "Anne Weeks",
+    "first_name": "Anne",
+    "last_name": "Weeks",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "HD16984"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
   }
  ],
  "landmarks": [
