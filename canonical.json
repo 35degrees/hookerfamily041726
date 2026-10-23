@@ -109498,7 +109498,8 @@
     "first_name": "John",
     "last_name": "Plumbe",
     "married_names": [],
-    "bio_blurb": "New London shipmaster and constable"
+    "bio_blurb": "New London shipmaster and constable",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792765377/60460458_42917322-76dc-4fe8-8259-65c01aa67da3-resized_whyzyu.jpg"
    },
    "residence": {},
    "baptism": {},
@@ -1101581,10 +1101582,6 @@
      "artwork_id": "ART063",
      "role": "Family collection",
      "artwork_blurb": "From her father’s collection, sold to George Heye in 1906."
-    },
-    {
-     "artwork_id": "ART403",
-     "artwork_blurb": "tribes of the upper Missouri valley"
     }
    ],
    "quotes": [],
@@ -2552287,7 +2552284,8 @@
    ],
    "url": "https://www.christies.com/en/stories/sandra-ferry-rockefeller-fieldwood-farm-c15483b3245749dca27b36922775ed1f",
    "primary_url": "https://www.christies.com/en/stories/sandra-ferry-rockefeller-fieldwood-farm-c15483b3245749dca27b36922775ed1f",
-   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792764622/Screenshot_2026-10-23_at_7-resized_uusxnm.png"
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792764622/Screenshot_2026-10-23_at_7-resized_uusxnm.png",
+   "title_scale": 0.75
   },
   {
    "id": "ART402",
@@ -2552305,8 +2552303,7 @@
    "title": "Painted Buffalo Robe",
    "type": "artifact",
    "person_ids": [
-    "X02887",
-    "HD5060"
+    "X02887"
    ],
    "url": "https://www.penn.museum/sites/journal/1365/",
    "primary_url": "https://www.penn.museum/sites/journal/1365/",
