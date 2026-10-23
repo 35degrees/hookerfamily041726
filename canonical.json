@@ -166568,7 +166568,7 @@
     "married_names": [
      "Woodbridge"
     ],
-    "bio_blurb": "Edwards daughter who worked to support orphans",
+    "bio_blurb": "Breadwinner for her orphaned siblings",
     "last_name": "Woodbridge"
    },
    "residence": {},
@@ -166586,26 +166586,32 @@
     {
      "number": 1,
      "category": "family",
-     "header": "Edwards recorded the exact hour of her birth",
-     "body": "She was born August 31, 1736 in Northampton — 'between 2 and 3 o'clock in the morning,' as her father Jonathan Edwards recorded in the family Bible. She was a Northampton child of the Great Awakening years."
+     "header": "Orphaned at twenty-one, with siblings to keep",
+     "body": "Lucy lost her father at Princeton in March 1758 and her mother at Philadelphia that October. With her brother Timothy and her sister Susannah she went to work to keep the younger Edwards children, with almost nothing left to them."
     },
     {
      "number": 2,
      "category": "marriage",
-     "header": "Her husband was kidnapped by Shays' men",
-     "body": "Lucy married Jahleel Woodbridge of Stockbridge, a Princeton man who captained the local minutemen and sat in the provincial congress. Years later, during Shays' Rebellion, insurgents seized him from his home at midnight — one of the prominent Berkshire men dragged off in the winter of 1787."
+     "header": "Back to Stockbridge as Jahleel Woodbridge's wife",
+     "body": "Lucy spent her teens at Stockbridge, where her father preached to the Mohicans, and in June 1764, at twenty-seven, she married Jahleel Woodbridge there. He had grown up in the mission town and learned the Mahican language at its school."
     },
     {
      "number": 3,
      "category": "family",
-     "header": "Stockbridge home base for the Edwards-Woodbridge line",
-     "body": "She moved to Stockbridge with Jahleel Woodbridge — the same Mohican mission town where her father had ministered after Northampton. She died in Stockbridge in 1786, age fifty."
+     "header": "Nine children at Stockbridge in nineteen years",
+     "body": "Lucy bore nine children between 1765 and 1784 and named a daughter Sarah Edwards, for her mother. Her son Jonathan became a militia general, and her son Timothy, blind from seventeen, became a minister."
     },
     {
      "number": 4,
-     "category": "family",
-     "header": "She worked to support her orphaned siblings",
-     "body": "Orphaned with her siblings in 1758, Lucy was among the unmarried Edwards children — with Timothy and Susannah — who went to work to support the younger ones. The family’s training in learning and faith carried them through with almost no inheritance."
+     "category": "character",
+     "header": "Her birth hour went into the family Bible",
+     "body": "Lucy was born at Northampton in the years of the Great Awakening, on the last day of August 1736, between two and three in the morning, the hour her father entered in the family Bible."
+    },
+    {
+     "number": 5,
+     "category": "death",
+     "header": "Her stone in the Stockbridge burying ground",
+     "body": "Lucy died at Stockbridge in September 1786, at fifty, the winter before Shays's insurgents broke into her husband's house at midnight and carried him off. Her gravestone reads “The pure in heart.”"
     }
    ],
    "burial": {
