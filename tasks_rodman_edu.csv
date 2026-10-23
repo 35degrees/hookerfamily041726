@@ -1,0 +1,2 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD3246,field_set,education[0].notes=null,OK set education[0].notes = None,/person/rodman-hooker-1909,,
