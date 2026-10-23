@@ -2524534,7 +2524534,14 @@
      "location_country": "United States"
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "Twenty-one years building New Profit",
+     "body": "Douglas joined New Profit, the Boston venture philanthropy, in 2005, when it had ten staff and six grantees. When he retired as chief operating officer at the end of 2025, its staff was six times larger and it backed nearly a hundred."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
