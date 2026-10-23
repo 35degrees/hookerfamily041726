@@ -1,0 +1,13 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD16987,field_set,bio.chip_first_name=Bill,OK set bio.chip_first_name = 'Bill',/person/william-cavers,,
+HD16987,field_set,bio.bio_blurb=Bedford Audubon executive director,OK set bio.bio_blurb = 'Bedford Audubon executive director',/person/william-cavers,,
+HD16987,education,"school_name=""Johns Hopkins University"" notes=""B.A., political science""",OK education record appended,/person/william-cavers,,
+HD16987,education,"school_name=""The Fletcher School, Tufts"" notes=""M.A., law and diplomacy""",OK education record appended,/person/william-cavers,,
+HD16987,education,"school_name=""University of Michigan"" notes=""M.B.A.""",OK education record appended,/person/william-cavers,,
+HD16987,career,"role=""Clean-energy project finance"" organization=""Solar and wind projects"" end_year=2017","OK career appended (no year -- renders without a date, sorts last)",/person/william-cavers,,
+HD16987,career,"role=""Senior Fellow"" organization=""Conservation Law Foundation"" start_year=2020 end_year=2021",OK career record appended,/person/william-cavers,,
+HD16987,career,"role=""Executive Director"" organization=""Bedford Audubon"" start_year=2021",OK career record appended,/person/william-cavers,,
+HD16987,nb_approved,"header=""Thirty years financing wind and solar"" body=""Bill spent thirty years financing large solar, wind and other clean-energy projects and retired in 2017. He took a nonprofit-management course at UConn, then joined the Conservation Law Foundation and set up its Connecticut office."" category=career",OK nb_approved appended verbatim: 'Thirty years financing wind and solar',/person/william-cavers,,
+HD16987,nb_approved,"header=""Executive director of Bedford Audubon, 2021"" body=""In September 2021 Bill became executive director of Bedford Audubon. He sits on two committees of the Long Island Sound Study and on Darien's Coastal Commission, and has sailed the New England coast all his life."" category=social_reform","OK nb_approved appended verbatim: 'Executive director of Bedford Audubon, 2021'",/person/william-cavers,,
+HD16987,cc,"related=HD3136 link=""Jane-Kerin Moffat"" label=""brought 180 groups together for Audubon's Long Island Sound alliance""",OK cc->HD3136 added; FLAG needs reciprocal cc row on HD3136,/person/william-cavers,,
+HD3136,cc,"related=HD16987 link=""Bill Cavers"" label=""runs Bedford Audubon and sits on the Long Island Sound Study""",OK cc->HD16987 added (reciprocal present),/person/jane-kerin-moffat-1931,,

@@ -593918,6 +593918,12 @@
      "type": "connection",
      "link_text": "Olivia Coolidge",
      "display_label": "read classics at Somerville in 1931, then taught Greek and Latin"
+    },
+    {
+     "related_id": "HD16987",
+     "type": "connection",
+     "link_text": "Bill Cavers",
+     "display_label": "runs Bedford Audubon and sits on the Long Island Sound Study"
     }
    ],
    "bio": {
@@ -2521127,7 +2521133,9 @@
     "married_names": [],
     "first_name": "William",
     "last_name": "Cavers",
-    "display_name": "William Cavers"
+    "display_name": "William Cavers",
+    "chip_first_name": "Bill",
+    "bio_blurb": "Bedford Audubon executive director"
    },
    "gender": "male",
    "birth": {},
@@ -2521143,9 +2521151,29 @@
      "children_ids": []
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "Thirty years financing wind and solar",
+     "body": "Bill spent thirty years financing large solar, wind and other clean-energy projects and retired in 2017. He took a nonprofit-management course at UConn, then joined the Conservation Law Foundation and set up its Connecticut office."
+    },
+    {
+     "number": 2,
+     "category": "social_reform",
+     "header": "Executive director of Bedford Audubon, 2021",
+     "body": "In September 2021 Bill became executive director of Bedford Audubon. He sits on two committees of the Long Island Sound Study and on Darien's Coastal Commission, and has sailed the New England coast all his life."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD3136",
+     "type": "connection",
+     "link_text": "Jane-Kerin Moffat",
+     "display_label": "brought 180 groups together for Audubon's Long Island Sound alliance"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
@@ -2521159,7 +2521187,39 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "education": [
+    {
+     "school_name": "Johns Hopkins University",
+     "notes": "B.A., political science"
+    },
+    {
+     "school_name": "The Fletcher School, Tufts",
+     "notes": "M.A., law and diplomacy"
+    },
+    {
+     "school_name": "University of Michigan",
+     "notes": "M.B.A."
+    }
+   ],
+   "career": [
+    {
+     "role": "Clean-energy project finance",
+     "organization": "Solar and wind projects",
+     "end_year": "2017"
+    },
+    {
+     "role": "Senior Fellow",
+     "organization": "Conservation Law Foundation",
+     "start_year": "2020",
+     "end_year": "2021"
+    },
+    {
+     "role": "Executive Director",
+     "organization": "Bedford Audubon",
+     "start_year": "2021"
+    }
+   ]
   },
   {
    "id": "HD16988",
