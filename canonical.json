@@ -2231127,7 +2231127,14 @@
      "body": "In The Moment takes after Paul Madonna, whose synthesis of text and reportage illustration she admired. She sets down conversations overheard, or the thought that arrives while she is drawing."
     }
    ],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD16986",
+     "type": "connection",
+     "link_text": "Nancy Cavers Dougherty",
+     "display_label": "wrote the poems of Heaven is in Truckee, in 2021"
+    }
+   ],
    "tags": [],
    "notable": {
     "is_notable": false,
@@ -2521117,7 +2521124,8 @@
     "first_name": "Nancy",
     "maiden_name": "Cavers",
     "last_name": "Dougherty",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792772795/nancy.png_as17na.avif"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792772795/nancy.png_as17na.avif",
+    "bio_blurb": "Sebastopol poet and chapbook author"
    },
    "gender": "female",
    "birth": {},
@@ -2521133,9 +2521141,29 @@
      "children_ids": []
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "literature",
+     "header": "Heaven is in Truckee, 2021",
+     "body": "Nancy's chapbook Heaven is in Truckee came out from the Orchard Street Press in 2021, after she was a finalist in its 2020 Quiet Diamonds contest. It follows Tape Recorder On, Memory in Salt and Levee Town, and the collaborative Silk."
+    },
+    {
+     "number": 2,
+     "category": "character",
+     "header": "The cello and the written word",
+     "body": "Nancy plays the cello and works across music, visual art and writing. In Sebastopol she supports a homeless shelter for women, counseling for teenagers and art-making in groups."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD14140",
+     "type": "connection",
+     "link_text": "Pamela McAdoo",
+     "display_label": "has spent twenty-five years drawing Truckee"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
@@ -2521326,7 +2521354,26 @@
      "children_ids": []
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "business",
+     "header": "He started Maker Faire in 2006",
+     "body": "Dale founded Make: magazine in 2005, giving the name makers to people who build things with their hands, and started Maker Faire in the Bay Area in 2006. It spread to nearly two hundred places in forty countries."
+    },
+    {
+     "number": 2,
+     "category": "business",
+     "header": "O'Reilly, and the first web portal",
+     "body": "A co-founder of O'Reilly Media and the first editor of its computing books, Dale wrote sed & awk and in 1993 launched the Global Network Navigator, the first web portal and the first site paid for by advertising."
+    },
+    {
+     "number": 3,
+     "category": "legacy",
+     "header": "Introduced by Obama at the White House",
+     "body": "The White House named Dale a Champion of Change in 2011, and at its 2014 Maker Faire President Obama introduced him as an American innovator. He wrote Free to Make with Adriane Conrad."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
