@@ -1557200,6 +1557200,12 @@
      "display_label": "was Middlebury's Bread Loaf musician in residence while he studied",
      "type": "associate",
      "lateral": true
+    },
+    {
+     "related_id": "I04721",
+     "type": "connection",
+     "link_text": "Richard McAdoo",
+     "display_label": "was Houghton Mifflin's editor-in-chief as he built its economics list"
     }
    ],
    "narrative_blocks": [
@@ -1758059,6 +1758065,12 @@
      "type": "connection",
      "link_text": "Charles Minor",
      "display_label": "was a Marine radio operator in the assaults on Guam and Iwo Jima"
+    },
+    {
+     "related_id": "I04721",
+     "type": "connection",
+     "link_text": "Richard McAdoo",
+     "display_label": "edited at Harper in New York while he represented it in London"
     }
    ],
    "education": [
@@ -2190550,7 +2190562,20 @@
      "body": "The Temple house was where they kept open door. At night he and Mary sent music out of two large speakers from the porch, across the fields and into the woods."
     }
    ],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD8135",
+     "type": "connection",
+     "link_text": "Hugh Joyce",
+     "display_label": "built Houghton Mifflin's economics list while he was editor-in-chief"
+    },
+    {
+     "related_id": "X03869",
+     "type": "connection",
+     "link_text": "Michael Canfield",
+     "display_label": "was Harper's London editorial man while he edited in New York"
+    }
+   ],
    "tags": [
     "extraordinary_longevity"
    ],
@@ -2521104,12 +2521129,22 @@
    "id": "I06103",
    "bio": {
     "married_names": [],
-    "first_name": "Tom",
+    "first_name": "Thomas",
     "last_name": "Waxter",
-    "display_name": "Tom Waxter"
+    "display_name": "Thomas J. S. Waxter Jr.",
+    "middle_name": "J. S.",
+    "suffix": "Jr.",
+    "chip_first_name": "Tom",
+    "nickname": "Tom",
+    "bio_blurb": "Baltimore City Circuit Court judge"
    },
    "gender": "male",
-   "birth": {},
+   "birth": {
+    "year": 1934,
+    "city": "Baltimore",
+    "state": "Maryland",
+    "country": "United States"
+   },
    "death": {},
    "parents": {},
    "marriages": [
@@ -2521119,7 +2521154,20 @@
      "children_ids": []
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "politics",
+     "header": "Twelve years on the Baltimore City Council",
+     "body": "Tom Waxter sat in the Maryland House of Delegates from 1967 to 1971 and on the Baltimore City Council from 1975 to 1987. In 1996 he went onto the Baltimore City Circuit Court as an associate judge, and he retired from the bench in 2004."
+    },
+    {
+     "number": 2,
+     "category": "education",
+     "header": "A social work degree before the law",
+     "body": "After Princeton, class of 1956, and Army Reserve service, Tom took a master's in social work at Penn in 1959. He finished law school at the University of Maryland in 1962 and served on Baltimore's Welfare Commission from 1963 to 1966."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2521134,7 +2521182,52 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "education": [
+    {
+     "school_name": "Gilman School"
+    },
+    {
+     "institution_id": "INST023",
+     "school_name": "Princeton University",
+     "dates": "1956"
+    },
+    {
+     "institution_id": "INST143",
+     "school_name": "University of Pennsylvania",
+     "dates": "1959"
+    },
+    {
+     "school_name": "University of Maryland School of Law",
+     "dates": "1962"
+    }
+   ],
+   "career": [
+    {
+     "role": "Member",
+     "organization": "Baltimore City Welfare Commission",
+     "start_year": "1963",
+     "end_year": "1966"
+    },
+    {
+     "role": "Delegate",
+     "organization": "Maryland House of Delegates",
+     "start_year": "1967",
+     "end_year": "1971"
+    },
+    {
+     "role": "Member",
+     "organization": "Baltimore City Council",
+     "start_year": "1975",
+     "end_year": "1987"
+    },
+    {
+     "role": "Associate Judge",
+     "organization": "Baltimore City Circuit Court",
+     "start_year": "1996",
+     "end_year": "2004"
+    }
+   ]
   },
   {
    "id": "I06104",
