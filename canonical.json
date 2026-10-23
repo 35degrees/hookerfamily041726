@@ -1257271,6 +1257271,12 @@
      "role": "Distinguished Professor of Anthropology",
      "organization": "University of Illinois Chicago",
      "start_year": 1994
+    },
+    {
+     "role": "Guest curator",
+     "organization": "American Museum of Natural History",
+     "start_year": 1985,
+     "end_year": 1989
     }
    ],
    "birth": {
@@ -1257288,13 +1257294,13 @@
      "school_name": "Stanford University",
      "dates": "1968",
      "type": "graduation",
-     "notes": "B.A."
+     "notes": "B.A. in history, with distinction"
     },
     {
      "school_name": "Columbia University",
      "dates": "1977",
      "type": "graduation",
-     "notes": "Ph.D., anthropology"
+     "notes": "M.A. 1974, Ph.D. 1977, anthropology"
     },
     {
      "school_name": "East Woods School",
@@ -2560686,6 +2560692,11 @@
    "person_id": "HD15895",
    "url": "https://about.me/pratt_bennet",
    "note": "Pratt Bennet's about.me page. Leadership coach (AceUp, Make That Leap), Berklee professor, and author as P.H.T. Bennet of Raising Sleeping Stones; son of William S. Bennet II and Alice Talcott Bennet (TD0072). Could confirm his wife's name and his siblings' families."
+  },
+  {
+   "person_id": "HD6098",
+   "url": "https://anth.uic.edu/profiles/roosevelt-anna-c/",
+   "note": "Anna Curtenius Roosevelt's UIC faculty page (Distinguished Professor of Anthropology). A pupil of Langdon Gilbert Rankin (HD16947) at East Woods School, Oyster Bay, who wrote of him warmly in 2026; could tell more about East Woods and the Rankins, and about her own Roosevelt line."
   }
  ]
 }
