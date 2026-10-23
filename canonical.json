@@ -713144,12 +713144,18 @@
     },
     {
      "number": 2,
+     "category": "military",
+     "header": "Around the world underwater on the Swordfish",
+     "body": "After Stanford, David enlisted in the U.S. Navy and served as an engineer aboard the submarine Swordfish, which carried him around the world underwater."
+    },
+    {
+     "number": 3,
      "category": "career",
      "header": "Game warden in Alaska, watching for poachers",
      "body": "David went to Alaska as a game warden, on the watch for poachers. Back in California he bought a small airplane, and flew it north to Alaska again and then all the way down to South America."
     },
     {
-     "number": 3,
+     "number": 4,
      "category": "arts",
      "header": "The piano in Palo Alto",
      "body": "When David settled back in Palo Alto he took up the piano, and he has since brought it together with his first passion, the computer."
@@ -713175,6 +713181,10 @@
     {
      "role": "Game warden",
      "organization": "Alaska"
+    },
+    {
+     "role": "Engineer, submarine Swordfish",
+     "organization": "U.S. Navy"
     }
    ],
    "military_service": [],
@@ -713193,10 +713203,10 @@
    "is_placeholder": false,
    "has_descendants_documented": false,
    "bio": {
-    "display_name": "Florence Hope Austen Norris",
+    "display_name": "Florence Hope Austen Page",
     "first_name": "Florence",
     "middle_name": "Hope",
-    "last_name": "Norris",
+    "last_name": "Page",
     "maiden_name": "Austen",
     "married_names": [
      "Page",
@@ -713339,7 +713349,8 @@
      "description": "Middle name carries forward the Hope family surname through her grandfather Walter Ewing Hope (1879-1948), Hoover's Asst Treasury Secretary and her grandmother Florence's husband."
     }
    ],
-   "research_notes": "Compiler's maternal aunt. Daughter of David Edward Austen Sr. (X02363) and Helen Talcott Hope (TD0056). Lives in San Francisco. Married a Page; biographical detail pending family research.\n[pilot82]: FULL NAME = Florence Hope Austen Norris, nickname 'Hopey'. Born 26 July 1941 to Helen Hope Peet (TD0056) and David Edward Austen Sr. (X02363). First marriage to Harry Disbrow Page (X02366, 1940-2004), San Francisco lawyer; two sons Thomas Page (TD0114) and Michael Page (TD0115); divorced. Second marriage to Albert 'Al' Norris (X02367, b.~1935), still living and aged 91 at compiler's April 2026 update. Lives in San Francisco. Compiler's maternal aunt; a key figure in the Florence-Hope line continuation. Both her first name (Florence) and middle name (Hope) deliberately honor her maternal grandparents Florence Hazen Talcott Hope (TD0055) and Walter Ewing Hope (X02362) — see naming_inspiration."
+   "research_notes": "Compiler's maternal aunt. Daughter of David Edward Austen Sr. (X02363) and Helen Talcott Hope (TD0056). Lives in San Francisco. Married a Page; biographical detail pending family research.\n[pilot82]: FULL NAME = Florence Hope Austen Norris, nickname 'Hopey'. Born 26 July 1941 to Helen Hope Peet (TD0056) and David Edward Austen Sr. (X02363). First marriage to Harry Disbrow Page (X02366, 1940-2004), San Francisco lawyer; two sons Thomas Page (TD0114) and Michael Page (TD0115); divorced. Second marriage to Albert 'Al' Norris (X02367, b.~1935), still living and aged 91 at compiler's April 2026 update. Lives in San Francisco. Compiler's maternal aunt; a key figure in the Florence-Hope line continuation. Both her first name (Florence) and middle name (Hope) deliberately honor her maternal grandparents Florence Hazen Talcott Hope (TD0055) and Walter Ewing Hope (X02362) — see naming_inspiration.",
+   "slug_override": "hope-page"
   },
   {
    "id": "TD0108",
