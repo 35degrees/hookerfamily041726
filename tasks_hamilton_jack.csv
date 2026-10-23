@@ -1,0 +1,5 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+X03824,cc_remove,HD1170,OK CC to HD1170 removed (explicit),/person/alexander-hamilton-1757,,
+HD1170,cc_remove,X03824,OK CC to X03824 removed (explicit),/person/john-morgan-1837,,
+X03824,cc,"related=HD1172 link=""J. P. Morgan Jr."" label="", whose sister wed his great-grandson, made the Morgan Library public""",OK cc->HD1172 added; FLAG needs reciprocal cc row on HD1172,/person/alexander-hamilton-1757,,
+HD1172,cc,"related=X03824 link=""Alexander Hamilton"" label="", whose great-grandson married his sister, set up the national bank""",OK cc->X03824 added (reciprocal present),/person/john-morgan-ii-1867,,

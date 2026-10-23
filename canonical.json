@@ -276579,12 +276579,6 @@
      "type": "connection",
      "link_text": "Endicott Peabody",
      "display_label": "rebuked him over the 1895 gold crisis while he sat on Groton's board"
-    },
-    {
-     "related_id": "X03824",
-     "type": "connection",
-     "link_text": "Alexander Hamilton",
-     "display_label": ", whose great-grandson married his daughter, set up the national bank"
     }
    ],
    "bio": {
@@ -277183,6 +277177,12 @@
      "lateral": true,
      "link_text": "Charles Francis Adams III",
      "display_label": ", his son's father-in-law, defended the Cup under his commodoreship"
+    },
+    {
+     "related_id": "X03824",
+     "type": "connection",
+     "link_text": "Alexander Hamilton",
+     "display_label": ", whose great-grandson married his sister, set up the national bank"
     }
    ],
    "bio": {
@@ -1599932,10 +1599932,10 @@
      "display_label": "is the Butler of Butler Library, across the quad from Hamilton Hall"
     },
     {
-     "related_id": "HD1170",
+     "related_id": "HD1172",
      "type": "connection",
-     "link_text": "J. P. Morgan",
-     "display_label": ", whose daughter married his great-grandson, built the Morgan Library"
+     "link_text": "J. P. Morgan Jr.",
+     "display_label": ", whose sister wed his great-grandson, made the Morgan Library public"
     }
    ],
    "institutions": [],
