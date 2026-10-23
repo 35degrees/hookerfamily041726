@@ -1,0 +1,12 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+TD0107,field_set,"cross_connections[0].display_label=, her grandmother, gave her her first name","OK set cross_connections[0].display_label = ', her grandmother, gave her her first name'",/person/hope-page,,
+TD0107,field_set,cross_connections[0].lineal_gap=-2,OK set cross_connections[0].lineal_gap = -2,/person/hope-page,,
+TD0107,field_set,"cross_connections[1].display_label=, her grandfather, gave her the middle name she carries","OK set cross_connections[1].display_label = ', her grandfather, gave her the middle name she carries'",/person/hope-page,,
+TD0107,field_set,cross_connections[1].lineal_gap=-2,OK set cross_connections[1].lineal_gap = -2,/person/hope-page,,
+TD0055,field_set,"cross_connections[0].display_label=, her granddaughter, carries her first name","OK set cross_connections[0].display_label = ', her granddaughter, carries her first name'",/person/florence-hope-1881,,
+TD0055,field_set,cross_connections[0].lineal_gap=2,OK set cross_connections[0].lineal_gap = 2,/person/florence-hope-1881,,
+X02362,field_set,"cross_connections[0].display_label=, his granddaughter, carries his surname as her middle name","OK set cross_connections[0].display_label = ', his granddaughter, carries his surname as her middle name'",/person/walter-hope-1879,,
+X02362,field_set,cross_connections[0].lineal_gap=2,OK set cross_connections[0].lineal_gap = 2,/person/walter-hope-1879,,
+TD0055,field_set,cross_connections[0].link_text=Hope Page,OK set cross_connections[0].link_text = 'Hope Page',/person/florence-hope-1881,,
+X02362,field_set,cross_connections[0].link_text=Hope Page,OK set cross_connections[0].link_text = 'Hope Page',/person/walter-hope-1879,,
+HD14803,field_set,cross_connections[0].link_text=Hope Page,OK set cross_connections[0].link_text = 'Hope Page',/person/anne-hall-1924,,

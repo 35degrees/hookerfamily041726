@@ -102825,8 +102825,9 @@
     {
      "type": "family_connection",
      "related_id": "TD0107",
-     "display_label": "carries her first name a generation on",
-     "link_text": "Florence Hope Austen Norris"
+     "display_label": ", her granddaughter, carries her first name",
+     "link_text": "Hope Page",
+     "lineal_gap": 2
     },
     {
      "type": "arts",
@@ -712486,8 +712487,9 @@
     {
      "type": "family_connection",
      "related_id": "TD0107",
-     "display_label": "carries his surname as her middle name",
-     "link_text": "Florence Hope Austen Norris"
+     "display_label": ", his granddaughter, carries his surname as her middle name",
+     "link_text": "Hope Page",
+     "lineal_gap": 2
     },
     {
      "type": "parallel_careers",
@@ -713329,14 +713331,16 @@
     {
      "type": "family_connection",
      "related_id": "TD0055",
-     "display_label": "gave her her first name",
-     "link_text": "Florence Hazen Talcott Hope"
+     "display_label": ", her grandmother, gave her her first name",
+     "link_text": "Florence Hazen Talcott Hope",
+     "lineal_gap": -2
     },
     {
      "type": "family_connection",
      "related_id": "X02362",
-     "display_label": "gave her the middle name she carries",
-     "link_text": "Walter Ewing Hope"
+     "display_label": ", her grandfather, gave her the middle name she carries",
+     "link_text": "Walter Ewing Hope",
+     "lineal_gap": -2
     },
     {
      "related_id": "HD14803",
@@ -2304450,7 +2304454,7 @@
     {
      "related_id": "TD0107",
      "type": "connection",
-     "link_text": "Hope Norris Page",
+     "link_text": "Hope Page",
      "display_label": "worked over twenty years in administration at the San Francisco Zoo"
     }
    ],
