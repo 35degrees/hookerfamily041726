@@ -1,0 +1,6 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD16987,nb_approved,"header=""He followed his father onto the CLF"" body=""Bill's father, David Cavers, a corporate lawyer, sat on the Conservation Law Foundation's board for many years. Bill and his sister Nancy carried it on, Bill as a senior fellow in 2020 and on its first Connecticut state advisory board."" category=family",OK nb_approved appended verbatim: 'He followed his father onto the CLF',/person/william-cavers,,
+HD16987,career,"role=""Member"" organization=""Connecticut State Advisory Board, Conservation Law Foundation"" start_year=2021",OK career record appended,/person/william-cavers,,
+I06104,field_set,bio.bio_blurb=Corporate lawyer and Conservation Law Foundation director,OK set bio.bio_blurb = 'Corporate lawyer and Conservation Law Foundation director',/person/david-cavers-jr,,
+I06104,career,"role=""Corporate lawyer""","OK career appended (no year -- renders without a date, sorts last)",/person/david-cavers-jr,,
+I06104,career,"role=""Board member"" organization=""Conservation Law Foundation""","OK career appended (no year -- renders without a date, sorts last)",/person/david-cavers-jr,,

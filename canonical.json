@@ -2521049,7 +2521049,8 @@
     "first_name": "David",
     "middle_name": "Farquhar",
     "last_name": "Cavers",
-    "suffix": "Jr."
+    "suffix": "Jr.",
+    "bio_blurb": "Corporate lawyer and Conservation Law Foundation director"
    },
    "gender": "male",
    "birth": {},
@@ -2521082,7 +2521083,16 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "career": [
+    {
+     "role": "Corporate lawyer"
+    },
+    {
+     "role": "Board member",
+     "organization": "Conservation Law Foundation"
+    }
+   ]
   },
   {
    "id": "HD16986",
@@ -2521164,6 +2521174,12 @@
      "category": "social_reform",
      "header": "Executive director of Bedford Audubon, 2021",
      "body": "In September 2021 Bill became executive director of Bedford Audubon. He sits on two committees of the Long Island Sound Study and on Darien's Coastal Commission, and has sailed the New England coast all his life."
+    },
+    {
+     "number": 3,
+     "category": "family",
+     "header": "He followed his father onto the CLF",
+     "body": "Bill's father, David Cavers, a corporate lawyer, sat on the Conservation Law Foundation's board for many years. Bill and his sister Nancy carried it on, Bill as a senior fellow in 2020 and on its first Connecticut state advisory board."
     }
    ],
    "tags": [],
@@ -2521218,6 +2521234,11 @@
     {
      "role": "Executive Director",
      "organization": "Bedford Audubon",
+     "start_year": "2021"
+    },
+    {
+     "role": "Member",
+     "organization": "Connecticut State Advisory Board, Conservation Law Foundation",
      "start_year": "2021"
     }
    ]
