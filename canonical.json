@@ -26997,8 +26997,8 @@
    "state": "Massachusetts",
    "country": "United States",
    "gps": {
-    "latitude": 42.3903,
-    "longitude": -72.5125
+    "latitude": 42.3912278,
+    "longitude": -72.5101
    },
    "visitable": true,
    "hooker_connections": [
@@ -27015,7 +27015,9 @@
     "I03439",
     "HD10387",
     "H04352",
-    "H05262"
+    "H05262",
+    "X03127",
+    "X03128"
    ]
   },
   {
@@ -354405,6 +354407,13 @@
      "type": "connection",
      "link_text": "Henry Channing",
      "display_label": "gave Massachusetts Audubon 273 acres by Little Pond in 1963"
+    },
+    {
+     "type": "connection",
+     "related_id": "X03127",
+     "link_text": "Eben Loomis",
+     "display_label": ", her grandfather, sat for the portrait she left to the Smithsonian",
+     "lineal_gap": -2
     }
    ],
    "bio": {
@@ -1239351,7 +1239360,12 @@
    "sources": [],
    "institutions": [],
    "landmarks": [],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART408",
+     "artwork_blurb": "Edwin Burrage Child"
+    }
+   ],
    "research_tags": [],
    "cross_connections": [
     {
@@ -1239359,6 +1239373,13 @@
      "related_id": "HD1758",
      "display_label": "was the eclipse astronomer who married his daughter Mabel",
      "link_text": "David Peck Todd"
+    },
+    {
+     "type": "connection",
+     "related_id": "HD1759",
+     "link_text": "Millicent Todd Bingham",
+     "display_label": ", his granddaughter, left his 1910 portrait to the Smithsonian",
+     "lineal_gap": 2
     }
    ],
    "quotes": [],
@@ -1239394,7 +1239415,9 @@
     "month": 11,
     "day": 11,
     "city": "Oppenheim",
-    "state": "New York"
+    "state": "New York",
+    "county": "Fulton County",
+    "date_precision": "exact"
    },
    "death": {
     "year": 1912,
@@ -1239409,9 +1239432,18 @@
     "city": "Amherst",
     "county": "Hampshire",
     "state": "Massachusetts",
-    "country": "United States"
+    "country": "United States",
+    "cemetery_id": "CEM1431"
    },
-   "education": []
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "Lawrence Scientific School, Harvard",
+     "dates": "1853",
+     "type": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "X03128",
@@ -1239426,7 +1239458,7 @@
     "is_talcott_descendant": false,
     "is_thomas_spouse": false,
     "include_in_path_calculation": false,
-    "is_easter_egg": false
+    "is_easter_egg": true
    },
    "notable": {
     "is_notable": false,
@@ -1239448,7 +1239480,12 @@
    "sources": [],
    "institutions": [],
    "landmarks": [],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART408",
+     "artwork_blurb": "Edwin Burrage Child"
+    }
+   ],
    "research_tags": [],
    "cross_connections": [],
    "quotes": [],
@@ -1239472,20 +1239509,23 @@
     "year": 1831,
     "country": "United States",
     "month": 5,
-    "day": 15
+    "day": 15,
+    "date_precision": "exact"
    },
    "death": {
     "year": 1910,
     "country": "United States",
     "month": 9,
-    "day": 20
+    "day": 20,
+    "date_precision": "exact"
    },
    "burial": {
     "cemetery_name": "Wildwood Cemetery",
     "city": "Amherst",
     "county": "Hampshire",
     "state": "Massachusetts",
-    "country": "United States"
+    "country": "United States",
+    "cemetery_id": "CEM1431"
    },
    "education": []
   },
@@ -2559662,6 +2559702,20 @@
    "url": "https://en.wikipedia.org/wiki/William_Gillette#/media/File:Charles_Frohman_presents_William_Gillette_in_his_new_four_act_drama,_Sherlock_Holmes_(LOC_var_1364)_(edit).jpg",
    "primary_url": "https://en.wikipedia.org/wiki/William_Gillette#/media/File:Charles_Frohman_presents_William_Gillette_in_his_new_four_act_drama,_Sherlock_Holmes_(LOC_var_1364)_(edit).jpg",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792776633/Charles_Frohman_presents_William_Gillette_in_his_new_four_act_drama__Sherlock_Holmes__LOC_var_1364___edit_qe1ogu.jpg"
+  },
+  {
+   "id": "ART408",
+   "title": "Portrait (1910)",
+   "type": "painting",
+   "person_ids": [
+    "X03127",
+    "X03128"
+   ],
+   "url": "https://www.si.edu/object/eben-jenks-loomis%3Anpg_S_NPG.69.39",
+   "primary_url": "https://www.si.edu/object/eben-jenks-loomis%3Anpg_S_NPG.69.39",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792778356/NPG-S_NPG_69_39_ext_bjyhlu.jpg",
+   "credit_line": "National Portrait Gallery, Smithsonian Institution; bequest of Millicent Todd Bingham",
+   "artist": "Edwin Burrage Child"
   }
  ],
  "wars": [
