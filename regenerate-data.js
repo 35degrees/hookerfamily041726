@@ -257,6 +257,10 @@ function legacyPlaceholderSlug(p) {
 // priorBase is the year-bearing slug a now-private person USED to have, so the old URL can be
 // redirected forward without writing former_ids into canonical for ~140 people.
 function baseSlug(p) {
+	// A curated URL wins outright (Sam, 23 Oct 2026: Florence Hope Austen Page is "hope-page", the name
+	// she goes by, not the "florence-page" her structured first name would make). Collisions still go
+	// through the ordinary counter; the old slug belongs in former_ids so it redirects.
+	if (p.slug_override) return { base: slugify(p.slug_override), sticky: true, priorBase: null };
 	if (isPlaceholder(p)) {
 		// NO INTERNAL ID IN A URL (Sam, 4 Oct 2026): "the internal ID is an internal-only identifier, so it
 		// should never be in the slug." Placeholders used to be `{desc}-{id}` — ID-anchored for stability —
