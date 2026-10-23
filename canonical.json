@@ -102797,7 +102797,8 @@
    "education": [
     {
      "school_name": "Vassar College",
-     "dates": "1903"
+     "dates": "1903",
+     "institution_id": "INST037"
     }
    ],
    "last_updated": "2026-09-18"
@@ -102956,7 +102957,13 @@
      "body": "She was widowed in February 1982, when Creighton Peet died of a heart attack skiing at Sugar Bowl. Her four children were by then in San Francisco, Palo Alto and New York. She lived on until September 2000."
     }
    ],
-   "last_updated": "2026-09-18"
+   "last_updated": "2026-09-18",
+   "education": [
+    {
+     "institution_id": "INST037",
+     "school_name": "Vassar College"
+    }
+   ]
   },
   {
    "id": "TD0057",
@@ -692596,6 +692603,12 @@
      "type": "colleague",
      "link_text": "Stephen Carlton Clark",
      "display_label": "chaired the Modern in the years before her presidencies"
+    },
+    {
+     "related_id": "TD0107",
+     "type": "connection",
+     "link_text": "Hope Norris",
+     "display_label": "was student body president at Vassar"
     }
    ],
    "research_notes": "Per RAC Blanchette H. Rockefeller papers + Wikipedia + 'Muse of the Museum of Modern Art' research report: b. Oct 2, 1909 NYC; d. Nov 29, 1992 NYC age 83. Youngest of Elon + Blanche Hooker's four daughters. NOT IN EH (b. Oct 1909 after publication). Miss Chapin's → Vassar 1927-1931 (class president both schools). m. Nov 19, 1932 Riverside Church NYC John D. Rockefeller III (X-prefix above). 4 children incl. US Senator Jay Rockefeller IV. MoMA President 1959-1962 + 1972-1985 — second tenure included decade-long fundraising campaign that doubled exhibition space + Blanchette Hooker Rockefeller Gallery dedicated 1987 (abstract-expressionist gallery). 1985 White House Presidential Recognition Award for MoMA work. Cared for never-married eldest sister Barbara Ferry Hooker (H04639) amid mental illness across decades. RAC archive: 'Hooker and Ferry Families Files' Series 53/1, 4.27 cubic feet, dates 1745, 1884-1992. Includes letters from Harriet Beecher Stowe + Stowe Memorial Window (Mandarin FL) info; Wedding correspondence boxes 26+50+51 of Subject Series. The donation pattern shows close inter-generational continuity: gifts from Mrs. Edward M. Trimble (Elon's sister Jeanette Trimble) 1949+1955; Edward Trimble 1978; Saralinda Hooker 2009; Cormac O'Malley 2021+2024. === Migrated NB content (pre-schema-v12-rewrite, kept for reference) === [family] Married John D. Rockefeller III, 1932 Riverside Church\nBorn Oct 2, 1909 in NYC — youngest of Elon Huntington Hooker's four daughters and the only one not in EH 1909 (her birth followed publication by months). Raised at Chelmsford, the Hooker family Greenwich CT estate named after Thomas Hooker's English parish. Attended Miss Chapin's School NYC then Vassar 1927-31 (class president at both). Met John D. Rockefeller III (X-prefix above) over tennis + horse-riding in 1931; married him at Riverside Church NYC on Nov 19, 1932. Four children: Sandra, Jay (US Senator from West Virginia 1985-2015), Hope, Alida. The marriage joined the Hooker chemical-industrial fortune with the Rockefeller petroleum dynasty — though Blanchette's son Jay always insisted (per his memorial speech for her in 1992): 'my mother was not a Rockefeller. She was born Blanchette Ferry Hooker, and she was enormously proud of the Hooker family and her mother's Ferry family from Detroit.' [arts_legacy] Doubled MoMA's exhibition space as president\nBlanchette served two terms as President of the Museum of Modern Art: 1959-62 and 1972-85. During her second tenure she drove the decade-long fundraising campaign that doubled MoMA's exhibition space, funded an adjoining residential tower whose ongoing income supports museum operations + acquisitions, and established the Blanchette Hooker Rockefeller Gallery (dedicated December 7, 1987 by brother-in-law David Rockefeller — an abstract-expressionist gallery where Barnett Newman + Jackson Pollock works hang today). Architect Cesar Pelli (consulting on the expansion) said: 'Blanchette was the hero of this whole process as far as I'm concerned.' She received the White House Presidential Recognition Award 1985 for her MoMA work. Her predecessor in MoMA leadership was her mother-in-law Abby Aldrich Rockefeller, MoMA co-founder 1929 — the Hooker + Rockefeller arts-patron lines converged through her. [family] Cared for sister Barbara amid mental illness\nThroughout her life Blanchette tended to the needs of her never-married eldest sister Barbara Ferry Hooker (H04639), who suffered from mental illness — a private dimension of her philanthropic temperament. The Blanchette Hooker Rockefeller Papers at the Rockefeller Archive Center document this care across decades. She remained close to her sisters Adelaide (Marquand) and Helen (O'Malley + Roelofs) into late life: the four Hooker daughters maintained vigorous correspondence (Boxes 16-63 of the RAC collection) chronicling their scattered lives between Greenwich, NYC, Mayo Ireland, Greenwich, and Boston. Sister Helen's son Cormac O'Malley would later become the principal Hooker family genealogist, depositing 24+ boxes of Hooker family papers at the University of Rochester (gifts in 1949, 1955, 1978, 2009, 2021, 2024). [arts_legacy] Founding chairman MoMA Junior Council\nBlanchette Rockefeller's MoMA involvement began in 1949 as a Trustee, but earlier than that she founded and chaired MoMA's Junior Council — an early effort to engage younger collectors. In 1958, when many Americans denounced modern art as communist + subversive, she lent her support to MoMA's International Program that sent The New American Painting (the first major exhibition of Abstract Expressionism) to eight European cities. Her two most important personal gifts to MoMA were Willem de Kooning's Woman II (1952) and Clyfford Still's Painting (1951). She accepted MoMA's 1979 Academy Award (Oscar) on behalf of the museum's work in film. The MoMA Abstract Expressionist galleries on the second floor are named in her honor as the Blanchette Hooker Rockefeller Gallery — dedicated December 7, 1987 by brother-in-law David Rockefeller. [philanthropy] BRNI in Morgantown West Virginia, 1999\nIn her later years, after being diagnosed with Alzheimer's disease, Blanchette established the Blanchette Rockefeller Neurosciences Institute (BRNI) in 1999 in Morgantown West Virginia — the world's only non-profit institute dedicated exclusively to the study of human memory + diseases of memory. Founded with her son Senator Jay Rockefeller. A $30 million state-of-the-art BRNI research facility opened at West Virginia University in Fall 2008, designed for 100 scientists. The institute's mission combined her devotion to medical philanthropy (a Rockefeller family tradition) with her personal experience of cognitive decline — turning her diagnosis into a generational research legacy.",
@@ -712178,7 +712191,8 @@
      "marriage_number": 2,
      "spouse_id": "X02367",
      "location_country": "United States",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 2001
     }
    ],
    "number_of_marriages": 2,
@@ -712193,7 +712207,20 @@
     "is_notable": false,
     "notable_category": []
    },
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "education",
+     "header": "Student body president at Burke's and Vassar",
+     "body": "Hope was student body president at the Katherine Burke School in San Francisco and again at Vassar, the college her mother and her grandmother Florence Talcott Hope had gone to before her."
+    },
+    {
+     "number": 2,
+     "category": "family",
+     "header": "She followed her sons to Hailey, Idaho",
+     "body": "Hope, an accomplished fisherwoman since her sons' school years, bought a house in Hailey, Idaho, with her husband Al, after Tom and Michael settled there with their families."
+    }
+   ],
    "cross_connections": [
     {
      "type": "family_connection",
@@ -712212,12 +712239,28 @@
      "type": "connection",
      "link_text": "Anne Porter Hall",
      "display_label": "spent twenty-five years in administration at the San Diego Zoo"
+    },
+    {
+     "related_id": "HD3284",
+     "type": "connection",
+     "link_text": "Blanchette Rockefeller",
+     "display_label": "was class president at Vassar, and later a trustee"
     }
    ],
    "education": [
     {
+     "institution_id": null,
+     "school_name": "Potomac School",
+     "notes": "Washington, D.C."
+    },
+    {
+     "school_name": "Katherine Burke School",
+     "notes": "San Francisco; student body president"
+    },
+    {
      "institution_id": "INST037",
-     "school_name": "Vassar College"
+     "school_name": "Vassar College",
+     "notes": "Student body president"
     }
    ],
    "career": [],
@@ -712342,7 +712385,7 @@
      "related_id": "I03786",
      "type": "connection",
      "link_text": "Richard Lyman",
-     "display_label": "was president of Stanford while he led its student body"
+     "display_label": "was president of Stanford while he led its student body in 1979"
     }
    ],
    "education": [
@@ -715391,7 +715434,8 @@
      "marriage_number": 1,
      "spouse_id": "TD0107",
      "location_country": "United States",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 2001
     }
    ],
    "number_of_marriages": 1,
