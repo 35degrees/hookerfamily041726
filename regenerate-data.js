@@ -1110,7 +1110,11 @@ const mediaRow = (o) => ({
 	// Per-ROW object-position for the 34px thumb, e.g. 'top' — the media-row twin of
 	// bio.photo_position. Null on every row that has not asked for it, so the default
 	// centre crop is untouched. Set it on the RECORD (or the person-side entry, which wins).
-	thumbPos: o.thumbPos ?? null
+	thumbPos: o.thumbPos ?? null,
+	// Per-ROW title size multiplier (Sam, 23 Oct 2026: "size down the font by 25%" on one long art title).
+	// Opt-in like thumbPos, but ABSENT rather than null when unset, so no other payload changes. Scales the
+	// title's full size and both of fitMediaText's floors; the description keeps its own size.
+	...(o.titleScale ? { titleScale: o.titleScale } : {})
 });
 function safeResolve(arr, fn) {
 	try {
@@ -1161,7 +1165,9 @@ function resolveLandmarks(p, byId) {
 			url: r.primary_url ?? r.url ?? null,
 			thumbUrl: r.photo_url ?? r.image_url ?? null,
 			alt: r.photo_notes ?? r.image_caption ?? r.primary_name ?? null,
-			tooltip: loc ? `${r.primary_name} — ${loc}` : (r.primary_name ?? null)
+			tooltip: loc ? `${r.primary_name} — ${loc}` : (r.primary_name ?? null),
+			// same opt-in title multiplier as artworks; person-side wins
+			titleScale: bl.title_scale ?? r.title_scale ?? null
 		});
 	});
 }
@@ -1170,16 +1176,21 @@ function resolveArtworks(p, byId) {
 		const r = byId[bl && bl.artwork_id];
 		if (!r) return null;
 		const blurb = bl.artwork_blurb ?? bl.blurb ?? null;
+		// person-side title wins, like photo_position: one portrait can be "Portrait (1910)" on the
+		// sitter's card and "Loomis Portrait" on the granddaughter's (Sam, 23 Oct 2026)
+		const title = bl.artwork_title ?? r.title ?? null;
 		return mediaRow({
-			name: r.title,
+			name: title,
 			typeLabel: artTypeLabel(r.type),
 			blurb,
 			subtitle: blurb ?? artTypeLabel(r.type),
 			url: r.primary_url ?? r.url ?? null,
 			thumbUrl: r.photo_url ?? r.image_url ?? null,
-			alt: r.title ?? null,
-			tooltip: r.title ?? null,
-			thumbPos: bl.photo_position ?? r.photo_position ?? null
+			alt: title,
+			tooltip: title,
+			thumbPos: bl.photo_position ?? r.photo_position ?? null,
+			// person-side wins, as with photo_position: the same artwork can be sized on one card only
+			titleScale: bl.title_scale ?? r.title_scale ?? null
 		});
 	});
 }

@@ -207,6 +207,8 @@
      group-hover, no underline) but is NOT its own anchor — the whole row is the link (see mediaRow).
      Single secondary line = row.subtitle. showPlay overlays a ▶ badge, legible over thumb or slot. -->
 {#snippet mediaBody(row: MediaRow, showPlay: boolean)}
+	<!-- ts: a per-row title multiplier from the data (MediaRow.titleScale), 1 everywhere it is absent. -->
+	{@const ts = row.titleScale ?? 1}
 	<div
 		class="relative mt-0.5 h-[34px] w-[34px] shrink-0 overflow-hidden rounded"
 		role="presentation"
@@ -243,20 +245,21 @@
 		class="min-w-0 flex-1"
 		title={tip(row)}
 		use:fitMediaText={{
-			max: t(13),
-			min: t(11.5),
+			max: t(13 * ts),
+			min: t(11.5 * ts),
 			lines: 1,
 			wrapAt: 'max',
 			maxLines: 3,
-			capMin: t(10),
+			capMin: t(10 * ts),
 			subMax: t(11),
 			subMin: t(9.5),
-			key: `${row.name}|${row.subtitle}|${k}`
+			key: `${row.name}|${row.subtitle}|${k}|${ts}`
 		}}
 	>
 		<div
 			data-title
 			class="text-[calc(13px*var(--type-k,1))] leading-tight font-medium text-slate-800 group-hover:text-slate-600"
+			style={ts !== 1 ? `font-size:${t(13 * ts)}px` : undefined}
 		>
 			{row.name ?? '—'}
 		</div>

@@ -191,6 +191,8 @@ export interface MediaRow {
 	tooltip: string | null;
 	/** Optional CSS object-position for the thumb ('top', 'left bottom'…). Null = centre crop. */
 	thumbPos?: string | null;
+	/** Optional title size multiplier (0.75 = 25% smaller). Absent = 1. */
+	titleScale?: number;
 }
 
 export interface Person {

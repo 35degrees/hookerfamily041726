@@ -65,7 +65,20 @@ export function shrinkToFit(node: HTMLElement, params: ShrinkParams) {
 		// which is the window the flight's hold has to cover (roadmap §58.7). Text width scales almost
 		// exactly with font-size, so one measurement at `max` predicts the answer; the walk below then
 		// confirms it on the same grid in one or two reads, and lands on the SAME size the old loop did.
-		const fits = () => target.scrollWidth <= node.clientWidth;
+		// FRACTIONAL, NOT ROUNDED (Sam, 23 Oct 2026: "Edward Hooker Gillette" drew an ellipsis at 11.8px, far
+		// above its floor). scrollWidth/clientWidth round to whole pixels: a 128.5px column and 128.8px of text
+		// both read 129, pass as a fit, and `text-overflow` (which works on the real widths) cuts the name.
+		// A Range measures the text's own line box, unclipped even once the ellipsis styling makes the holder a
+		// block, and both rects carry the same ancestor transform, so the comparison holds mid-flight too.
+		// Not a fixed 1px of slack: the chip column shrinks to its content when uncapped, so a slack test can
+		// never pass and drives every name to the floor (tried, measured).
+		const range = typeof document !== 'undefined' ? document.createRange() : null;
+		const textWidth = () => {
+			if (!range) return target.scrollWidth;
+			range.selectNodeContents(target);
+			return range.getBoundingClientRect().width;
+		};
+		const fits = () => textWidth() <= node.getBoundingClientRect().width + 0.01;
 		if (!fits() && size > min) {
 			const needed0 = target.scrollWidth;
 			const available0 = node.clientWidth;
