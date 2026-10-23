@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+X03824,cc,"related=HD1173 link=""Juliet Morgan Hamilton"" label=""married his great-grandson William Pierson Hamilton in 1894""",OK cc->HD1173 added; FLAG needs reciprocal cc row on HD1173,/person/alexander-hamilton-1757,,
+HD1173,cc,"related=X03824 link=""Alexander Hamilton"" label="", her husband's great-grandfather, founded the Bank of New York""",OK cc->X03824 added (reciprocal present),/person/juliet-hamilton-1870,,

@@ -277381,7 +277381,15 @@
     "is_notable": false,
     "notable_category": []
    },
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "X03824",
+     "type": "connection",
+     "link_text": "Alexander Hamilton",
+     "display_label": ", her husband's great-grandfather, founded the Bank of New York",
+     "lineal_gap": -3
+    }
+   ],
    "bio": {
     "display_name": "Juliet Pierpont Morgan Hamilton",
     "first_name": "Juliet",
@@ -1599936,6 +1599944,13 @@
      "type": "connection",
      "link_text": "J. P. Morgan Jr.",
      "display_label": ", whose sister wed his great-grandson, made the Morgan Library public"
+    },
+    {
+     "related_id": "HD1173",
+     "type": "connection",
+     "link_text": "Juliet Morgan Hamilton",
+     "display_label": "married his great-grandson William Pierson Hamilton in 1894",
+     "lineal_gap": 3
     }
    ],
    "institutions": [],
