@@ -692251,8 +692251,18 @@
      "institution_id": "INST104"
     }
    ],
-   "landmarks": [],
-   "artworks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM556",
+     "landmark_blurb": "Hudson River Valley, NY"
+    }
+   ],
+   "artworks": [
+    {
+     "artwork_id": "ART401",
+     "artwork_blurb": "Gifford (1879)"
+    }
+   ],
    "quotes": [],
    "military_service": [],
    "gender": "male",
@@ -693033,9 +693043,18 @@
     },
     {
      "landmark_id": "LM059"
+    },
+    {
+     "landmark_id": "LM556",
+     "landmark_blurb": "Hudson River Valley, NY"
     }
    ],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART401",
+     "artwork_blurb": "Gifford (1879)"
+    }
+   ],
    "quotes": [],
    "military_service": [],
    "gender": "female"
@@ -693682,11 +693701,20 @@
      "institution_id": "INST037"
     }
    ],
-   "landmarks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM556",
+     "landmark_blurb": "Hudson River Valley, NY"
+    }
+   ],
    "artworks": [
     {
      "artwork_id": "ART400",
      "artwork_blurb": "Kurama granite (1957-66)"
+    },
+    {
+     "artwork_id": "ART401",
+     "artwork_blurb": "Gifford (1879)"
     }
    ],
    "quotes": [],
@@ -693938,7 +693966,12 @@
      "institution_id": "INST105"
     }
    ],
-   "landmarks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM556",
+     "landmark_blurb": "Hudson River Valley, NY"
+    }
+   ],
    "artworks": [],
    "quotes": [],
    "military_service": [],
@@ -694669,7 +694702,12 @@
    "documents": [],
    "naming_inspiration": [],
    "institutions": [],
-   "landmarks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM556",
+     "landmark_blurb": "Hudson River Valley, NY"
+    }
+   ],
    "artworks": [],
    "quotes": [],
    "military_service": [],
@@ -694869,7 +694907,12 @@
    "documents": [],
    "naming_inspiration": [],
    "institutions": [],
-   "landmarks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM556",
+     "landmark_blurb": "Hudson River Valley, NY"
+    }
+   ],
    "artworks": [],
    "quotes": [],
    "military_service": [],
@@ -2528079,6 +2528122,27 @@
    "dates": {
     "built": 1922
    }
+  },
+  {
+   "id": "LM556",
+   "name": "Fieldwood Farm",
+   "primary_name": "Fieldwood Farm",
+   "type": "estate",
+   "location": {
+    "city": "Hudson River Valley",
+    "state": "New York",
+    "country": "United States"
+   },
+   "primary_url": "https://www.christies.com/en/stories/sandra-ferry-rockefeller-fieldwood-farm-c15483b3245749dca27b36922775ed1f",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792764752/Screenshot_2026-10-23_at_7.12.18_AM_ccyfn7.png",
+   "person_ids": [
+    "X02324",
+    "HD3284",
+    "HD3285",
+    "HD3286",
+    "HD3287",
+    "HD3288"
+   ]
   }
  ],
  "compiler": {
@@ -2552153,6 +2552217,19 @@
    "url": "https://www.christies.com/en/stories/sandra-ferry-rockefeller-fieldwood-farm-c15483b3245749dca27b36922775ed1f",
    "primary_url": "https://www.christies.com/en/stories/sandra-ferry-rockefeller-fieldwood-farm-c15483b3245749dca27b36922775ed1f",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792764104/Screenshot_2026-10-23_at_7-resized_gdtn8d.png"
+  },
+  {
+   "id": "ART401",
+   "title": "Sunset Over the Palisades on the Hudson",
+   "type": "painting",
+   "person_ids": [
+    "HD3285",
+    "X02324",
+    "HD3284"
+   ],
+   "url": "https://www.christies.com/en/stories/sandra-ferry-rockefeller-fieldwood-farm-c15483b3245749dca27b36922775ed1f",
+   "primary_url": "https://www.christies.com/en/stories/sandra-ferry-rockefeller-fieldwood-farm-c15483b3245749dca27b36922775ed1f",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792764622/Screenshot_2026-10-23_at_7-resized_uusxnm.png"
   }
  ],
  "wars": [
