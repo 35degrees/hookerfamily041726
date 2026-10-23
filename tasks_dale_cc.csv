@@ -1,0 +1,5 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+I06105,cc,"related=HD15491 link=""David C. Robertson"" label=""wrote Brick by Brick, the story of LEGO's turnaround, in 2013""",OK cc->HD15491 added; FLAG needs reciprocal cc row on HD15491,/person/dale-dougherty-1956,,
+HD15491,cc,"related=I06105 link=""Dale Dougherty"" label=""founded Maker Faire in 2006, for people who build with their hands""",OK cc->I06105 added (reciprocal present),/person/david-robertson-1960,,
+I06105,cc,"related=HD5041 link=""Ted Hardie"" label=""patented routing between IPv4 and IPv6 at Google""",OK cc->HD5041 added; FLAG needs reciprocal cc row on HD5041,/person/dale-dougherty-1956,,
+HD5041,cc,"related=I06105 link=""Dale Dougherty"" label=""launched the first web portal, the Global Network Navigator, in 1993""",OK cc->I06105 added (reciprocal present),/person/edward-hardie,,

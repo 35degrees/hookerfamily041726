@@ -1098202,7 +1098202,14 @@
     "notable_category": []
    },
    "death": {},
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "I06105",
+     "type": "connection",
+     "link_text": "Dale Dougherty",
+     "display_label": "launched the first web portal, the Global Network Navigator, in 1993"
+    }
+   ],
    "bio": {
     "display_name": "Edward Thomas Lingham Hardie",
     "first_name": "Edward",
@@ -2396763,6 +2396770,12 @@
      "type": "connection",
      "link_text": "Jonathan Ingersoll",
      "display_label": ", a distant Ingersoll cousin, also took his doctorate at MIT Sloan"
+    },
+    {
+     "related_id": "I06105",
+     "type": "connection",
+     "link_text": "Dale Dougherty",
+     "display_label": "founded Maker Faire in 2006, for people who build with their hands"
     }
    ],
    "bio": {
@@ -2521377,7 +2521390,20 @@
     }
    ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD15491",
+     "type": "connection",
+     "link_text": "David C. Robertson",
+     "display_label": "wrote Brick by Brick, the story of LEGO's turnaround, in 2013"
+    },
+    {
+     "related_id": "HD5041",
+     "type": "connection",
+     "link_text": "Ted Hardie",
+     "display_label": "patented routing between IPv4 and IPv6 at Google"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
