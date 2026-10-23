@@ -2521116,7 +2521116,8 @@
     "display_name": "Nancy Cavers Dougherty",
     "first_name": "Nancy",
     "maiden_name": "Cavers",
-    "last_name": "Dougherty"
+    "last_name": "Dougherty",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792772795/nancy.png_as17na.avif"
    },
    "gender": "female",
    "birth": {},
@@ -2521148,7 +2521149,17 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "videos": [
+    {
+     "video_id": "VID151"
+    }
+   ],
+   "education": [
+    {
+     "school_name": "Northwestern University"
+    }
+   ]
   },
   {
    "id": "HD16987",
@@ -2521296,10 +2521307,16 @@
     "married_names": [],
     "first_name": "Dale",
     "last_name": "Dougherty",
-    "display_name": "Dale Dougherty"
+    "display_name": "Dale Dougherty",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792772998/Dale-Dougherty-2013_jhv25l.jpg",
+    "bio_blurb": "Founder of Make: magazine and Maker Faire"
    },
    "gender": "male",
-   "birth": {},
+   "birth": {
+    "year": 1956,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
    "death": {},
    "parents": {},
    "marriages": [
@@ -2521321,10 +2521338,39 @@
     "is_easter_egg": false
    },
    "notable": {
-    "is_notable": false
+    "is_notable": true,
+    "notable_category": [
+     "business"
+    ],
+    "notable_blurb": "Founder of Make: magazine and Maker Faire",
+    "primary_url": "https://en.wikipedia.org/wiki/Dale_Dougherty",
+    "notable_url": "https://en.wikipedia.org/wiki/Dale_Dougherty",
+    "primary_url_label": "Wikipedia"
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "career": [
+    {
+     "role": "Co-founder",
+     "organization": "O'Reilly Media"
+    },
+    {
+     "role": "Founder and publisher",
+     "organization": "Global Network Navigator",
+     "start_year": 1993,
+     "end_year": 1995
+    },
+    {
+     "role": "Founder",
+     "organization": "Make: magazine",
+     "start_year": 2005
+    },
+    {
+     "role": "President",
+     "organization": "Make: Community",
+     "start_year": 2019
+    }
+   ]
   },
   {
    "id": "I06106",
@@ -2562555,6 +2562601,16 @@
     "HD1714",
     "HD1715",
     "HD1708"
+   ]
+  },
+  {
+   "id": "VID151",
+   "title": "Featured Poet (2021)",
+   "summary": "Featured Poet (2021)",
+   "url": "https://www.youtube.com/watch?v=G4wxZ0DJ4uE",
+   "platform": "youtube",
+   "person_ids": [
+    "HD16986"
    ]
   }
  ],
