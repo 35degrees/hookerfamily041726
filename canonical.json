@@ -2222852,6 +2222852,12 @@
      "related_id": "I02461",
      "link_text": "Frank Abercrombie Elliott",
      "display_label": "worked on preventing stroke from the neurology side, decades earlier"
+    },
+    {
+     "related_id": "I06118",
+     "type": "connection",
+     "link_text": "James Meigs",
+     "display_label": "has studied insulin resistance and heart disease at Harvard"
     }
    ],
    "narrative_blocks": [
@@ -2375320,7 +2375326,14 @@
    "research_tags": [],
    "naming_inspiration": [],
    "statues": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "T02323",
+     "type": "connection",
+     "link_text": "Julia Talcott",
+     "display_label": "carves relief prints and drew holiday stamps for the Postal Service"
+    }
+   ],
    "narrative_blocks": [
     {
      "number": 1,
@@ -2524250,10 +2524263,35 @@
      "category": "arts",
      "header": "A LEED Silver house in Newton",
      "body": "In 2009 the house Julia and her husband James built in Newton Centre earned a LEED Silver certificate, the second custom home in Newton to win one. Julia designed the railing for its loft bedroom."
+    },
+    {
+     "number": 3,
+     "category": "arts",
+     "header": "She drew holiday stamps for the Post Office",
+     "body": "Before printmaking, Julia illustrated for newspapers, magazines and advertising agencies, among them holiday stamps for the U.S. Postal Service. Scolded for doodling in school, she still fills a sketchbook about every six months."
+    },
+    {
+     "number": 4,
+     "category": "arts",
+     "header": "Her students print with a steamroller",
+     "body": "Julia teaches a class in carving large relief prints at the Mosesian Center for the Arts in Watertown. It ends at the town's community arts fair, where she and her students print their linoleum blocks under a steamroller."
+    },
+    {
+     "number": 5,
+     "category": "arts",
+     "header": "Escher, she says, was the gateway drug",
+     "body": "Julia paints on linoleum before she carves it with Japanese tools; On the Night You Were Born, made at a California residency, prints from three 24-inch panels. She says M. C. Escher was her gateway drug to art."
     }
    ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD15331",
+     "type": "connection",
+     "link_text": "Fortune Fulweiler",
+     "display_label": "was a painter, printmaker and illustrator for Cricket Magazine"
+    }
+   ],
    "classification": {
     "is_thomas_descendant": true,
     "is_talcott_descendant": true,
@@ -2524305,6 +2524343,14 @@
      "start_year": null,
      "end_year": null,
      "notes": null
+    },
+    {
+     "role": "Illustrator",
+     "organization": "Newspapers, magazines and the U.S. Postal Service"
+    },
+    {
+     "role": "Instructor, large relief printmaking",
+     "organization": "Mosesian Center for the Arts, Watertown"
     }
    ],
    "videos": [
@@ -2524322,7 +2524368,8 @@
     "married_names": [],
     "title": "Dr.",
     "middle_name": "Benjamin",
-    "bio_blurb": "Harvard diabetes epidemiologist"
+    "bio_blurb": "Harvard diabetes epidemiologist",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792792155/16881824-2_h11ngv.jpg"
    },
    "gender": "male",
    "birth": {},
@@ -2524356,7 +2524403,14 @@
     }
    ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD14043",
+     "type": "connection",
+     "link_text": "Walter Kernan",
+     "display_label": "ran Yale's trial treating insulin resistance after stroke"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
