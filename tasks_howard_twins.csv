@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD3250,nb_replace,"old=""The elder twin stayed in the city"" header=""Duncan stayed in the city his twin left"" body=""Duncan was born in San Francisco on September 9, 1940, the twin of George Lent Howard. George went toward livestock and the rural West; Duncan stayed in the city."" category=family",OK nb_replace: 'The elder twin stayed in the city' -> 'Duncan stayed in the city his twin left' placed verbatim in place,/person/duncan-howard,,
+HD3251,nb_remove,The elder twin by a few minutes,OK NB 'The elder twin by a few minutes' removed (explicit),/person/george-howard-1940,,
