@@ -675976,9 +675976,9 @@
      "body": "Moved by President Clinton's 1997 apology, Tony made The Greater Good, a documentary installation on the Tuskegee syphilis study. Shown in San Francisco, in St. Louis and at Morgan State, it was named one of 2002's best exhibitions by the St. Louis Post-Dispatch."
     },
     {
-     "category": "education",
-     "header": "From Harvard to the Naval Academy",
-     "body": "Tony spent a year at Harvard, his father's college, in 1956 and 1957, and went on to the United States Naval Academy, graduating from Annapolis in 1961. He later earned an M.F.A. from the San Francisco Art Institute, in 1995.",
+     "category": "military",
+     "header": "Harvard, Annapolis, then submarines",
+     "body": "Tony spent a year at Harvard, his father's college, in 1956 and 1957, then went to the Naval Academy, graduating in 1961, and into the Navy's Submarine Service. He later took an M.F.A. at the San Francisco Art Institute, in 1995.",
      "number": 2
     },
     {
@@ -675992,6 +675992,12 @@
      "category": "family",
      "header": "His middle name came from the jewelers",
      "body": "Tony was the only child of John Rodman Hooker and Josephine Dunham, born in 1938. His middle name, Shreve, came from his father's mother, a daughter of George Choate Shreve of Shreve & Co., the San Francisco jewelers."
+    },
+    {
+     "number": 5,
+     "category": "career",
+     "header": "A portfolio manager at Ashfield",
+     "body": "Tony was a portfolio manager at Ashfield Capital Partners, the San Francisco investment firm, and stayed on as a senior adviser from 2009. Since 2022 he has sat on the board of the Belvedere Tiburon Library."
     }
    ],
    "cross_connections": [
@@ -676013,6 +676019,12 @@
      "link_text": "George Choate Shreve",
      "display_label": ", his great-grandfather, opened Shreve & Co. in San Francisco in 1852",
      "lineal_gap": -3
+    },
+    {
+     "related_id": "TD0106",
+     "type": "connection",
+     "link_text": "David Austen",
+     "display_label": "served as an engineer on the submarine Swordfish after Stanford"
     }
    ],
    "research_notes": "Sam Talcott Hooker's first-cousin-once-removed (colloquially 'uncle'). LIVING — built per Sam's preference 'living is good, i want interested users.' Per Ashfield Capital Partners SEC Form ADV Part 2B Brochure Supplement (January 16, 2013) + Tony Hooker pedigree (#1002): b.1938, only child of John Rodman Hooker (HD3243, 1903-1983) and Josephine Dunham (X02254, 1906-1982). Education: Harvard 1956-57 (no degree), USNA B.S. 1961, American University 1966-67 (no degree), SF Art Institute M.F.A. 1995. CAREER: Principal/Portfolio Manager Ashfield & Co. 1986-2007 → Ashfield Capital Partners LLC Portfolio Manager 2007-2009 → Senior Advisor 2009-present. Office at 750 Battery Street, 6th Floor, San Francisco CA 94111. Tony has been the primary contemporary documentor of the Hooker family pedigree — major source for this database. Connects via Ashfield to distant cousin Lyman Howard (b.1969, descended via Bessie Augusta H04268 → Elizabeth Lent HD3247 → Howard line). MARRIAGE/CHILDREN: Not yet documented in this database — Sam may supply.",
@@ -676055,6 +676067,20 @@
      "role": "Senior Adviser",
      "organization": "Ashfield Capital Partners, San Francisco",
      "start_year": 2009
+    },
+    {
+     "role": "Portfolio Manager",
+     "organization": "Ashfield Capital Partners, San Francisco"
+    },
+    {
+     "role": "Officer, Submarine Service",
+     "organization": "U.S. Navy",
+     "start_year": "1961"
+    },
+    {
+     "role": "Board member",
+     "organization": "Belvedere Tiburon Library",
+     "start_year": "2022"
     }
    ]
   },
@@ -713161,7 +713187,14 @@
      "body": "When David settled back in Palo Alto he took up the piano, and he has since brought it together with his first passion, the computer."
     }
    ],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD3249",
+     "type": "connection",
+     "link_text": "Tony Hooker",
+     "display_label": "went from Annapolis into the Navy's Submarine Service in 1961"
+    }
+   ],
    "education": [
     {
      "school_name": "St. Albans School",
@@ -716731,7 +716764,9 @@
     "display_name": "Michael Page",
     "first_name": "Michael",
     "last_name": "Page",
-    "married_names": []
+    "married_names": [],
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792789900/Screenshot_2026-10-23_at_2-resized_qtz5uq.png",
+    "bio_blurb": "Commercial real estate investor and rancher"
    },
    "birth": {
     "country": "United States"
@@ -716793,8 +716828,20 @@
     {
      "number": 1,
      "category": "business",
-     "header": "Founded Sun Valley investment firm crossing $100 million",
-     "body": "After UC Berkeley Economics and a Wharton MBA in Finance, Michael founded Alpine Investment Group in 2009 in Sun Valley, Idaho — a commercial real estate investment firm focused on the inter-mountain West. Under his leadership, the firm has executed over $100 million in investments across office, retail, industrial, and apartment properties."
+     "header": "He invests alongside his clients",
+     "body": "Michael founded Alpine Investment Group in Sun Valley in 2009 and, as managing partner, puts money into each deal beside his investors: office buildings, shopping centers, industrial projects and apartments across the Northwest."
+    },
+    {
+     "number": 2,
+     "category": "business",
+     "header": "Four ranches in the Pahsimeroi with Tom",
+     "body": "From 2009 to 2013 Michael and his brother Tom bought four ranches in Idaho's Pahsimeroi Valley with their inheritance and made them Big Creek Ranch. Neighbors called the newcomers communists and threats to agriculture."
+    },
+    {
+     "number": 3,
+     "category": "character",
+     "header": "Conservation as the better business",
+     "body": "As Tom's partner, Michael backed piped irrigation that left water in the Pahsimeroi, and grazing changes that brought back sage grouse and elk. “The value of the property doing what we’re doing is increasing far faster,” he said."
     }
    ],
    "cross_connections": [],
@@ -716803,13 +716850,13 @@
     {
      "school_name": "University of California, Berkeley",
      "type": "undergraduate",
-     "notes": "Bachelor's degree in Economics."
+     "notes": "B.A., economics"
     },
     {
      "institution_id": "INST143",
-     "school_name": "The Wharton School of Business (University of Pennsylvania)",
+     "school_name": "Wharton School, University of Pennsylvania",
      "type": "graduate",
-     "notes": "MBA in Finance."
+     "notes": "M.B.A., finance"
     }
    ],
    "career": [
@@ -716818,13 +716865,14 @@
      "organization": "Alpine Investment Group",
      "location": "Sun Valley, Idaho",
      "start_year": 2009,
-     "notes": "Commercial real estate investment firm focused on the inter-mountain West region. Has executed over $100 million in investments across office, retail, industrial, and apartment properties under his leadership."
+     "notes": null
     },
     {
      "role": "Co-owner",
-     "organization": "Big Creek Ranch (Pahsimeroi Valley)",
-     "location": "Pahsimeroi Valley, Idaho",
-     "notes": "Joint owner with brother Tom Page (TD0114) of the Idaho conservation ranch."
+     "organization": "Big Creek Ranch, Pahsimeroi Valley, Idaho",
+     "location": null,
+     "notes": null,
+     "start_year": 2009
     }
    ],
    "military_service": [],
