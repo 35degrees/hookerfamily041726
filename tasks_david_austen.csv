@@ -1,0 +1,12 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD3284,cc_remove,TD0107,OK CC to TD0107 removed (explicit),/person/blanchette-rockefeller-1909,,
+TD0107,cc_remove,HD3284,OK CC to HD3284 removed (explicit),/person/florence-norris,,
+TD0106,field_set,birth.city=Washington,OK set birth.city = 'Washington',/person/david-austen-jr,,
+TD0106,field_set,birth.state=District of Columbia,OK set birth.state = 'District of Columbia',/person/david-austen-jr,,
+TD0106,education,"school_name=""St. Albans School"" notes=""Washington, D.C.""",OK education record appended,/person/david-austen-jr,,
+TD0106,education,"institution_id=INST103 school_name=""Phillips Exeter Academy""",OK education record appended,/person/david-austen-jr,,
+TD0106,education,"institution_id=INST194 school_name=""Stanford University"" notes=""Electrical engineering""",OK education record appended,/person/david-austen-jr,,
+TD0106,career,"role=""Game warden"" organization=""Alaska""","OK career appended (no year -- renders without a date, sorts last)",/person/david-austen-jr,,
+TD0106,nb_approved,"header=""Game warden in Alaska, watching for poachers"" body=""After Stanford, David went north and worked in Alaska as a game warden, watching out for poachers."" category=career","OK nb_approved appended verbatim: 'Game warden in Alaska, watching for poachers'",/person/david-austen-jr,,
+TD0106,nb_approved,"header=""He flew his own plane to South America"" body=""Back in California, David bought a small airplane and flew it north to Alaska again, then all the way down to South America."" category=character",OK nb_approved appended verbatim: 'He flew his own plane to South America',/person/david-austen-jr,,
+TD0106,nb_approved,"header=""The personal computer, then the piano"" body=""David took his Stanford degree in electrical engineering and was one of the very early adopters of the personal computer. Settled again in Palo Alto, he took up the piano, and has brought the two passions together ever since."" category=science","OK nb_approved appended verbatim: 'The personal computer, then the piano'",/person/david-austen-jr,,
