@@ -150294,7 +150294,7 @@
      "related_id": "H00420",
      "type": "connection",
      "link_text": "Hooker Gilbert",
-     "display_label": "served in Capt. Lankton's company of his regiment in 1777"
+     "display_label": "served in Capt. Langdon's company of his regiment in 1777"
     },
     {
      "related_id": "X00151",
@@ -171735,6 +171735,12 @@
      "type": "connection",
      "link_text": "Col. Noadiah Hooker",
      "display_label": "commanded the regiment he served in during the summer of 1777"
+    },
+    {
+     "related_id": "X00151",
+     "type": "connection",
+     "link_text": "Capt. Joseph Langdon",
+     "display_label": "led the company he served in under Col. Noadiah Hooker in 1777"
     }
    ],
    "gender": "male",
@@ -222404,6 +222410,12 @@
      "type": "connection",
      "link_text": "Col. Noadiah Hooker",
      "display_label": ", his brother-in-law, was colonel of his 15th Militia Regiment"
+    },
+    {
+     "related_id": "H00420",
+     "type": "connection",
+     "link_text": "Hooker Gilbert",
+     "display_label": "served in his company of the 15th Regiment in 1777"
     }
    ],
    "bio": {

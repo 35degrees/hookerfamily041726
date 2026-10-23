@@ -1,0 +1,4 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+H00420,cc,"related=X00151 link=""Capt. Joseph Langdon"" label=""led the company he served in under Col. Noadiah Hooker in 1777""",OK cc->X00151 added; FLAG needs reciprocal cc row on X00151,/person/hooker-gilbert-1754,,
+X00151,cc,"related=H00420 link=""Hooker Gilbert"" label=""served in his company of the 15th Regiment in 1777""",OK cc->H00420 added (reciprocal present),/person/joseph-langdon-1740,,
+H00288,field_set,cross_connections[8].display_label=served in Capt. Langdon's company of his regiment in 1777,"OK set cross_connections[8].display_label = ""served in Capt. Langdon's company of his regiment in 1777""",/person/noadiah-hooker-1737,,
