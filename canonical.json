@@ -691262,7 +691262,16 @@
      "landmark_blurb": "The Hookers' Greenwich estate, named for Rev. Thomas Hooker's English parish of Chelmsford."
     }
    ],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART398",
+     "artwork_blurb": "by Buck Dunton (1910)"
+    },
+    {
+     "artwork_id": "ART399",
+     "artwork_blurb": "Calvert Lith. Co. Detroit (1901)"
+    }
+   ],
    "quotes": [],
    "military_service": [],
    "education": [
@@ -691503,10 +691512,49 @@
    "naming_inspiration": [],
    "institutions": [],
    "landmarks": [],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART398",
+     "artwork_blurb": "by Buck Dunton (1910)"
+    },
+    {
+     "artwork_id": "ART399",
+     "artwork_blurb": "Calvert Lith. Co. Detroit (1901)"
+    }
+   ],
    "quotes": [],
    "military_service": [],
-   "gender": "male"
+   "gender": "male",
+   "career": [
+    {
+     "role": "Errand boy, salesman, then bookkeeper",
+     "organization": "S. D. Elwood & Company, Detroit",
+     "start_year": 1852,
+     "end_year": 1856
+    },
+    {
+     "role": "Founder and president",
+     "organization": "D. M. Ferry & Company, Detroit",
+     "start_year": 1856,
+     "end_year": 1907
+    },
+    {
+     "role": "Chairman",
+     "organization": "Michigan Republican State Central Committee",
+     "start_year": 1896,
+     "end_year": 1898
+    },
+    {
+     "role": "President",
+     "organization": "First National Bank of Detroit"
+    }
+   ],
+   "education": [
+    {
+     "school_name": "Penfield schools",
+     "notes": "Penfield, New York"
+    }
+   ]
   },
   {
    "id": "X02321",
@@ -1518048,7 +1518096,16 @@
    "institutions": [],
    "landmarks": [],
    "naming_inspiration": [],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART398",
+     "artwork_blurb": "by Buck Dunton (1910)"
+    },
+    {
+     "artwork_id": "ART399",
+     "artwork_blurb": "Calvert Lith. Co. Detroit (1901)"
+    }
+   ],
    "tags": [],
    "research_tags": [],
    "cross_connections": [],
@@ -2552026,6 +2552083,32 @@
    "url": "https://episdionc.org/wp-content/uploads/2025/11/2011-booklet-engraved-with-love_832.pdf",
    "primary_url": "https://episdionc.org/wp-content/uploads/2025/11/2011-booklet-engraved-with-love_832.pdf",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1791480402/Screenshot_2026-10-08_at_10-resized_mttekj.png"
+  },
+  {
+   "id": "ART398",
+   "title": "Settlers and Seeds Poster",
+   "type": "poster",
+   "person_ids": [
+    "X02320",
+    "X03757",
+    "X02319"
+   ],
+   "url": "https://www.saveseeds.org/biography/ferry/index.html",
+   "primary_url": "https://www.saveseeds.org/biography/ferry/index.html",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792763283/Ferry_Morse_Card_uxhixa.jpg"
+  },
+  {
+   "id": "ART399",
+   "title": "Ferry Seeds Poster",
+   "type": "poster",
+   "person_ids": [
+    "X02320",
+    "X03757",
+    "X02319"
+   ],
+   "url": "https://www.detroithistorical.org/learn/online-research/collection/archive/poster-advertisement-d-m-ferry-cos-seeds-sale-here",
+   "primary_url": "https://www.detroithistorical.org/learn/online-research/collection/archive/poster-advertisement-d-m-ferry-cos-seeds-sale-here",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792763373/1952223002.jpg_pepy7l.webp"
   }
  ],
  "wars": [
