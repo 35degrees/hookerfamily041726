@@ -2518548,11 +2518548,19 @@
     "middle_name": "J.",
     "last_name": "Codella",
     "married_names": [],
-    "bio_blurb": "New York advertising executive"
+    "bio_blurb": "First chairman of American Mensa"
    },
    "gender": "male",
    "birth": {},
-   "death": {},
+   "death": {
+    "year": 1993,
+    "month": 7,
+    "day": 8,
+    "date_precision": "exact",
+    "city": "Philadelphia",
+    "state": "Pennsylvania",
+    "country": "United States"
+   },
    "parents": {},
    "marriages": [
     {
@@ -2518564,7 +2518572,32 @@
      "date_day": 30
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "social_reform",
+     "header": "He found American Mensa with 121 members",
+     "body": "On a 1961 visit to England John became intrigued by Mensa, and he found its new American chapter with 121 members. He volunteered as its first selection officer and fiscal officer, and by 1967 it had 12,000."
+    },
+    {
+     "number": 2,
+     "category": "career",
+     "header": "First chairman of American Mensa, 1961 to 1966",
+     "body": "John chaired American Mensa from 1961 to 1966; Victor Serebriakoff, who had rebuilt Mensa in England, called him its most effective builder in North America. Critics who called him an autocrat eventually pushed him out."
+    },
+    {
+     "number": 3,
+     "category": "education",
+     "header": "Metallography at Stevens, sculpture at the League",
+     "body": "A New Rochelle native, John went to Cooper Union, studied metallography at the Stevens Institute of Technology and sculpture at the Art Students League, and spent most of his working life in advertising and public relations."
+    },
+    {
+     "number": 4,
+     "category": "career",
+     "header": "Consulting at Basking Ridge until 1991",
+     "body": "In 1977 John joined Science Management Corporation, consultants at Basking Ridge, New Jersey, and retired as a vice-president in 1991. He died at Philadelphia in July 1993, at sixty-four."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2518584,6 +2518617,31 @@
     {
      "role": "President",
      "organization": "Codella Duffus, Baker, Inc., New York"
+    },
+    {
+     "role": "First chairman",
+     "organization": "American Mensa",
+     "start_year": "1961",
+     "end_year": "1966"
+    },
+    {
+     "role": "Vice-president",
+     "organization": "Science Management Corporation, Basking Ridge",
+     "start_year": "1977",
+     "end_year": "1991"
+    }
+   ],
+   "education": [
+    {
+     "school_name": "Cooper Union"
+    },
+    {
+     "school_name": "Stevens Institute of Technology",
+     "notes": "Metallography"
+    },
+    {
+     "school_name": "Art Students League",
+     "notes": "Sculpture"
     }
    ]
   }
