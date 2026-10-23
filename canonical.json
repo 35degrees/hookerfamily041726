@@ -414328,7 +414328,11 @@
    ],
    "naming_inspiration": [],
    "institutions": [],
-   "landmarks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM561"
+    }
+   ],
    "artworks": [],
    "quotes": [],
    "military_service": [],
@@ -1599856,6 +1599860,9 @@
    "landmarks": [
     {
      "landmark_id": "LM343"
+    },
+    {
+     "landmark_id": "LM562"
     }
    ],
    "artworks": [
@@ -2535861,6 +2535868,42 @@
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792779185/725Dome_czsrop.jpg",
    "person_ids": [
     "HD1758"
+   ]
+  },
+  {
+   "id": "LM561",
+   "name": "Butler Library",
+   "primary_name": "Butler Library",
+   "type": "library",
+   "dates": {
+    "built": 1934
+   },
+   "location": {
+    "city": "Columbia University",
+    "country": "United States"
+   },
+   "primary_url": "https://library.columbia.edu/libraries/butler/about.html",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792786552/butler_cnhb9r.jpg",
+   "person_ids": [
+    "X00721"
+   ]
+  },
+  {
+   "id": "LM562",
+   "name": "Hamilton Hall",
+   "primary_name": "Hamilton Hall",
+   "type": "academic_building",
+   "dates": {
+    "built": 1907
+   },
+   "location": {
+    "city": "Columbia University",
+    "country": "United States"
+   },
+   "primary_url": "https://en.wikipedia.org/wiki/Hamilton_Hall_(Columbia_University)",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792786714/Hamilton_Hall_-_Circa_1886_rjud3p.png",
+   "person_ids": [
+    "X03824"
    ]
   }
  ],
