@@ -1,0 +1,10 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+I06098,cc,"related=HD14199 link=""Ramsay Wood"" label=""retold Kalila and Dimna, the Indian fables La Fontaine drew on""",OK cc->HD14199 added; FLAG needs reciprocal cc row on HD14199,/person/william-larned-1865,,
+HD14199,cc,"related=I06098 link=""William Larned"" label=""put La Fontaine into Fables in Rhyme for Little Folks""",OK cc->I06098 added (reciprocal present),/person/ramsay-wood-1943,,
+I01818,field_set,cross_connections[0].link_text=Pearl Craigie,OK set cross_connections[0].link_text = 'Pearl Craigie',/person/forrestine-cooper-1867,,
+I01818,field_set,"cross_connections[0].display_label=won custody of her son in an 1895 divorce, and lived by her pen","OK set cross_connections[0].display_label = 'won custody of her son in an 1895 divorce, and lived by her pen'",/person/forrestine-cooper-1867,,
+HD7469,field_set,cross_connections[0].link_text=Forrestine Hooker,OK set cross_connections[0].link_text = 'Forrestine Hooker',/person/pearl-craigie-1867,,
+HD7469,field_set,cross_connections[0].display_label=raised two children after her divorce and wrote nine novels,OK set cross_connections[0].display_label = 'raised two children after her divorce and wrote nine novels',/person/pearl-craigie-1867,,
+I01818,field_set,cross_connections[1].display_label=raised animals on her farm and taught children to ride,OK set cross_connections[1].display_label = 'raised animals on her farm and taught children to ride',/person/forrestine-cooper-1867,,
+HD6111,field_set,cross_connections[0].link_text=Forrestine Hooker,OK set cross_connections[0].link_text = 'Forrestine Hooker',/person/antonia-palfrey-1954,,
+HD6111,field_set,cross_connections[0].display_label=was an Arizona ranch woman who wrote a novel told by a pony,OK set cross_connections[0].display_label = 'was an Arizona ranch woman who wrote a novel told by a pony',/person/antonia-palfrey-1954,,

@@ -1259846,8 +1259846,8 @@
     {
      "type": "parallel_lives",
      "related_id": "I01818",
-     "link_text": "Forrestine Cooper Hooker",
-     "display_label": "was another woman of the family drawn to write the American West"
+     "link_text": "Forrestine Hooker",
+     "display_label": "was an Arizona ranch woman who wrote a novel told by a pony"
     }
    ],
    "quotes": [],
@@ -1317441,14 +1317441,14 @@
     {
      "type": "parallel_lives",
      "related_id": "HD7469",
-     "link_text": "Pearl Richards Craigie",
-     "display_label": "was a novelist born the same year, hers literary London"
+     "link_text": "Pearl Craigie",
+     "display_label": "won custody of her son in an 1895 divorce, and lived by her pen"
     },
     {
      "type": "parallel_lives",
      "related_id": "HD6111",
      "link_text": "Antonia Palfrey",
-     "display_label": "was a later kinswoman who loved the same American West and ranches"
+     "display_label": "raised animals on her farm and taught children to ride"
     },
     {
      "related_id": "I06098",
@@ -1450920,8 +1450920,8 @@
     {
      "type": "parallel_lives",
      "related_id": "I01818",
-     "link_text": "Forrestine Cooper Hooker",
-     "display_label": "was a novelist born the same year, hers the American frontier"
+     "link_text": "Forrestine Hooker",
+     "display_label": "raised two children after her divorce and wrote nine novels"
     },
     {
      "type": "parallel_lives",
@@ -2237301,6 +2237301,12 @@
      "type": "parallel_careers",
      "link_text": "Pamela Colman Smith",
      "display_label": "wrote down the Jamaican Anansi fables as he did the Indian ones"
+    },
+    {
+     "related_id": "I06098",
+     "type": "connection",
+     "link_text": "William Larned",
+     "display_label": "put La Fontaine into Fables in Rhyme for Little Folks"
     }
    ],
    "classification": {
@@ -2520292,6 +2520298,12 @@
      "type": "connection",
      "link_text": "Forrestine Hooker",
      "display_label": "wrote Star, the Story of an Indian Pony, for young readers"
+    },
+    {
+     "related_id": "HD14199",
+     "type": "connection",
+     "link_text": "Ramsay Wood",
+     "display_label": "retold Kalila and Dimna, the Indian fables La Fontaine drew on"
     }
    ],
    "classification": {
