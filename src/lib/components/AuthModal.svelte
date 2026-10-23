@@ -157,7 +157,7 @@
 			     rather than hue. ConnectModal records why they are not cream — §41.3, cream ink is
 			     defined entirely by the dark behind it, and marshmallow is a shade of the PAGE. -->
 			<div class="head">
-				<span class="head-title">{auth.signedIn ? 'Account' : 'Sign In'}</span>
+				<span class="head-title">{auth.signedIn ? 'Account' : 'Create an account'}</span>
 				<button type="button" class="head-x" onclick={dismiss} aria-label="Close">
 					<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
 						<path
@@ -188,8 +188,8 @@
 				     but minimal." A reader deciding whether to hand over an identity is owed the reason,
 				     and the reason is small enough to state exactly rather than sell. -->
 				<p class="why">
-					Create an account to bookmark cards you want to come back to, and to choose a personal
-					home card.
+					Create an account to bookmark people you want to come back to, and to choose your own
+					person home card.
 				</p>
 				<button
 					type="button"
