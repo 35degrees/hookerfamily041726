@@ -693577,33 +693577,45 @@
    "narrative_blocks": [
     {
      "number": 1,
-     "category": "legacy",
-     "header": "Founded TMU on the eve of glasnost",
-     "body": "In 1985 she funded U.S.-Soviet citizen exchanges in arts and environment when governments still blocked such contact. The fund now spans 28 countries across the former Eastern Bloc."
+     "category": "social_reform",
+     "header": "Talking across the Iron Curtain, 1985",
+     "body": "In 1985, when ordinary Americans and Soviets could barely meet, Sandra founded the Trust for Mutual Understanding to bring their artists and conservationists together. It now works in 28 countries, from the Baltic to Mongolia."
     },
     {
      "number": 2,
-     "category": "character",
-     "header": "Mutual understanding as essential first step to peace",
-     "body": "She believed direct human-level interaction was the essential first step toward peace in the nuclear age. Until her death at 89 she never stopped asking what she could do to help the world be a better place."
+     "category": "legacy",
+     "header": "A second foundation at eighty-four",
+     "body": "In 2019 Sandra started the Foundation for the Fight for Human Survival, which has backed mental-health work, Alzheimer's and addiction trials, and teaching in neuroscience. At eighty-nine she was still asking what more she could do."
     },
     {
      "number": 3,
-     "category": "legacy",
-     "header": "Launched a second nonprofit at eighty-four",
-     "body": "She founded the Foundation for the Fight for Human Survival in 2019. The work funded mental health initiatives, Alzheimer's trials, and neuroscience education."
+     "category": "character",
+     "header": "Often anonymous, often against the bomb",
+     "body": "Sandra gave to cultural, political and social-justice causes, often anonymously, and above all to anti-nuclear environmental groups. Peace in the nuclear age, she held, began with citizens learning each other's languages."
     },
     {
      "number": 4,
-     "category": "education",
-     "header": "Vassar continued her mother and grandmother's tradition",
-     "body": "She graduated from The Brearley School in New York City and then Vassar College — continuing the path her mother Blanchette and her Ferry forebears had taken. Vassar was a Hooker family tradition."
+     "category": "character",
+     "header": "Piano, waltz prizes, then landscapes",
+     "body": "Sandra studied piano seriously as a girl. In Boston she took up ballroom dancing and won contests at the city's waltz evenings, and in her quieter later years at Chestnut Hill she painted landscapes."
     },
     {
      "number": 5,
-     "category": "character",
-     "header": "She won waltz contests in Boston ballrooms",
-     "body": "A lifelong ballroom dancer, Sandra won contests at Boston's famous waltz evenings and kept dancing into old age. It was one of the private joys of a woman better known for her quiet, serious philanthropy."
+     "category": "education",
+     "header": "The third generation at Vassar",
+     "body": "Sandra went from the Brearley School in New York to Vassar, where her mother Blanchette had graduated in 1931 and her grandmother Blanche Ferry in 1894: three generations of the family's women at Poughkeepsie."
+    },
+    {
+     "number": 6,
+     "category": "arts",
+     "header": "A Noguchi for her mother's birthday",
+     "body": "In 1980 Sandra and her brother and sisters gave their mother Isamu Noguchi's granite Myo for her birthday. It stood more than thirty years in the garden at Fieldwood Farm, the Hudson Valley house Sandra inherited."
+    },
+    {
+     "number": 7,
+     "category": "legacy",
+     "header": "Fieldwood Farm's art, at Christie's in 2025",
+     "body": "Sandra kept her parents' collection together at Fieldwood for decades, from Hudson River School paintings to Shaker chairs. A year after her death Christie's began selling it, part of the proceeds going to her foundation."
     }
    ],
    "cross_connections": [
