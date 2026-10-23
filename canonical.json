@@ -2524425,7 +2524425,8 @@
     "married_names": [
      "Borchard"
     ],
-    "middle_name": "Geer"
+    "middle_name": "Geer",
+    "bio_blurb": "St. Paul's School teacher"
    },
    "gender": "female",
    "birth": {},
@@ -2524474,7 +2524475,7 @@
     {
      "institution_id": null,
      "school_name": "St. Paul's School",
-     "dates": null,
+     "dates": "1979",
      "type": null,
      "notes": "Magna cum laude"
     },
@@ -2524494,6 +2524495,14 @@
      "start_year": 1983,
      "end_year": null,
      "notes": null
+    },
+    {
+     "role": "Faculty",
+     "organization": "St. Paul's School",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
     }
    ]
   },
@@ -2524505,7 +2524514,8 @@
     "last_name": "Borchard",
     "married_names": [],
     "middle_name": "Charles",
-    "suffix": "III"
+    "suffix": "III",
+    "bio_blurb": "New Profit chief operating officer"
    },
    "gender": "male",
    "birth": {},
@@ -2524567,19 +2524577,36 @@
      "start_year": 1983,
      "end_year": null,
      "notes": null
+    },
+    {
+     "role": "Chief Operating Officer and Managing Partner",
+     "organization": "New Profit",
+     "location": null,
+     "start_year": 2005,
+     "end_year": 2025,
+     "notes": null
+    },
+    {
+     "role": "President",
+     "organization": "iMarket",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
     }
    ]
   },
   {
    "id": "T02325",
    "bio": {
-    "display_name": "Margaret Talcott Scharer",
+    "display_name": "Margaret McCurrach Talcott",
     "first_name": "Margaret",
-    "last_name": "Scharer",
+    "last_name": "Talcott",
     "maiden_name": "Talcott",
     "married_names": [
      "Scharer"
-    ]
+    ],
+    "middle_name": "McCurrach"
    },
    "gender": "female",
    "birth": {},
@@ -2524592,7 +2524619,13 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06120",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1994,
+     "date_month": 6,
+     "date_day": 18,
+     "location_city": "Brookline",
+     "location_state": "Massachusetts",
+     "location_country": "United States"
     }
    ],
    "narrative_blocks": [],
@@ -2524614,15 +2524647,40 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "former_ids": [
+    "margaret-scharer"
+   ],
+   "education": [
+    {
+     "institution_id": "INST023",
+     "school_name": "Princeton University",
+     "dates": null,
+     "type": null,
+     "notes": null
+    }
+   ],
+   "career": [
+    {
+     "role": "Associate, investor relations",
+     "organization": "Merrill Lynch & Company, New York",
+     "location": null,
+     "start_year": 1994,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "I06120",
    "bio": {
-    "display_name": "Scott Scharer",
-    "first_name": "Scott",
+    "display_name": "Leland Scott Scharer",
+    "first_name": "Leland",
     "last_name": "Scharer",
-    "married_names": []
+    "married_names": [],
+    "middle_name": "Scott",
+    "chip_first_name": "Scott",
+    "nickname": "Scott"
    },
    "gender": "male",
    "birth": {},
@@ -2524632,7 +2524690,13 @@
     {
      "marriage_number": 1,
      "spouse_id": "T02325",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1994,
+     "date_month": 6,
+     "date_day": 18,
+     "location_city": "Brookline",
+     "location_state": "Massachusetts",
+     "location_country": "United States"
     }
    ],
    "narrative_blocks": [],
@@ -2524650,7 +2524714,36 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "former_ids": [
+    "scott-scharer"
+   ],
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "St. Paul's School",
+     "dates": "1980",
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": "INST023",
+     "school_name": "Princeton University",
+     "dates": null,
+     "type": null,
+     "notes": null
+    }
+   ],
+   "career": [
+    {
+     "role": "Securities analyst",
+     "organization": "Oppenheimer Management Corporation, New York",
+     "location": null,
+     "start_year": 1994,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   }
  ],
  "landmarks": [
