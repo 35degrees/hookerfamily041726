@@ -2041447,14 +2041447,7 @@
      "body": "He served from 1942 to 1946, between the business degree at Southwestern and the law degree at Texas. He took the LL.B. in 1947 with the Order of the Coif."
     }
    ],
-   "cross_connections": [
-    {
-     "related_id": "X04351",
-     "type": "connection",
-     "link_text": "David Cavers",
-     "display_label": "was Harvard's associate dean when he took his doctorate there"
-    }
-   ],
+   "cross_connections": [],
    "education": [
     {
      "school_name": "Harvard Law School",
@@ -2393616,14 +2393609,7 @@
     "is_notable": false,
     "notable_category": []
    },
-   "cross_connections": [
-    {
-     "related_id": "X04351",
-     "type": "connection",
-     "link_text": "David Cavers",
-     "display_label": "was associate general counsel of the Office of Price Administration"
-    }
-   ],
+   "cross_connections": [],
    "bio": {
     "first_name": "Laurence",
     "last_name": "Channing",
@@ -2521406,47 +2521392,9 @@
      ]
     }
    ],
-   "narrative_blocks": [
-    {
-     "number": 1,
-     "category": "law",
-     "header": "He founded Law and Contemporary Problems",
-     "body": "In 1932, a year into teaching at Duke, David sent Dean Justin Miller a memo proposing a new kind of law review. Law and Contemporary Problems began in 1933, bringing other disciplines to bear on legal questions, and he edited it ten years."
-    },
-    {
-     "number": 2,
-     "category": "law",
-     "header": "Fifty years on the conflict of laws",
-     "body": "David's field was the conflict of laws, how a court chooses between the laws of different places, and his work came to be seen internationally as the start of a revolution in it. His essays were collected as Choice of Law in 1985."
-    },
-    {
-     "number": 3,
-     "category": "education",
-     "header": "Harvard's first associate dean",
-     "body": "Back at Harvard after the war, in which he was associate general counsel of the Office of Price Administration, David became the law school's first associate dean in 1951 and built its program in international legal studies."
-    },
-    {
-     "number": 4,
-     "category": "legacy",
-     "header": "A gentle humanitarian, said Duke in 1979",
-     "body": "When Duke made him a Doctor of Laws in 1979, the citation read by President Terry Sanford called him “a generous, patient, gentle humanitarian.”"
-    }
-   ],
+   "narrative_blocks": [],
    "tags": [],
-   "cross_connections": [
-    {
-     "related_id": "HD15467",
-     "type": "connection",
-     "link_text": "Laurence Minot Channing",
-     "display_label": "was an attorney at the Office of Price Administration in the war"
-    },
-    {
-     "related_id": "HD12303",
-     "type": "connection",
-     "link_text": "Joseph Sneed",
-     "display_label": "took a Harvard law doctorate in 1958, and later ran Duke's law school"
-    }
-   ],
+   "cross_connections": [],
    "classification": {
     "is_thomas_descendant": false,
     "is_talcott_descendant": false,
