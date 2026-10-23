@@ -75280,6 +75280,12 @@
      "type": "connection",
      "link_text": "Noah Webster",
      "display_label": "wrote the Blue-Backed Speller and the 1828 American Dictionary"
+    },
+    {
+     "related_id": "I01195",
+     "type": "connection",
+     "link_text": "William Capron",
+     "display_label": "ran Hartford's Hopkins Grammar School in the 1850s, then went to India"
     }
    ],
    "bio": {
@@ -1065355,6 +1065361,18 @@
      "type": "family_connection",
      "link_text": "Rev. Elias Cornelius",
      "display_label": "served the American Board at home before Capron sailed for India"
+    },
+    {
+     "related_id": "H00546",
+     "type": "connection",
+     "link_text": "Rev. Horace Hooker",
+     "display_label": "was principal of Hartford's Hopkins Grammar School from 1815 to 1817"
+    },
+    {
+     "related_id": "X04010",
+     "type": "connection",
+     "link_text": "Thomas K. Beecher",
+     "display_label": "was principal of Hartford High School from 1849 to 1851"
     }
    ],
    "narrative_blocks": [
@@ -1842704,6 +1842722,12 @@
      "link_text": "Olivia Langdon Clemens",
      "display_label": "grew up in his church, and he buried her father, mother and daughter",
      "lateral": true
+    },
+    {
+     "related_id": "I01195",
+     "type": "connection",
+     "link_text": "William Capron",
+     "display_label": "ran Hartford's Hopkins Grammar School for six years before India"
     }
    ],
    "education": [
