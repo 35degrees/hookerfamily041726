@@ -693615,7 +693615,7 @@
      "number": 7,
      "category": "legacy",
      "header": "Fieldwood Farm's art, at Christie's in 2025",
-     "body": "Sandra kept her parents' collection together at Fieldwood for decades, from Hudson River School paintings to Shaker chairs. A year after her death Christie's began selling it, part of the proceeds going to her foundation."
+     "body": "Sandra kept her parents' collection together at Fieldwood for decades, from Sanford Gifford's Sunset Over the Palisades to Shaker chairs. A year after her death Christie's began selling it, part of the proceeds for her foundation."
     }
    ],
    "cross_connections": [
@@ -693625,6 +693625,12 @@
      "link_text": "Dexter Mason Ferry",
      "display_label": ", her great-grandfather, built the seed firm whose name she carried",
      "lineal_gap": -3
+    },
+    {
+     "related_id": "HD7511",
+     "type": "connection",
+     "link_text": "Caroline Morgan Clowes",
+     "display_label": "hung her cattle beside Gifford's work at the 1876 Centennial"
     }
    ],
    "research_notes": "Per Sandra Ferry Rockefeller obituary (October 2024) + Wikipedia (John D. Rockefeller III): BIRTH: Oct 14, 1935 New York City. (Wikipedia gives 'circa 1935'; obituary confirms exact Oct 14 date.) DEATH: Oct 25, 2024 Chestnut Hill MA age 89. Died peacefully at home. Burial location not stated in obituary. PARENTS: John D. Rockefeller III (X02324) + Blanchette Ferry Hooker Rockefeller (HD3284). ELDEST of the four siblings: Sandra + Jay (HD3286) + Hope (HD3287) + Alida (HD3288). MARITAL STATUS: NEVER MARRIED. NO CHILDREN. Survived by 3 siblings + their spouses + numerous nieces + nephews. EDUCATION: The Brearley School NYC → Vassar College (continuing her mother + grandmother Vassar tradition). PASSIONS: classical music + piano study (young); ballroom dancing (won contests at Boston's famous waltz evenings); landscape painting (later years). PHILANTHROPY: 'gave generously and often anonymously' to cultural, political + social justice causes. Anti-nuclear environmental organizations particularly attracted her. FOUNDED 2 NONPROFITS: • Trust for Mutual Understanding (~1984): U.S./Central+Eastern+SE Europe/Baltic/Central Asia/Caucasus/Mongolia exchanges in arts + environmental stewardship across 28 countries • Foundation for the Fight for Human Survival (2019): mental health initiatives + Alzheimer's clinical trials + substance abuse treatment + neuroscience education PHILOSOPHY: 'the resilience of mutual understanding at a human level was the essential first step toward achieving world peace in the nuclear age.' LAST WORDS (paraphrased per obituary): 'Until her death, Sandra never stopped asking what can I do to help the world be a better place.' TMU FOUNDING CONTEXT: per TMU's primary organizational history, established 1985 — not 1984 as some obituary phrasing suggests ('forty years ago' written 2024). The 1985 founding date places Sandra's Cold War detente philanthropy squarely on the eve of glasnost (~1986) when person-to-person contact between U.S. + Soviet citizens was still severely restricted. === Migrated NB content (pre-schema-v12-rewrite, kept for reference) === [family] Eldest of JDR III's four children\nSandra Ferry Rockefeller was born October 14, 1935 in New York City — eldest of the four children of John D. Rockefeller III + Blanchette Ferry Hooker Rockefeller. She graduated from The Brearley School in New York + Vassar College like her mother + her great-aunt before her. As a young person she loved classical music + studied piano seriously, but her greatest passion became ballroom dancing — after moving to Boston she won contests at the city's famous waltz evenings, where her twirling figure 'attracted many a young man's attention' per her obituary. In later years she lived a quiet + private life, finding great pleasure in painting landscapes. She never married; she was survived by her three siblings — Sen. Jay Rockefeller IV, Hope Aldrich Rockefeller, + Alida Rockefeller Messinger — their spouses + numerous nieces + nephews. [philanthropy] Founded Trust for Mutual Understanding 1984\nSandra became a determined philanthropist who 'gave generously and often anonymously, to cultural, political and social justice causes' — environmental organizations associated with the anti-nuclear movement particularly attracted her. In 1985, on the eve of glasnost, she founded the Trust for Mutual Understanding to promote 'improved communication, closer cooperation, and greater respect between the people of the United States, the Soviet Union, and other countries in Central and Eastern Europe' — at a time when government-to-government contact was severely constrained. After the 1991 Soviet collapse, TMU expanded its reach to 28 countries across the former Eastern Bloc, the Baltic states, Central Asia, the Caucasus, Mongolia + Russia, supporting cultural + environmental exchanges. In 2019 she launched a second nonprofit, the Foundation for the Fight for Human Survival, focused on mental health initiatives, Alzheimer's clinical trials, + neuroscience education. Sandra believed that 'mutual understanding from direct interactions, at a human level, was the essential first step toward achieving world peace in the nuclear age.' Until her death she 'never stopped asking what can I do to help the world be a better place.' She died peacefully Oct 25, 2024 at her Chestnut Hill MA home, age 89.",
@@ -1454006,6 +1454012,12 @@
      "type": "connection",
      "link_text": "Annie Collins",
      "display_label": "painted people and wildlife on notebook paper in the 2000s"
+    },
+    {
+     "related_id": "HD3285",
+     "type": "connection",
+     "link_text": "Sandra Ferry Rockefeller",
+     "display_label": "kept Sanford Gifford's Sunset Over the Palisades at Fieldwood Farm"
     }
    ],
    "notable": {
