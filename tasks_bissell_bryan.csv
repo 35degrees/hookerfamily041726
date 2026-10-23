@@ -1,0 +1,6 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD0186,field_set,notable.is_notable=false,OK set notable.is_notable = False,/person/mary-bryan-1731,,
+I02484,field_set,"cross_connections[1].display_label=, his father-in-law, co-founded Rochester Commercial Nursery in 1844","OK set cross_connections[1].display_label = ', his father-in-law, co-founded Rochester Commercial Nursery in 1844'",/person/josiah-bissell-sr-1818,,
+I02484,field_set,cross_connections[1].lineal_gap=-1,OK set cross_connections[1].lineal_gap = -1,/person/josiah-bissell-sr-1818,,
+H00798,field_set,"cross_connections[1].display_label=, his son-in-law, co-founded the Rochester Commercial Nursery in 1844","OK set cross_connections[1].display_label = ', his son-in-law, co-founded the Rochester Commercial Nursery in 1844'",/person/horace-hooker-sr-1794,,
+H00798,field_set,cross_connections[1].lineal_gap=1,OK set cross_connections[1].lineal_gap = 1,/person/horace-hooker-sr-1794,,

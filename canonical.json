@@ -122276,7 +122276,7 @@
    "gender": "female",
    "marriages": [],
    "notable": {
-    "is_notable": true,
+    "is_notable": false,
     "notable_category": []
    },
    "death": {},
@@ -260782,7 +260782,8 @@
      "related_id": "I02484",
      "type": "connection",
      "link_text": "Col. Josiah Wolcott Bissell",
-     "display_label": "was his nursery partner and married his daughter Julia"
+     "display_label": ", his son-in-law, co-founded the Rochester Commercial Nursery in 1844",
+     "lineal_gap": 1
     },
     {
      "related_id": "H01569",
@@ -1513436,7 +1513437,8 @@
      "related_id": "H00798",
      "type": "connection",
      "link_text": "Horace Hooker",
-     "display_label": "founded the Rochester Commercial Nursery with him in 1844"
+     "display_label": ", his father-in-law, co-founded Rochester Commercial Nursery in 1844",
+     "lineal_gap": -1
     }
    ],
    "narrative_blocks": [
