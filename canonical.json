@@ -1550632,7 +1550632,11 @@
     {
      "marriage_number": 1,
      "spouse_id": "I02615",
-     "children_ids": [],
+     "children_ids": [
+      "T02323",
+      "T02324",
+      "T02325"
+     ],
      "date_year": 1956,
      "location_city": "Rumson",
      "location_state": "New Jersey",
@@ -1551253,7 +1551257,11 @@
     {
      "marriage_number": 1,
      "spouse_id": "T02296",
-     "children_ids": [],
+     "children_ids": [
+      "T02323",
+      "T02324",
+      "T02325"
+     ],
      "date_year": 1956,
      "location_city": "Rumson",
      "location_state": "New Jersey",
@@ -2524176,6 +2524184,252 @@
     {
      "marriage_number": 1,
      "spouse_id": "HD17013",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "T02323",
+   "bio": {
+    "display_name": "Julia Talcott Meigs",
+    "first_name": "Julia",
+    "last_name": "Meigs",
+    "maiden_name": "Talcott",
+    "married_names": [
+     "Meigs"
+    ]
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "T02296",
+    "mother_id": "I02615"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06118",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": true,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": true,
+    "generation_from_thomas": 12,
+    "generation_from_john_talcott": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06118",
+   "bio": {
+    "display_name": "James Meigs",
+    "first_name": "James",
+    "last_name": "Meigs",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "T02323",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "T02324",
+   "bio": {
+    "display_name": "Barbara Talcott Borchard",
+    "first_name": "Barbara",
+    "last_name": "Borchard",
+    "maiden_name": "Talcott",
+    "married_names": [
+     "Borchard"
+    ]
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "T02296",
+    "mother_id": "I02615"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06119",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": true,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": true,
+    "generation_from_thomas": 12,
+    "generation_from_john_talcott": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06119",
+   "bio": {
+    "display_name": "Douglas Borchard",
+    "first_name": "Douglas",
+    "last_name": "Borchard",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "T02324",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "T02325",
+   "bio": {
+    "display_name": "Margaret Talcott Scharer",
+    "first_name": "Margaret",
+    "last_name": "Scharer",
+    "maiden_name": "Talcott",
+    "married_names": [
+     "Scharer"
+    ]
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "T02296",
+    "mother_id": "I02615"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06120",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": true,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": true,
+    "generation_from_thomas": 12,
+    "generation_from_john_talcott": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06120",
+   "bio": {
+    "display_name": "Scott Scharer",
+    "first_name": "Scott",
+    "last_name": "Scharer",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "T02325",
      "children_ids": []
     }
    ],
