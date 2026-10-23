@@ -672083,8 +672083,18 @@
    "documents": [],
    "naming_inspiration": [],
    "institutions": [],
-   "landmarks": [],
-   "artworks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM558",
+     "landmark_blurb": "Union Square, San Francisco"
+    }
+   ],
+   "artworks": [
+    {
+     "artwork_id": "ART404",
+     "artwork_blurb": "14K gold pennant (1852)"
+    }
+   ],
    "quotes": [],
    "military_service": [],
    "gender": "female"
@@ -673624,7 +673634,8 @@
     "last_name": "Shreve",
     "married_names": [],
     "gender": "male",
-    "display_name": "George Choate Shreve"
+    "display_name": "George Choate Shreve",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792765936/Photo339954_adiidl.jpg"
    },
    "birth": {
     "year": 1829,
@@ -673768,8 +673779,18 @@
    "documents": [],
    "naming_inspiration": [],
    "institutions": [],
-   "landmarks": [],
-   "artworks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM558",
+     "landmark_blurb": "Union Square, San Francisco"
+    }
+   ],
+   "artworks": [
+    {
+     "artwork_id": "ART404",
+     "artwork_blurb": "14K gold pennant (1852)"
+    }
+   ],
    "quotes": [],
    "military_service": [],
    "gender": "male"
@@ -673859,8 +673880,18 @@
    "documents": [],
    "naming_inspiration": [],
    "institutions": [],
-   "landmarks": [],
-   "artworks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM558",
+     "landmark_blurb": "Union Square, San Francisco"
+    }
+   ],
+   "artworks": [
+    {
+     "artwork_id": "ART404",
+     "artwork_blurb": "14K gold pennant (1852)"
+    }
+   ],
    "quotes": [],
    "military_service": [],
    "gender": "female"
@@ -2528198,6 +2528229,23 @@
     "I03776",
     "X04297"
    ]
+  },
+  {
+   "id": "LM558",
+   "name": "Historical Marker",
+   "primary_name": "Historical Marker",
+   "type": "historical_marker",
+   "location": {
+    "city": "Union Square, San Francisco",
+    "country": "United States"
+   },
+   "primary_url": "https://www.hmdb.org/m.asp?m=9163",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792765862/Photo28236_t5oubg.jpg",
+   "person_ids": [
+    "X02259",
+    "X02260",
+    "X02253"
+   ]
   }
  ],
  "compiler": {
@@ -2552308,6 +2552356,19 @@
    "url": "https://www.penn.museum/sites/journal/1365/",
    "primary_url": "https://www.penn.museum/sites/journal/1365/",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792765075/robe01-resized_e0gbah.jpg"
+  },
+  {
+   "id": "ART404",
+   "title": "Maker's Mark",
+   "type": "jewelry",
+   "person_ids": [
+    "X02259",
+    "X02260",
+    "X02253"
+   ],
+   "url": "https://www.langantiques.com/university/shreve-company/",
+   "primary_url": "https://www.langantiques.com/university/shreve-company/",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792765703/art-nouveau-demantoid-garnet-and-diamond-necklace-by-shreve-co_4_90-1-15115-768x768_cghzjb.jpg"
   }
  ],
  "wars": [
