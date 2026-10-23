@@ -2231194,7 +2231194,12 @@
    "burial": {},
    "baptism": {},
    "landmarks": [],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART405",
+     "artwork_blurb": "Truckee, CA (2012)"
+    }
+   ],
    "institutions": [],
    "sources": [],
    "documents": [],
@@ -2521185,9 +2521190,6 @@
    "number_of_marriages": 1,
    "education": [
     {
-     "school_name": "Gilman School"
-    },
-    {
      "institution_id": "INST023",
      "school_name": "Princeton University",
      "dates": "1956"
@@ -2521200,6 +2521202,9 @@
     {
      "school_name": "University of Maryland School of Law",
      "dates": "1962"
+    },
+    {
+     "school_name": "Gilman School"
     }
    ],
    "career": [
@@ -2521227,6 +2521232,9 @@
      "start_year": "1996",
      "end_year": "2004"
     }
+   ],
+   "former_ids": [
+    "tom-waxter"
    ]
   },
   {
@@ -2557626,6 +2557634,17 @@
    "url": "https://www.langantiques.com/university/shreve-company/",
    "primary_url": "https://www.langantiques.com/university/shreve-company/",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792765703/art-nouveau-demantoid-garnet-and-diamond-necklace-by-shreve-co_4_90-1-15115-768x768_cghzjb.jpg"
+  },
+  {
+   "id": "ART405",
+   "title": "Double Take",
+   "type": "photograph",
+   "person_ids": [
+    "HD14140"
+   ],
+   "url": "https://www.moonshineink.com/opinion/double-take/",
+   "primary_url": "https://www.moonshineink.com/opinion/double-take/",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792773954/spout_inthemomentdec_web_2_dlqhxv.jpg"
   }
  ],
  "wars": [
