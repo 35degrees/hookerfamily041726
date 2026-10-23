@@ -1,0 +1,7 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+X04315,cc,"related=X02879 link=""Raymond Guest"" label=""won the polo U.S. Open twice with the Templeton team""",OK cc->X02879 added; FLAG needs reciprocal cc row on X02879,/person/charles-von-stade-1919,,
+HD16730,cc,"related=X02879 link=""Raymond Guest"" label=""was voted into polo's Hall of Fame in 2006, posthumously""",OK cc->X02879 added; FLAG needs reciprocal cc row on X02879,/person/lester-armour-iii-1948,,
+X02879,cc,"related=X04315 link=""Charles von Stade"" label=""won polo's U.S. Open at Meadow Brook in 1941, at twenty-one""",OK cc->X04315 added (reciprocal present),/person/raymond-guest-sr-1907,,
+X02879,cc,"related=HD16730 link=""Red Armour"" label=""reached nine goals in the 1970s and polo's Hall of Fame in 1999""",OK cc->HD16730 added (reciprocal present),/person/raymond-guest-sr-1907,,
+X02879,nb_replace,"old=""Six years in the Senate of Virginia"" header=""Two U.S. Opens with the Templeton team"" body=""Raymond and his brother Winston both played polo, and Raymond won the U.S. Open twice with the Templeton team. The Museum of Polo and Hall of Fame inducted him posthumously in 2006."" category=sports",OK nb_replace: 'Six years in the Senate of Virginia' -> 'Two U.S. Opens with the Templeton team' placed verbatim in place,/person/raymond-guest-sr-1907,,
+X02879,tag_add,polo,"FLAG: tag 'polo' not in canonical set -- add it to canonical_tags.txt to approve, or drop this row",/person/raymond-guest-sr-1907,,

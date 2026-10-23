@@ -1,0 +1,11 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+I06118,field_set,bio.photo_url=https://res.cloudinary.com/dc5clrqtw/image/upload/v1792792155/16881824-2_h11ngv.jpg,,,,
+T02323,nb_approved,"header=""She drew holiday stamps for the Post Office"" body=""Before printmaking, Julia illustrated for newspapers, magazines and advertising agencies, among them holiday stamps for the U.S. Postal Service. Scolded for doodling in school, she still fills a sketchbook about every six months."" category=arts",,,,
+T02323,nb_approved,"header=""Her students print with a steamroller"" body=""Julia teaches a class in carving large relief prints at the Mosesian Center for the Arts in Watertown. It ends at the town's community arts fair, where she and her students print their linoleum blocks under a steamroller."" category=arts",,,,
+T02323,nb_approved,"header=""Escher, she says, was the gateway drug"" body=""Julia paints on linoleum before she carves it with Japanese tools; On the Night You Were Born, made at a California residency, prints from three 24-inch panels. She says M. C. Escher was her gateway drug to art."" category=arts",,,,
+T02323,career,"role=""Illustrator"" organization=""Newspapers, magazines and the U.S. Postal Service""",,,,
+T02323,career,"role=""Instructor, large relief printmaking"" organization=""Mosesian Center for the Arts, Watertown""",,,,
+I06118,cc,"related=HD14043 link=""Walter Kernan"" label=""ran Yale's trial treating insulin resistance after stroke""",,,,
+HD14043,cc,"related=I06118 link=""James Meigs"" label=""has studied insulin resistance and heart disease at Harvard""",,,,
+T02323,cc,"related=HD15331 link=""Fortune Fulweiler"" label=""was a painter, printmaker and illustrator for Cricket Magazine""",,,,
+HD15331,cc,"related=T02323 link=""Julia Talcott"" label=""carves relief prints and drew holiday stamps for the Postal Service""",,,,

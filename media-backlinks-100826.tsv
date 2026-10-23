@@ -1,0 +1,137 @@
+kind	media_id	media_name	person_id	person_name	status	link?
+landmark	LM001	The Hooker Elm	H00030	Hon. John Hooker	shown on no card	YES/NO
+landmark	LM002	Stanley-Whitman House	I00031	Abigail Standley Hooker	shown on other cards	YES/NO
+landmark	LM003	Hart Street	I00029	Lieut. Samuel Hart	shown on no card	YES/NO
+landmark	LM004	Thomas Hooker Farm	H00001	Rev. Thomas Hooker	shown on no card	YES/NO
+landmark	LM006	Dr. Daniel Hooker House	H00036	Dr. Daniel Hooker	shown on no card	YES/NO
+landmark	LM007	Jethro Coffin House (The Oldest House)	X00015	Jethro Coffin	shown on no card	YES/NO
+landmark	LM008	Benjamin Tallmadge House (ca. 1775)	H00757	Maj. Benjamin Tallmadge Jr.	shown on no card	YES/NO
+landmark	LM009	Jacob Purdy House (1740 ca.)	H00331	Abigail Smith Purdy	shown on no card	YES/NO
+landmark	LM009	Jacob Purdy House (1740 ca.)	X00121	Captain Jacob G Purdy	shown on no card	YES/NO
+landmark	LM017	Edward Augustus Russell House (1842)	HD1374	Edward Augustus Russell	shown on no card	YES/NO
+landmark	LM018	Thomas Macdonough Russell House (1902)	HD1378	Thomas Macdonough Russell Sr.	shown on no card	YES/NO
+landmark	LM020	Pierpont Homestead and Store, 29 State Street (1785)	H00877	Daniel Pierpont Esq.	shown on no card	YES/NO
+landmark	LM021	John Pierpont House, Elm Street New Haven (1767)	H00388	John Pierpont	shown on no card	YES/NO
+landmark	LM021	John Pierpont House, Elm Street New Haven (1767)	H00976	Hezekiah Beers Pierrepont	shown on no card	YES/NO
+landmark	LM021	John Pierpont House, Elm Street New Haven (1767)	X00126	Rev. James Pierpont	shown on no card	YES/NO
+landmark	LM021	John Pierpont House, Elm Street New Haven (1767)	H00981	Mary Pierpont Foster	shown on no card	YES/NO
+landmark	LM021	John Pierpont House, Elm Street New Haven (1767)	HD1563	Caroline Hooker Foster	shown on no card	YES/NO
+landmark	LM023	Seth M. Gates House	X00541	Seth Merrill Gates	shown on no card	YES/NO
+landmark	LM023	Seth M. Gates House	HD1673	Fanny Jennette Parsons Gates	shown on no card	YES/NO
+landmark	LM024	1 Pierrepont Place, Brooklyn Heights (Pierrepont Family Mansion)	HD1533	Henry Evelyn Pierrepont	shown on no card	YES/NO
+landmark	LM024	1 Pierrepont Place, Brooklyn Heights (Pierrepont Family Mansion)	X00496	Anna Jay Pierrepont	shown on no card	YES/NO
+landmark	LM024	1 Pierrepont Place, Brooklyn Heights (Pierrepont Family Mansion)	HD1627	Anna Jay Pierrepont	shown on no card	YES/NO
+landmark	LM024	1 Pierrepont Place, Brooklyn Heights (Pierrepont Family Mansion)	HD1626	Julia Jay Pierrepont	shown on no card	YES/NO
+landmark	LM024	1 Pierrepont Place, Brooklyn Heights (Pierrepont Family Mansion)	HD1537	Henry Evelyn Pierrepont II	shown on no card	YES/NO
+landmark	LM025	Pierrepont Manor House and Land Office (c.1823)	HD1534	William Constable Pierrepont	shown on no card	YES/NO
+landmark	LM025	Pierrepont Manor House and Land Office (c.1823)	X00525	Cornelia Anna Butler	shown on no card	YES/NO
+landmark	LM027	Walter E. Hope Mansion, 43 East 70th Street	TD0056	Helen Hope Peet	shown on no card	YES/NO
+landmark	LM028	Dr. James Percival House	X01934	Dr. James Percival Jr.	shown on no card	YES/NO
+landmark	LM030	First Church Parsonage, 96 Main Street	H00698	Major Timothy Cowles	shown on no card	YES/NO
+landmark	LM035	Mark Twain House	I00170	Isabella Beecher Hooker	shown on other cards	YES/NO
+landmark	LM035	Mark Twain House	H01626	John Hooker	shown on other cards	YES/NO
+landmark	LM039	Richmond Hill Inn (site)	HD3106	Richmond Mumford Pearson Jr.	shown on no card	YES/NO
+landmark	LM048	Normanstone	X02145	Robert Barton Barnard	shown on no card	YES/NO
+landmark	LM048	Normanstone	X02146	Sophia Cropley Barnard	shown on no card	YES/NO
+landmark	LM101	E.A. Werner Home, Washington Street, Atlanta	HD3774	Florence Woodruff Cowles Werner	shown on other cards	YES/NO
+landmark	LM102	Eliphalet Austin House	X02783	Sybil Dudley Austin	shown on other cards	YES/NO
+landmark	LM103	Stiles Hall	HD4106	Anson Stiles Blake	shown on other cards	YES/NO
+landmark	LM104	Redpath Sugar Refinery	I00630	Maj. John James Redpath	shown on other cards	YES/NO
+landmark	LM105	J. Hooker Hamersley Mansion	I00897	Margaret Willing Chisolm Hamersley	shown on other cards	YES/NO
+landmark	LM105	J. Hooker Hamersley Mansion	H04621	Louis Gordon Hamersley	shown on other cards	YES/NO
+landmark	LM067	Lewis Kennedy Morse Playground	I01204	Lewis Kennedy Morse	shown on no card	YES/NO
+landmark	LM067	Lewis Kennedy Morse Playground	HD4949	Anna Hooker Morse Haynes	shown on no card	YES/NO
+landmark	LM142	Elkins Estate	X03173	Stella McIntire Elkins	shown on other cards	YES/NO
+landmark	LM142	Elkins Estate	X03174	Allethaire Chase Ludlow Cummer Elkins Rotan	shown on other cards	YES/NO
+landmark	LM145	General Selah Hart House	H00273	Brig. Gen. Selah Hart	shown on no card	YES/NO
+landmark	LM147	Asahel Hart House	H00585	Asahel Hart	shown on no card	YES/NO
+landmark	LM149	William Coit House	H00248	Captain William Coit	shown on no card	YES/NO
+landmark	LM150	Roger Hooker & Keziah Leavitt Homestead	HD0868	Roger Hooker Leavitt	shown on no card	YES/NO
+landmark	LM150	Roger Hooker & Keziah Leavitt Homestead	X01344	Keziah Osgood Hunt	shown on no card	YES/NO
+landmark	LM150	Roger Hooker & Keziah Leavitt Homestead	H00685	Roger Leavitt	shown on no card	YES/NO
+landmark	LM150	Roger Hooker & Keziah Leavitt Homestead	X00252	Chloe Maxwell Leavitt	shown on no card	YES/NO
+landmark	LM151	Grange Sard Jr. House	X03355	Grange Sard Jr.	shown on no card	YES/NO
+landmark	LM151	Grange Sard Jr. House	X03356	Caroline Shuler Woolverton Sard	shown on no card	YES/NO
+landmark	LM152	Emma Willard House	I00037	Dr. John Willard	shown on other cards	YES/NO
+landmark	LM164	Tapping Reeve House and Litchfield Law School	X00614	Judge Tapping Reeve	shown on no card	YES/NO
+landmark	LM165	Katharine Seymour Day House	HD3004	Katharine Seymour Day	shown on no card	YES/NO
+landmark	LM193	William H. & William S. Edwards House (Bellefleur)	HD06974	William Henry Edwards	shown on no card	YES/NO
+landmark	LM193	William H. & William S. Edwards House (Bellefleur)	HD06976	William Seymour Edwards	shown on no card	YES/NO
+landmark	LM194	Arthur Tappan School (P.S./M.S. 46)	X03572	Arthur Tappan	shown on no card	YES/NO
+landmark	LM195	Clifton Springs Sanitarium	I02058	Dr. Henry Foster	shown on no card	YES/NO
+landmark	LM195	Clifton Springs Sanitarium	HD06985	Mary Elizabeth Edwards Foster	shown on no card	YES/NO
+landmark	LM196	173 Main Street (Park House)	I02053	Rev. Edwards Amasa Park	shown on no card	YES/NO
+landmark	LM196	173 Main Street (Park House)	HD6970	Ann Maria Edwards Park	shown on no card	YES/NO
+landmark	LM196	173 Main Street (Park House)	HD07035	Rev. William Edwards Park	shown on no card	YES/NO
+landmark	LM196	173 Main Street (Park House)	HD07037	Agnes Park	shown on no card	YES/NO
+landmark	LM200	The Hemlocks	I00284	Deacon Edward Lucas Hart	shown on no card	YES/NO
+landmark	LM200	The Hemlocks	H01623	Nancy Champion Hooker Hart	shown on no card	YES/NO
+landmark	LM201	Janet Annenberg Hooker Hall of Geology, Gems, and Minerals	I02144	Janet Annenberg Hooker	shown on no card	YES/NO
+landmark	LM202	Gen. George Cowles House	H02878	Julius Deming Cowles	shown on no card	YES/NO
+landmark	LM202	Gen. George Cowles House	I02154	Maj. Gen. George Cowles	shown on no card	YES/NO
+landmark	LM202	Gen. George Cowles House	X01975	Captain Solomon Cowles	shown on no card	YES/NO
+landmark	LM203	William H. Reid House	I02161	William Henry Reid	shown on no card	YES/NO
+landmark	LM203	William H. Reid House	HD07157	Caroline Whittlesey Reid Reynolds	shown on no card	YES/NO
+landmark	LM207	Canemount	X01712	John Murdoch	shown on other cards	YES/NO
+landmark	LM208	Henry Farnam House	X02361	Ann Sophia Whitman Farnam	shown on other cards	YES/NO
+landmark	LM431	Lakeside Estate	X00746	Charles Astor Bristed	shown on other cards	YES/NO
+landmark	LM452	Jacob Purdy House	X03786	George Washington	shown on other cards	YES/NO
+landmark	LM461	Elawa Farm	HD12004	A. Watson Armour III	shown on other cards	YES/NO
+artwork	ART030	Jeremiah Wadsworth and His Son Daniel Wadsworth	T00387	Col. Jeremiah Wadsworth	shown on no card	YES/NO
+artwork	ART030	Jeremiah Wadsworth and His Son Daniel Wadsworth	HD1330	Daniel Wadsworth	shown on no card	YES/NO
+artwork	ART031	Portrait of Judge Pierpont Edwards (1750-1826)	H00386	Pierpont Edwards	shown on no card	YES/NO
+artwork	ART032	Portrait of Samuel Edmund Foote and Elizabeth Betts Elliott Foote	X01189	Samuel Edmund Foote	shown on no card	YES/NO
+artwork	ART032	Portrait of Samuel Edmund Foote and Elizabeth Betts Elliott Foote	HD0403	Elizabeth Betts Elliott Foote	shown on no card	YES/NO
+artwork	ART033	Portrait of Lawrence Godkin	HD2991	Lawrence Godkin	shown on no card	YES/NO
+artwork	ART034	Portrait of Edward Swift Isham	HD1149	Edward Swift Isham	shown on no card	YES/NO
+artwork	ART037	William Russell Sea Chest	H00360	Noadiah Russell	shown on no card	YES/NO
+artwork	ART037	William Russell Sea Chest	H00859	Abigail Russell Larned	shown on no card	YES/NO
+artwork	ART037	William Russell Sea Chest	H00856	Matthew Talcott Russell	shown on no card	YES/NO
+artwork	ART037	William Russell Sea Chest	HD1413	George Larned	shown on no card	YES/NO
+artwork	ART037	William Russell Sea Chest	HD1395	Gen. William Huntington Russell	shown on no card	YES/NO
+artwork	ART037	William Russell Sea Chest	HD1406	Talcott Huntington Russell	shown on no card	YES/NO
+artwork	ART056	Portrait of Rev. Timothy Dwight	H00914	Timothy Dwight III	shown on no card	YES/NO
+artwork	ART057	Theodore Dwight Woolsey statue	HD1973	Theodore Dwight Woolsey	shown on no card	YES/NO
+artwork	ART065	Portrait of Polly Sutton Catlin	H05316	Mary Sutton Catlin	shown on no card	YES/NO
+artwork	ART066	Mrs. George Catlin (Clara Bartlet Gregory)	X02900	Clara Gregory Catlin	shown on no card	YES/NO
+artwork	ART067	The National Plumbeotype Gallery — Robert Patterson	X02906	Gen. Robert Patterson	shown on no card	YES/NO
+artwork	ART088	Edward C. Herrick (bas relief)	HD1554	Edward Claudius Herrick	shown on no card	YES/NO
+artwork	ART089	An Elegy: Upon the Death of Master John George Washington Hancock	H05318	Samuel V. Dorr	shown on no card	YES/NO
+artwork	ART090	Benjamin Tappan	X03309	Benjamin Tappan	shown on no card	YES/NO
+artwork	ART091	Sarah Homes Tappan (Mrs. Benjamin Tappan)	X03310	Sarah Holmes Tappan	shown on no card	YES/NO
+artwork	ART092	Rev. Joshua Leavitt	HD0867	Rev. Joshua Leavitt	shown on no card	YES/NO
+artwork	ART117	Portrait of Tapping Reeve	X00614	Judge Tapping Reeve	shown on no card	YES/NO
+artwork	ART117	Portrait of Tapping Reeve	HD5618	George Catlin	shown on no card	YES/NO
+artwork	ART118	Lyman Beecher	X03448	Lyman Beecher	shown on no card	YES/NO
+artwork	ART127	Edwards Albert Park	HD07039	Dr. Edwards A. Park	shown on no card	YES/NO
+artwork	ART128	Charleston, W.Va., July 4, 1910	I02079	Julius Allan de Gruyter Jr.	shown on no card	YES/NO
+artwork	ART129	G. Colesberry Purves, Esq.	I02081	Guillermo Colesberry Purves	shown on no card	YES/NO
+artwork	ART130	Loss of the Packet Ship Albion	HD2407	William Harris Dwight	shown on no card	YES/NO
+artwork	ART131	Niagara Falls	X03109	Louisa Davis Minot	shown on no card	YES/NO
+artwork	ART132	Lt. Col. Theron Edwards Parsons (carte-de-visite)	I02110	Theron Edwards Parsons	shown on no card	YES/NO
+artwork	ART133	Hooker Emerald Brooch	I02144	Janet Annenberg Hooker	shown on no card	YES/NO
+artwork	ART134	Hooker Yellow (Starburst) Diamonds	I02144	Janet Annenberg Hooker	shown on no card	YES/NO
+artwork	ART266	William Samuel Johnson, after Gilbert Stuart	X03617	William Samuel Johnson	shown on other cards	YES/NO
+landmark	LM013	Hurlbut-Dunham House (1804)		(no person listed)	shown on no card	
+landmark	LM014	Charter Oak (1687)		(no person listed)	shown on no card	
+landmark	LM046	Talcottville Gorge		(no person listed)	shown on no card	
+landmark	LM049	Brighton		(no person listed)	shown on no card	
+landmark	LM055	Hooker Telescope (100-inch reflector, Mount Wilson Observatory)		(no person listed)	shown on no card	
+landmark	LM056	John Bowman House (1824)		(no person listed)	shown on no card	
+landmark	LM057	Hooker Lent Building		(no person listed)	shown on no card	
+landmark	LM059	Rockefeller Guest House (Blanchette Hooker Rockefeller Guest House)		(no person listed)	shown on no card	
+landmark	LM146	Deming Lewis House		(no person listed)	shown on no card	
+landmark	LM199	Francis W. Little House I		(no person listed)	shown on no card	
+artwork	ART001	Landscape		(no person listed)	shown on no card	
+artwork	ART002	Portrait of Benjamin Tallmadge		(no person listed)	shown on no card	
+artwork	ART003	Portrait of Sarah Pierpont Edwards		(no person listed)	shown on no card	
+artwork	ART005	Portrait of Edwards Pierrepont		(no person listed)	shown on no card	
+artwork	ART015	James Luce Kingsley (1778–1852), B.A. 1799, M.A. 1802		(no person listed)	shown on no card	
+artwork	ART035	Angelica Schuyler Crosby (Mrs. John B.) Henderson Jr.		(no person listed)	shown on no card	
+artwork	ART043	Portrait of Col. Thomas Mann Randolph Talcott		(no person listed)	shown on no card	
+artwork	ART045	Tintype of PVT Levi H. Bartlett		(no person listed)	shown on no card	
+artwork	ART049	Mrs. George Brinley (Catherine Putnam) (1785-1842)		(no person listed)	shown on no card	
+artwork	ART085	Mrs. Kermit Roosevelt (Belle Wyatt Willard)		(no person listed)	shown on no card	
+artwork	ART086	Portrait of Mary Chew Wilcocks Ingersoll		(no person listed)	shown on no card	
+artwork	ART087	Portrait of Joseph Reed Ingersoll		(no person listed)	shown on no card	
+artwork	ART093	Philip Battell Stewart		(no person listed)	shown on no card	

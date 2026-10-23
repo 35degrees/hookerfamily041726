@@ -1,0 +1,456 @@
+id	display_name	visibility	flags
+T01481	Baby Butler	hidden	Mrs./Miss/Infant/Child/Son/Daughter
+T02292	Child Talcott	hidden	Mrs./Miss/Infant/Child/Son/Daughter
+T02248	Infant Daughter Smith	hidden	Mrs./Miss/Infant/Child/Son/Daughter
+T02249	Infant Son Smith	hidden	Mrs./Miss/Infant/Child/Son/Daughter
+T02293	Infant Talcott	hidden	Mrs./Miss/Infant/Child/Son/Daughter
+TD0126	Pamelia Hobart Child	hidden	Mrs./Miss/Infant/Child/Son/Daughter
+X02547	Rev. Rufus Child	hidden	Mrs./Miss/Infant/Child/Son/Daughter
+HD12375	[Daughter] Barnes	hidden	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+T02218	Twin Son 1 Talcott	hidden	number, Mrs./Miss/Infant/Child/Son/Daughter
+T02219	Twin Son 2 Talcott	hidden	number, Mrs./Miss/Infant/Child/Son/Daughter
+TD0079	Charles Gratiot Talcott (II)	hidden	parentheses
+TD0091	Lucia Beverly Hollerith (II)	hidden	parentheses
+X02551	Mrs. Sarah Bullard (NOT BUILT per Jalapeño)	hidden	parentheses, Mrs./Miss/Infant/Child/Son/Daughter
+X03116	"Alexander ""Sandy"" Courage"	hidden	quotes
+I01550	"Clyde Lynwood ""Jay"" Burr"	hidden	quotes
+I01522	"Eleanor ""Ellen"" Hollenback Welles Eleanor Hollenback Welles"	hidden	quotes
+I00277	"Gillet ""Gil"" Lefferts Jr."	hidden	quotes
+I01141	"Jerome Herrick Tyson ""Jerry"" Kidder"	hidden	quotes
+TD0290	"Joseph Henry ""Joe"" Huntington"	hidden	quotes
+T01869	"Lieut. Charles Gratiot ""Charlie"" Talcott Jr."	hidden	quotes
+TD0099	"Lucia Beverly ""C.C."" Hollerith Lefferts"	hidden	quotes
+I01154	"Luther E. ""Luke"" Cox"	hidden	quotes
+TD0335	"Margarita ""Daisy"" Pumpelly Smyth"	hidden	quotes
+I00278	"Nancy Carrington ""Nannie"" McPhail Talcott"	hidden	quotes
+TD0094	"Nannie Talcott ""Nan"" Hollerith"	hidden	quotes
+TD0101	"Rt. Rev. Herman ""Holly"" Hollerith IV"	hidden	quotes
+TD0097	"Sarah Fox ""Sally"" Hollerith Nietsch"	hidden	quotes
+I00265	"Theodosia Lawrence ""Thedie"" Barnard Hambleton"	hidden	quotes
+TD0102	"Very Rev. Randolph ""Randy"" Marshall Hollerith"	hidden	quotes
+I01151	Louisa Huntington Huntington	hidden	repeated word
+X02490	Unknown second wife	hidden	unknown
+X01819	Balch [unknown]	hidden	unknown, brackets
+X01810	Hudson unknown]	hidden	unknown, brackets
+X01800	Jemima [unknown]	hidden	unknown, brackets
+X01781	Sarah [unknown]	hidden	unknown, brackets
+U00044	[Unknown] [Talcott 2nd wife]	hidden	unknown, number, brackets
+X01768	(unknown spouse)	hidden	unknown, parentheses
+X01772	(unknown spouse)	hidden	unknown, parentheses
+HD5499	Baby Girl Allen	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD2136	Baby Girl Dwight	visible	Mrs./Miss/Infant/Child/Son/Daughter
+I01878	Capt. Arthur Child	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD0987	Child Cowles	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD5432	Infant Daughter Dunham	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD9397	Infant Daughter Greene	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD1400	Infant Daughter Russell	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD5383	Infant Female Sterling	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD8348	Infant Gallaudet	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD5868	Infant Loveland	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD6473	Infant Newton	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD8415	Infant Snowden	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD2942	Infant Son Hooker	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD5650	Infant Son Hooker	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD1391	Infant Son Russell	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD7794	Infant Son Turner	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD6940	Infant Stoughton	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD6688	Mary Chaplin Cushman Child	visible	Mrs./Miss/Infant/Child/Son/Daughter
+I00667	Mrs. Florence Ellis	visible	Mrs./Miss/Infant/Child/Son/Daughter
+I03297	Mrs. Gilpatric	visible	Mrs./Miss/Infant/Child/Son/Daughter
+X01540	Mrs. Ingersoll	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD4818	Son Crossett	visible	Mrs./Miss/Infant/Child/Son/Daughter
+HD3482	[Twin] Norton	visible	brackets
+HD3483	[Twin] Norton	visible	brackets
+HD11020	[Baby] Rowland	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13746	[Child] Cowles	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16428	[Daughter] Aldrich	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD8177	[Daughter] Anthony	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10781	[Daughter] Benton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9145	[Daughter] Brinsmade	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD6242	[Daughter] Brockway	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16204	[Daughter] Bromley	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7850	[Daughter] Brush	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10793	[Daughter] Butler	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12315	[Daughter] Campbell	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12167	[Daughter] Coit	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15015	[Daughter] Dwight	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14957	[Daughter] Fiske Michelson	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11284	[Daughter] Fredricks	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13930	[Daughter] Gault	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10021	[Daughter] Gilpatric	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD4163	[Daughter] Hale	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+H03434A	[Daughter] Hooker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7862	[Daughter] Hooker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12483	[Daughter] Howland	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10753	[Daughter] Ingersoll	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11192	[Daughter] King	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9337	[Daughter] Lambert	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10111	[Daughter] Lang	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10033	[Daughter] Leavitt Ninfi	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD4053	[Daughter] Leek	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15771	[Daughter] Montgomery	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13041	[Daughter] Morris	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13414	[Daughter] Nelson	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD6443	[Daughter] Newton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13940	[Daughter] Nichols	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9205	[Daughter] Nicholson	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD3484	[Daughter] Norton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13694	[Daughter] Norton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14504	[Daughter] Persons	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16573	[Daughter] Phelps	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13893	[Daughter] Pierpont	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD2534	[Daughter] Porter	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14786	[Daughter] Porter	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15361	[Daughter] Porter	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11466	[Daughter] Purdy	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16406	[Daughter] Reynolds	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD1412	[Daughter] Russell	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16527	[Daughter] Sherman	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+T02321	[Daughter] Smith	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9026	[Daughter] Smith	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11204	[Daughter] Starks	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10098	[Daughter] Strong	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9016	[Daughter] Thomas	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD0076	[Daughter] Torrey	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13864	[Daughter] Tuttle	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13865	[Daughter] Tuttle	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13867	[Daughter] Tuttle	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11612	[Daughter] Van Rensselaer	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD1421	[Daughter] Wadsworth	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14305	[Daughter] Walker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7619	[Daughter] Whiting	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10435	[Daughter] Whiting	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10115	[Daughter] Woodward	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+I03467	[Husband] Buckley	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11686	[Infant Daughter] Merwin	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11687	[Infant Daughter] Merwin	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD3851	[Infant Son] Tillman	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11525	[Infant] Bancroft	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD5683	[Infant] Hart	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15786	[Infant] Haseltine	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7665	[Infant] Hollister	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16587	[Infant] Jameson	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD4052	[Infant] Leek	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+H02441A	[Infant] Preston	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD6273	[Infant] Rawson	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD8176	[Son] Anthony	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13842	[Son] Austin	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13743	[Son] Baker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10923	[Son] Barnes	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12490	[Son] Bicknell	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7583	[Son] Blake	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16650	[Son] Blunt	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13541	[Son] Bogel	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9133	[Son] Brinsmade	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD6241	[Son] Brockway	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16195	[Son] Bromley	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD8914	[Son] Bunnell	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12168	[Son] Coit	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD0985	[Son] Cowles	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13404	[Son] Cowles	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16387	[Son] Devereux	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16388	[Son] Devereux	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16393	[Son] Devereux	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16394	[Son] Devereux	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16395	[Son] Devereux	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16397	[Son] Devereux	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16399	[Son] Devereux	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11650	[Son] Drew	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11389	[Son] Dusenberry	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14661	[Son] Dwight	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14662	[Son] Dwight	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14673	[Son] Dwight	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15014	[Son] Dwight	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15054	[Son] Dwight	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15055	[Son] Dwight	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15056	[Son] Dwight	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15057	[Son] Dwight	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD6783	[Son] Edwards	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7185	[Son] Edwards	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7187	[Son] Edwards	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14729	[Son] Ellery	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12455	[Son] Faxon	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12457	[Son] Faxon	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10634	[Son] Hoadley	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15134	[Son] Hoadly	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15135	[Son] Hoadly	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15136	[Son] Hoadly	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD0002	[Son] Hooker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD2706	[Son] Hooker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+H03432A	[Son] Hooker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD04871	[Son] Hooker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7859	[Son] Hooker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11225	[Son] Hooker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15496	[Son] Hooker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15497	[Son] Hooker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9163	[Son] Hurd	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14455	[Son] Hussey	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16162	[Son] Ingersoll	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13782	[Son] Kennedy	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10545	[Son] Labouisse	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD6362	[Son] Leavitt	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10019	[Son] Leavitt	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10471	[Son] McMahon	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15455	[Son] Minot	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15457	[Son] Minot	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15458	[Son] Minot	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15460	[Son] Minot	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15777	[Son] Montgomery	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD8584	[Son] Newton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD8585	[Son] Newton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD8595	[Son] Newton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD8975	[Son] Newton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD8976	[Son] Newton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9296	[Son] Newton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9496	[Son] Newton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9614	[Son] Newton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13535	[Son] Newton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9239	[Son] Peck	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9240	[Son] Peck	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD11907	[Son] Peck	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16571	[Son] Phelps	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD16572	[Son] Phelps	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9970	[Son] Pierpont	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13892	[Son] Pierpont	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13621	[Son] Pinkham	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10206	[Son] Pitkin	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10524	[Son] Polk	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10525	[Son] Polk	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15144	[Son] Pomeroy	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15148	[Son] Pomeroy	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15150	[Son] Pomeroy	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15152	[Son] Pomeroy	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14060	[Son] Rackemann	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13784	[Son] Rathbone	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13722	[Son] Robinson	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10428	[Son] Russell	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD8044	[Son] Sheldon	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10588	[Son] Smith	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12304	[Son] Sneed	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+H00453a	[Son] Stiles	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12817	[Son] Stiles	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12818	[Son] Stiles	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD10607	[Son] Sturges	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7954	[Son] Stuyvesant	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14681	[Son] Sumner	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14545	[Son] Sutton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14546	[Son] Sutton	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15762	[Son] Sweetland	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15763	[Son] Sweetland	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+T02302	[Son] Talcott McMillan	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD4115	[Son] Thacher	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD4116	[Son] Thacher	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9015	[Son] Thomas	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD12578	[Son] Torrey	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13798	[Son] Van Emburgh	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD13800	[Son] Van Emburgh II	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD14304	[Son] Walker	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD8589	[Son] Wetherell	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7620	[Son] Whiting	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD7625	[Son] Whiting	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD0104	[Son] Whittlesey	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD3792	[Son] Whittlesey	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD9545	[Son] Wills	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+I03013	[Wife] Ingersoll Peck	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+I04575	[Wife] Ross	visible	brackets, Mrs./Miss/Infant/Child/Son/Daughter
+HD15436	1st Lt. James Quincy Porter	visible	number
+HD7233	1st Lt. Richard Skinner	visible	number
+HD14598	2nd Lt. Stephen Hart Butler	visible	number
+I01327	2nd Lt. William Otis Waters Jr.	visible	number
+H02809	Charles Richard Hooker No. 2	visible	number
+H00696	Dolly Newell No. 2	visible	number
+HD3679	Edgar Cowles No. 2	visible	number
+X01565	Frances Aiken 22 Nov	visible	number
+H00732	Huldah Ruggles No. 2	visible	number
+H00740	John Bartlett No. 2	visible	number
+H02742	John Hooker Packard 1st	visible	number
+H00657	Lois Pomeroy No. 2	visible	number
+H00414	Martin Hooker No. 2	visible	number
+H00193	Mary Marsh No. 2	visible	number
+H02805	Mary Phelps Hooker No. 2	visible	number
+H02134	Riverius 3rd Hooker	visible	number
+HD0830	Samuel Root No. 2	visible	number
+H00978	Sarah Pierpont No. 2	visible	number
+HD3373	Thomas Debevoise 3rd	visible	number
+H00714	Thomas Hart No.2	visible	number
+H00025	Thomas Wilson No. 2	visible	number
+X01572	Viola Mae DePew 25 Dec	visible	number
+H00659	William Pomeroy No.2	visible	number
+HD15553	T/5 Robert Eugene North	visible	number, slash/ampersand
+HD14174	"A. W. ""Fred"" Dorchester"	visible	quotes
+I01874	"Abigail ""Abbie"" Hunt Snelling Chaplin"	visible	quotes
+I1670	"Andrew Murray ""Mike"" Williams"	visible	quotes
+X02168	"Ann ""Annie"" Wilson Hooker"	visible	quotes
+HD3348	"Anne Bethune ""Nannie"" Adams"	visible	quotes
+X02150	"Anne Cabell ""Nancy"" Carrington McPhail"	visible	quotes
+HD5611	"Archibald Loudon ""Archie"" Snowden Jr."	visible	quotes
+HD6050	"Benjamin Henry ""Ben"" Tallmadge"	visible	quotes
+I01217	"Beryldene ""Dena"" Brown West"	visible	quotes
+HD13149	"Bruce Hughes ""Chip"" Lloyd Jr."	visible	quotes
+X02148	"Caroline ""Carrie"" Adams Brannon Barclay"	visible	quotes
+X02269	"Caroline E. ""Carrie"" Shader Hooker"	visible	quotes
+HD5850	"Catharine ""Kate"" Lyman"	visible	quotes
+HD7564	Catharine “Kitty” Hooker Barclay	visible	quotes
+HD6381	Catherine Margaret “Kate” Ingersoll Maury	visible	quotes
+HD5263	"Charles William ""Charlie"" Catlin"	visible	quotes
+HD5866	"Charlotte L. ""Lottie"" Loveland"	visible	quotes
+HD3256	"Clarence Irving ""Cookie"" Cook"	visible	quotes
+HD5267	"Claude Standley ""Jess"" Catlin"	visible	quotes
+HD7748	Countess Sylvia Anita Gabriella Denise Irene Marie “Syvie” Széchenyi Szapáry	visible	quotes
+HD3257	"Donald David ""Cookie"" Cook"	visible	quotes
+I1668	"Dr. Adelbert ""Del"" Ames III"	visible	quotes
+I02478	"Edith Genevieve ""Didi"" Hadik"	visible	quotes
+HD5240	"Edward Augustus ""Gus"" Catlin"	visible	quotes
+X03026	"Edward Joseph ""Ed"" Delehanty III"	visible	quotes
+I01406	"Effie Jewel ""Judy"" Peach Hurlburt"	visible	quotes
+I02562	"Eleanor ""Sandy"" Bell Brown"	visible	quotes
+X01703	"Elizabeth ""Bessie"" Kone Dornin"	visible	quotes
+HD5377	"Elizabeth ""Betsey"" Sterling Hickok"	visible	quotes
+HD4703	"Elizabeth ""Betty"" Strong"	visible	quotes
+I01450	"Elizabeth Ellis ""Betsey"" Rickard Hart"	visible	quotes
+I04894	"Elizabeth Lee ""Jill"" Foley"	visible	quotes
+HD1177	"Elizabeth Lillian ""Lillie"" Pierpont"	visible	quotes
+I02253	Elizabeth “Betsey” Culver Hurlbut	visible	quotes
+X03150	Elizabeth “Eliza” Mowatt Carow	visible	quotes
+HD7680	"Ellen Earle ""Nell"" Flagg"	visible	quotes
+HD3355	"Ellen Rebecca ""Becky"" Adams"	visible	quotes
+HD4794	"Elza Augusta ""Elzie"" Crossett"	visible	quotes
+I00903	"Emma Cornelia ""Nellie"" Dennison Hooker"	visible	quotes
+HD5525	"Estelle Masters ""Bunch"" Rathbun Innocent"	visible	quotes
+HD5278	"Eugenie S. ""Jean"" Stevens Magee"	visible	quotes
+HD3351	"Faneuil ""Fan"" Adams Jr."	visible	quotes
+HD04843	"Fidelia Louise ""Della"" Hooker Puffer"	visible	quotes
+HD1206	"Florence Frances ""Sal"" Pierpont Marple"	visible	quotes
+HD7236	"Frances ""Fanny"" Skinner Willing"	visible	quotes
+X3693	Frances Bradley “Franny” Prindle Taft	visible	quotes
+HD6355	Frances Christine “Christy” Bennett Skinner	visible	quotes
+HD3206	"Frances E. ""Frankie"" Adams George"	visible	quotes
+HD5209	"Francis Putnam ""Frank"" Catlin"	visible	quotes
+X02747	"Gilbert ""Bud"" Van Valkenburg"	visible	quotes
+HD5787	"Harold Wakeman ""Harry"" Payne"	visible	quotes
+X02532	"Harriet Olive ""Hattie"" Owen"	visible	quotes
+H03863	"Helen Clementine ""Nellie"" Hooker Farmer"	visible	quotes
+HD3604	"Henry ""Hank"" Dykeman"	visible	quotes
+I01535	"Herman Elgin ""Bud"" Robison"	visible	quotes
+HD7291	"Ingersoll ""Sandy"" Cunningham"	visible	quotes
+HD5264	"James Darrah ""Pete"" Catlin"	visible	quotes
+X03455	"James Roy ""Jeb"" Stuart"	visible	quotes
+HD6611	"Jane Revere ""Joy"" Rotch Boissevain"	visible	quotes
+H01608	"Jeannette ""Nettie"" Hooker Powell"	visible	quotes
+H02417	"John ""Jack"" Hooker"	visible	quotes
+X03470	"John ""Long Time Sleep"" Monroe"	visible	quotes
+X03468	"John ""Posey"" Ryan"	visible	quotes
+X03025	"John Francis ""Jack"" Nelson"	visible	quotes
+HD1642	"John Jay ""Red"" Pierrepont II"	visible	quotes
+HD5877	"John Martin ""Harvey"" Dwight"	visible	quotes
+HD7967	"Josephine ""Bennett"" Pierrepont Jack"	visible	quotes
+HD3353	Katharine “Kay” Adams Kulmala	visible	quotes
+I01950	"Katherine ""Kate"" Elston Chislett"	visible	quotes
+I01888	"Katherine ""Kate"" Young Chaplin"	visible	quotes
+X02913	"Katherine May ""Kittie"" Barnes Brown"	visible	quotes
+HD14130	"Kathryn ""Kitty"" Ober Peightal"	visible	quotes
+I04544	Lenore Leslie “Twink” Lonergan Bertram	visible	quotes
+X03041	"Leola ""Betty"" Jetton Martin"	visible	quotes
+X03344	Lorenzo Cornelius “Lory” Davis	visible	quotes
+HD7773	Lucille Margaret “Lulu” Vanderbilt Pate	visible	quotes
+X02722	"Lurene Rebecca ""Renea"" Steele Gilbert"	visible	quotes
+X02761	"Magdalene ""Maggie"" Krizan Van Dorn Doud"	visible	quotes
+I01887	"Margaret ""Maggie"" Ryan Chaplin"	visible	quotes
+HD5578	"Margaret S. ""Maggie"" Raymond Henry"	visible	quotes
+I02353	Maria Mercedes “Gloria” Morgan Vanderbilt	visible	quotes
+HD8780	"Martha ""Polly"" Pond"	visible	quotes
+HD5996	"Martha Angela ""Mattie"" Burr Aldridge"	visible	quotes
+HD7436	"Mary ""Mamie"" Hooker Daoust"	visible	quotes
+X02251	"Mary ""Mollie"" Cook Goad"	visible	quotes
+I02554	"Mary ""Molly"" Shriver Pierrepont"	visible	quotes
+I01863	"Mary ""Polly"" Ballard"	visible	quotes
+I01233	"Mary ""Polly"" Ives Hooker"	visible	quotes
+HD8778	"Mary ""Polly"" Miles"	visible	quotes
+H00849	"Mary ""Polly"" Russell"	visible	quotes
+HD6687	"Mary Anne ""Mamie"" Chaplin Tronjo"	visible	quotes
+I01213	"Mary Augusta ""Gussie"" Mace Strong"	visible	quotes
+I02233	"Mary Douglas ""Mimi"" Anderson Hooker"	visible	quotes
+HD5262	"Mary Isabelle ""Belle"" Catlin Alger"	visible	quotes
+I02170	"Mary Jennings ""Sue"" Hill Ingersoll"	visible	quotes
+HD7261	Mary Perin “Murph” Taft Mahler	visible	quotes
+I01051	"Michael A. ""Mike"" Williams"	visible	quotes
+I04506	Michael “Big Mike” Petrashune	visible	quotes
+X00628	Nathaniel LeCount “Nathan” Durham	visible	quotes
+HD5230	"Nathaniel Randolph ""Ralph"" Snowden"	visible	quotes
+HD6254	"Olivia ""Liva"" Rawson Stratton"	visible	quotes
+HD4966	"Patricia Ann ""Pat"" Smith Courage"	visible	quotes
+I01452	"Pvt Doc Delos ""Dock"" Gray"	visible	quotes
+I02474	"Richard Dean ""Dick"" Magee"	visible	quotes
+HD11632	"Robbinson Lantz ""Robbin"" Crosby"	visible	quotes
+HD6211	"Robert Arthur ""Buster"" LaBonville"	visible	quotes
+HD6212	"Robert Clay ""Tiger"" Fletcher"	visible	quotes
+I02395	Robert Mathews “Beaver” Balding	visible	quotes
+HD5675	"Ronald Raymond ""Jack"" Capen"	visible	quotes
+HD1578	Rowland “Roy” Hazard III	visible	quotes
+H01690	"Sarah ""Sally"" Hooker"	visible	quotes
+I01885	"Sarah Richardson ""Sadie"" D'Oyley Chaplin"	visible	quotes
+HD7995	"Snowden Pierpoint ""Don"" Herrick"	visible	quotes
+HD5558	"Southworth Samuel ""Sam"" Sargeant"	visible	quotes
+HD5217	"Susan ""Polly"" Gustine"	visible	quotes
+HD5431	"Susanna ""Sukey"" Dunham"	visible	quotes
+HD3198	"Syrena Lulu ""Rena"" Hare Ketchpaw"	visible	quotes
+HD8557	"Webster C. ""Web"" Johnson"	visible	quotes
+TD0108	William Creighton “Tony” Peet III	visible	quotes
+HD4960	"William Dwight ""Billy"" Strong Jr."	visible	quotes
+HD3268	"William H. ""Willie"" Gordon"	visible	quotes
+I02550	"William Tapley ""Tap"" Bennett Jr."	visible	quotes
+HD0920	Adaline Fuller Fuller Reublin	visible	repeated word
+X02219	Burnham Burnham	visible	repeated word
+HD1021	Catherine Elsie Kline Kline Goodwin	visible	repeated word
+HD1475	Ellen Adelia Pierpont Pierpont Chatfield	visible	repeated word
+HD1020	Eltruda Baker Baker Kline	visible	repeated word
+HD1028	Etta Deborah Smith Smith Ryant	visible	repeated word
+HD1478	Evelyn Pierpont Pierpont Nolan	visible	repeated word
+HD9488	Flora Newton Newton	visible	repeated word
+HD4239	Hannah Ellis Ellis	visible	repeated word
+I00160	Hannah Stiles Stiles	visible	repeated word
+HD0922	Harriett Fuller Fuller Kyle	visible	repeated word
+HD1190	Juliette Morgan Boardman Boardman Powell	visible	repeated word
+HD7412	Laura Tallmadge Tallmadge	visible	repeated word
+I00600	Laura Tuttle Tuttle	visible	repeated word
+HD7478	Louisa May Cowles Cowles	visible	repeated word
+HD1040	Mahitable Rudgers Rudgers Rude	visible	repeated word
+HD1205	Margery Pierpont Pierpont Brown	visible	repeated word
+I01502	Martha G. Morgan Morgan	visible	repeated word
+HD1439	Nancy Pierpont Pierpont	visible	repeated word
+I00501	Paulina Monroe Monroe Root	visible	repeated word
+HD1990	Sophia Dwight Dwight	visible	repeated word
+HD6258	Sophia Rawson Rawson	visible	repeated word
+X02207	Stinson Stinson	visible	repeated word
+H03906	Aurora/Jane Aurora Ainsworth	visible	slash/ampersand
+X02991	S/Sgt. Darwin A. Blanke	visible	slash/ampersand
+X00459	Deborah Unknown	visible	unknown
+I00125	Esther Unknown	visible	unknown
+HD2623	Unknown Edwards	visible	unknown
+X00191	Unknown Hewit	visible	unknown
+HD1466	Unknown Pierpont	visible	unknown
+HD4729	Unknown Pixley	visible	unknown
+HD2584	Unknown Snell	visible	unknown
+HD4505	Unnamed Mead son	visible	unknown
+HD4449	Unnamed Phelps daughter	visible	unknown
+HD4476	Unnamed Phelps son	visible	unknown
+HD4757	Unnamed Infant Root	visible	unknown, Mrs./Miss/Infant/Child/Son/Daughter
+HD4758	Unnamed Infant Root	visible	unknown, Mrs./Miss/Infant/Child/Son/Daughter
+X01867	Anna [Unknown]	visible	unknown, brackets
+X01131	Elizabeth [Unknown]	visible	unknown, brackets
+I00816	Maria [unknown] Saint John	visible	unknown, brackets
+X01836	[Unknown spouse]	visible	unknown, brackets
+X00972	[Unknown]	visible	unknown, brackets
+HD4075	[Unknown] Goodyear Warner	visible	unknown, brackets
+X01156	[Unknown] Hart	visible	unknown, brackets
+I04300	[Unknown] Massey	visible	unknown, brackets
+X00782	[Unknown] Whittle	visible	unknown, brackets
+HD4638	[Unnamed] Gibbs	visible	unknown, brackets
+I03915	[Unnamed] Gray	visible	unknown, brackets
+I00836	[unknown] Bradshaw	visible	unknown, brackets
+I00817	[unknown] McRoberts	visible	unknown, brackets
+I00837	[unknown] VanVranken	visible	unknown, brackets
+HD4583	[unnamed son] Phelps	visible	unknown, brackets
+HD1923	[unnamed] Burr	visible	unknown, brackets
+HD4928	[Unnamed Son Bridgeman]	visible	unknown, brackets, Mrs./Miss/Infant/Child/Son/Daughter
+X00369	unknown unknown-wav	visible	unknown, lowercase start, repeated word

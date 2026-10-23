@@ -1,0 +1,716 @@
+id	hidden	problems	first_name	last_name	maiden_name	suffix	display_name	slug
+H00453a		qualifier/punctuation in first_name	[Son]	Stiles			[Son] Stiles	son-stiles-1766
+H00717		slug has a collision counter	John	Hart			John Hart	john-hart-1773-2
+H00789		slug has a collision counter	Daniel	Lord		No. 3	Daniel Lord	daniel-lord-1763-2
+H01266		slug has a collision counter	James	Hooker			James Harvey Hooker	james-hooker-1792-2
+H01399		slug has a collision counter	John	Hooker			John Hooker	john-hooker-1791-2
+H01564		slug has a collision counter	William	Hart			Rev. William Henry Hart	william-hart-1790-2
+H01698		slug has a collision counter	Sarah	Hooker			Sarah Hooker Kittredge	sarah-hooker-1821-2
+H02174		slug has a collision counter	Polly	Norton			Polly Norton	polly-norton-2
+H02179		slug has a collision counter	Lydia	Norton			Lydia Norton	lydia-norton-2
+H02393		slug has a collision counter	John	Pixley			John Hooker Pixley	john-pixley-1819-2
+H02419		slug has a collision counter	Franklin	Hooker			Franklin Hooker	franklin-hooker-1845-2
+H02441A		qualifier/punctuation in first_name	[Infant]	Preston			[Infant] Preston	infant-preston
+H02538		slug has a collision counter	James	Hooker			James Hart Hooker	james-hooker-1830-2
+H02540		first_name has 2+ words (middle name?)	Mary Jane	Hooker	Hooker		Mary Jane Lewis Hooker	mary-jane-hooker-1833
+H02756		slug has a collision counter	Edward	Hooker			Edward Hooker	edward-hooker-1822-2
+H02791		slug has a collision counter	William	Hooker			William Hooker	william-hooker-1819-2
+H02802		slug has a collision counter	Mary	Hooker			Mary Phelps Hooker	mary-hooker-1824-2
+H02814		slug has a collision counter	Mary	Hooker			Mary Hooker Chapman	mary-hooker-1825-2
+H02816		slug has a collision counter	John	Hooker			John Laurens Hooker	john-hooker-1830-2
+H03812		slug has a collision counter	Theodore	Pixley			Theodore Pixley	theodore-pixley-2
+H03814		slug has a collision counter	George	Pixley			George Pixley	george-pixley-2
+H03906		qualifier/punctuation in first_name	Aurora/Jane	Ainsworth			Aurora/Jane Aurora Ainsworth	aurora-jane-ainsworth-1856
+H04347		slug has a collision counter	Henry	Hooker			Henry Chester Hooker	henry-hooker-1835-2
+H04358		slug has a collision counter	William	Hooker			William Augustus Hooker	william-hooker-1845-2
+H04365		slug has a collision counter	Charles	Hooker			Charles Hall Hooker	charles-hooker-1847-2
+H04942		last_name has 2+ words (middle+surname?)	Mary	Zoll Peters	Houghton		Mary Cornelia Houghton Hopson Zoll Peters	mary-zoll-peters-1864
+H04949		slug has a collision counter	Frederick	Hooker			Frederick Fessenden Hooker	frederick-hooker-1865-2
+H05252		slug has a collision counter	Edward	Hooker			Edward Festus Hooker	edward-hooker-1876-2
+HD0002		qualifier/punctuation in first_name	[Son]	Hooker			[Son] Hooker	son-hooker-1634
+HD0076		qualifier/punctuation in first_name	[Daughter]	Torrey			[Daughter] Torrey	daughter-torrey-1722
+HD0104		qualifier/punctuation in first_name	[Son]	Whittlesey			[Son] Whittlesey	son-whittlesey-1779
+HD0392		slug has a collision counter	John	Hooker			John Hooker	john-hooker-1774-2
+HD04870		slug has a collision counter	Edward	Hooker			Edward Ingersoll Hooker	edward-hooker-1840-2
+HD04871		qualifier/punctuation in first_name	[Son]	Hooker			[Son] Hooker	son-hooker-1856
+HD0672		slug has a collision counter	Hart	Bebee			Hart Bebee	hart-bebee-1850-2
+HD07144		slug has a collision counter	John	Cowles			John Edward Cowles	john-cowles-1806-2
+HD07148		slug has a collision counter	Helen	Hooker			Helen Foster Hooker	helen-hooker-1876-2
+HD0985		qualifier/punctuation in first_name	[Son]	Cowles			[Son] Cowles	son-cowles-1810
+HD0992		slug has a collision counter	William	Cowles			William Cowles	william-cowles-1824-2
+HD10206		qualifier/punctuation in first_name	[Son]	Pitkin			[Son] Pitkin	son-pitkin-1837
+HD10382		last_name has 2+ words (middle+surname?)	Isabelle	Sprague Smith	Dwight		Isabelle Dwight Sprague Smith	isabelle-sprague-smith-1861
+HD10385		last_name has 2+ words (middle+surname?)	Hilda	Sprague Smith			Hilda Sprague Smith	hilda-sprague-smith-1885
+HD10428		qualifier/punctuation in first_name	[Son]	Russell			[Son] Russell	son-russell-1895
+HD10435		qualifier/punctuation in first_name	[Daughter]	Whiting			[Daughter] Whiting	daughter-whiting-1879
+HD10471		qualifier/punctuation in first_name	[Son]	McMahon			[Son] McMahon	son-mcmahon-1946
+HD10525		slug has a collision counter		Polk			[Son] Polk	son-polk-1845-2
+HD10588		qualifier/punctuation in first_name	[Son]	Smith			[Son] Smith	son-smith-1910
+HD10607		qualifier/punctuation in first_name	[Son]	Sturges			[Son] Sturges	son-sturges-1928
+HD10753		qualifier/punctuation in first_name	[Daughter]	Ingersoll	Ingersoll		[Daughter] Ingersoll	daughter-ingersoll-1890
+HD10781		qualifier/punctuation in first_name	[Daughter]	Benton	Benton		[Daughter] Benton	daughter-benton-1844
+HD10793		qualifier/punctuation in first_name	[Daughter]	Butler	Butler		[Daughter] Butler	daughter-butler-1937
+HD11192		qualifier/punctuation in first_name	[Daughter]	King			[Daughter] King	daughter-king-1855
+HD11204		qualifier/punctuation in first_name	[Daughter]	Starks			[Daughter] Starks	daughter-starks-1892
+HD11225		qualifier/punctuation in first_name	[Son]	Hooker			[Son] Hooker	son-hooker-1845
+HD11250		slug has a collision counter	Mary	Mather	Suydam		Mary Louise Suydam Mather	mary-mather-1829-2
+HD11284		qualifier/punctuation in first_name	[Daughter]	Fredricks			[Daughter] Fredricks	daughter-fredricks-1930
+HD11644		slug has a collision counter	John	Tallmadge			John Tallmadge	john-tallmadge-1825-2
+HD11645		slug has a collision counter	Charles	Hooker			Charles Richard Hooker	charles-hooker-1834-2
+HD11650		qualifier/punctuation in first_name	[Son]	Drew			[Son] Drew	son-drew-1857
+HD11686		first_name has 2+ words (middle name?) | qualifier/punctuation in first_name	[Infant Daughter]	Merwin			[Infant Daughter] Merwin	infant-daughter-merwin-1875
+HD11687		first_name has 2+ words (middle name?) | qualifier/punctuation in first_name	[Infant Daughter]	Merwin			[Infant Daughter] Merwin	infant-daughter-merwin-1882
+HD11907		qualifier/punctuation in first_name	[Son]	Peck			[Son] Peck	son-peck-1805
+HD12018		last_name has 2+ words (middle+surname?)	Anne	de Baillet Latour			Anne de Baillet Latour	anne-de-baillet-latour-1937
+HD12217		slug has a collision counter	Thomas	Hale			Thomas Hogg Hale	thomas-hale-1876-2
+HD12375	hidden	qualifier/punctuation in first_name	[Daughter]	Barnes	Barnes		[Daughter] Barnes	
+HD1260		slug has a collision counter	James	Pierpont			Captain James Morris Pierpont	james-pierpont-1839-2
+HD1294		slug has a collision counter	Charles	Pierpont			Charles H. Pierpont	charles-pierpont-1830-2
+HD13041		qualifier/punctuation in first_name	[Daughter]	Morris			[Daughter] Morris	daughter-morris-1867
+HD1320		slug has a collision counter	Elizabeth		Pierpont		Elizabeth L. Pierpont	elizabeth-pierpont-1853-2
+HD13333		slug has a collision counter	William	Smith			William Bulkley Smith	william-smith-1855-2
+HD13381		slug has a collision counter	Robert	Ingersoll			Robert Ingersoll	robert-ingersoll-2
+HD13404		qualifier/punctuation in first_name	[Son]	Cowles			[Son] Cowles	son-cowles-1806
+HD13414		qualifier/punctuation in first_name	[Daughter]	Nelson			[Daughter] Nelson	daughter-nelson-1839
+HD13535		qualifier/punctuation in first_name	[Son]	Newton			[Son] Newton	son-newton-1803
+HD13541		qualifier/punctuation in first_name	[Son]	Bogel			[Son] Bogel	son-bogel-1918
+HD13621		qualifier/punctuation in first_name	[Son]	Pinkham			[Son] Pinkham	son-pinkham-1769
+HD13694		qualifier/punctuation in first_name	[Daughter]	Norton			[Daughter] Norton	daughter-norton-1829
+HD13722		qualifier/punctuation in first_name	[Son]	Robinson			[Son] Robinson	son-robinson-1915
+HD13743		qualifier/punctuation in first_name	[Son]	Baker			[Son] Baker	son-baker-1924
+HD13746		qualifier/punctuation in first_name	[Child]	Cowles			[Child] Cowles	child-cowles-1838
+HD13782		qualifier/punctuation in first_name	[Son]	Kennedy			[Son] Kennedy	son-kennedy-1918
+HD13784		qualifier/punctuation in first_name	[Son]	Rathbone			[Son] Rathbone	son-rathbone-1827
+HD13798		qualifier/punctuation in first_name	[Son]	Van Emburgh			[Son] Van Emburgh	son-van-emburgh-1855
+HD13800		qualifier/punctuation in first_name	[Son]	Van Emburgh			[Son] Van Emburgh II	son-van-emburgh-ii-1857
+HD13818		slug has a collision counter	Sarah	Smith	Lyman		Sarah Lyman Smith	sarah-smith-1844-2
+HD13842		qualifier/punctuation in first_name	[Son]	Austin			[Son] Austin	son-austin-1895
+HD13864		qualifier/punctuation in first_name	[Daughter]	Tuttle			[Daughter] Tuttle	daughter-tuttle-1780
+HD13865		qualifier/punctuation in first_name	[Daughter]	Tuttle			[Daughter] Tuttle	daughter-tuttle-1787
+HD13867		qualifier/punctuation in first_name	[Daughter]	Tuttle			[Daughter] Tuttle	daughter-tuttle-1804
+HD13892		qualifier/punctuation in first_name	[Son]	Pierpont			[Son] Pierpont	son-pierpont-1793
+HD13893		qualifier/punctuation in first_name	[Daughter]	Pierpont			[Daughter] Pierpont	daughter-pierpont-1793
+HD13930		qualifier/punctuation in first_name	[Daughter]	Gault			[Daughter] Gault	daughter-gault-1867
+HD13940		qualifier/punctuation in first_name	[Daughter]	Nichols			[Daughter] Nichols	daughter-nichols-1898
+HD14060		qualifier/punctuation in first_name	[Son]	Rackemann			[Son] Rackemann	son-rackemann-1856
+HD1421		qualifier/punctuation in first_name	[Daughter]	Wadsworth	Wadsworth		[Daughter] Wadsworth	daughter-wadsworth-1769
+HD14220		first_name has a middle INITIAL	N. C.	Butler			N. C. Butler	n-c-butler-1798
+HD14304		qualifier/punctuation in first_name	[Son]	Walker			[Son] Walker	son-walker-1839
+HD14305		qualifier/punctuation in first_name	[Daughter]	Walker			[Daughter] Walker	daughter-walker-1839
+HD14411		slug has a collision counter	Jane	Page			Jane Page Mallinson	jane-page-2
+HD14455		qualifier/punctuation in first_name	[Son]	Hussey			[Son] Hussey	son-hussey-1807
+HD14504		qualifier/punctuation in first_name	[Daughter]	Persons			[Daughter] Persons	daughter-persons-1926
+HD14661		qualifier/punctuation in first_name	[Son]	Dwight			[Son] Dwight	son-dwight-1783
+HD14662		qualifier/punctuation in first_name	[Son]	Dwight			[Son] Dwight	son-dwight-1790
+HD14667		slug has a collision counter	James	Dwight			James Adams Dwight	james-dwight-1825-2
+HD14673		qualifier/punctuation in first_name	[Son]	Dwight			[Son] Dwight	son-dwight-1873
+HD14681		qualifier/punctuation in first_name	[Son]	Sumner			[Son] Sumner	son-sumner-1858
+HD14729		qualifier/punctuation in first_name	[Son]	Ellery			[Son] Ellery	son-ellery-1761
+HD14786		qualifier/punctuation in first_name	[Daughter]	Porter			[Daughter] Porter	daughter-porter-1805
+HD14827		slug has a collision counter	Charles	Porter			Charles Porter	charles-porter-2
+HD14955		slug has a collision counter	Anne	Hopkins			Anne S. Hopkins	anne-hopkins-2
+HD14957		qualifier/punctuation in first_name	[Daughter]	Michelson	Fiske		[Daughter] Fiske Michelson	daughter-fiske-michelson
+HD15014		qualifier/punctuation in first_name	[Son]	Dwight			[Son] Dwight	son-dwight-1787
+HD15015		qualifier/punctuation in first_name	[Daughter]	Dwight			[Daughter] Dwight	daughter-dwight-1813
+HD1518		first_name has 2+ words (middle name?)	Mary Ann	Porter	Brockett		Mary Ann Brockett Porter	mary-ann-porter-1820
+HD15258		slug has a collision counter	Michael	Prentice			Michael Andrew Prentice	michael-prentice-2
+HD15305		slug has a collision counter	Peter	Prentice			Peter Sartell Prentice	peter-prentice-2
+HD15308		slug has a collision counter	Anne	Porter			Anne Lee Porter	anne-porter-2
+HD15361		qualifier/punctuation in first_name	[Daughter]	Porter			[Daughter] Porter	daughter-porter-1969
+HD15434		slug has a collision counter	James	Porter			James Alwood Porter	james-porter-1887-2
+HD15455		qualifier/punctuation in first_name	[Son]	Minot			[Son] Minot	son-minot-1843
+HD15457		qualifier/punctuation in first_name	[Son]	Minot			[Son] Minot	son-minot-1845
+HD15458		qualifier/punctuation in first_name	[Son]	Minot			[Son] Minot	son-minot-1847
+HD15460		qualifier/punctuation in first_name	[Son]	Minot			[Son] Minot	son-minot-1851
+HD15470		slug has a collision counter	John	Porter			John Fairfield Porter	john-porter-2
+HD15488		slug has a collision counter	Sarah	Porter	Porter		Sarah Elizabeth Porter	sarah-porter-2
+HD15489		slug has a collision counter	John	Porter			John Carl Fairfield Porter	john-porter-3
+HD15494		slug has a collision counter	Robert	Ingersoll			Robert Ingersoll	robert-ingersoll-3
+HD15496		qualifier/punctuation in first_name	[Son]	Hooker			[Son] Hooker	son-hooker-1801
+HD15497		qualifier/punctuation in first_name | slug has a collision counter	[Son]	Hooker			[Son] Hooker	son-hooker-1801-2
+HD15550		first_name has 2+ words (middle name?)	Lee Roi	North			Lee Roi Ransom North	lee-roi-north-1889
+HD15563		slug has a collision counter	Richard	Crocker			Richard J. Crocker	richard-crocker-2
+HD15690		slug has a collision counter	Eleanor	von Stade	von Stade		Dr. Eleanor Fisher von Stade	eleanor-von-stade-2
+HD15705		slug has a collision counter	Nicholas	Hooker			Nicholas Gavin Hooker	nicholas-hooker-2
+HD15729		last_name has 2+ words (middle+surname?)	Agnes	do Rosario	Ingersoll		Agnes Ingersoll do Rosario	agnes-do-rosario
+HD15771		qualifier/punctuation in first_name	[Daughter]	Montgomery			[Daughter] Montgomery	daughter-montgomery-1878
+HD15777		qualifier/punctuation in first_name	[Son]	Montgomery			[Son] Montgomery	son-montgomery-1910
+HD15786		qualifier/punctuation in first_name	[Infant]	Haseltine			[Infant] Haseltine	infant-haseltine-1879
+HD16059		last_name has 2+ words (middle+surname?)	Franklin	Rawson Guiñazú			Col. Franklin de la Esperanza Rawson Guiñazú	franklin-rawson-guinazu-1857
+HD16060		last_name has 2+ words (middle+surname?)	Juan	Rawson Guiñazú			Juan de Dios Rawson Guiñazú	juan-rawson-guinazu-1856
+HD16061		last_name has 2+ words (middle+surname?)	Emilia	Rawson Guiñazú			Emilia Virginia Rawson Guiñazú	emilia-rawson-guinazu-1859
+HD16062		last_name has 2+ words (middle+surname?)	Manuel	Rawson Guiñazú			Manuel Francisco Lino Rawson Guiñazú	manuel-rawson-guinazu-1861
+HD16063		last_name has 2+ words (middle+surname?)	José	Rawson Guiñazú			José Rawson Guiñazú	jose-rawson-guinazu-1863
+HD16064		last_name has 2+ words (middle+surname?)	Elvira	Rawson Guiñazú			Elvira del Carmen Rawson Guiñazú	elvira-rawson-guinazu-1865
+HD16065		last_name has 2+ words (middle+surname?)	Julio	Rawson Guiñazú			Julio del Carmen Rawson Guiñazú	julio-rawson-guinazu-1869
+HD16066		last_name has 2+ words (middle+surname?)	Trinidad	Rawson Guiñazú			Trinidad Rosa Rawson Guiñazú	trinidad-rawson-guinazu-1872
+HD16068		last_name has 2+ words (middle+surname?)	Francisco	Rawson Corvalán			Francisco Rawson Corvalán	francisco-rawson-corvalan-1885
+HD16070		last_name has 2+ words (middle+surname?)	Franklin	Rawson Borda			Franklin Alfredo Rawson Borda	franklin-rawson-borda-1917
+HD16071		last_name has 2+ words (middle+surname?)	Delia	Rawson Borda			Delia Elvira Rawson Borda	delia-rawson-borda-1918
+HD16072		last_name has 2+ words (middle+surname?)	Arturo	Rawson Borda			Arturo Rawson Borda	arturo-rawson-borda-1920
+HD16073		last_name has 2+ words (middle+surname?)	Ercilia	Rawson Borda			Ercilia Virginia Rawson Borda	ercilia-rawson-borda-1921
+HD16074		last_name has 2+ words (middle+surname?)	Adolfo	Rawson Rojo			Adolfo Rawson Rojo	adolfo-rawson-rojo-1847
+HD16075		last_name has 2+ words (middle+surname?)	Abram	Rawson Rojo			Abram del Carmen Rawson Rojo	abram-rawson-rojo-1854
+HD16077		last_name has 2+ words (middle+surname?)	Joaquín	Belgrano Rawson			Joaquín Guillermo Belgrano Rawson	joaquin-belgrano-rawson-1886
+HD16078		last_name has 2+ words (middle+surname?)	Mariano	Belgrano Rawson			Mariano Rómulo Belgrano Rawson	mariano-belgrano-rawson-1888
+HD16079		last_name has 2+ words (middle+surname?)	María	Belgrano Rawson			María Lucía Belgrano Rawson	maria-belgrano-rawson-1890
+HD16080		last_name has 2+ words (middle+surname?)	María	Belgrano Rawson			María Eloísa Belgrano Rawson	maria-belgrano-rawson-1893
+HD16081		last_name has 2+ words (middle+surname?)	Luis	Belgrano Rawson			Luis María Belgrano Rawson	luis-belgrano-rawson-1895
+HD16082		last_name has 2+ words (middle+surname?)	Alicia	Belgrano Rawson			Alicia Luisa Belgrano Rawson	alicia-belgrano-rawson-1897
+HD16083		last_name has 2+ words (middle+surname?)	Josefina	Belgrano Rawson			Josefina Lía Belgrano Rawson	josefina-belgrano-rawson-1900
+HD16084		last_name has 2+ words (middle+surname?)	Franklin	Rawson Mendieta			Franklin Rawson Mendieta	franklin-rawson-mendieta-1848
+HD16085		last_name has 2+ words (middle+surname?)	Fidel	Rawson Mendieta			Fidel Rawson Mendieta	fidel-rawson-mendieta-1855
+HD16086		last_name has 2+ words (middle+surname?)	Ignacio	Rawson Mendieta			Ignacio Amando Rawson Mendieta	ignacio-rawson-mendieta-1859
+HD16098		slug has a collision counter	David	Tyler			David Tyler	david-tyler-2
+HD16387		qualifier/punctuation in first_name	[Son]	Devereux			[Son] Devereux	son-devereux-1848
+HD16388		qualifier/punctuation in first_name	[Son]	Devereux			[Son] Devereux	son-devereux-1850
+HD16393		qualifier/punctuation in first_name	[Son]	Devereux			[Son] Devereux	son-devereux-1854
+HD16394		qualifier/punctuation in first_name	[Son]	Devereux			[Son] Devereux	son-devereux-1856
+HD16395		qualifier/punctuation in first_name	[Son]	Devereux			[Son] Devereux	son-devereux-1858
+HD16397		qualifier/punctuation in first_name	[Son]	Devereux			[Son] Devereux	son-devereux-1860
+HD16399		qualifier/punctuation in first_name	[Son]	Devereux			[Son] Devereux	son-devereux-1862
+HD16406		qualifier/punctuation in first_name	[Daughter]		Reynolds		[Daughter] Reynolds	daughter-reynolds-1894
+HD1657		slug has a collision counter	Sarah		Pierpont		Sarah Pierpont	sarah-pierpont-1773-2
+HD1663		slug has a collision counter	Sarah		Pierpont		Sarah Pierpont	sarah-pierpont-1773-3
+HD1802		slug has a collision counter	William	Ingersoll			William D Ingersoll	william-ingersoll-1821-2
+HD1878		slug has a collision counter	John	Ingersoll			John Campbell Ingersoll	john-ingersoll-1898-2
+HD1923		qualifier/punctuation in first_name	[unnamed]	Burr			[unnamed] Burr	unnamed-burr-1788
+HD2010		slug has a collision counter	Edward	Dwight			Edward Foote Dwight	edward-dwight-1862-2
+HD2060		slug has a collision counter	George	Dwight			George Spring Dwight	george-dwight-1835-2
+HD2241		slug has a collision counter	Mary		Hooker		Mary Lanman Hooker	mary-hooker-1822-2
+HD2292		slug has a collision counter	Hannah		Dwight		Hannah Worthington Dwight	hannah-dwight-1811-2
+HD2534		qualifier/punctuation in first_name	[Daughter]	Porter			[Daughter] Porter	daughter-porter-1793
+HD2706		qualifier/punctuation in first_name	[Son]	Hooker			[Son] Hooker	son-hooker-1751
+HD2708		NO first_name (slug guessed from display_name)		Seeley			Seeley	seeley
+HD2738		slug has a collision counter	Elizabeth		Pierpont		Elizabeth Pierpont	elizabeth-pierpont-1872-2
+HD2801		first_name has 2+ words (middle name?)	Mary Ellen	Rogers	Perkins		Mary Ellen Perkins Rogers	mary-ellen-rogers-1844
+HD2802		slug has a collision counter	Benjamin	Rogers			Benjamin V. Rogers	benjamin-rogers-1860-2
+HD2803		slug has a collision counter	Dennis	Rogers			Dennis Earl Rogers	dennis-rogers-1868-2
+HD2804		slug has a collision counter	Blanche	Rogers			Blanche A. Rogers	blanche-rogers-1875-2
+HD2805		slug has a collision counter	Nellie	Rogers			Nellie Inez Rogers	nellie-rogers-1880-2
+HD2806		slug has a collision counter	Ruth	Rogers			Ruth Verna Rogers	ruth-rogers-1884-2
+HD2842		slug has a collision counter	Louisa	Cowles	Cowles		Louisa Brooks Cowles	louisa-cowles-1841-2
+HD2870		first_name has 2+ words (middle name?)	Mary Ann	Cowles	Cowles		Mary Ann Cowles	mary-ann-cowles-1807
+HD2878		first_name has 2+ words (middle name?)	Mary Ann	Hardy	Cowles		Mary Ann Cowles Hardy	mary-ann-hardy-1826
+HD2892		slug has a collision counter	Edward	Cowles	Cowles		Edward Cowles	edward-cowles-1820-2
+HD2930		first_name is a TITLE	Ensign	Newton			Ensign C. Newton	ensign-newton-1837
+HD2940		slug has a collision counter	William	Hooker			William G. Hooker	william-hooker-1819-3
+HD2941		slug has a collision counter	William	Hooker			William H. Hooker	william-hooker-1819-4
+HD2942		qualifier/punctuation in first_name	[Infant]	Hooker			Infant Son Hooker	infant-hooker-1824
+HD2946		first_name has 2+ words (middle name?)	W. Irving	Hooker			W. Irving Hooker	w-irving-hooker-1862
+HD3025		first_name has 2+ words (middle name?)	Mary Ann	Ingersoll	Ingersoll		Mary Ann Ingersoll	mary-ann-ingersoll-1813
+HD3387		slug has a collision counter	Anne	Hooker			Anne Austen Hooker Collins	anne-hooker-2
+HD3393		slug has a collision counter	Thomas	Hooker			Thomas Van Blois Hooker	thomas-hooker-2
+HD3482		qualifier/punctuation in first_name	[Twin]	Norton			[Twin] Norton	twin-norton-1813
+HD3483		qualifier/punctuation in first_name | slug has a collision counter	[Twin]	Norton			[Twin] Norton	twin-norton-1813-2
+HD3484		qualifier/punctuation in first_name	[Daughter]	Norton			[Daughter] Norton	daughter-norton
+HD3525		first_name has 2+ words (middle name?)	O. S. Edward	Fowler			O. S. Edward Fowler	o-s-edward-fowler-1895
+HD3654		slug has a collision counter	Minerva	Judd	Woodward		Minerva Pierpoint Woodward Judd	minerva-judd-1835-2
+HD3721		slug has a collision counter	Edward	Cowles			Edward Hooker Cowles	edward-cowles-1849-2
+HD3792		qualifier/punctuation in first_name	[Son]	Whittlesey			[Son] Whittlesey	son-whittlesey-1811
+HD3826		slug has a collision counter	John	Whittlesey			John Newton Whittlesey	john-whittlesey-1803-2
+HD3851		first_name has 2+ words (middle name?) | qualifier/punctuation in first_name	[Infant Son]	Tillman			[Infant Son] Tillman	infant-son-tillman-1864
+HD3888		slug has a collision counter	Helen	Cowles			Helen Cowles	helen-cowles-2
+HD4052		qualifier/punctuation in first_name	[Infant]	Leek			[Infant] Leek	infant-leek-1823
+HD4053		qualifier/punctuation in first_name	[Daughter]	Leek			[Daughter] Leek	daughter-leek-1823
+HD4115		qualifier/punctuation in first_name	[Son]	Thacher			[Son] Thacher	son-thacher-1898
+HD4116		qualifier/punctuation in first_name	[Son]	Thacher			[Son] Thacher	son-thacher-1900
+HD4163		qualifier/punctuation in first_name	[Daughter]	Hale			[Daughter] Hale	daughter-hale-1826
+HD4197		slug has a collision counter	James	Redpath			James Botterell Redpath	james-redpath-1908-2
+HD4209		slug has a collision counter	Peter	Redpath			Peter Mills Redpath	peter-redpath-2
+HD4464		slug has a collision counter	Henry	Hooker			Henry S Hooker	henry-hooker-2
+HD4485		slug has a collision counter	Mary	Hooker			Mary Hooker	mary-hooker-2
+HD4583		qualifier/punctuation in first_name	[unnamed]	Phelps			[unnamed son] Phelps	unnamed-son-phelps-1856
+HD4595		slug has a collision counter	Thomas	Hooker			Thomas Hooker	thomas-hooker-3
+HD4638		qualifier/punctuation in first_name	[unnamed]	Gibbs			[Unnamed] Gibbs	unnamed-gibbs-1845
+HD4758		slug has a collision counter	Infant	Root			Unnamed Infant Root	infant-root-2
+HD4928		qualifier/punctuation in first_name	[Unnamed]	Bridgeman			[Unnamed Son Bridgeman]	unnamed-son-bridgeman-1852
+HD4991		slug has a collision counter	John	Hart			John Rusk Hart	john-hart-1832-2
+HD5258		last_name has 2+ words (middle+surname?)	Grace	Sal Haney	Catlin		Grace Elizabeth Catlin Sal Haney	grace-sal-haney-1922
+HD5259		first_name has 2+ words (middle name?)	De Witt	Catlin			De Witt R. Catlin	de-witt-catlin-1889
+HD5322		first_name has 2+ words (middle name?)	Mary Jane	Kimball	Sutton		Mary Jane Sutton Kimball	mary-jane-kimball-1838
+HD5364		first_name has 2+ words (middle name?)	Nancy Ann	Sutton			Nancy Ann Sutton	nancy-ann-sutton-1824
+HD5402		slug has a collision counter	Sarah	Butterfield	Jacques		Sarah Ann Jacques Butterfield	sarah-butterfield-1803-2
+HD5413		first_name has 2+ words (middle name?)	Anna Maria	Mason	Jacques		Anna Maria Jacques Mason	anna-maria-mason-1830
+HD5445		slug has a collision counter	Gustavus	Dunham			Gustavus Dunham	gustavus-dunham-2
+HD5451		slug has a collision counter	Mary	Dunham			Mary Dunham	mary-dunham-2
+HD5564		first_name has 2+ words (middle name?)	Sarah Ann	Southworth			Sarah Ann Southworth	sarah-ann-southworth-1822
+HD5604		first_name has 2+ words (middle name?)	J. Snowden	Wainwright			J. Snowden Wainwright	j-snowden-wainwright
+HD5683		qualifier/punctuation in first_name	[Infant]	Hart			[Infant] Hart	infant-hart
+HD5726		first_name has 2+ words (middle name?)	J. Foster	Hart			J. Foster Hart	j-foster-hart-1814
+HD5760		slug has a collision counter	George	Hart			Dr. George Dwight Hart	george-hart-1835-2
+HD5769		slug has a collision counter	Seth	Hart			Seth Norman Hart	seth-hart-2
+HD5864		slug has a collision counter	Mary	Lee			Mary G. Lee	mary-lee-2
+HD6231		NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Maria Spencer Goddard Grafton	maria-grafton-1800
+HD6241		qualifier/punctuation in first_name	[Son]	Brockway			[Son] Brockway	son-brockway
+HD6242		qualifier/punctuation in first_name	[Daughter]	Brockway			[Daughter] Brockway	daughter-brockway
+HD6273		qualifier/punctuation in first_name	[Infant]	Rawson			[Infant] Rawson	infant-rawson
+HD6436		first_name has 2+ words (middle name?)	Sarah Ann	Thompson	Newton		Sarah Ann Newton Thompson	sarah-ann-thompson-1827
+HD6443		qualifier/punctuation in first_name	[Daughter]	Newton			[Daughter] Newton	daughter-newton-1795
+HD6481		slug has a collision counter	John	Newton			John Hampden Palmer Newton	john-newton-1836-2
+HD6545		slug has a collision counter	Francis	Merwin			Francis Stowe Merwin	francis-merwin-1830-2
+HD6618		slug has a collision counter	Josiah	Hine			Josiah Hine	josiah-hine-1797-2
+HD6643		slug has a collision counter	Sally	Hooker			Sally Hill Hooker	sally-hooker-2
+HD6760		slug has a collision counter	Frances	Edwards			Frances Jane Edwards Smith	frances-edwards-1838-2
+HD6762		first_name has 2+ words (middle name?)	Mary Ann	Edwards			Mary Ann Edwards Sheldon	mary-ann-edwards-1809
+HD6783		qualifier/punctuation in first_name	[Son]	Edwards			[Son] Edwards	son-edwards-1809
+HD6817		slug has a collision counter	Charles	Edwards			Charles Edwards	charles-edwards-1832-2
+HD7185		qualifier/punctuation in first_name	[Son]	Edwards			[Son] Edwards	son-edwards-1807
+HD7187		qualifier/punctuation in first_name | slug has a collision counter	[Son]	Edwards			[Son] Edwards	son-edwards-1809-2
+HD7324		slug has a collision counter	William	Ingersoll			William K. Ingersoll	william-ingersoll-1843-2
+HD7347		slug has a collision counter	Mary	Ingersoll			Mary Wilcocks Ingersoll	mary-ingersoll-1852-2
+HD7446		first_name has 2+ words (middle name?)	H. Harris	Healy		III	H. Harris Healy III	h-harris-healy-iii
+HD7583		qualifier/punctuation in first_name	[Son]	Blake			[Son] Blake	son-blake-1869
+HD7595		slug has a collision counter	Charles	Hooker			Dr. Charles C. Hooker	charles-hooker-1799-2
+HD7603		slug has a collision counter	Horace	Hooker			Horace Hooker	horace-hooker-1847-2
+HD7610		slug has a collision counter	Ralph	Hooker			Ralph W. Emerson Hooker	ralph-hooker-1895-2
+HD7619		qualifier/punctuation in first_name	[Daughter]	Whiting			[Daughter] Whiting	daughter-whiting-1755
+HD7620		qualifier/punctuation in first_name	[Son]	Whiting			[Son] Whiting	son-whiting-1767
+HD7625		qualifier/punctuation in first_name	[Son]	Whiting			[Son] Whiting	son-whiting-1785
+HD7665		qualifier/punctuation in first_name	[Infant]	Hollister			[Infant] Hollister	infant-hollister-1849
+HD7768		last_name has 2+ words (middle+surname?)	Nicholas	von und zu Eltz			Nicholas von und zu Eltz	nicholas-von-und-zu-eltz-1950
+HD7954		qualifier/punctuation in first_name	[Son]	Stuyvesant	Stuyvesant		[Son] Stuyvesant	son-stuyvesant-1879
+HD8044		qualifier/punctuation in first_name	[Son]	Sheldon			[Son] Sheldon	son-sheldon-1876
+HD8130		slug has a collision counter	Edward	Russell			Edward Stanton Russell	edward-russell-1894-2
+HD8274		slug has a collision counter	Elizabeth	Smith			Elizabeth E. Smith	elizabeth-smith-1907-2
+HD8378		slug has a collision counter	Mary	Snowden	Snowden		Mary Snowden	mary-snowden-1866-2
+HD8584		qualifier/punctuation in first_name	[Son]	Newton			[Son] Newton	son-newton-1784
+HD8585		qualifier/punctuation in first_name	[Son]	Newton			[Son] Newton	son-newton-1786
+HD8589		qualifier/punctuation in first_name	[Son]	Wetherell			[Son] Wetherell	son-wetherell-1859
+HD8595		qualifier/punctuation in first_name	[Son]	Newton			[Son] Newton	son-newton-1788
+HD8669		slug has a collision counter	Mary	Newton			Mary Newton	mary-newton-1759-2
+HD8914		qualifier/punctuation in first_name	[Son]	Bunnell			[Son] Bunnell	son-bunnell-1785
+HD8930		slug has a collision counter	Abner	Newton			Abner Newton	abner-newton-1764-2
+HD8975		qualifier/punctuation in first_name	[Son]	Newton			[Son] Newton	son-newton-1765
+HD8976		qualifier/punctuation in first_name	[Son]	Newton			[Son] Newton	son-newton-1767
+HD9015		qualifier/punctuation in first_name	[Son]	Thomas			[Son] Thomas	son-thomas-1782
+HD9016		qualifier/punctuation in first_name	[Daughter]	Thomas			[Daughter] Thomas	daughter-thomas-1782
+HD9026		qualifier/punctuation in first_name	[Daughter]	Smith			[Daughter] Smith	daughter-smith-1793
+HD9039		slug has a collision counter	Harriet	Smith			Harriet Smith	harriet-smith-1827-2
+HD9133		qualifier/punctuation in first_name	[Son]	Brinsmade			[Son] Brinsmade	son-brinsmade-1892
+HD9145		qualifier/punctuation in first_name	[Daughter]	Brinsmade			[Daughter] Brinsmade	daughter-brinsmade-1886
+HD9163		qualifier/punctuation in first_name	[Son]	Hurd			[Son] Hurd	son-hurd-1813
+HD9205		qualifier/punctuation in first_name	[Daughter]	Nicholson			[Daughter] Nicholson	daughter-nicholson-1813
+HD9239		qualifier/punctuation in first_name	[Son]	Peck			[Son] Peck	son-peck-1800
+HD9240		qualifier/punctuation in first_name	[Son]	Peck			[Son] Peck	son-peck-1801
+HD9296		qualifier/punctuation in first_name	[Son]	Newton			[Son] Newton	son-newton-1802
+HD9337		qualifier/punctuation in first_name	[Daughter]	Lambert			[Daughter] Lambert	daughter-lambert-1800
+HD9416		slug has a collision counter	Martha		Newton		Martha Newton	martha-newton-1768-2
+HD9464		slug has a collision counter	John	Newton			John Newton	john-newton-1818-2
+HD9496		qualifier/punctuation in first_name	[Son]	Newton			[Son] Newton	son-newton-1831
+HD9518		slug has a collision counter	Edward	Newton			Edward Orvis Newton	edward-newton-1826-2
+HD9545		qualifier/punctuation in first_name	[Son]	Wills			[Son] Wills	son-wills-1899
+HD9603		first_name is a TITLE	Major	Newton			Major Andrew Newton	major-newton-1816
+HD9608		first_name is a TITLE	Major	Newton			Major Newton	major-newton-1827
+HD9614		qualifier/punctuation in first_name	[Son]	Newton			[Son] Newton	son-newton-1866
+HD9647		first_name is a TITLE	Major	Newton			Major Scott Newton	major-newton-1886
+HD9700		slug has a collision counter	John	Newton			John Herbert Newton	john-newton-2
+HD9704		slug has a collision counter	Jason	Newton			Jason Joseph Newton	jason-newton-2
+HD9706		slug has a collision counter	Richard	Newton			Richard Newton	richard-newton-2
+HD9744		slug has a collision counter	Thomas	Vincent			Thomas Matthew Vincent	thomas-vincent-2
+HD9822		slug has a collision counter	Charles	Gaylord			Charles Gaylord	charles-gaylord-2
+HD9857		NO surname (slug guessed from display_name)	Elizabeth				Elizabeth Cornelia	elizabeth-cornelia
+HD9909		slug has a collision counter	Sarah	Fowler			Sarah Fowler	sarah-fowler-1804-2
+HD9976		slug has a collision counter	Mary	Pierpont			Mary Elizabeth Pierpont	mary-pierpont-1851-2
+I00297		first_name has 2+ words (middle name?)	Mary Ann	Hooker	Brown		Mary Ann Brown Hooker	mary-ann-brown-1796
+I00334		slug has a collision counter	James	Shepherd			Dr. James Shepherd	james-shepherd-2
+I00406		last_name has 2+ words (middle+surname?)	Amelia	Carpenter Seeley	Carpenter		Amelia C. Carpenter Seeley	amelia-carpenter
+I00408		last_name has 2+ words (middle+surname?)	Alma	Walker Seeley	Walker		Alma E. Walker Seeley	alma-walker
+I00409		last_name has 2+ words (middle+surname?)	Anna	Selby Seeley	Selby		Anna Selby Seeley	anna-selby
+I00410		last_name has 2+ words (middle+surname?)	Mary	Whiting Seeley	Whiting		Mary E. Whiting Seeley	mary-whiting
+I00568		NO first_name (slug guessed from display_name)		Brennan			Mr. Brennan	mr-brennan
+I00809		slug has a collision counter	Henry	Smith			Henry Crowley Smith	henry-smith-2
+I00836		qualifier/punctuation in first_name	[unknown]	Bradshaw			[unknown] Bradshaw	bradshaw
+I00837		qualifier/punctuation in first_name	[unknown]	VanVranken			[unknown] VanVranken	vanvranken
+I01016		first_name has 2+ words (middle name?)	De Witt	Hubbard			De Witt Pratt Hubbard	de-witt-hubbard
+I01024		NO first_name (slug guessed from display_name)		Proctor			Mr. Proctor	mr-proctor
+I01026		NO first_name (slug guessed from display_name)		Aldrich			Mr. Aldrich	mr-aldrich
+I01057		NO first_name (slug guessed from display_name)		Jordan			Mr. Jordan	mr-jordan
+I01162		first_name has 2+ words (middle name?)	Mary Ann	Hooker	Dwight		Mary Ann Dwight Hooker	mary-ann-dwight-1810
+I01232		slug has a collision counter	Abigail	Goodrich			Abigail Goodrich Hooker	abigail-goodrich-1768-2
+I01258		slug has a collision counter	George	Caner			George Caner	george-caner-2
+I01540	hidden	first_name has 2+ words (middle name?)	Eliza Frances	Shepard			Eliza Frances Shepard Pumpelly	
+I01541	hidden	first_name has 2+ words (middle name?)	Henry Lloyd	Smyth			Henry Lloyd Smyth	
+I01542	hidden	first_name has 2+ words (middle name?)	Thomas Handasyd	Cabot			Thomas Handasyd Cabot	
+I01543	hidden	first_name has 2+ words (middle name?)	Amelie Sybil	Ripley			Amelie Sybil Van Doren Ripley	
+I01544	hidden	first_name has 2+ words (middle name?)	Otis Tenney	Russell			Otis Tenney Russell	
+I01547	hidden	first_name has 2+ words (middle name?)	Edwin Arthur	Shuman		Jr.	Edwin Arthur Shuman Jr.	
+I01548	hidden	first_name has 2+ words (middle name?)	Benjamin Clark	Boeckeler			Benjamin Clark Boeckeler	
+I01549	hidden	first_name has 2+ words (middle name?)	John Henry	Bates			John Henry Bates	
+I01550	hidden	first_name has 2+ words (middle name?)	Clyde Lynwood	Burr			"Clyde Lynwood ""Jay"" Burr"	
+I01551	hidden	first_name has 2+ words (middle name?)	Ronald Dean	Foster			Ronald Dean Foster	
+I01552	hidden	first_name has 2+ words (middle name?)	Mary Ann	Foote			Mary Ann Foote Pumpelly	
+I01553	hidden	first_name has 2+ words (middle name?)	Marta Marie	Szalonek			Marta Marie Szalonek	
+I01554	hidden	first_name has 2+ words (middle name?)	Shirley Mae	Bonesteel			Shirley Mae Bonesteel Courage	
+I01555	hidden	first_name has 2+ words (middle name?)	Shirley Madeline	L'Esperance			Shirley Madeline L'Esperance Pumpelly	
+I01560	hidden	first_name has 2+ words (middle name?)	Charles Barnard	Prince		Jr.	Charles Barnard Prince Jr.	
+I01561	hidden	first_name has 2+ words (middle name?)	Margaret Danforth	Johnston			Margaret Danforth Johnston Waters	
+I01562	hidden	first_name has 2+ words (middle name?)	John Stuart	Fallow		Jr.	John Stuart Fallow Jr.	
+I01563	hidden	first_name has 2+ words (middle name?)	George Pierce	Metcalf			George Pierce Metcalf	
+I01564	hidden	first_name has 2+ words (middle name?)	Cecil Wingfield Twisleton	Wykeham-Fiennes			Cecil Wykeham-Fiennes	
+I01566	hidden	first_name has 2+ words (middle name?)	Elizabeth Rollins	Mauran			Elizabeth Rollins Mauran	
+I01567	hidden	first_name has 2+ words (middle name?)	Nigel Stirling	Blackwell			Nigel Stirling Blackwell	
+I01734	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Salmon Swetland	
+I01735	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)				Jr.	Grindall Rawson Jr.	
+I01736	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Chester Bates Starks	
+I01737	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Henry S. Palmer	
+I01740	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Christopher Hamlin	
+I01741	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Capt. Timothy Starr	
+I01742	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Elizabeth Taylor Starr	
+I01743	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Julia O’Brian Starr	
+I01744	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mary Ann Kent Starr	
+I01745	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)				Sr.	John Bernard Williard Sr.	
+I01746	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Elizabeth Jane Raw Williard	
+I01749	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mary A. Nye Talcott	
+I01750	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Eliza White Adams Talcott	
+I01751	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Rosa Ghastin Talcott	
+I01752	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Chloe Sophia Holbrook Talcott	
+I01753	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Francis Henry Forbes	
+I01754	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Elizabeth Scott Andrick Forbes	
+I01755	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Genevieve Wood Forbes	
+I01756	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Elizabeth Serana Kemp Talcott	
+I01757	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Harriet Alice Manchester Talcott	
+I01790		slug has a collision counter	William	Hart			William Hart	william-hart-1821-2
+I01909		last_name has 2+ words (middle+surname?)	Jean	Capece Zurlo			Prince Jean Capece Zurlo	jean-capece-zurlo-1878
+I01937		first_name has 2+ words (middle name?)	Mary Ann		Fry		Mary Ann Fry Edwards	mary-ann-fry-1835
+I02128		slug has a collision counter	Henry	Smith			Henry H. Smith	henry-smith-3
+I02145		slug has a collision counter	Mary	Hooker			Mary P. Hooker	mary-hooker-3
+I02222		slug has a collision counter	Helen	Cowles			Helen Cowles	helen-cowles-1841-2
+I02379		last_name has 2+ words (middle+surname?)	Alexander	von und zu Eltz			Alexander von und zu Eltz	alexander-von-und-zu-eltz-1911
+I02964		slug has a collision counter	Mary	Smith	Frost		Mary Frost Smith	mary-frost-1780-2
+I03013		qualifier/punctuation in first_name	[Wife]	Peck	Ingersoll		[Wife] Ingersoll Peck	wife-ingersoll-peck
+I03117		slug has a collision counter	William	Barnes			William C Barnes	william-barnes-1845-2
+I03179		slug has a collision counter	Mary	Falkner	Brown		Mary Alice Brown Falkner	mary-brown-2
+I03297		NO first_name (slug guessed from display_name)		Gilpatric			Mrs. Gilpatric	mrs-gilpatric
+I03342		slug has a collision counter	Margaret	Dawson	Williams		Margaret Williams Dawson	margaret-williams-2
+I03549		first_name has 2+ words (middle name?)	Mary Jane	Bird	Strong		Mary Jane Strong Bird	mary-jane-strong-1820
+I03601		slug has a collision counter	Nancy	Drake	Williams		Nancy Ball Williams Drake	nancy-williams-2
+I03915		qualifier/punctuation in first_name	[Unnamed]	Gray			[Unnamed] Gray	unnamed-gray-1788
+I04187		last_name has 2+ words (middle+surname?)	Guy	de Baillet Latour			Count Guy de Baillet Latour	guy-de-baillet-latour-1905
+I04827		slug has a collision counter	Caroline	Pierpont			Caroline Gorham Moulthrop Pierpont	caroline-pierpont-1852-2
+I04859		slug has a collision counter	Thomas	Fee			Thomas Fee	thomas-fee-2
+I05009		slug has a collision counter	John	Joseph			John Joseph	john-joseph-2
+I05270		slug has a collision counter	Elisabeth	Dwight			Elisabeth Dwight	elisabeth-dwight-2
+I05315		slug has a collision counter	Susan	Chase			Susan Chase	susan-chase-2
+I05318		slug has a collision counter	Susan	Chase			Susan Chase	susan-chase-3
+I05429		slug has a collision counter	Louise	Stewart	Thompson		Louise Conant Thompson Stewart	louise-thompson-2
+I05457		slug has a collision counter	Jane	Morse			Jane Turner Morse	jane-morse-2
+I05538		slug has a collision counter	William	Bacon			William Stevens Bacon	william-bacon-1858-2
+I05552		slug has a collision counter	Peter	Salas			Peter Eckart Salas	peter-salas-2
+I05558		slug has a collision counter	Jean	Hooker	Harvey		Jean Gilmore Harvey-Marano Hooker	jean-harvey-2
+I05722		last_name has 2+ words (middle+surname?)	Joaquín	Belgrano Villarino			Joaquín Mariano Belgrano Villarino	joaquin-belgrano-villarino-1854
+I05811		first_name has 2+ words (middle name?)	Mary Ann	Feindel			Mary Ann Feindel	mary-ann-feindel
+T00469	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Samuel Talcott	
+T00473	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)				Sr.	Joseph Talcott Sr.	
+T00476	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)				Jr.	Joseph Talcott Jr.	
+T00477	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Daniel Talcott	
+T00478	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Samuel Talcott	
+T00479	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Betsey Talcott Swetland	
+T00480	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Dolly Talcott Rawson	
+T00481	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Asa Talcott	
+T00482	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Polly Talcott Adams	
+T00483	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Martin Canary Talcott	
+T00484	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Ezra W. Talcott	
+T00485	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Eliza Dean Talcott Hallowell	
+T00486	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Rebecca Talcott Wood	
+T00487	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Caroline Talcott Steward Fuller	
+T00488	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					William C. Talcott	
+T00489	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Silas N. Talcott	
+T00490	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Melissa A. Talcott Garis	
+T00491	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Asenath C. Talcott Foss Bartlett	
+T00492	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Rhoda Talcott Rush	
+T00493	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)				Jr.	Samuel Talcott Jr.	
+T00494	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mary Talcott Prowley	
+T00495	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Daniel Talcott	
+T00496	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Louisa Talcott Lockwood	
+T00497	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Eunice Talcott	
+T00498	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Joseph Talcott	
+T00499	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Daniel Talcott	
+T00500	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Cynthia Talcott Brook	
+T00501	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					John Talcott	
+T00502	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Harriet Swetland Gager	
+T00503	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Rosett Swetland Scoville	
+T00504	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)				Jr.	Salmon Swetland Jr.	
+T00505	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mariette Swetland Crocker	
+T00506	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Leonard Swetland	
+T00507	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mary Rawson Deeds	
+T00508	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Joseph Talcott Rawson	
+T00509	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Laura Rawson Starks	
+T00510	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Orange Rawson	
+T00511	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)				Sr.	George Leander Rawson Sr.	
+T00512	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Philander Rawson	
+T00513	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mariva Rawson Cunningham	
+T00514	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Grindall Rawson	
+T00515	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Adaline Rawson Fowler	
+T00516	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Eunice Euphrasia Talcott Davis	
+T00517	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Fitz Henry Talcott	
+T00518	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mary Angeline Talcott Hammond	
+T00519	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Bradford Newcomb Talcott	
+T00520	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Elvina F. Talcott	
+T00521	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Edward Plympton Talcott	
+T00522	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Walter Burroughs Talcott	
+T00523	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Horace Plimon Talcott	
+T00524	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Elvina C. Talcott Strong	
+T00525	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Lydia E. Talcott Allen	
+T00526	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					William A. Talcott	
+T00527	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mabel O. Talcott Hollister	
+T00528	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Silas A. Talcott	
+T01174	hidden	first_name has 2+ words (middle name?)	Nathaniel Hubbard	Talcott			Nathaniel Hubbard Talcott	
+T01175	hidden	first_name has 2+ words (middle name?)	James Morris	Talcott			James Morris Talcott	
+T01176	hidden	first_name has 2+ words (middle name?)	William Flavel	Talcott			William Flavel Talcott	
+T01177	hidden	first_name has 2+ words (middle name?)	Samuel Olmsted	Talcott			Samuel Olmsted Talcott	
+T01178	hidden	first_name has 2+ words (middle name?)	Philander Parmele	Talcott			Philander Parmele Talcott	
+T01179	hidden	first_name has 2+ words (middle name?)	Elizabeth Ann	Perrin	Talcott		Elizabeth Ann Perrin	
+T01181	hidden	first_name has 2+ words (middle name?)	William Hart	Talcott			William Hart Talcott	
+T01182	hidden	first_name has 2+ words (middle name?)	Susan Maria	Talcott			Susan Maria Talcott	
+T01183	hidden	first_name has 2+ words (middle name?)	Henry Warner	Talcott			Henry Warner Talcott	
+T01184	hidden	first_name has 2+ words (middle name?)	Elizabeth Parthenia	Talcott			Elizabeth Parthenia Talcott	
+T01185	hidden	first_name has 2+ words (middle name?)	Clarina Rebecca	Talcott			Clarina Rebecca Talcott	
+T01186	hidden	first_name has 2+ words (middle name?)	Edward Olmstead	Talcott			Edward Olmstead Talcott	
+T01189	hidden	first_name has 2+ words (middle name?)	Edward Charles	Talcott			Edward Charles Talcott	
+T01190	hidden	first_name has 2+ words (middle name?)	Parthenia Maria	Talcott			Parthenia Maria Talcott	
+T01191	hidden	first_name has 2+ words (middle name?)	Elijah Julius	Talcott			Elijah Julius Talcott	
+T01192	hidden	first_name has 2+ words (middle name?)	Eliza Jane	Talcott			Eliza Jane Talcott	
+T01195	hidden	first_name has 2+ words (middle name?)	Samuel Tudor	Talcott			Samuel Tudor Talcott	
+T01196	hidden	first_name has 2+ words (middle name?)	Samuel Tudor	Talcott			Samuel Tudor Talcott	
+T01376	hidden	first_name has 2+ words (middle name?)	N. Flavel	Talcott			N. Flavel Talcott	
+T01377	hidden	first_name has 2+ words (middle name?)	Abbie Ann	Talcott			Abbie Ann Talcott	
+T01935	hidden	first_name has 2+ words (middle name?)	Smith Stephen	Talcott			Smith Stephen Talcott	
+T02182	hidden	first_name has 2+ words (middle name?)	Joseph Abbott	Talcott			Joseph Abbott Talcott	
+T02183	hidden	first_name has a middle INITIAL	Anson F	Talcott			Anson F Talcott	
+T02184	hidden	first_name has a middle INITIAL	Norman W	Talcott			Norman W Talcott	
+T02185	hidden	first_name has a middle INITIAL	George A	Talcott			George A Talcott	
+T02186	hidden	first_name has a middle INITIAL	Hiram W	Talcott			Hiram W Talcott	
+T02188	hidden	first_name has a middle INITIAL	Charlotte A	Talcott			Charlotte A Talcott	
+T02191	hidden	first_name has a middle INITIAL	Lydia M	Talcott			Lydia M Talcott	
+T02202	hidden	first_name has 2+ words (middle name?)	John Flavel	Griswold			Rev. John Flavel Griswold	
+T02207	hidden	first_name has 2+ words (middle name?)	Philena Ann	Reynolds	Clark		Philena Ann Clark Reynolds	
+T02208	hidden	first_name has 2+ words (middle name?)	John Wrisley	Clark			John Wrisley Clark	
+T02209	hidden	first_name has 2+ words (middle name?)	Theophilus Lyman	Griswold			Theophilus Lyman Griswold	
+T02210	hidden	first_name has 2+ words (middle name?)	Mary Ellen	Griswold	Burrows		Mary Ellen Burrows Griswold	
+T02214	hidden	first_name has 2+ words (middle name?)	Bartsheba Williams	Cotter	Talcott		Bartsheba Williams Talcott Cotter	
+T02218	hidden	first_name has 2+ words (middle name?)	Twin Son 1	Talcott			Twin Son 1 Talcott	
+T02219	hidden	first_name has 2+ words (middle name?)	Twin Son 2	Talcott			Twin Son 2 Talcott	
+T02220	hidden	first_name has 2+ words (middle name?)	Elizabeth Lyman	Talcott			Elizabeth Lyman Talcott	
+T02222	hidden	first_name has 2+ words (middle name?)	Harriet Martha Ann	Talcott			Harriet Martha Ann Talcott	
+T02232	hidden	first_name has 2+ words (middle name?)	John Howard	Ward			John Howard Ward	
+T02233	hidden	first_name has 2+ words (middle name?)	Catherine Bertha	Ward			Catherine Bertha Ward	
+T02234	hidden	first_name has 2+ words (middle name?)	Rachel Lorain	Ward			Rachel Lorain Ward	
+T02238	hidden	first_name has 2+ words (middle name?)	Julia Gertrude	Ward			Julia Gertrude Ward	
+T02239	hidden	first_name has 2+ words (middle name?)	Morgan Bulkeley	Ward			Morgan Bulkeley Ward	
+T02243	hidden	first_name has 2+ words (middle name?)	David Talcott	Smith			David Talcott Smith	
+T02248	hidden	first_name has 2+ words (middle name?)	Infant Daughter	Smith			Infant Daughter Smith	
+T02249	hidden	first_name has 2+ words (middle name?)	Infant Son	Smith			Infant Son Smith	
+T02251	hidden	first_name has a middle INITIAL	Helen M	Bly	Smith		Helen M Smith Bly	
+T02252	hidden	first_name has a middle INITIAL	Adelia H	Carey	Smith		Adelia H Smith Carey	
+T02258	hidden	first_name has 2+ words (middle name?)	Samuel Lyman	Keeney			Samuel Lyman Keeney	
+T02262	hidden	first_name has 2+ words (middle name?)	Rachel Howard	Case	Talcott		Rachel Howard Case	
+T02270	hidden	first_name has 2+ words (middle name?)	William Henry	Talcott			William Henry Talcott	
+T02271	hidden	first_name has 2+ words (middle name?)	Mary Elizabeth	Talcott			Mary Elizabeth Talcott	
+T02291	hidden	first_name has 2+ words (middle name?)	Samuel Austin	Talcott			Samuel Austin Talcott	
+TD00441	hidden	first_name has 2+ words (middle name?)	Jonathan Gurley	Talcott			Jonathan Gurley Talcott	
+TD00446	hidden	first_name has 2+ words (middle name?)	Julia Ann	Loomis	Talcott		Julia Ann Talcott Loomis	
+TD0330	hidden	first_name has 2+ words (middle name?)	John Hollenbeck	Pumpelly			John Hollenbeck Pumpelly	
+TD0337	hidden	first_name has 2+ words (middle name?)	Raphael Welles	Pumpelly			Raphael Welles Pumpelly	
+TD0340	hidden	first_name has 2+ words (middle name?)	Henry Lloyd	Smyth		Jr.	Henry Lloyd Smyth Jr.	
+TD0341	hidden	first_name has 2+ words (middle name?)	Barbara Elliot	Boeckeler			Barbara Elliot Smyth Boeckeler	
+TD0342	hidden	first_name has 2+ words (middle name?)	Thomas Handasyd	Cabot		Jr.	Thomas Handasyd Cabot Jr.	
+TD0343	hidden	first_name has 2+ words (middle name?)	Elizabeth Dwight	Cabot			Elizabeth Dwight Cabot Prince	
+TD0344	hidden	first_name has 2+ words (middle name?)	Pauline Pumpelly	Cabot			Pauline Pumpelly Cabot Metcalf Wykeham-Fiennes	
+TD0345	hidden	first_name has 2+ words (middle name?)	Amelie Welles	Bates			Amelie Welles Pumpelly Bates	
+TD0346	hidden	first_name has 2+ words (middle name?)	Raphael Ripley	Pumpelly			Raphael Ripley Pumpelly	
+TD0347	hidden	first_name has 2+ words (middle name?)	Ripley Huntington	Pumpelly			Ripley Huntington Pumpelly	
+TD0348	hidden	first_name has 2+ words (middle name?)	Pauline Pumpelly	Trumbull			Pauline Pumpelly Fraser-Campbell Trumbull	
+TD0349	hidden	first_name has 2+ words (middle name?)	Charlotte Pumpelly	Jackson			Charlotte Pumpelly Smyth Jackson	
+TD0350	hidden	first_name has a middle INITIAL	William W.	Pumpelly			William W. Smyth Pumpelly	
+TD0351	hidden	first_name has 2+ words (middle name?)	Henry Lloyd	Smyth		III	Henry Lloyd Smyth III	
+TD0352	hidden	first_name has 2+ words (middle name?)	Edwin Arthur	Shuman		III	Capt. Edwin Arthur Shuman III	
+TD0353	hidden	first_name has 2+ words (middle name?)	Peter Somers	Boeckeler			Peter Somers Boeckeler	
+TD0355	hidden	first_name has 2+ words (middle name?)	Bess Irmgard	Bates			Bess Irmgard Bates	
+TD0357	hidden	first_name has 2+ words (middle name?)	Grace Ann	Bates			Grace Ann Bates	
+TD0358	hidden	first_name has 2+ words (middle name?)	Solomon William Leroy	Foster			Solomon William Leroy Foster	
+TD0359	hidden	first_name has 2+ words (middle name?)	Mkali Ronald Dean	Foster			Mkali Ronald Dean Foster	
+TD0360	hidden	first_name has 2+ words (middle name?)	Changa Howard John	Foster			Changa Howard John Foster	
+TD0361	hidden	first_name has 2+ words (middle name?)	Dakota Edmund	Burr			Dakota Edmund Burr	
+TD0362	hidden	first_name has 2+ words (middle name?)	Ason William Leroy	Foster			Ason William Leroy Foster	
+TD0364	hidden	first_name has 2+ words (middle name?)	Elise Pumpelly	Holt			Elise Pumpelly Holt Fallow	
+TD0365	hidden	first_name has 2+ words (middle name?)	Esther Elise	Metcalf			Esther Elise Metcalf Mauran	
+TD0366	hidden	first_name has 2+ words (middle name?)	Michael Pierce	Metcalf			Michael Pierce Metcalf	
+TD0367	hidden	first_name has 2+ words (middle name?)	Eliza Pumpelly	Mauran			Eliza Pumpelly Mauran Blackwell	
+TD0369	hidden	first_name has 2+ words (middle name?)	Marion Rollins	Mauran			Marion Rollins Mauran	
+TD0370	hidden	first_name has 2+ words (middle name?)	Cecily Lippitt	Mauran			Cecily Lippitt Mauran	
+TD0371	hidden	first_name has 2+ words (middle name?)	John Ormsbee Ames	Mauran			John Ormsbee Ames Mauran	
+TD0372	hidden	first_name has 2+ words (middle name?)	Georgina Stirling	Blackwell			Georgina Stirling Blackwell O’Sullivan	
+TD0373	hidden	first_name has 2+ words (middle name?)	Richard Raphael Holliday	Blackwell			Richard Raphael Holliday Blackwell	
+TD0374	hidden	first_name has 2+ words (middle name?)	Connie Eliza Hedderwick	O’Sullivan			Connie Eliza Hedderwick O’Sullivan	
+TD0375	hidden	first_name has 2+ words (middle name?)	Nancy Susan Blackwell	O’Sullivan			Nancy Susan Blackwell O’Sullivan	
+TD0376	hidden	first_name has 2+ words (middle name?)	Henry August Metcalf	Blackwell			Henry August Metcalf Blackwell	
+TD0378	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Elizabeth Rawson Talcott	
+TD0379	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Walter Rawson	
+TD0380	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Buell Grindall Rawson	
+TD0381	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Edward Rawson	
+TD0382	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Albert Rawson	
+TD0383	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Minnie Rawson	
+TD0384	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Harry Genung Rawson	
+TD0385	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Minnie Victoria Rawson Abel	
+TD0386	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Frank Durell Talcott	
+TD0387	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Hannah Talcott	
+TD0388	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Abigail Talcott Hamlin Starr	
+TD0389	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Elizabeth Talcott	
+TD0390	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Capt. William Talcott	
+TD0391	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Capt. Gad Talcott	
+TD0392	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Asa Talcott	
+TD0393	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Christopher Hamlin Starr	
+TD0394	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Timothy Starr	
+TD0395	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Abigail Taylor Starr Williard	
+TD0396	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Levi Starr	
+TD0397	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Adaline Starr Welton	
+TD0398	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Stephen Morehouse Starr	
+TD0399	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)				Jr.	Christopher Hamlin Starr Jr.	
+TD0400	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Edward Starr	
+TD0401	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Talcott Seymour Starr	
+TD0402	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Amanda Malvina Starr Howard	
+TD0403	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Almira Taylor Starr Gallup	
+TD0404	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Almira Starr	
+TD0405	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Augustus Starr	
+TD0406	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Norman M Starr	
+TD0407	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Martin Luther Starr	
+TD0408	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Sarah Elizabeth Starr	
+TD0409	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Levi Hartman Starr	
+TD0410	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mary Adaline Starr Osborn	
+TD0411	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Seymour Talcott Starr	
+TD0412	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Carrie Almira Starr Wood	
+TD0413	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Martha Eleanor Starr Meader	
+TD0414	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)				Jr.	John Bernard Williard Jr.	
+TD0415	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Hettie Jane Williard Cooper	
+TD0416	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					William Talcott	
+TD0417	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Charles A. Talcott	
+TD0418	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Fitz Edward Talcott	
+TD0419	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Rosella Inez Talcott	
+TD0420	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Ettie Lettie Talcott	
+TD0421	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Ida May Talcott	
+TD0422	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Henry Talcott	
+TD0423	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Ellen M. Talcott	
+TD0424	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Asa Bradford Talcott	
+TD0425	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Walter Melvin Talcott	
+TD0426	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Allen Manley Talcott	
+TD0427	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Joseph Earl Talcott	
+TD0428	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Genevieve A. Talcott Forbes	
+TD0429	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Walter Talcott Forbes	
+TD0430	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Roba Forbes Field	
+TD0431	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Field Bradford Forbes	
+TD0432	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					John Lawrence Forbes	
+TD0433	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Josephine Jessamine Forbes Burnap	
+TD0434	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Fred Arthur Talcott	
+TD0435	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Bernice E. Talcott Davis	
+TD0436	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Blanche Mildred Talcott Oelrich	
+TD0437	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Arthur Kemp Talcott	
+TD0438	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Alice Vivian Talcott Smith	
+TD0439	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mertie May Talcott Dexter	
+TD0440	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Bert Wallace Talcott	
+TD0461		slug has a collision counter	Elizabeth	Stout			Elizabeth Stout	elizabeth-stout-2
+U00044	hidden	last_name has 2+ words (middle+surname?) | qualifier/punctuation in first_name | qualifier/punctuation in last_name	[Unknown]	[Talcott 2nd wife]		II	[Unknown] [Talcott 2nd wife]	
+U00057	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Mary Thomas Talcott	
+U00058	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Rebecca Warren Talcott	
+U00059	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Abigail Stearns Talcott	
+U00060	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Hannah Reed Talcott	
+U00061	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Marinda Calista Genung Rawson	
+U00062	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Ellen White Rawson	
+U00063	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Elmira Ann Nye Talcott	
+U00064	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Leona Caroline Newcomb Talcott	
+U00065	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Amelia Harned Talcott	
+X00219		slug has a collision counter	Sarah		Cannon		Sarah Cannon	sarah-cannon-1780-2
+X00365		slug has a collision counter	Sidney		Humiston		Sidney Humiston	sidney-humiston-1786-2
+X00366		slug has a collision counter	Sherman	Woodward			Sherman Prindle Woodward	sherman-woodward-1807-2
+X00464		slug has a collision counter	Sarah		Beecher		Sarah Beecher	sarah-beecher-1794-2
+X01062		NO first_name (slug guessed from display_name)		Wolcott			Wolcott	wolcott
+X01112		NO first_name (slug guessed from display_name)		Morse			Mr. Morse	mr-morse
+X01122		NO first_name (slug guessed from display_name)		Pinkham			Pinkham	pinkham
+X01242		first_name has 2+ words (middle name?)	Hannah Maria	Munson	Van Nest		Hannah Maria Van Nest Munson	hannah-maria-van-nest-1813
+X01283		slug has a collision counter	Horace	Bebee			Horace Melville Bebee	horace-bebee-2
+X01354		NO first_name (slug guessed from display_name)		Bailey			Bailey	bailey
+X01372		NO first_name (slug guessed from display_name)		Treat			Treat	treat
+X01380		NO first_name (slug guessed from display_name)		Fuller			Fuller	fuller
+X01382		NO first_name (slug guessed from display_name)		Newton			Newton	newton
+X01383		NO first_name (slug guessed from display_name)		Weller			Weller	weller
+X01385		NO first_name (slug guessed from display_name)		Patterson			Patterson	patterson
+X01386		NO first_name (slug guessed from display_name)		Brewer			Brewer	brewer
+X01390		NO first_name (slug guessed from display_name)		Jennings			Jennings	jennings
+X01391		NO first_name (slug guessed from display_name)		Gillett			Gillett	gillett
+X01398		slug has a collision counter	Norman	Hart			Norman Hart	norman-hart-1794-2
+X01413		NO first_name (slug guessed from display_name)		Smith			Smith	smith
+X01415		NO first_name (slug guessed from display_name)		Church			Church	church
+X01430		NO first_name (slug guessed from display_name)		Nettleton			Nettleton	nettleton
+X01431		NO first_name (slug guessed from display_name)		Turner			Turner	turner
+X01435		NO first_name (slug guessed from display_name)		Bond			Bond	bond
+X01465		NO first_name (slug guessed from display_name)		Greene			Greene	greene
+X01475		NO first_name (slug guessed from display_name)		Clemons			Clemons	clemons
+X01476		NO first_name (slug guessed from display_name)		Barnard			Barnard	barnard
+X01489		first_name has 2+ words (middle name?)	R. Burton	Jones			R. Burton Jones	r-burton-jones
+X01514		NO first_name (slug guessed from display_name)		Freeman			Freeman	freeman
+X01515		NO first_name (slug guessed from display_name)		Wilson			Wilson	wilson
+X01516		NO first_name (slug guessed from display_name)		Crosier			Crosier	crosier
+X01520		NO first_name (slug guessed from display_name)		Manners			Manners	manners
+X01526		NO first_name (slug guessed from display_name)		Crocker			Crocker	crocker
+X01538		NO first_name (slug guessed from display_name)		Roberts			Roberts	roberts
+X01540		first_name is a TITLE	Mrs				Mrs	mrs
+X01541		NO first_name (slug guessed from display_name)		Clark			Clark	clark
+X01565		slug has a collision counter	Frances	Nov	22		Frances Aiken 22 Nov	frances-22
+X01572		slug has a collision counter	Viola	Dec	25		Viola Mae DePew 25 Dec	viola-25
+X01574		NO first_name (slug guessed from display_name)		Pratt			Pratt	pratt
+X01575		NO first_name (slug guessed from display_name)		Ball			Ball	ball
+X01595		slug has a collision counter	Charles	Foster			Charles Foster	charles-foster-2
+X01612		slug has a collision counter	William	Allee			William Allee	william-allee-2
+X01617		slug has a collision counter	Sarah		Lee		Sarah Lee	sarah-lee-2
+X01626		slug has a collision counter	Mary		Turner		Mary A. Turner Pierpont	mary-turner-1833-2
+X01667		first_name has 2+ words (middle name?)	Polly Ann	Watson	Watson		Polly Ann Watson Ingersoll	polly-ann-watson-1839
+X01720		slug has a collision counter	Elizabeth	Hart			Elizabeth Hart	elizabeth-hart-2
+X01768	hidden	qualifier/punctuation in first_name | qualifier/punctuation in last_name	(unknown	spouse)			(unknown spouse)	
+X01771	hidden	NO first_name (slug guessed from display_name)					Rev.	
+X01772	hidden	qualifier/punctuation in first_name | qualifier/punctuation in last_name	(unknown	spouse)			(unknown spouse)	
+X01781	hidden	qualifier/punctuation in last_name	Sarah	[unknown]			Sarah [unknown]	
+X01800	hidden	qualifier/punctuation in last_name	Jemima	[unknown]			Jemima [unknown]	
+X01810	hidden	qualifier/punctuation in last_name	Hudson	unknown]			Hudson unknown]	
+X01819	hidden	qualifier/punctuation in last_name	Balch	[unknown]			Balch [unknown]	
+X01912		slug has a collision counter	David	Perkins			David M. Perkins	david-perkins-2
+X01913		slug has a collision counter	William	Shewell			William Shewell	william-shewell-2
+X01969		first_name has 2+ words (middle name?)	Mary Ann	Smith	Smith		Mary Ann Steele Smith	mary-ann-smith-1784
+X01992		slug has a collision counter	Charles	Tillotson			Charles Tillotson	charles-tillotson-2
+X02429	hidden	NO first_name (slug guessed from display_name)		Hendry			Mr. Hendry	
+X02430	hidden	NO first_name (slug guessed from display_name)		Odell			Mr. Odell	
+X02431	hidden	NO first_name (slug guessed from display_name)		Belden			Mr. Belden	
+X02432	hidden	NO first_name (slug guessed from display_name)		Putnam			Mr. Putnam	
+X02433	hidden	NO first_name (slug guessed from display_name)		Eiholzer			Mr. Eiholzer	
+X02434	hidden	NO first_name (slug guessed from display_name)		Fisk			Mr. Fisk	
+X02435	hidden	NO first_name (slug guessed from display_name)		Larkin			Mr. Larkin	
+X02436	hidden	NO first_name (slug guessed from display_name)		Eisenhut			Mr. Eisenhut	
+X02439		NO first_name (slug guessed from display_name)		Hall			Mr. Hall	mr-hall
+X02485	hidden	first_name is a TITLE	Rev.	Huntington			Rev. Enoch S. Huntington	
+X02501	hidden	first_name is a TITLE	Rev.	Hollerith			Rev. Melissa Kaye Hollerith	
+X02516		NO first_name (slug guessed from display_name)		Carter			Carter	carter
+X02530		NO first_name (slug guessed from display_name)		Boehm			Mr. Boehm	mr-boehm
+X02542		NO first_name (slug guessed from display_name)		Hoppough			Hoppough	hoppough
+X02543		NO first_name (slug guessed from display_name)		Makely			Makely	makely
+X02546	hidden	first_name is a TITLE	Hon.	IA			Hon. Amary Kinney of Terre Haute IA	
+X02547	hidden	first_name is a TITLE	Rev.	Child			Rev. Rufus Child	
+X02548	hidden	first_name is a TITLE	Rev.	Craven			Rev. George Craven	
+X02550	hidden	NO first_name (slug guessed from display_name)		Pollard			Mr. Pollard	
+X02551	hidden	qualifier/punctuation in last_name	Sarah	Jalapeño)			Mrs. Sarah Bullard (NOT BUILT per Jalapeño)	
+X02574		slug has a collision counter	Mary	Norton			Mary Ann Mulliken Norton	mary-norton-2
+X02583		slug has a collision counter	Lucinda	Norton	Foster		Lucinda Foster Norton	lucinda-foster-2
+X02594		slug has a collision counter	James	Smith			James B. Smith	james-smith-2
+X02656		slug has a collision counter	Sarah	Stevens	Wheeler		Sarah Wheeler Stevens	sarah-wheeler-2
+X02709		slug has a collision counter	Joseph	Thomas			Joseph C. Thomas	joseph-thomas-1924-2
+X02727		NO first_name (slug guessed from display_name)		Parker			Mr. Parker	mr-parker
+X02890		slug has a collision counter	Peyton	Skipwith			Peyton Horatio Skipwith	peyton-skipwith-1805-2
+X03020		first_name has 2+ words (middle name?)	Mary Jane	Sargeant	Webb		Mary Jane Webb Sargeant	mary-jane-webb
+X03121	hidden	first_name has 2+ words (middle name?)	Stephen Olney	Metcalf			Stephen Olney Metcalf	
+X03122	hidden	first_name has 2+ words (middle name?)	Esther Henrietta	Pierce			Esther Pierce Metcalf	
+X03211		last_name has 2+ words (middle+surname?)	Levan	Melikov de Somhetie			Prince Levan Melikov de Somhetie	levan-melikov-de-somhetie-1893
+X03306	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Richard Shippey Hackley	
+X03307	hidden	NO first_name (slug guessed from display_name) | NO surname (slug guessed from display_name)					Harriet Randolph Hackley	
+X03504		first_name has 2+ words (middle name?)	Mary Jane	Edwards	McCutcheon		Mary Jane McCutcheon Guy Edwards	mary-jane-mccutcheon-1916
+X03849		slug has a collision counter	George	Newton			George G Newton	george-newton-1845-2
+X03930		slug has a collision counter	Ernest	Smith			Ernest L. Smith	ernest-smith-2
+X04071		slug has a collision counter	Mary	Olmsted	Perkins		Mary Cleveland Perkins Olmsted	mary-perkins-1830-2
+X3647		last_name has 2+ words (middle+surname?)	Anne	Murray Dike			Dr. Anne Murray Dike	anne-murray-dike-1878

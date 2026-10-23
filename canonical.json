@@ -2524306,6 +2524306,11 @@
      "end_year": null,
      "notes": null
     }
+   ],
+   "videos": [
+    {
+     "video_id": "VID152"
+    }
    ]
   },
   {
@@ -2566092,6 +2566097,16 @@
    "platform": "youtube",
    "person_ids": [
     "HD16986"
+   ]
+  },
+  {
+   "id": "VID152",
+   "title": "Exhibiting Artist",
+   "summary": "Exhibiting Artist",
+   "url": "https://www.youtube.com/watch?v=asAVE3Lx92c",
+   "platform": "youtube",
+   "person_ids": [
+    "T02323"
    ]
   }
  ],

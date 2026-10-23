@@ -1,0 +1,66 @@
+id	current	proposed	why	OK?
+I00125	Esther Unknown	Esther [Unknown]	bracket convention	
+X00459	Deborah Unknown	Deborah [Unknown]	bracket convention	
+X00191	Unknown Hewit	[Unknown] Hewit	bracket convention	
+HD1466	Unknown Pierpont	[Unknown] Pierpont	bracket convention	
+HD2584	Unknown Snell	[Unknown] Snell	bracket convention	
+HD2623	Unknown Edwards	[Unknown] Edwards	bracket convention	
+HD4729	Unknown Pixley	[Unknown] Pixley	bracket convention	
+HD4449	Unnamed Phelps daughter	[Daughter] Phelps	bracket convention	
+HD4476	Unnamed Phelps son	[Son] Phelps	bracket convention	
+HD4505	Unnamed Mead son	[Son] Mead	bracket convention	
+HD4757	Unnamed Infant Root	[Infant] Root	bracket convention	
+HD4758	Unnamed Infant Root	[Infant] Root	bracket convention (twin of HD4757?)	
+X00369	unknown unknown-wav	DELETE	empty orphan record: no relatives, dates or links	
+X01112	Mr. Morse	[Unknown] Morse	husband known by surname only	
+X01381	Mr. Harriot	[Unknown] Harriot	husband known by surname only	
+X02439	Mr. Hall	[Unknown] Hall	husband known by surname only	
+X02530	Mr. Boehm	[Unknown] Boehm	husband known by surname only	
+X02727	Mr. Parker	[Unknown] Parker	husband known by surname only	
+I00568	Mr. Brennan	[Unknown] Brennan	husband known by surname only	
+I01057	Mr. Jordan	[Unknown] Jordan	husband known by surname only	
+I05873	Mr. Perry	[Unknown] Perry	husband known by surname only	
+X01540	Mrs. Ingersoll	[Unknown] Ingersoll	wife known by surname only	
+I03297	Mrs. Gilpatric	[Unknown] Gilpatric	"you chose ""Mrs. Gilpatric for now"" in Aug; keep?"	
+I00667	Mrs. Florence Ellis	Florence Ellis	drop the Mrs.	
+X00209	Widow Abigail Mitchell	Abigail Brownson Mitchell Gilbert	maiden Brownson, widow of Mitchell, married Moses Gilbert (per her note)	
+X01432	Hooker's widow	[Unknown] Hooker Goodsell	1909 book: Willis Goodsell married a Mr. Hooker's widow	
+X02207	Stinson Stinson	[Unknown] Stinson	surname only, first name missing	
+X02219	Burnham Burnham	[Unknown] Burnham	surname only, first name missing	
+H00567a	Stephen Hurlburt Hart 2d	Stephen Hurlburt Hart	"""2d"" = No. 2; older Stephen died about age 1"	
+I02374	15th Earl of Winchelsea Christopher Guy Heneage Finch-Hatton	Christopher Finch-Hatton, 15th Earl of Winchilsea	title after name; spelling Winchilsea	
+HD7767	16th Earl of Winchelsea Christopher Denys Stormonte Finch-Hatton	Christopher Finch-Hatton, 16th Earl of Winchilsea	title after name; spelling Winchilsea	
+H03906	Aurora/Jane Aurora Ainsworth	Aurora Jane Ainsworth	"1909 book gives ""Aurora Jane"""	
+I00160	Hannah Stiles Stiles	Hannah Stiles	married a Stiles: write once	
+HD1439	Nancy Pierpont Pierpont	Nancy Pierpont	married a Pierpont: write once	
+I00600	Laura Tuttle Tuttle	Laura Tuttle	married a Tuttle: write once	
+I01502	Martha G. Morgan Morgan	Martha G. Morgan	write once	
+HD7478	Louisa May Cowles Cowles	Louisa May Cowles	write once	
+HD9488	Flora Newton Newton	Flora Newton	write once	
+HD4239	Hannah Ellis Ellis	Hannah Ellis	write once	
+HD7412	Laura Tallmadge Tallmadge	Laura Tallmadge	write once	
+HD1990	Sophia Dwight Dwight	Sophia Dwight	write once	
+HD6258	Sophia Rawson Rawson	Sophia Rawson	write once	
+HD0920	Adaline Fuller Fuller Reublin	Adaline Fuller Reublin	maiden name doubled	
+HD0922	Harriett Fuller Fuller Kyle	Harriett Fuller Kyle	maiden name doubled	
+HD1020	Eltruda Baker Baker Kline	Eltruda Baker Kline	maiden name doubled	
+HD1021	Catherine Elsie Kline Kline Goodwin	Catherine Elsie Kline Goodwin	maiden name doubled	
+HD1028	Etta Deborah Smith Smith Ryant	Etta Deborah Smith Ryant	maiden name doubled	
+HD1040	Mahitable Rudgers Rudgers Rude	Mahitable Rudgers Rude	maiden name doubled	
+HD1190	Juliette Morgan Boardman Boardman Powell	Juliette Morgan Boardman Powell	maiden name doubled	
+HD1205	Margery Pierpont Pierpont Brown	Margery Pierpont Brown	maiden name doubled	
+HD1475	Ellen Adelia Pierpont Pierpont Chatfield	Ellen Adelia Pierpont Chatfield	maiden name doubled	
+HD1478	Evelyn Pierpont Pierpont Nolan	Evelyn Pierpont Nolan	maiden name doubled	
+I00501	Paulina Monroe Monroe Root	Paulina Monroe Root	maiden name doubled	
+HD1923	[unnamed] Burr	[Unnamed] Burr	capitalize placeholder	
+I00817	[unknown] McRoberts	[Unknown] McRoberts	capitalize placeholder	
+I00836	[unknown] Bradshaw	[Unknown] Bradshaw	capitalize placeholder	
+I00837	[unknown] VanVranken	[Unknown] VanVranken	capitalize placeholder	
+HD4583	[unnamed son] Phelps	[Son] Phelps	match convention	
+HD5428	1LT Robert Edmondson Jones	1st Lt. Robert Edmondson Jones	"optional: match the tree's ""1st Lt."" style"	
+HD6164	1Lt. Sidney Frederick Tyler Brock	1st Lt. Sidney Frederick Tyler Brock	optional	
+HD7731	2Lt Edward Claypool Gwynne	2nd Lt. Edward Claypool Gwynne	optional	
+HD8513	2Lt. William Woolsey Johnson	2nd Lt. William Woolsey Johnson	optional	
+HD12282	1Lt. John R. Pearson	1st Lt. John R. Pearson	optional	
+I02389	1LT Charles Simonton McCain Jr	1st Lt. Charles Simonton McCain Jr.	optional	
+HD3253	Lyman Domning Howard, CFP®	Lyman Domning Howard	optional: drop the credential mark	

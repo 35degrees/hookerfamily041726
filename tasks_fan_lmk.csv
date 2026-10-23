@@ -1,0 +1,4 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD3351,field_set,bio.chip_first_name=Fan,OK set bio.chip_first_name = 'Fan',/person/faneuil-adams-jr-1923,,
+HD3351,field_set,bio.display_name=Faneuil Adams Jr.,OK set bio.display_name = 'Faneuil Adams Jr.',/person/faneuil-adams-jr-1923,,
+HD8547,landmark,"name=""Winthrop Hotel"" type=hotel city=""Tacoma"" state=""Washington"" country=""United States"" url=https://www.historylink.org/File/11176 photo_url=https://res.cloudinary.com/dc5clrqtw/image/upload/v1792681659/WinthropHotel_Tacoma_1925_ms7xhu.jpg",OK landmark created LM555 'Winthrop Hotel' (+url/photo); backlink wired (bidirectional),/person/theodore-winthrop-1828,,
