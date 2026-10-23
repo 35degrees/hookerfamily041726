@@ -2521068,7 +2521068,20 @@
      "date_year": 1955
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "law",
+     "header": "A corporate lawyer on the CLF board",
+     "body": "David practised as a corporate lawyer, spent his free time on New England's waters, and for many years sat on the board of the Conservation Law Foundation. His son Bill and daughter Nancy both took up the foundation's work."
+    },
+    {
+     "number": 2,
+     "category": "family",
+     "header": "His father taught law at Harvard",
+     "body": "David's father, David Farquhar Cavers, was Harvard Law School's first associate dean and its Fessenden Professor of Law, a leading scholar of the conflict of laws, and at Duke had founded the journal Law and Contemporary Problems."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
