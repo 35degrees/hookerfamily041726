@@ -2517501,7 +2517501,13 @@
    },
    "gender": "female",
    "birth": {},
-   "death": {},
+   "death": {
+    "year": 2023,
+    "month": 7,
+    "date_precision": "month_year",
+    "country": "United States",
+    "cause": "cancer"
+   },
    "parents": {
     "father_id": "I06083",
     "mother_id": "HD16948"
@@ -2517510,7 +2517516,14 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06086",
-     "children_ids": []
+     "children_ids": [
+      "HD16962",
+      "HD16963",
+      "HD16964"
+     ],
+     "date_year": 1982,
+     "end_type": "death",
+     "end_year": 2023
     }
    ],
    "narrative_blocks": [],
@@ -2517537,17 +2517550,37 @@
     "married_names": [],
     "first_name": "Tom",
     "last_name": "Eckels",
-    "display_name": "Tom Eckels"
+    "display_name": "Tom Eckels",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792768664/eyJoIjoxMDgsInciOjMwMCwidXJsIjoiaHR0cHM6XC9cL2FkYXMtb3JlZ29uLWNhcy1vYml0cy5zMy5hbWF6b25hd3MuY29tXC9waG90b3NcL2NyZWF0ZV9zdG9yeVwvNjY0M2QzZTIxZGZiZFwvYWM2NjU3NDFjOWI4MTg5YmRkNDE4YTg3NmE1Ni5qcGciLCJkIjo3MiwibSI6IldFQlAifQ_f2cfpb.webp"
    },
    "gender": "male",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1950,
+    "date_precision": "year_only",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2024,
+    "month": 3,
+    "day": 27,
+    "date_precision": "exact",
+    "city": "Seattle",
+    "state": "Washington",
+    "country": "United States"
+   },
    "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
      "spouse_id": "HD16953",
-     "children_ids": []
+     "children_ids": [
+      "HD16962",
+      "HD16963",
+      "HD16964"
+     ],
+     "date_year": 1982
     }
    ],
    "narrative_blocks": [],
@@ -2517565,7 +2517598,27 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "education": [
+    {
+     "school_name": "Dartmouth College"
+    },
+    {
+     "school_name": "University of Chicago",
+     "notes": "Theology, doctorate left unfinished"
+    }
+   ],
+   "career": [
+    {
+     "role": "Transmitter engineer",
+     "organization": "KRAB radio, Seattle",
+     "start_year": 1976
+    },
+    {
+     "role": "Radio engineer",
+     "organization": "Hatfield and Dawson"
+    }
+   ]
   },
   {
    "id": "HD16949",
@@ -2518280,6 +2518333,108 @@
     "is_talcott_descendant": false,
     "is_easter_egg": false,
     "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16962",
+   "bio": {
+    "display_name": "Julia Eckels",
+    "first_name": "Julia",
+    "last_name": "Eckels",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06086",
+    "mother_id": "HD16953"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16963",
+   "bio": {
+    "display_name": "Lydia Eckels",
+    "first_name": "Lydia",
+    "last_name": "Eckels",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06086",
+    "mother_id": "HD16953"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16964",
+   "bio": {
+    "display_name": "Andrew Eckels",
+    "first_name": "Andrew",
+    "last_name": "Eckels",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06086",
+    "mother_id": "HD16953"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
    },
    "notable": {
     "is_notable": false
