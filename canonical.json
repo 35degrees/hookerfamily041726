@@ -139058,8 +139058,9 @@
     "first_name": "Alphonso",
     "last_name": "Taft",
     "married_names": [],
-    "photo_url": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Alphonso_Taft_-_cropped_and_retouched.jpg",
-    "bio_blurb": "Grant's Attorney General; co-founded Skull and Bones"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792727656/Alphonso_Taft_-_cropped_and_retouched_cfs4yo.jpg",
+    "bio_blurb": "Grant's Attorney General; co-founded Skull and Bones",
+    "photo_notes": "Previous photo (Wikimedia, replaced 22 Oct 2026): https://upload.wikimedia.org/wikipedia/commons/b/b9/Alphonso_Taft_-_cropped_and_retouched.jpg"
    },
    "residence": {},
    "baptism": {},
@@ -711586,7 +711587,9 @@
     "married_names": [
      "Smith"
     ],
-    "bio_blurb": null
+    "bio_blurb": null,
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792727439/Screenshot_2026-10-22_at_8-resized_kno266.png",
+    "photo_position": "center top"
    },
    "birth": {
     "year": 1912,
@@ -711660,9 +711663,25 @@
     "is_notable": false,
     "notable_category": []
    },
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "marriage",
+     "header": "Married at home on East Seventieth Street",
+     "body": "Marian married Robert McNeal Smith of Harrisburg in April 1944 in her parents' house on East Seventieth Street, with her sister Helen as matron of honor. The Rev. George Buttrick of Madison Avenue Presbyterian married them."
+    }
+   ],
    "cross_connections": [],
-   "education": [],
+   "education": [
+    {
+     "institution_id": "INST082",
+     "school_name": "Ethel Walker School"
+    },
+    {
+     "institution_id": "INST211",
+     "school_name": "Bryn Mawr College"
+    }
+   ],
    "career": [],
    "military_service": [],
    "institutions": [],
@@ -712057,7 +712076,8 @@
     "last_name": "Austen",
     "married_names": [],
     "suffix": "Jr.",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1785123176/daust_xjf0na.png"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1785123176/daust_xjf0na.png",
+    "bio_blurb": "Electrical engineer and pianist"
    },
    "birth": {
     "year": 1939,
@@ -712111,21 +712131,21 @@
    "narrative_blocks": [
     {
      "number": 1,
-     "category": "career",
-     "header": "Game warden in Alaska, watching for poachers",
-     "body": "After Stanford, David went north and worked in Alaska as a game warden, watching out for poachers."
+     "category": "science",
+     "header": "An electrical engineer from Stanford",
+     "body": "After Phillips Exeter, David followed his family to California and took his degree in electrical engineering at Stanford. He was one of the very early adopters of the personal computer."
     },
     {
      "number": 2,
-     "category": "character",
-     "header": "He flew his own plane to South America",
-     "body": "Back in California, David bought a small airplane and flew it north to Alaska again, then all the way down to South America."
+     "category": "career",
+     "header": "Game warden in Alaska, watching for poachers",
+     "body": "David went to Alaska as a game warden, on the watch for poachers. Back in California he bought a small airplane, and flew it north to Alaska again and then all the way down to South America."
     },
     {
      "number": 3,
-     "category": "science",
-     "header": "The personal computer, then the piano",
-     "body": "David took his Stanford degree in electrical engineering and was one of the very early adopters of the personal computer. Settled again in Palo Alto, he took up the piano, and has brought the two passions together ever since."
+     "category": "arts",
+     "header": "The piano in Palo Alto",
+     "body": "When David settled back in Palo Alto he took up the piano, and he has since brought it together with his first passion, the computer."
     }
    ],
    "cross_connections": [],
@@ -1555080,7 +1555100,15 @@
     "primary_url_label": null,
     "notable_url": null
    },
-   "education": [],
+   "education": [
+    {
+     "school_name": "The Hill School"
+    },
+    {
+     "institution_id": "INST022",
+     "school_name": "Yale College"
+    }
+   ],
    "career": [],
    "military_service": [],
    "institutions": [],
