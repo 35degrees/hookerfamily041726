@@ -984459,6 +984459,12 @@
      "type": "connection",
      "link_text": "Constance Semerad",
      "display_label": "helped found a New York school built for dyslexic children"
+    },
+    {
+     "related_id": "HD5626",
+     "type": "connection",
+     "link_text": "James Hooker",
+     "display_label": "put Arizona prison inmates to work selling software for Cisco and SAP"
     }
    ],
    "narrative_blocks": [
@@ -1172306,7 +1172312,14 @@
    "research_tags": [
     "living_or_recent"
    ],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD4695",
+     "type": "connection",
+     "link_text": "Watts Humphrey",
+     "display_label": "brought in IBM's first software license, and made software a product"
+    }
+   ],
    "narrative_blocks": [
     {
      "number": 1,

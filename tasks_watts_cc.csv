@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD4695,cc,"related=HD5626 link=""James Hooker"" label=""put Arizona prison inmates to work selling software for Cisco and SAP""",OK cc->HD5626 added; FLAG needs reciprocal cc row on HD5626,/person/watts-humphrey-1927,,
+HD5626,cc,"related=HD4695 link=""Watts Humphrey"" label=""brought in IBM's first software license, and made software a product""",OK cc->HD4695 added (reciprocal present),/person/james-hooker-1949,,
