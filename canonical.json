@@ -2524238,7 +2524238,20 @@
      "location_country": "United States"
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "arts",
+     "header": "From Cranbrook to the printmaking press",
+     "body": "Julia went from Milton Academy to Williams College, class of 1980, and took a Master of Fine Arts at the Cranbrook Academy of Art. She paints and makes prints, and in 2026 showed in Making An Impression at the Rocky Neck Art Colony."
+    },
+    {
+     "number": 2,
+     "category": "arts",
+     "header": "A LEED Silver house in Newton",
+     "body": "In 2009 the house Julia and her husband James built in Newton Centre earned a LEED Silver certificate, the second custom home in Newton to win one. Julia designed the railing for its loft bedroom."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2524323,7 +2524336,20 @@
      "location_country": "United States"
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "science",
+     "header": "Four hundred papers on diabetes",
+     "body": "James has spent more than twenty years on the causes and prevention of type 2 diabetes and heart disease, and has written more than four hundred papers. In 2009 the American Diabetes Association gave him its Kelly West Award."
+    },
+    {
+     "number": 2,
+     "category": "career",
+     "header": "A Mass General internist for thirty years",
+     "body": "Alongside the research James has practiced primary care internal medicine at Massachusetts General Hospital for more than thirty years, and has mentored some fifty young clinical investigators."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
