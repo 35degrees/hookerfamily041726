@@ -1239355,6 +1239355,12 @@
      "header": "His daughter befriended and edited Emily Dickinson",
      "body": "Loomis's daughter Mabel became Emily Dickinson's first editor, and his granddaughter Millicent completed the work decades later. The family papers, gathered by Millicent, now anchor the Dickinson archives at Yale and Amherst.",
      "number": 2
+    },
+    {
+     "number": 3,
+     "category": "literature",
+     "header": "Four lines from a poet he never met",
+     "body": "In November 1884 Emily Dickinson sent Eben and Mary four lines in pencil, though she never met either of them: “Parting with Thee reluctantly, / That we have never met, / A Heart sometimes a Foreigner, / Remembers it forgot.”"
     }
    ],
    "sources": [],
@@ -1239392,7 +1239398,7 @@
     "display_name": "Eben Jenks Loomis",
     "gender": "male",
     "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1780863483/127611345_1680f21b-d2fe-4da6-8ae8-7d73cd405334_fkyajv.jpg",
-    "bio_blurb": "Astronomer and poet; Mabel Loomis Todd's father",
+    "bio_blurb": "Nautical Almanac astronomer and poet",
     "middle_name": "Jenks"
    },
    "military_service": [],
@@ -1239476,7 +1239482,20 @@
     }
    ],
    "tags": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "literature",
+     "header": "A pencilled note from Emily Dickinson",
+     "body": "Under the four lines she sent Mary and Eben in November 1884, Emily Dickinson added that in all the circumference of Expression, Adam and Eve’s “I was afraid and hid Myself” was never surpassed. She never met them."
+    },
+    {
+     "number": 2,
+     "category": "marriage",
+     "header": "Married at Cambridge in July 1853",
+     "body": "Mary Alden Wilder of Cambridge married Eben Loomis there on 13 July 1853, the year he finished at Harvard’s Lawrence Scientific School. Their daughter Mabel was born at Cambridge in November 1856."
+    }
+   ],
    "sources": [],
    "institutions": [],
    "landmarks": [],
