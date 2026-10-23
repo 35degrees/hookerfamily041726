@@ -2520977,7 +2520977,26 @@
      ]
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "arts",
+     "header": "He helped start the Chicago Jazz Festival",
+     "body": "In 1979 Charlie helped found the Chicago Jazz Festival and raised its first money from the City Arts Program and the musicians' union. He was president of the Jazz Institute of Chicago from 1980 to 1982 and from 1999 until he died."
+    },
+    {
+     "number": 2,
+     "category": "arts",
+     "header": "Banker by day, drummer at the Plugged Nickel",
+     "body": "Charlie studied jazz drums with Joe Porcaro while at Trinity College in Hartford, then went into banking at Chicago's National Boulevard Bank. At night he played the London House, Basin Street, the Plugged Nickel and the Hideaway."
+    },
+    {
+     "number": 3,
+     "category": "legacy",
+     "header": "His papers are at the University of Chicago",
+     "body": "Six boxes of his papers on Chicago jazz and the Jazz Institute are in the University of Chicago Library's special collections. In retirement he led a band of his own, the Weeks Hornblowers."
+    }
+   ],
    "tags": [],
    "cross_connections": [
     {
