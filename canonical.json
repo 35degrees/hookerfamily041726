@@ -139400,6 +139400,12 @@
      "display_label": ", his granddaughter, became a development economist",
      "link_text": "Cynthia Taft Morris",
      "lineal_gap": 2
+    },
+    {
+     "related_id": "X00721",
+     "type": "connection",
+     "link_text": "Nicholas Murray Butler",
+     "display_label": "replaced the dead James Sherman as his running mate in 1912"
     }
    ],
    "burial": {
@@ -276573,6 +276579,12 @@
      "type": "connection",
      "link_text": "Endicott Peabody",
      "display_label": "rebuked him over the 1895 gold crisis while he sat on Groton's board"
+    },
+    {
+     "related_id": "X03824",
+     "type": "connection",
+     "link_text": "Alexander Hamilton",
+     "display_label": ", whose great-grandson married his daughter, set up the national bank"
     }
    ],
    "bio": {
@@ -414302,6 +414314,24 @@
      "type": "connection",
      "link_text": "Willystine Goodsell",
      "display_label": "taught at Teachers College, which he founded, for thirty-one years"
+    },
+    {
+     "related_id": "HD0338",
+     "type": "connection",
+     "link_text": "William Howard Taft",
+     "display_label": "headed the 1912 Republican ticket he joined as running mate"
+    },
+    {
+     "related_id": "X04005",
+     "type": "connection",
+     "link_text": "John Watson Foster",
+     "display_label": "helped found the Carnegie Endowment that he ran from 1925 to 1945"
+    },
+    {
+     "related_id": "X03824",
+     "type": "connection",
+     "link_text": "Alexander Hamilton",
+     "display_label": "gave his name to Hamilton Hall, across the quad from his library"
     }
    ],
    "bio": {
@@ -414354,6 +414384,24 @@
      "header": "Theodore Roosevelt called him Nicholas Miraculous",
      "body": "A lifelong Republican insider and a friend of Theodore Roosevelt, Butler earned the nickname for his prodigious energy and his connections. In 1912 he took the electoral votes meant for Vice President James Sherman, dead days before.",
      "number": 3
+    },
+    {
+     "number": 4,
+     "category": "literature",
+     "header": "He kept Hemingway from the 1941 Pulitzer",
+     "body": "In 1941 the fiction jury chose For Whom the Bell Tolls and the Pulitzer board agreed. Butler, its chairman by office, thought the novel offensive and talked the board out of it, so no fiction prize was given that year."
+    },
+    {
+     "number": 5,
+     "category": "education",
+     "header": "He chose the names carved on his library",
+     "body": "Butler picked the names carved along the porticos of South Hall, Columbia's new library of 1934, and the quotations for its main rooms. In 1946, the year after he retired, it was renamed Butler Library."
+    },
+    {
+     "number": 6,
+     "category": "character",
+     "header": "An ex-student hid an insult in an ode",
+     "body": "In 1939 Rolfe Humphries, once Butler's student, published a Draft Ode for a Phi Beta Kappa Occasion in Poetry. Read down, the first letters of its lines spelled Nicholas Murray Butler is a horses ass, and the editors apologized."
     }
    ],
    "burial": {
@@ -676505,7 +676553,7 @@
      "number": 1,
      "category": "career",
      "header": "Navy, bonds, then portfolio management",
-     "body": "Lyman worked in institutional bond sales at Sutro, RBC Dain Rauscher and Wedbush Securities, where he was a vice president, before joining Ashfield Capital Partners in San Francisco as a portfolio manager in 2014."
+     "body": "Lyman served as a lieutenant in the U.S. Navy from 1992, then sold institutional bonds at Sutro, RBC Dain Rauscher and Wedbush Securities, where he was a vice president. In 2014 he joined Ashfield Capital Partners as a portfolio manager."
     }
    ],
    "cross_connections": [
@@ -676552,6 +676600,15 @@
      "organization": "RBC Dain Rauscher",
      "start_year": 2002,
      "end_year": 2006
+    },
+    {
+     "role": "Lieutenant",
+     "organization": "U.S. Navy",
+     "start_year": "1992"
+    },
+    {
+     "role": "Partner and Wealth Advisor",
+     "organization": "Cerity Partners, San Francisco"
     }
    ]
   },
@@ -1599854,6 +1599911,18 @@
      "related_id": "X02895",
      "link_text": "Baron Jan Cornelis Van den Heuvel",
      "display_label": "was the bride’s father when John Church married in 1814"
+    },
+    {
+     "related_id": "X00721",
+     "type": "connection",
+     "link_text": "Nicholas Murray Butler",
+     "display_label": "is the Butler of Butler Library, across the quad from Hamilton Hall"
+    },
+    {
+     "related_id": "HD1170",
+     "type": "connection",
+     "link_text": "J. P. Morgan",
+     "display_label": ", whose daughter married his great-grandson, built the Morgan Library"
     }
    ],
    "institutions": [],
@@ -1842910,6 +1842979,12 @@
      "type": "connection",
      "link_text": "Isaac Elston",
      "display_label": "was an 11th Indiana major in 1861, then Lew Wallace's chief of staff"
+    },
+    {
+     "related_id": "X00721",
+     "type": "connection",
+     "link_text": "Nicholas Murray Butler",
+     "display_label": "presided over the Carnegie Endowment he helped found, 1925 to 1945"
     }
    ],
    "burial": {
