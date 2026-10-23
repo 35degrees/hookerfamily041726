@@ -362709,6 +362709,12 @@
      "link_text": "Peter James Goldmark",
      "display_label": "managed Washington's public forests as commissioner of public lands",
      "notes": null
+    },
+    {
+     "related_id": "I06086",
+     "type": "connection",
+     "link_text": "Tom Eckels",
+     "display_label": "drove as close as he could get to Mount St. Helens as it erupted"
     }
    ],
    "bio": {
@@ -1783549,7 +1783555,8 @@
     "last_name": "Langdon",
     "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792767614/thumbMobile-561_eemczc.jpg",
     "photo_position": "center top",
-    "photo_notes": "Previous photo (replaced 23 Oct 2026): https://res.cloudinary.com/dc5clrqtw/image/upload/v1786839412/131258814_0975e788-b28b-4b49-81ab-2e6c915e6b72_fu7xov.jpg"
+    "photo_notes": "Previous photo (replaced 23 Oct 2026): https://res.cloudinary.com/dc5clrqtw/image/upload/v1786839412/131258814_0975e788-b28b-4b49-81ab-2e6c915e6b72_fu7xov.jpg",
+    "bio_blurb": "Hartford dry-goods merchant"
    },
    "military_service": [],
    "education": [],
@@ -2501336,6 +2501343,12 @@
      "type": "connection",
      "link_text": "Harry Payne Whitney",
      "display_label": ", his son-in-law's father, raced cars from a stripped-down hearse"
+    },
+    {
+     "related_id": "HD16948",
+     "type": "connection",
+     "link_text": "Peg Knowles",
+     "display_label": "kept a house at Edgartown from 1963, and sailed there too"
     }
    ],
    "classification": {
@@ -2516974,7 +2516987,8 @@
     "first_name": "John",
     "middle_name": "Luther",
     "last_name": "Rankin",
-    "display_name": "John Luther Rankin"
+    "display_name": "John Luther Rankin",
+    "bio_blurb": "South Orange attorney"
    },
    "gender": "male",
    "birth": {
@@ -2517104,7 +2517118,8 @@
     "display_name": "Frances Jones Rankin",
     "first_name": "Frances",
     "maiden_name": "Jones",
-    "last_name": "Rankin"
+    "last_name": "Rankin",
+    "bio_blurb": "Essex Garden Club president"
    },
    "gender": "female",
    "birth": {
@@ -2517242,7 +2517257,8 @@
     "middle_name": "Ogden",
     "maiden_name": "Rankin",
     "last_name": "Knowles",
-    "chip_first_name": "Peg"
+    "chip_first_name": "Peg",
+    "bio_blurb": "Mountaineer, Red Cross social worker and watercolorist"
    },
    "gender": "female",
    "birth": {
@@ -2517335,6 +2517351,12 @@
      "type": "connection",
      "link_text": "Mary Frances Bridewell",
      "display_label": "worked for the Red Cross on Guadalcanal, Guam and Okinawa"
+    },
+    {
+     "related_id": "X04348",
+     "type": "connection",
+     "link_text": "Walter Cronkite",
+     "display_label": "sailed out of Edgartown every summer from 1974"
     }
    ],
    "classification": {
@@ -2517382,7 +2517404,8 @@
     "first_name": "George",
     "middle_name": "Milton",
     "last_name": "Knowles",
-    "title": "Dr."
+    "title": "Dr.",
+    "bio_blurb": "Hackensack Hospital physician"
    },
    "gender": "male",
    "birth": {
@@ -2517526,7 +2517549,14 @@
      "end_year": 2023
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "character",
+     "header": "Downhill skiing at forty-five",
+     "body": "Alison met Tom Eckels at a Quaker Friends meeting and married him in 1982. At forty-five, at his urging, she took up downhill skiing, and the two of them volunteered for their children's middle-school ski program."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2517551,7 +2517581,8 @@
     "first_name": "Tom",
     "last_name": "Eckels",
     "display_name": "Tom Eckels",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792768664/eyJoIjoxMDgsInciOjMwMCwidXJsIjoiaHR0cHM6XC9cL2FkYXMtb3JlZ29uLWNhcy1vYml0cy5zMy5hbWF6b25hd3MuY29tXC9waG90b3NcL2NyZWF0ZV9zdG9yeVwvNjY0M2QzZTIxZGZiZFwvYWM2NjU3NDFjOWI4MTg5YmRkNDE4YTg3NmE1Ni5qcGciLCJkIjo3MiwibSI6IldFQlAifQ_f2cfpb.webp"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792768664/eyJoIjoxMDgsInciOjMwMCwidXJsIjoiaHR0cHM6XC9cL2FkYXMtb3JlZ29uLWNhcy1vYml0cy5zMy5hbWF6b25hd3MuY29tXC9waG90b3NcL2NyZWF0ZV9zdG9yeVwvNjY0M2QzZTIxZGZiZFwvYWM2NjU3NDFjOWI4MTg5YmRkNDE4YTg3NmE1Ni5qcGciLCJkIjo3MiwibSI6IldFQlAifQ_f2cfpb.webp",
+    "bio_blurb": "Seattle radio engineer"
    },
    "gender": "male",
    "birth": {
@@ -2517583,9 +2517614,29 @@
      "date_year": 1982
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "Keeping KRAB's transmitter on the air",
+     "body": "Tom left a theology doctorate at Chicago unfinished, moved to Seattle in 1976 and kept the transmitter running at KRAB radio. He spent the rest of his career with Hatfield and Dawson, designing radio systems for public projects."
+    },
+    {
+     "number": 2,
+     "category": "character",
+     "header": "Driving toward St. Helens as it erupted",
+     "body": "With the geology students he shared a Seattle house with, Tom hopped freight trains to backpack in Glacier, spent two summers at Copper Lake below Vesper Peak, and drove as close as they could get to Mount St. Helens as it erupted."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "X00597",
+     "type": "connection",
+     "link_text": "George Weyerhaeuser",
+     "display_label": "lost 68,000 acres of timber to the 1980 St. Helens eruption"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
@@ -2517767,7 +2517818,8 @@
     "middle_name": "Nelson",
     "last_name": "Byrne",
     "suffix": "Sr.",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792768032/0011264642-01-1_20190427.jpgx_cntahx.jpg"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792768032/0011264642-01-1_20190427.jpgx_cntahx.jpg",
+    "bio_blurb": "Skunk Works aerodynamic engineer"
    },
    "gender": "male",
    "birth": {
