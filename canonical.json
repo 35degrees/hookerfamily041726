@@ -1298342,6 +1298342,12 @@
      "type": "connection",
      "link_text": "Brig. Gen. Henry Dwight Terry",
      "display_label": "had the Fifth Michigan at Williamsburg and Seven Pines, same corps"
+    },
+    {
+     "related_id": "I06094",
+     "type": "connection",
+     "link_text": "Dr. John Younglove",
+     "display_label": "served in Sickles's 71st New York, then as an army surgeon"
     }
    ],
    "gender": "male",
@@ -1783812,7 +1783818,26 @@
     }
    ],
    "tags": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "business",
+     "header": "Fifty-one years in dry goods",
+     "body": "Charles went into dry goods at Hartford at twenty-three, joined a Boston commission house in 1851, and in 1855 founded the importing firm of Langdon Brothers in New York with his brother Reuben. He retired in 1893, fifty-one years on."
+    },
+    {
+     "number": 2,
+     "category": "business",
+     "header": "Thomson, Langdon & Company, 1858 to 1893",
+     "body": "In 1858 Charles joined W. S. Thomson's New York house, which became Thomson, Langdon & Company. The two stayed close friends through twenty years as partners; in 1879 Charles bought Thomson out, and kept the firm's name."
+    },
+    {
+     "number": 3,
+     "category": "military",
+     "header": "Second lieutenant of the Foot Guard, 1845",
+     "body": "Charles was elected second lieutenant of the First Company, Governor's Foot Guard of Hartford, on 2 October 1845, and Governor Isaac Toucey signed his commission the next June. That December he married Augusta Ives of Hamden."
+    }
+   ],
    "sources": [],
    "institutions": [],
    "landmarks": [],
@@ -2519294,9 +2519319,35 @@
      "date_day": 21
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "military",
+     "header": "Clara Barton's friend at Sandy Hook",
+     "body": "Near the end of the war John was made a surgeon in the regular army, and at the hospital at Sandy Hook he became a close friend of Clara Barton. Governor Reuben Fenton of New York made him a brevet major."
+    },
+    {
+     "number": 2,
+     "category": "military",
+     "header": "Medical student, then Sickles's 71st New York",
+     "body": "John was studying medicine at Washington Medical College and the St. Louis Homeopathic College when the war began. He enlisted in the 1st New York Mounted Rifles and was moved to the 71st New York Volunteers under Gen. Daniel Sickles."
+    },
+    {
+     "number": 3,
+     "category": "career",
+     "header": "Doctor in Elizabeth from 1867",
+     "body": "John settled at Elizabeth, New Jersey, in 1867 and practised medicine there for many years. He married Gertrude Langdon there in September 1870, and died at Elizabeth in January 1929, at ninety-two."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "X03325",
+     "type": "connection",
+     "link_text": "Capt. Alexander Moore",
+     "display_label": "was on Daniel Sickles's staff at Gettysburg"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
