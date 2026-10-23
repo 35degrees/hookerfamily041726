@@ -1,0 +1,4 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+I06105,field_set,cross_connections[0].link_text=Dave Robertson,OK set cross_connections[0].link_text = 'Dave Robertson',/person/dale-dougherty-1956,,
+I06105,cc,"related=HD6112 link=""John Palfrey"" label=""wrote Born Digital in 2008, on the first generation to grow up online""",OK cc->HD6112 added; FLAG needs reciprocal cc row on HD6112,/person/dale-dougherty-1956,,
+HD6112,cc,"related=I06105 link=""Dale Dougherty"" label=""founded Make: magazine and wrote Free to Make, on the maker movement""",OK cc->I06105 added (reciprocal present),/person/john-palfrey-iv-1972,,

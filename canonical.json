@@ -1260004,6 +1260004,12 @@
      "type": "connection",
      "link_text": "John Ripley Adams",
      "display_label": "taught at Phillips Academy in 1822, while his father was its principal"
+    },
+    {
+     "related_id": "I06105",
+     "type": "connection",
+     "link_text": "Dale Dougherty",
+     "display_label": "founded Make: magazine and wrote Free to Make, on the maker movement"
     }
    ],
    "quotes": [],
@@ -2521400,7 +2521406,7 @@
     {
      "related_id": "HD15491",
      "type": "connection",
-     "link_text": "David C. Robertson",
+     "link_text": "Dave Robertson",
      "display_label": "wrote Brick by Brick, the story of LEGO's turnaround, in 2013"
     },
     {
@@ -2521408,6 +2521414,12 @@
      "type": "connection",
      "link_text": "Ted Hardie",
      "display_label": "patented routing between IPv4 and IPv6 at Google"
+    },
+    {
+     "related_id": "HD6112",
+     "type": "connection",
+     "link_text": "John Palfrey",
+     "display_label": "wrote Born Digital in 2008, on the first generation to grow up online"
     }
    ],
    "classification": {
