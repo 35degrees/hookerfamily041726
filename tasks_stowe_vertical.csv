@@ -1,0 +1,7 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+X03815,field_set,cross_connections[0].link_text=Calvin Stowe,OK set cross_connections[0].link_text = 'Calvin Stowe',/person/robinson-stowe-1918,,
+X03815,field_set,"cross_connections[0].display_label=, his great-grandfather, married Harriet Beecher Stowe in 1836","OK set cross_connections[0].display_label = ', his great-grandfather, married Harriet Beecher Stowe in 1836'",/person/robinson-stowe-1918,,
+X03815,field_set,cross_connections[0].lineal_gap=-3,OK set cross_connections[0].lineal_gap = -3,/person/robinson-stowe-1918,,
+X03488,field_set,"cross_connections[1].display_label=was his great-grandson, through Charles Edward and Lyman Beecher Stowe","OK set cross_connections[1].display_label = 'was his great-grandson, through Charles Edward and Lyman Beecher Stowe'",/person/calvin-stowe-1802,,
+X03488,field_set,cross_connections[1].lineal_gap=3,OK set cross_connections[1].lineal_gap = 3,/person/calvin-stowe-1802,,
+X03815,nb_replace,"old=""The line back to Uncle Tom's Cabin"" header=""The line back to Uncle Tom's Cabin"" body=""His father Lyman Beecher Stowe was an author and lecturer, and his grandfather was Charles Edward Stowe, Harriet Beecher Stowe's son. That made Harriet and Calvin Stowe his great-grandparents. His mother Hilda was a daughter of Charles Robinson Smith, a founder of Allied Chemical."" category=family",OK nb_replace: 'The line back to Uncle Tom's Cabin' -> 'The line back to Uncle Tom's Cabin' placed verbatim in place,/person/robinson-stowe-1918,,

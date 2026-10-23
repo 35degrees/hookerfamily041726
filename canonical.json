@@ -1360096,7 +1360096,8 @@
      "related_id": "X03815",
      "type": "connection",
      "link_text": "Robinson Smith Beecher Stowe",
-     "display_label": "was his great-great-grandson, through Charles Edward and Lyman Stowe"
+     "display_label": "was his great-grandson, through Charles Edward and Lyman Beecher Stowe",
+     "lineal_gap": 3
     }
    ],
    "bio": {
@@ -1596760,8 +1596761,9 @@
     {
      "related_id": "X03488",
      "type": "connection",
-     "link_text": "Rev. Calvin Ellis Stowe",
-     "display_label": "married Harriet Beecher Stowe; this was their great-great-grandson"
+     "link_text": "Calvin Stowe",
+     "display_label": ", his great-grandfather, married Harriet Beecher Stowe in 1836",
+     "lineal_gap": -3
     }
    ],
    "bio": {
@@ -1596790,7 +1596792,7 @@
      "number": 1,
      "category": "family",
      "header": "The line back to Uncle Tom's Cabin",
-     "body": "His father Lyman Beecher Stowe was an author and lecturer, and his grandfather was Charles Edward Stowe, Harriet Beecher Stowe's son. That made Harriet and Calvin Stowe his great-great-grandparents. His mother Hilda was a daughter of Charles Robinson Smith, a founder of Allied Chemical."
+     "body": "His father Lyman Beecher Stowe was an author and lecturer, and his grandfather was Charles Edward Stowe, Harriet Beecher Stowe's son. That made Harriet and Calvin Stowe his great-grandparents. His mother Hilda was a daughter of Charles Robinson Smith, a founder of Allied Chemical."
     }
    ],
    "career": [],
