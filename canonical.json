@@ -685416,6 +685416,12 @@
      "type": "connection",
      "link_text": "George Curtis Langdon",
      "display_label": "served one term as Detroit's mayor six years after his own"
+    },
+    {
+     "related_id": "H02018",
+     "type": "connection",
+     "link_text": "Robert Strong",
+     "display_label": "secured the land for Forest Home Cemetery, where he was buried in 1888"
     }
    ],
    "research_notes": "Per EH 2448 + Wikipedia (https://en.wikipedia.org/wiki/David_G._Hooker) + Findagrave + Milwaukee historical record + Wisconsin State Bar Association: b. Sept 4, 1830 Poultney Rutland Co VT (Wikipedia; EH says Sept 14 — minor discrepancy); d. March 24, 1888 (EH) or March 6, 1888 (Wikipedia + Findagrave — 18-day discrepancy) Jacksonville FL from heart disease, age 57. Buried Forest Home Cemetery Milwaukee. EDUCATION: Middlebury College 1853 (Wikipedia). CAREER: Bar admission 1856 → Milwaukee → Palmer and Hooker law firm 1864 → City Attorney 3 terms (first 1867-1870) → Mayor of Milwaukee 1872-1873 (21st Mayor; predecessor + successor both Harrison Ludington) → General Counsel Northwestern Mutual Life Insurance Company until 1888 death. MAYORAL ACCOMPLISHMENTS: 13 miles of water pipe laid; pumping engines installed; reservoir built. Population then ~75,000. PARTY: Democrat. MARRIAGES: m1. Sept 9, 1862 Sarah Parker Harris (1837 Middlebury VT - 1868 Middlebury VT age 30); 3 sons. m2. Sept 28, 1871 Julia Almira Ashley (1839 Glastonbury CT - 1915 Milwaukee WI age 76 — Forest Home Cemetery). 3 daughters. Discrepancy on Julia's father — EH says 'Dr. William Bliss + Julia Cornwall (Hall) Ashley of Milwaukee'; Milwaukee record says 'her father was rector of St Paul's Episcopal Church.' Both could be true (Dr. Ashley = rector AND doctor). NOTABLE: 21st Mayor of Milwaukee + General Counsel of Northwestern Mutual.\n[Stage 6Y-264 NB#1 body trim]: original body had 5 sentences, trimmed to first 3. Original body preserved here for reference: 'David Griswold Hooker — born September 4, 1830 in Poultney VT (named after his mother's Griswold maiden name) — left the family farm for college, graduating Middlebury College in 1853. Admitted to the Wisconsin bar in 1856, he moved to Milwaukee that same year and built his law practice over 16 years. He served as Milwaukee City Attorney three times (first term 1867-1870), formed the law firm of Palmer and Hooker in 1864 with Henry Palmer, and was elected the 21st Mayor of Milwaukee in 1872 — a single one-year term during which he laid 13 miles of water pipe, installed pumping engines, and built the city's reservoir. After mayoral service he returned to legal practice; when his former partner Henry Palmer became president of Northwestern Mutual Life Insurance, David served as General Counsel until his sudden death from heart disease in Jacksonville FL on March 24, 1888. Buried Forest Home Cemetery Milwaukee.'\n[Stage 6Y-264 NB#2 body trim]: original body had 6 sentences, trimmed to first 3. Original body preserved here for reference: 'David's first marriage to Sarah Parker Harris of Middlebury VT in 1862 ended with her early death April 27, 1868 at age 30 — likely childbirth complications after the rapid arrival of their three sons (Edward Harris 1863, Frederick Nathaniel 1865, William David 1867). David remarried in 1871 to Julia Almira Ashley of Milwaukee, daughter of Dr. William Bliss Ashley + Julia Cornwall Hall, and rector of Milwaukee's St. Paul's Episcopal Church. Three daughters by Julia: Alice (m. Frank McCutcheon), Julia Elizabeth (never married), and Edith (m. Greenwood). Six children total across two marriages — the wives' families both tied to Vermont/Connecticut Episcopal church networks.'",
@@ -966648,6 +966654,12 @@
      "type": "connection",
      "link_text": "Frank Weeks",
      "display_label": "was buried in Forest Home, the Milwaukee cemetery he helped found"
+    },
+    {
+     "related_id": "H02448",
+     "type": "connection",
+     "link_text": "David Hooker",
+     "display_label": "was Milwaukee's mayor in 1872 and lies in the cemetery he helped found"
     }
    ],
    "narrative_blocks": [
@@ -1260009,7 +1260021,7 @@
      "related_id": "I06105",
      "type": "connection",
      "link_text": "Dale Dougherty",
-     "display_label": "founded Make: magazine and wrote Free to Make, on the maker movement"
+     "display_label": "built the first web portal, in 1993, for the generation born digital"
     }
    ],
    "quotes": [],
@@ -1806176,7 +1806188,14 @@
    "landmarks": [],
    "artworks": [],
    "research_tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "I04721",
+     "type": "connection",
+     "link_text": "Richard McAdoo",
+     "display_label": "edited at Harper & Brothers for twenty-one years, until 1967"
+    }
+   ],
    "quotes": [],
    "research_sources": [],
    "documents": [],
@@ -2190574,6 +2190593,12 @@
      "type": "connection",
      "link_text": "Michael Canfield",
      "display_label": "was Harper's London editorial man while he edited in New York"
+    },
+    {
+     "related_id": "HD10389",
+     "type": "connection",
+     "link_text": "Linda Barnes",
+     "display_label": "became managing editor of Harper's Magazine Press in 1968"
     }
    ],
    "tags": [
@@ -2519284,7 +2519309,8 @@
     "date_precision": "exact",
     "county": "Union County",
     "state": "New Jersey",
-    "country": "United States"
+    "country": "United States",
+    "city": "Summit"
    },
    "parents": {
     "father_id": "HD10234",
@@ -2519330,7 +2519356,10 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM719"
+   }
   },
   {
    "id": "HD16967",
@@ -2520383,7 +2520412,10 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM719"
+   }
   },
   {
    "id": "HD16977",
@@ -2520731,18 +2520763,29 @@
     "first_name": "Florence",
     "middle_name": "Langdon",
     "last_name": "Watkins",
-    "display_name": "Florence Langdon Watkins"
+    "display_name": "Florence Langdon Watkins",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792774356/208177879_a1fae956-8be0-43f9-8afd-db934c8d690c_isjpwe.jpg"
    },
    "gender": "female",
    "birth": {
     "year": 1911,
-    "date_precision": "year_only",
-    "country": "United States"
+    "date_precision": "exact",
+    "country": "United States",
+    "month": 6,
+    "day": 24,
+    "city": "Highland Park",
+    "county": "Lake County",
+    "state": "Illinois"
    },
    "death": {
     "year": 1933,
-    "date_precision": "year_only",
-    "country": "United States"
+    "date_precision": "exact",
+    "country": "United States",
+    "month": 5,
+    "day": 23,
+    "city": "Highland Park",
+    "county": "Lake County",
+    "state": "Illinois"
    },
    "parents": {
     "father_id": "I06101",
@@ -2520765,7 +2520808,10 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0
+   "number_of_marriages": 0,
+   "burial": {
+    "cemetery_id": "CEM268"
+   }
   },
   {
    "id": "I06102",
@@ -2521148,7 +2521194,10 @@
     "year": 1934,
     "city": "Baltimore",
     "state": "Maryland",
-    "country": "United States"
+    "country": "United States",
+    "month": 7,
+    "day": 9,
+    "date_precision": "exact"
    },
    "death": {},
    "parents": {},
@@ -2521162,15 +2521211,21 @@
    "narrative_blocks": [
     {
      "number": 1,
-     "category": "politics",
-     "header": "Twelve years on the Baltimore City Council",
-     "body": "Tom Waxter sat in the Maryland House of Delegates from 1967 to 1971 and on the Baltimore City Council from 1975 to 1987. In 1996 he went onto the Baltimore City Circuit Court as an associate judge, and he retired from the bench in 2004."
+     "category": "career",
+     "header": "His mother wrote the governor",
+     "body": "Tom Waxter was passed over for the Baltimore City Circuit Court four times, once by Governor William Donald Schaefer and three times by Parris Glendening. In 1996, at 62, he got the seat after his 92-year-old mother wrote to Glendening."
     },
     {
      "number": 2,
+     "category": "politics",
+     "header": "He stood for gay rights at City Hall",
+     "body": "Tom held Baltimore's 5th District council seat as a Democrat from 1975 to 1987 and defended gay rights at City Hall. In 1983 the district was redrawn so most of his voters were Black or Jewish, and he won it again."
+    },
+    {
+     "number": 3,
      "category": "education",
-     "header": "A social work degree before the law",
-     "body": "After Princeton, class of 1956, and Army Reserve service, Tom took a master's in social work at Penn in 1959. He finished law school at the University of Maryland in 1962 and served on Baltimore's Welfare Commission from 1963 to 1966."
+     "header": "A social worker's degree before the law",
+     "body": "Tom's father, Thomas J. S. Waxter Sr., was Maryland's director of public welfare, and a state children's center bears his name. Tom took a master's in social work at Penn in 1959 and sat on Baltimore's Welfare Commission from 1963 to 1966."
     }
    ],
    "tags": [],
