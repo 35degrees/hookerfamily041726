@@ -1257227,6 +1257227,12 @@
      "type": "connection",
      "link_text": "Ledyard Smith",
      "display_label": "first tied Maya buildings to pottery dates, at Uaxactun"
+    },
+    {
+     "related_id": "HD16947",
+     "type": "connection",
+     "link_text": "Langdon Rankin",
+     "display_label": "was her headmaster at East Woods, and taught her Latin"
     }
    ],
    "quotes": [],
@@ -1257284,6 +1257290,10 @@
      "dates": "1977",
      "type": "graduation",
      "notes": "Ph.D., anthropology"
+    },
+    {
+     "school_name": "East Woods School",
+     "notes": "Oyster Bay, under Langdon Rankin"
     }
    ],
    "number_of_marriages": 0
@@ -2517109,11 +2517119,36 @@
      "number": 1,
      "category": "education",
      "header": "Headmaster at Oyster Bay until 1967",
-     "body": "Langdon was headmaster of the East Woods School at Oyster Bay, on Long Island, and retired in June 1967. He and Frances settled at Essex, Connecticut, where their daughter Judith was married at the house the next spring."
+     "body": "Langdon was headmaster of the East Woods School at Oyster Bay, on Long Island, until 1967, and taught history and Latin. He worked with the Educational Testing Service and the independent schools' association, and consulted after retiring."
+    },
+    {
+     "number": 2,
+     "category": "career",
+     "header": "Assistant head at Eaglebrook, then Fay",
+     "body": "Out of Princeton in 1930, where he was in Cannon Club, Langdon went into schoolmastering, as assistant headmaster at Eaglebrook in Deerfield and then at the Fay School in Southborough, before East Woods."
+    },
+    {
+     "number": 3,
+     "category": "character",
+     "header": "Ship models and Essex history",
+     "body": "Retired to River Road in Essex, Langdon presided over the Essex Historical Society, wrote articles on the town's history, sat as a trustee of the Connecticut River Foundation and built ship models. Judith was married at the house in 1968."
+    },
+    {
+     "number": 4,
+     "category": "character",
+     "header": "Anna Roosevelt remembered his school",
+     "body": "Anna Roosevelt, the archaeologist, was a pupil at East Woods under him, and credited his Latin with leading her into the classics. She remembered him as “calm, humane, and always alert intellectually.”"
     }
    ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD6098",
+     "type": "connection",
+     "link_text": "Anna Roosevelt",
+     "display_label": "studied Latin under him at East Woods, and took it into archaeology"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
@@ -2517133,6 +2517168,27 @@
      "role": "Headmaster",
      "organization": "East Woods School, Oyster Bay",
      "end_year": 1967
+    },
+    {
+     "role": "Assistant headmaster",
+     "organization": "Eaglebrook School, Deerfield"
+    },
+    {
+     "role": "Assistant headmaster",
+     "organization": "Fay School, Southborough"
+    },
+    {
+     "role": "Educational consultant",
+     "organization": "After retiring from East Woods",
+     "start_year": "1967"
+    }
+   ],
+   "education": [
+    {
+     "institution_id": "INST023",
+     "school_name": "Princeton University",
+     "dates": "1930",
+     "notes": "Cannon Club"
     }
    ]
   },
