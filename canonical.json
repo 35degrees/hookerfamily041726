@@ -554861,6 +554861,12 @@
      "type": "parallel_careers",
      "link_text": "Egbert Cowles",
      "display_label": "dedicated his 1880 history to her, at ninety-five"
+    },
+    {
+     "related_id": "X04002",
+     "type": "connection",
+     "link_text": "Clover Dulles",
+     "display_label": "was at her school before going to France for war work"
     }
    ],
    "institutions": [
@@ -672057,6 +672063,12 @@
      "category": "family",
      "header": "Shreve, a middle name four generations deep",
      "body": "Married to Robert Gay Hooker of the Hooker and Lent firm in 1900, she named a son for his great-uncle, and the family answered in kind for generations, a grandson and a great-granddaughter each carrying Shreve as a middle name in her honor."
+    },
+    {
+     "number": 2,
+     "category": "marriage",
+     "header": "Wed on the earthquake's date, six years early",
+     "body": "Elizabeth married Robert Gay Hooker in San Francisco on 18 April 1900. Six years later to the day the earthquake struck, and the new building of her late father's firm on Post Street was one of the few left standing."
     }
    ],
    "cross_connections": [
@@ -672066,13 +672078,6 @@
      "display_label": ", her great-granddaughter, carries Shreve as her middle name",
      "link_text": "Katherine Shepherd",
      "lineal_gap": 3
-    },
-    {
-     "type": "connection",
-     "related_id": "HD3249",
-     "display_label": ", her grandson, carries her Shreve surname as his middle name",
-     "link_text": "Tony Hooker",
-     "lineal_gap": 2
     }
    ],
    "research_notes": "Wife of Robert Gay Hooker (H04266). Per Tony Hooker pedigree: b. Jan 31, 1868. Daughter of George Choate Shreve and Rebecca Rodman Nichols. m. Apr 18, 1900 SF. Mother of John Rodman Hooker (HD3243, named after his great-uncle John Daggett Hooker H02709). Death year unknown to current sources.\n[pilot79]: Her great-granddaughter Katherine Shreve Hooker Shepherd (HD3388) carries the Shreve middle name in her honor — see Katherine's naming_inspiration field. (This is the kind of multi-generational family-name through-line the project surfaces by design.)\n[pilot80]: Two documented namesakes in the Hooker line carry her Shreve surname as a middle name: her grandson Anthony Shreve 'Tony' Hooker (HD3249, b.1938 — son of her son John Rodman Hooker HD3243), and her great-granddaughter Katherine Shreve Hooker Shepherd (HD3388 — granddaughter of her son Rodman Lent Hooker HD3246). Both are wired as cross_connections (type 'namesake') and via naming_inspiration. Death year 1923 was unsourced (notes said unknown); year nulled pending a source.",
@@ -673725,7 +673730,7 @@
    ],
    "notable": {
     "is_notable": true,
-    "notable_blurb": "Founded Shreve & Co., oldest SF commercial establishment",
+    "notable_blurb": "Gold-rush jeweler, founder of Shreve & Co.",
     "notable_category": [
      "gold_rush_pioneer",
      "jeweler",
@@ -673741,26 +673746,44 @@
     {
      "number": 1,
      "category": "business",
-     "header": "Sailed to gold-rush San Francisco with nephew",
-     "body": "George Choate Shreve was born May 11, 1829 in Salem, Essex County MA — the 13th child and 5th son of Isaac Shreve (1779-1829) and Mary Moulton. His father died the same year George was born. As a young man George learned goldsmithing from his older half-brother Benjamin (b.1780, who later returned to Salem and founded Shreve, Crump & Low in Boston in 1869, a firm that still claims to be 'America's Oldest and Finest Jeweler')."
+     "header": "A jewelry store for gold-rush San Francisco",
+     "body": "In 1852 George and his nephew Samuel Shreve came out to the gold-rush city and opened a jewelry store at Montgomery and Clay. George built it into the largest jewelry house in the West, its silver among the finest made in America."
     },
     {
      "number": 2,
      "category": "business",
-     "header": "Built largest jewelry house in the West",
-     "body": "Per the Tony Hooker pedigree (which records George's brief biography from late-19th-century San Francisco mercantile sources): George was 'head of the large manufacturing jewelry house of Geo. C. Shreve & Co., well known in the business world and the largest establishment of the kind in the West.' By the 1860s the firm was considered one of the finest silver and goldsmiths in America."
+     "header": "America's second Patek Philippe dealer, 1887",
+     "body": "In 1887 George's firm became only the second American jeweler to sell Patek Philippe watches. Its own silver, hand-hammered and pierced in the Arts and Crafts manner, was by then known across the country."
     },
     {
      "number": 3,
-     "category": "business",
-     "header": "His firm's earthquake-proof building survived 1906",
-     "body": "Thirteen years after George's 1893 death, the firm — by then run by his son George Rodman Shreve and others — opened in March 1906 a brand-new eleven-story 'earthquake-proof' building at the corner of Post Street and Grant Avenue, San Francisco. One month later, the great earthquake struck. When the dust settled, the Shreve Building was one of the only structures still standing in the firm's neighborhood."
+     "category": "character",
+     "header": "His father died the year he was born",
+     "body": "George was born at Salem in May 1829, the thirteenth child of Isaac Shreve, who died that same year. He learned goldsmithing from his older half-brother Benjamin, one of the men behind Boston's Shreve, Crump & Low."
     },
     {
      "number": 4,
-     "category": "family",
-     "header": "His daughter married into Hooker mercantile dynasty",
-     "body": "In 1858 George Choate Shreve married Rebecca Rodman Nichols of Salem MA. Their daughter Elizabeth Lawton Shreve (1868-1943) married Robert Gay Hooker on April 18, 1900 — uniting two prominent SF mercantile families: the Hookers in hardware (Hooker & Co.) and the Shreves in jewelry (Geo. C."
+     "category": "marriage",
+     "header": "Back to Salem for a bride, 1858",
+     "body": "George went home to Salem to marry Rebecca Rodman Nichols in June 1858. Their daughter Elizabeth married Robert Gay Hooker of the San Francisco hardware house in April 1900, joining the two merchant families."
+    },
+    {
+     "number": 5,
+     "category": "legacy",
+     "header": "The building that stood in 1906",
+     "body": "In March 1906 his firm moved into an eleven-story building at Post and Grant, built to withstand earthquakes. A month later it was among the few left standing, its silver safe in a vault too hot to open for three weeks."
+    },
+    {
+     "number": 6,
+     "category": "legacy",
+     "header": "A gold teddy bear for Theodore Roosevelt",
+     "body": "The firm George founded went on to make the ten-inch gold teddy bear that San Francisco gave Theodore Roosevelt, and the gift California sent Queen Elizabeth II for her coronation in 1953."
+    },
+    {
+     "number": 7,
+     "category": "death",
+     "header": "From Lone Mountain to Colma",
+     "body": "George died at Mountain View in October 1893, at sixty-four, and his son George Rodman Shreve took over the firm. He was buried at Lone Mountain in San Francisco and moved to Cypress Lawn at Colma when the city cleared its cemeteries."
     }
    ],
    "cross_connections": [
@@ -673769,6 +673792,13 @@
      "related_id": "H04266",
      "display_label": "married his daughter Elizabeth in 1900",
      "link_text": "Robert Gay Hooker"
+    },
+    {
+     "related_id": "HD3249",
+     "type": "connection",
+     "link_text": "Tony Hooker",
+     "display_label": ", his great-grandson, carries Shreve as his middle name",
+     "lineal_gap": 3
     }
    ],
    "research_notes": "NOTABLE EASTER EGG: Founder of Shreve & Co. — established 1852 in San Francisco at the corner of Montgomery and Clay Streets, considered the oldest commercial establishment in San Francisco. Per Wikipedia (Shreve & Co. article — George has no separate page, so the firm article serves) + Tony Hooker pedigree + Findagrave + Shreve & Co. company history: b. May 11, 1829 Salem Essex County MA, 13th child / 5th son of Isaac Shreve (1779-1829) and Mary Moulton (d.1854). Father Isaac died same year George was born. Learned goldsmithing from older half-brother Benjamin Shreve (b.1780) — who returned to Salem and founded Shreve, Crump & Low in Boston in 1869, a firm that still claims to be 'America's Oldest and Finest Jeweler.' Wikipedia says George moved to SF from New York City; the company history says 'sailed to America's new Gold Coast.' Either way, by 1852 he and his NEPHEW Samuel S. Shreve had opened the new firm at 110 Montgomery Street on the corner of Clay Street. By the 1860s among the finest US silver/gold-smiths. 1887 became second jeweler in US to represent Patek Philippe. m. Jun 16, 1858 Salem MA Rebecca Rodman Nichols, daughter of Nathan Nichols + Elizabeth Rodman. Children include daughter Elizabeth Lawton Shreve (1868-1943, m. Robert Gay Hooker H04266 in 1900) and son George Rodman Shreve (1861-1914, who took over the firm in 1894 with Albert J. Lewis as Shreve & Co. Inc., later founded Shreve, Treat & Eacret jewelers SF). George died Oct 13, 1893 Mountain View Santa Clara County CA, age 64. Originally buried Lone Mountain Cemetery SF; remains later removed to Cypress Lawn Memorial Park Colma when LM was decommissioned. His new 11-story 'earthquake-proof' Shreve Building at Post and Grant Streets opened ONE MONTH BEFORE the April 1906 earthquake — and was one of the only buildings left standing in its district after the quake/fire; inventory survived intact in the new fireproof vault. THROUGH HIS DAUGHTER ELIZABETH, GEORGE IS THE GREAT-GRANDFATHER OF SAM TALCOTT HOOKER, the curator of this Hooker descendants database.\n[Stage 6Y-264 NB#1 body trim]: original body had 5 sentences, trimmed to first 3. Original body preserved here for reference: 'George Choate Shreve was born May 11, 1829 in Salem, Essex County MA — the 13th child and 5th son of Isaac Shreve (1779-1829) and Mary Moulton. His father died the same year George was born. As a young man George learned goldsmithing from his older half-brother Benjamin (b.1780, who later returned to Salem and founded Shreve, Crump & Low in Boston in 1869, a firm that still claims to be 'America's Oldest and Finest Jeweler'). When the California Gold Rush erupted, George and his nephew Samuel S. Shreve sailed for San Francisco — arriving 1852 — and on the corner of Montgomery and Clay Streets opened the doors of what would become Shreve & Co.'\n[Stage 6Y-264 NB#2 body trim]: original body had 6 sentences, trimmed to first 3. Original body preserved here for reference: 'Per the Tony Hooker pedigree (which records George's brief biography from late-19th-century San Francisco mercantile sources): George was 'head of the large manufacturing jewelry house of Geo. C. Shreve & Co., well known in the business world and the largest establishment of the kind in the West.' By the 1860s the firm was considered one of the finest silver and goldsmiths in America. In 1887 it became the second jeweler in the United States to represent Patek Philippe. Spectacular pieces — including a solid-gold 10-inch Teddy Bear commissioned by SF citizens for Theodore Roosevelt — passed through the workshop. The firm later expanded into a major silver manufactory; by 1921 it employed 600 skilled workers.'\n[Stage 6Y-264 NB#3 body trim]: original body had 6 sentences, trimmed to first 3. Original body preserved here for reference: 'Thirteen years after George's 1893 death, the firm — by then run by his son George Rodman Shreve and others — opened in March 1906 a brand-new eleven-story 'earthquake-proof' building at the corner of Post Street and Grant Avenue, San Francisco. One month later, the great earthquake struck. When the dust settled, the Shreve Building was one of the only structures still standing in the firm's neighborhood. The inventory was found intact and unscathed in the company's new fireproof vault three weeks later when it had cooled enough to be opened. The firm continues today as one of the oldest commercial establishments in San Francisco — incorporated 1894 (the year of George Rodman's takeover with Albert J. Lewis), still operating into the 21st century.'\n[Stage 6Y-264 NB#4 body trim]: original body had 7 sentences, trimmed to first 3. Original body preserved here for reference: 'In 1858 George Choate Shreve married Rebecca Rodman Nichols of Salem MA. Their daughter Elizabeth Lawton Shreve (1868-1943) married Robert Gay Hooker on April 18, 1900 — uniting two prominent SF mercantile families: the Hookers in hardware (Hooker & Co.) and the Shreves in jewelry (Geo. C. Shreve & Co.). George died Oct 13, 1893 at Mountain View, Santa Clara County CA, age 64. He was originally buried at Lone Mountain Cemetery in San Francisco; when that cemetery was decommissioned, his remains were moved to Cypress Lawn Memorial Park in Colma. Through his daughter Elizabeth, George is the great-grandfather of Sam Talcott Hooker — the present-day curator of this Hooker descendant database.'",
@@ -675516,17 +675546,17 @@
      "link_text": "Lyman Howard"
     },
     {
-     "type": "connection",
-     "related_id": "X02253",
-     "display_label": ", his grandmother, was the jeweler's daughter whose surname he carries",
-     "link_text": "Elizabeth Shreve Hooker",
-     "lineal_gap": -2
-    },
-    {
      "related_id": "HD2386",
      "type": "connection",
      "link_text": "Charles Bishop Dwight III",
      "display_label": "went from Yale to the Naval Academy in 1945"
+    },
+    {
+     "related_id": "X02259",
+     "type": "connection",
+     "link_text": "George Choate Shreve",
+     "display_label": ", his great-grandfather, opened Shreve & Co. at San Francisco in 1852",
+     "lineal_gap": -3
     }
    ],
    "research_notes": "Sam Talcott Hooker's first-cousin-once-removed (colloquially 'uncle'). LIVING — built per Sam's preference 'living is good, i want interested users.' Per Ashfield Capital Partners SEC Form ADV Part 2B Brochure Supplement (January 16, 2013) + Tony Hooker pedigree (#1002): b.1938, only child of John Rodman Hooker (HD3243, 1903-1983) and Josephine Dunham (X02254, 1906-1982). Education: Harvard 1956-57 (no degree), USNA B.S. 1961, American University 1966-67 (no degree), SF Art Institute M.F.A. 1995. CAREER: Principal/Portfolio Manager Ashfield & Co. 1986-2007 → Ashfield Capital Partners LLC Portfolio Manager 2007-2009 → Senior Advisor 2009-present. Office at 750 Battery Street, 6th Floor, San Francisco CA 94111. Tony has been the primary contemporary documentor of the Hooker family pedigree — major source for this database. Connects via Ashfield to distant cousin Lyman Howard (b.1969, descended via Bessie Augusta H04268 → Elizabeth Lent HD3247 → Howard line). MARRIAGE/CHILDREN: Not yet documented in this database — Sam may supply.",
@@ -1841657,7 +1841687,14 @@
      "body": "Clover Dulles died at Washington in April 1974, having spent the last five years a widow. She was eighty."
     }
    ],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "X01980",
+     "type": "connection",
+     "link_text": "Sarah Porter",
+     "display_label": "founded the Farmington school she attended, in 1843"
+    }
+   ],
    "burial": {
     "cemetery_id": "CEM797",
     "plot_notes": "Green Mount Cemetery, Baltimore MD"
