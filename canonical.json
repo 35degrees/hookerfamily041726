@@ -693626,7 +693626,7 @@
    ],
    "career": [
     {
-     "role": "Founder + Funder",
+     "role": "Founder and funder",
      "organization": "Trust for Mutual Understanding",
      "location": "New York NY",
      "start_year": 1985,
@@ -693665,7 +693665,12 @@
     }
    ],
    "landmarks": [],
-   "artworks": [],
+   "artworks": [
+    {
+     "artwork_id": "ART400",
+     "artwork_blurb": "Kurama granite (1957-66)"
+    }
+   ],
    "quotes": [],
    "military_service": [],
    "gender": "female"
@@ -2552113,6 +2552118,17 @@
    "url": "https://www.detroithistorical.org/learn/online-research/collection/archive/poster-advertisement-d-m-ferry-cos-seeds-sale-here",
    "primary_url": "https://www.detroithistorical.org/learn/online-research/collection/archive/poster-advertisement-d-m-ferry-cos-seeds-sale-here",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792763373/1952223002.jpg_pepy7l.webp"
+  },
+  {
+   "id": "ART400",
+   "title": "Isamu Noguchi, Myo",
+   "type": "sculpture",
+   "person_ids": [
+    "HD3285"
+   ],
+   "url": "https://www.christies.com/en/stories/sandra-ferry-rockefeller-fieldwood-farm-c15483b3245749dca27b36922775ed1f",
+   "primary_url": "https://www.christies.com/en/stories/sandra-ferry-rockefeller-fieldwood-farm-c15483b3245749dca27b36922775ed1f",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792764104/Screenshot_2026-10-23_at_7-resized_gdtn8d.png"
   }
  ],
  "wars": [
