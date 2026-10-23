@@ -150239,6 +150239,12 @@
      "type": "connection",
      "link_text": "Hooker Gilbert",
      "display_label": "served in Capt. Lankton's company of his regiment in 1777"
+    },
+    {
+     "related_id": "X00151",
+     "type": "connection",
+     "link_text": "Capt. Joseph Langdon",
+     "display_label": ", his brother-in-law, was a captain in his 15th Regiment"
     }
    ],
    "gender": "male",
@@ -222329,7 +222335,14 @@
     "is_notable": false,
     "notable_category": []
    },
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "H00288",
+     "type": "connection",
+     "link_text": "Col. Noadiah Hooker",
+     "display_label": ", his brother-in-law, was colonel of his 15th Militia Regiment"
+    }
+   ],
    "bio": {
     "display_name": "Captain Joseph Langdon",
     "first_name": "Joseph",
@@ -674550,6 +674563,12 @@
      "link_text": "Rebecca Rodman Shreve",
      "display_label": ", his maternal grandmother, gave him his first name",
      "lineal_gap": -2
+    },
+    {
+     "related_id": "HD16954",
+     "type": "connection",
+     "link_text": "David Byrne",
+     "display_label": "taught small planes and gliders after flying C-130s in Vietnam"
     }
    ],
    "research_notes": "Sam Talcott Hooker's grandfather. Per Sam's direct family knowledge + Tony Hooker pedigree + family records: b.1909, d.1994 age 85. Youngest of three sons of Robert Gay Hooker (H04266) and Elizabeth Lawton Shreve (X02253). Older brothers: Robert Gay Hooker Jr. (HD3248, 1901-1984, m. Marion Sabina Kuhn) and John Rodman Hooker (HD3243, 1903-1983, m. Josephine Dunham, father of Tony Hooker HD3249). TWO MARRIAGES: (1) Jane Austin (1915-1969), m.1956 — Rodman was 47 at marriage; Jane d.1969 age 54 leaving Rodman widowed. (2) Nancy A Morse (1915-2005) — likely remarried after Jane's 1969 death; Nancy survived Rodman by 11 years. Sam's father (gen 11, living, not built per privacy convention) is one of Rodman Lent's children. Mother of Sam's father (Jane Austin or Nancy Morse?) not yet confirmed by Sam — pending direct family clarification. His name 'Rodman' echoes his maternal-grandmother Rebecca Rodman Nichols Shreve and his uncle George Rodman Shreve (the SF jeweler); 'Lent' echoes Robert Lent / George H. Lent — Robert Gay's real estate partner and Bessie Augusta Hooker's husband. The two names carry forward both the Shreve maternal heritage and the Hooker-Lent business partnership that defined Robert Gay's career. THROUGH RODMAN LENT, THE HOOKER LINE CONTINUES TO SAM TALCOTT HOOKER (curator of this database). Sam's father and Sam are intentionally not built (living).\n[pilot79]: Children of marriage 1 (to Nancy Borland Morse I00288) updated — now wired: HD3315 Rodman L. Hooker Jr. (1940-2016), HD3384 Michael Gay Hooker (1935-c.2017), HD3385 Anne Stewart Hooker Walker.\n[pilot80 CORRECTION]: Anne Stewart Walker (HD3385) was wrongly added to marriage[0] children_ids in pilot79. She is Nancy's daughter from a different marriage (to Kenneth Stewart Walker, X02349), not Rod Sr.'s biological child. Removed.",
@@ -828038,6 +828057,12 @@
      "type": "parallel_lives",
      "link_text": "Allison Stacey Cowles",
      "display_label": "carried the same cause into Spokane, from a mother who had nursed"
+    },
+    {
+     "related_id": "HD16948",
+     "type": "connection",
+     "link_text": "Peg Knowles",
+     "display_label": "served the Red Cross on a hospital ship in Guam harbor in 1945"
     }
    ],
    "narrative_blocks": [
@@ -1288682,7 +1288707,14 @@
     "notable_url": "https://en.wikipedia.org/wiki/Mayor_of_Hartford,_Connecticut"
    },
    "gender": "male",
-   "cross_connections": []
+   "cross_connections": [
+    {
+     "related_id": "HD10231",
+     "type": "connection",
+     "link_text": "Joseph Langdon",
+     "display_label": "kept his place in the Foot Guard's Veteran Corps until 1895"
+    }
+   ]
   },
   {
    "id": "X03201",
@@ -1783460,13 +1783492,51 @@
     }
    ],
    "tags": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "business",
+     "header": "Fifty years behind his father's counter",
+     "body": "Joseph's father Reuben opened a dry-goods store in Hartford about 1817, and Joseph succeeded him and kept it more than fifty years. Under other hands it was still trading in 1901, as C. S. Hills & Co."
+    },
+    {
+     "number": 2,
+     "category": "business",
+     "header": "Vice-president of the Pratt Street Bank",
+     "body": "For many years Joseph was vice-president of the Society for Savings, Hartford's Pratt Street Bank, which his father had served as treasurer. He watched the city grow more than sevenfold in his lifetime."
+    },
+    {
+     "number": 3,
+     "category": "military",
+     "header": "A Foot Guard officer to the end",
+     "body": "As a young man Joseph was an officer of the First Company, Governor's Foot Guard, and he kept his place in its Veteran Corps, and his enthusiasm for the company, until he died."
+    },
+    {
+     "number": 4,
+     "category": "family",
+     "header": "His stepson kept his books",
+     "body": "Joseph married Mary Ann Mather of Westfield on New Year's Day 1835; their only son, Edward Mather Langdon, died at twelve. In 1874 he married the widow Nancy Hubbard Sheldon, whose son Charles kept his books for years."
+    },
+    {
+     "number": 5,
+     "category": "death",
+     "header": "A trolley car accident at eighty-three",
+     "body": "Joseph died at Hartford on 3 June 1895, at eighty-three, from the effects of a trolley car accident."
+    }
+   ],
    "sources": [],
    "institutions": [],
    "landmarks": [],
    "artworks": [],
    "research_tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD6293",
+     "type": "connection",
+     "link_text": "Edward Williams Hooker",
+     "display_label": "was a major of the Foot Guard's Veteran Battalion by 1905"
+    }
+   ],
    "quotes": [],
    "research_sources": [],
    "documents": [],
@@ -2517214,9 +2517284,59 @@
      "location_state": "New Jersey"
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "sports",
+     "header": "The only woman on the Grand Teton, 1938",
+     "body": "In 1938 Peg climbed the Grand Teton as the only woman in a party of eight. Sixty-one years later she went back to Wyoming to raft the Snake River with her children and grandchildren."
+    },
+    {
+     "number": 2,
+     "category": "military",
+     "header": "In Guam harbor the day Japan surrendered",
+     "body": "Trained at Smith and the New York School of Social Work, Peg served in the war as a Red Cross medical social worker aboard a Navy hospital ship, which lay in Guam harbor the day Japan surrendered."
+    },
+    {
+     "number": 3,
+     "category": "education",
+     "header": "Twenty-five years on the Elisabeth Morrow board",
+     "body": "Peg sat on the board of the Elisabeth Morrow School in Englewood for twenty-five years and was for a time its librarian, building up the shelves by asking every child to give the school a book."
+    },
+    {
+     "number": 4,
+     "category": "character",
+     "header": "Swimming in the rain at Edgartown",
+     "body": "Peg first came to Martha's Vineyard in 1917, bought a house at Edgartown in 1963, and spent part of every year there for almost forty years, sailing, gardening and swimming in the rain, often alone in the water."
+    },
+    {
+     "number": 5,
+     "category": "character",
+     "header": "Pastries past Emily Post's house",
+     "body": "In her college summers on the Vineyard, Peg and her friends sneaked bakery goods past Emily Post's house, against Mrs. Post's ruling that ladies do not carry packages."
+    },
+    {
+     "number": 6,
+     "category": "death",
+     "header": "She voted on her last day, at ninety-two",
+     "body": "On 12 April 2002, at ninety-two, Peg voted, drove to the library and the post office, talked with friends and worked on a paper about medieval tapestries. She died in her sleep that night."
+    },
+    {
+     "number": 7,
+     "category": "arts",
+     "header": "Her first gallery show at eighty-six",
+     "body": "Peg took watercolor classes from Maine to Florida and at eighty-six held her first professional show, at the Sculpin Gallery in Edgartown. She sold most of the paintings, she said, because “I'm small and I'm cheap.”"
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD3754",
+     "type": "connection",
+     "link_text": "Mary Frances Bridewell",
+     "display_label": "worked for the Red Cross on Guadalcanal, Guam and Okinawa"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
@@ -2517632,9 +2517752,35 @@
      ]
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "science",
+     "header": "Aerodynamics at Lockheed's Skunk Works",
+     "body": "David spent his career as an aerodynamic engineer with the Skunk Works at Lockheed Martin, working on many of its most advanced projects."
+    },
+    {
+     "number": 2,
+     "category": "military",
+     "header": "A C-130 commander in the Vietnam War",
+     "body": "David went from Newtown to the Air Force Academy, graduated in 1963, and served four years as an Air Force captain, commanding a C-130 in support of combat operations in Vietnam."
+    },
+    {
+     "number": 3,
+     "category": "character",
+     "header": "He taught others to fly gliders",
+     "body": "In his spare time David taught others to fly, as an instructor in small aircraft and gliders. His memorial service was held at the Air Force Academy in July 2019."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD3246",
+     "type": "connection",
+     "link_text": "Rodman Lent Hooker",
+     "display_label": "was a pilot and flight instructor, kept out of the war by polio"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
