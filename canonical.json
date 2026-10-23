@@ -4577,7 +4577,10 @@
     "I04753",
     "I00301",
     "HD11641",
-    "HD1076"
+    "HD1076",
+    "HD10234",
+    "I06092",
+    "I06093"
    ],
    "notes": "Hartford, Hartford County CT. Burial site of T01458 Mary Corning Talcott Guyton (1859-1888) and X01824 Maria J. Corning Talcott (1832-1862). NOTE: distinct from Spring Grove Cemetery Cincinnati OH (CEM083)."
   },
@@ -15481,7 +15484,9 @@
    "visitable": true,
    "url": "https://www.findagrave.com/cemetery/185168/evergreen-cemetery",
    "hooker_connections": [
-    "X03080"
+    "X03080",
+    "HD16965",
+    "I06094"
    ]
   },
   {
@@ -1783741,11 +1783746,22 @@
    "gender": "male",
    "birth": {
     "year": 1819,
-    "date_precision": "year_only"
+    "month": 10,
+    "day": 21,
+    "date_precision": "exact",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
    },
    "death": {
     "year": 1903,
-    "date_precision": "year_only"
+    "month": 5,
+    "day": 24,
+    "date_precision": "exact",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
    },
    "classification": {
     "include_in_path_calculation": true,
@@ -1783764,8 +1783780,37 @@
     "father_id": "H00637",
     "mother_id": "X00144"
    },
-   "number_of_marriages": 0,
-   "marriages": [],
+   "number_of_marriages": 2,
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06092",
+     "children_ids": [
+      "HD16965",
+      "HD16966",
+      "HD16967"
+     ],
+     "date_year": 1845,
+     "date_month": 12,
+     "date_day": 17,
+     "end_type": "death",
+     "end_year": 1854
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06093",
+     "children_ids": [
+      "HD16968",
+      "HD16969",
+      "HD16970"
+     ],
+     "date_year": 1858,
+     "date_month": 6,
+     "date_day": 17,
+     "location_city": "Providence",
+     "location_state": "Rhode Island"
+    }
+   ],
    "tags": [],
    "narrative_blocks": [],
    "sources": [],
@@ -1783784,14 +1783829,51 @@
     "gender": "male",
     "married_names": [],
     "middle_name": "Huntington",
-    "last_name": "Langdon"
+    "last_name": "Langdon",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792770337/Screenshot_2026-10-23_at_8-resized_rvjxsn.png",
+    "bio_blurb": "New York dry-goods importer"
    },
-   "military_service": [],
+   "military_service": [
+    {
+     "unit": "First Company, Governor's Foot Guard, Hartford",
+     "rank": "Second Lieutenant",
+     "dates": "1845",
+     "notes": "Elected 2 October 1845; commissioned by Gov. Isaac Toucey 13 June 1846"
+    }
+   ],
    "education": [],
-   "career": [],
+   "career": [
+    {
+     "role": "Dry-goods merchant",
+     "organization": "Hartford",
+     "start_year": 1842,
+     "end_year": 1851
+    },
+    {
+     "role": "Partner",
+     "organization": "J. C. Howe & Company, Boston",
+     "start_year": 1851,
+     "end_year": 1855
+    },
+    {
+     "role": "Founder",
+     "organization": "Langdon Brothers, New York",
+     "start_year": 1855,
+     "end_year": 1858
+    },
+    {
+     "role": "Partner, then head",
+     "organization": "Thomson, Langdon & Company, New York",
+     "start_year": 1858,
+     "end_year": 1893
+    }
+   ],
    "residence": {},
    "baptism": {},
-   "naming_inspiration": []
+   "naming_inspiration": [],
+   "burial": {
+    "cemetery_id": "CEM138"
+   }
   },
   {
    "id": "HD10235",
@@ -2518743,6 +2518825,518 @@
     {
      "school_name": "Art Students League",
      "notes": "Sculpture"
+    }
+   ]
+  },
+  {
+   "id": "I06092",
+   "bio": {
+    "married_names": [
+     "Langdon"
+    ],
+    "display_name": "Augusta Louisa Ives Langdon",
+    "first_name": "Augusta",
+    "middle_name": "Louisa",
+    "maiden_name": "Ives",
+    "last_name": "Langdon"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1823,
+    "month": 5,
+    "day": 5,
+    "date_precision": "exact",
+    "city": "Mount Carmel",
+    "county": "New Haven County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1854,
+    "month": 8,
+    "day": 29,
+    "date_precision": "exact",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD10234",
+     "children_ids": [
+      "HD16965",
+      "HD16966",
+      "HD16967"
+     ],
+     "date_year": 1845,
+     "date_month": 12,
+     "date_day": 17
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM138",
+    "plot_notes": "Section A"
+   }
+  },
+  {
+   "id": "I06093",
+   "bio": {
+    "married_names": [
+     "Langdon"
+    ],
+    "display_name": "Mary Butler Taylor Langdon",
+    "first_name": "Mary",
+    "middle_name": "Butler",
+    "maiden_name": "Taylor",
+    "last_name": "Langdon"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1828,
+    "month": 10,
+    "day": 6,
+    "date_precision": "exact",
+    "city": "Providence",
+    "county": "Providence County",
+    "state": "Rhode Island",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1902,
+    "month": 5,
+    "day": 9,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD10234",
+     "children_ids": [
+      "HD16968",
+      "HD16969",
+      "HD16970"
+     ],
+     "date_year": 1858,
+     "date_month": 6,
+     "date_day": 17,
+     "location_city": "Providence",
+     "location_state": "Rhode Island"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM138"
+   }
+  },
+  {
+   "id": "HD16965",
+   "bio": {
+    "married_names": [
+     "Younglove"
+    ],
+    "display_name": "Gertrude Langdon Younglove",
+    "first_name": "Gertrude",
+    "maiden_name": "Langdon",
+    "last_name": "Younglove"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1848,
+    "month": 4,
+    "day": 1,
+    "date_precision": "exact",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1934,
+    "month": 4,
+    "day": 17,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD10234",
+    "mother_id": "I06092"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06094",
+     "children_ids": [],
+     "date_year": 1870,
+     "date_month": 9,
+     "date_day": 21,
+     "location_city": "Elizabeth",
+     "location_state": "New Jersey"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM719"
+   }
+  },
+  {
+   "id": "HD16966",
+   "bio": {
+    "married_names": [],
+    "first_name": "Florence",
+    "middle_name": "Woodruff",
+    "last_name": "Langdon",
+    "display_name": "Florence Woodruff Langdon"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1850,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1943,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD10234",
+    "mother_id": "I06092"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16967",
+   "bio": {
+    "married_names": [],
+    "first_name": "Augusta",
+    "middle_name": "Louisa",
+    "last_name": "Langdon",
+    "display_name": "Augusta Louisa Langdon"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1854,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1867,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD10234",
+    "mother_id": "I06092"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16968",
+   "bio": {
+    "married_names": [],
+    "first_name": "Grace",
+    "middle_name": "Huntington",
+    "last_name": "Langdon",
+    "display_name": "Grace Huntington Langdon"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1860,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1921,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD10234",
+    "mother_id": "I06093"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16969",
+   "bio": {
+    "married_names": [],
+    "first_name": "Charles",
+    "middle_name": "Thompson",
+    "last_name": "Langdon",
+    "display_name": "Charles Thompson Langdon"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1863,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1863,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD10234",
+    "mother_id": "I06093"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD16970",
+   "bio": {
+    "married_names": [],
+    "display_name": "Charles Huntington Langdon Jr.",
+    "first_name": "Charles",
+    "middle_name": "Huntington",
+    "last_name": "Langdon",
+    "suffix": "Jr."
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1868,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1925,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD10234",
+    "mother_id": "I06093"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06094",
+   "bio": {
+    "married_names": [],
+    "display_name": "Dr. John Younglove",
+    "first_name": "John",
+    "last_name": "Younglove",
+    "title": "Dr.",
+    "bio_blurb": "Elizabeth physician and Civil War surgeon",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792770204/thumbMobile-562_gnv7kb.jpg",
+    "photo_position": "center top"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1836,
+    "month": 8,
+    "day": 28,
+    "date_precision": "exact",
+    "city": "Trenton Falls",
+    "county": "Oneida County",
+    "state": "New York",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1929,
+    "month": 1,
+    "day": 17,
+    "date_precision": "exact",
+    "city": "Elizabeth",
+    "county": "Union County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16965",
+     "children_ids": [],
+     "date_year": 1870,
+     "date_month": 9,
+     "date_day": 21
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM719"
+   },
+   "education": [
+    {
+     "school_name": "Washington Medical College"
+    },
+    {
+     "school_name": "St. Louis Homeopathic College"
+    }
+   ],
+   "career": [
+    {
+     "role": "Physician",
+     "organization": "Elizabeth, New Jersey",
+     "start_year": 1867
+    },
+    {
+     "role": "Surgeon",
+     "organization": "United States Army"
+    }
+   ],
+   "military_service": [
+    {
+     "war": "American Civil War",
+     "unit": "1st New York Mounted Rifles; 71st New York Volunteers",
+     "notes": "Later surgeon in the regular army; brevet major by Gov. Reuben Fenton"
     }
    ]
   }
