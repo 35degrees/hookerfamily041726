@@ -188,8 +188,7 @@
 				     but minimal." A reader deciding whether to hand over an identity is owed the reason,
 				     and the reason is small enough to state exactly rather than sell. -->
 				<p class="why">
-					Create an account to bookmark people you want to come back to, and to choose your own
-					person home card.
+					Bookmark people you want to come back to, and choose your own person home card.
 				</p>
 				<button
 					type="button"
