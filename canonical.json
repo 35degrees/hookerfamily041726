@@ -582968,6 +582968,12 @@
      "type": "colleague",
      "link_text": "Elizabeth Sturgis Potter Polk",
      "display_label": "was the daughter of the man who sold him the Phillies in 1904"
+    },
+    {
+     "related_id": "HD10449",
+     "type": "connection",
+     "link_text": "Nelson Doubleday Jr.",
+     "display_label": "ran the family publishing house, and bought the New York Mets in 1980"
     }
    ],
    "notable": {
@@ -1812456,6 +1812462,12 @@
      "type": "connection",
      "link_text": "Helen Knickerbocker",
      "display_label": "was an avid Mets fan who lived to 106"
+    },
+    {
+     "related_id": "HD3067",
+     "type": "connection",
+     "link_text": "Charles Phelps Taft",
+     "display_label": "owned the Cincinnati Times-Star and a share of the Chicago Cubs"
     }
    ],
    "quotes": [],

@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD3067,cc,"related=HD10449 link=""Nelson Doubleday Jr."" label=""ran the family publishing house, and bought the New York Mets in 1980""",OK cc->HD10449 added; FLAG needs reciprocal cc row on HD10449,/person/charles-taft-1843,,
+HD10449,cc,"related=HD3067 link=""Charles Phelps Taft"" label=""owned the Cincinnati Times-Star and a share of the Chicago Cubs""",OK cc->HD3067 added (reciprocal present),/person/nelson-doubleday-jr-1933,,
