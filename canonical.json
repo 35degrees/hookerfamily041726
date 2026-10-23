@@ -2517054,7 +2517054,8 @@
     "first_name": "Langdon",
     "middle_name": "Gilbert",
     "last_name": "Rankin",
-    "display_name": "Langdon Gilbert Rankin"
+    "display_name": "Langdon Gilbert Rankin",
+    "bio_blurb": "East Woods School headmaster"
    },
    "gender": "male",
    "birth": {
@@ -2517091,7 +2517092,14 @@
      ]
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "education",
+     "header": "Headmaster at Oyster Bay until 1967",
+     "body": "Langdon was headmaster of the East Woods School at Oyster Bay, on Long Island, and retired in June 1967. He and Frances settled at Essex, Connecticut, where their daughter Judith was married at the house the next spring."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {

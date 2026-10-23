@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD16947,field_set,bio.bio_blurb=East Woods School headmaster,OK set bio.bio_blurb = 'East Woods School headmaster',/person/langdon-rankin-1908,,
+HD16947,nb_approved,"header=""Headmaster at Oyster Bay until 1967"" body=""Langdon was headmaster of the East Woods School at Oyster Bay, on Long Island, and retired in June 1967. He and Frances settled at Essex, Connecticut, where their daughter Judith was married at the house the next spring."" category=education",OK nb_approved appended verbatim: 'Headmaster at Oyster Bay until 1967',/person/langdon-rankin-1908,,
