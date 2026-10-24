@@ -99042,6 +99042,12 @@
      "type": "connection",
      "link_text": "Roger Leavitt",
      "display_label": "helped Mary Lyon open Mount Holyoke before he gave to it"
+    },
+    {
+     "related_id": "H02770",
+     "type": "connection",
+     "link_text": "Sarah Capron",
+     "display_label": "ran the women's department of Moody's new Bible Institute in Chicago"
     }
    ],
    "burial": {
@@ -1066449,6 +1066455,18 @@
      "link_text": "Col. John Brown of Pittsfield",
      "display_label": ", her great-grandfather, quit the army distrusting Benedict Arnold",
      "lineal_gap": -3
+    },
+    {
+     "related_id": "X03607",
+     "type": "connection",
+     "link_text": "Rev. Miron Winslow",
+     "display_label": "compiled a monumental Tamil–English dictionary for the Madras mission"
+    },
+    {
+     "related_id": "H03207",
+     "type": "connection",
+     "link_text": "James Talcott",
+     "display_label": "helped Dwight L. Moody found Northfield Seminary in Massachusetts"
     }
    ],
    "narrative_blocks": [
@@ -1416885,7 +1416903,14 @@
     }
    ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "H02770",
+     "type": "connection",
+     "link_text": "Sarah Capron",
+     "display_label": "taught Tamil girls at the American Board's Madura mission from 1857"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,

@@ -1,5 +1,5 @@
 person_id,field,value_or_angle,status,slug,proposed,decision
-I01195,cc,"related=H00546 link=""Rev. Horace Hooker"" label=""was principal of Hartford's Hopkins Grammar School from 1815 to 1817""",OK cc->H00546 added; FLAG needs reciprocal cc row on H00546,/person/william-capron-1824,,
-H00546,cc,"related=I01195 link=""William Capron"" label=""ran Hartford's Hopkins Grammar School in the 1850s, then went to India""",OK cc->I01195 added (reciprocal present),/person/horace-hooker-1793,,
-I01195,cc,"related=X04010 link=""Thomas K. Beecher"" label=""was principal of Hartford High School from 1849 to 1851""",OK cc->X04010 added; FLAG needs reciprocal cc row on X04010,/person/william-capron-1824,,
-X04010,cc,"related=I01195 link=""William Capron"" label=""ran Hartford's Hopkins Grammar School for six years before India""",OK cc->I01195 added (reciprocal present),/person/thomas-beecher-1824,,
+H02770,cc,"related=X03607 link=""Rev. Miron Winslow"" label=""compiled a monumental Tamil–English dictionary for the Madras mission""",OK cc->X03607 added; FLAG needs reciprocal cc row on X03607,/person/sarah-hooker-1828,,
+X03607,cc,"related=H02770 link=""Sarah Capron"" label=""taught Tamil girls at the American Board's Madura mission from 1857""",OK cc->H02770 added (reciprocal present),/person/miron-winslow-1789,,
+H02770,cc,"related=H03207 link=""James Talcott"" label=""helped Dwight L. Moody found Northfield Seminary in Massachusetts""",OK cc->H03207 added; FLAG needs reciprocal cc row on H03207,/person/sarah-hooker-1828,,
+H03207,cc,"related=H02770 link=""Sarah Capron"" label=""ran the women's department of Moody's new Bible Institute in Chicago""",OK cc->H02770 added (reciprocal present),/person/james-talcott-1835,,
