@@ -277342,6 +277342,12 @@
      "type": "connection",
      "link_text": "Alexander Hamilton",
      "display_label": ", whose great-grandson married his sister, set up the national bank"
+    },
+    {
+     "related_id": "HD2066",
+     "type": "connection",
+     "link_text": "Frederick Atherton",
+     "display_label": "took Morgan's chair when the banker rose to testify before the Senate"
     }
    ],
    "bio": {
@@ -390831,24 +390837,40 @@
    },
    "narrative_blocks": [
     {
-     "header": "He built a college from a contested fortune",
-     "detail": "The estate was contested by Wentworth daughter; after nine months of negotiation approximately $3.5M went to the Institute, which opened to students in 1911. Atherton served as Secretary and Director throughout. Harvard class of 1886 records show that when J.P. Morgan Jr. was called before a Senate committee, Atherton arrived and took his chair. (Wikipedia)",
-     "body": "Named a trustee of the disputed seven-million-dollar estate of Arioch Wentworth, he helped steer half of it into founding the Wentworth Institute of Technology in 1904, then served as its secretary and director from its first plans through a quarter-century of operation.",
      "number": 1,
-     "category": "education"
+     "category": "character",
+     "header": "He took J. P. Morgan Jr.'s chair",
+     "body": "Frederick sat in on Senate hearings for years. At the inquiry into J. P. Morgan & Co. the room was full when he arrived, and when Morgan, Harvard three classes behind him, was called forward to testify, Frederick took his chair."
     },
     {
-     "header": "Harvard named an annual lecture for him",
-     "detail": "Atherton left no children. His legacy is this lecture series and his brother Percy (HD2071) $15,000 Harvard musical scholarship fund. His DC home is now the Embassy of the Ivory Coast. (Wikipedia; Harvard)",
-     "body": "Since 1966 Harvard has held an annual Frederick William Atherton Lecture on ethical and social criticism; Lillian Hellman and Russell Baker are among those who have delivered it.",
      "number": 2,
-     "category": "legacy"
+     "category": "education",
+     "header": "He built a college from a contested fortune",
+     "body": "In 1904 Frederick became one of three trustees of Arioch Wentworth's fortune, left to found a school of the mechanical arts. Wentworth's daughter fought the will and the estate was split, and he saw the institute through design and building to its first students in 1911."
     },
     {
      "number": 3,
-     "category": "character",
-     "header": "He worked Washington society for his causes",
-     "body": "For more than twenty-five years he was a fixture of Washington society, entertaining diplomats and courting presidents to advance his educational philanthropies. He sat in on Senate hearings from the J. P. Morgan inquiry to the meatpacking investigation."
+     "category": "politics",
+     "header": "Diplomats at his table before the war",
+     "body": "From 1912 Frederick and his wife, Maud, kept house in Washington, entertaining diplomats and courting presidents for his education causes. In 1913 his guests were Henry White, the former ambassador to France, and others urging America to stay out of a European war."
+    },
+    {
+     "number": 4,
+     "category": "marriage",
+     "header": "He married his headmaster's daughter",
+     "body": "At forty-five Frederick married Ellen Maud Tilton, daughter of Frederic W. Tilton, his principal at Phillips Academy. Her family was in mourning for her mother, and there was no reception."
+    },
+    {
+     "number": 5,
+     "category": "legacy",
+     "header": "His Washington house is now an embassy",
+     "body": "He died of a heart attack in 1936 at the house Nathan C. Wyeth built him on Massachusetts Avenue in 1930. It later housed the Sons of the American Revolution and is now the Embassy of the Ivory Coast."
+    },
+    {
+     "number": 6,
+     "category": "legacy",
+     "header": "Harvard named an annual lecture for him",
+     "body": "Since 1966 Harvard has held an annual Frederick William Atherton Lecture on ethical and social criticism. Russell Baker gave it in 1974 and Lillian Hellman in 1977."
     }
    ],
    "research_notes": "b. Aug 6, 1865 Boston MA; d. Apr 4/5, 1936 Washington DC age 70. Harvard class of 1886. WENTWORTH INSTITUTE: One of three founding trustees of Wentworth Institute of Technology (1904), administering the $7M+ Arioch Wentworth estate. Secretary and Director for 25 years through 1936. CAREER: Commercial reporter, Boston Evening Transcript; Massachusetts House of Representatives 1896 (Republican). WASHINGTON: Trustee of George Washington University; moved in diplomatic and Senate circles for 25+ years. His home at 2412 Massachusetts Ave NW (designed by Nathan C. Wyeth, 1930) became the Sons of the American Revolution headquarters after his wife death in 1965, and is now the Embassy of the Ivory Coast. Harvard holds the annual Frederick William Atherton Lecture on ethical and social criticism since 1966; the 1977 lecture was delivered by Lillian Hellman. NOTE: Attended Boston Latin School — co-founded 1636 by John Cotton, contemporary of Thomas Hooker. Flag for research. Married Ellen Maud Tilton (1872-1965) Apr 8, 1911 Cambridge MA. No children. Buried Forest Hills Cemetery, Jamaica Plain Boston MA. (Wikipedia; FindAGrave)\n[Stage 6Y-264 NB#2 header trim]: 'The Frederick William Atherton Lecture — Harvard annual lecture on ethics since 1966' → 'The Frederick William Atherton Lecture'.",
@@ -390866,6 +390888,12 @@
      "type": "connection",
      "link_text": "Alice Roosevelt Longworth",
      "display_label": "held court over Washington society from her Massachusetts Avenue salon"
+    },
+    {
+     "related_id": "HD1172",
+     "type": "connection",
+     "link_text": "J. P. Morgan Jr.",
+     "display_label": "was called to testify before the Senate, and Atherton took his seat"
     }
    ],
    "bio": {
@@ -390922,12 +390950,43 @@
      "institution_id": "INST002",
      "dates": "1886",
      "notes": " — Harvard class of 1886. Founding trustee of Wentworth Institute of Technology. Harvard holds the annual Frederick William Atherton Lecture (since 1966) on ethical and social criticism. Great-great-great-grandson of Jonathan Edwards."
+    },
+    {
+     "institution_id": "INST057",
+     "school_name": "Phillips Academy Andover"
     }
    ],
    "burial": {
     "cemetery_id": "CEM098"
    },
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "career": [
+    {
+     "role": "Broker",
+     "organization": "Fuller, Harding & Co., then A. B. Turner & Brothers, Boston",
+     "start_year": "1890"
+    },
+    {
+     "role": "Financial writer",
+     "organization": "Boston Evening Transcript"
+    },
+    {
+     "role": "Representative",
+     "organization": "Massachusetts House of Representatives",
+     "start_year": "1896",
+     "end_year": "1896"
+    },
+    {
+     "role": "Secretary and director",
+     "organization": "Wentworth Institute of Technology",
+     "start_year": "1904",
+     "end_year": "1936"
+    },
+    {
+     "role": "Trustee",
+     "organization": "George Washington University"
+    }
+   ]
   },
   {
    "id": "HD2067",
