@@ -1,0 +1,2 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+H04853,nb_replace,"old=""His mother died the month he was born"" header=""His mother died the month he was born"" body=""John Thomas was born at Henderson, Tennessee, on 10 February 1867. His mother, Martha Graham, adopted daughter of Dr. Smith of Mifflin, died that same month, the year after she married his father, Freeman Hall Seeley Jr."" category=family",OK nb_replace: 'His mother died the month he was born' -> 'His mother died the month he was born' placed verbatim in place,/person/john-seeley-1867,,
