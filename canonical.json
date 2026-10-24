@@ -476792,7 +476792,15 @@
    ],
    "cross_reference": {
     "edward_hooker_1909": "4853"
-   }
+   },
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "His mother died the month he was born",
+     "body": "John Thomas was born at Henderson, Tennessee, on 10 February 1867. His mother, Martha Graham, adopted daughter of Dr. Smith of Mifflin, died that same month, a year after marrying his father, Freeman Hall Seeley Jr."
+    }
+   ]
   },
   {
    "id": "X00953",
@@ -2537884,7 +2537892,14 @@
      "end_year": 1928
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Married at seventeen, mother of eleven",
+     "body": "Eunice married William Robert Bradford on 6 August 1898, at seventeen, and had eleven children between 1899 and 1924. William died at Pinson, Tennessee, in May 1928, and Eunice lived thirty more years, to December 1958."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
