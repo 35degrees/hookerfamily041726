@@ -474419,7 +474419,11 @@
      "marriage_number": 1,
      "spouse_id": "I06182",
      "children_ids": [],
-     "end_type": "death_of_spouse"
+     "end_type": "death_of_spouse",
+     "date_year": 1849,
+     "location_city": "St. Louis",
+     "location_state": "Missouri",
+     "location_country": "United States"
     },
     {
      "marriage_number": 2,
@@ -474427,7 +474431,8 @@
      "children_ids": [
       "H04852"
      ],
-     "end_type": "separation"
+     "end_type": "separation",
+     "date_year": 1862
     },
     {
      "marriage_number": 3,
@@ -474436,12 +474441,14 @@
       "H04853"
      ],
      "end_type": "death_of_spouse",
-     "end_year": 1863
+     "end_year": 1867,
+     "date_year": 1866
     },
     {
      "marriage_number": 4,
      "spouse_id": "I06185",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1870
     },
     {
      "spouse_id": "X01885",
@@ -474453,7 +474460,10 @@
      ],
      "marriage_number": 5,
      "date_year": 1879,
-     "date_month": 3
+     "date_month": 3,
+     "location_county": "Chester County",
+     "location_state": "Tennessee",
+     "location_country": "United States"
     }
    ],
    "gender": "male",
@@ -476719,20 +476729,36 @@
    "birth": {
     "year": 1867,
     "month": 2,
-    "day": 10
+    "day": 10,
+    "city": "Henderson",
+    "county": "Chester County",
+    "state": "Tennessee",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "death": {
     "year": 1937,
     "month": 11,
-    "day": 9
+    "day": 9,
+    "county": "Chester County",
+    "state": "Tennessee",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "marriages": [
     {
      "spouse_id": "X00953",
      "children_ids": [
-      "HD2731"
+      "HD17109",
+      "HD17110",
+      "HD17111",
+      "HD17112",
+      "HD17113",
+      "HD2731",
+      "HD17114"
      ],
-     "marriage_number": 1
+     "marriage_number": 1,
+     "date_year": 1885
     }
    ],
    "gender": "male",
@@ -476786,7 +476812,9 @@
     }
    ],
    "birth": {
-    "year": 1865
+    "year": 1865,
+    "state": "Tennessee",
+    "country": "United States"
    },
    "death": {
     "year": 1938
@@ -476799,8 +476827,15 @@
      "marriage_number": 1,
      "spouse_id": "H04853",
      "children_ids": [
-      "HD2731"
-     ]
+      "HD17109",
+      "HD17110",
+      "HD17111",
+      "HD17112",
+      "HD17113",
+      "HD2731",
+      "HD17114"
+     ],
+     "date_year": 1885
     }
    ],
    "parents": {},
@@ -476810,11 +476845,14 @@
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Tennessee Nancy Jane Mount",
+    "display_name": "Tennessee Nancy Jane Mount Seeley",
     "first_name": "Tennessee",
     "maiden_name": "Mount",
-    "married_names": [],
-    "middle_name": "Nancy Jane"
+    "married_names": [
+     "Seeley"
+    ],
+    "middle_name": "Nancy Jane",
+    "last_name": "Seeley"
    },
    "residence": {},
    "baptism": {},
@@ -540057,7 +540095,10 @@
       "H04855",
       "H04856",
       "H04857"
-     ]
+     ],
+     "location_county": "Chester County",
+     "location_state": "Tennessee",
+     "location_country": "United States"
     }
    ],
    "parents": {},
@@ -540065,7 +540106,16 @@
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 1910,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 6,
+    "city": "Pinson",
+    "county": "Madison County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
    "cross_connections": [],
    "bio": {
     "display_name": "Harriet Maria Blount Seeley",
@@ -2537440,7 +2537490,11 @@
     "title": "Mrs."
    },
    "gender": "female",
-   "birth": {},
+   "birth": {
+    "year": 1834,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
    "death": {
     "city": "New Orleans",
     "state": "Louisiana",
@@ -2537452,7 +2537506,11 @@
      "marriage_number": 1,
      "spouse_id": "H03532",
      "children_ids": [],
-     "end_type": "death_of_spouse"
+     "end_type": "death_of_spouse",
+     "date_year": 1849,
+     "location_city": "St. Louis",
+     "location_state": "Missouri",
+     "location_country": "United States"
     }
    ],
    "narrative_blocks": [],
@@ -2537491,10 +2537549,17 @@
     "married_names": [
      "Seeley"
     ],
-    "maiden_name": "Hood"
+    "maiden_name": "Hood",
+    "extra_names": "Helen Mary Gilkey"
    },
    "gender": "female",
-   "birth": {},
+   "birth": {
+    "year": 1840,
+    "date_precision": "approximate",
+    "county": "Caldwell County",
+    "state": "Kentucky",
+    "country": "United States"
+   },
    "death": {},
    "parents": {},
    "marriages": [
@@ -2537504,7 +2537569,8 @@
      "children_ids": [
       "H04852"
      ],
-     "end_type": "separation"
+     "end_type": "separation",
+     "date_year": 1862
     }
    ],
    "narrative_blocks": [],
@@ -2537596,13 +2537662,21 @@
      "Seeley"
     ],
     "middle_name": "Esther",
-    "maiden_name": "Smith"
+    "maiden_name": "Smith",
+    "extra_names": "Martha Graham"
    },
    "gender": "female",
-   "birth": {},
-   "death": {
-    "year": 1863,
+   "birth": {
+    "year": 1844,
     "date_precision": "year_only",
+    "county": "Chester County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1867,
+    "date_precision": "month_year",
+    "month": 2,
     "country": "United States"
    },
    "parents": {},
@@ -2537614,7 +2537688,8 @@
       "H04853"
      ],
      "end_type": "death_of_spouse",
-     "end_year": 1863
+     "end_year": 1867,
+     "date_year": 1866
     }
    ],
    "narrative_blocks": [],
@@ -2537652,14 +2537727,21 @@
     "title": "Mrs."
    },
    "gender": "female",
-   "birth": {},
+   "birth": {
+    "year": 1840,
+    "date_precision": "year_only",
+    "county": "Chester County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
    "death": {},
    "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
      "spouse_id": "H03532",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1870
     }
    ],
    "narrative_blocks": [],
@@ -2537745,11 +2537827,14 @@
   {
    "id": "H04855",
    "bio": {
-    "display_name": "Eunice Tennessee Seeley",
+    "display_name": "Eunice Tennessee Seeley Bradford",
     "first_name": "Eunice",
-    "last_name": "Seeley",
-    "married_names": [],
-    "middle_name": "Tennessee"
+    "last_name": "Bradford",
+    "married_names": [
+     "Bradford"
+    ],
+    "middle_name": "Tennessee",
+    "maiden_name": "Seeley"
    },
    "gender": "female",
    "birth": {
@@ -2537757,14 +2537842,48 @@
     "date_precision": "exact",
     "month": 1,
     "day": 4,
+    "country": "United States",
+    "city": "Henderson",
+    "county": "Chester County",
+    "state": "Tennessee"
+   },
+   "death": {
+    "year": 1958,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 8,
+    "county": "Chester County",
+    "state": "Tennessee",
     "country": "United States"
    },
-   "death": {},
    "parents": {
     "father_id": "H03532",
     "mother_id": "X01885"
    },
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06192",
+     "children_ids": [
+      "HD17098",
+      "HD17099",
+      "HD17100",
+      "HD17101",
+      "HD17102",
+      "HD17103",
+      "HD17104",
+      "HD17105",
+      "HD17106",
+      "HD17107",
+      "HD17108"
+     ],
+     "date_year": 1898,
+     "date_month": 8,
+     "date_day": 6,
+     "end_type": "death_of_spouse",
+     "end_year": 1928
+    }
+   ],
    "narrative_blocks": [],
    "tags": [],
    "cross_connections": [],
@@ -2537781,7 +2537900,7 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0,
+   "number_of_marriages": 1,
    "sources": [
     {
      "short": "EH 1909"
@@ -2537789,7 +2537908,10 @@
    ],
    "cross_reference": {
     "edward_hooker_1909": "4855"
-   }
+   },
+   "former_ids": [
+    "eunice-seeley-1881"
+   ]
   },
   {
    "id": "H04856",
@@ -2537808,7 +2537930,11 @@
     "day": 10,
     "country": "United States"
    },
-   "death": {},
+   "death": {
+    "year": 1970,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
    "parents": {
     "father_id": "H03532",
     "mother_id": "X01885"
@@ -2537857,7 +2537983,11 @@
     "day": 6,
     "country": "United States"
    },
-   "death": {},
+   "death": {
+    "year": 1977,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
    "parents": {
     "father_id": "H03532",
     "mother_id": "X01885"
@@ -2539831,6 +2539961,874 @@
     "is_talcott_descendant": false,
     "is_easter_egg": false,
     "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "I06192",
+   "bio": {
+    "display_name": "William Robert Bradford",
+    "first_name": "William",
+    "last_name": "Bradford",
+    "married_names": [],
+    "middle_name": "Robert"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1875,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 11,
+    "city": "Henderson",
+    "county": "Chester County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1928,
+    "date_precision": "exact",
+    "month": 5,
+    "day": 18,
+    "city": "Pinson",
+    "county": "Madison County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04855",
+     "children_ids": [
+      "HD17098",
+      "HD17099",
+      "HD17100",
+      "HD17101",
+      "HD17102",
+      "HD17103",
+      "HD17104",
+      "HD17105",
+      "HD17106",
+      "HD17107",
+      "HD17108"
+     ],
+     "date_year": 1898,
+     "date_month": 8,
+     "date_day": 6,
+     "end_type": "death_of_self",
+     "end_year": 1928
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17098",
+   "bio": {
+    "display_name": "Jessie William Bradford",
+    "first_name": "Jessie",
+    "last_name": "Bradford",
+    "married_names": [],
+    "middle_name": "William"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1899,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17099",
+   "bio": {
+    "display_name": "Freeman Lee Bradford",
+    "first_name": "Freeman",
+    "last_name": "Bradford",
+    "married_names": [],
+    "middle_name": "Lee"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1901,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1984,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17100",
+   "bio": {
+    "display_name": "Bessie Bradford",
+    "first_name": "Bessie",
+    "last_name": "Bradford",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1904,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1996,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17101",
+   "bio": {
+    "display_name": "Lessie Bradford",
+    "first_name": "Lessie",
+    "last_name": "Bradford",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1905,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2002,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17102",
+   "bio": {
+    "display_name": "George Robert Bradford",
+    "first_name": "George",
+    "last_name": "Bradford",
+    "married_names": [],
+    "middle_name": "Robert"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1906,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1974,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17103",
+   "bio": {
+    "display_name": "Jesse Virgil Bradford",
+    "first_name": "Jesse",
+    "last_name": "Bradford",
+    "married_names": [],
+    "middle_name": "Virgil"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1908,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2005,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17104",
+   "bio": {
+    "display_name": "Maydell Corrine Bradford",
+    "first_name": "Maydell",
+    "last_name": "Bradford",
+    "married_names": [],
+    "middle_name": "Corrine"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1911,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1977,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17105",
+   "bio": {
+    "display_name": "Pauline Lucy Bradford",
+    "first_name": "Pauline",
+    "last_name": "Bradford",
+    "married_names": [],
+    "middle_name": "Lucy"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1914,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17106",
+   "bio": {
+    "display_name": "James Jesse Bradford",
+    "first_name": "James",
+    "last_name": "Bradford",
+    "married_names": [],
+    "middle_name": "Jesse"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1917,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2003,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17107",
+   "bio": {
+    "display_name": "Mary Bradford",
+    "first_name": "Mary",
+    "last_name": "Bradford",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1920,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17108",
+   "bio": {
+    "display_name": "Harmell Bradford",
+    "first_name": "Harmell",
+    "last_name": "Bradford",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1924,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06192",
+    "mother_id": "H04855"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17109",
+   "bio": {
+    "display_name": "Ernest J. Seeley",
+    "first_name": "Ernest",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "J."
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1889,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1963,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H04853",
+    "mother_id": "X00953"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17110",
+   "bio": {
+    "display_name": "Jesse Freeman Seeley",
+    "first_name": "Jesse",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Freeman"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1894,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1976,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H04853",
+    "mother_id": "X00953"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17111",
+   "bio": {
+    "display_name": "John Henry Seeley",
+    "first_name": "John",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Henry"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1897,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1950,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H04853",
+    "mother_id": "X00953"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17112",
+   "bio": {
+    "display_name": "Lua Seeley",
+    "first_name": "Lua",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1898,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H04853",
+    "mother_id": "X00953"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17113",
+   "bio": {
+    "display_name": "Joseph Carroll Seeley",
+    "first_name": "Joseph",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Carroll"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1900,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1935,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H04853",
+    "mother_id": "X00953"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17114",
+   "bio": {
+    "display_name": "Sarah Ellen Seeley",
+    "first_name": "Sarah",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Ellen"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1905,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1988,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H04853",
+    "mother_id": "X00953"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
    },
    "notable": {
     "is_notable": false
