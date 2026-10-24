@@ -118,8 +118,7 @@
 			</div>
 			<div class="body">
 				<p>
-					The backbone of this project is the many thorough and thoughtful family genealogies completed in the
-					late 19th and 20th centuries, including:
+					The backbone of this project is a century of thorough and thoughtful family genealogies, including:
 				</p>
 				<ul>
 					<li>
