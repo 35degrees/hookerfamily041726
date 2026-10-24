@@ -160926,39 +160926,45 @@
    "narrative_blocks": [
     {
      "number": 1,
-     "category": "marriage",
-     "header": "Edwards wrote about her when she was twelve",
-     "body": "Jonathan Edwards composed a private spiritual meditation about a 'young lady in New Haven who is beloved of that Great Being who made and rules the world.' She married him five years later, at seventeen."
+     "category": "religion",
+     "header": "Nine days swallowed up in light",
+     "body": "In January 1742, with Jonathan away preaching, Sarah broke down and then for nine days felt herself swallowed up with light and love. She lost her speech and strength, fainted and leapt for joy, and came out of it sure of her salvation."
     },
     {
      "number": 2,
-     "category": "family",
-     "header": "Brought home her orphaned Burr grandchildren",
-     "body": "After Jonathan's death she traveled south in autumn 1758 to retrieve four-year-old Sarah Burr and two-year-old Aaron Burr Jr. She fell sick with dysentery in Philadelphia before she could complete the journey."
+     "category": "religion",
+     "header": "Her raptures went into print unsigned",
+     "body": "Jonathan had Sarah write the experience down and printed it, without her name, in Some Thoughts Concerning the Present Revival of Religion. An earlier draft found in 2021 shows how much of her bodily agitation he left out."
     },
     {
      "number": 3,
-     "category": "death",
-     "header": "Died exactly six months after her husband",
-     "body": "Jonathan died of smallpox-inoculation complications on March 22, 1758, weeks into the Princeton presidency. Sarah died of dysentery on October 2, 1758, at forty-eight."
+     "category": "marriage",
+     "header": "Married at seventeen, mother of eleven",
+     "body": "Sarah married Jonathan in July 1727, at seventeen, and all eleven of their children survived infancy, rare in that century. George Whitefield, a guest in 1740, wrote that a sweeter couple he had not yet seen."
     },
     {
      "number": 4,
-     "category": "death",
-     "header": "Made her will the day she died",
-     "body": "On October 2, 1758, in Philadelphia, she dictated her last instructions hours before dysentery took her. The two Burr grandchildren she had been escorting were placed with Dr. William Shippen."
+     "category": "religion",
+     "header": "Seven years at the Stockbridge mission",
+     "body": "After Northampton dismissed Jonathan in 1750, the family went to the Stockbridge mission among the Mohicans. With the French war raiding near, Sarah nursed soldiers from the barracks and sold needlework with her daughters."
     },
     {
      "number": 5,
-     "category": "legacy",
-     "header": "Her portrait hangs in a Yale dining hall",
-     "body": "She and her husband were both painted in oils, traditionally attributed to John Smybert. The portraits were bequeathed to Yale in 1939 and now hang in Jonathan Edwards College."
+     "category": "character",
+     "header": "A young lady beloved of that Great Being",
+     "body": "Sarah's raptures began at about six, hours at a time. At thirteen she came to the notice of Jonathan Edwards, then at Yale, who wrote of a young lady in New Haven who hardly cared for anything but to meditate on God."
     },
     {
      "number": 6,
+     "category": "death",
+     "header": "She died going to fetch the Burr orphans",
+     "body": "Jonathan died in March 1758, weeks into the Princeton presidency, and their daughter Esther Burr in April. That autumn Sarah set out to bring home Esther's children, Sally and Aaron Burr, and died of dysentery at Philadelphia."
+    },
+    {
+     "number": 7,
      "category": "legacy",
-     "header": "Eleven children and never a raised voice",
-     "body": "She corrected her children with gentle words and reason rather than noise. George Whitefield stayed with the family in 1740 and wrote afterwards that he wanted a wife like her."
+     "header": "Her epitaph is carved on a Yale bench",
+     "body": "A stone bench at Jonathan Edwards College at Yale carries the words from her tombstone: Friend, Neighbor, Mother, Wife, and Christian. Her portrait, painted about 1740 by Joseph Badger, hangs in the same college."
     }
    ],
    "last_updated": "2026-09-15"
