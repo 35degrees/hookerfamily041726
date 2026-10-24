@@ -468030,6 +468030,14 @@
      "end_year": 1823,
      "notes": null
     }
+   ],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "business",
+     "header": "Montpelier's fourth merchant",
+     "body": "Wyllys was the fourth man to go into trade at Montpelier after its settlement, and kept his store there twenty-four years. He had the finest house in town, entertained state and national officials, and was prominent among the Masons."
+    }
    ]
   },
   {
@@ -545862,9 +545870,9 @@
    "narrative_blocks": [
     {
      "number": 1,
-     "category": "family",
-     "header": "Elizabeth died young",
-     "body": "Elizabeth died in 1831, in the first year."
+     "category": "death",
+     "header": "Thirteen days past her first birthday",
+     "body": "Elizabeth, the second child of Almira and Epaphroditus Ransom, was born on 22 September 1830 and died on 5 October 1831."
     }
    ],
    "number_of_marriages": 0
@@ -545936,9 +545944,9 @@
    "narrative_blocks": [
     {
      "number": 1,
-     "category": "family",
-     "header": "Eugene died young",
-     "body": "Eugene died in 1837, in the first year."
+     "category": "death",
+     "header": "Dead at three in Kalamazoo",
+     "body": "Eugene was born on 31 March 1834, the year his parents moved from Vermont to Michigan, and died at Kalamazoo on 5 August 1837, at three."
     }
    ],
    "number_of_marriages": 0
@@ -2525212,7 +2525220,14 @@
      "date_day": 10
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "She outlived all five of her children",
+     "body": "Maria bore five children at Montpelier and buried every one: a daughter who lived a day, Maria Eliza at two, Cadwell Jay at fifteen, Cornelia at twenty-eight and William Williams at forty-eight. She died there in 1886, at eighty-two."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2525341,7 +2525356,14 @@
      "date_day": 17
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "From Montpelier to the Canadian line",
+     "body": "Julia Ann married the Montpelier merchant Levi Spalding in 1833 and followed his trade to Rock Island, just over the line in Canada, and in 1845 to Derby Line, Vermont. She bore ten children and died at Derby Line in 1854, at forty-five."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2525474,7 +2525496,14 @@
      "children_ids": []
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "marriage",
+     "header": "A divorce, then a Chicago merchant",
+     "body": "Eliza Ann married Joseph Hutchins of Montpelier, whose sister Mary was the wife of her uncle Aaron Decius Hooker Cadwell, and bore their son James in 1835. She divorced Joseph and married John Palmer, a merchant at Chicago."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2528766,7 +2528795,14 @@
     "mother_id": "HD17017"
    },
    "marriages": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "military",
+     "header": "Killed at Port Hudson at twenty-two",
+     "body": "Stephen was a Union lieutenant when he was killed at Port Hudson, Louisiana, on 14 June 1863, eleven days short of his twenty-third birthday."
+    }
+   ],
    "tags": [
     "civil_war",
     "killed_in_action"
