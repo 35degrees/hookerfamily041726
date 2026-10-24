@@ -2528769,7 +2528769,9 @@
     "last_name": "Spalding",
     "married_names": [],
     "middle_name": "Foster",
-    "title": "Lt."
+    "title": "Lt.",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792856806/historyofninthre00lcmurr_0080_xvzmka.jpg",
+    "bio_blurb": "Union lieutenant killed at Port Hudson"
    },
    "gender": "male",
    "birth": {
@@ -2528777,7 +2528779,10 @@
     "date_precision": "exact",
     "month": 6,
     "day": 25,
-    "country": "United States"
+    "country": "United States",
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont"
    },
    "death": {
     "year": 1863,
@@ -2528821,7 +2528826,56 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0
+   "number_of_marriages": 0,
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "University of Vermont",
+     "dates": null,
+     "type": null,
+     "notes": "Graduate"
+    }
+   ],
+   "career": [
+    {
+     "role": "First Lieutenant and acting Adjutant",
+     "organization": "Company B, 8th Vermont Infantry Regiment",
+     "location": null,
+     "start_year": 1861,
+     "end_year": 1863,
+     "notes": null
+    },
+    {
+     "role": "Second Lieutenant",
+     "organization": "New York volunteer regiment",
+     "location": null,
+     "start_year": 1861,
+     "end_year": 1861,
+     "notes": null
+    },
+    {
+     "role": "Private",
+     "organization": "7th New York Militia",
+     "location": null,
+     "start_year": 1861,
+     "end_year": 1861,
+     "notes": null
+    }
+   ],
+   "military_service": [
+    {
+     "war": "American Civil War",
+     "war_id": "WAR006",
+     "rank": "First Lieutenant",
+     "unit": "Company B, 8th Vermont Infantry Regiment",
+     "notes": "Commissioned 19 December 1861; acting adjutant when killed in the charge of 14 June 1863 at Port Hudson, the 24th day of the siege. Earlier served three months with the 7th New York Militia from April 1861."
+    }
+   ],
+   "landmarks": [
+    {
+     "landmark_id": "LM564"
+    }
+   ]
   },
   {
    "id": "H04746",
@@ -2541405,6 +2541459,25 @@
    "person_ids": [
     "HD17027",
     "I06126"
+   ]
+  },
+  {
+   "id": "LM564",
+   "name": "Gravestone",
+   "primary_name": "Gravestone",
+   "type": "gravestone",
+   "dates": {
+    "built": 1863
+   },
+   "location": {
+    "city": "Newport",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "primary_url": "https://civilwarthosesurnames.blogspot.com/2012/01/stephen-foster-spalding.html",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792856642/thumbMobile-566_om2wnb.jpg",
+   "person_ids": [
+    "H04745"
    ]
   }
  ],
@@ -2558292,6 +2558365,13 @@
    "notes": "Fredericksburg; killed in action at Wyse Fork, Kinston NC, 8 Mar 1865.",
    "tree_connection": "descendant",
    "years": "1862-1865"
+  },
+  {
+   "person_id": "H04745",
+   "war": "American Civil War",
+   "rank": "First Lieutenant",
+   "notes": "Company B, 8th Vermont Infantry; acting adjutant; killed in the charge of 14 June 1863 at Port Hudson, Louisiana.",
+   "tree_connection": "descendant"
   }
  ],
  "open_research": [
@@ -2566473,7 +2566553,8 @@
      "location": "Port Hudson, Louisiana",
      "wikipedia_url": "https://en.wikipedia.org/wiki/Siege_of_Port_Hudson",
      "person_ids": [
-      "HD3335"
+      "HD3335",
+      "H04745"
      ]
     },
     {
@@ -2566918,7 +2566999,8 @@
     "I05991",
     "X03017",
     "HD5937",
-    "H02534"
+    "H02534",
+    "H04745"
    ],
    "notable_people": []
   },
