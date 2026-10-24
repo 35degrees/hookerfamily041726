@@ -44570,14 +44570,7 @@
    "landmarks": [],
    "naming_inspiration": [],
    "research_tags": [],
-   "cross_connections": [
-    {
-     "type": "cousin_marriage",
-     "related_id": "H00024",
-     "display_label": ", her nephew, married her daughter Sarah, his first cousin",
-     "link_text": "John Wilson"
-    }
-   ],
+   "cross_connections": [],
    "quotes": [],
    "research_sources": [],
    "narrative_blocks": [
@@ -49810,13 +49803,6 @@
      "related_id": "H00006",
      "display_label": "John Wilson and his wife Sarah Newton were first cousins",
      "link_text": "Sarah Hooker Wilson"
-    },
-    {
-     "type": "cousin_marriage",
-     "notes": "Their children carry descent from Thomas Hooker through two separate lines — descent_paths_to_thomas: 2",
-     "related_id": "H00003",
-     "display_label": "John Wilson and his wife Sarah Newton were first cousins",
-     "link_text": "Mary Hooker Newton"
     }
    ],
    "tags": [
