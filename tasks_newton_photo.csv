@@ -1,0 +1,2 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+I00003,field_set,bio.photo_position=left center,OK set bio.photo_position = 'left center',/person/roger-newton-sr-1620,,
