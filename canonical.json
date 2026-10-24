@@ -473180,7 +473180,7 @@
     "first_name": "Joseph",
     "last_name": "Hubbell",
     "married_names": [],
-    "bio_blurb": "Farmer and musician"
+    "bio_blurb": "Revolutionary War soldier, farmer and musician"
    },
    "residence": {},
    "baptism": {},
@@ -473359,15 +473359,28 @@
    "birth": {
     "year": 1792,
     "month": 2,
-    "day": 17
+    "day": 17,
+    "city": "Weston",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "death": {
     "year": 1876,
     "month": 2,
-    "day": 8
+    "day": 8,
+    "city": "Mineral Point",
+    "county": "Green County",
+    "state": "Wisconsin",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "gender": "male",
-   "parents": {},
+   "parents": {
+    "father_name": "Agur Seeley",
+    "mother_name": "Charity Hall Seeley"
+   },
    "research_notes": "b. Feb 17, 1792 Weston, Fairfield County CT; d. Feb 8, 1876 Mineral Point WI age 83. Son of Agur (Agar) Seeley and Charity Hall of Stratton CT. Carpenter. m. Eunice Hubbell (H02078) Jul 4, 1812 or 1813 Trumbull CT. 10 children. (EH 2078; FamilySearch)",
    "number_of_marriages": 1,
    "marriages": [
@@ -473416,7 +473429,17 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "career": [
+    {
+     "role": "Carpenter",
+     "organization": null,
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "H03526",
@@ -474136,7 +474159,10 @@
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 1918,
+    "date_precision": "year_only"
+   },
    "cross_connections": [],
    "bio": {
     "display_name": "Ann Eliza Seeley",
@@ -474331,7 +474357,10 @@
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 1899,
+    "date_precision": "year_only"
+   },
    "cross_connections": [],
    "bio": {
     "display_name": "Julia Elizabeth Seeley",
@@ -474456,7 +474485,10 @@
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 1914,
+    "date_precision": "year_only"
+   },
    "cross_connections": [],
    "bio": {
     "display_name": "Harriet Louisa Seeley",
@@ -474590,11 +474622,14 @@
    "birth": {
     "city": "Versailles",
     "state": "New York",
-    "country": "United States"
+    "country": "United States",
+    "year": 1840,
+    "date_precision": "year_only"
    },
    "is_placeholder": true,
    "former_ids": [
-    "seeley-seeley"
+    "seeley-seeley",
+    "son-seeley"
    ]
   },
   {
