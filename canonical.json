@@ -19411,7 +19411,10 @@
     "HD3714",
     "I00411",
     "I05294",
-    "HD15129"
+    "HD15129",
+    "I00406",
+    "HD17062",
+    "I06163"
    ],
    "gps": {
     "latitude": 45.46218,
@@ -821258,7 +821261,8 @@
       "HD3744",
       "HD3745",
       "HD3746",
-      "HD3747"
+      "HD3747",
+      "HD17064"
      ]
     }
    ],
@@ -825650,7 +825654,8 @@
       "HD3744",
       "HD3745",
       "HD3746",
-      "HD3747"
+      "HD3747",
+      "HD17064"
      ]
     }
    ],
@@ -826137,7 +826142,16 @@
     "country": "United States"
    },
    "baptism": {},
-   "death": {},
+   "death": {
+    "year": 1932,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 23,
+    "city": "Portland",
+    "county": "Multnomah County",
+    "state": "Oregon",
+    "country": "United States"
+   },
    "residence": {
     "city": "Portland",
     "county": "Multnomah County",
@@ -826176,18 +826190,49 @@
      "date_year": 1876,
      "location_country": "United States",
      "children_ids": [
-      "HD17062"
-     ]
+      "HD17062",
+      "HD17065",
+      "HD17066",
+      "HD17067"
+     ],
+     "date_month": 11,
+     "date_day": 1,
+     "location_city": "West Andover",
+     "location_state": "Ohio"
     }
    ],
-   "education": [],
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "Grand River Institute, Austinburg, Ohio",
+     "dates": null,
+     "type": null,
+     "notes": null
+    }
+   ],
    "career": [
+    {
+     "role": "President",
+     "organization": "Columbia River and Puget Sound Navigation Company",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
     {
      "role": "Steamboat owner",
      "organization": "Ohio, Fleetwood, Telephone and Flyer, with U. B. Scott and E. W. Crichton",
      "location": null,
      "start_year": null,
      "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Representative",
+     "organization": "Oregon Iron Company, San Francisco",
+     "location": null,
+     "start_year": 1876,
+     "end_year": 1892,
      "notes": null
     },
     {
@@ -826259,25 +826304,37 @@
   {
    "id": "I00406",
    "former_ids": [
-    "amelia-c-carpenter"
+    "amelia-carpenter"
    ],
    "is_placeholder": false,
    "has_descendants_documented": false,
    "bio": {
     "first_name": "Amelia",
-    "last_name": "Carpenter Seeley",
+    "last_name": "Seeley",
     "maiden_name": "Carpenter",
     "married_names": [
      "Seeley"
     ],
     "gender": "female",
-    "display_name": "Amelia C. Carpenter Seeley",
-    "middle_name": "C."
+    "display_name": "Amelia Carpenter Seeley",
+    "chip_first_name": "Minnie",
+    "nickname": "Minnie"
    },
    "baptism": {},
-   "death": {},
+   "death": {
+    "year": 1926,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 15,
+    "city": "Redlands",
+    "county": "San Bernardino County",
+    "state": "California",
+    "country": "United States"
+   },
    "residence": {},
-   "burial": {},
+   "burial": {
+    "cemetery_id": "CEM966"
+   },
    "classification": {
     "is_thomas_descendant": false,
     "is_talcott_descendant": false,
@@ -826303,8 +826360,15 @@
      "date_year": 1876,
      "location_country": "United States",
      "children_ids": [
-      "HD17062"
-     ]
+      "HD17062",
+      "HD17065",
+      "HD17066",
+      "HD17067"
+     ],
+     "date_month": 11,
+     "date_day": 1,
+     "location_city": "West Andover",
+     "location_state": "Ohio"
     }
    ],
    "education": [],
@@ -826324,7 +826388,16 @@
    "research_notes": "Married 1876 Lamar Boudinot Seeley (HD3743). 4 children. Per Cowles book.",
    "documents": [],
    "gender": "female",
-   "birth": {}
+   "birth": {
+    "year": 1851,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 11,
+    "city": "West Andover",
+    "county": "Ashtabula County",
+    "state": "Ohio",
+    "country": "United States"
+   }
   },
   {
    "id": "HD3744",
@@ -826352,7 +826425,11 @@
     "country": "United States"
    },
    "baptism": {},
-   "death": {},
+   "death": {
+    "year": 1937,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
    "residence": {
     "city": "Tacoma",
     "county": "Pierce County",
@@ -826499,7 +826576,11 @@
     "country": "United States"
    },
    "baptism": {},
-   "death": {},
+   "death": {
+    "year": 1921,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
    "residence": {
     "city": "Seattle",
     "county": "King County",
@@ -826652,7 +826733,11 @@
     "country": "United States"
    },
    "baptism": {},
-   "death": {},
+   "death": {
+    "year": 1938,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
    "residence": {
     "city": "Portland",
     "county": "Multnomah County",
@@ -826802,7 +826887,11 @@
     "country": "United States"
    },
    "baptism": {},
-   "death": {},
+   "death": {
+    "year": 1941,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
    "residence": {
     "city": "Austinburg",
     "county": "Ashtabula County",
@@ -2532767,11 +2532856,29 @@
     "last_name": "Seeley",
     "married_names": [],
     "title": "Rev.",
-    "bio_blurb": "Pennsylvania pastor"
+    "bio_blurb": "Presbyterian minister and home-missions superintendent"
    },
    "gender": "male",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1877,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 2,
+    "city": "San Francisco",
+    "county": "San Francisco County",
+    "state": "California",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1937,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 4,
+    "city": "Seattle",
+    "county": "King County",
+    "state": "Washington",
+    "country": "United States"
+   },
    "parents": {
     "father_id": "HD3743",
     "mother_id": "I00406"
@@ -2532779,10 +2532886,14 @@
    "marriages": [
     {
      "marriage_number": 1,
-     "spouse_id": null,
+     "spouse_id": "I06163",
      "children_ids": [
-      "HD17063"
-     ]
+      "HD17068",
+      "HD17063",
+      "HD17069",
+      "HD17070"
+     ],
+     "date_year": 1904
     }
    ],
    "narrative_blocks": [],
@@ -2532801,17 +2532912,82 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0,
+   "number_of_marriages": 1,
    "career": [
     {
      "role": "Pastor",
-     "organization": "Pennsylvania",
+     "organization": "Oysterville and Ocean Park church, Washington",
      "location": null,
-     "start_year": null,
+     "start_year": 1934,
      "end_year": null,
      "notes": null
+    },
+    {
+     "role": "Pastor",
+     "organization": "Woodburn, Oregon",
+     "location": null,
+     "start_year": 1927,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Superintendent of Presbyterian home missions",
+     "organization": "Oregon",
+     "location": null,
+     "start_year": null,
+     "end_year": 1923,
+     "notes": null
+    },
+    {
+     "role": "First minister",
+     "organization": "Rose City Park Presbyterian Church, Portland",
+     "location": null,
+     "start_year": 1910,
+     "end_year": 1914,
+     "notes": null
+    },
+    {
+     "role": "Pastor",
+     "organization": "Presbyterian churches at Wilmington, Delaware, and Philadelphia",
+     "location": null,
+     "start_year": 1903,
+     "end_year": 1910,
+     "notes": null
     }
-   ]
+   ],
+   "burial": {
+    "cemetery_id": "CEM966",
+    "plot_notes": "Sec 13, Lot 36, Grave 6"
+   },
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "Williams College",
+     "dates": "1900",
+     "type": null,
+     "notes": "Phi Gamma Delta"
+    },
+    {
+     "institution_id": null,
+     "school_name": "Union Theological Seminary",
+     "dates": null,
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": null,
+     "school_name": "Princeton Theological Seminary",
+     "dates": "1903",
+     "type": null,
+     "notes": null
+    }
+   ],
+   "residence": {
+    "city": "Portland",
+    "county": "Multnomah County",
+    "state": "Oregon",
+    "country": "United States"
+   }
   },
   {
    "id": "HD17063",
@@ -2532823,10 +2532999,332 @@
     "middle_name": "Woodward"
    },
    "gender": "male",
-   "birth": {},
+   "birth": {
+    "year": 1906,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 12,
+    "city": "Philadelphia",
+    "county": "Philadelphia County",
+    "state": "Pennsylvania",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1995,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 1,
+    "city": "Tiburon",
+    "county": "Marin County",
+    "state": "California",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17062",
+    "mother_id": "I06163"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06164",
+     "children_ids": [
+      "HD17071"
+     ],
+     "date_year": 1937,
+     "date_month": 5,
+     "date_day": 26,
+     "location_city": "Walla Walla",
+     "location_state": "Washington",
+     "location_country": "United States",
+     "end_type": "death",
+     "end_year": 1939
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06165",
+     "children_ids": [],
+     "date_year": 1942,
+     "date_month": 10,
+     "date_day": 21
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 2
+  },
+  {
+   "id": "HD17064",
+   "bio": {
+    "display_name": "Sophia Seeley",
+    "first_name": "Sophia",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1863,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
    "death": {},
    "parents": {
-    "father_id": "HD17062"
+    "father_id": "I00411",
+    "mother_id": "HD3714"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17065",
+   "bio": {
+    "display_name": "Carrol Carpenter Seeley",
+    "first_name": "Carrol",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Carpenter"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1878,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1958,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3743",
+    "mother_id": "I00406"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17066",
+   "bio": {
+    "display_name": "Dr. Lamar Seeley",
+    "first_name": "Lamar",
+    "last_name": "Seeley",
+    "married_names": [],
+    "title": "Dr."
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1881,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1907,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3743",
+    "mother_id": "I00406"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17067",
+   "bio": {
+    "display_name": "Arthur Carpenter Seeley",
+    "first_name": "Arthur",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Carpenter"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1883,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1953,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3743",
+    "mother_id": "I00406"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06163",
+   "bio": {
+    "display_name": "Mayannah Woodward Seeley",
+    "first_name": "Mayannah",
+    "last_name": "Seeley",
+    "married_names": [
+     "Seeley"
+    ],
+    "maiden_name": "Woodward",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792865457/Screenshot_2026-10-24_at_11.10.28_AM_adsxmh.png"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1878,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 20,
+    "city": "Portland",
+    "county": "Multnomah County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1971,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 23,
+    "city": "La Jolla",
+    "county": "San Diego County",
+    "state": "California",
+    "country": "United States"
+   },
+   "parents": {
+    "father_name": "Tyler Woodward",
+    "mother_name": "Mary Jane Ross Woodward"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17062",
+     "children_ids": [
+      "HD17068",
+      "HD17063",
+      "HD17069",
+      "HD17070"
+     ],
+     "date_year": 1904
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM966"
+   }
+  },
+  {
+   "id": "HD17068",
+   "bio": {
+    "display_name": "Amelia Seeley",
+    "first_name": "Amelia",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1905,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1905,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17062",
+    "mother_id": "I06163"
    },
    "marriages": [],
    "narrative_blocks": [],
@@ -2532846,6 +2533344,439 @@
    },
    "is_placeholder": false,
    "number_of_marriages": 0
+  },
+  {
+   "id": "HD17069",
+   "bio": {
+    "display_name": "Ross Seeley",
+    "first_name": "Ross",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1908,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1908,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17062",
+    "mother_id": "I06163"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17070",
+   "bio": {
+    "display_name": "Boudinot Seeley",
+    "first_name": "Boudinot",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1910,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1910,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17062",
+    "mother_id": "I06163"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06164",
+   "bio": {
+    "display_name": "Mary Lois Bridwell Seeley",
+    "first_name": "Mary",
+    "last_name": "Seeley",
+    "married_names": [
+     "Seeley"
+    ],
+    "middle_name": "Lois",
+    "maiden_name": "Bridwell"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1912,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 26,
+    "county": "Klickitat County",
+    "state": "Washington",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1939,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 21,
+    "city": "Walla Walla",
+    "county": "Walla Walla County",
+    "state": "Washington",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17063",
+     "children_ids": [
+      "HD17071"
+     ],
+     "date_year": 1937,
+     "date_month": 5,
+     "date_day": 26,
+     "location_city": "Walla Walla",
+     "location_state": "Washington",
+     "location_country": "United States",
+     "end_type": "death",
+     "end_year": 1939
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17071",
+   "bio": {
+    "display_name": "Mary Lois Seeley Bedeau",
+    "first_name": "Mary",
+    "last_name": "Bedeau",
+    "married_names": [
+     "Bedeau"
+    ],
+    "middle_name": "Lois",
+    "maiden_name": "Seeley"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1939,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 21,
+    "city": "Walla Walla",
+    "county": "Walla Walla County",
+    "state": "Washington",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2004,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 20,
+    "city": "Indianapolis",
+    "county": "Marion County",
+    "state": "Indiana",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17063",
+    "mother_id": "I06164"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06166",
+     "children_ids": [
+      "HD17072",
+      "HD17073"
+     ],
+     "date_year": 1960,
+     "date_month": 7,
+     "date_day": 16
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06165",
+   "bio": {
+    "display_name": "Emma Jane Johnson Seeley",
+    "first_name": "Emma",
+    "last_name": "Seeley",
+    "married_names": [
+     "Seeley"
+    ],
+    "middle_name": "Jane",
+    "maiden_name": "Johnson"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1919,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 2,
+    "city": "Pendleton",
+    "county": "Umatilla County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2009,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 16,
+    "city": "College Place",
+    "county": "Walla Walla County",
+    "state": "Washington",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17063",
+     "children_ids": [],
+     "date_year": 1942,
+     "date_month": 10,
+     "date_day": 21
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06166",
+   "bio": {
+    "display_name": "Robert William Bedeau",
+    "first_name": "Robert",
+    "last_name": "Bedeau",
+    "married_names": [],
+    "middle_name": "William"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1925,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 4,
+    "city": "Vallejo",
+    "county": "Solano County",
+    "state": "California",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1999,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 21,
+    "city": "Indianapolis",
+    "county": "Marion County",
+    "state": "Indiana",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17071",
+     "children_ids": [
+      "HD17072",
+      "HD17073"
+     ],
+     "date_year": 1960,
+     "date_month": 7,
+     "date_day": 16
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17072",
+   "bio": {
+    "display_name": "Victoria Elizabeth Bedeau",
+    "first_name": "Victoria",
+    "last_name": "Bedeau",
+    "married_names": [],
+    "middle_name": "Elizabeth"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1961,
+    "date_precision": "exact",
+    "month": 5,
+    "day": 25,
+    "country": "United States"
+   },
+   "death": {
+    "year": 2022,
+    "date_precision": "exact",
+    "month": 5,
+    "day": 20,
+    "city": "Indianapolis",
+    "county": "Marion County",
+    "state": "Indiana",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06166",
+    "mother_id": "HD17071"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 13
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17073",
+   "bio": {
+    "display_name": "Katharine Woodward Bedeau",
+    "first_name": "Katharine",
+    "last_name": "Bedeau",
+    "married_names": [],
+    "middle_name": "Woodward"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1963,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 15,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06166",
+    "mother_id": "HD17071"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 13
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "is_living": false
   }
  ],
  "landmarks": [
