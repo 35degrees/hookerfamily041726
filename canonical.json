@@ -2529761,7 +2529761,8 @@
     ],
     "middle_name": "White",
     "maiden_name": "Spalding",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792863617/Screenshot_2026-10-24_at_10-resized_p0pvru.png"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792863617/Screenshot_2026-10-24_at_10-resized_p0pvru.png",
+    "bio_blurb": "Belle of Derby Line, killed by her husband"
    },
    "gender": "female",
    "birth": {
@@ -2529806,14 +2529807,14 @@
     {
      "number": 1,
      "category": "death",
-     "header": "He came for her at the hotel",
-     "body": "In August 1876 Gertrude went to stay with her sister Clara and Clara's husband, Charles Brigham, at the Derby Line Hotel. On 31 August Edwin arrived drunk, borrowed a revolver at a store, and demanded to see her. Brigham refused."
+     "header": "Her husband came to the hotel armed",
+     "body": "In August 1876 Gertrude went to stay with her sister Clara and Clara's husband, Charles Brigham, at the Derby Line Hotel. On 31 August her husband, Edwin Hayden, came with a borrowed revolver to see her. Brigham refused him."
     },
     {
      "number": 2,
      "category": "death",
-     "header": "“Oh, Edwin”",
-     "body": "Edwin shot Brigham through the lung, walked into the next room and shot Gertrude in the head. She turned, crying “Oh, Edwin,” and he shot her again in the back. She lived six days and died on 6 September 1876, at twenty-three."
+     "header": "Her husband shot her: “Oh, Edwin”",
+     "body": "Her husband, Edwin Hayden, shot Brigham through the lung, walked into the next room and shot Gertrude in the head. She turned, crying “Oh, Edwin,” and he shot her again in the back. She died on 6 September 1876, at twenty-three."
     },
     {
      "number": 3,
@@ -2529824,14 +2529825,14 @@
     {
      "number": 4,
      "category": "marriage",
-     "header": "She left him in 1875",
-     "body": "Her money went next into a hotel he kept at Stanstead, and was spent there. In 1875, after years of beatings, Gertrude left him for a sister at Allston, near Boston, and would not go back while he drank."
+     "header": "She left her husband in 1875",
+     "body": "Her money went next into a hotel her husband, Edwin Hayden, kept at Stanstead, and was spent there. In 1875, after years of his beatings, Gertrude left Edwin for a sister at Allston, near Boston, and would not go back while he drank."
     },
     {
      "number": 5,
      "category": "death",
      "header": "What she said before she died",
-     "body": "Before she died Gertrude said her husband had often knocked her down, and had once forced her to sign over bonds by threatening to shoot her."
+     "body": "Before she died Gertrude said her husband, Edwin Hayden, had often knocked her down, and had once forced her to sign over bonds by threatening to shoot her."
     }
    ],
    "tags": [],
@@ -2529877,7 +2529878,8 @@
     "middle_name": "Clay",
     "chip_first_name": "Ned",
     "nickname": "Ned",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792863564/Screenshot_2026-10-24_at_10-resized_va64ur.png"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792863564/Screenshot_2026-10-24_at_10-resized_va64ur.png",
+    "bio_blurb": "Murderer of his wife, hanged in 1881"
    },
    "gender": "male",
    "birth": {
@@ -2529919,20 +2529921,20 @@
     {
      "number": 1,
      "category": "death",
-     "header": "A borrowed revolver and a dog story",
-     "body": "Drinking on the way from St. Leon Springs, Edwin reached Derby Line on 31 August 1876 and borrowed a revolver at a store, showing a scar he said a dog had left. He went straight to the hotel where his wife Gertrude was staying."
+     "header": "He shot and killed his wife, Gertrude",
+     "body": "On 31 August 1876 Edwin shot and killed his wife, Gertrude Spalding Hayden, at the Derby Line Hotel, where she had taken refuge with her sister. That morning he had borrowed a revolver at a store, saying a dog had bitten him."
     },
     {
      "number": 2,
      "category": "death",
-     "header": "He shot her brother-in-law, then her",
-     "body": "When Charles Brigham refused to let him see Gertrude, Edwin shot him through the lung, walked into the next room and shot her in the head and, as she turned, in the back. Brigham and others pinned him down."
+     "header": "He shot her brother-in-law first",
+     "body": "When Charles Brigham refused to let him see Gertrude, Edwin shot him through the lung, walked into the next room and shot his wife in the head and, as she turned, in the back. Brigham and others pinned him down."
     },
     {
      "number": 3,
      "category": "death",
-     "header": "Hanged at Windsor in 1881",
-     "body": "Convicted of first-degree murder in September 1877, Edwin spent more than three years in the state prison at Windsor and was hanged there on 25 February 1881. On the scaffold he denied ever abusing his wife and blamed her family."
+     "header": "Hanged for murdering his wife",
+     "body": "Convicted in September 1877 of the first-degree murder of his wife, Edwin spent more than three years in the state prison at Windsor and was hanged there on 25 February 1881. On the scaffold he denied ever abusing her."
     },
     {
      "number": 4,
