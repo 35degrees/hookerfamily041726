@@ -2329305,6 +2329305,12 @@
      "type": "connection",
      "link_text": "Francis Rackemann",
      "display_label": "built the allergy clinic at the hospital where he ran pediatrics"
+    },
+    {
+     "related_id": "HD17054",
+     "type": "connection",
+     "link_text": "Dr. David Ovitt",
+     "display_label": "organized Northpoint, one of Wisconsin's first HMOs, in 1972"
     }
    ],
    "research_tags": [],
@@ -2531065,7 +2531071,14 @@
     }
    ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD17056",
+     "type": "connection",
+     "link_text": "Margaret Ovitt",
+     "display_label": ", her granddaughter, was named Margaret for her"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
@@ -2531160,7 +2531173,14 @@
    "tags": [
     "wwii"
    ],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "I05230",
+     "type": "connection",
+     "link_text": "Dr. Allan Macy Butler",
+     "display_label": "helped organize White Cross, one of the first HMOs in the country"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
@@ -2531375,7 +2531395,26 @@
      "children_ids": []
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "science",
+     "header": "The first digital subtraction angiography",
+     "body": "Terry led a series of NIH-funded projects at the University of Arizona that built the first digital subtraction angiography system, then the first digital display console and the first mini PACS, taking radiology from film to digital."
+    },
+    {
+     "number": 2,
+     "category": "career",
+     "header": "Twelve years chairing Arizona radiology",
+     "body": "Terry came to Tucson in 1974 after a cardiovascular radiology fellowship under Kurt Amplatz in Minnesota. He made full professor in 1982, ran the diagnostic division seven years, and chaired the department from 1993 for twelve."
+    },
+    {
+     "number": 3,
+     "category": "career",
+     "header": "The physician's physician",
+     "body": "Terry taught generations of radiologists and cardiologists the reading of cardiac angiograms, led the Eastern Radiological Society and the chairs of academic radiology, and worked in Arizona's cardiothoracic imaging until 2020."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2531481,9 +2531520,29 @@
     "mother_id": "I06156"
    },
    "marriages": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "From nursing to native landscapes",
+     "body": "After a nursing degree at Vanderbilt, years in Perth and Cambridge, and a decade at McDonough District Hospital in Macomb, Margaret took a master's in landscape architecture and opened Western Illinois Land Design, working in native plants."
+    },
+    {
+     "number": 2,
+     "category": "social_reform",
+     "header": "Restoring the Illinois River lakes",
+     "body": "Retired, Margaret restores land west of Macomb, sits on the Macomb Tree Board, works for a local foods co-op, and joins the Emiquon Corps of Discovery in The Nature Conservancy's restoration of Thompson and Flag lakes."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "I06155",
+     "type": "connection",
+     "link_text": "Margaret Haight Ovitt",
+     "display_label": ", her grandmother, gave her the name Margaret"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
@@ -2531588,7 +2531647,14 @@
     "mother_id": "I06156"
    },
    "marriages": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "From Alaska to Oregon",
+     "body": "Betsy graduated from Whitefish Bay High School in 1964, became a nurse, and lived in Alaska, Florida, Colorado and Wisconsin before settling in Oregon, where she has since retired."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
