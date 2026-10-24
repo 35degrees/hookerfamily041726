@@ -467008,9 +467008,9 @@
    ],
    "birth": {
     "year": 1754,
-    "month": 11,
-    "day": 17,
-    "city": "Hartford",
+    "date_precision": "year_only",
+    "city": "Hartford West District",
+    "county": "Hartford County",
     "state": "Connecticut",
     "country": "United States"
    },
@@ -467066,7 +467066,16 @@
     ]
    },
    "residence": {},
-   "baptism": {},
+   "baptism": {
+    "year": 1754,
+    "month": 11,
+    "day": 17,
+    "date_precision": "exact",
+    "city": "Hartford West District",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
    "research_tags": [],
    "research_sources": [],
    "documents": [],
@@ -467834,8 +467843,11 @@
    ],
    "birth": {
     "year": 1754,
-    "month": 1,
-    "day": 1
+    "date_precision": "year_only",
+    "city": "Wintonbury",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
    },
    "death": {
     "year": 1809,
@@ -468025,7 +468037,7 @@
    "birth": {
     "year": 1776,
     "date_precision": "year_only",
-    "city": "Hartford",
+    "city": "Hartford West District",
     "county": "Hartford County",
     "state": "Connecticut",
     "country": "United States"
@@ -468121,10 +468133,22 @@
     }
    ],
    "birth": {
-    "year": 1782
+    "year": 1782,
+    "date_precision": "year_only",
+    "city": "Hartford West District",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
    },
    "death": {
-    "year": 1847
+    "year": 1847,
+    "month": 10,
+    "day": 14,
+    "date_precision": "exact",
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
    },
    "gender": "unknown",
    "research_notes": "b. 1782; d. 1847. (FamilySearch)",
@@ -468179,10 +468203,22 @@
     }
    ],
    "birth": {
-    "year": 1785
+    "year": 1784,
+    "date_precision": "year_only",
+    "city": "Hartford West District",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
    },
    "death": {
-    "year": 1855
+    "year": 1855,
+    "month": 2,
+    "day": 23,
+    "date_precision": "exact",
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
    },
    "gender": "female",
    "research_notes": "b. 1785; d. 1855. (FamilySearch)",
@@ -468234,10 +468270,20 @@
     }
    ],
    "birth": {
-    "year": 1787
+    "year": 1787,
+    "date_precision": "year_only",
+    "city": "Hartford West District",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
    },
    "death": {
-    "year": 1835
+    "year": 1835,
+    "date_precision": "year_only",
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
    },
    "gender": "male",
    "research_notes": "b. 1787; d. 1835. (FamilySearch)",
@@ -468291,7 +468337,14 @@
     }
    ],
    "birth": {
-    "year": 1791
+    "year": 1791,
+    "month": 2,
+    "day": 10,
+    "date_precision": "exact",
+    "city": "Hartford West District",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
    },
    "death": {
     "year": 1872
@@ -2526862,6 +2526915,8 @@
    "death": {
     "year": 1809,
     "date_precision": "year_only",
+    "cause": "Drowned in the Winooski River",
+    "state": "Vermont",
     "country": "United States"
    },
    "parents": {
@@ -2526981,7 +2527036,13 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "residence": {
+    "city": "Whitehall",
+    "county": "Washington County",
+    "state": "New York",
+    "country": "United States"
+   }
   },
   {
    "id": "I06130",
@@ -2527039,7 +2527100,13 @@
      "end_year": null,
      "notes": null
     }
-   ]
+   ],
+   "residence": {
+    "city": "East Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   }
   },
   {
    "id": "H04728",
@@ -2549290,7 +2549357,7 @@
    "one_line": "A Thomas Hooker descendant organized and commanded two Kansas cavalry regiments, fought Quantrill's raiders daily through the summer of 1862, was shot nine times through his hat by bushwhackers in Kansas City, and survived — the son of a Michigan governor, great-great-grandson of a Hooker.",
    "category": "historical_witness",
    "title": "wyllys_cadwell_ransom_civil_war_major_quantrill_kansas_border_governor_son_hooker_descendant",
-   "summary": "Wyllys Cadwell Ransom (HD2676, 1828-1908) was a great-great-grandson of Mary Hooker Cadwell (H00986, EH 986, gen 5) — daughter of Daniel Hooker (H00389, EH 389) and great-great-great-granddaughter of Thomas Hooker. His father Epaphroditus Ransom was the 7th Governor of Michigan (1848-1850); Wyllys served as his father's private secretary in 1849. \nCIVIL WAR: Wyllys organized Company E of the 2nd Kansas Cavalry at Fort Sumter's fall, then organized the entire 6th Kansas Cavalry (rising to Major). He held the Missouri-Kansas border against guerrilla chieftains Quantrill, Todd, Yeager, and Parker through the summer of 1862 in near-daily skirmishes. He was present after the Lawrence, Kansas massacre (August 21, 1863, 150 dead) and participated in the pursuit of Quantrill afterward. \nPOST-WAR: As District Court Clerk in Independence MO in 1866, he repelled a midnight Confederate bushwhacker raid on the county jail — the deputy sheriff was killed, his young son shot through a bedroom window. Two weeks later, Ransom was attacked on Kansas City streets by five mounted armed rebels. The fight lasted several minutes; he fired on them while taking \"nine balls through his hat and clothing that did not strike his person,\" and fell seriously wounded in the face and thigh before eventually recovering. \nHis grandfather Major Ezekiel Ransom \"was a member of the non-commissioned staff of George Washington and fought in most of the battles of the Virginia campaign — and was present at the execution of Major André\" (Oct 2, 1780). By a separate line of the same Hooker tree, Capt. Nathan Beers (brother of Sarah Beers Pierpont, X00494, wife of H00388 John Pierpont) commanded the guard at the same execution. Two separate Hooker family branches both present at André's execution — neither knowing the other's connection. \nWyllys published \"Historical outline of the Ransom family of America\" in 1903 and died in 1908, one of the oldest living University of Michigan graduates.",
+   "summary": "Wyllys Cadwell Ransom (1828-1908) was a great-great-grandson of Mary Hooker Cadwell (H00986, EH 986, gen 5) — daughter of Daniel Hooker (H00389, EH 389) and great-great-great-granddaughter of Thomas Hooker. His father Epaphroditus Ransom was the 7th Governor of Michigan (1848-1850); Wyllys served as his father's private secretary in 1849. \nCIVIL WAR: Wyllys organized Company E of the 2nd Kansas Cavalry at Fort Sumter's fall, then organized the entire 6th Kansas Cavalry (rising to Major). He held the Missouri-Kansas border against guerrilla chieftains Quantrill, Todd, Yeager, and Parker through the summer of 1862 in near-daily skirmishes. He was present after the Lawrence, Kansas massacre (August 21, 1863, 150 dead) and participated in the pursuit of Quantrill afterward. \nPOST-WAR: As District Court Clerk in Independence MO in 1866, he repelled a midnight Confederate bushwhacker raid on the county jail — the deputy sheriff was killed, his young son shot through a bedroom window. Two weeks later, Ransom was attacked on Kansas City streets by five mounted armed rebels. The fight lasted several minutes; he fired on them while taking \"nine balls through his hat and clothing that did not strike his person,\" and fell seriously wounded in the face and thigh before eventually recovering. \nHis grandfather Major Ezekiel Ransom \"was a member of the non-commissioned staff of George Washington and fought in most of the battles of the Virginia campaign — and was present at the execution of Major André\" (Oct 2, 1780). By a separate line of the same Hooker tree, Capt. Nathan Beers (brother of Sarah Beers Pierpont, X00494, wife of H00388 John Pierpont) commanded the guard at the same execution. Two separate Hooker family branches both present at André's execution — neither knowing the other's connection. \nWyllys published \"Historical outline of the Ransom family of America\" in 1903 and died in 1908, one of the oldest living University of Michigan graduates.",
    "person_ids": [
     "HD2683",
     "HD2682",
