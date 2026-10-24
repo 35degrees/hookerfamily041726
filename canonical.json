@@ -160916,9 +160916,6 @@
      "artwork_id": "ART168",
      "role": "subject",
      "artwork_blurb": "New Haven, CT"
-    },
-    {
-     "artwork_id": "ART003"
     }
    ],
    "quotes": [],
@@ -2554557,9 +2554554,7 @@
    "notes": "Companion to the Jonathan Edwards portrait (ART019), both by Badger. Bequeathed to Yale by Eugene Phelps Edwards (HD2637) in 1938, carried to Yale the day the Great Hurricane of 1938 struck.",
    "artist_dates": "1708–1765",
    "collection": "Jonathan Edwards College, Yale University",
-   "person_ids": [
-    "HD0418"
-   ]
+   "person_ids": []
   },
   {
    "id": "ART004",
