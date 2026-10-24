@@ -716390,6 +716390,17 @@
    ],
    "career": [
     {
+     "role": "Associate Professor of Internal Medicine (Infectious Diseases); Affiliated Faculty, Yale Institute for Global Health",
+     "organization": "Yale School of Medicine",
+     "location": "New Haven, Connecticut",
+     "notes": "Returned to Yale after nine years overseas.",
+     "institution_id": "INST122"
+    },
+    {
+     "role": "Owner and manager",
+     "organization": "Smokedown Farm, Sharon, Connecticut"
+    },
+    {
      "role": "Tuberculosis advisor",
      "organization": "Government of India (advisory role)",
      "location": "India",
@@ -716406,17 +716417,6 @@
      "organization": "University of Maryland AIDS treatment program",
      "location": "Nigeria",
      "notes": "Helped start a large AIDS treatment program in Nigeria."
-    },
-    {
-     "role": "Associate Professor of Internal Medicine (Infectious Diseases); Affiliated Faculty, Yale Institute for Global Health",
-     "organization": "Yale School of Medicine",
-     "location": "New Haven, Connecticut",
-     "notes": "Returned to Yale after nine years overseas.",
-     "institution_id": "INST122"
-    },
-    {
-     "role": "Owner and manager",
-     "organization": "Smokedown Farm, Sharon, Connecticut"
     }
    ],
    "military_service": [],
