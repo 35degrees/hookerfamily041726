@@ -700895,6 +700895,12 @@
      "type": "connection",
      "link_text": "Cottie Davison",
      "display_label": "captained Yale's 1947 football team"
+    },
+    {
+     "related_id": "HD3384",
+     "link_text": "Michael Hooker",
+     "display_label": ", his grandson, hit a hole in one on the 15th at Cypress Point",
+     "lineal_gap": 2
     }
    ],
    "education": [
@@ -714649,6 +714655,12 @@
      "lateral": true,
      "link_text": "John Hall Jr.",
      "display_label": "kept a seat at the Pacific-Union Club's games table for dominoes"
+    },
+    {
+     "related_id": "X02345",
+     "link_text": "Samuel F. B. Morse",
+     "display_label": ", his grandfather, built the course he hit a hole in one on over the Pacific",
+     "lineal_gap": -2
     }
    ],
    "naming_inspiration": [],
@@ -715057,7 +715069,9 @@
      "Hatch"
     ],
     "nickname": "Lisa",
-    "chip_first_name": "Lisa"
+    "chip_first_name": "Lisa",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792876461/1567629093372_zvu6bv.jpg",
+    "bio_blurb": "Certified employee benefits specialist"
    },
    "birth": {
     "year": 1957,
@@ -715103,8 +715117,25 @@
    "narrative_blocks": [],
    "cross_connections": [],
    "naming_inspiration": [],
-   "education": [],
-   "career": [],
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "University of South Florida",
+     "dates": null,
+     "type": null,
+     "notes": null
+    }
+   ],
+   "career": [
+    {
+     "role": "Certified Employee Benefits Specialist, CEBS",
+     "organization": null,
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ],
    "military_service": [],
    "institutions": [],
    "landmarks": [],
