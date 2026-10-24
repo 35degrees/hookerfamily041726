@@ -474012,17 +474012,39 @@
    "birth": {
     "year": 1824,
     "month": 8,
-    "day": 10
+    "day": 10,
+    "city": "Long Hill, Trumbull",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "death": {
     "year": 1867,
     "month": 2,
-    "day": 13
+    "day": 13,
+    "city": "Leavenworth",
+    "county": "Leavenworth County",
+    "state": "Kansas",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "marriages": [
     {
      "spouse_id": "X00941",
-     "children_ids": [],
+     "children_ids": [
+      "H04830",
+      "H04831",
+      "H04832",
+      "H04833",
+      "H04834",
+      "H04835",
+      "H04836",
+      "H04837",
+      "H04838",
+      "H04839",
+      "H04840"
+     ],
      "marriage_number": 1,
      "date_year": 1845,
      "date_month": 7,
@@ -474076,12 +474098,22 @@
    "birth": {
     "year": 1826,
     "month": 7,
-    "day": 27
+    "day": 27,
+    "city": "Redstone",
+    "county": "Fayette County",
+    "state": "Pennsylvania",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "death": {
     "year": 1882,
     "month": 2,
-    "day": 2
+    "day": 2,
+    "city": "Leavenworth",
+    "county": "Leavenworth County",
+    "state": "Kansas",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "gender": "female",
    "research_notes": "b. Jul 27, 1826 Redstone, Fayette County PA; d. Feb 2, 1882 Leavenworth KS. Daughter of John and Nancy Laughlin Crawford. m. Roswell Hamilton Seeley Jul 21, 1845. (EH 3530)",
@@ -474093,21 +474125,39 @@
      "date_year": 1845,
      "date_month": 7,
      "date_day": 21,
-     "children_ids": []
+     "children_ids": [
+      "H04830",
+      "H04831",
+      "H04832",
+      "H04833",
+      "H04834",
+      "H04835",
+      "H04836",
+      "H04837",
+      "H04838",
+      "H04839",
+      "H04840"
+     ]
     }
    ],
-   "parents": {},
+   "parents": {
+    "father_name": "John Crawford",
+    "mother_name": "Nancy Laughlin Crawford"
+   },
    "notable": {
     "is_notable": false,
     "notable_category": []
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Isabel Stevenson Crawford",
+    "display_name": "Isabel Stevenson Crawford Seeley",
     "first_name": "Isabel",
     "middle_name": "Stevenson",
     "maiden_name": "Crawford",
-    "married_names": []
+    "married_names": [
+     "Seeley"
+    ],
+    "last_name": "Seeley"
    },
    "residence": {},
    "baptism": {},
@@ -474146,12 +474196,29 @@
    "birth": {
     "year": 1827,
     "month": 7,
-    "day": 30
+    "day": 30,
+    "city": "Weston",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "marriages": [
     {
      "spouse_id": "X00942",
-     "children_ids": [],
+     "children_ids": [
+      "H04841",
+      "H04842",
+      "H04843",
+      "H04844",
+      "H04845",
+      "H04846",
+      "H04847",
+      "H04848",
+      "H04849",
+      "H04850",
+      "H04851"
+     ],
      "marriage_number": 1,
      "date_year": 1847,
      "date_month": 7,
@@ -474171,13 +474238,21 @@
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Ann Eliza Seeley",
+    "display_name": "Ann Eliza Seeley Taylor",
     "first_name": "Ann",
     "middle_name": "Eliza",
     "maiden_name": "Seeley",
-    "married_names": []
+    "married_names": [
+     "Taylor"
+    ],
+    "last_name": "Taylor"
    },
-   "residence": {},
+   "residence": {
+    "city": "Miles Grove",
+    "county": "Erie County",
+    "state": "Pennsylvania",
+    "country": "United States"
+   },
    "baptism": {},
    "research_tags": [],
    "research_sources": [],
@@ -474187,7 +474262,10 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "former_ids": [
+    "ann-seeley-1827"
+   ]
   },
   {
    "id": "X00942",
@@ -474209,7 +474287,12 @@
    "death": {
     "year": 1900,
     "month": 2,
-    "day": 18
+    "day": 18,
+    "city": "Fairplain",
+    "county": "Erie County",
+    "state": "Pennsylvania",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "gender": "male",
    "research_notes": "b. Rupert VT; d. Feb 18, 1900 Fairplain, Erie County PA. Son of Benajah and Rebecca Smith Taylor. m. Ann Eliza Seeley Jul 12, 1847. (EH 3531)",
@@ -474221,10 +474304,25 @@
      "date_year": 1847,
      "date_month": 7,
      "date_day": 12,
-     "children_ids": []
+     "children_ids": [
+      "H04841",
+      "H04842",
+      "H04843",
+      "H04844",
+      "H04845",
+      "H04846",
+      "H04847",
+      "H04848",
+      "H04849",
+      "H04850",
+      "H04851"
+     ]
     }
    ],
-   "parents": {},
+   "parents": {
+    "father_name": "Benajah Taylor",
+    "mother_name": "Rebecca Smith Taylor"
+   },
    "notable": {
     "is_notable": false,
     "notable_category": []
@@ -474236,7 +474334,12 @@
     "last_name": "Taylor",
     "married_names": []
    },
-   "residence": {},
+   "residence": {
+    "city": "Miles Grove",
+    "county": "Erie County",
+    "state": "Pennsylvania",
+    "country": "United States"
+   },
    "baptism": {},
    "research_tags": [],
    "research_sources": [],
@@ -474247,7 +474350,11 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "birth": {}
+   "birth": {
+    "city": "Rupert",
+    "state": "Vermont",
+    "country": "United States"
+   }
   },
   {
    "id": "H03532",
@@ -474274,38 +474381,80 @@
    "birth": {
     "year": 1830,
     "month": 2,
-    "day": 17
+    "day": 17,
+    "city": "Weston",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "death": {
     "year": 1916,
     "month": 3,
-    "day": 26
+    "day": 26,
+    "city": "Henderson",
+    "county": "Chester County",
+    "state": "Tennessee",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "marriages": [
     {
+     "marriage_number": 1,
+     "spouse_id": "I06182",
+     "children_ids": [],
+     "end_type": "death_of_spouse"
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06183",
+     "children_ids": [
+      "H04852"
+     ],
+     "end_type": "separation"
+    },
+    {
+     "marriage_number": 3,
+     "spouse_id": "I06184",
+     "children_ids": [
+      "H04853"
+     ],
+     "end_type": "death_of_spouse",
+     "end_year": 1863
+    },
+    {
+     "marriage_number": 4,
+     "spouse_id": "I06185",
+     "children_ids": []
+    },
+    {
      "spouse_id": "X01885",
      "children_ids": [
-      "HD2730"
+      "H04854",
+      "H04855",
+      "H04856",
+      "H04857"
      ],
-     "marriage_number": 1,
+     "marriage_number": 5,
      "date_year": 1879,
      "date_month": 3
     }
    ],
    "gender": "male",
    "research_notes": "b. Feb 17, 1830 Weston CT; d. Mar 26, 1916 Henderson, Chester County TN age 86. Carpenter. Married 5 times. m.(1) Mrs. Catherine Churchill of St. Louis (d. New Orleans). m.(2) Mary Hood of Alton IL (separated after 1 child). m.(3) Martha Esther Smith (adopted dau. of Dr. Smith of Miflin TN; d. 1863). m.(4) Mrs. Esther King. m.(5) Harriet Maria Blount (b. Aug 7, 1845 Jacks Creek, Chester County TN) Mar 1879. 5+ children by multiple wives. (EH 3532; FamilySearch) [Migrated from marriage.notes (spouse X01885)]: Harriet Maria Blount, b. Aug 7, 1845 Jacks Creek TN. 3 children by 5th wife.",
-   "number_of_marriages": 1,
+   "number_of_marriages": 5,
    "notable": {
     "is_notable": false,
     "notable_category": []
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Freeman Hall Seeley",
+    "display_name": "Freeman Hall Seeley Jr.",
     "first_name": "Freeman",
     "last_name": "Seeley",
     "middle_name": "Hall",
-    "married_names": []
+    "married_names": [],
+    "suffix": "Jr."
    },
    "residence": {},
    "baptism": {},
@@ -474317,7 +474466,20 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "career": [
+    {
+     "role": "Carpenter",
+     "organization": null,
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ],
+   "former_ids": [
+    "freeman-seeley-1830"
+   ]
   },
   {
    "id": "H03533",
@@ -474344,12 +474506,33 @@
    "birth": {
     "year": 1832,
     "month": 9,
-    "day": 28
+    "day": 28,
+    "city": "Newtown",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "marriages": [
     {
      "spouse_id": "X00943",
-     "children_ids": [],
+     "children_ids": [
+      "H04858",
+      "H04859",
+      "H04860",
+      "H04861",
+      "H04862",
+      "H04863",
+      "H04864",
+      "H04865",
+      "H04866",
+      "H04867",
+      "H04868",
+      "H04869",
+      "H04870",
+      "H04871",
+      "H04872"
+     ],
      "marriage_number": 1,
      "date_year": 1849,
      "date_month": 10,
@@ -474369,11 +474552,14 @@
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Julia Elizabeth Seeley",
+    "display_name": "Julia Elizabeth Seeley Simons",
     "first_name": "Julia",
     "middle_name": "Elizabeth",
     "maiden_name": "Seeley",
-    "married_names": []
+    "married_names": [
+     "Simons"
+    ],
+    "last_name": "Simons"
    },
    "residence": {},
    "baptism": {},
@@ -474385,7 +474571,10 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "former_ids": [
+    "julia-seeley-1832"
+   ]
   },
   {
    "id": "X00943",
@@ -474407,7 +474596,12 @@
    "birth": {
     "year": 1823,
     "month": 2,
-    "day": 6
+    "day": 6,
+    "city": "Paris",
+    "county": "Bourbon County",
+    "state": "Kentucky",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "gender": "male",
    "research_notes": "b. Feb 6, 1823 Paris, Bourbon County KY. Farmer in Wisconsin. m. Julia Elizabeth Seeley Oct 10, 1849. 15 children. (EH 3533)",
@@ -474419,7 +474613,23 @@
      "date_year": 1849,
      "date_month": 10,
      "date_day": 10,
-     "children_ids": []
+     "children_ids": [
+      "H04858",
+      "H04859",
+      "H04860",
+      "H04861",
+      "H04862",
+      "H04863",
+      "H04864",
+      "H04865",
+      "H04866",
+      "H04867",
+      "H04868",
+      "H04869",
+      "H04870",
+      "H04871",
+      "H04872"
+     ]
     }
    ],
    "parents": {},
@@ -474445,7 +474655,17 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "career": [
+    {
+     "role": "Farmer",
+     "organization": "Wisconsin",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "H03534",
@@ -476443,7 +476663,7 @@
    "birth": {}
   },
   {
-   "id": "HD2730",
+   "id": "H04853",
    "has_descendants_documented": true,
    "classification": {
     "include_in_path_calculation": true,
@@ -476456,7 +476676,7 @@
    },
    "parents": {
     "father_id": "H03532",
-    "mother_id": "X01885"
+    "mother_id": "I06184"
    },
    "tags": [],
    "sources": [
@@ -476508,7 +476728,13 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "former_ids": [
+    "HD2730"
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4853"
+   }
   },
   {
    "id": "X00953",
@@ -476539,7 +476765,7 @@
    "marriages": [
     {
      "marriage_number": 1,
-     "spouse_id": "HD2730",
+     "spouse_id": "H04853",
      "children_ids": [
       "HD2731"
      ]
@@ -476650,7 +476876,7 @@
     "is_easter_egg": false
    },
    "parents": {
-    "father_id": "HD2730",
+    "father_id": "H04853",
     "mother_id": "X00953"
    },
    "tags": [],
@@ -539779,7 +540005,12 @@
    "birth": {
     "year": 1845,
     "month": 8,
-    "day": 7
+    "day": 7,
+    "city": "Jacks Creek",
+    "county": "Chester County",
+    "state": "Tennessee",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "research_notes": "b. Aug 7, 1845 Jacks Creek, Chester County TN. 5th wife of Freeman Hall Seeley Jr. (H03532). Married Mar 1879. Named in EH 3532. (EH 1909)",
    "number_of_marriages": 1,
@@ -539790,7 +540021,10 @@
      "date_year": 1879,
      "date_month": 3,
      "children_ids": [
-      "HD2730"
+      "H04854",
+      "H04855",
+      "H04856",
+      "H04857"
      ]
     }
    ],
@@ -539802,11 +540036,14 @@
    "death": {},
    "cross_connections": [],
    "bio": {
-    "display_name": "Harriet Maria Blount",
+    "display_name": "Harriet Maria Blount Seeley",
     "first_name": "Harriet",
     "middle_name": "Maria",
     "maiden_name": "Blount",
-    "married_names": []
+    "married_names": [
+     "Seeley"
+    ],
+    "last_name": "Seeley"
    },
    "residence": {},
    "baptism": {},
@@ -2535394,6 +2535631,2898 @@
      "short": "EH 1909; FamilySearch"
     }
    ]
+  },
+  {
+   "id": "H04830",
+   "bio": {
+    "display_name": "Horace Hamilton Seeley",
+    "first_name": "Horace",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Hamilton"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1846,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 23,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4830"
+   }
+  },
+  {
+   "id": "H04831",
+   "bio": {
+    "display_name": "Eunice Rosaline Seeley",
+    "first_name": "Eunice",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Rosaline"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1848,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 1,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4831"
+   }
+  },
+  {
+   "id": "H04832",
+   "bio": {
+    "display_name": "James Stevenson Seeley",
+    "first_name": "James",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Stevenson"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1850,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 14,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4832"
+   }
+  },
+  {
+   "id": "H04833",
+   "bio": {
+    "display_name": "Eliza Isabel Seeley",
+    "first_name": "Eliza",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Isabel"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1852,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 9,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4833"
+   }
+  },
+  {
+   "id": "H04834",
+   "bio": {
+    "display_name": "Charles Roswell Seeley",
+    "first_name": "Charles",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Roswell"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1854,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 15,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4834"
+   }
+  },
+  {
+   "id": "H04835",
+   "bio": {
+    "display_name": "William Seeley",
+    "first_name": "William",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1856,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 23,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4835"
+   }
+  },
+  {
+   "id": "H04836",
+   "bio": {
+    "display_name": "Anna Seeley",
+    "first_name": "Anna",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1858,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 11,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4836"
+   }
+  },
+  {
+   "id": "H04837",
+   "bio": {
+    "display_name": "Edward Seeley",
+    "first_name": "Edward",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1860,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 6,
+    "country": "United States"
+   },
+   "death": {
+    "year": 1863,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 3,
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4837"
+   }
+  },
+  {
+   "id": "H04838",
+   "bio": {
+    "display_name": "John Freeman Seeley",
+    "first_name": "John",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Freeman"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1863,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 1,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4838"
+   }
+  },
+  {
+   "id": "H04839",
+   "bio": {
+    "display_name": "Emma Seeley",
+    "first_name": "Emma",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1865,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 6,
+    "country": "United States"
+   },
+   "death": {
+    "year": 1865,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 27,
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4839"
+   }
+  },
+  {
+   "id": "H04840",
+   "bio": {
+    "display_name": "Laura Athalia Seeley",
+    "first_name": "Laura",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Athalia"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1866,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 3,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03530",
+    "mother_id": "X00941"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4840"
+   }
+  },
+  {
+   "id": "H04841",
+   "bio": {
+    "display_name": "Harriet Eliza Taylor Strucken",
+    "first_name": "Harriet",
+    "last_name": "Strucken",
+    "married_names": [
+     "Strucken"
+    ],
+    "middle_name": "Eliza",
+    "maiden_name": "Taylor"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1848,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 4,
+    "city": "Girard",
+    "county": "Erie County",
+    "state": "Pennsylvania",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06172",
+     "children_ids": [],
+     "date_year": 1866,
+     "date_month": 9,
+     "date_day": 27
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4841"
+   }
+  },
+  {
+   "id": "H04842",
+   "bio": {
+    "display_name": "Helen Emma Taylor Daggett",
+    "first_name": "Helen",
+    "last_name": "Daggett",
+    "married_names": [
+     "Daggett"
+    ],
+    "middle_name": "Emma",
+    "maiden_name": "Taylor"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1850,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 8,
+    "city": "Girard",
+    "county": "Erie County",
+    "state": "Pennsylvania",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06173",
+     "children_ids": [],
+     "date_year": 1868,
+     "date_month": 6,
+     "date_day": 25
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4842"
+   }
+  },
+  {
+   "id": "H04843",
+   "bio": {
+    "display_name": "George Arthur Taylor",
+    "first_name": "George",
+    "last_name": "Taylor",
+    "married_names": [],
+    "middle_name": "Arthur"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1852,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 3,
+    "city": "Girard",
+    "county": "Erie County",
+    "state": "Pennsylvania",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06174",
+     "children_ids": [],
+     "date_year": 1872,
+     "date_month": 7,
+     "date_day": 28
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06175",
+     "children_ids": [],
+     "date_year": 1888,
+     "date_month": 5,
+     "date_day": 26
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 2,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4843"
+   }
+  },
+  {
+   "id": "H04844",
+   "bio": {
+    "display_name": "Arria Viola Taylor Pettibone Cross",
+    "first_name": "Arria",
+    "last_name": "Cross",
+    "married_names": [
+     "Pettibone",
+     "Cross"
+    ],
+    "middle_name": "Viola",
+    "maiden_name": "Taylor"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1854,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 25,
+    "city": "Girard",
+    "county": "Erie County",
+    "state": "Pennsylvania",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06176",
+     "children_ids": [],
+     "date_year": 1875,
+     "date_month": 3,
+     "date_day": 9
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06177",
+     "children_ids": [],
+     "date_year": 1885,
+     "date_month": 12,
+     "date_day": 15
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 2,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4844"
+   }
+  },
+  {
+   "id": "H04845",
+   "bio": {
+    "display_name": "Alma Violet Taylor",
+    "first_name": "Alma",
+    "last_name": "Taylor",
+    "married_names": [],
+    "middle_name": "Violet"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1854,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 25,
+    "city": "Girard",
+    "county": "Erie County",
+    "state": "Pennsylvania",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1854,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 13,
+    "city": "Miles Grove",
+    "county": "Erie County",
+    "state": "Pennsylvania",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4845"
+   }
+  },
+  {
+   "id": "H04846",
+   "bio": {
+    "display_name": "Ruby Taylor Hopkins",
+    "first_name": "Ruby",
+    "last_name": "Hopkins",
+    "married_names": [
+     "Hopkins"
+    ],
+    "maiden_name": "Taylor"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1856,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 2,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06178",
+     "children_ids": [],
+     "date_year": 1875,
+     "date_month": 6,
+     "date_day": 16
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4846"
+   }
+  },
+  {
+   "id": "H04847",
+   "bio": {
+    "display_name": "Lily Bell Taylor Burton",
+    "first_name": "Lily",
+    "last_name": "Burton",
+    "married_names": [
+     "Burton"
+    ],
+    "middle_name": "Bell",
+    "maiden_name": "Taylor"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1858,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 27,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06179",
+     "children_ids": [],
+     "date_year": 1893,
+     "date_month": 5,
+     "date_day": 24
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4847"
+   }
+  },
+  {
+   "id": "H04848",
+   "bio": {
+    "display_name": "Delia Taylor",
+    "first_name": "Delia",
+    "last_name": "Taylor",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1863,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 5,
+    "country": "United States"
+   },
+   "death": {
+    "year": 1883,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 26,
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4848"
+   }
+  },
+  {
+   "id": "H04849",
+   "bio": {
+    "display_name": "James Seeley Taylor",
+    "first_name": "James",
+    "last_name": "Taylor",
+    "married_names": [],
+    "middle_name": "Seeley"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1866,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 11,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06180",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4849"
+   }
+  },
+  {
+   "id": "H04850",
+   "bio": {
+    "display_name": "Anna Grace Taylor",
+    "first_name": "Anna",
+    "last_name": "Taylor",
+    "married_names": [],
+    "middle_name": "Grace"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1868,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 6,
+    "country": "United States"
+   },
+   "death": {
+    "year": 1868,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 7,
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4850"
+   }
+  },
+  {
+   "id": "H04851",
+   "bio": {
+    "display_name": "Anson Grant Taylor",
+    "first_name": "Anson",
+    "last_name": "Taylor",
+    "married_names": [],
+    "middle_name": "Grant"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1868,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 6,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00942",
+    "mother_id": "H03531"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06181",
+     "children_ids": [],
+     "date_year": 1889,
+     "date_month": 9,
+     "date_day": 4
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4851"
+   }
+  },
+  {
+   "id": "I06172",
+   "bio": {
+    "display_name": "Abraham Strucken",
+    "first_name": "Abraham",
+    "last_name": "Strucken",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04841",
+     "children_ids": [],
+     "date_year": 1866,
+     "date_month": 9,
+     "date_day": 27
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06173",
+   "bio": {
+    "display_name": "William Ernest Daggett",
+    "first_name": "William",
+    "last_name": "Daggett",
+    "married_names": [],
+    "middle_name": "Ernest"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04842",
+     "children_ids": [],
+     "date_year": 1868,
+     "date_month": 6,
+     "date_day": 25
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06174",
+   "bio": {
+    "display_name": "Jane Banton Taylor",
+    "first_name": "Jane",
+    "last_name": "Taylor",
+    "married_names": [
+     "Taylor"
+    ],
+    "maiden_name": "Banton"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04843",
+     "children_ids": [],
+     "date_year": 1872,
+     "date_month": 7,
+     "date_day": 28
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06175",
+   "bio": {
+    "display_name": "Mary Eugene Manly Taylor",
+    "first_name": "Mary",
+    "last_name": "Taylor",
+    "married_names": [
+     "Taylor"
+    ],
+    "middle_name": "Eugene",
+    "maiden_name": "Manly"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04843",
+     "children_ids": [],
+     "date_year": 1888,
+     "date_month": 5,
+     "date_day": 26
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06176",
+   "bio": {
+    "display_name": "Myron Clarence Pettibone",
+    "first_name": "Myron",
+    "last_name": "Pettibone",
+    "married_names": [],
+    "middle_name": "Clarence"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04844",
+     "children_ids": [],
+     "date_year": 1875,
+     "date_month": 3,
+     "date_day": 9
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06177",
+   "bio": {
+    "display_name": "Robert Cross",
+    "first_name": "Robert",
+    "last_name": "Cross",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04844",
+     "children_ids": [],
+     "date_year": 1885,
+     "date_month": 12,
+     "date_day": 15
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06178",
+   "bio": {
+    "display_name": "Frank Hopkins",
+    "first_name": "Frank",
+    "last_name": "Hopkins",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04846",
+     "children_ids": [],
+     "date_year": 1875,
+     "date_month": 6,
+     "date_day": 16
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06179",
+   "bio": {
+    "display_name": "David Herbert Burton",
+    "first_name": "David",
+    "last_name": "Burton",
+    "married_names": [],
+    "middle_name": "Herbert"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04847",
+     "children_ids": [],
+     "date_year": 1893,
+     "date_month": 5,
+     "date_day": 24
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06180",
+   "bio": {
+    "display_name": "Nina Ethel Daggett Taylor",
+    "first_name": "Nina",
+    "last_name": "Taylor",
+    "married_names": [
+     "Taylor"
+    ],
+    "middle_name": "Ethel",
+    "maiden_name": "Daggett"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04849",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06181",
+   "bio": {
+    "display_name": "Edith Clara Manly Taylor",
+    "first_name": "Edith",
+    "last_name": "Taylor",
+    "married_names": [
+     "Taylor"
+    ],
+    "middle_name": "Clara",
+    "maiden_name": "Manly"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04851",
+     "children_ids": [],
+     "date_year": 1889,
+     "date_month": 9,
+     "date_day": 4
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06182",
+   "bio": {
+    "display_name": "Mrs. Catherine Churchill Seeley",
+    "first_name": "Catherine",
+    "last_name": "Seeley",
+    "married_names": [
+     "Churchill",
+     "Seeley"
+    ],
+    "title": "Mrs."
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {
+    "city": "New Orleans",
+    "state": "Louisiana",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H03532",
+     "children_ids": [],
+     "end_type": "death_of_spouse"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "residence": {
+    "city": "St. Louis",
+    "state": "Missouri",
+    "country": "United States"
+   }
+  },
+  {
+   "id": "I06183",
+   "bio": {
+    "display_name": "Mary Hood Seeley",
+    "first_name": "Mary",
+    "last_name": "Seeley",
+    "married_names": [
+     "Seeley"
+    ],
+    "maiden_name": "Hood"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H03532",
+     "children_ids": [
+      "H04852"
+     ],
+     "end_type": "separation"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "residence": {
+    "city": "Alton",
+    "state": "Illinois",
+    "country": "United States"
+   }
+  },
+  {
+   "id": "H04852",
+   "bio": {
+    "display_name": "Edward Jay Seeley",
+    "first_name": "Edward",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Jay"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1863,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 27,
+    "city": "Alton",
+    "county": "Madison County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03532",
+    "mother_id": "I06183"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4852"
+   }
+  },
+  {
+   "id": "I06184",
+   "bio": {
+    "display_name": "Martha Esther Smith Seeley",
+    "first_name": "Martha",
+    "last_name": "Seeley",
+    "married_names": [
+     "Seeley"
+    ],
+    "middle_name": "Esther",
+    "maiden_name": "Smith"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {
+    "year": 1863,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H03532",
+     "children_ids": [
+      "H04853"
+     ],
+     "end_type": "death_of_spouse",
+     "end_year": 1863
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "I06185",
+   "bio": {
+    "display_name": "Mrs. Esther King Seeley",
+    "first_name": "Esther",
+    "last_name": "Seeley",
+    "married_names": [
+     "King",
+     "Seeley"
+    ],
+    "title": "Mrs."
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H03532",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ]
+  },
+  {
+   "id": "H04854",
+   "bio": {
+    "display_name": "James Freeman Seeley",
+    "first_name": "James",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Freeman"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1880,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 19,
+    "city": "Jacks Creek",
+    "county": "Chester County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1880,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 1,
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H03532",
+    "mother_id": "X01885"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4854"
+   }
+  },
+  {
+   "id": "H04855",
+   "bio": {
+    "display_name": "Eunice Tennessee Seeley",
+    "first_name": "Eunice",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Tennessee"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1881,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 4,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03532",
+    "mother_id": "X01885"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4855"
+   }
+  },
+  {
+   "id": "H04856",
+   "bio": {
+    "display_name": "Arthur Hall Seeley",
+    "first_name": "Arthur",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Hall"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1884,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 10,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03532",
+    "mother_id": "X01885"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4856"
+   }
+  },
+  {
+   "id": "H04857",
+   "bio": {
+    "display_name": "Lucy Howard Cleveland Seeley",
+    "first_name": "Lucy",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Howard Cleveland"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1886,
+    "date_precision": "exact",
+    "month": 5,
+    "day": 6,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H03532",
+    "mother_id": "X01885"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4857"
+   }
+  },
+  {
+   "id": "H04858",
+   "bio": {
+    "display_name": "Willie Eugene Simons",
+    "first_name": "Willie",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Eugene"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1851,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 4,
+    "city": "Mineral Point",
+    "state": "Wisconsin",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4858"
+   }
+  },
+  {
+   "id": "H04859",
+   "bio": {
+    "display_name": "Oscar Mead Simons",
+    "first_name": "Oscar",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Mead"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1855,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 31,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4859"
+   }
+  },
+  {
+   "id": "H04860",
+   "bio": {
+    "display_name": "Charles Freeman Simons",
+    "first_name": "Charles",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Freeman"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1857,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 22,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4860"
+   }
+  },
+  {
+   "id": "H04861",
+   "bio": {
+    "display_name": "Julia Emeline Simons",
+    "first_name": "Julia",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Emeline"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1859,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 19,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4861"
+   }
+  },
+  {
+   "id": "H04862",
+   "bio": {
+    "display_name": "Caroline Alice Simons",
+    "first_name": "Caroline",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Alice"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1861,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 27,
+    "country": "United States"
+   },
+   "death": {
+    "year": 1863,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 7,
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4862"
+   }
+  },
+  {
+   "id": "H04863",
+   "bio": {
+    "display_name": "John Burton Simons",
+    "first_name": "John",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Burton"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1863,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 24,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4863"
+   }
+  },
+  {
+   "id": "H04864",
+   "bio": {
+    "display_name": "Ruey Ann Simons",
+    "first_name": "Ruey",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Ann"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1867,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 15,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4864"
+   }
+  },
+  {
+   "id": "H04865",
+   "bio": {
+    "display_name": "Francis Marion Simons",
+    "first_name": "Francis",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Marion"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1869,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 8,
+    "country": "United States"
+   },
+   "death": {
+    "year": 1869,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 30,
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4865"
+   }
+  },
+  {
+   "id": "H04866",
+   "bio": {
+    "display_name": "Walter Denio Simons",
+    "first_name": "Walter",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Denio"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1870,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 9,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4866"
+   }
+  },
+  {
+   "id": "H04867",
+   "bio": {
+    "display_name": "Laura Miller Simons",
+    "first_name": "Laura",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Miller"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1871,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 31,
+    "country": "United States"
+   },
+   "death": {
+    "year": 1872,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 17,
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4867"
+   }
+  },
+  {
+   "id": "H04868",
+   "bio": {
+    "display_name": "George Jay Simons",
+    "first_name": "George",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Jay"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1871,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 31,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4868"
+   }
+  },
+  {
+   "id": "H04869",
+   "bio": {
+    "display_name": "Mary Jane Sherman Simons",
+    "first_name": "Mary",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Jane Sherman"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1872,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 9,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4869"
+   }
+  },
+  {
+   "id": "H04870",
+   "bio": {
+    "display_name": "Eunice Hubbell Simons",
+    "first_name": "Eunice",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Hubbell"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1874,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 30,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4870"
+   }
+  },
+  {
+   "id": "H04871",
+   "bio": {
+    "display_name": "Willoughby Douglass Simons",
+    "first_name": "Willoughby",
+    "last_name": "Simons",
+    "married_names": [],
+    "middle_name": "Douglass"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1876,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 22,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4871"
+   }
+  },
+  {
+   "id": "H04872",
+   "bio": {
+    "display_name": "Roy Simons",
+    "first_name": "Roy",
+    "last_name": "Simons",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1878,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 24,
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00943",
+    "mother_id": "H03533"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "4872"
+   }
   }
  ],
  "landmarks": [
