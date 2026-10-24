@@ -2526636,24 +2526636,47 @@
     "last_name": "Storrs",
     "married_names": [],
     "middle_name": "Dow",
-    "bio_blurb": "Bridge engineer"
+    "bio_blurb": "Bridge engineer",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792855118/Screenshot_2026-10-24_at_8-resized_zgrmwy.png"
    },
    "gender": "male",
    "birth": {
     "year": 1886,
-    "date_precision": "year_only",
+    "month": 2,
+    "day": 20,
+    "date_precision": "exact",
+    "city": "Concord",
+    "county": "Merrimack County",
+    "state": "New Hampshire",
     "country": "United States"
    },
    "death": {
     "year": 1956,
-    "date_precision": "year_only",
+    "month": 3,
+    "day": 27,
+    "date_precision": "exact",
+    "city": "Concord",
+    "county": "Merrimack County",
+    "state": "New Hampshire",
     "country": "United States"
    },
    "parents": {
     "father_id": "HD17027",
     "mother_id": "I06126"
    },
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06127",
+     "children_ids": [],
+     "date_year": 1909,
+     "date_month": 5,
+     "date_day": 4,
+     "location_city": "Concord",
+     "location_state": "New Hampshire",
+     "location_country": "United States"
+    }
+   ],
    "narrative_blocks": [
     {
      "number": 1,
@@ -2526677,11 +2526700,27 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0,
+   "number_of_marriages": 1,
    "career": [
     {
-     "role": "Bridge engineer",
-     "organization": "John W. Storrs and Son, Concord",
+     "role": "Partner, consulting bridge engineers",
+     "organization": "Storrs and Storrs, Concord",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Engineer",
+     "organization": "American Bridge Company, Elmira, New York",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Owner, in part",
+     "organization": "Ford Foundry Company, Concord",
      "location": null,
      "start_year": null,
      "end_year": null,
@@ -2526693,7 +2526732,76 @@
      "artwork_id": "ART411",
      "artwork_blurb": "Concord, NH (1912)"
     }
+   ],
+   "education": [
+    {
+     "institution_id": "INST058",
+     "school_name": "Dartmouth College",
+     "dates": "Class of 1908",
+     "type": null,
+     "notes": "Left in freshman year"
+    }
    ]
+  },
+  {
+   "id": "I06127",
+   "bio": {
+    "display_name": "Ethel Mae Foster Storrs",
+    "first_name": "Ethel",
+    "middle_name": "Mae",
+    "last_name": "Storrs",
+    "maiden_name": "Foster",
+    "married_names": [
+     "Storrs"
+    ]
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1887,
+    "month": 5,
+    "day": 5,
+    "date_precision": "exact",
+    "city": "Concord",
+    "county": "Merrimack County",
+    "state": "New Hampshire",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1974,
+    "month": 12,
+    "date_precision": "month_year",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17031",
+     "children_ids": [],
+     "date_year": 1909,
+     "date_month": 5,
+     "date_day": 4,
+     "location_city": "Concord",
+     "location_state": "New Hampshire",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
   }
  ],
  "landmarks": [
