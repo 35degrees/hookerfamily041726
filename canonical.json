@@ -13584,7 +13584,9 @@
    "visitable": true,
    "notes": "Rose Hill Burial Park, Oklahoma City, Oklahoma County, Oklahoma.",
    "hooker_connections": [
-    "HD5267"
+    "HD5267",
+    "I06157",
+    "HD17059"
    ]
   },
   {
@@ -36041,7 +36043,11 @@
     "H04746",
     "I06141",
     "H04747",
-    "I06142"
+    "I06142",
+    "H04749",
+    "I06144",
+    "HD17060",
+    "I06161"
    ],
    "city": "Derby Line",
    "county": "Orleans County",
@@ -2529597,7 +2529603,7 @@
     "year": 1850,
     "date_precision": "exact",
     "month": 7,
-    "day": 21,
+    "day": 20,
     "city": "Derby Line",
     "county": "Orleans County",
     "state": "Vermont",
@@ -2529605,7 +2529611,13 @@
    },
    "death": {
     "year": 1931,
-    "date_precision": "year_only"
+    "date_precision": "exact",
+    "month": 4,
+    "day": 15,
+    "city": "Derby",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
    },
    "parents": {
     "father_id": "I06138",
@@ -2529615,7 +2529627,10 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06144",
-     "children_ids": []
+     "children_ids": [
+      "HD17060"
+     ],
+     "date_year": 1875
     }
    ],
    "narrative_blocks": [],
@@ -2529634,26 +2529649,50 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2029"
+   }
   },
   {
    "id": "I06144",
    "bio": {
-    "display_name": "George W. Bixby",
+    "display_name": "George Wingate Bixby",
     "first_name": "George",
     "last_name": "Bixby",
     "married_names": [],
-    "middle_name": "W."
+    "middle_name": "Wingate"
    },
    "gender": "male",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1851,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 22,
+    "city": "Nashua",
+    "county": "Hillsborough County",
+    "state": "New Hampshire",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1901,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 12,
+    "city": "Boston",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
    "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
      "spouse_id": "H04749",
-     "children_ids": []
+     "children_ids": [
+      "HD17060"
+     ],
+     "date_year": 1875
     }
    ],
    "narrative_blocks": [],
@@ -2529671,7 +2529710,10 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2029"
+   }
   },
   {
    "id": "H04750",
@@ -2531774,8 +2531816,24 @@
     "maiden_name": "Spalding"
    },
    "gender": "female",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1879,
+    "date_precision": "year_only",
+    "city": "Dorchester",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1947,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 14,
+    "city": "Norman",
+    "county": "Cleveland County",
+    "state": "Oklahoma",
+    "country": "United States"
+   },
    "parents": {
     "father_id": "H04748",
     "mother_id": "I06143"
@@ -2531803,33 +2531861,81 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM606",
+    "plot_notes": "Abbey Mausoleum"
+   },
+   "residence": {
+    "city": "Norman",
+    "county": "Cleveland County",
+    "state": "Oklahoma",
+    "country": "United States"
+   },
+   "career": [
+    {
+     "role": "President",
+     "organization": "Colonial Dames, Oklahoma",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "I06157",
    "bio": {
-    "display_name": "Gen. John Pearson",
-    "title": "Gen.",
+    "display_name": "Col. John Alonzo Pearson",
+    "title": "Col.",
     "first_name": "John",
     "last_name": "Pearson",
-    "married_names": []
+    "married_names": [],
+    "middle_name": "Alonzo",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792863325/114273117_1500734755_f2djtm.jpg",
+    "bio_blurb": "Cavalry colonel and Princeton military professor"
    },
    "gender": "male",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1876,
+    "date_precision": "year_only",
+    "city": "Lexington",
+    "county": "Henderson County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1963,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 29,
+    "city": "Norman",
+    "county": "Cleveland County",
+    "state": "Oklahoma",
+    "country": "United States"
+   },
    "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
      "spouse_id": "HD17059",
      "children_ids": []
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": null,
+     "children_ids": [
+      "I06159",
+      "I06160"
+     ]
     }
    ],
    "narrative_blocks": [],
    "tags": [],
    "cross_connections": [],
    "residence": {
-    "city": "Oklahoma City",
+    "city": "Norman",
+    "county": "Cleveland County",
     "state": "Oklahoma",
     "country": "United States"
    },
@@ -2531845,7 +2531951,87 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "former_ids": [
+    "john-pearson"
+   ],
+   "burial": {
+    "cemetery_id": "CEM606",
+    "plot_notes": "Rose Hill Mausoleum"
+   },
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "University of Tennessee",
+     "dates": null,
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": null,
+     "school_name": "United States Military Academy, West Point",
+     "dates": null,
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": null,
+     "school_name": "Yale Law School",
+     "dates": "1923",
+     "type": null,
+     "notes": "LL.B.; Ph.D. 1924"
+    }
+   ],
+   "career": [
+    {
+     "role": "Head, retired officers bureau",
+     "organization": "U.S. Army, Oklahoma City",
+     "location": null,
+     "start_year": 1941,
+     "end_year": 1945,
+     "notes": null
+    },
+    {
+     "role": "Lawyer",
+     "organization": "Oklahoma City",
+     "location": null,
+     "start_year": 1924,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Professor of military science and tactics",
+     "organization": "Princeton University",
+     "location": null,
+     "start_year": null,
+     "end_year": 1919,
+     "notes": null
+    },
+    {
+     "role": "Officer, Pershing punitive expedition",
+     "organization": "U.S. Army",
+     "location": null,
+     "start_year": 1916,
+     "end_year": 1916,
+     "notes": null
+    },
+    {
+     "role": "Officer",
+     "organization": "7th Cavalry, Philippines",
+     "location": null,
+     "start_year": 1906,
+     "end_year": null,
+     "notes": null
+    }
+   ],
+   "military_service": [
+    {
+     "war": "Mexican Border",
+     "rank": "Colonel",
+     "unit": "7th Cavalry",
+     "notes": "Philippines 1906; with Pershing after Pancho Villa 1916; retired 1919."
+    }
+   ]
   },
   {
    "id": "I06158",
@@ -2531865,6 +2532051,315 @@
     {
      "marriage_number": 1,
      "spouse_id": "HD17055",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06159",
+   "bio": {
+    "display_name": "Fred Jennings",
+    "first_name": "Fred",
+    "last_name": "Jennings",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06157"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [
+    "adopted"
+   ],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06160",
+   "bio": {
+    "display_name": "Ruby Jennings",
+    "first_name": "Ruby",
+    "last_name": "Jennings",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06157"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [
+    "adopted"
+   ],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17060",
+   "bio": {
+    "display_name": "Clara Grey Gertrude Bixby Gress",
+    "first_name": "Clara",
+    "last_name": "Gress",
+    "married_names": [
+     "Gress"
+    ],
+    "middle_name": "Grey Gertrude",
+    "maiden_name": "Bixby"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1876,
+    "date_precision": "exact",
+    "month": 5,
+    "day": 20,
+    "city": "Boston",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1965,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 6,
+    "city": "Los Angeles",
+    "county": "Los Angeles County",
+    "state": "California",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06144",
+    "mother_id": "H04749"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06161",
+     "children_ids": [
+      "HD17061"
+     ],
+     "date_year": 1901
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2029"
+   }
+  },
+  {
+   "id": "I06161",
+   "bio": {
+    "display_name": "John Hart Gress",
+    "first_name": "John",
+    "middle_name": "Hart",
+    "last_name": "Gress",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1877,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 1,
+    "city": "Chattanooga",
+    "county": "Hamilton County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1970,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 11,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "parents": {
+    "father_name": "George Valentine Gress"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17060",
+     "children_ids": [
+      "HD17061"
+     ],
+     "date_year": 1901
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2029"
+   }
+  },
+  {
+   "id": "HD17061",
+   "bio": {
+    "display_name": "George Valentine Bixby Gress",
+    "first_name": "George",
+    "last_name": "Gress",
+    "married_names": [],
+    "middle_name": "Valentine Bixby"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1904,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 7,
+    "state": "Georgia",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1975,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 4,
+    "county": "Los Angeles County",
+    "state": "California",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06161",
+    "mother_id": "HD17060"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06162",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06162",
+   "bio": {
+    "display_name": "Natalie Wallace Gress",
+    "first_name": "Natalie",
+    "maiden_name": "Wallace",
+    "last_name": "Gress",
+    "married_names": [
+     "Gress"
+    ]
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1905,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 29,
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1947,
+    "date_precision": "exact",
+    "month": 5,
+    "day": 17,
+    "county": "Los Angeles County",
+    "state": "California",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17061",
      "children_ids": []
     }
    ],
