@@ -2531076,7 +2531076,8 @@
      "related_id": "HD17056",
      "type": "connection",
      "link_text": "Margaret Ovitt",
-     "display_label": ", her granddaughter, was named Margaret for her"
+     "display_label": ", her granddaughter, was named Margaret for her",
+     "lineal_gap": 2
     }
    ],
    "classification": {
@@ -2531540,7 +2531541,8 @@
      "related_id": "I06155",
      "type": "connection",
      "link_text": "Margaret Haight Ovitt",
-     "display_label": ", her grandmother, gave her the name Margaret"
+     "display_label": ", her grandmother, gave her the name Margaret",
+     "lineal_gap": -2
     }
    ],
    "classification": {
