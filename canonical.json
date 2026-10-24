@@ -2529284,13 +2529284,15 @@
      "related_id": "H04750",
      "type": "connection",
      "link_text": "Gertrude Hayden",
-     "display_label": ", his wife's sister, was killed by her husband at the Derby Line Hotel"
+     "display_label": ", his wife's sister, was killed by her husband at the Derby Line Hotel",
+     "lateral": true
     },
     {
      "related_id": "I06145",
      "type": "connection",
      "link_text": "Edwin Hayden",
-     "display_label": "shot him through the lung at the Derby Line Hotel in 1876"
+     "display_label": "shot him through the lung at the Derby Line Hotel in 1876",
+     "lateral": true
     }
    ],
    "classification": {
@@ -2529832,7 +2529834,8 @@
      "related_id": "I06141",
      "type": "connection",
      "link_text": "Maj. Charles O. Brigham",
-     "display_label": ", her brother-in-law, was shot trying to keep her husband away"
+     "display_label": ", her brother-in-law, was shot trying to keep her husband away",
+     "lateral": true
     }
    ],
    "classification": {
@@ -2529938,7 +2529941,8 @@
      "related_id": "I06141",
      "type": "connection",
      "link_text": "Maj. Charles O. Brigham",
-     "display_label": "took his bullet in the lung and testified against him"
+     "display_label": "took his bullet in the lung and testified against him",
+     "lateral": true
     },
     {
      "related_id": "H00840",
