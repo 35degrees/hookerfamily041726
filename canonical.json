@@ -2531080,7 +2531080,8 @@
    "is_placeholder": false,
    "number_of_marriages": 1,
    "burial": {
-    "cemetery_id": "CEM444"
+    "cemetery_id": "CEM444",
+    "plot_notes": "Section G, Block 38, Lot 1, Space 1"
    }
   },
   {
@@ -2531336,21 +2531337,44 @@
   {
    "id": "HD17055",
    "bio": {
-    "display_name": "Theron Ovitt",
+    "display_name": "Dr. Theron W. Ovitt",
     "first_name": "Theron",
     "last_name": "Ovitt",
     "married_names": [],
     "chip_first_name": "Terry",
-    "nickname": "Terry"
+    "nickname": "Terry",
+    "title": "Dr.",
+    "middle_name": "W.",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792862768/Ovitt_Professor_Emeritus.jpg_wvmunc.webp",
+    "bio_blurb": "Arizona radiologist and digital angiography pioneer"
    },
    "gender": "male",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1939,
+    "date_precision": "approximate",
+    "city": "Milwaukee",
+    "county": "Milwaukee County",
+    "state": "Wisconsin",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2022,
+    "month": 2,
+    "day": 22,
+    "date_precision": "exact",
+    "country": "United States"
+   },
    "parents": {
     "father_id": "HD17054",
     "mother_id": "I06156"
    },
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06158",
+     "children_ids": []
+    }
+   ],
    "narrative_blocks": [],
    "tags": [],
    "cross_connections": [],
@@ -2531367,7 +2531391,77 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0
+   "number_of_marriages": 1,
+   "former_ids": [
+    "theron-ovitt"
+   ],
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "University of Minnesota",
+     "dates": null,
+     "type": null,
+     "notes": "Residency and cardiovascular radiology fellowship under Kurt Amplatz"
+    }
+   ],
+   "career": [
+    {
+     "role": "Cardiothoracic Imaging Division",
+     "organization": "University of Arizona College of Medicine",
+     "location": null,
+     "start_year": 2009,
+     "end_year": 2020,
+     "notes": null
+    },
+    {
+     "role": "Chair, Radiology Department",
+     "organization": "Maricopa Medical Center, Phoenix",
+     "location": null,
+     "start_year": 2006,
+     "end_year": 2009,
+     "notes": null
+    },
+    {
+     "role": "Chair, Department of Medical Imaging",
+     "organization": "University of Arizona",
+     "location": null,
+     "start_year": 1993,
+     "end_year": 2005,
+     "notes": null
+    },
+    {
+     "role": "Chief, Diagnostic Division",
+     "organization": "University of Arizona Department of Medical Imaging",
+     "location": null,
+     "start_year": 1982,
+     "end_year": 1989,
+     "notes": null
+    },
+    {
+     "role": "Assistant Professor, then Professor",
+     "organization": "University of Arizona Department of Medical Imaging",
+     "location": null,
+     "start_year": 1974,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "President",
+     "organization": "Society of Chairs of Academic Radiology Departments",
+     "location": null,
+     "start_year": 2002,
+     "end_year": 2004,
+     "notes": null
+    },
+    {
+     "role": "President",
+     "organization": "Eastern Radiological Society",
+     "location": null,
+     "start_year": 1998,
+     "end_year": 1999,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "HD17056",
@@ -2531375,7 +2531469,9 @@
     "display_name": "Margaret Ovitt",
     "first_name": "Margaret",
     "last_name": "Ovitt",
-    "married_names": []
+    "married_names": [],
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792862830/margaret_orig_ljfyug.png",
+    "bio_blurb": "Nurse turned landscape architect"
    },
    "gender": "female",
    "birth": {},
@@ -2531401,7 +2531497,77 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0
+   "number_of_marriages": 0,
+   "residence": {
+    "city": "Macomb",
+    "county": "McDonough County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "Whitefish Bay High School",
+     "dates": null,
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": null,
+     "school_name": "Vanderbilt University",
+     "dates": null,
+     "type": null,
+     "notes": "B.S.N."
+    },
+    {
+     "institution_id": null,
+     "school_name": "Western Illinois University",
+     "dates": null,
+     "type": null,
+     "notes": "Master's, health education"
+    },
+    {
+     "institution_id": null,
+     "school_name": "University of Illinois",
+     "dates": null,
+     "type": null,
+     "notes": "Master's, landscape architecture"
+    }
+   ],
+   "career": [
+    {
+     "role": "Founder, landscape designer",
+     "organization": "Western Illinois Land Design, Macomb",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Nurse",
+     "organization": "McDonough District Hospital, Macomb",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Member",
+     "organization": "Macomb Tree Board",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Member",
+     "organization": "Emiquon Corps of Discovery",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "HD17057",
@@ -2531411,7 +2531577,8 @@
     "last_name": "Ovitt",
     "married_names": [],
     "chip_first_name": "Betsy",
-    "nickname": "Betsy"
+    "nickname": "Betsy",
+    "bio_blurb": "Nurse"
    },
    "gender": "female",
    "birth": {},
@@ -2531437,7 +2531604,22 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0
+   "number_of_marriages": 0,
+   "residence": {
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "education": [],
+   "career": [
+    {
+     "role": "Nurse",
+     "organization": "Retired",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "HD17058",
@@ -2531575,6 +2531757,44 @@
     "state": "Oklahoma",
     "country": "United States"
    },
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06158",
+   "bio": {
+    "display_name": "Judy Ovitt",
+    "first_name": "Judy",
+    "last_name": "Ovitt",
+    "married_names": [
+     "Ovitt"
+    ]
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17055",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
