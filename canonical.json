@@ -320702,7 +320702,7 @@
     "notable_category": [
      "religion"
     ],
-    "notable_blurb": "Bountiful water master and ward clerk",
+    "notable_blurb": "Mormon pioneer and Bountiful water master",
     "url_override": true
    },
    "bio": {
@@ -320712,7 +320712,7 @@
     "married_names": [],
     "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1791475501/19645288_118065778240_tf7cre.jpg",
     "chip_first_name": "Newton",
-    "bio_blurb": "Bountiful water master and ward clerk"
+    "bio_blurb": "Mormon pioneer and Bountiful water master"
    },
    "residence": {},
    "baptism": {},
@@ -350820,7 +350820,8 @@
      "Wilson"
     ],
     "middle_name": "Elizabeth",
-    "maiden_name": "Ingersoll"
+    "maiden_name": "Ingersoll",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792851683/Screenshot_2026-10-24_at_7-resized_itz4zp.png"
    },
    "residence": {},
    "baptism": {},
@@ -517362,10 +517363,11 @@
    "death": {},
    "cross_connections": [],
    "bio": {
-    "display_name": "Wilson",
+    "display_name": "Mr. Wilson",
     "first_name": null,
     "married_names": [],
-    "last_name": "Wilson"
+    "last_name": "Wilson",
+    "title": "Mr."
    },
    "residence": {},
    "baptism": {},
@@ -694035,7 +694037,8 @@
      "related_id": "I05355",
      "type": "connection",
      "link_text": "Alta Prentice",
-     "display_label": ", her sister-in-law, left her brownstone to the Museum of Modern Art"
+     "display_label": ", her sister-in-law, left her brownstone to the Museum of Modern Art",
+     "lateral": true
     }
    ],
    "research_notes": "Per Wikipedia + Findagrave: b. Oct 26, 1874 Providence Providence Co RI; d. April 5, 1948 NYC age 73. Daughter of US Senator Nelson W. Aldrich (RI 1881-1911) — chairman Senate Finance Committee + Federal Reserve architect. m.1901 JDR Jr. (X-prefix above). 6 children incl. JDR III (Blanchette's husband). MoMA co-founder 1929. EASTER_EGG. The Hooker-Rockefeller arts-patron axis ran for two generations: Abby co-founded MoMA 1929 → daughter-in-law Blanchette became MoMA President 1959-62 + 1972-85. Her grand-daughter-in-law Sharon Percy Rockefeller (Jay's wife) is also a MoMA board member — three generations of Rockefeller women on MoMA. === Migrated NB content (pre-schema-v12-rewrite, kept for reference) === [arts_legacy] MoMA co-founder; predecessor to Blanchette's leadership\nAbby Aldrich Rockefeller — daughter of Senator Nelson W. Aldrich (RI) — co-founded the Museum of Modern Art (MoMA) in NYC in 1929 with Lillie P. Bliss + Mary Quinn Sullivan. She donated over 2,000 artworks to MoMA across her life. Also encouraged the restoration of Colonial Williamsburg, where the Abby Aldrich Rockefeller Folk Art Collection was dedicated. Mother of 6 Rockefeller children including JDR III (X02324). The Hooker connection: her son JDR III married Blanchette Hooker (HD3284) in 1932; Blanchette later inherited her mother-in-law's MoMA leadership mantle, serving twice as President 1959-1962 + 1972-1985. Two consecutive Rockefeller-family generations of women leading MoMA from co-foundation through major institutional growth.",
@@ -1742500,6 +1742503,12 @@
    "research_tags": [],
    "cross_connections": [
     {
+     "related_id": "X04139",
+     "type": "civic_peer",
+     "link_text": "Leland Stanford",
+     "display_label": "took him on as private secretary after Leland Jr. died at Florence"
+    },
+    {
      "related_id": "X03473",
      "link_text": "Rev. Solomon Stoddard",
      "display_label": "was the first American ever called librarian, at Harvard in 1667",
@@ -1742535,12 +1742544,6 @@
      "link_text": "Hubert Howe Bancroft",
      "display_label": "sold Berkeley the books that became the Bancroft Library",
      "type": "parallel_careers"
-    },
-    {
-     "related_id": "X04139",
-     "type": "civic_peer",
-     "link_text": "Leland Stanford",
-     "display_label": "took him on as private secretary after Leland Jr. died at Florence"
     },
     {
      "related_id": "X04141",
@@ -2362616,7 +2362619,8 @@
      "related_id": "X02326",
      "type": "connection",
      "link_text": "Abby Rockefeller",
-     "display_label": ", her sister-in-law, founded the Museum of Modern Art in 1929"
+     "display_label": ", her sister-in-law, founded the Museum of Modern Art in 1929",
+     "lateral": true
     }
    ],
    "research_tags": [],
@@ -2394110,13 +2394114,7 @@
     {
      "institution_id": "INST211",
      "school_name": "Bryn Mawr College",
-     "dates": "1929",
-     "degree": "B.A."
-    },
-    {
-     "institution_id": "INST211",
-     "school_name": "Bryn Mawr College",
-     "dates": "1929",
+     "dates": "Class of 1929",
      "degree": "B.A."
     }
    ]
