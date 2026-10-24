@@ -103314,24 +103314,20 @@
    "quotes": [],
    "military_service": [],
    "research_notes": "[BUILD pilot77]: Bio updated to Lea Austen Hooker — maiden Austen (from father David Edward Austen), married Hooker (from Michael Gay Hooker). Marriage to Michael Gay Hooker pending HD entry creation in next session (he is the compiler's father; per HD3246 Rodman Lent Hooker's marriage notes, Michael was deferred as 'NOT BUILT per living rule' — superseded by current rule that all descendants are in the JSON with living_or_recent tag).\n[BUILD pilot79]: Marriage to Michael Gay Hooker (HD3384) wired — m.1976 div.1988. Two children Samuel Talcott Hooker (HD3386, compiler) and Anne Austen Hooker (HD3387, b.1982). The Lea-Michael marriage is the SECOND HOOKER-TALCOTT CONVERGENCE point in the project (the first being the gen-5 Charles Hooker Talcott × Eliza Selden Hubbard marriage). Both Sam and Annie are dual-line descendants with descent_paths_to_thomas=2.\n[BIRTH pilot82]: Birth date 8 May 1946 confirmed by compiler. Living. Per compiler April 2026: Lea never remarried after her 1988 divorce from Michael Gay Hooker (HD3384).",
-   "narrative_blocks": [
+   "narrative_blocks": [],
+   "education": [
     {
-     "number": 1,
-     "category": "family",
-     "header": "Marriage produced second Hooker-Talcott convergence",
-     "body": "Lea Austen's 1976 marriage to Michael Gay Hooker produced the project's second Hooker-Talcott convergence — joining the gen-10 Talcott descent line with the Hooker descent line into one family. The first historical convergence had occurred more than a century earlier through a nineteenth-century Hooker-Talcott marriage. Their two children inherit dual Hooker-Talcott descent paths."
+     "institution_id": "INST082",
+     "school_name": "Ethel Walker School"
     },
     {
-     "number": 2,
-     "category": "family",
-     "header": "Two children share descent through both lines",
-     "body": "Both of Lea's children with Michael Gay Hooker — Samuel Talcott Hooker (the compiler) and Anne Austen Hooker — carry descent_paths_to_thomas=2 in the project's structural data, reflecting their merged Hooker-Talcott ancestry. The dual-line documentation is what motivated the project as a genealogy visualization in the first place."
+     "institution_id": "INST096",
+     "school_name": "University of California, Berkeley",
+     "dates": "Class of 1967"
     },
     {
-     "number": 3,
-     "category": "family",
-     "header": "Born May eighth nineteen forty-six",
-     "body": "Lea Austen Hooker was born May 8, 1946. She married Michael Gay Hooker in 1976 and they divorced in 1988; she never remarried. The Austen maiden name comes from her father David Edward Austen."
+     "school_name": "San Francisco State University",
+     "dates": "Master's in Family Counseling and Therapy"
     }
    ]
   },
@@ -714755,32 +714751,26 @@
     {
      "number": 1,
      "category": "family",
-     "header": "Who am I?",
-     "body": "I was born and raised in Northern California. My father's great-grandfather Charles Hooker moved to California in 1851, one of three brothers who went west, and started a hardware business, and my mother's mother moved west in the 1950s to get a divorce in Reno and start fresh in San Francisco. I studied American Civilization at Boston College."
+     "header": "Why build this project?",
+     "body": "Born and raised in Northern California, and a student of American Civilization at Boston College, I grew up hearing that my family went far back in American history, but I could never figure out exactly who I was descended from: was my great-grandfather, Samuel F. B. Morse, a direct descendant of the inventor of the telegraph? I heard different things; the answer is that he was a distant cousin, and the name was more of an inspiration. I also assumed I was directly related to Joseph Hooker, the famed general of the Army of the Potomac, and I got a lot of credit in high school for it, until some digging showed he had no children, which left me needing to find out more."
     },
     {
      "number": 2,
-     "category": "family",
-     "header": "Why build this project?",
-     "body": "I grew up hearing that my family went far back in American history, but I could never figure out exactly who I was descended from: was my great-grandfather, Samuel F. B. Morse, a direct descendant of the inventor of the telegraph? I heard different things; the answer is that he was a distant cousin, and the name was more of an inspiration. I also assumed I was directly related to Joseph Hooker, the famed general of the Army of the Potomac, and I got a lot of credit in high school for it, until some digging showed he had no children, which left me wondering."
-    },
-    {
-     "number": 3,
      "category": "character",
      "header": "How can you reach me?",
      "body": "Click [here](contact) to give feedback, ask questions, correct any genealogical or technical errors, or just to say hello!"
     },
     {
-     "number": 4,
+     "number": 3,
      "category": "education",
      "header": "What was your main source material?",
      "body": "We had a copy of Edward Hooker's epic genealogy of the descendants of Rev. Thomas Hooker, published in 1909 and completed by Margaret Huntington Hooker after Edward died. The book answered a lot of questions and is the backbone of research for this project. Each of the major founding Hartford families has its own genealogy, and I used those along with online resources like FamilySearch and Ancestry."
     },
     {
-     "number": 5,
+     "number": 4,
      "category": "family",
      "header": "How are you connected to the founders?",
-     "body": "I grew up thinking that the connection to Thomas Hooker came through my father and the John Talcott connection came through my mother. Then I found out my mother also descends directly from Thomas, and the Hooker name runs through a lot of her close family. Through this project I discovered I'm connected to 22 of the original Hartford founders through 27 direct lines, including three to John Stanley and two to Stephen Hart."
+     "body": "My father's great-grandfather Charles Hooker moved to California in 1851, one of three brothers who went west, and started a hardware business; my mother's mother moved west in the 1950s to get a divorce in Reno and start fresh in San Francisco. I grew up thinking that the connection to Thomas Hooker came through my father and the John Talcott connection came through my mother, then found out my mother also descends directly from Thomas, and the Hooker name runs through a lot of her close family. Through this project I discovered I'm connected to 22 of the original Hartford founders through 27 direct lines, including three to John Stanley and two to Stephen Hart."
     }
    ],
    "cross_connections": [
@@ -714794,7 +714784,7 @@
      "related_id": "X03948",
      "type": "connection",
      "link_text": "Maj. Gen. Joseph Hooker",
-     "display_label": "won him respect in high school, though he never knew if they were kin"
+     "display_label": "won him respect in high school, assuming he was an ancestor at the time"
     },
     {
      "related_id": "H03433",
