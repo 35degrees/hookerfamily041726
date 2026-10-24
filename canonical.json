@@ -2528533,9 +2528533,35 @@
      "date_day": 17
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "business",
+     "header": "A bank president on the Canadian line",
+     "body": "Levi kept businesses on both sides of the border, at Derby Line and at Stanstead in Lower Canada, and for many years was president of the First National Bank of Derby Line. He is buried there beside Julia Ann."
+    },
+    {
+     "number": 2,
+     "category": "family",
+     "header": "His father came to Sharon at eleven",
+     "body": "Levi's father, Deacon Reuben Spalding, came to Sharon, Vermont, in 1769 at eleven, when the town had seven families, and lived on the same farm eighty years. He was a sergeant in the Revolution and a deacon for forty-two years."
+    },
+    {
+     "number": 3,
+     "category": "family",
+     "header": "One of twelve, unbroken until 1847",
+     "body": "Levi was one of Reuben and Jerusha Spalding's twelve children, a family that stayed unbroken until his brother Dr. Jason Spalding died in 1847. The whole family gathered at the Sharon farm, and their father spoke over the casket."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD17044",
+     "type": "connection",
+     "link_text": "Lee Ovitt",
+     "display_label": ", his grandson, was named Levi Spalding for him"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
@@ -2530146,9 +2530172,23 @@
      ]
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "business",
+     "header": "The Silurian Spring and the Casino",
+     "body": "In the 1890s Lee ran the Silurian Spring and the Casino at Waukesha, and in 1901 he built a house on Hartwell Avenue there. He was an editor at Chicago when he died in 1945, and lies at Rosehill beside his parents."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "I06138",
+     "type": "connection",
+     "link_text": "Levi Spalding",
+     "display_label": ", his grandfather, gave him the name Levi Spalding"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
@@ -2530503,7 +2530543,14 @@
      "date_day": 14
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "A state oil inspector and a Mason",
+     "body": "Arthur was born in Kansas City and moved to Waukesha as a boy. He worked as a deputy oil inspector for the state at Madison until 1957, and belonged to the Masonic lodge and the Wisconsin Consistory."
+    }
+   ],
    "tags": [
     "freemason"
    ],
@@ -2530784,7 +2530831,14 @@
      "date_day": 14
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Her father edited the Waukesha Freeman",
+     "body": "Margaret was the daughter of T. W. Haight, once editor of the Waukesha Freeman, and lived most of her life in Waukesha. She died at Madison in 1957, at sixty-nine, and was buried at Prairie Home."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2530857,7 +2530911,26 @@
      "location_country": "United States"
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "military",
+     "header": "Front-line surgery with Patton's army",
+     "body": "From 1943 to 1945 David operated with the 4th Surgical Auxiliary, attached to Patton's Third Army, on soldiers too critically wounded to be carried back to a hospital."
+    },
+    {
+     "number": 2,
+     "category": "career",
+     "header": "He brought open-heart surgery to St. Mary's",
+     "body": "David joined the staff of St. Mary's Hospital in Milwaukee in 1947, was its chief of surgery from 1960 and its chief of staff from 1966 to 1970, when he led the push to begin open-heart surgery there."
+    },
+    {
+     "number": 3,
+     "category": "career",
+     "header": "One of Wisconsin's first HMOs",
+     "body": "Worried by rising costs, David worked with American Motors and St. Mary's in 1972 to organize the physicians who founded Northpoint, one of the earliest health maintenance organizations in Wisconsin."
+    }
+   ],
    "tags": [
     "wwii"
    ],
