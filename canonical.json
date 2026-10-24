@@ -827338,7 +827338,20 @@
    "tags": [],
    "research_tags": [],
    "cross_connections": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "He managed the steamer Flyer on Puget Sound",
+     "body": "Uri spent most of his life in Seattle as manager of the steamship Flyer, which ran between Tacoma and Seattle. His brother, L.B. Seeley, was one of the men who built her."
+    },
+    {
+     "number": 2,
+     "category": "death",
+     "header": "Died suddenly at the ironworks",
+     "body": "Uri died suddenly on the night of 22 April 1921 while at work in the Willamette Iron & Steel plant in Portland."
+    }
+   ],
    "quotes": [],
    "sources": [],
    "research_sources": [],
@@ -827426,7 +827439,14 @@
    "tags": [],
    "research_tags": [],
    "cross_connections": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Daughter of Saybrook's Uncle Alden Walker",
+     "body": "Alma's father, Rev. Alden Walker, known in Saybrook as Uncle Alden, preached ten years as a Methodist circuit minister, then spent thirty as the railroad's station agent. He had come to the township as a boy of seven, when it was still wilderness."
+    }
+   ],
    "quotes": [],
    "sources": [],
    "research_sources": [],
@@ -2534130,7 +2534150,20 @@
      "location_country": "United States"
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "Engineer in charge on the Mount Hood Loop",
+     "body": "When the state built the Mount Hood Loop Highway, Carrol was the highway department's engineer in charge."
+    },
+    {
+     "number": 2,
+     "category": "career",
+     "header": "Three years on an engineering job in China",
+     "body": "After Williams College and Stanford, Carrol spent three years on an engineering job in China."
+    }
+   ],
    "tags": [],
    "cross_connections": [
     {
@@ -2534250,7 +2534283,14 @@
     "mother_id": "I00406"
    },
    "marriages": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Dead of heart failure at twenty-five",
+     "body": "Lamar, a doctor on the staff of St. Luke's Hospital in New York City, died suddenly of heart failure on the morning of 14 June 1907. His parents in Portland learned of it from a message that evening."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2542602,7 +2542642,14 @@
     "mother_id": "HD17124"
    },
    "marriages": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Named for an uncle lost over Rabaul",
+     "body": "Stan carried the name of his uncle, 2nd Lt. Stanley Warren Johnson, a P-38 pilot and wingman to Medal of Honor ace Dick Bong, who was last seen over Rabaul on 7 November 1943 diving out of a fight with four Japanese Zeroes on his tail."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
