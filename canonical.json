@@ -36095,6 +36095,71 @@
     "latitude": 42.27839,
     "longitude": -71.05768
    }
+  },
+  {
+   "id": "CEM2032",
+   "name": "Highland Memorial Gardens",
+   "hooker_connections": [
+    "HD2733",
+    "I05852",
+    "HD16375"
+   ],
+   "city": "Jackson",
+   "county": "Madison County",
+   "state": "Tennessee",
+   "country": "United States",
+   "gps": {
+    "latitude": 35.7031736,
+    "longitude": -88.8276931
+   }
+  },
+  {
+   "id": "CEM2033",
+   "name": "Providence Cemetery",
+   "hooker_connections": [
+    "I06193",
+    "HD16378",
+    "I06194",
+    "HD17117"
+   ],
+   "city": "Providence",
+   "county": "Madison County",
+   "state": "Tennessee",
+   "country": "United States",
+   "gps": {
+    "latitude": 35.64973,
+    "longitude": -89.06653
+   }
+  },
+  {
+   "id": "CEM2034",
+   "name": "Browns Church Cemetery",
+   "hooker_connections": [
+    "HD16380"
+   ],
+   "city": "Jackson",
+   "county": "Madison County",
+   "state": "Tennessee",
+   "country": "United States",
+   "gps": {
+    "latitude": 35.67822,
+    "longitude": -88.71109
+   }
+  },
+  {
+   "id": "CEM2035",
+   "name": "New Friendship Cemetery",
+   "hooker_connections": [
+    "X01886"
+   ],
+   "city": "Mifflin",
+   "county": "Chester County",
+   "state": "Tennessee",
+   "country": "United States",
+   "gps": {
+    "latitude": 35.51852,
+    "longitude": -88.60708
+   }
   }
  ],
  "institutions": [
@@ -477131,18 +477196,23 @@
    "research_notes": "b. Jan 12, 1956 Madison County TN; d. Feb 12, 2019 Madison County TN age 63. Daughter of Oscar Harold Holder. (FamilySearch)",
    "marriages": [
     {
-     "spouse_id": "I05852",
-     "children_ids": [
-      "HD16374"
-     ],
-     "marriage_number": 1
-    },
-    {
      "children_ids": [
       "HD16375",
       "HD16376"
      ],
-     "marriage_number": 2
+     "marriage_number": 1,
+     "spouse_id": "I06193",
+     "date_year": 1974
+    },
+    {
+     "spouse_id": "I05852",
+     "children_ids": [
+      "HD16374"
+     ],
+     "marriage_number": 2,
+     "date_year": 1989,
+     "end_type": "death_of_spouse",
+     "end_year": 2003
     }
    ],
    "notable": {
@@ -477151,11 +477221,12 @@
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Glenda Kay Holder Hornsby",
+    "display_name": "Glenda Kay Holder Johnson Hornsby",
     "first_name": "Glenda",
     "middle_name": "Kay",
     "maiden_name": "Holder",
     "married_names": [
+     "Johnson",
      "Hornsby"
     ],
     "last_name": "Hornsby"
@@ -477174,7 +477245,11 @@
    "number_of_marriages": 2,
    "former_ids": [
     "glenda-holder-1956"
-   ]
+   ],
+   "burial": {
+    "cemetery_id": "CEM2032",
+    "plot_notes": "Find a Grave memorial 196801766"
+   }
   },
   {
    "id": "X00955",
@@ -540189,7 +540264,16 @@
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 2022,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 25,
+    "city": "Medon",
+    "county": "Madison County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
    "cross_connections": [],
    "bio": {
     "display_name": "Wilma Lee Jones Holder",
@@ -540212,11 +540296,23 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "birth": {},
+   "birth": {
+    "year": 1932,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 7,
+    "city": "Knoxville",
+    "county": "Knox County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
    "former_ids": [
     "unnamed-x01886",
     "spouse-2"
-   ]
+   ],
+   "burial": {
+    "cemetery_id": "CEM2035"
+   }
   },
   {
    "id": "X01888",
@@ -2474921,8 +2475017,17 @@
     "is_talcott_descendant": false,
     "is_easter_egg": false
    },
-   "birth": {},
-   "parents": {},
+   "birth": {
+    "year": 1949,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 11,
+    "country": "United States"
+   },
+   "parents": {
+    "father_name": "John Morris Hornsby",
+    "mother_name": "Bernice Grantham Hornsby"
+   },
    "tags": [],
    "sources": [],
    "gender": "male",
@@ -2474932,14 +2475037,27 @@
      "children_ids": [
       "HD16374"
      ],
-     "marriage_number": 1
+     "marriage_number": 1,
+     "date_year": 1989,
+     "end_type": "death_of_self",
+     "end_year": 2003
     }
    ],
    "notable": {
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 2003,
+    "date_precision": "exact",
+    "month": 2,
+    "day": 1,
+    "city": "Jackson",
+    "county": "Madison County",
+    "state": "Tennessee",
+    "country": "United States",
+    "cause": "automobile accident"
+   },
    "cross_connections": [],
    "bio": {
     "display_name": "Ronnie Lynn Hornsby",
@@ -2474959,7 +2475077,10 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2032"
+   }
   },
   {
    "id": "HD16374",
@@ -2475019,9 +2475140,16 @@
     "is_talcott_descendant": false,
     "is_easter_egg": false
    },
-   "birth": {},
+   "birth": {
+    "year": 1981,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 28,
+    "country": "United States"
+   },
    "parents": {
-    "mother_id": "HD2733"
+    "mother_id": "HD2733",
+    "father_id": "I06193"
    },
    "tags": [],
    "sources": [],
@@ -2475031,7 +2475159,14 @@
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 1994,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 19,
+    "country": "United States",
+    "cause": "automobile accident"
+   },
    "cross_connections": [],
    "bio": {
     "display_name": "Kenneth Joe Johnson",
@@ -2475051,7 +2475186,19 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "number_of_marriages": 0
+   "number_of_marriages": 0,
+   "burial": {
+    "cemetery_id": "CEM2032"
+   },
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "West Middle School, Jackson, Tennessee",
+     "dates": null,
+     "type": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "HD16376",
@@ -2475067,7 +2475214,8 @@
    },
    "birth": {},
    "parents": {
-    "mother_id": "HD2733"
+    "mother_id": "HD2733",
+    "father_id": "I06193"
    },
    "tags": [],
    "sources": [],
@@ -2475080,10 +2475228,12 @@
    "death": {},
    "cross_connections": [],
    "bio": {
-    "display_name": "James Johnson",
+    "display_name": "James Edward Johnson Jr.",
     "first_name": "James",
     "last_name": "Johnson",
-    "married_names": []
+    "married_names": [],
+    "middle_name": "Edward",
+    "suffix": "Jr."
    },
    "residence": {},
    "baptism": {},
@@ -2475096,7 +2475246,10 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "number_of_marriages": 0
+   "number_of_marriages": 0,
+   "former_ids": [
+    "james-johnson"
+   ]
   },
   {
    "id": "HD16377",
@@ -2475158,7 +2475311,16 @@
     "is_talcott_descendant": false,
     "is_easter_egg": false
    },
-   "birth": {},
+   "birth": {
+    "year": 1953,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 5,
+    "city": "Chicago",
+    "county": "Cook County",
+    "state": "Illinois",
+    "country": "United States"
+   },
    "parents": {
     "father_id": "HD2732",
     "mother_id": "X01886"
@@ -2475166,12 +2475328,34 @@
    "tags": [],
    "sources": [],
    "gender": "female",
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06194",
+     "children_ids": [
+      "HD17117",
+      "HD17118",
+      "HD17119"
+     ],
+     "end_type": "death_of_self",
+     "end_year": 1997
+    }
+   ],
    "notable": {
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 1997,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 10,
+    "city": "Jackson",
+    "county": "Madison County",
+    "state": "Tennessee",
+    "country": "United States",
+    "cause": "automobile accident"
+   },
    "cross_connections": [],
    "bio": {
     "display_name": "Linda Sue Holder Johnson",
@@ -2475194,7 +2475378,23 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "number_of_marriages": 0
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2033"
+   },
+   "career": [
+    {
+     "role": "Employee",
+     "organization": "Forest Grove Nursing Center",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ],
+   "former_ids": [
+    "linda-johnson"
+   ]
   },
   {
    "id": "HD16379",
@@ -2475224,10 +2475424,11 @@
    "death": {},
    "cross_connections": [],
    "bio": {
-    "display_name": "Terry Holder",
+    "display_name": "Terry Wayne Holder",
     "first_name": "Terry",
     "last_name": "Holder",
-    "married_names": []
+    "married_names": [],
+    "middle_name": "Wayne"
    },
    "residence": {},
    "baptism": {},
@@ -2475254,7 +2475455,16 @@
     "is_talcott_descendant": false,
     "is_easter_egg": false
    },
-   "birth": {},
+   "birth": {
+    "year": 1961,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 13,
+    "city": "Jackson",
+    "county": "Madison County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
    "parents": {
     "father_id": "HD2732",
     "mother_id": "X01886"
@@ -2475262,18 +2475472,37 @@
    "tags": [],
    "sources": [],
    "gender": "male",
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "children_ids": [
+      "HD17115",
+      "HD17116"
+     ]
+    }
+   ],
    "notable": {
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 2019,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 20,
+    "city": "Jackson",
+    "county": "Madison County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
    "cross_connections": [],
    "bio": {
-    "display_name": "Bobby Holder",
+    "display_name": "Bobby Joe Holder",
     "first_name": "Bobby",
     "last_name": "Holder",
-    "married_names": []
+    "married_names": [],
+    "middle_name": "Joe",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792868036/Screenshot_2026-10-24_at_11.53.30_AM_qsoiti.png"
    },
    "residence": {},
    "baptism": {},
@@ -2475286,7 +2475515,13 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "number_of_marriages": 0
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2034"
+   },
+   "former_ids": [
+    "bobby-holder"
+   ]
   },
   {
    "id": "HD16381",
@@ -2475316,10 +2475551,11 @@
    "death": {},
    "cross_connections": [],
    "bio": {
-    "display_name": "Johnny Holder",
+    "display_name": "Johnny Ray Holder",
     "first_name": "Johnny",
     "last_name": "Holder",
-    "married_names": []
+    "married_names": [],
+    "middle_name": "Ray"
    },
    "residence": {},
    "baptism": {},
@@ -2475368,10 +2475604,11 @@
    "death": {},
    "cross_connections": [],
    "bio": {
-    "display_name": "David Holder",
+    "display_name": "David Howard Holder",
     "first_name": "David",
     "last_name": "Holder",
-    "married_names": []
+    "married_names": [],
+    "middle_name": "Howard"
    },
    "residence": {},
    "baptism": {},
@@ -2475471,13 +2475708,14 @@
    "death": {},
    "cross_connections": [],
    "bio": {
-    "display_name": "Mary Holder Doyle",
+    "display_name": "Mary Ruth Holder Doyle",
     "first_name": "Mary",
     "maiden_name": "Holder",
     "married_names": [
      "Doyle"
     ],
-    "last_name": "Doyle"
+    "last_name": "Doyle",
+    "middle_name": "Ruth"
    },
    "residence": {},
    "baptism": {},
@@ -2475574,13 +2475812,14 @@
    "death": {},
    "cross_connections": [],
    "bio": {
-    "display_name": "Joyce Holder Stringfellow",
+    "display_name": "Joyce Ann Holder Stringfellow",
     "first_name": "Joyce",
     "maiden_name": "Holder",
     "married_names": [
      "Stringfellow"
     ],
-    "last_name": "Stringfellow"
+    "last_name": "Stringfellow",
+    "middle_name": "Ann"
    },
    "residence": {},
    "baptism": {},
@@ -2540853,6 +2541092,377 @@
    "sources": [
     {
      "short": "FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17115",
+   "bio": {
+    "display_name": "Joseph Williams",
+    "first_name": "Joseph",
+    "last_name": "Williams",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "HD16380"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 13
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "Obituaries; Find a Grave"
+    }
+   ]
+  },
+  {
+   "id": "HD17116",
+   "bio": {
+    "display_name": "Tamarra Sanders",
+    "first_name": "Tamarra",
+    "last_name": "Sanders",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "HD16380"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 13
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "Obituaries; Find a Grave"
+    }
+   ]
+  },
+  {
+   "id": "I06193",
+   "bio": {
+    "display_name": "James Edward Johnson",
+    "first_name": "James",
+    "last_name": "Johnson",
+    "married_names": [],
+    "middle_name": "Edward"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1953,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 17,
+    "city": "Gadsden",
+    "county": "Crockett County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1994,
+    "date_precision": "exact",
+    "month": 2,
+    "day": 14,
+    "city": "Brownsville",
+    "county": "Haywood County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "parents": {
+    "father_name": "Aubrey Walter Johnson"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD2733",
+     "children_ids": [
+      "HD16375",
+      "HD16376"
+     ],
+     "date_year": 1974
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "Obituaries; Find a Grave"
+    }
+   ],
+   "burial": {
+    "cemetery_id": "CEM2033"
+   }
+  },
+  {
+   "id": "I06194",
+   "bio": {
+    "display_name": "Walter Gene Johnson",
+    "first_name": "Walter",
+    "last_name": "Johnson",
+    "married_names": [],
+    "middle_name": "Gene"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1951,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 7,
+    "county": "Crockett County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2024,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 18,
+    "city": "Jackson",
+    "county": "Madison County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "parents": {
+    "father_name": "Aubrey Walter Johnson",
+    "mother_name": "Irene Johnson"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD16378",
+     "children_ids": [
+      "HD17117",
+      "HD17118",
+      "HD17119"
+     ],
+     "end_type": "death_of_spouse",
+     "end_year": 1997
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "Obituaries; Find a Grave"
+    }
+   ],
+   "burial": {
+    "cemetery_id": "CEM2033"
+   }
+  },
+  {
+   "id": "HD17117",
+   "bio": {
+    "display_name": "Michael Gene Johnson",
+    "first_name": "Michael",
+    "last_name": "Johnson",
+    "married_names": [],
+    "middle_name": "Gene",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792868216/145974371_1475763004_gjku8m.jpg"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1978,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 5,
+    "city": "Jackson",
+    "county": "Madison County",
+    "state": "Tennessee",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1994,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 19,
+    "city": "Jackson",
+    "county": "Madison County",
+    "state": "Tennessee",
+    "country": "United States",
+    "cause": "automobile accident"
+   },
+   "parents": {
+    "father_id": "I06194",
+    "mother_id": "HD16378"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 13
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "Obituaries; Find a Grave"
+    }
+   ],
+   "burial": {
+    "cemetery_id": "CEM2033"
+   },
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "South Side High School, Jackson, Tennessee",
+     "dates": null,
+     "type": null,
+     "notes": null
+    }
+   ]
+  },
+  {
+   "id": "HD17118",
+   "bio": {
+    "display_name": "Beverly Gail Johnson Harrison",
+    "first_name": "Beverly",
+    "last_name": "Harrison",
+    "married_names": [
+     "Harrison"
+    ],
+    "middle_name": "Gail",
+    "maiden_name": "Johnson"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06194",
+    "mother_id": "HD16378"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 13
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "Obituaries; Find a Grave"
+    }
+   ]
+  },
+  {
+   "id": "HD17119",
+   "bio": {
+    "display_name": "Lucinda Ann Johnson",
+    "first_name": "Lucinda",
+    "last_name": "Johnson",
+    "married_names": [],
+    "middle_name": "Ann"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06194",
+    "mother_id": "HD16378"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 13
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "Obituaries; Find a Grave"
     }
    ]
   }
