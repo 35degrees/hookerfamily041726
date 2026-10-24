@@ -2531609,7 +2531609,15 @@
     "state": "Oregon",
     "country": "United States"
    },
-   "education": [],
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "Whitefish Bay High School",
+     "dates": "Class of 1964",
+     "type": null,
+     "notes": null
+    }
+   ],
    "career": [
     {
      "role": "Nurse",
