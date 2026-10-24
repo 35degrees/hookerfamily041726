@@ -2206781,7 +2206781,13 @@
     {
      "spouse_id": "I04790",
      "marriage_number": 1,
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1908,
+     "date_month": 6,
+     "date_day": 30,
+     "location_city": "Richmond",
+     "location_state": "Virginia",
+     "location_country": "United States"
     }
    ],
    "number_of_marriages": 1,
@@ -2206805,8 +2206811,9 @@
     "married_names": [],
     "prefix": null,
     "display_name": "Ramsey William Probasco",
-    "bio_blurb": null,
-    "photo_url": null
+    "bio_blurb": "Author and orator",
+    "photo_url": null,
+    "extra_names": "William Ramsey Probasco"
    },
    "birth": {
     "year": 1880,
@@ -2206836,12 +2206843,21 @@
     "is_easter_egg": false,
     "generation_from_thomas": 11
    },
-   "parents": {},
+   "parents": {
+    "father_name": "Harry Russell Probasco",
+    "mother_name": "Mary Sherman Moulton Probasco"
+   },
    "marriages": [
     {
      "spouse_id": "HD13829",
      "marriage_number": 1,
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1908,
+     "date_month": 6,
+     "date_day": 30,
+     "location_city": "Richmond",
+     "location_state": "Virginia",
+     "location_country": "United States"
     }
    ],
    "number_of_marriages": 1,
@@ -2206851,7 +2206867,17 @@
    "last_updated": "2026-09-20",
    "burial": {
     "cemetery_id": "CEM083"
-   }
+   },
+   "career": [
+    {
+     "role": "Author",
+     "organization": "Why Abraham Lincoln Was Successful as an Orator",
+     "location": null,
+     "start_year": 1902,
+     "end_year": null,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "HD13830",
@@ -2533103,7 +2533129,13 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 2
+   "number_of_marriages": 2,
+   "artworks": [
+    {
+     "artwork_id": "ART412",
+     "artwork_blurb": "Tyler Woodward Seeley (c. 1919-1920)"
+    }
+   ]
   },
   {
    "id": "HD17064",
@@ -2569989,6 +2570021,17 @@
    "url": "https://www.familysearch.org/en/tree/person/memories/GS2B-33K",
    "primary_url": "https://www.familysearch.org/en/tree/person/memories/GS2B-33K",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792854300/thumbMobile-565_nwg9vp.jpg"
+  },
+  {
+   "id": "ART412",
+   "title": "8th Grade Drawings",
+   "type": "drawing",
+   "person_ids": [
+    "HD17063"
+   ],
+   "url": "https://www.flickr.com/photos/adavey/55002195936/in/photostream/",
+   "primary_url": "https://www.flickr.com/photos/adavey/55002195936/in/photostream/",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792866033/Screenshot_2026-10-24_at_11-resized_pzbqtm.png"
   }
  ],
  "wars": [
@@ -2575393,6 +2575436,11 @@
    "person_id": "HD15335",
    "url": "https://www.bu.edu/earth/profiles/robinson-w-fulweiler/",
    "note": "Dr. Robinson W. Fulweiler's Boston University faculty page (biogeochemist). Daughter of John Kennedy \"Fortune\" Fulweiler (HD15331); could confirm the Fulweiler and Kennedy lines, her father's career and the Saunderstown family."
+  },
+  {
+   "person_id": "HD17063",
+   "url": "https://www.flickr.com/photos/adavey/55002195936/in/photostream/",
+   "note": "Flickr album of the present owner of the Seeleys' old beach house, West Dunes, bought by the poster's father-in-law in the early 1940s. They are cataloguing the original owners' library, which holds Mayannah Woodward Seeley's inscribed books and Tyler Woodward Seeley's 1914 geography book with his drawings; could share more Seeley papers and say where West Dunes stands."
   }
  ]
 }
