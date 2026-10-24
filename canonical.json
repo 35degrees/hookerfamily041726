@@ -714823,25 +714823,25 @@
      "number": 1,
      "category": "family",
      "header": "Why build this project?",
-     "body": "I grew up in Northern California hearing that my family went far back in American history, but I never knew exactly who we came from. My great-grandfather Samuel F. B. Morse turned out to be only a distant cousin of the telegraph's inventor, and I got a lot of credit in high school for General Joseph Hooker until some digging showed he had no children. That left me needing to find out more."
+     "body": "I grew up hearing that my family went far back in American history, but no one could tell me exactly how. My great-grandfather was Samuel F. B. Morse, and I assumed he descended from the inventor of the telegraph; he was actually a distant cousin, named in the inventor's honor. I also took credit all through high school for General Joseph Hooker, until I learned he had no children, and that left me needing to find out more."
     },
     {
      "number": 2,
-     "category": "character",
-     "header": "How can you reach me?",
-     "body": "Click [here](contact) to give feedback, ask questions, correct any genealogical or technical errors, or just to say hello!"
+     "category": "family",
+     "header": "How are you connected to the founders?",
+     "body": "I'm a Northern Californian because of two migrations: my father's side came west in 1851, when Charles Hooker and two of his brothers left New England and he started a hardware business in San Francisco, and my mother's mother came in the 1950s, to get a divorce in Reno and start over there. I always assumed the Hooker line ran through my father and the Talcott line through my mother, then learned that my mother descends from Thomas Hooker too. All told, I'm connected to 22 of Hartford's original founders through 27 direct lines, three of them to John Stanley and two to Stephen Hart."
     },
     {
      "number": 3,
      "category": "education",
      "header": "What was your main source material?",
-     "body": "My family had a copy of Edward Hooker's epic genealogy of the descendants of Rev. Thomas Hooker, published in 1909 and completed by Margaret Huntington Hooker after Edward died. The book answered a lot of questions and is the backbone of research for this project. Each of the major founding Hartford families has its own genealogy, and I used those along with online resources like FamilySearch and Ancestry."
+     "body": "My family owned a copy of Edward Hooker's 1909 genealogy of the descendants of Rev. Thomas Hooker, finished by Margaret Huntington Hooker after his death, and it became the backbone of this project. The other founding Hartford families have their own published genealogies, and I worked from those alongside FamilySearch and Ancestry."
     },
     {
      "number": 4,
-     "category": "family",
-     "header": "How are you connected to the founders?",
-     "body": "My father's great-grandfather Charles Hooker moved to California in 1851, one of three brothers who went west, and started a hardware business; my mother's mother moved west in the 1950s to get a divorce in Reno and start fresh in San Francisco. I grew up thinking that the connection to Thomas Hooker came through my father and the John Talcott connection came through my mother, then found out my mother also descends directly from Thomas, and the Hooker name runs through a lot of her close family. Through this project I discovered I'm connected to 22 of the original Hartford founders through 27 direct lines, including three to John Stanley and two to Stephen Hart."
+     "category": "character",
+     "header": "How can you reach me?",
+     "body": "Click [here](contact) to give feedback, ask questions, correct any genealogical or technical errors, or just to say hello!"
     }
    ],
    "cross_connections": [
