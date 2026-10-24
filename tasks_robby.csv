@@ -1,0 +1,2 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD17058,nb_replace,"old=""Nine months old"" header=""Nine months old"" body=""Robby was born at Boston on 10 October 1881 and died there on 9 August 1882. He is buried at Cedar Grove in Dorchester, where both his parents were later buried too."" category=death",OK nb_replace: 'Nine months old' -> 'Nine months old' placed verbatim in place,/person/robert-spalding-1881,,
