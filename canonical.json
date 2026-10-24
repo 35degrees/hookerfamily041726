@@ -704067,6 +704067,12 @@
      "related_id": "X02358",
      "display_label": ", his father-in-law, was shot at Shiloh leading a brigade for Sherman",
      "link_text": "Gen. David Stuart"
+    },
+    {
+     "related_id": "H04745",
+     "type": "connection",
+     "link_text": "Stephen Spalding",
+     "display_label": "was killed charging Port Hudson with the 8th Vermont in June 1863"
     }
    ],
    "institutions": [
@@ -2528804,15 +2528810,40 @@
     {
      "number": 1,
      "category": "military",
-     "header": "Killed at Port Hudson at twenty-two",
-     "body": "Stephen was a Union lieutenant when he was killed at Port Hudson, Louisiana, on 14 June 1863, eleven days short of his twenty-third birthday."
+     "header": "He said he would lead the charge",
+     "body": "The night before the charge of 14 June 1863 at Port Hudson, Stephen told a friend he would be at the head of his regiment, and Captain Barstow that he would not spend another night with him. He fell to a minié ball in the head."
+    },
+    {
+     "number": 2,
+     "category": "military",
+     "header": "On the road to Washington in six hours",
+     "body": "A University of Vermont graduate reading law in New York, Stephen was on his way to Washington with the 7th New York less than six hours after the attack on Fort Sumter, and served out its three months."
+    },
+    {
+     "number": 3,
+     "category": "military",
+     "header": "He resigned one commission for his brother",
+     "body": "Stephen raised another New York regiment and was made its second lieutenant, but resigned when his eldest brother fell dangerously ill and went home to read law at Derby. In December 1861 he joined Company B, 8th Vermont."
+    },
+    {
+     "number": 4,
+     "category": "military",
+     "header": "Acting adjutant on the siege's 24th day",
+     "body": "Stephen was acting adjutant of the 8th Vermont when it charged the Port Hudson works on 14 June 1863, the 24th day of the siege, eleven days short of his twenty-third birthday. His body was recovered and sent home to Vermont."
     }
    ],
    "tags": [
     "civil_war",
     "killed_in_action"
    ],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD3335",
+     "type": "connection",
+     "link_text": "Edward Terry",
+     "display_label": "shelled Port Hudson from the sloop Richmond during the 1863 siege"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
