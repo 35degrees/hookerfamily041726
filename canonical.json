@@ -1125333,9 +1125333,52 @@
      "category": "death",
      "header": "Grant and Sherman bore his coffin",
      "body": "When Patterson died at eighty-nine in 1881, his pallbearers included Ulysses S. Grant and William Tecumseh Sherman; his sons Francis and Robert had both served as Union generals."
+    },
+    {
+     "number": 6,
+     "category": "military",
+     "header": "Militia against the 1844 church burners",
+     "body": "Sent by the governor in 1844 to guard Philadelphia's Irish Catholic churches from nativist mobs, Patterson led the state militia into the streets. St. Michael's and St. Augustine's burned anyway, and men died on both sides."
+    },
+    {
+     "number": 7,
+     "category": "politics",
+     "header": "Grant's envoy in the disputed election",
+     "body": "When the 1876 presidential count was disputed, President Grant asked Patterson to go to Washington and talk with Southern members of Congress. Hayes later made him president of West Point's board of visitors, as Jackson had in 1835."
     }
    ],
-   "career": [],
+   "career": [
+    {
+     "role": "President, Board of Trustees",
+     "organization": "Lafayette College",
+     "start_year": "1876",
+     "end_year": "1881"
+    },
+    {
+     "role": "President",
+     "organization": "Aztec Club of 1847",
+     "start_year": "1867",
+     "end_year": "1881"
+    },
+    {
+     "role": "Major General, Pennsylvania Volunteers",
+     "organization": "Union Army",
+     "start_year": "1861",
+     "end_year": "1861"
+    },
+    {
+     "role": "Major General of Volunteers",
+     "organization": "U.S. Army, Mexican-American War",
+     "start_year": "1846",
+     "end_year": "1848"
+    },
+    {
+     "role": "Trustee",
+     "organization": "Lafayette College",
+     "start_year": "1826",
+     "end_year": "1835"
+    }
+   ],
    "education": []
   },
   {
@@ -1592322,7 +1592365,7 @@
     "descent_from_john_talcott": false,
     "is_thomas_descendant": false,
     "is_talcott_descendant": false,
-    "is_easter_egg": false,
+    "is_easter_egg": true,
     "include_in_path_calculation": false
    },
    "bio": {
@@ -1592373,7 +1592416,14 @@
     }
    ],
    "tags": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "The house at Thirteenth and Locust",
+     "body": "In 1836 Sarah and Robert bought John Hare Powel's mansion at the corner of Thirteenth and Locust Streets in Philadelphia. After Robert died the Historical Society of Pennsylvania bought it for its headquarters."
+    }
+   ],
    "cross_connections": [],
    "career": [],
    "education": [],
