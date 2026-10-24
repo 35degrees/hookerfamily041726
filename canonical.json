@@ -2528559,7 +2528559,8 @@
      "related_id": "HD17044",
      "type": "connection",
      "link_text": "Lee Ovitt",
-     "display_label": ", his grandson, was named Levi Spalding for him"
+     "display_label": ", his grandson, was named Levi Spalding for him",
+     "lineal_gap": 2
     }
    ],
    "classification": {
@@ -2530186,7 +2530187,8 @@
      "related_id": "I06138",
      "type": "connection",
      "link_text": "Levi Spalding",
-     "display_label": ", his grandfather, gave him the name Levi Spalding"
+     "display_label": ", his grandfather, gave him the name Levi Spalding",
+     "lineal_gap": -2
     }
    ],
    "classification": {
