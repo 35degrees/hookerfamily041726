@@ -328248,7 +328248,8 @@
     "first_name": "Henry",
     "last_name": "Blake",
     "middle_name": "Taylor",
-    "married_names": []
+    "married_names": [],
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792872902/94a28cfd-ea7a-4e8e-9ab6-a35b86088d4c-2-resized_c0ec70.png"
    },
    "residence": {},
    "baptism": {},
@@ -328260,6 +328261,9 @@
    "landmarks": [
     {
      "landmark_id": "LM267"
+    },
+    {
+     "landmark_id": "LM568"
     }
    ],
    "artworks": [],
@@ -2556580,6 +2556584,25 @@
     "HD3745",
     "I00408",
     "HD3743"
+   ]
+  },
+  {
+   "id": "LM568",
+   "name": "Public Square & Green",
+   "primary_name": "Public Square & Green",
+   "type": "public square",
+   "dates": {
+    "built": 1898
+   },
+   "location": {
+    "city": "New Haven",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "primary_url": "https://rogershermanhouse.com/2020/01/15/the-development-of-the-green-as-a-public-square-by-henry-taylor-blake/",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792872870/98267c99-0346-409b-b79e-f9f0089afd46.jpeg_jcbbrr.webp",
+   "person_ids": [
+    "HD1568"
    ]
   }
  ],
