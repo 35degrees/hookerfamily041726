@@ -467971,7 +467971,15 @@
     "is_notable": false,
     "notable_category": []
    },
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD2683",
+     "type": "connection",
+     "link_text": "Wyllys Cadwell Ransom",
+     "display_label": ", his grandson, was named Wyllys Cadwell for him",
+     "lineal_gap": 2
+    }
+   ],
    "bio": {
     "display_name": "Wyllys Jay Cadwell",
     "first_name": "Wyllys",
@@ -469049,6 +469057,13 @@
      "link_text": "Robert North",
      "display_label": ", his great-grandson, died of wounds in Belgium in December 1944",
      "lineal_gap": 3
+    },
+    {
+     "related_id": "HD2675",
+     "type": "connection",
+     "link_text": "Wyllys Jay Cadwell",
+     "display_label": ", his grandfather, gave him the name Wyllys Cadwell",
+     "lineal_gap": -2
     }
    ],
    "bio": {
@@ -1112372,6 +1112387,12 @@
      "related_id": "HD13732",
      "link_text": "Walter Linsley Cowles",
      "display_label": "left Sheffield in 1878 for structural steel and bridge work"
+    },
+    {
+     "related_id": "HD17027",
+     "type": "connection",
+     "link_text": "John Storrs",
+     "display_label": "became New Hampshire's first state highway engineer in 1905"
     }
    ],
    "narrative_blocks": [
@@ -1892634,6 +1892655,12 @@
      "link_text": "William Howard Taft",
      "display_label": "was asked by Roosevelt to weigh the canal commission's men",
      "type": "professional_peer"
+    },
+    {
+     "related_id": "HD17027",
+     "type": "connection",
+     "link_text": "John Storrs",
+     "display_label": "wrote a 1918 handbook on short-span bridges for town selectmen"
     }
    ],
    "bio": {
@@ -2526305,9 +2526332,47 @@
      "date_day": 29
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "New Hampshire's first highway engineer",
+     "body": "When New Hampshire formed its State Highway Department in 1905, John was put in charge of its roads and bridges as state engineer. In 1903 he had been secretary of the Good Roads League under the former governor Frank W. Rollins."
+    },
+    {
+     "number": 2,
+     "category": "career",
+     "header": "The arch above Quechee Gorge",
+     "body": "John designed the steel deck arch that carried the Woodstock Railway across Vermont's Quechee Gorge in 1911, 160 feet above the Ottauquechee. When the line folded in 1933 it was decked over for US Route 4, and it still carries the road."
+    },
+    {
+     "number": 3,
+     "category": "character",
+     "header": "Deaf from scarlet fever, an engineer anyway",
+     "body": "Scarlet fever in childhood left John with poor eyesight and almost no hearing. He qualified as an engineer all the same, in 1885, the year he married Carrie Dow of Concord."
+    },
+    {
+     "number": 4,
+     "category": "career",
+     "header": "A bridge book for town selectmen",
+     "body": "In 1918 John and his son Edward published a handbook on short-span bridges for road agents, town clerks and selectmen, with designs strong enough for twelve- and fifteen-ton motor trucks and road rollers."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "X04043",
+     "type": "connection",
+     "link_text": "William Hubert Burr",
+     "display_label": "wrote Stresses in Bridge and Roof Trusses for engineers in 1879"
+    },
+    {
+     "related_id": "HD5140",
+     "type": "connection",
+     "link_text": "Colin Ingersoll",
+     "display_label": "became New York City's chief engineer of bridges in 1906"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
@@ -2526589,7 +2526654,14 @@
     "mother_id": "I06126"
    },
    "marriages": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "career",
+     "header": "He and his father wrote the bridge handbook",
+     "body": "In 1918 Edward and his father, John W. Storrs, published a handbook on short-span bridges for New England towns from their firm in Concord. Both belonged to the Boston Society of Civil Engineers."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
