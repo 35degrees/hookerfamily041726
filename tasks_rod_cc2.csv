@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD3315,field_set,cross_connections[2].lineal_gap=-1,,,,
+HD3243,field_set,cross_connections[4].lineal_gap=1,,,,

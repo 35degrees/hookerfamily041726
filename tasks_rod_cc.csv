@@ -1,0 +1,5 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD3315,cc,"related=I03520 link=""Sheffield Phelps"" label=""ran Seafirst Mortgage and the boards of Seattle Opera and the ballet""",OK cc->I03520 added; FLAG needs reciprocal cc row on I03520,/person/rodman-hooker-jr-1940,,
+I03520,cc,"related=HD3315 link=""Rod Hooker"" label=""banked at Seattle First National and sat on the Intiman Theatre board""",OK cc->HD3315 added (reciprocal present),/person/sheffield-phelps-ii-1920,,
+HD3315,cc,"related=HD3243 link=""John Rodman Hooker"" label="", his uncle, presided over the Cate School board in the 1950s""",OK cc->HD3243 added; FLAG needs reciprocal cc row on HD3243,/person/rodman-hooker-jr-1940,,
+HD3243,cc,"related=HD3315 link=""Rod Hooker"" label="", his nephew, went to Cate in the 1950s""",OK cc->HD3315 added (reciprocal present),/person/john-hooker-1903,,
