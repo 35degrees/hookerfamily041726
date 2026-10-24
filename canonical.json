@@ -36037,7 +36037,11 @@
    "name": "Derby Line Cemetery",
    "hooker_connections": [
     "I06138",
-    "HD17017"
+    "HD17017",
+    "H04746",
+    "I06141",
+    "H04747",
+    "I06142"
    ],
    "city": "Derby Line",
    "county": "Orleans County",
@@ -36062,6 +36066,23 @@
    "gps": {
     "latitude": 43.1197,
     "longitude": -87.90317
+   }
+  },
+  {
+   "id": "CEM2031",
+   "name": "Cedar Grove Cemetery",
+   "hooker_connections": [
+    "H04748",
+    "I06143",
+    "HD17058"
+   ],
+   "city": "Dorchester",
+   "county": "Suffolk County",
+   "state": "Massachusetts",
+   "country": "United States",
+   "gps": {
+    "latitude": 42.27839,
+    "longitude": -71.05768
    }
   }
  ],
@@ -2529034,11 +2529055,27 @@
    ],
    "career": [
     {
-     "role": "First Lieutenant and acting Adjutant",
+     "role": "Adjutant, commanding Company B in action",
+     "organization": "8th Vermont Infantry Regiment",
+     "location": null,
+     "start_year": 1863,
+     "end_year": 1863,
+     "notes": null
+    },
+    {
+     "role": "First Lieutenant, commanding Company B",
      "organization": "Company B, 8th Vermont Infantry Regiment",
      "location": null,
      "start_year": 1861,
      "end_year": 1863,
+     "notes": null
+    },
+    {
+     "role": "Recruiter",
+     "organization": "Butler Brigade, Vermont",
+     "location": null,
+     "start_year": 1861,
+     "end_year": 1861,
      "notes": null
     },
     {
@@ -2529050,8 +2529087,8 @@
      "notes": null
     },
     {
-     "role": "Private",
-     "organization": "7th New York Militia",
+     "role": "Volunteer",
+     "organization": "7th New York",
      "location": null,
      "start_year": 1861,
      "end_year": 1861,
@@ -2529064,7 +2529101,7 @@
      "war_id": "WAR006",
      "rank": "First Lieutenant",
      "unit": "Company B, 8th Vermont Infantry Regiment",
-     "notes": "Commissioned 19 December 1861; acting adjutant when killed in the charge of 14 June 1863 at Port Hudson, the 24th day of the siege. Earlier served three months with the 7th New York Militia from April 1861."
+     "notes": "Enlisted 13 April 1861 with the 7th New York (the Spalding Memorial calls it the 7th New York Battery) and went to Washington. Recruited for the Butler Brigade, then first lieutenant of Company B, 8th Vermont, 19 December 1861, commanding the company at New Orleans while its captain was detached. Adjutant of the regiment from spring 1863. Killed in the second assault on Port Hudson, 14 June 1863."
     }
    ],
    "landmarks": [
@@ -2529076,11 +2529113,11 @@
   {
    "id": "H04746",
    "bio": {
-    "display_name": "Clara Augusta Spalding Bingham",
+    "display_name": "Clara Augusta Spalding Brigham",
     "first_name": "Clara",
-    "last_name": "Bingham",
+    "last_name": "Brigham",
     "married_names": [
-     "Bingham"
+     "Brigham"
     ],
     "middle_name": "Augusta",
     "maiden_name": "Spalding"
@@ -2529090,7 +2529127,7 @@
     "year": 1842,
     "date_precision": "exact",
     "month": 4,
-    "day": 4,
+    "day": 5,
     "city": "Rock Island",
     "county": "Stanstead",
     "state": "Quebec",
@@ -2529098,7 +2529135,13 @@
    },
    "death": {
     "year": 1914,
-    "date_precision": "year_only"
+    "date_precision": "exact",
+    "month": 6,
+    "day": 21,
+    "city": "Derby",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
    },
    "parents": {
     "father_id": "I06138",
@@ -2529108,7 +2529151,10 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06141",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1867,
+     "date_month": 2,
+     "date_day": 14
     }
    ],
    "narrative_blocks": [],
@@ -2529127,30 +2529173,60 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "former_ids": [
+    "clara-bingham-1842"
+   ],
+   "burial": {
+    "cemetery_id": "CEM2029"
+   }
   },
   {
    "id": "I06141",
    "bio": {
-    "display_name": "Charles O. Bingham",
+    "display_name": "Maj. Charles O. Brigham",
     "first_name": "Charles",
-    "last_name": "Bingham",
+    "last_name": "Brigham",
     "married_names": [],
-    "middle_name": "O."
+    "middle_name": "O.",
+    "title": "Maj.",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792862495/130364715_986c31cf-9b8e-4590-8498-9da3cdb260be_fvsdlk.jpg",
+    "bio_blurb": "Civil War major and attorney"
    },
    "gender": "male",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1838,
+    "date_precision": "year_only",
+    "city": "Fitchburg",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1890,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 27,
+    "city": "Derby",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
    "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
      "spouse_id": "H04746",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1867,
+     "date_month": 2,
+     "date_day": 14
     }
    ],
    "narrative_blocks": [],
-   "tags": [],
+   "tags": [
+    "civil_war"
+   ],
    "cross_connections": [],
    "classification": {
     "include_in_path_calculation": false,
@@ -2529164,7 +2529240,40 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "former_ids": [
+    "charles-bingham"
+   ],
+   "burial": {
+    "cemetery_id": "CEM2029"
+   },
+   "career": [
+    {
+     "role": "Attorney",
+     "organization": "Derby, Vermont",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Captain, later Major",
+     "organization": "1st Connecticut Heavy Artillery",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ],
+   "military_service": [
+    {
+     "war": "American Civil War",
+     "war_id": "WAR006",
+     "rank": "Major",
+     "unit": "1st Connecticut Heavy Artillery",
+     "notes": "Captain, later major."
+    }
+   ]
   },
   {
    "id": "H04747",
@@ -2529191,7 +2529300,14 @@
    },
    "death": {
     "year": 1903,
-    "date_precision": "year_only"
+    "date_precision": "exact",
+    "month": 10,
+    "day": 30,
+    "city": "Newton",
+    "county": "Middlesex County",
+    "state": "Massachusetts",
+    "country": "United States",
+    "cause": "Suicide"
    },
    "parents": {
     "father_id": "I06138",
@@ -2529201,7 +2529317,12 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06142",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1865,
+     "date_month": 6,
+     "date_day": 15,
+     "end_type": "death",
+     "end_year": 1894
     }
    ],
    "narrative_blocks": [],
@@ -2529220,7 +2529341,16 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2029"
+   },
+   "residence": {
+    "city": "Derby",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   }
   },
   {
    "id": "I06142",
@@ -2529232,14 +2529362,27 @@
     "middle_name": "S."
    },
    "gender": "male",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1839,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1894,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
    "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
      "spouse_id": "H04747",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1865,
+     "date_month": 6,
+     "date_day": 15,
+     "end_type": "death",
+     "end_year": 1894
     }
    ],
    "narrative_blocks": [],
@@ -2529257,7 +2529400,10 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2029"
+   }
   },
   {
    "id": "H04748",
@@ -2529280,7 +2529426,13 @@
    },
    "death": {
     "year": 1918,
-    "date_precision": "year_only"
+    "date_precision": "exact",
+    "month": 12,
+    "day": 29,
+    "city": "Boston",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
    },
    "parents": {
     "father_id": "I06138",
@@ -2529290,7 +2529442,11 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06143",
-     "children_ids": []
+     "children_ids": [
+      "HD17058",
+      "HD17059"
+     ],
+     "date_year": 1878
     }
    ],
    "narrative_blocks": [],
@@ -2529309,29 +2529465,53 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2031"
+   }
   },
   {
    "id": "I06143",
    "bio": {
-    "display_name": "Juliet A. Long Spalding",
+    "display_name": "Juliet N. Long Spalding",
     "first_name": "Juliet",
     "last_name": "Spalding",
     "married_names": [
      "Spalding"
     ],
-    "middle_name": "A.",
+    "middle_name": "N.",
     "maiden_name": "Long"
    },
    "gender": "female",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1851,
+    "date_precision": "month_year",
+    "month": 3,
+    "city": "Cambridge",
+    "county": "Middlesex County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1934,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 18,
+    "city": "Dorchester",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
    "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
      "spouse_id": "H04748",
-     "children_ids": []
+     "children_ids": [
+      "HD17058",
+      "HD17059"
+     ],
+     "date_year": 1878
     }
    ],
    "narrative_blocks": [],
@@ -2529349,7 +2529529,16 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2031"
+   },
+   "residence": {
+    "city": "Dorchester",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   }
   },
   {
    "id": "H04749",
@@ -2531215,6 +2531404,149 @@
    },
    "is_placeholder": false,
    "number_of_marriages": 0
+  },
+  {
+   "id": "HD17058",
+   "bio": {
+    "display_name": "Robert William Spalding",
+    "first_name": "Robert",
+    "last_name": "Spalding",
+    "married_names": [],
+    "middle_name": "William",
+    "chip_first_name": "Robby",
+    "nickname": "Robby"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1881,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 10,
+    "city": "Boston",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1882,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 9,
+    "city": "Boston",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H04748",
+    "mother_id": "I06143"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "burial": {
+    "cemetery_id": "CEM2031"
+   }
+  },
+  {
+   "id": "HD17059",
+   "bio": {
+    "display_name": "Ethel Spalding Pearson",
+    "first_name": "Ethel",
+    "last_name": "Pearson",
+    "married_names": [
+     "Pearson"
+    ],
+    "maiden_name": "Spalding"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "H04748",
+    "mother_id": "I06143"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06157",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06157",
+   "bio": {
+    "display_name": "Gen. John Pearson",
+    "title": "Gen.",
+    "first_name": "John",
+    "last_name": "Pearson",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17059",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "residence": {
+    "city": "Oklahoma City",
+    "state": "Oklahoma",
+    "country": "United States"
+   },
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
   }
  ],
  "landmarks": [
