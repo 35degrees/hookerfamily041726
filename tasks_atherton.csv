@@ -1,0 +1,5 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD2066,cc_remove,HD3074,OK CC to HD3074 removed (explicit),/person/frederick-atherton-1865,,
+HD3074,cc_remove,HD2066,OK CC to HD2066 removed (explicit),/person/horace-taft-1861,,
+HD2066,cc,"related=X03145 link=""Alice Roosevelt Longworth"" label=""held court over Washington society from her Massachusetts Avenue salon""",OK cc->X03145 added; FLAG needs reciprocal cc row on X03145,/person/frederick-atherton-1865,,
+X03145,cc,"related=HD2066 link=""Frederick Atherton"" label=""courted presidents and diplomats in Washington for twenty-five years""",OK cc->HD2066 added (reciprocal present),/person/alice-roosevelt-1884,,

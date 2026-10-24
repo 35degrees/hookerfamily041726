@@ -390862,10 +390862,10 @@
    ],
    "cross_connections": [
     {
-     "type": "kin_peer",
-     "display_label": "founded and led the Taft School for boys",
-     "related_id": "HD3074",
-     "link_text": "Horace Dutton Taft"
+     "related_id": "X03145",
+     "type": "connection",
+     "link_text": "Alice Roosevelt Longworth",
+     "display_label": "held court over Washington society from her Massachusetts Avenue salon"
     }
    ],
    "bio": {
@@ -585321,12 +585321,6 @@
      "display_label": "has the school's library named for him; his granduncle founded it",
      "related_id": "HD3094",
      "link_text": "Hulbert Taft Jr."
-    },
-    {
-     "type": "kin_peer",
-     "display_label": "helped found the Wentworth Institute of Technology",
-     "related_id": "HD2066",
-     "link_text": "Frederick William Atherton"
     },
     {
      "related_id": "HD4101",
@@ -1256701,6 +1256695,12 @@
      "link_text": "Janet January Elliott Hobart",
      "display_label": "met the Emerys through her before the China expedition",
      "lateral": true
+    },
+    {
+     "related_id": "HD2066",
+     "type": "connection",
+     "link_text": "Frederick Atherton",
+     "display_label": "courted presidents and diplomats in Washington for twenty-five years"
     }
    ],
    "quotes": [],
