@@ -12,6 +12,8 @@
 	 */
 	import { modal, closeModal } from '#lib/state/modal.svelte.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
+	import { personHref } from '#lib/paths.js';
+	import { thomasVertical } from '#lib/state/thomasVertical.js';
 	import { linear, cubicOut } from 'svelte/easing';
 
 	const VEIL_IN_MS = 340;
@@ -38,6 +40,38 @@
 			css: (t: number) => `opacity: ${t}; transform: translateY(${((1 - t) * -8).toFixed(2)}px);`
 		};
 	}
+
+	/**
+	 * AN AUTHOR NAME IS A CC — the same handoff SearchModal's pick makes (read its note there): close first,
+	 * then click a synthetic `data-cc` anchor laid over the FEATURED CARD's rect, so `warmPersonLinks` runs the
+	 * ordinary lateral flight from the stage, not from a line of text inside the sheet. No gen-delta: an author
+	 * can be any distance from the reader, and omitting it is what makes the move lateral.
+	 *
+	 * The sheet simply fades as on any close (Sam: a left sweep moved with the arriving card and read badly).
+	 */
+	function pick(e: MouseEvent, slug: string) {
+		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // let the browser have it
+		e.preventDefault();
+		leaving = true;
+		closeModal();
+		const stage = document.querySelector('.page-container') ?? document.body;
+		const card = document.querySelector('.featured-card');
+		const r = (card ?? stage).getBoundingClientRect();
+		const a = document.createElement('a');
+		a.href = personHref(slug);
+		a.dataset.cc = 'true';
+		// The Thomas exception, as in SearchModal: every author here is on the line or married into it.
+		const dir = thomasVertical(slug, true);
+		if (dir) {
+			a.dataset.relationClass = 'direct';
+			a.dataset.genDelta = dir === 'up' ? '-1' : '1';
+		}
+		a.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;opacity:0;pointer-events:none;`;
+		stage.appendChild(a);
+		a.click();
+		a.remove();
+	}
+
 	function veil(_node: Element, { duration, delay = 0 }: { duration: number; delay?: number }) {
 		return {
 			delay,
@@ -89,14 +123,21 @@
 				</p>
 				<ul>
 					<li>
-						<cite>Descendants of Rev. Thomas Hooker, 1586–1908</cite>, researched and written by Cdr. Edward
-						Hooker and published in 1909 by Margaret Huntington Hooker after his death
+						<cite>Descendants of Rev. Thomas Hooker, 1586–1908</cite>, researched and written by <a class="who" href={personHref('edward-hooker-1822')} onclick={(e) => pick(e, 'edward-hooker-1822')}>Cdr. Edward Hooker</a>
+						and published in 1909 by <a class="who" href={personHref('frances-hooker-1868')} onclick={(e) => pick(e, 'frances-hooker-1868')}>Margaret Huntington Hooker</a> after his death
 					</li>
-					<li><cite>Talcott Pedigree</cite> by S. V. Talcott (1876)</li>
+					<li><cite>Talcott Pedigree</cite> by S.&nbsp;V.&nbsp;Talcott (1876)</li>
 					<li><cite>Deacon Stephen Hart and His Descendants</cite> by Alfred Andrews (1875)</li>
-					<li><cite>Pierrepont Genealogies from Norman Times to 1913</cite> by R. Burnham Moffat</li>
-					<li><cite>Genealogy of the Cowles Families</cite> by Calvin Duvall Cowles (1929)</li>
-					<li><cite>The Newton Family</cite>, compiled by Robert S. Newton (1984)</li>
+					<li><cite>Pierrepont Genealogies from Norman Times to 1913</cite> by <a class="who" href={personHref('reuben-moffat-1861')} onclick={(e) => pick(e, 'reuben-moffat-1861')}>R.&nbsp;Burnham Moffat</a> (1913)</li>
+					<li>
+						<cite>Timothy and Rhoda Ogden Edwards of Stockbridge, Mass., and Their Descendants</cite> by
+						<a class="who" href={personHref('william-edwards-1822')} onclick={(e) => pick(e, 'william-edwards-1822')}>William H.&nbsp;Edwards</a> (1903)
+					</li>
+					<li>
+						<cite>History of the Descendants of John Dwight</cite> by <a class="who" href={personHref('benjamin-dwight-1816')} onclick={(e) => pick(e, 'benjamin-dwight-1816')}>Benjamin W.&nbsp;Dwight</a>
+						(1874)
+					</li>
+					<li><cite>The Newton Family</cite>, compiled by <a class="who" href={personHref('robert-newton-1912')} onclick={(e) => pick(e, 'robert-newton-1912')}>Robert S.&nbsp;Newton</a> (1984)</li>
 				</ul>
 				<p>among many others.</p>
 				<p>
@@ -212,6 +253,18 @@
 		font-size: 13.5px;
 		line-height: 1.55;
 		color: var(--color-inkblue);
+	}
+	.body a.who {
+		color: inherit;
+		font-weight: 600;
+		text-decoration: none;
+		text-underline-offset: 2px;
+		text-decoration-thickness: 1px;
+	}
+	.body a.who:hover,
+	.body a.who:focus-visible {
+		text-decoration: underline;
+		outline: none;
 	}
 	.body li {
 		position: relative;
