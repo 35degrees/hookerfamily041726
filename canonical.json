@@ -825715,6 +825715,12 @@
      "category": "death",
      "header": "Portland at the end, after a golden wedding",
      "body": "He and Charlotte kept their golden wedding at Flavel in Oregon in 1898 with all six children present. She died at Portland in 1904 and he in 1910, eighty-eight, of heart failure."
+    },
+    {
+     "number": 5,
+     "category": "family",
+     "header": "Home to his father's farm in 1873",
+     "body": "In 1873 Boudinot brought his family back to the Painesville farm his father Uriah had cleared in 1815, because Uriah was old and the children needed schooling. He farmed its three hundred acres until he moved to Oregon in 1893."
     }
    ],
    "quotes": [],
@@ -826217,7 +826223,32 @@
    "tags": [],
    "research_tags": [],
    "cross_connections": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "business",
+     "header": "The first iron furnace in the West",
+     "body": "L.B. came to Oregon in 1873, at twenty-two, to run the iron furnace at Oswego, the first west of the Mississippi. His syndicate raised its stone stack from thirty-two feet to forty-two and laid a narrow-gauge railroad to the Prosser mine."
+    },
+    {
+     "number": 2,
+     "category": "business",
+     "header": "Four steamers on Northwest rivers",
+     "body": "With Captain U. B. Scott, an old Ironton friend of the family, and E. W. Crichton, who had learned the iron trade beside him, L.B. built and ran the steamers Ohio, Fleetwood, Telephone and Flyer."
+    },
+    {
+     "number": 3,
+     "category": "family",
+     "header": "A cane from Washington's tomb",
+     "body": "About 1871 L.B. cut a small evergreen at George Washington's tomb at Mount Vernon and made a cane of it for his father, Boudinot. By 1926 it had passed to the fourth generation, his grandson Tyler Woodward Seeley."
+    },
+    {
+     "number": 4,
+     "category": "character",
+     "header": "At seventy-five, a poem for Oregon",
+     "body": "On his seventy-fifth birthday in 1926 L.B. wrote a poem to Oregon and proposed that the old furnace stack at Oswego, forty-two feet of hewn stone, carry a statue of Sam Simpson, the poet of the Willamette."
+    }
+   ],
    "quotes": [],
    "sources": [],
    "research_sources": [],
