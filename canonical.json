@@ -714661,6 +714661,12 @@
      "link_text": "Samuel F. B. Morse",
      "display_label": ", his grandfather, built the course he hit a hole in one on over the Pacific",
      "lineal_gap": -2
+    },
+    {
+     "related_id": "HD3395",
+     "type": "connection",
+     "link_text": "James Shepherd",
+     "display_label": ", his grandson, went to St. Paul's School in New Hampshire"
     }
    ],
    "naming_inspiration": [],
@@ -715516,7 +715522,8 @@
     "display_name": "James Shepherd",
     "first_name": "James",
     "last_name": "Shepherd",
-    "married_names": []
+    "married_names": [],
+    "bio_blurb": "London corporate barrister"
    },
    "birth": {
     "year": 1996,
@@ -715559,10 +715566,30 @@
     "notable_category": []
    },
    "narrative_blocks": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD3384",
+     "type": "connection",
+     "link_text": "Michael Hooker",
+     "display_label": ", his grandfather, graduated from St. Paul's School in 1953"
+    }
+   ],
    "naming_inspiration": [],
-   "education": [],
-   "career": [],
+   "education": [
+    {
+     "institution_id": "INST061",
+     "school_name": "St. Paul's School"
+    },
+    {
+     "school_name": "University of St Andrews"
+    }
+   ],
+   "career": [
+    {
+     "role": "Barrister, corporate law",
+     "organization": "London"
+    }
+   ],
    "military_service": [],
    "institutions": [
     {
@@ -715586,7 +715613,8 @@
     "display_name": "George Shepherd",
     "first_name": "George",
     "last_name": "Shepherd",
-    "married_names": []
+    "married_names": [],
+    "bio_blurb": "London marketer and bookseller"
    },
    "birth": {
     "year": 1999,
@@ -715638,8 +715666,21 @@
     }
    ],
    "naming_inspiration": [],
-   "education": [],
-   "career": [],
+   "education": [
+    {
+     "institution_id": "INST056",
+     "school_name": "The Taft School"
+    },
+    {
+     "school_name": "University of St Andrews"
+    }
+   ],
+   "career": [
+    {
+     "role": "Marketer and bookseller",
+     "organization": "London"
+    }
+   ],
    "military_service": [],
    "institutions": [
     {
@@ -715663,7 +715704,9 @@
     "display_name": "Charles Shepherd",
     "first_name": "Charles",
     "last_name": "Shepherd",
-    "married_names": []
+    "married_names": [],
+    "chip_first_name": "Charlie",
+    "nickname": "Charlie"
    },
    "birth": {
     "year": 2002,
@@ -715708,7 +715751,18 @@
    "narrative_blocks": [],
    "cross_connections": [],
    "naming_inspiration": [],
-   "education": [],
+   "education": [
+    {
+     "school_name": "Gaborone International School, Botswana"
+    },
+    {
+     "school_name": "Salisbury School"
+    },
+    {
+     "school_name": "Chapman University",
+     "dates": "Class of 2024"
+    }
+   ],
    "career": [],
    "military_service": [],
    "institutions": [
