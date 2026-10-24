@@ -467027,7 +467027,6 @@
     {
      "spouse_id": "X00910",
      "children_ids": [
-      "HD2676",
       "HD2677",
       "HD2675",
       "HD2678",
@@ -467854,7 +467853,6 @@
     {
      "spouse_id": "H00986",
      "children_ids": [
-      "HD2676",
       "HD2677",
       "HD2675",
       "HD2678",
@@ -468003,66 +468001,10 @@
    }
   },
   {
-   "id": "HD2676",
-   "has_descendants_documented": false,
-   "classification": {
-    "include_in_path_calculation": false,
-    "generation_from_thomas": 7,
-    "descent_from_thomas_hooker": true,
-    "descent_from_john_talcott": false,
-    "is_thomas_descendant": true,
-    "is_talcott_descendant": false,
-    "is_easter_egg": false
-   },
-   "parents": {
-    "father_id": "X00910",
-    "mother_id": "H00986"
-   },
-   "tags": [],
-   "sources": [
-    {
-     "short": "EH 1909; FamilySearch"
-    }
-   ],
-   "birth": {
-    "year": 1776
-   },
-   "death": {
-    "year": 1819
-   },
-   "gender": "female",
-   "research_notes": "b. 1776 West Hartford CT; d. 1819 age ~43. (FamilySearch)",
-   "marriages": [],
-   "notable": {
-    "is_notable": false,
-    "notable_category": []
-   },
-   "cross_connections": [],
-   "bio": {
-    "display_name": "Mary Polly Cadwell",
-    "first_name": "Mary",
-    "middle_name": "Polly",
-    "maiden_name": "Cadwell",
-    "married_names": []
-   },
-   "residence": {},
-   "baptism": {},
-   "research_tags": [],
-   "research_sources": [],
-   "documents": [],
-   "naming_inspiration": [],
-   "institutions": [],
-   "landmarks": [],
-   "artworks": [],
-   "quotes": [],
-   "military_service": [],
-   "number_of_marriages": 0
-  },
-  {
    "id": "HD2677",
    "has_descendants_documented": false,
    "classification": {
-    "include_in_path_calculation": false,
+    "include_in_path_calculation": true,
     "generation_from_thomas": 7,
     "descent_from_thomas_hooker": true,
     "descent_from_john_talcott": false,
@@ -468081,25 +468023,59 @@
     }
    ],
    "birth": {
-    "year": 1776
+    "year": 1776,
+    "date_precision": "year_only",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
    },
    "death": {
-    "year": 1840
+    "year": 1840,
+    "date_precision": "month_year",
+    "month": 10,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
    },
    "gender": "female",
    "research_notes": "b. 1776; d. Oct 1840 Montpelier VT. Buried Green Mount Cemetery. (FamilySearch)",
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06128",
+     "children_ids": [
+      "H03491",
+      "H03492"
+     ],
+     "date_year": 1800
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06129",
+     "children_ids": [],
+     "date_year": 1809,
+     "date_month": 3,
+     "date_day": 12
+    }
+   ],
    "notable": {
     "is_notable": false,
     "notable_category": []
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Polly Mary Cadwell",
-    "first_name": "Polly",
-    "middle_name": "Mary",
+    "display_name": "Mary Cadwell Munsell",
+    "first_name": "Mary",
     "maiden_name": "Cadwell",
-    "married_names": []
+    "married_names": [
+     "Plum",
+     "Munsell"
+    ],
+    "last_name": "Munsell",
+    "chip_first_name": "Polly",
+    "nickname": "Polly"
    },
    "residence": {},
    "baptism": {},
@@ -468112,7 +468088,15 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "number_of_marriages": 0
+   "number_of_marriages": 2,
+   "former_ids": [
+    "HD2676",
+    "mary-cadwell-1776",
+    "polly-cadwell-1776"
+   ],
+   "burial": {
+    "cemetery_id": "CEM180"
+   }
   },
   {
    "id": "HD2678",
@@ -2526796,6 +2526780,1371 @@
      "location_city": "Concord",
      "location_state": "New Hampshire",
      "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06128",
+   "bio": {
+    "display_name": "Charles Plum",
+    "first_name": "Charles",
+    "last_name": "Plum",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1771,
+    "date_precision": "year_only",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD2677",
+     "children_ids": [
+      "H03491",
+      "H03492"
+     ],
+     "date_year": 1800
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H03491",
+   "bio": {
+    "display_name": "Charles Plum",
+    "first_name": "Charles",
+    "last_name": "Plum",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1803,
+    "date_precision": "year_only",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1809,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06128",
+    "mother_id": "HD2677"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "H03492",
+   "bio": {
+    "display_name": "Betsey Plum Nelson",
+    "first_name": "Betsey",
+    "last_name": "Nelson",
+    "married_names": [
+     "Nelson"
+    ],
+    "maiden_name": "Plum"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1804,
+    "date_precision": "year_only",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06128",
+    "mother_id": "HD2677"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06130",
+     "children_ids": [
+      "H04728",
+      "H04729",
+      "H04730",
+      "H04731",
+      "H04732",
+      "H04733"
+     ],
+     "date_year": 1822
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06129",
+   "bio": {
+    "display_name": "Thomas Larned Munsell",
+    "first_name": "Thomas",
+    "last_name": "Munsell",
+    "married_names": [],
+    "middle_name": "Larned"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD2677",
+     "children_ids": [],
+     "date_year": 1809,
+     "date_month": 3,
+     "date_day": 12
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06130",
+   "bio": {
+    "display_name": "John Nelson",
+    "first_name": "John",
+    "last_name": "Nelson",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1800,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H03492",
+     "children_ids": [
+      "H04728",
+      "H04729",
+      "H04730",
+      "H04731",
+      "H04732",
+      "H04733"
+     ],
+     "date_year": 1822
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "career": [
+    {
+     "role": "Farmer",
+     "organization": "East Montpelier, Vermont",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ]
+  },
+  {
+   "id": "H04728",
+   "bio": {
+    "display_name": "Mary Ann Nelson",
+    "first_name": "Mary",
+    "last_name": "Nelson",
+    "married_names": [],
+    "middle_name": "Ann"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1823,
+    "date_precision": "year_only",
+    "city": "East Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06130",
+    "mother_id": "H03492"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "H04729",
+   "bio": {
+    "display_name": "William Wallace Nelson",
+    "first_name": "William",
+    "last_name": "Nelson",
+    "married_names": [],
+    "middle_name": "Wallace"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1826,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 2,
+    "city": "East Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1905,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 11,
+    "city": "Mendon",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06130",
+    "mother_id": "H03492"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06131",
+     "children_ids": [],
+     "date_year": 1855,
+     "date_month": 6,
+     "date_day": 21
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H04730",
+   "bio": {
+    "display_name": "Mariah Nelson Clark",
+    "first_name": "Mariah",
+    "last_name": "Clark",
+    "married_names": [
+     "Clark"
+    ],
+    "maiden_name": "Nelson"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1829,
+    "date_precision": "year_only",
+    "city": "East Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1848,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06130",
+    "mother_id": "H03492"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06132",
+     "children_ids": [],
+     "date_year": 1847,
+     "date_month": 10,
+     "date_day": 11
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H04731",
+   "bio": {
+    "display_name": "Charles Plum Nelson",
+    "first_name": "Charles",
+    "last_name": "Nelson",
+    "married_names": [],
+    "middle_name": "Plum"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1830,
+    "date_precision": "year_only",
+    "city": "East Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1903,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 19,
+    "city": "Lynn",
+    "county": "Essex County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06130",
+    "mother_id": "H03492"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06133",
+     "children_ids": [
+      "HD17032",
+      "HD17033",
+      "HD17034",
+      "HD17035"
+     ],
+     "date_year": 1854,
+     "date_month": 6,
+     "date_day": 8,
+     "location_city": "Mendon",
+     "location_state": "Massachusetts",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H04732",
+   "bio": {
+    "display_name": "John Currier Nelson",
+    "first_name": "John",
+    "last_name": "Nelson",
+    "married_names": [],
+    "middle_name": "Currier"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1834,
+    "date_precision": "month_year",
+    "month": 3,
+    "city": "East Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06130",
+    "mother_id": "H03492"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "H04733",
+   "bio": {
+    "display_name": "Alonzo Nelson",
+    "first_name": "Alonzo",
+    "last_name": "Nelson",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1836,
+    "date_precision": "year_only",
+    "city": "East Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06130",
+    "mother_id": "H03492"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06131",
+   "bio": {
+    "display_name": "Nancy Horton Goff Nelson",
+    "first_name": "Nancy",
+    "last_name": "Nelson",
+    "married_names": [
+     "Nelson"
+    ],
+    "middle_name": "Horton",
+    "maiden_name": "Goff"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1825,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 27,
+    "city": "Rehoboth",
+    "county": "Bristol County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1908,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 15,
+    "city": "Mendon",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04729",
+     "children_ids": [],
+     "date_year": 1855,
+     "date_month": 6,
+     "date_day": 21
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06132",
+   "bio": {
+    "display_name": "Hiram Clark",
+    "first_name": "Hiram",
+    "last_name": "Clark",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04730",
+     "children_ids": [],
+     "date_year": 1847,
+     "date_month": 10,
+     "date_day": 11
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06133",
+   "bio": {
+    "display_name": "Chloris Cordelia Cummings Nelson",
+    "first_name": "Chloris",
+    "last_name": "Nelson",
+    "married_names": [
+     "Nelson"
+    ],
+    "middle_name": "Cordelia",
+    "maiden_name": "Cummings"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1831,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 15,
+    "city": "Douglas",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1886,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 25,
+    "city": "Brookfield",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04731",
+     "children_ids": [
+      "HD17032",
+      "HD17033",
+      "HD17034",
+      "HD17035"
+     ],
+     "date_year": 1854,
+     "date_month": 6,
+     "date_day": 8,
+     "location_city": "Mendon",
+     "location_state": "Massachusetts",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17032",
+   "bio": {
+    "display_name": "Henry E. Nelson",
+    "first_name": "Henry",
+    "last_name": "Nelson",
+    "married_names": [],
+    "middle_name": "E."
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1856,
+    "date_precision": "approximate",
+    "city": "Milford",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1911,
+    "date_precision": "exact",
+    "month": 5,
+    "day": 17,
+    "city": "Quincy",
+    "county": "Norfolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H04731",
+    "mother_id": "I06133"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06134",
+     "children_ids": [
+      "HD17036"
+     ],
+     "date_year": 1876,
+     "date_month": 11,
+     "date_day": 30,
+     "location_city": "Milford",
+     "location_state": "Massachusetts",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17033",
+   "bio": {
+    "display_name": "Rosa May Nelson Taylor",
+    "first_name": "Rosa",
+    "last_name": "Taylor",
+    "married_names": [
+     "Taylor"
+    ],
+    "middle_name": "May",
+    "maiden_name": "Nelson"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1861,
+    "date_precision": "month_year",
+    "month": 5,
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H04731",
+    "mother_id": "I06133"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06135",
+     "children_ids": [
+      "HD17037"
+     ],
+     "date_year": 1882
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17034",
+   "bio": {
+    "display_name": "Clara Frances Nelson",
+    "first_name": "Clara",
+    "last_name": "Nelson",
+    "married_names": [],
+    "middle_name": "Frances"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1867,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 14,
+    "city": "Milford",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1877,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 12,
+    "city": "Milford",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H04731",
+    "mother_id": "I06133"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17035",
+   "bio": {
+    "display_name": "[Son] Nelson",
+    "first_name": "[Son]",
+    "last_name": "Nelson",
+    "married_names": [],
+    "notes": "Name unknown"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1868,
+    "date_precision": "year_only",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1868,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 28,
+    "city": "Milford",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H04731",
+    "mother_id": "I06133"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06134",
+   "bio": {
+    "display_name": "Addie Maria Rogers Nelson",
+    "first_name": "Addie",
+    "last_name": "Nelson",
+    "married_names": [
+     "Nelson"
+    ],
+    "middle_name": "Maria",
+    "maiden_name": "Rogers"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1857,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 29,
+    "city": "Upton",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17032",
+     "children_ids": [
+      "HD17036"
+     ],
+     "date_year": 1876,
+     "date_month": 11,
+     "date_day": 30,
+     "location_city": "Milford",
+     "location_state": "Massachusetts",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17036",
+   "bio": {
+    "display_name": "May Nelson",
+    "first_name": "May",
+    "last_name": "Nelson",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1880,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1880,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17032",
+    "mother_id": "I06134"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06135",
+   "bio": {
+    "display_name": "Leonard W. Taylor",
+    "first_name": "Leonard",
+    "last_name": "Taylor",
+    "married_names": [],
+    "middle_name": "W."
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1858,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 9,
+    "city": "Milford",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17033",
+     "children_ids": [
+      "HD17037"
+     ],
+     "date_year": 1882
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17037",
+   "bio": {
+    "display_name": "Cara May Taylor Gardiner",
+    "first_name": "Cara",
+    "last_name": "Gardiner",
+    "married_names": [
+     "Gardiner"
+    ],
+    "middle_name": "May",
+    "maiden_name": "Taylor"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1883,
+    "date_precision": "year_only",
+    "city": "Brookfield",
+    "county": "Worcester County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06135",
+    "mother_id": "HD17033"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06136",
+     "children_ids": [
+      "HD17038",
+      "HD17039"
+     ],
+     "date_year": 1903,
+     "date_month": 10,
+     "date_day": 14
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06136",
+   "bio": {
+    "display_name": "Algernon Sidney Gardiner",
+    "first_name": "Algernon",
+    "last_name": "Gardiner",
+    "married_names": [],
+    "middle_name": "Sidney"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1873,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 13,
+    "city": "Boston",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1935,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17037",
+     "children_ids": [
+      "HD17038",
+      "HD17039"
+     ],
+     "date_year": 1903,
+     "date_month": 10,
+     "date_day": 14
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17038",
+   "bio": {
+    "display_name": "Sydney Leonard Gardiner",
+    "first_name": "Sydney",
+    "last_name": "Gardiner",
+    "married_names": [],
+    "middle_name": "Leonard"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1908,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 14,
+    "city": "Quincy",
+    "county": "Norfolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1987,
+    "date_precision": "exact",
+    "month": 2,
+    "day": 19,
+    "city": "Quincy",
+    "county": "Norfolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06136",
+    "mother_id": "HD17037"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06137",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17039",
+   "bio": {
+    "display_name": "Helen Cara Gardiner",
+    "first_name": "Helen",
+    "last_name": "Gardiner",
+    "married_names": [],
+    "middle_name": "Cara"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1909,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1989,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06136",
+    "mother_id": "HD17037"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06137",
+   "bio": {
+    "display_name": "Jessie Catherine Macdonald Gardiner",
+    "first_name": "Jessie",
+    "last_name": "Gardiner",
+    "married_names": [
+     "Gardiner"
+    ],
+    "middle_name": "Catherine",
+    "maiden_name": "Macdonald"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1912,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 17,
+    "city": "Quincy",
+    "county": "Norfolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2000,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 18,
+    "city": "Quincy",
+    "county": "Norfolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17038",
+     "children_ids": []
     }
    ],
    "narrative_blocks": [],
