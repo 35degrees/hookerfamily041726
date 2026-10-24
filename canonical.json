@@ -2535019,7 +2535019,14 @@
      "location_country": "United States"
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Lost two children, his mother and his wife",
+     "body": "William buried two of his children in 1851, Charles Carroll and Amanda Jane, and his mother, Eunice Hooker Hubbell, died that December. In September 1852 his wife, Sarah Ann Sharp Hubbell, died at Birmingham at thirty-one. Ten months later he married Frances A. Fairchild at Stratford."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2539060,7 +2539067,14 @@
      "end_year": 1880
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Widowed at twenty-six with a baby son",
+     "body": "Jennie married William Hitchcock on 24 May 1877. Their son, Orrin Beardsley Hitchcock, was born at New Haven on 6 June 1879, and William died on 16 September 1880, when Orrin was fifteen months old."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
