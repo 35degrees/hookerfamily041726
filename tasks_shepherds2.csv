@@ -1,3 +1,3 @@
 person_id,field,value_or_angle,status,slug,proposed,decision
-HD3395,field_set,cross_connections[0].lineal_gap=-2,,,,
-HD3384,field_set,cross_connections[3].lineal_gap=2,,,,
+HD3395,field_set,cross_connections[0].lineal_gap=-2,OK set cross_connections[0].lineal_gap = -2,/person/james-shepherd,,
+HD3384,field_set,cross_connections[3].lineal_gap=2,OK set cross_connections[3].lineal_gap = 2,/person/michael-hooker-1935,,

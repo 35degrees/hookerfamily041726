@@ -714666,7 +714666,8 @@
      "related_id": "HD3395",
      "type": "connection",
      "link_text": "James Shepherd",
-     "display_label": ", his grandson, went to St. Paul's School in New Hampshire"
+     "display_label": ", his grandson, went to St. Paul's School in New Hampshire",
+     "lineal_gap": 2
     }
    ],
    "naming_inspiration": [],
@@ -715571,7 +715572,8 @@
      "related_id": "HD3384",
      "type": "connection",
      "link_text": "Michael Hooker",
-     "display_label": ", his grandfather, graduated from St. Paul's School in 1953"
+     "display_label": ", his grandfather, graduated from St. Paul's School in 1953",
+     "lineal_gap": -2
     }
    ],
    "naming_inspiration": [],
