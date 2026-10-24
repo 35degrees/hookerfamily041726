@@ -1,0 +1,10 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD17065,bio_blurb,Oregon state highway engineer,OK bio_blurb set,/person/carrol-seeley-1878,,
+HD17066,bio_blurb,"Physician at St. Luke's Hospital, New York",OK bio_blurb set,/person/lamar-seeley-1881,,
+HD3745,bio_blurb,Manager of the Puget Sound steamer Flyer,OK bio_blurb set,/person/uri-seeley-1855,,
+X00936,bio_blurb,Carpenter,OK bio_blurb set,/person/freeman-seeley-1792,,
+H03532,bio_blurb,Carpenter,OK bio_blurb set,/person/freeman-seeley-jr-1830,,
+X00943,bio_blurb,Wisconsin farmer,OK bio_blurb set,/person/william-simons-1823,,
+HD17064,field_set,birth.city=Austinburg,OK set birth.city = 'Austinburg',/person/sophia-seeley-1863,,
+HD17064,field_set,birth.county=Ashtabula County,OK set birth.county = 'Ashtabula County',/person/sophia-seeley-1863,,
+HD17064,field_set,birth.state=Ohio,OK set birth.state = 'Ohio',/person/sophia-seeley-1863,,

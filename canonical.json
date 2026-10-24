@@ -473500,7 +473500,8 @@
     "first_name": "Freeman",
     "last_name": "Seeley",
     "middle_name": "Hall",
-    "married_names": []
+    "married_names": [],
+    "bio_blurb": "Carpenter"
    },
    "residence": {},
    "baptism": {},
@@ -474557,7 +474558,8 @@
     "last_name": "Seeley",
     "middle_name": "Hall",
     "married_names": [],
-    "suffix": "Jr."
+    "suffix": "Jr.",
+    "bio_blurb": "Carpenter"
    },
    "residence": {},
    "baptism": {},
@@ -474762,7 +474764,8 @@
     "display_name": "William Simons",
     "first_name": "William",
     "last_name": "Simons",
-    "married_names": []
+    "married_names": [],
+    "bio_blurb": "Wisconsin farmer"
    },
    "residence": {},
    "baptism": {},
@@ -827268,7 +827271,8 @@
     "gender": "male",
     "display_name": "Uri Seeley",
     "extra_names": "Uriah Seeley",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792868876/91151133_133858593482_epzu8j.jpg"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792868876/91151133_133858593482_epzu8j.jpg",
+    "bio_blurb": "Manager of the Puget Sound steamer Flyer"
    },
    "birth": {
     "year": 1855,
@@ -2534208,7 +2534212,10 @@
    "birth": {
     "year": 1863,
     "date_precision": "year_only",
-    "country": "United States"
+    "country": "United States",
+    "city": "Austinburg",
+    "county": "Ashtabula County",
+    "state": "Ohio"
    },
    "death": {},
    "parents": {
@@ -2534241,7 +2534248,8 @@
     "first_name": "Carrol",
     "last_name": "Seeley",
     "married_names": [],
-    "middle_name": "Carpenter"
+    "middle_name": "Carpenter",
+    "bio_blurb": "Oregon state highway engineer"
    },
    "gender": "male",
    "birth": {
@@ -2534386,7 +2534394,8 @@
     "last_name": "Seeley",
     "married_names": [],
     "title": "Dr.",
-    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792868700/100253783_51b93125-81d1-4b35-8348-42d9d5cbf19e_yxn1z4.png"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792868700/100253783_51b93125-81d1-4b35-8348-42d9d5cbf19e_yxn1z4.png",
+    "bio_blurb": "Physician at St. Luke's Hospital, New York"
    },
    "gender": "male",
    "birth": {
