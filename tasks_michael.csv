@@ -1,0 +1,2 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD3384,nb_replace,"old=""Hockey, golf and dominoes"" header=""Hockey, golf and dominoes"" body=""At St. Paul's Michael played hockey and football and ran track. Later he made four holes-in-one, one of them on the 15th at Cypress Point, played dominoes and fly-fished. He played to win, even against his family."" category=sports","OK nb_replace: 'Hockey, golf and dominoes' -> 'Hockey, golf and dominoes' placed verbatim in place",/person/michael-hooker-1935,,
