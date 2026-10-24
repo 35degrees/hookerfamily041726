@@ -467789,20 +467789,32 @@
     {
      "number": 1,
      "category": "family",
-     "header": "Husband Joseph Hubbell Revolutionary War soldier",
-     "body": "Eunice married Joseph Hubbell in 1791. Joseph Hubbell had served as a Revolutionary War soldier, listed among the sons-in-law fighting in the Continental cause alongside Eunice's other brothers-in-law Timothy Fisher, Roger Clark, Lemuel Rowell, and Aaron Cadwell. The Hooker-line cluster of Revolutionary veterans marked the family's contribution to the war from its Hartford Connecticut base."
+     "header": "Two daughters named Eunice",
+     "body": "Eunice's first child, a daughter named Eunice for her, was born and died on the same day at Hartford. When another girl came on 31 January 1797, she gave her the name again. That second Eunice lived to eighty-six."
     },
     {
      "number": 2,
-     "category": "family",
-     "header": "Four children including daughter Eunice Hubbell",
-     "body": "Eunice and Joseph Hubbell had four documented children, including a daughter Eunice Hubbell who carried forward the maternal name into the next generation. The four-child family was modest by late-eighteenth-century standards and may reflect undocumented infant losses or simply a smaller completed family size."
+     "category": "marriage",
+     "header": "Born on Christmas Day, married at eighteen",
+     "body": "Eunice was born on 25 December 1772 to Dr. Daniel Hooker of Hartford's West District and Mary Sedgwick Hooker. In 1791 she married Joseph Hubbell of Weston, a farmer who was known as a musician."
     },
     {
      "number": 3,
      "category": "family",
-     "header": "Hartford 1772 to West Haven 1851 age seventy-eight",
-     "body": "Eunice Hooker was born December 25, 1772 in Hartford Connecticut — daughter of Daniel Hooker (the family's third Daniel) and Mary Sedgwick Hooker — and died December 9, 1851 in West Haven Connecticut at age seventy-eight. The Hartford-to-coastal-Connecticut life arc tracked her marriage migration south to the Hubbell family's coastal New Haven County settlement."
+     "header": "Twelve children across twenty-four years",
+     "body": "Eunice had twelve children between about 1792 and 1816, the first at nineteen and the last, William Reilly Hubbell, at forty-three. Seven were born at Hartford; the last five came after she and Joseph moved to his hometown, Weston."
+    },
+    {
+     "number": 4,
+     "category": "military",
+     "header": "Her husband and sisters' husbands, all soldiers",
+     "body": "Joseph Hubbell was one of five men who married Dr. Daniel Hooker's daughters and served in the Revolutionary War. The others were Timothy Fisher, Roger Clark, Lemuel Rowell and Aaron Cadwell, and Eunice's brother Daniel fought too."
+    },
+    {
+     "number": 5,
+     "category": "death",
+     "header": "Widowed twenty-two years, buried at Birmingham",
+     "body": "Joseph died at Weston on 22 February 1829. Eunice outlived him by twenty-two years, died at New Haven on 9 December 1851, sixteen days before her seventy-ninth birthday, and was buried at Birmingham, Connecticut."
     }
    ],
    "burial": {
@@ -473192,6 +473204,32 @@
    ],
    "former_ids": [
     "joseph-hubbell-1765"
+   ],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "music",
+     "header": "A Weston farmer known for his music",
+     "body": "Joseph farmed at Weston, Connecticut, and was known as a musician. He was born there on 9 May 1764 to Stephen and Rhoda Middlebrook Hubbell, and he died there on 22 February 1829, at sixty-four."
+    },
+    {
+     "number": 2,
+     "category": "military",
+     "header": "He and four brothers-in-law served",
+     "body": "Joseph served as a soldier in the Revolutionary War, as did four other men who married daughters of Dr. Daniel Hooker of Hartford: Timothy Fisher, Roger Clark, Lemuel Rowell and Aaron Cadwell."
+    },
+    {
+     "number": 3,
+     "category": "family",
+     "header": "Hartford years, then home to Weston",
+     "body": "Joseph and Eunice married in 1791 and lived at Hartford, where seven of their twelve children were born. By December 1804, when Nancy Abigail arrived, they had moved to Weston, his birthplace, where the last five were born."
+    },
+    {
+     "number": 4,
+     "category": "family",
+     "header": "Gave a son his mother's maiden name",
+     "body": "Joseph and Eunice named the son born on 20 August 1800 Joseph Middlebrook Hubbell, after Joseph's mother, Rhoda Middlebrook Hubbell. The boy grew up and died in 1831, two years after his father."
+    }
    ]
   },
   {
@@ -473291,6 +473329,14 @@
    },
    "former_ids": [
     "eunice-hubbell-1797"
+   ],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Named for a sister who lived one day",
+     "body": "Eunice was born at Hartford on 31 January 1797 and given the name of her parents' first child, a Eunice who was born and died on the same day. She married Freeman Hall Seeley in 1813 and died at Watson, Michigan, in 1883, at eighty-six."
+    }
    ]
   },
   {
@@ -2534137,7 +2534183,14 @@
      "date_precision": "approximate"
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Lost his eldest son at thirty",
+     "body": "Zalmon's eldest son, George, died at New Haven in August 1854 at thirty, leaving a wife, a baby daughter and a son born the next spring. Zalmon died at Trumbull on 19 April 1868, ten days after his seventy-third birthday."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2534862,7 +2534915,14 @@
      "end_year": 1854
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Dead at thirty, a son on the way",
+     "body": "George died at New Haven on 23 August 1854, seventeen days after his thirtieth birthday. His wife, Elizabeth Maria Opdyke Hubbell, was carrying their son George L., born the next March, and she died three years later."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2535264,7 +2535324,14 @@
     "mother_id": "I06171"
    },
    "marriages": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Born seven months after his father died",
+     "body": "George L. Hubbell was born on 29 March 1855, seven months after his father, George, died at thirty. His parents' first son, also George, had died as a baby, and his mother died in 1857, when he was two. He lived until 1928."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
