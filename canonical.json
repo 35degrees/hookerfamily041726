@@ -5656,7 +5656,8 @@
     "I03373",
     "I03374",
     "HD10198",
-    "HD2675"
+    "HD2675",
+    "I06145"
    ],
    "notes": "Green Mount Cemetery, Montpelier Vermont — primary burial ground of the Vermont Dewey dynasty. Burial site of Dr. Julius Yemans Dewey (X02373, NLI founder) and his first wife Mary Polly Perrin Dewey (TD0138); their eldest son Charles Dewey (TD0139) and his wife Betsey Tarbox (X02374) and their seven children TD0143-TD0149; second son Edward Dewey (TD0140) and his wife Susan Griggs Lilley (X02375). Three generations of Deweys in a single cemetery. GPS Latitude 44.257843, Longitude -72.5944519.",
    "lat": 44.2578,
@@ -36047,7 +36048,8 @@
     "H04749",
     "I06144",
     "HD17060",
-    "I06161"
+    "I06161",
+    "H04750"
    ],
    "city": "Derby Line",
    "county": "Orleans County",
@@ -2529725,7 +2529727,8 @@
      "Hayden"
     ],
     "middle_name": "White",
-    "maiden_name": "Spalding"
+    "maiden_name": "Spalding",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792863617/Screenshot_2026-10-24_at_10-resized_p0pvru.png"
    },
    "gender": "female",
    "birth": {
@@ -2529740,10 +2529743,14 @@
    },
    "death": {
     "year": 1876,
-    "date_precision": "exact",
     "month": 9,
     "day": 6,
-    "country": "United States"
+    "date_precision": "exact",
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States",
+    "cause": "Shot by her husband, Edwin C. Hayden, at the Derby Line Hotel"
    },
    "parents": {
     "father_id": "I06138",
@@ -2529753,7 +2529760,13 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06145",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1871,
+     "location_city": "Boston",
+     "location_state": "Massachusetts",
+     "location_country": "United States",
+     "end_type": "death",
+     "end_year": 1876
     }
    ],
    "narrative_blocks": [],
@@ -2529772,26 +2529785,62 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2029"
+   },
+   "landmarks": [
+    {
+     "landmark_id": "LM565"
+    }
+   ]
   },
   {
    "id": "I06145",
    "bio": {
-    "display_name": "Edward C. Hayden",
-    "first_name": "Edward",
+    "display_name": "Edwin Clay Hayden",
+    "first_name": "Edwin",
     "last_name": "Hayden",
     "married_names": [],
-    "middle_name": "C."
+    "middle_name": "Clay",
+    "chip_first_name": "Ned",
+    "nickname": "Ned",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792863564/Screenshot_2026-10-24_at_10-resized_va64ur.png"
    },
    "gender": "male",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1847,
+    "month": 8,
+    "day": 25,
+    "date_precision": "exact",
+    "city": "Cincinnati",
+    "county": "Hamilton County",
+    "state": "Ohio",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1881,
+    "month": 2,
+    "day": 25,
+    "date_precision": "exact",
+    "city": "Windsor",
+    "county": "Windsor County",
+    "state": "Vermont",
+    "country": "United States",
+    "cause": "Hanged at the Vermont State Prison for the murder of his wife"
+   },
    "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
      "spouse_id": "H04750",
-     "children_ids": []
+     "children_ids": [],
+     "date_year": 1871,
+     "location_city": "Boston",
+     "location_state": "Massachusetts",
+     "location_country": "United States",
+     "end_type": "death",
+     "end_year": 1876
     }
    ],
    "narrative_blocks": [],
@@ -2529809,7 +2529858,84 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "former_ids": [
+    "edward-hayden"
+   ],
+   "burial": {
+    "cemetery_id": "CEM180"
+   },
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "Barre Academy",
+     "dates": null,
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": null,
+     "school_name": "Academy at South Woodstock",
+     "dates": null,
+     "type": null,
+     "notes": null
+    }
+   ],
+   "career": [
+    {
+     "role": "Hotel clerk",
+     "organization": "St. Leon Springs",
+     "location": null,
+     "start_year": 1876,
+     "end_year": 1876,
+     "notes": null
+    },
+    {
+     "role": "Proprietor",
+     "organization": "Studdert Hotel, Stanstead, Quebec",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Corset manufacturer",
+     "organization": "Boston",
+     "location": null,
+     "start_year": 1871,
+     "end_year": 1872,
+     "notes": null
+    },
+    {
+     "role": "Traveling agent",
+     "organization": "Champney Brothers",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Errand boy",
+     "organization": "Jordan, Marsh and Company, Boston",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Assistant Paymaster",
+     "organization": "Union Army",
+     "location": null,
+     "start_year": 1864,
+     "end_year": 1865,
+     "notes": null
+    }
+   ],
+   "landmarks": [
+    {
+     "landmark_id": "LM565"
+    }
+   ]
   },
   {
    "id": "I06146",
@@ -2544337,6 +2544463,26 @@
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792856642/thumbMobile-566_om2wnb.jpg",
    "person_ids": [
     "H04745"
+   ]
+  },
+  {
+   "id": "LM565",
+   "name": "Derby Line Hotel",
+   "primary_name": "Derby Line Hotel",
+   "type": "hotel",
+   "dates": {
+    "built": 1876
+   },
+   "location": {
+    "city": "Derby Line",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "primary_url": "https://www.facebook.com/groups/220365061802020/posts/2133609483810892/",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792863826/496756119_10235703968196706_8310702379342213153_n.webp_dkhvdt.jpg",
+   "person_ids": [
+    "H04750",
+    "I06145"
    ]
   }
  ],
