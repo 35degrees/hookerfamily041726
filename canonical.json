@@ -826913,6 +826913,9 @@
    "landmarks": [
     {
      "landmark_id": "LM566"
+    },
+    {
+     "landmark_id": "LM567"
     }
    ],
    "naming_inspiration": [],
@@ -827360,7 +827363,11 @@
    ],
    "military_service": [],
    "institutions": [],
-   "landmarks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM567"
+    }
+   ],
    "naming_inspiration": [],
    "artworks": [],
    "tags": [],
@@ -827461,7 +827468,11 @@
    "career": [],
    "military_service": [],
    "institutions": [],
-   "landmarks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM567"
+    }
+   ],
    "naming_inspiration": [],
    "artworks": [],
    "tags": [],
@@ -2556486,6 +2556497,19 @@
    "primary_url": "https://www.oregonencyclopedia.org/articles/oswego_iron_furnace/",
    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792870811/2-resized_znrwlc.jpg",
    "person_ids": [
+    "HD3743"
+   ]
+  },
+  {
+   "id": "LM567",
+   "name": "Flyer (1891)",
+   "primary_name": "Flyer (1891)",
+   "type": "Puget Sound steamboat ferry",
+   "primary_url": "https://en.wikipedia.org/wiki/Flyer_(steamboat)",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792871432/Steamer_Flyer_on_Puget_Sound_circa_1910-resized_tbw5uk.jpg",
+   "person_ids": [
+    "HD3745",
+    "I00408",
     "HD3743"
    ]
   }
