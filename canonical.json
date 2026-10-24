@@ -291250,6 +291250,12 @@
      "related_id": "H00826",
      "display_label": "was his cousin, and preached abolition from a Boston pulpit",
      "link_text": "Rev. John Pierpont"
+    },
+    {
+     "related_id": "I06145",
+     "type": "connection",
+     "link_text": "Edwin Hayden",
+     "display_label": "lost his last plea before him in 1881 and was hanged at Windsor"
     }
    ],
    "gender": "male",
@@ -2529183,6 +2529189,12 @@
      "category": "family",
      "header": "Two widowed sisters at Derby",
      "body": "Clara married Charles O. Brigham, a lawyer and Civil War major, in February 1867; they had no children. Widowed in 1890, she shared a house at Derby with her widowed sister Sarah, and died there in 1914."
+    },
+    {
+     "number": 2,
+     "category": "family",
+     "header": "She saw her sister shot",
+     "body": "Clara was in the next room of the Derby Line Hotel on 31 August 1876 when Edwin Hayden shot her husband, then her sister Gertrude, who died six days later."
     }
    ],
    "tags": [],
@@ -2529256,12 +2529268,31 @@
      "category": "military",
      "header": "Captain, then major, of Connecticut artillery",
      "body": "Charles was born at Fitchburg, Massachusetts, and served in the Civil War with the 1st Connecticut Heavy Artillery, as a captain and later a major. He practised law afterwards and died at Derby, Vermont, in 1890."
+    },
+    {
+     "number": 2,
+     "category": "family",
+     "header": "Shot through the lung for his sister-in-law",
+     "body": "On 31 August 1876 Charles barred Edwin Hayden from his wife's sister Gertrude at the Derby Line Hotel, and Hayden shot him through the lung before killing her. Charles recovered and testified at the trial."
     }
    ],
    "tags": [
     "civil_war"
    ],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "H04750",
+     "type": "connection",
+     "link_text": "Gertrude Hayden",
+     "display_label": ", his wife's sister, was killed by her husband at the Derby Line Hotel"
+    },
+    {
+     "related_id": "I06145",
+     "type": "connection",
+     "link_text": "Edwin Hayden",
+     "display_label": "shot him through the lung at the Derby Line Hotel in 1876"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
@@ -2529769,9 +2529800,41 @@
      "end_year": 1876
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Shot at the Derby Line Hotel",
+     "body": "On 31 August 1876 Edwin Hayden came to the Derby Line Hotel, where Gertrude was staying with her sister Clara. He shot Clara's husband, then shot Gertrude as she cried out, “Oh, Edwin.” She died on 6 September, at twenty-three."
+    },
+    {
+     "number": 2,
+     "category": "marriage",
+     "header": "The belle of Derby Line",
+     "body": "The acknowledged belle of Derby Line, Gertrude married Edwin Hayden at Boston in 1871 over her family's objections, just after coming into an inheritance. Her money set him up in a Boston corset factory, which burned in the fire of 1872."
+    },
+    {
+     "number": 3,
+     "category": "marriage",
+     "header": "She left him in 1875",
+     "body": "Her money went next into a hotel he kept at Stanstead, and was spent there. In 1875, after years of beatings, Gertrude left him for a sister at Allston, near Boston, and would not go back while he drank."
+    },
+    {
+     "number": 4,
+     "category": "death",
+     "header": "What she said before she died",
+     "body": "Before she died Gertrude said her husband had often knocked her down, and had once forced her to sign over bonds by threatening to shoot her."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "I06141",
+     "type": "connection",
+     "link_text": "Maj. Charles O. Brigham",
+     "display_label": ", her brother-in-law, was shot trying to keep her husband away"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": true,
     "descent_from_thomas_hooker": true,
@@ -2529843,9 +2529906,47 @@
      "end_year": 1876
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Hanged at Windsor in 1881",
+     "body": "Convicted of first-degree murder in September 1877, Edwin spent more than three years in the state prison at Windsor and was hanged there on 25 February 1881. On the scaffold he denied ever abusing his wife and blamed her family."
+    },
+    {
+     "number": 2,
+     "category": "law",
+     "header": "His last plea failed at Montpelier",
+     "body": "A legislative committee sent new evidence to the judges, and Governor Farnham reprieved him to February. On 16 February 1881 the court ruled he had been as sane as ever men are in committing such crimes."
+    },
+    {
+     "number": 3,
+     "category": "military",
+     "header": "A paymaster's clerk in 1864",
+     "body": "Born at Cincinnati, Edwin was raised partly by his grandfather Russel Perry at Montpelier and went to Barre Academy. In 1864 he joined the Union army as an assistant paymaster, under his guardian, General Pitkin."
+    },
+    {
+     "number": 4,
+     "category": "business",
+     "header": "Corsets in Boston, a hotel at Stanstead",
+     "body": "After clerking for Jordan, Marsh and travelling for Champney Brothers, Edwin started a Boston corset factory with his wife's money; it burned in the 1872 fire. He then kept the Studdert Hotel at Stanstead, Quebec."
+    }
+   ],
    "tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "I06141",
+     "type": "connection",
+     "link_text": "Maj. Charles O. Brigham",
+     "display_label": "took his bullet in the lung and testified against him"
+    },
+    {
+     "related_id": "H00840",
+     "type": "connection",
+     "link_text": "Chief Justice John Pierpont",
+     "display_label": "heard his last plea at Montpelier in February 1881 and refused it"
+    }
+   ],
    "classification": {
     "include_in_path_calculation": false,
     "descent_from_thomas_hooker": false,
