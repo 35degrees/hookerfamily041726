@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+I00003,field_set,bio.photo_url=https://res.cloudinary.com/dc5clrqtw/image/upload/v1792880034/29847948_135816918007-2_aw9ftu.jpg,,,,
+X00067,field_set,cross_connections[6].display_label=was son of a man who crossed the Atlantic with him in 1639,,,,
