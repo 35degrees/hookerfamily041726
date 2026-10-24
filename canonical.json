@@ -122549,7 +122549,7 @@
    "gender": "female",
    "marriages": [],
    "notable": {
-    "is_notable": true,
+    "is_notable": false,
     "notable_category": []
    },
    "cross_connections": [],
@@ -827016,7 +827016,8 @@
     ],
     "primary_url": "https://www.oregonencyclopedia.org/articles/oswego_iron_furnace/",
     "notable_url": "https://www.oregonencyclopedia.org/articles/oswego_iron_furnace/",
-    "primary_url_label": "Oregon Encyclopedia: Oswego Iron Furnace"
+    "primary_url_label": "Oregon Encyclopedia: Oswego Iron Furnace",
+    "notable_blurb": "Oswego iron founder and steamboat owner"
    },
    "parents": {
     "father_id": "I00411",

@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD0188,field_set,notable.is_notable=false,OK set notable.is_notable = False,/person/mary-bryan-1749,,
+HD3743,field_set,notable.notable_blurb=Oswego iron founder and steamboat owner,OK set notable.notable_blurb = 'Oswego iron founder and steamboat owner',/person/lamar-seeley-1851,,
