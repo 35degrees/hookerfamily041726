@@ -477249,7 +477249,27 @@
    "burial": {
     "cemetery_id": "CEM2032",
     "plot_notes": "Find a Grave memorial 196801766"
-   }
+   },
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Her son and nephew died the same day",
+     "body": "On Saturday, 19 November 1994, Glenda's son Kenneth Joe Johnson, thirteen, a student at West Middle School, died from injuries in an automobile accident. Her sister Linda Sue's son, Michael Gene Johnson, sixteen, died of accident injuries the same day."
+    },
+    {
+     "number": 2,
+     "category": "family",
+     "header": "Two Holder sisters married two Johnson brothers",
+     "body": "Glenda married James Edward Johnson in 1974, and her older sister, Linda Sue, married his brother, Walter Gene Johnson. Their sons, Kenneth and Michael, were double first cousins."
+    },
+    {
+     "number": 3,
+     "category": "death",
+     "header": "Her second husband died after a car accident",
+     "body": "Glenda's former husband, James Edward Johnson, died at his home in Brownsville in February 1994, nine months before their son Kenneth. Her second husband, Ronnie Hornsby, whom she married in 1989, died on 1 February 2003 from injuries in an automobile accident."
+    }
+   ]
   },
   {
    "id": "X00955",
@@ -540312,7 +540332,15 @@
    ],
    "burial": {
     "cemetery_id": "CEM2035"
-   }
+   },
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Lost two children in four months, 2019",
+     "body": "Wilma lost her daughter Glenda in February 2019 and her son Bobby Joe that June; her daughter Linda Sue and son Oscar Harold Jr. had died before them. Wilma died at Medon, Tennessee, on 25 October 2022, at ninety."
+    }
+   ]
   },
   {
    "id": "X01888",
@@ -2475198,6 +2475226,14 @@
      "type": null,
      "notes": null
     }
+   ],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Died the same day as his cousin Michael",
+     "body": "Kenneth, a student at West Middle School, died on 19 November 1994 from injuries in an automobile accident, nine months after his father, James Edward Johnson, died at forty-one. His double first cousin, Michael Gene Johnson, died of accident injuries the same day."
+    }
    ]
   },
   {
@@ -2475394,6 +2475430,20 @@
    ],
    "former_ids": [
     "linda-johnson"
+   ],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Her son died at sixteen, her nephew too",
+     "body": "Linda's son, Michael Gene Johnson, a sixteen-year-old sophomore at South Side High School, died on 19 November 1994 from injuries in an automobile accident. Her sister Glenda's son, Kenneth Joe Johnson, thirteen, died of accident injuries the same day."
+    },
+    {
+     "number": 2,
+     "category": "death",
+     "header": "Killed in a car accident at forty-three",
+     "body": "Linda died at Jackson-Madison County Hospital on 10 January 1997, at forty-three, from injuries in an automobile accident, two years after her son. Born in Chicago, she had moved to Jackson as a child and worked at Forest Grove Nursing Center."
+    }
    ]
   },
   {
@@ -2541348,7 +2541398,14 @@
     "mother_id": "HD16378"
    },
    "marriages": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Died the same day as his cousin Kenneth",
+     "body": "Michael, a sophomore at South Side High School who attended Westover Baptist Church, died on 19 November 1994 from injuries in an automobile accident. His double first cousin, Kenneth Joe Johnson, thirteen, died of accident injuries the same day."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
