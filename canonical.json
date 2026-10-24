@@ -702167,8 +702167,7 @@
    "education": [
     {
      "institution_id": "INST097",
-     "type": "secondary",
-     "notes": "Attended in the 1950s under the Cate School name (the school had been The Santa Barbara School in earlier decades)."
+     "type": "secondary"
     },
     {
      "school_name": "Menlo School of Business",
@@ -702176,8 +702175,7 @@
     },
     {
      "institution_id": "INST107",
-     "type": "undergraduate",
-     "notes": "Later President of USC Business School alumni board; Man of Troy Award recipient."
+     "type": "undergraduate"
     }
    ],
    "bio": {
