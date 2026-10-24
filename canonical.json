@@ -1487968,7 +1487968,14 @@
    "artworks": [],
    "tags": [],
    "research_tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "HD14226",
+     "type": "connection",
+     "link_text": "Justice Philip McCook",
+     "display_label": "sentenced Lucky Luciano to thirty to fifty years in prison"
+    }
+   ],
    "narrative_blocks": [
     {
      "number": 1,
@@ -1833650,6 +1833657,12 @@
      "type": "connection",
      "link_text": "Bill Walling",
      "display_label": "got into Paramount at fourteen pushing a mop, then shot its portraits"
+    },
+    {
+     "related_id": "HD5311",
+     "type": "connection",
+     "link_text": "Sidney Van Keuren",
+     "display_label": "was general manager of Hal Roach Studios from 1919 into the 1950s"
     }
    ],
    "bio": {
@@ -2241369,6 +2241382,12 @@
      "type": "military_peer",
      "link_text": "Maj. Philip Parkhurst Gardiner",
      "display_label": "went to the Argonne a major too, and to a second war after sixty"
+    },
+    {
+     "related_id": "I02354",
+     "type": "connection",
+     "link_text": "Pat DiCicco",
+     "display_label": "was long rumored to run errands for Lucky Luciano"
     }
    ],
    "classification": {

@@ -1,0 +1,5 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD14226,cc,"related=I02354 link=""Pat DiCicco"" label=""was long rumored to run errands for Lucky Luciano""",OK cc->I02354 added; FLAG needs reciprocal cc row on I02354,/person/philip-mccook-1873,,
+I02354,cc,"related=HD14226 link=""Justice Philip McCook"" label=""sentenced Lucky Luciano to thirty to fifty years in prison""",OK cc->HD14226 added (reciprocal present),/person/pasquale-dicicco-1909,,
+HD5311,cc,"related=X03976 link=""George Stevens"" label=""shot thirty-five Laurel and Hardy shorts at Hal Roach, then won two Oscars""",FLAG BLOCKED: cc label 74 chars (max 70),/person/sidney-van-keuren-1901,,
+X03976,cc,"related=HD5311 link=""Sidney Van Keuren"" label=""was general manager of Hal Roach Studios from 1919 into the 1950s""",OK cc->HD5311 added; FLAG needs reciprocal cc row on HD5311,/person/george-stevens-1904,,
