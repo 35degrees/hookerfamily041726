@@ -714666,7 +714666,7 @@
      "related_id": "HD3395",
      "type": "connection",
      "link_text": "James Shepherd",
-     "display_label": ", his grandson, followed him to St. Paul's two generations later",
+     "display_label": ", his grandson, followed him to St. Paul's",
      "lineal_gap": 2
     }
    ],
@@ -716257,10 +716257,10 @@
     "extra_names": "MD, PhD",
     "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1777592054/jamesshepher_xuvnr9.jpg",
     "photo_notes": "Yale faculty portrait. Cloudinary.",
-    "bio_blurb": "Yale infectious-disease doctor; global TB and HIV"
+    "bio_blurb": "Yale infectious-disease physician and Sharon farmer"
    },
    "birth": {
-    "country": "United States"
+    "country": "United Kingdom"
    },
    "death": {
     "country": "United States"
@@ -716312,14 +716312,32 @@
     {
      "number": 1,
      "category": "career",
-     "header": "Directed CDC TB-HIV research program in Botswana",
-     "body": "James spent nine years overseas advising governments on infectious disease — directing the U.S. CDC's tuberculosis and HIV research program in Gaborone, Botswana, advising the Government of India on tuberculosis control, and helping the University of Maryland start a large AIDS treatment program in Nigeria. He returned to Yale as Associate Professor of Internal Medicine and faculty of the Yale Institute for Global Health."
+     "header": "Rounds for a refugee camp, from Sharon",
+     "body": "From home in Sharon in the winter of 2020, James ran the COVID response for the Rohingya refugee camp at Cox's Bazar, Bangladesh, where clinics were built of bamboo. He held case rounds by computer in the snow, to the camp's tropical birds and evening call to prayer."
     },
     {
+     "number": 2,
+     "category": "character",
+     "header": "A fogged visor in the COVID wards",
+     "body": "In March 2020 James went into Yale New Haven's isolation rooms in a puffy blue-and-yellow outbreak suit and an air-fed helmet. The visor fogged at once and the rushing air drowned every word, so he gestured at terrified patients with rubber-gloved hands."
+    },
+    {
+     "number": 3,
+     "category": "science",
+     "header": "He helped trace TB through Botswana",
+     "body": "In Gaborone James directed the CDC's tuberculosis and HIV research program, and helped design the Kopanyo study, which used the bacteria's genetic fingerprints to trace how TB spread where HIV was common."
+    },
+    {
+     "number": 4,
+     "category": "character",
+     "header": "Botswana on the eve of the pandemic",
+     "body": "On 2 February 2020 James and his wife flew from Johannesburg to Gaborone on a plane full of Chinese travelers coming home from the New Year, ten days after Wuhan locked down."
+    },
+    {
+     "number": 5,
      "category": "business",
-     "header": "He raises grass-fed cattle in Connecticut",
-     "body": "Back from Africa, the infectious-disease doctor put his conservationist streak into Smokedown Farm on Sharon Mountain above the Housatonic. He now runs a rotational-grazing program with American Aberdeen cattle, rebuilding the soil and a rich meadow ecosystem of birds, clover, and grasses.",
-     "number": 2
+     "header": "A hop yard to keep Sharon land farmed",
+     "body": "To keep open land in agriculture, James started Smokedown Farm, a nine-acre hop yard on Sharon Mountain at the western edge of the Housatonic valley, and runs it as owner and manager. Its fourth harvest came in 2019."
     }
    ],
    "cross_connections": [
@@ -716340,6 +716358,12 @@
      "link_text": "Judson Canfield",
      "display_label": "bred sheep and improved cattle at Sharon in the 1790s",
      "type": "associate"
+    },
+    {
+     "related_id": "HD7244",
+     "type": "connection",
+     "link_text": "Dr. George Bushnell",
+     "display_label": ", Yale medicine 1880, argued adults almost never caught TB from others"
     }
    ],
    "naming_inspiration": [],
@@ -716347,18 +716371,21 @@
     {
      "school_name": "Columbia University College of Physicians and Surgeons",
      "type": "medical",
-     "notes": "M.D. from Columbia P&S."
+     "notes": "M.D. from Columbia P&S.",
+     "dates": "M.D. 1999"
     },
     {
-     "school_name": "Beth Israel Hospital, Boston",
+     "school_name": "Beth Israel Deaconess Medical Center, Boston",
      "type": "residency",
-     "notes": "Internal Medicine residency."
+     "notes": "Internal Medicine residency.",
+     "dates": "Internship 2000, residency 2002"
     },
     {
      "institution_id": "INST146",
      "school_name": "Johns Hopkins Hospital",
      "type": "fellowship",
-     "notes": "Infectious Disease fellowship."
+     "notes": "Infectious Disease fellowship.",
+     "dates": "Infectious disease fellowship 2005"
     }
    ],
    "career": [
@@ -716386,6 +716413,10 @@
      "location": "New Haven, Connecticut",
      "notes": "Returned to Yale after nine years overseas.",
      "institution_id": "INST122"
+    },
+    {
+     "role": "Owner and manager",
+     "organization": "Smokedown Farm, Sharon, Connecticut"
     }
    ],
    "military_service": [],
@@ -1427496,6 +1427527,12 @@
      "type": "connection",
      "link_text": "Garry Trudeau",
      "display_label": "is the great-grandson of the Trudeau whose cure he adopted"
+    },
+    {
+     "related_id": "I00334",
+     "type": "connection",
+     "link_text": "Dr. James Shepherd",
+     "display_label": "helped design a Botswana study tracing how tuberculosis spreads"
     }
    ],
    "marriages": [
