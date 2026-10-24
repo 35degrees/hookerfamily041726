@@ -84,13 +84,13 @@
 			</div>
 			<div class="body">
 				<p>
-					The backbone of this project is the many thorough and thoughtful family genealogies completed in the
-					early 20th century, including:
+					The backbone of this project is the many thorough and thoughtful family genealogies compiled since the
+					1870s, including:
 				</p>
 				<ul>
 					<li>
 						<cite>Descendants of Rev. Thomas Hooker, 1586–1908</cite>, researched and written by Cdr. Edward
-						Hooker and published by Margaret Huntington Hooker after his death
+						Hooker and published by Margaret Huntington Hooker after his death in 1909
 					</li>
 					<li><cite>Talcott Pedigree</cite> by S. V. Talcott (1876)</li>
 					<li><cite>Deacon Stephen Hart and His Descendants</cite> by Alfred Andrews (1875)</li>
