@@ -715030,26 +715030,32 @@
     {
      "number": 1,
      "category": "social_reform",
-     "header": "She ran free clinics in West Africa",
-     "body": "While her husband worked for the CDC near Lagos, Nigeria, and later in Gaborone, Botswana, Katherine volunteered tirelessly in communities with severe health needs. She ran free clinics for local people, treating those the formal system could not reach."
+     "header": "Free clinics wherever the family landed",
+     "body": "In Nigeria and then in Botswana, where her husband's work against HIV and tuberculosis took the family, Katherine ran free clinics for people the hospitals could not reach."
     },
     {
      "number": 2,
-     "category": "character",
-     "header": "From African clinics to a Connecticut farm",
-     "body": "After their years overseas, Katherine and her husband settled on the flank of Sharon Mountain in Connecticut at Smokedown Farm. They raise Katahdin sheep and American Aberdeen cattle, a smaller Angus first bred in Australia, on pasture tended by rotational grazing."
+     "category": "family",
+     "header": "Three boys raised between two continents",
+     "body": "Katherine raised her three sons between Africa and Connecticut: James, now a barrister in London, George, a London bookseller, and Charlie, who started school in Gaborone."
     },
     {
      "number": 3,
-     "category": "science",
-     "header": "An orchard of pawpaws and beach plums",
-     "body": "At Smokedown they are growing an experimental orchard of Cornelian cherry, pawpaw, Virginia persimmon, chokeberry and beach plum, testing how far north these rare fruits can now grow."
+     "category": "character",
+     "header": "A flock and a herd on Sharon Mountain",
+     "body": "Home on Sharon Mountain, Katherine and her husband keep Katahdin sheep and American Aberdeen cattle at Smokedown Farm, moving them in rotation so the grazing thickens the grass and brings back clover, insects and birds."
     },
     {
      "number": 4,
+     "category": "science",
+     "header": "Pawpaws and beach plums in Connecticut",
+     "body": "She is also growing an orchard of rare fruits, Cornelian cherry, pawpaw, Virginia persimmon, chokeberry and beach plum, to see how far north they will now ripen."
+    },
+    {
+     "number": 5,
      "category": "family",
-     "header": "Named Shreve for her great-grandmother",
-     "body": "Katherine carries her great-grandmother's surname 'Shreve' as her own middle name. Elizabeth Lawton Shreve married Robert Gay Hooker and was the matriarch of the California Hooker line that produced both Katherine's grandfather Rodman Lent Hooker and her father Michael."
+     "header": "The Shreve in her name",
+     "body": "Katherine's middle name comes from her great-grandmother Elizabeth Lawton Shreve, wife of Robert Gay Hooker and mother of Katherine's grandfather Rodman."
     }
    ],
    "cross_connections": [
@@ -715074,7 +715080,12 @@
      "description": "Middle name Shreve carries forward her great-grandmother Elizabeth Lawton Shreve, who married Robert Gay Hooker (H04266) and was the mother of Michael's father Rodman Lent Hooker (HD3246)."
     }
    ],
-   "education": [],
+   "education": [
+    {
+     "school_name": "The New School, New York",
+     "dates": "Master's"
+    }
+   ],
    "career": [],
    "military_service": [],
    "institutions": [],
