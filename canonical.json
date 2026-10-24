@@ -1134623,7 +1134623,14 @@
    "death": {
     "year": 1971
    },
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "X03976",
+     "type": "connection",
+     "link_text": "George Stevens",
+     "display_label": "shot Laurel and Hardy at Hal Roach, then won two Oscars"
+    }
+   ],
    "bio": {
     "display_name": "Sidney Sutton Van Keuren",
     "first_name": "Sidney",

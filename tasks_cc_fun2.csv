@@ -1,2 +1,2 @@
 person_id,field,value_or_angle,status,slug,proposed,decision
-HD5311,cc,"related=X03976 link=""George Stevens"" label=""shot thirty-five Laurel and Hardy shorts at Hal Roach before two Oscars""",FLAG BLOCKED: cc label 71 chars (max 70),/person/sidney-van-keuren-1901,,
+HD5311,cc,"related=X03976 link=""George Stevens"" label=""shot Laurel and Hardy at Hal Roach, then won two Oscars""",OK cc->X03976 added (reciprocal present),/person/sidney-van-keuren-1901,,
