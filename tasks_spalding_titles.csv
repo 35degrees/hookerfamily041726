@@ -1,0 +1,3 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD3335,field_set,cross_connections[3].link_text=Lt. Stephen Spalding,OK set cross_connections[3].link_text = 'Lt. Stephen Spalding',/person/edward-terry-1839,,
+H04745,field_set,cross_connections[0].link_text=Cmdr. Edward Terry,OK set cross_connections[0].link_text = 'Cmdr. Edward Terry',/person/stephen-spalding-1840,,
