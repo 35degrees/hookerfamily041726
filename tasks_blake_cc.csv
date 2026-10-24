@@ -1,0 +1,5 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD1568,cc,"related=H01928 link=""Sallie Snowden"" label=""was called the last survivor of the 1778 Wyoming Massacre""",OK cc->H01928 added; FLAG needs reciprocal cc row on H01928,/person/henry-blake-1828,,
+H01928,cc,"related=HD1568 link=""Henry Taylor Blake"" label=""lectured in 1893 on Connecticut's claim to the Wyoming Valley""",OK cc->HD1568 added (reciprocal present),/person/sarah-snowden-1775,,
+HD1568,cc,"related=HD10217 link=""George Langdon"" label=""got Detroit to buy the swampy island that became Belle Isle Park""",OK cc->HD10217 added; FLAG needs reciprocal cc row on HD10217,/person/henry-blake-1828,,
+HD10217,cc,"related=HD1568 link=""Henry Taylor Blake"" label=""grew New Haven's parks to more than six hundred and fifty acres""",OK cc->HD1568 added (reciprocal present),/person/george-langdon-1833,,

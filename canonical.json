@@ -328247,6 +328247,18 @@
      "display_label": ", himself the son of Kingsley's student, married his niece Eliza",
      "type": "associate",
      "lineal_gap": 1
+    },
+    {
+     "related_id": "H01928",
+     "type": "connection",
+     "link_text": "Sallie Snowden",
+     "display_label": "was called the last survivor of the 1778 Wyoming Massacre"
+    },
+    {
+     "related_id": "HD10217",
+     "type": "connection",
+     "link_text": "George Langdon",
+     "display_label": "got Detroit to buy the swampy island that became Belle Isle Park"
     }
    ],
    "bio": {
@@ -1125153,6 +1125165,12 @@
      "type": "connection",
      "link_text": "Deborah Sutton Bedford",
      "display_label": "survived the same day and outlived her by thirteen years"
+    },
+    {
+     "related_id": "HD1568",
+     "type": "connection",
+     "link_text": "Henry Taylor Blake",
+     "display_label": "lectured in 1893 on Connecticut's claim to the Wyoming Valley"
     }
    ],
    "bio": {
@@ -1784448,6 +1784466,12 @@
      "type": "connection",
      "link_text": "George Norton Ladue",
      "display_label": "was the son of John T. LaDue, mayor of Detroit from 1850 to 1851"
+    },
+    {
+     "related_id": "HD1568",
+     "type": "connection",
+     "link_text": "Henry Taylor Blake",
+     "display_label": "grew New Haven's parks to more than six hundred and fifty acres"
     }
    ],
    "quotes": [],
