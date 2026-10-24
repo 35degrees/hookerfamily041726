@@ -826278,8 +826278,8 @@
     {
      "number": 2,
      "category": "business",
-     "header": "Four steamers on Northwest rivers",
-     "body": "With Captain U. B. Scott, an old Ironton friend of the family, and E. W. Crichton, who had learned the iron trade beside him, L.B. built and ran the steamers Ohio, Fleetwood, Telephone and Flyer."
+     "header": "Steamers on the Columbia and Puget Sound",
+     "body": "With Captain U. B. Scott and E. W. Crichton, L.B. built the steamers Ohio, Fleetwood, Telephone and Flyer. He organized the Columbia River and Puget Sound Navigation Company, whose Flyer and Bailey Gatzert were known across the Northwest."
     },
     {
      "number": 3,
@@ -826381,7 +826381,14 @@
    "tags": [],
    "research_tags": [],
    "cross_connections": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "San Francisco, then Portland",
+     "body": "Married at West Andover in 1876, Minnie went with L.B. to San Francisco, where he represented the Oregon Iron Company, and in 1892 they settled in Portland. She died at Redlands, California, in 1926, where she had gone for the winter."
+    }
+   ],
    "quotes": [],
    "sources": [],
    "research_sources": [],
@@ -2532896,7 +2532903,26 @@
      "date_year": 1904
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "He died about to preach",
+     "body": "On Sunday 4 July 1937 Boudinot was getting ready to preach at Mount Baker Presbyterian in Seattle when he collapsed in the church study and died, at fifty-nine."
+    },
+    {
+     "number": 2,
+     "category": "religion",
+     "header": "First pastor of Rose City Park",
+     "body": "After Williams College and Princeton Seminary, Boudinot preached at Wilmington and Philadelphia, then in 1910 became the first minister of Portland's new Rose City Park Presbyterian church and later ran the church's Oregon home missions."
+    },
+    {
+     "number": 3,
+     "category": "family",
+     "header": "Three of their four children died as babies",
+     "body": "Boudinot and Mayannah lost three of their four children as infants: Amelia in 1905, Ross in 1908 and a son named Boudinot in 1910. Only Tyler, born at Philadelphia in 1906, grew up."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2533048,7 +2533074,20 @@
      "date_day": 21
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Named for his grandfather Tyler Woodward",
+     "body": "Tyler was named for his mother's father, Tyler Woodward, a Portland pioneer who left a trust for his education when he died in 1914; Tyler was seven. By 1926 he also held the cane his grandfather L.B. cut at Mount Vernon."
+    },
+    {
+     "number": 2,
+     "category": "family",
+     "header": "His wife died the day their daughter arrived",
+     "body": "Tyler married Mary Lois Bridwell at Walla Walla in May 1937. She died there on 21 April 1939, the day their daughter Mary Lois was born. In 1942 he married Emma Jane Johnson of Pendleton."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2533283,7 +2533322,14 @@
      "date_year": 1904
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Her father left a trust for her son",
+     "body": "Mayannah's father, Tyler Woodward, a Vermont-born Portland pioneer, died in 1914 and left her a lot on First Street and a trust for the education of her son, Tyler, then seven."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2533546,7 +2533592,14 @@
      "date_day": 16
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Her mother died the day she was born",
+     "body": "Mary Lois was born at Walla Walla on 21 April 1939, and her mother, Mary Lois Bridwell Seeley, died the same day, at twenty-six. She married Robert Bedeau in 1960 and raised two daughters at Indianapolis."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
