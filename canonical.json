@@ -10533,7 +10533,9 @@
    },
    "url": "https://www.findagrave.com/cemetery/88776/prairie-home-cemetery",
    "hooker_connections": [
-    "I00920"
+    "I00920",
+    "HD17050",
+    "I06155"
    ],
    "city": "Waukesha",
    "county": "Waukesha County",
@@ -18293,7 +18295,10 @@
     "I05137",
     "HD14809",
     "I05146",
-    "HD14813"
+    "HD14813",
+    "H04744",
+    "I06140",
+    "HD17044"
    ],
    "notes": "Chicago Cook County IL. Burial site of Emily Carol Scott Hubbard (I00699), first wife of Frank Langdon Hubbard (HD4333).",
    "location": {
@@ -36025,6 +36030,38 @@
    "gps": {
     "latitude": 52.02933,
     "longitude": -113.95989
+   }
+  },
+  {
+   "id": "CEM2029",
+   "name": "Derby Line Cemetery",
+   "hooker_connections": [
+    "I06138",
+    "HD17017"
+   ],
+   "city": "Derby Line",
+   "county": "Orleans County",
+   "state": "Vermont",
+   "country": "United States",
+   "gps": {
+    "latitude": 45.00402,
+    "longitude": -72.10135
+   }
+  },
+  {
+   "id": "CEM2030",
+   "name": "Christ Church Episcopal Columbarium",
+   "hooker_connections": [
+    "HD17054",
+    "I06156"
+   ],
+   "city": "Whitefish Bay",
+   "county": "Milwaukee County",
+   "state": "Wisconsin",
+   "country": "United States",
+   "gps": {
+    "latitude": 43.1197,
+    "longitude": -87.90317
    }
   }
  ],
@@ -2525331,7 +2525368,7 @@
     "year": 1854,
     "date_precision": "exact",
     "month": 4,
-    "day": 17,
+    "day": 7,
     "city": "Derby Line",
     "county": "Orleans County",
     "state": "Vermont",
@@ -2525385,7 +2525422,10 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2029"
+   }
   },
   {
    "id": "H03499",
@@ -2528445,7 +2528485,7 @@
     "first_name": "Levi",
     "last_name": "Spalding",
     "married_names": [],
-    "bio_blurb": "Merchant"
+    "bio_blurb": "Derby Line merchant and bank president"
    },
    "gender": "male",
    "birth": {
@@ -2528468,7 +2528508,10 @@
     "state": "Vermont",
     "country": "United States"
    },
-   "parents": {},
+   "parents": {
+    "father_name": "Deacon Reuben Spalding",
+    "mother_name": "Jerusha Carpenter Spalding"
+   },
    "marriages": [
     {
      "marriage_number": 1,
@@ -2528508,30 +2528551,33 @@
    "number_of_marriages": 1,
    "career": [
     {
+     "role": "President",
+     "organization": "First National Bank of Derby Line",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Merchant",
+     "organization": "Derby Line, Vermont, and Stanstead, Lower Canada",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
      "role": "Merchant",
      "organization": "Montpelier, Vermont",
      "location": null,
      "start_year": null,
      "end_year": null,
      "notes": null
-    },
-    {
-     "role": "Merchant",
-     "organization": "Rock Island, Canada",
-     "location": null,
-     "start_year": null,
-     "end_year": 1845,
-     "notes": null
-    },
-    {
-     "role": "Merchant",
-     "organization": "Derby Line, Vermont",
-     "location": null,
-     "start_year": 1845,
-     "end_year": null,
-     "notes": null
     }
-   ]
+   ],
+   "burial": {
+    "cemetery_id": "CEM2029"
+   }
   },
   {
    "id": "H04742",
@@ -2528554,7 +2528600,13 @@
    },
    "death": {
     "year": 1910,
-    "date_precision": "year_only"
+    "date_precision": "exact",
+    "month": 4,
+    "day": 1,
+    "city": "Derby",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
    },
    "parents": {
     "father_id": "I06138",
@@ -2528564,7 +2528616,12 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06139",
-     "children_ids": []
+     "children_ids": [
+      "HD17041"
+     ],
+     "date_year": 1873,
+     "date_month": 11,
+     "date_day": 20
     }
    ],
    "narrative_blocks": [],
@@ -2528588,24 +2528645,47 @@
   {
    "id": "I06139",
    "bio": {
-    "display_name": "Emma J. Bingham Spalding",
+    "display_name": "Emma Isabel Brigham Spalding",
     "first_name": "Emma",
     "last_name": "Spalding",
     "married_names": [
      "Spalding"
     ],
-    "middle_name": "J.",
-    "maiden_name": "Bingham"
+    "middle_name": "Isabel",
+    "maiden_name": "Brigham"
    },
    "gender": "female",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1849,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 11,
+    "city": "Boston",
+    "county": "Suffolk County",
+    "state": "Massachusetts",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1907,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 4,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
    "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
      "spouse_id": "H04742",
-     "children_ids": []
+     "children_ids": [
+      "HD17041"
+     ],
+     "date_year": 1873,
+     "date_month": 11,
+     "date_day": 20
     }
    ],
    "narrative_blocks": [],
@@ -2528637,12 +2528717,22 @@
    "gender": "male",
    "birth": {
     "year": 1836,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 7,
+    "day": 15,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
     "country": "United States"
    },
    "death": {
-    "year": 1836,
-    "date_precision": "year_only",
+    "year": 1837,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 29,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
     "country": "United States"
    },
    "parents": {
@@ -2528693,7 +2528783,13 @@
    },
    "death": {
     "year": 1905,
-    "date_precision": "year_only"
+    "date_precision": "exact",
+    "month": 3,
+    "day": 7,
+    "city": "Chicago",
+    "county": "Cook County",
+    "state": "Illinois",
+    "country": "United States"
    },
    "parents": {
     "father_id": "I06138",
@@ -2528703,10 +2528799,19 @@
     {
      "marriage_number": 1,
      "spouse_id": "I06140",
-     "children_ids": [],
+     "children_ids": [
+      "HD17044",
+      "HD17045",
+      "HD17046",
+      "HD17047",
+      "HD17048",
+      "HD17049"
+     ],
      "date_year": 1861,
      "date_month": 12,
-     "date_day": 14
+     "date_day": 14,
+     "location_state": "Vermont",
+     "location_country": "United States"
     }
    ],
    "narrative_blocks": [],
@@ -2528725,29 +2528830,59 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM900"
+   }
   },
   {
    "id": "I06140",
    "bio": {
-    "display_name": "Almyron W. Ovitt",
+    "display_name": "Almyron Wilkinson Ovitt",
     "first_name": "Almyron",
     "last_name": "Ovitt",
     "married_names": [],
-    "middle_name": "W."
+    "middle_name": "Wilkinson"
    },
    "gender": "male",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1836,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 20,
+    "city": "Derby",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1902,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 9,
+    "city": "Chicago",
+    "county": "Cook County",
+    "state": "Illinois",
+    "country": "United States"
+   },
    "parents": {},
    "marriages": [
     {
      "marriage_number": 1,
      "spouse_id": "H04744",
-     "children_ids": [],
+     "children_ids": [
+      "HD17044",
+      "HD17045",
+      "HD17046",
+      "HD17047",
+      "HD17048",
+      "HD17049"
+     ],
      "date_year": 1861,
      "date_month": 12,
-     "date_day": 14
+     "date_day": 14,
+     "location_state": "Vermont",
+     "location_country": "United States"
     }
    ],
    "narrative_blocks": [],
@@ -2528765,7 +2528900,10 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM900"
+   }
   },
   {
    "id": "H04745",
@@ -2529562,11 +2529700,16 @@
    "gender": "female",
    "birth": {
     "year": 1836,
-    "date_precision": "year_only"
+    "date_precision": "approximate",
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
    },
    "death": {
     "year": 1926,
-    "date_precision": "year_only"
+    "date_precision": "approximate",
+    "country": "United States"
    },
    "parents": {
     "father_id": "I06138",
@@ -2529584,6 +2529727,1413 @@
     "is_talcott_descendant": false,
     "is_easter_egg": false,
     "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17041",
+   "bio": {
+    "display_name": "Anna Kathleen Spalding Jenkins",
+    "first_name": "Anna",
+    "last_name": "Jenkins",
+    "married_names": [
+     "Jenkins"
+    ],
+    "middle_name": "Kathleen",
+    "maiden_name": "Spalding"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1883,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 28,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1969,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 24,
+    "city": "Newport",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H04742",
+    "mother_id": "I06139"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06149",
+     "children_ids": [
+      "HD17042",
+      "HD17043"
+     ],
+     "date_year": 1903,
+     "date_month": 6,
+     "date_day": 24
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06149",
+   "bio": {
+    "display_name": "Charles Ruiter Jenkins",
+    "first_name": "Charles",
+    "last_name": "Jenkins",
+    "married_names": [],
+    "middle_name": "Ruiter"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1881,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 18,
+    "city": "Tomifobia",
+    "county": "Stanstead",
+    "state": "Quebec",
+    "country": "Canada"
+   },
+   "death": {
+    "year": 1955,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17041",
+     "children_ids": [
+      "HD17042",
+      "HD17043"
+     ],
+     "date_year": 1903,
+     "date_month": 6,
+     "date_day": 24
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17042",
+   "bio": {
+    "display_name": "Charles Spalding Jenkins",
+    "first_name": "Charles",
+    "last_name": "Jenkins",
+    "married_names": [],
+    "middle_name": "Spalding"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1909,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 17,
+    "city": "Derby",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1990,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06149",
+    "mother_id": "HD17041"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17043",
+   "bio": {
+    "display_name": "William Francis Jenkins",
+    "first_name": "William",
+    "last_name": "Jenkins",
+    "married_names": [],
+    "middle_name": "Francis"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1913,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 15,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06149",
+    "mother_id": "HD17041"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06150",
+     "children_ids": [],
+     "date_year": 1939,
+     "date_month": 12,
+     "date_day": 27
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06151",
+     "children_ids": [],
+     "date_year": 1959,
+     "date_month": 7,
+     "date_day": 29
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 2
+  },
+  {
+   "id": "I06150",
+   "bio": {
+    "display_name": "Frances MacLachlan Carlin Jenkins",
+    "first_name": "Frances",
+    "last_name": "Jenkins",
+    "married_names": [
+     "Jenkins"
+    ],
+    "middle_name": "MacLachlan",
+    "maiden_name": "Carlin"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1913,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 19,
+    "city": "Fort Smith",
+    "county": "Sebastian County",
+    "state": "Arkansas",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17043",
+     "children_ids": [],
+     "date_year": 1939,
+     "date_month": 12,
+     "date_day": 27
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06151",
+   "bio": {
+    "display_name": "Marielle Andree Bilodeau Jenkins",
+    "first_name": "Marielle",
+    "last_name": "Jenkins",
+    "married_names": [
+     "Jenkins"
+    ],
+    "middle_name": "Andree",
+    "maiden_name": "Bilodeau"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1925,
+    "date_precision": "exact",
+    "month": 2,
+    "day": 4,
+    "city": "Sherbrooke",
+    "state": "Quebec",
+    "country": "Canada"
+   },
+   "death": {
+    "year": 1998,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 17,
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17043",
+     "children_ids": [],
+     "date_year": 1959,
+     "date_month": 7,
+     "date_day": 29
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17044",
+   "bio": {
+    "display_name": "Levi Spalding Ovitt Sr.",
+    "first_name": "Levi",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "Spalding",
+    "suffix": "Sr.",
+    "chip_first_name": "Lee",
+    "nickname": "Lee"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1863,
+    "date_precision": "exact",
+    "month": 5,
+    "day": 31,
+    "city": "Derby",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1945,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 30,
+    "city": "Chicago",
+    "county": "Cook County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06140",
+    "mother_id": "H04744"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06152",
+     "children_ids": [
+      "HD17050",
+      "HD17051"
+     ],
+     "date_year": 1885,
+     "date_month": 6,
+     "date_day": 3,
+     "end_type": "death",
+     "end_year": 1894
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06153",
+     "children_ids": []
+    },
+    {
+     "marriage_number": 3,
+     "spouse_id": "I06154",
+     "children_ids": []
+    },
+    {
+     "marriage_number": 4,
+     "spouse_id": null,
+     "children_ids": [
+      "HD17052",
+      "HD17053"
+     ]
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 3,
+   "burial": {
+    "cemetery_id": "CEM900"
+   },
+   "career": [
+    {
+     "role": "Editor",
+     "organization": "Chicago",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Proprietor",
+     "organization": "Silurian Spring and the Casino, Waukesha",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ]
+  },
+  {
+   "id": "HD17045",
+   "bio": {
+    "display_name": "Jennie Belle Ovitt",
+    "first_name": "Jennie",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "Belle"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1864,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1884,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06140",
+    "mother_id": "H04744"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17046",
+   "bio": {
+    "display_name": "Edna Grace Ovitt",
+    "first_name": "Edna",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "Grace"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1867,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1952,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06140",
+    "mother_id": "H04744"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17047",
+   "bio": {
+    "display_name": "Charles Henry Ovitt",
+    "first_name": "Charles",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "Henry"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1870,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1926,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06140",
+    "mother_id": "H04744"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17048",
+   "bio": {
+    "display_name": "George Walter Ovitt",
+    "first_name": "George",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "Walter"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1871,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1951,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06140",
+    "mother_id": "H04744"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17049",
+   "bio": {
+    "display_name": "Gertrude Blanche Ovitt",
+    "first_name": "Gertrude",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "Blanche"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1874,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1952,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06140",
+    "mother_id": "H04744"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06152",
+   "bio": {
+    "display_name": "Jennie Violet Wilkie Ovitt",
+    "first_name": "Jennie",
+    "last_name": "Ovitt",
+    "married_names": [
+     "Ovitt"
+    ],
+    "middle_name": "Violet",
+    "maiden_name": "Wilkie"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1862,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1894,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17044",
+     "children_ids": [
+      "HD17050",
+      "HD17051"
+     ],
+     "date_year": 1885,
+     "date_month": 6,
+     "date_day": 3,
+     "end_type": "death",
+     "end_year": 1894
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17050",
+   "bio": {
+    "display_name": "Arthur Wilkie Ovitt",
+    "first_name": "Arthur",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "Wilkie",
+    "bio_blurb": "Wisconsin deputy oil inspector"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1887,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 1,
+    "city": "Kansas City",
+    "county": "Jackson County",
+    "state": "Missouri",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1966,
+    "date_precision": "exact",
+    "month": 5,
+    "day": 2,
+    "city": "Milwaukee",
+    "county": "Milwaukee County",
+    "state": "Wisconsin",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17044",
+    "mother_id": "I06152"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06155",
+     "children_ids": [
+      "HD17054"
+     ],
+     "date_year": 1912,
+     "date_month": 2,
+     "date_day": 14
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [
+    "freemason"
+   ],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM444"
+   },
+   "career": [
+    {
+     "role": "Deputy oil inspector",
+     "organization": "State of Wisconsin, Madison",
+     "location": null,
+     "start_year": null,
+     "end_year": 1957,
+     "notes": null
+    }
+   ]
+  },
+  {
+   "id": "HD17051",
+   "bio": {
+    "display_name": "Beverly Spalding Ovitt",
+    "first_name": "Beverly",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "Spalding"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1890,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1940,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17044",
+    "mother_id": "I06152"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06153",
+   "bio": {
+    "display_name": "Emma B. Markle Ovitt",
+    "first_name": "Emma",
+    "last_name": "Ovitt",
+    "married_names": [
+     "Ovitt"
+    ],
+    "middle_name": "B.",
+    "maiden_name": "Markle"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1867,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1910,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17044",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06154",
+   "bio": {
+    "display_name": "Amelia Ovitt",
+    "first_name": "Amelia",
+    "last_name": "Ovitt",
+    "married_names": [
+     "Ovitt"
+    ]
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17044",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "HD17052",
+   "bio": {
+    "display_name": "Leonore Ovitt Harris",
+    "first_name": "Leonore",
+    "last_name": "Harris",
+    "married_names": [
+     "Harris"
+    ],
+    "maiden_name": "Ovitt"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "HD17044"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17053",
+   "bio": {
+    "display_name": "Levi Spalding Ovitt Jr.",
+    "first_name": "Levi",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "Spalding",
+    "suffix": "Jr.",
+    "chip_first_name": "Lee",
+    "nickname": "Lee"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "HD17044"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06155",
+   "bio": {
+    "display_name": "Margaret Adele Haight Ovitt",
+    "first_name": "Margaret",
+    "last_name": "Ovitt",
+    "married_names": [
+     "Ovitt"
+    ],
+    "middle_name": "Adele",
+    "maiden_name": "Haight"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1888,
+    "date_precision": "exact",
+    "month": 2,
+    "day": 14,
+    "city": "Waukesha",
+    "county": "Waukesha County",
+    "state": "Wisconsin",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1957,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 11,
+    "city": "Madison",
+    "county": "Dane County",
+    "state": "Wisconsin",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17050",
+     "children_ids": [
+      "HD17054"
+     ],
+     "date_year": 1912,
+     "date_month": 2,
+     "date_day": 14
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM444"
+   }
+  },
+  {
+   "id": "HD17054",
+   "bio": {
+    "display_name": "Dr. David Wilkie Ovitt",
+    "first_name": "David",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "Wilkie",
+    "title": "Dr.",
+    "bio_blurb": "Milwaukee surgeon, St. Mary's chief of staff"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1912,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 2,
+    "city": "Chicago",
+    "county": "Cook County",
+    "state": "Illinois",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2006,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 21,
+    "city": "Eugene",
+    "county": "Lane County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17050",
+    "mother_id": "I06155"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06156",
+     "children_ids": [
+      "HD17055",
+      "HD17056",
+      "HD17057"
+     ],
+     "date_year": 1938,
+     "date_month": 6,
+     "date_day": 15,
+     "location_city": "Bowling Green",
+     "location_state": "Kentucky",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [
+    "wwii"
+   ],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2030"
+   },
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "Madison Central High School",
+     "dates": "1929",
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": null,
+     "school_name": "University of Wisconsin",
+     "dates": "1933",
+     "type": null,
+     "notes": "B.A."
+    },
+    {
+     "institution_id": null,
+     "school_name": "University of Wisconsin",
+     "dates": "1936",
+     "type": null,
+     "notes": "M.D."
+    }
+   ],
+   "career": [
+    {
+     "role": "Chief of Staff",
+     "organization": "St. Mary's Hospital, Milwaukee",
+     "location": null,
+     "start_year": 1966,
+     "end_year": 1970,
+     "notes": null
+    },
+    {
+     "role": "Chief of Surgery",
+     "organization": "St. Mary's Hospital, Milwaukee",
+     "location": null,
+     "start_year": 1960,
+     "end_year": 1966,
+     "notes": null
+    },
+    {
+     "role": "General surgeon",
+     "organization": "St. Mary's Hospital, Milwaukee",
+     "location": null,
+     "start_year": 1947,
+     "end_year": 1984,
+     "notes": null
+    },
+    {
+     "role": "Co-founder",
+     "organization": "Northpoint, Milwaukee",
+     "location": null,
+     "start_year": 1972,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Editorial Board",
+     "organization": "Wisconsin State Medical Journal",
+     "location": null,
+     "start_year": 1950,
+     "end_year": 1975,
+     "notes": null
+    },
+    {
+     "role": "Clinical Instructor of Surgery",
+     "organization": "Marquette Medical School",
+     "location": null,
+     "start_year": 1947,
+     "end_year": 1955,
+     "notes": null
+    },
+    {
+     "role": "Consulting Surgeon",
+     "organization": "Milwaukee County Hospital",
+     "location": null,
+     "start_year": 1947,
+     "end_year": 1955,
+     "notes": null
+    },
+    {
+     "role": "Surgeon, 4th Surgical Auxiliary",
+     "organization": "U.S. Army, Third Army",
+     "location": null,
+     "start_year": 1943,
+     "end_year": 1945,
+     "notes": null
+    }
+   ]
+  },
+  {
+   "id": "I06156",
+   "bio": {
+    "display_name": "Elizabeth L. Wright Ovitt",
+    "first_name": "Elizabeth",
+    "last_name": "Ovitt",
+    "married_names": [
+     "Ovitt"
+    ],
+    "middle_name": "L.",
+    "maiden_name": "Wright",
+    "chip_first_name": "Bess",
+    "nickname": "Bess"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1911,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1998,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 8,
+    "state": "Wisconsin",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17054",
+     "children_ids": [
+      "HD17055",
+      "HD17056",
+      "HD17057"
+     ],
+     "date_year": 1938,
+     "date_month": 6,
+     "date_day": 15,
+     "location_city": "Bowling Green",
+     "location_state": "Kentucky",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "burial": {
+    "cemetery_id": "CEM2030"
+   }
+  },
+  {
+   "id": "HD17055",
+   "bio": {
+    "display_name": "Theron Ovitt",
+    "first_name": "Theron",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "chip_first_name": "Terry",
+    "nickname": "Terry"
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "HD17054",
+    "mother_id": "I06156"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 13
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17056",
+   "bio": {
+    "display_name": "Margaret Ovitt",
+    "first_name": "Margaret",
+    "last_name": "Ovitt",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "HD17054",
+    "mother_id": "I06156"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 13
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "HD17057",
+   "bio": {
+    "display_name": "Elizabeth Ovitt",
+    "first_name": "Elizabeth",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "chip_first_name": "Betsy",
+    "nickname": "Betsy"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "HD17054",
+    "mother_id": "I06156"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 13
    },
    "notable": {
     "is_notable": false
