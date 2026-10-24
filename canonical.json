@@ -826813,8 +826813,13 @@
     "is_easter_egg": false
    },
    "notable": {
-    "is_notable": false,
-    "notable_category": []
+    "is_notable": true,
+    "notable_category": [
+     "business"
+    ],
+    "primary_url": "https://www.oregonencyclopedia.org/articles/oswego_iron_furnace/",
+    "notable_url": "https://www.oregonencyclopedia.org/articles/oswego_iron_furnace/",
+    "primary_url_label": "Oregon Encyclopedia: Oswego Iron Furnace"
    },
    "parents": {
     "father_id": "I00411",
@@ -826902,7 +826907,11 @@
    ],
    "military_service": [],
    "institutions": [],
-   "landmarks": [],
+   "landmarks": [
+    {
+     "landmark_id": "LM566"
+    }
+   ],
    "naming_inspiration": [],
    "artworks": [],
    "tags": [],
@@ -2556444,6 +2556453,25 @@
    "person_ids": [
     "H04750",
     "I06145"
+   ]
+  },
+  {
+   "id": "LM566",
+   "name": "Oswego Iron Furnace",
+   "primary_name": "Oswego Iron Furnace",
+   "type": "iron furnace",
+   "dates": {
+    "built": 1866
+   },
+   "location": {
+    "city": "Lake Oswego",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "primary_url": "https://www.oregonencyclopedia.org/articles/oswego_iron_furnace/",
+   "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792870811/2-resized_znrwlc.jpg",
+   "person_ids": [
+    "HD3743"
    ]
   }
  ],
