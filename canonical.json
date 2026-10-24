@@ -1571,7 +1571,9 @@
     "X02783",
     "HD3718",
     "I00397",
-    "HD3717"
+    "HD3717",
+    "HD3747",
+    "I00410"
    ]
   },
   {
@@ -827481,15 +827483,23 @@
    },
    "birth": {
     "year": 1857,
-    "city": "Austinburg",
-    "county": "Ashtabula County",
+    "date_precision": "exact",
+    "month": 4,
+    "day": 12,
+    "city": "Buckhorn Furnace",
+    "county": "Lawrence County",
     "state": "Ohio",
     "country": "United States"
    },
    "baptism": {},
    "death": {
     "year": 1938,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 2,
+    "day": 21,
+    "city": "New York City",
+    "county": "New York County",
+    "state": "New York",
     "country": "United States"
    },
    "residence": {
@@ -827526,7 +827536,14 @@
      "spouse_id": "I00409",
      "date_year": 1883,
      "location_country": "United States",
-     "children_ids": []
+     "children_ids": [
+      "HD17130",
+      "HD17131",
+      "HD17132",
+      "HD17133"
+     ],
+     "date_month": 2,
+     "date_day": 14
     }
    ],
    "education": [],
@@ -827549,21 +827566,35 @@
   },
   {
    "id": "I00409",
-   "former_ids": [],
+   "former_ids": [
+    "anna-selby"
+   ],
    "is_placeholder": false,
    "has_descendants_documented": false,
    "bio": {
-    "first_name": "Anna",
-    "last_name": "Selby Seeley",
+    "first_name": "Wealthy",
+    "last_name": "Seeley",
     "maiden_name": "Selby",
     "married_names": [
      "Seeley"
     ],
     "gender": "female",
-    "display_name": "Anna Selby Seeley"
+    "display_name": "Wealthy Ann Selby Seeley",
+    "middle_name": "Ann",
+    "extra_names": "Anna Selby Seeley",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792870430/thumbMobile-572_ht1kw6.jpg"
    },
    "baptism": {},
-   "death": {},
+   "death": {
+    "year": 1942,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 10,
+    "city": "San Francisco",
+    "county": "San Francisco County",
+    "state": "California",
+    "country": "United States"
+   },
    "residence": {
     "city": "Portland",
     "county": "Multnomah County",
@@ -827594,7 +827625,14 @@
      "spouse_id": "HD3746",
      "date_year": 1883,
      "location_country": "United States",
-     "children_ids": []
+     "children_ids": [
+      "HD17130",
+      "HD17131",
+      "HD17132",
+      "HD17133"
+     ],
+     "date_month": 2,
+     "date_day": 14
     }
    ],
    "education": [],
@@ -827614,7 +827652,16 @@
    "research_notes": "Married 1883 Edward Austin Seeley (HD3746); resided Portland OR. Per Cowles book.",
    "documents": [],
    "gender": "female",
-   "birth": {}
+   "birth": {
+    "year": 1857,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 16,
+    "city": "Gustavus",
+    "county": "Trumbull County",
+    "state": "Ohio",
+    "country": "United States"
+   }
   },
   {
    "id": "HD3747",
@@ -827633,22 +827680,32 @@
    },
    "birth": {
     "year": 1859,
-    "city": "Austinburg",
-    "county": "Ashtabula County",
+    "date_precision": "exact",
+    "month": 7,
+    "day": 13,
+    "city": "Buckhorn Furnace",
+    "county": "Lawrence County",
     "state": "Ohio",
     "country": "United States"
    },
    "baptism": {},
    "death": {
     "year": 1941,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 6,
+    "day": 25,
+    "city": "Austinburg",
+    "county": "Ashtabula County",
+    "state": "Ohio",
     "country": "United States"
    },
    "residence": {
     "state": "Ohio",
     "country": "United States"
    },
-   "burial": {},
+   "burial": {
+    "cemetery_id": "CEM035"
+   },
    "classification": {
     "is_thomas_descendant": true,
     "is_talcott_descendant": false,
@@ -827679,7 +827736,21 @@
      "spouse_id": "I00410",
      "date_year": 1890,
      "location_country": "United States",
-     "children_ids": []
+     "children_ids": [
+      "HD17142",
+      "HD17143",
+      "HD17144",
+      "HD17145",
+      "HD17146",
+      "HD17147",
+      "HD17148",
+      "HD17149"
+     ],
+     "date_month": 2,
+     "date_day": 5,
+     "location_city": "Austinburg Township",
+     "location_county": "Ashtabula County",
+     "location_state": "Ohio"
     }
    ],
    "education": [],
@@ -827703,29 +827774,39 @@
   {
    "id": "I00410",
    "former_ids": [
-    "mary-e-whiting"
+    "mary-e-whiting",
+    "mary-whiting"
    ],
    "is_placeholder": false,
    "has_descendants_documented": false,
    "bio": {
     "first_name": "Mary",
-    "last_name": "Whiting Seeley",
+    "last_name": "Seeley",
     "maiden_name": "Whiting",
     "married_names": [
      "Seeley"
     ],
     "gender": "female",
-    "display_name": "Mary E. Whiting Seeley",
-    "middle_name": "E."
+    "display_name": "Mary Emily Whiting Seeley",
+    "middle_name": "Emily"
    },
    "baptism": {},
-   "death": {},
+   "death": {
+    "year": 1953,
+    "date_precision": "year_only",
+    "city": "Austinburg",
+    "county": "Ashtabula County",
+    "state": "Ohio",
+    "country": "United States"
+   },
    "residence": {
     "city": "Austinburg",
     "county": "Ashtabula County",
     "state": "Ohio"
    },
-   "burial": {},
+   "burial": {
+    "cemetery_id": "CEM035"
+   },
    "classification": {
     "is_thomas_descendant": false,
     "is_talcott_descendant": false,
@@ -827750,7 +827831,21 @@
      "spouse_id": "HD3747",
      "date_year": 1890,
      "location_country": "United States",
-     "children_ids": []
+     "children_ids": [
+      "HD17142",
+      "HD17143",
+      "HD17144",
+      "HD17145",
+      "HD17146",
+      "HD17147",
+      "HD17148",
+      "HD17149"
+     ],
+     "date_month": 2,
+     "date_day": 5,
+     "location_city": "Austinburg Township",
+     "location_county": "Ashtabula County",
+     "location_state": "Ohio"
     }
    ],
    "education": [],
@@ -827770,7 +827865,15 @@
    "research_notes": "Married 1890 Orville Willard Seeley (HD3747); resided Austinburg OH. Per Cowles book.",
    "documents": [],
    "gender": "female",
-   "birth": {}
+   "birth": {
+    "year": 1866,
+    "date_precision": "month_year",
+    "month": 1,
+    "city": "Austinburg",
+    "county": "Ashtabula County",
+    "state": "Ohio",
+    "country": "United States"
+   }
   },
   {
    "id": "X02774",
@@ -2542818,6 +2542921,1564 @@
    },
    "is_placeholder": false,
    "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17130",
+   "bio": {
+    "display_name": "Charlotte Selby Seeley",
+    "first_name": "Charlotte",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Selby"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1884,
+    "date_precision": "exact",
+    "month": 5,
+    "day": 10,
+    "city": "Portland",
+    "county": "Multnomah County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1888,
+    "date_precision": "approximate",
+    "city": "Portland",
+    "county": "Multnomah County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3746",
+    "mother_id": "I00409"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17131",
+   "bio": {
+    "display_name": "Edward Austin Seeley Jr.",
+    "first_name": "Edward",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Austin",
+    "suffix": "Jr."
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1886,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 23,
+    "city": "Portland",
+    "county": "Multnomah County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1968,
+    "date_precision": "exact",
+    "month": 2,
+    "day": 15,
+    "county": "Multnomah County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3746",
+    "mother_id": "I00409"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06200",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17132",
+   "bio": {
+    "display_name": "Alma Walker Seeley",
+    "first_name": "Alma",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Walker"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1887,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1897,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3746",
+    "mother_id": "I00409"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ],
+   "naming_inspiration": [
+    {
+     "name_element": "Alma Walker",
+     "inspired_by_id": "I00408",
+     "description": "Given the full name of her aunt Alma Walker Seeley, wife of her father's brother Uri."
+    }
+   ]
+  },
+  {
+   "id": "HD17133",
+   "bio": {
+    "display_name": "Anna Bernard Seeley Lee",
+    "first_name": "Anna",
+    "last_name": "Lee",
+    "married_names": [
+     "Lee"
+    ],
+    "middle_name": "Bernard",
+    "maiden_name": "Seeley"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1890,
+    "date_precision": "exact",
+    "month": 1,
+    "day": 27,
+    "city": "Portland",
+    "county": "Multnomah County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1984,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 5,
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3746",
+    "mother_id": "I00409"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06201",
+     "children_ids": [
+      "HD17134",
+      "HD17135",
+      "HD17136"
+     ],
+     "date_year": 1913,
+     "date_month": 9,
+     "date_day": 15,
+     "location_city": "San Francisco",
+     "location_county": "San Francisco County",
+     "location_state": "California",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ],
+   "naming_inspiration": [
+    {
+     "name_element": "Anna Bernard",
+     "inspired_by_id": "HD3744",
+     "description": "Given the married name of her aunt Anna Seeley Bernard, her father's sister."
+    }
+   ]
+  },
+  {
+   "id": "I06200",
+   "bio": {
+    "display_name": "Lydia A. Johnston Seeley",
+    "first_name": "Lydia",
+    "last_name": "Seeley",
+    "married_names": [
+     "Seeley"
+    ],
+    "middle_name": "A.",
+    "maiden_name": "Johnston"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1888,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 19,
+    "city": "Portland",
+    "county": "Multnomah County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17131",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "I06201",
+   "bio": {
+    "display_name": "Charles Preston Lee",
+    "first_name": "Charles",
+    "last_name": "Lee",
+    "married_names": [],
+    "middle_name": "Preston"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1886,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 8,
+    "city": "San Francisco",
+    "county": "San Francisco County",
+    "state": "California",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1964,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 3,
+    "city": "San Francisco",
+    "county": "San Francisco County",
+    "state": "California",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17133",
+     "children_ids": [
+      "HD17134",
+      "HD17135",
+      "HD17136"
+     ],
+     "date_year": 1913,
+     "date_month": 9,
+     "date_day": 15,
+     "location_city": "San Francisco",
+     "location_county": "San Francisco County",
+     "location_state": "California",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17134",
+   "bio": {
+    "display_name": "Marjorie Selby Lee Boyd Collins",
+    "first_name": "Marjorie",
+    "last_name": "Collins",
+    "married_names": [
+     "Boyd",
+     "Collins"
+    ],
+    "middle_name": "Selby",
+    "maiden_name": "Lee",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1792870551/639391ccd5642.image_xpty8c.jpg"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1917,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 24,
+    "city": "San Francisco",
+    "county": "San Francisco County",
+    "state": "California",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2003,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 30,
+    "city": "Nevada City",
+    "county": "Nevada County",
+    "state": "California",
+    "country": "United States",
+    "cause": "cancer"
+   },
+   "parents": {
+    "father_id": "I06201",
+    "mother_id": "HD17133"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06202",
+     "children_ids": [],
+     "date_year": 1941,
+     "date_month": 3,
+     "date_day": 15,
+     "location_city": "State College",
+     "location_county": "Centre County",
+     "location_state": "Pennsylvania",
+     "location_country": "United States",
+     "end_type": "death_of_spouse",
+     "end_year": 1943
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06203",
+     "children_ids": [
+      "HD17137",
+      "HD17138",
+      "HD17139"
+     ],
+     "date_year": 1948,
+     "date_month": 12,
+     "date_day": 26,
+     "location_city": "Berkeley",
+     "location_county": "Alameda County",
+     "location_state": "California",
+     "location_country": "United States",
+     "end_type": "death_of_spouse",
+     "end_year": 1998
+    },
+    {
+     "marriage_number": 3,
+     "children_ids": [
+      "HD17140",
+      "HD17141"
+     ]
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 2,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ],
+   "education": [
+    {
+     "institution_id": null,
+     "school_name": "Frederick Burke Elementary School, San Francisco",
+     "dates": null,
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": null,
+     "school_name": "Lowell High School, San Francisco",
+     "dates": "1934",
+     "type": null,
+     "notes": null
+    },
+    {
+     "institution_id": null,
+     "school_name": "University of California, Berkeley",
+     "dates": "B.A. in zoology, 1938",
+     "type": null,
+     "notes": null
+    }
+   ],
+   "residence": {
+    "city": "Nevada City",
+    "county": "Nevada County",
+    "state": "California",
+    "country": "United States"
+   }
+  },
+  {
+   "id": "HD17135",
+   "bio": {
+    "display_name": "Herbert Selby Lee",
+    "first_name": "Herbert",
+    "last_name": "Lee",
+    "married_names": [],
+    "middle_name": "Selby"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1920,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06201",
+    "mother_id": "HD17133"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17136",
+   "bio": {
+    "display_name": "Edward S. Lee",
+    "first_name": "Edward",
+    "last_name": "Lee",
+    "married_names": [],
+    "middle_name": "S."
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06201",
+    "mother_id": "HD17133"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 11
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "I06202",
+   "bio": {
+    "display_name": "John Boyd",
+    "first_name": "John",
+    "last_name": "Boyd",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1916,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 16,
+    "city": "San Francisco",
+    "county": "San Francisco County",
+    "state": "California",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1943,
+    "month": 10,
+    "day": 12,
+    "date_precision": "exact",
+    "place": "At sea",
+    "cause": "killed in action, World War II"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17134",
+     "children_ids": [],
+     "date_year": 1941,
+     "date_month": 3,
+     "date_day": 15,
+     "location_city": "State College",
+     "location_county": "Centre County",
+     "location_state": "Pennsylvania",
+     "location_country": "United States",
+     "end_type": "death_of_self",
+     "end_year": 1943
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "I06203",
+   "bio": {
+    "display_name": "Carl Cleve Collins",
+    "first_name": "Carl",
+    "last_name": "Collins",
+    "married_names": [],
+    "middle_name": "Cleve"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1917,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 2,
+    "city": "Lebanon",
+    "county": "Linn County",
+    "state": "Oregon",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1998,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 3,
+    "city": "Nevada City",
+    "county": "Nevada County",
+    "state": "California",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17134",
+     "children_ids": [
+      "HD17137",
+      "HD17138",
+      "HD17139"
+     ],
+     "date_year": 1948,
+     "date_month": 12,
+     "date_day": 26,
+     "location_city": "Berkeley",
+     "location_county": "Alameda County",
+     "location_state": "California",
+     "location_country": "United States",
+     "end_type": "death_of_self",
+     "end_year": 1998
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17137",
+   "bio": {
+    "display_name": "David Collins",
+    "first_name": "David",
+    "last_name": "Collins",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06203",
+    "mother_id": "HD17134"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17138",
+   "bio": {
+    "display_name": "Donald Collins",
+    "first_name": "Donald",
+    "last_name": "Collins",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06203",
+    "mother_id": "HD17134"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17139",
+   "bio": {
+    "display_name": "Steven Collins",
+    "first_name": "Steven",
+    "last_name": "Collins",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "father_id": "I06203",
+    "mother_id": "HD17134"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06204",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "I06204",
+   "bio": {
+    "display_name": "Shelley Collins",
+    "first_name": "Shelley",
+    "last_name": "Collins",
+    "married_names": [
+     "Collins"
+    ]
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17139",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17140",
+   "bio": {
+    "display_name": "Joanne Schierling",
+    "first_name": "Joanne",
+    "last_name": "Schierling",
+    "married_names": [
+     "Schierling"
+    ]
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "mother_id": "HD17134"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06205",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17141",
+   "bio": {
+    "display_name": "Donna Kessler",
+    "first_name": "Donna",
+    "last_name": "Kessler",
+    "married_names": [
+     "Kessler"
+    ]
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {
+    "mother_id": "HD17134"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06206",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 12
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "I06205",
+   "bio": {
+    "display_name": "James Schierling",
+    "first_name": "James",
+    "last_name": "Schierling",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17140",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "I06206",
+   "bio": {
+    "display_name": "Earl Kessler",
+    "first_name": "Earl",
+    "last_name": "Kessler",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17141",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17142",
+   "bio": {
+    "display_name": "Morton Whiting Seeley",
+    "first_name": "Morton",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Whiting"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1890,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 11,
+    "city": "Austinburg",
+    "county": "Ashtabula County",
+    "state": "Ohio",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1971,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 2,
+    "city": "Ashtabula",
+    "county": "Ashtabula County",
+    "state": "Ohio",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3747",
+    "mother_id": "I00410"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06207",
+     "children_ids": [],
+     "date_year": 1914,
+     "date_month": 10,
+     "date_day": 28
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17143",
+   "bio": {
+    "display_name": "Isabella Austin Seeley Kelley",
+    "first_name": "Isabella",
+    "last_name": "Kelley",
+    "married_names": [
+     "Kelley"
+    ],
+    "middle_name": "Austin",
+    "maiden_name": "Seeley"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1892,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1953,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3747",
+    "mother_id": "I00410"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17144",
+   "bio": {
+    "display_name": "Uri Seeley",
+    "first_name": "Uri",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1893,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "HD3747",
+    "mother_id": "I00410"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ],
+   "naming_inspiration": [
+    {
+     "name_element": "Uri",
+     "inspired_by_id": "HD3745",
+     "description": "Shares the name of his uncle Uri Seeley, his father's brother."
+    }
+   ]
+  },
+  {
+   "id": "HD17145",
+   "bio": {
+    "display_name": "Mary Augusta Seeley Case",
+    "first_name": "Mary",
+    "last_name": "Case",
+    "married_names": [
+     "Case"
+    ],
+    "middle_name": "Augusta",
+    "maiden_name": "Seeley"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1897,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1977,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3747",
+    "mother_id": "I00410"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17146",
+   "bio": {
+    "display_name": "Charlotte Seeley",
+    "first_name": "Charlotte",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1899,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1901,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3747",
+    "mother_id": "I00410"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17147",
+   "bio": {
+    "display_name": "Ceylon Bernard Seeley",
+    "first_name": "Ceylon",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Bernard"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1903,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1941,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3747",
+    "mother_id": "I00410"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ],
+   "naming_inspiration": [
+    {
+     "name_element": "Ceylon Bernard",
+     "inspired_by_id": "I00407",
+     "description": "Given the name of his uncle by marriage, Ceylon Bernard, husband of his father's sister Anna."
+    }
+   ]
+  },
+  {
+   "id": "HD17148",
+   "bio": {
+    "display_name": "Orville Willard Seeley",
+    "first_name": "Orville",
+    "last_name": "Seeley",
+    "married_names": [],
+    "middle_name": "Willard",
+    "nickname": "Bill",
+    "chip_first_name": "Bill"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1907,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1997,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD3747",
+    "mother_id": "I00410"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "HD17149",
+   "bio": {
+    "display_name": "Martha Seeley",
+    "first_name": "Martha",
+    "last_name": "Seeley",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1907,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "HD3747",
+    "mother_id": "I00410"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 10
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "FamilySearch; Find a Grave; obituaries"
+    }
+   ]
+  },
+  {
+   "id": "I06207",
+   "bio": {
+    "display_name": "Myrtle L. Howard Seeley",
+    "first_name": "Myrtle",
+    "last_name": "Seeley",
+    "married_names": [
+     "Seeley"
+    ],
+    "middle_name": "L.",
+    "maiden_name": "Howard"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1893,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 31,
+    "city": "Austinburg",
+    "county": "Ashtabula County",
+    "state": "Ohio",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1975,
+    "date_precision": "exact",
+    "month": 2,
+    "day": 26,
+    "city": "Ashtabula",
+    "county": "Ashtabula County",
+    "state": "Ohio",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17142",
+     "children_ids": [],
+     "date_year": 1914,
+     "date_month": 10,
+     "date_day": 28
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
    "sources": [
     {
      "short": "FamilySearch; Find a Grave; obituaries"
