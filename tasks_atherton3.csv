@@ -1,0 +1,5 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+HD2066,cc_remove,HD1172,OK CC to HD1172 removed (explicit),/person/frederick-atherton-1865,,
+HD1172,cc_remove,HD2066,OK CC to HD2066 removed (explicit),/person/john-morgan-ii-1867,,
+HD2066,nb_remove,He took J. P. Morgan Jr.'s chair,OK NB 'He took J. P. Morgan Jr.'s chair' removed (explicit),/person/frederick-atherton-1865,,
+HD2066,nb_approved,"header=""He took J. P. Morgan Jr.'s chair"" body=""Frederick sat in on Senate hearings for years. At the inquiry into J. P. Morgan & Co. the room was full when he arrived, and when Morgan, Harvard three classes behind him, was called forward to testify, Frederick took his chair."" category=character",OK nb_approved appended verbatim: 'He took J. P. Morgan Jr.'s chair',/person/frederick-atherton-1865,,
