@@ -827145,7 +827145,14 @@
    "tags": [],
    "research_tags": [],
    "cross_connections": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Her brothers named children for her",
+     "body": "Two of Anna's brothers named children for her and her husband, Ceylon Bernard: Edward's daughter Anna Bernard Seeley, born in 1890, and Orville's son Ceylon Bernard Seeley, born in 1903."
+    }
+   ],
    "quotes": [],
    "sources": [],
    "research_sources": [],
@@ -827556,7 +827563,14 @@
    "tags": [],
    "research_tags": [],
    "cross_connections": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Lost two young daughters in Portland",
+     "body": "Edward's eldest child, Charlotte Selby Seeley, died at Portland at about four, around 1888. His daughter Alma Walker Seeley died in 1897, at about ten."
+    }
+   ],
    "quotes": [],
    "sources": [],
    "research_sources": [],
@@ -2543390,7 +2543404,14 @@
      ]
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Widowed by the war at twenty-six",
+     "body": "Marjorie married John Boyd at State College, Pennsylvania, on 15 March 1941. He was killed in action at sea on 12 October 1943."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
