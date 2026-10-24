@@ -702082,27 +702082,27 @@
    "narrative_blocks": [
     {
      "number": 1,
-     "category": "career",
-     "header": "Banker across five California institutions",
-     "body": "He worked as a banker at United California Bank in Los Angeles, Middendorff Colgate & Co., Seattle First National Bank, Crocker National Bank, First Interstate Bank, and Wells Fargo. After banking he became chairman of Washington Square Associates and Cambridge Park Properties."
+     "category": "character",
+     "header": "Pops: squash, skis and a boat anywhere",
+     "body": "To his family Rod was Pops, who played squash, tennis and golf, skied on snow and water, and would take a boat anywhere in the Northwest. He pushed his children to do their best and to be kind."
     },
     {
      "number": 2,
-     "category": "military",
-     "header": "Marine Corps service from 1958 to 1961",
-     "body": "He served in the United States Marine Corps from 1958 to 1961, between Cate School and his graduation from USC. He kept the 'Pops' nickname from his family throughout his banking career."
+     "category": "career",
+     "header": "A banker at both ends of the coast",
+     "body": "Rod's banking career ran up and down the West Coast, from United California Bank in Los Angeles to Seattle First National and the San Francisco houses of Crocker and Wells Fargo. In retirement he chaired two property firms."
     },
     {
      "number": 3,
-     "category": "education",
-     "header": "USC Man of Troy and Business School president",
-     "body": "He was elected President of the USC Business School and received the university's Man of Troy Award. He had prepped at Cate School and Menlo School of Business before USC."
+     "category": "social_reform",
+     "header": "Seattle's hospital and its stages",
+     "body": "In Seattle Rod gave more than a decade to the board of Swedish Hospital and sat on the boards of the Intiman Theatre and the Henry Art Gallery. Back on the Peninsula he served Mills Peninsula Hospital."
     },
     {
      "number": 4,
-     "category": "family",
-     "header": "Pebble Beach summers with grandfather 'The Boss'",
-     "body": "Rod's youth carried him between San Francisco, Hillsborough, and Indian Wells — but the family centerpiece was Pebble Beach, where his maternal grandfather Samuel F. B. Morse 'The Boss' had built the resort community itself."
+     "category": "military",
+     "header": "A Marine, then USC's Man of Troy",
+     "body": "Rod served in the Marine Corps from 1958 to 1961. At the University of Southern California he was president of the Business School and won the Man of Troy Award."
     }
    ],
    "cross_connections": [
@@ -702138,7 +702138,8 @@
     "nickname": "Pops",
     "display_name": "Rodman Lent Hooker Jr.",
     "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1781812292/S0066325_1_20160804_tcaesn.jpg",
-    "chip_first_name": "Rod"
+    "chip_first_name": "Rod",
+    "bio_blurb": "West Coast banker and Seattle hospital trustee"
    },
    "residence": [],
    "baptism": {},
@@ -702168,7 +702169,23 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "career": [
+    {
+     "role": "Chairman",
+     "organization": "Washington Square Associates and Cambridge Park Properties"
+    },
+    {
+     "role": "Banker",
+     "organization": "United California Bank, Seattle First National, Crocker National, First Interstate and Wells Fargo"
+    },
+    {
+     "role": "Marine",
+     "organization": "United States Marine Corps",
+     "start_year": "1958",
+     "end_year": "1961"
+    }
+   ]
   },
   {
    "id": "X02351",
@@ -716518,10 +716535,10 @@
    "is_placeholder": false,
    "has_descendants_documented": false,
    "bio": {
-    "display_name": "Mary Hooker",
+    "display_name": "Viola Hooker",
     "last_name": "Hooker",
     "married_names": [],
-    "first_name": "Mary"
+    "first_name": "Viola"
    },
    "birth": {
     "country": "United States",
@@ -716581,10 +716598,10 @@
    "is_placeholder": false,
    "has_descendants_documented": false,
    "bio": {
-    "display_name": "Teri Hooker",
+    "display_name": "Matilda Hooker",
     "last_name": "Hooker",
     "married_names": [],
-    "first_name": "Teri"
+    "first_name": "Matilda"
    },
    "birth": {
     "country": "United States",
