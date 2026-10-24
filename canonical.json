@@ -44574,7 +44574,7 @@
     {
      "type": "cousin_marriage",
      "related_id": "H00024",
-     "display_label": "Her daughter Sarah Newton married her first cousin John Wilson",
+     "display_label": ", her nephew, married her daughter Sarah, his first cousin",
      "link_text": "John Wilson"
     }
    ],
@@ -44584,26 +44584,26 @@
     {
      "number": 1,
      "category": "family",
-     "header": "Cared for her mother on the Hartford migration",
-     "body": "According to the Newton family genealogy, Mary was the daughter responsible for caring for her mother Susanna on the arduous journey from Cambridge to Hartford in 1636 — a journey in which Mrs. Hooker 'was carried on a horse litter' in poor health. Mary was roughly 13 years old."
+     "header": "At thirteen, beside her mother's litter",
+     "body": "Mary was about thirteen in 1636 when the Hooker company walked from Cambridge to found Hartford, and she was the daughter who cared for her mother, Susanna, carried the whole way on a horse litter."
     },
     {
      "number": 2,
-     "category": "family",
-     "header": "Stayed in Hartford while Newton built Farmington",
-     "body": "When Roger Newton went to establish the church at Farmington in the late 1640s, Mary remained in Hartford — their son Samuel's baptism on October 20, 1646 appears on the Hartford register, placing her there while her husband laid the groundwork for the congregation he would formally organize."
+     "category": "marriage",
+     "header": "A grandchild in her father's will",
+     "body": "Mary married the young minister Roger Newton at Hartford in 1644. When her father died in July 1647, his will counted one grandchild through her: Samuel, baptized at Hartford the autumn before."
     },
     {
      "number": 3,
      "category": "family",
-     "header": "Eight children born across three Connecticut towns",
-     "body": "The family's migrations are recorded in their children's birthplaces: Samuel and Roger Jr. born in Hartford; Susannah and John in Farmington; Ezekiel back in Hartford; then Sarah, Mary, and Alice in Milford — where the family finally settled and where Mary died on February 4, 1676."
+     "header": "From Farmington's first church to Milford",
+     "body": "Roger went ahead to gather the church at Farmington while Mary kept the baby in Hartford, and Susannah and John were born after she joined him. Two decades on the family moved to Milford, where Mary died in February 1676."
     },
     {
      "number": 4,
      "category": "family",
-     "header": "Probably born in Esher near Hooker's curacy",
-     "body": "Newton family genealogy says she was born around 1623, probably at Esher, Surrey — where Thomas Hooker had served as curate from c. 1618 to 1625. Esher was also where Hooker met her mother Susanna Garbrand."
+     "header": "Born where her parents met",
+     "body": "Mary was born about 1623, probably at Esher in Surrey, where her father was curate and where he had met her mother, Susanna Garbrand."
     }
    ],
    "bio": {
