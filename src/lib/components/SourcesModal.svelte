@@ -84,14 +84,24 @@
 			</div>
 			<div class="body">
 				<p>
-					The backbone of this project is Edward Hooker’s genealogy, <cite
-						>Descendants of Rev. Thomas Hooker, Hartford, Connecticut, 1586–1908</cite
-					>, published in Rochester, New York, in 1909 and completed by Margaret Huntington Hooker after Edward’s
-					death.
+					The backbone of this project is the many thorough and thoughtful family genealogies completed in the
+					early 20th century, including:
 				</p>
+				<ul>
+					<li>
+						<cite>Descendants of Rev. Thomas Hooker, 1586–1908</cite>, researched and written by Cdr. Edward
+						Hooker and published by Margaret Huntington Hooker after his death
+					</li>
+					<li><cite>Talcott Pedigree</cite> by S. V. Talcott (1876)</li>
+					<li><cite>Deacon Stephen Hart and His Descendants</cite> by Alfred Andrews (1875)</li>
+					<li><cite>Pierrepont Genealogies from Norman Times to 1913</cite> by R. Burnham Moffat</li>
+					<li><cite>Genealogy of the Cowles Families</cite> by Calvin Duvall Cowles (1929)</li>
+					<li><cite>The Newton Family</cite>, compiled by Robert S. Newton (1984)</li>
+				</ul>
+				<p>among many others.</p>
 				<p>
-					Each of the major founding Hartford families has its own published genealogy, and those were used
-					alongside it, together with online records from FamilySearch and Ancestry.
+					Online sources include <cite>Families of Early Milford, Connecticut</cite> and the Barbour Collection of
+					Connecticut vital records, compiled by Lucius Barnes Barbour, both on Ancestry, as well as FamilySearch.
 				</p>
 			</div>
 			<div class="acts"><button type="button" class="btn go" onclick={dismiss}>Close</button></div>
@@ -193,6 +203,28 @@
 	}
 	.body p:last-child {
 		margin-bottom: 0;
+	}
+	.body ul {
+		margin: 0 0 9px;
+		padding-left: 0;
+		list-style: none;
+		font-family: var(--font-opensans, 'Open Sans', sans-serif);
+		font-size: 13.5px;
+		line-height: 1.55;
+		color: var(--color-inkblue);
+	}
+	.body li {
+		position: relative;
+		margin-bottom: 3px;
+		padding-left: 18px;
+	}
+	/* a thin arrow marks each genealogy */
+	.body li::before {
+		content: '\2192';
+		position: absolute;
+		left: 0;
+		font-weight: 300;
+		opacity: 0.6;
 	}
 	.body cite {
 		font-style: italic;
