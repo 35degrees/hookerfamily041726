@@ -467715,20 +467715,39 @@
    "birth": {
     "year": 1772,
     "month": 12,
-    "day": 25
+    "day": 25,
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States",
+    "date_precision": "exact"
    },
    "death": {
     "year": 1851,
+    "date_precision": "exact",
     "month": 12,
     "day": 9,
-    "city": "West Haven",
-    "state": "Connecticut"
+    "city": "New Haven",
+    "county": "New Haven County",
+    "state": "Connecticut",
+    "country": "United States"
    },
    "marriages": [
     {
      "spouse_id": "X00935",
      "children_ids": [
-      "H02078"
+      "H02075",
+      "H02076",
+      "H02077",
+      "H02078",
+      "H02079",
+      "H02080",
+      "H02081",
+      "H02082",
+      "H02083",
+      "H02084",
+      "H02085",
+      "H02086"
      ],
      "marriage_number": 1,
      "date_year": 1791,
@@ -467785,7 +467804,12 @@
      "header": "Hartford 1772 to West Haven 1851 age seventy-eight",
      "body": "Eunice Hooker was born December 25, 1772 in Hartford Connecticut — daughter of Daniel Hooker (the family's third Daniel) and Mary Sedgwick Hooker — and died December 9, 1851 in West Haven Connecticut at age seventy-eight. The Hartford-to-coastal-Connecticut life arc tracked her marriage migration south to the Hubbell family's coastal New Haven County settlement."
     }
-   ]
+   ],
+   "burial": {
+    "city": "Birmingham",
+    "state": "Connecticut",
+    "country": "United States"
+   }
   },
   {
    "id": "H00996",
@@ -473079,13 +473103,14 @@
     }
    ],
    "birth": {
-    "year": 1765,
+    "year": 1764,
     "month": 5,
     "day": 9,
     "city": "Weston",
     "county": "Fairfield County",
     "state": "Connecticut",
-    "country": "United States"
+    "country": "United States",
+    "date_precision": "exact"
    },
    "death": {
     "year": 1829,
@@ -473103,14 +473128,28 @@
     {
      "spouse_id": "H00994",
      "children_ids": [
-      "H02078"
+      "H02075",
+      "H02076",
+      "H02077",
+      "H02078",
+      "H02079",
+      "H02080",
+      "H02081",
+      "H02082",
+      "H02083",
+      "H02084",
+      "H02085",
+      "H02086"
      ],
      "date_year": 1791,
      "location_state": "Connecticut",
      "marriage_number": 1
     }
    ],
-   "parents": {},
+   "parents": {
+    "father_name": "Stephen Hubbell",
+    "mother_name": "Rhoda Middlebrook Hubbell"
+   },
    "notable": {
     "is_notable": false,
     "notable_category": []
@@ -473128,7 +473167,8 @@
     "display_name": "Joseph Hubbell",
     "first_name": "Joseph",
     "last_name": "Hubbell",
-    "married_names": []
+    "married_names": [],
+    "bio_blurb": "Farmer and musician"
    },
    "residence": {},
    "baptism": {},
@@ -473139,7 +473179,20 @@
    "institutions": [],
    "landmarks": [],
    "artworks": [],
-   "quotes": []
+   "quotes": [],
+   "career": [
+    {
+     "role": "Farmer",
+     "organization": "Weston, Connecticut",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ],
+   "former_ids": [
+    "joseph-hubbell-1765"
+   ]
   },
   {
    "id": "H02078",
@@ -473166,12 +473219,20 @@
    "birth": {
     "year": 1797,
     "month": 1,
-    "day": 31
+    "day": 31,
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
    },
    "death": {
     "year": 1883,
     "month": 6,
-    "day": 12
+    "day": 12,
+    "city": "Watson",
+    "county": "Allegan County",
+    "state": "Michigan",
+    "country": "United States"
    },
    "marriages": [
     {
@@ -473191,7 +473252,10 @@
      "marriage_number": 1,
      "date_year": 1813,
      "date_month": 7,
-     "date_day": 4
+     "date_day": 4,
+     "location_city": "Trumbull",
+     "location_state": "Connecticut",
+     "location_country": "United States"
     }
    ],
    "gender": "female",
@@ -473203,10 +473267,13 @@
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Eunice Hubbell",
+    "display_name": "Eunice Hubbell Seeley",
     "first_name": "Eunice",
     "maiden_name": "Hubbell",
-    "married_names": []
+    "married_names": [
+     "Seeley"
+    ],
+    "last_name": "Seeley"
    },
    "residence": {},
    "baptism": {},
@@ -473218,7 +473285,13 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "cross_reference": {
+    "edward_hooker_1909": "2078"
+   },
+   "former_ids": [
+    "eunice-hubbell-1797"
+   ]
   },
   {
    "id": "X00936",
@@ -473269,7 +473342,10 @@
       "H03533",
       "H03534",
       "HD2708"
-     ]
+     ],
+     "location_city": "Trumbull",
+     "location_state": "Connecticut",
+     "location_country": "United States"
     }
    ],
    "notable": {
@@ -474433,20 +474509,25 @@
      "short": "EH 1909; FamilySearch; Seeley Society"
     }
    ],
-   "gender": "unknown",
+   "gender": "male",
    "research_notes": "Born and died at Versailles NY. EH entry 3534a. (EH 3534a)",
    "marriages": [],
    "notable": {
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "city": "Versailles",
+    "state": "New York",
+    "country": "United States"
+   },
    "cross_connections": [],
    "bio": {
-    "display_name": "Seeley",
+    "display_name": "[Son] Seeley",
     "last_name": "Seeley",
     "nickname": "unnamed son",
-    "married_names": []
+    "married_names": [],
+    "first_name": "[Son]"
    },
    "residence": {},
    "baptism": {},
@@ -474460,7 +474541,11 @@
    "quotes": [],
    "military_service": [],
    "number_of_marriages": 0,
-   "birth": {},
+   "birth": {
+    "city": "Versailles",
+    "state": "New York",
+    "country": "United States"
+   },
    "is_placeholder": true,
    "former_ids": [
     "seeley-seeley"
@@ -2533881,6 +2533966,1326 @@
    "is_placeholder": false,
    "number_of_marriages": 0,
    "is_living": false
+  },
+  {
+   "id": "H02075",
+   "bio": {
+    "display_name": "Eunice Hubbell",
+    "first_name": "Eunice",
+    "last_name": "Hubbell",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1792,
+    "date_precision": "approximate",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1792,
+    "date_precision": "approximate",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2075"
+   }
+  },
+  {
+   "id": "H02076",
+   "bio": {
+    "display_name": "Sally Hubbell French",
+    "first_name": "Sally",
+    "last_name": "French",
+    "married_names": [
+     "French"
+    ],
+    "maiden_name": "Hubbell",
+    "extra_names": "Sarah Hubbell"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1793,
+    "date_precision": "year_only",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1813,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06167",
+     "children_ids": [],
+     "location_city": "Weston",
+     "location_state": "Connecticut",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2076"
+   }
+  },
+  {
+   "id": "H02077",
+   "bio": {
+    "display_name": "Zalmon Hubbell",
+    "first_name": "Zalmon",
+    "last_name": "Hubbell",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1795,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 9,
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1868,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 19,
+    "city": "Trumbull",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06170",
+     "children_ids": [
+      "HD17074",
+      "HD17075",
+      "HD17076",
+      "HD17077",
+      "HD17078"
+     ],
+     "date_year": 1821,
+     "date_precision": "approximate"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2077"
+   }
+  },
+  {
+   "id": "H02079",
+   "bio": {
+    "display_name": "Polly Hubbell Hubbard",
+    "first_name": "Polly",
+    "last_name": "Hubbard",
+    "married_names": [
+     "Hubbard"
+    ],
+    "maiden_name": "Hubbell"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1799,
+    "date_precision": "year_only",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1838,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06168",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2079"
+   }
+  },
+  {
+   "id": "H02080",
+   "bio": {
+    "display_name": "Joseph Middlebrook Hubbell",
+    "first_name": "Joseph",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "middle_name": "Middlebrook"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1800,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 20,
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1831,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2080"
+   }
+  },
+  {
+   "id": "H02081",
+   "bio": {
+    "display_name": "Charlotte Hubbell",
+    "first_name": "Charlotte",
+    "last_name": "Hubbell",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1803,
+    "date_precision": "year_only",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2081"
+   }
+  },
+  {
+   "id": "H02082",
+   "bio": {
+    "display_name": "Nancy Abigail Hubbell Nichols",
+    "first_name": "Nancy",
+    "last_name": "Nichols",
+    "married_names": [
+     "Nichols"
+    ],
+    "middle_name": "Abigail",
+    "maiden_name": "Hubbell"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1804,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 10,
+    "city": "Weston",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1886,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2082"
+   }
+  },
+  {
+   "id": "H02083",
+   "bio": {
+    "display_name": "Alanson Hooker Hubbell",
+    "first_name": "Alanson",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "middle_name": "Hooker"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1808,
+    "date_precision": "year_only",
+    "city": "Weston",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1852,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2083"
+   }
+  },
+  {
+   "id": "H02084",
+   "bio": {
+    "display_name": "Mary Ann Hubbell",
+    "first_name": "Mary",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "middle_name": "Ann"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1810,
+    "date_precision": "year_only",
+    "city": "Weston",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2084"
+   }
+  },
+  {
+   "id": "H02085",
+   "bio": {
+    "display_name": "Caroline Hubbell Watts",
+    "first_name": "Caroline",
+    "last_name": "Watts",
+    "married_names": [
+     "Watts"
+    ],
+    "maiden_name": "Hubbell"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1812,
+    "date_precision": "year_only",
+    "city": "Weston",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1900,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06169",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2085"
+   }
+  },
+  {
+   "id": "H02086",
+   "bio": {
+    "display_name": "William Reilly Hubbell",
+    "first_name": "William",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "middle_name": "Reilly"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1816,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 21,
+    "city": "Weston",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1896,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "X00935",
+    "mother_id": "H00994"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 7
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ],
+   "cross_reference": {
+    "edward_hooker_1909": "2086"
+   }
+  },
+  {
+   "id": "I06167",
+   "bio": {
+    "display_name": "Daniel French",
+    "first_name": "Daniel",
+    "last_name": "French",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1789,
+    "date_precision": "approximate",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H02076",
+     "children_ids": [],
+     "location_city": "Weston",
+     "location_state": "Connecticut",
+     "location_country": "United States"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "I06168",
+   "bio": {
+    "display_name": "Stephen Hubbard",
+    "first_name": "Stephen",
+    "last_name": "Hubbard",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H02079",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "I06169",
+   "bio": {
+    "display_name": "John Watts",
+    "first_name": "John",
+    "last_name": "Watts",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H02085",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "I06170",
+   "bio": {
+    "display_name": "Laura Thorp Hubbell",
+    "first_name": "Laura",
+    "last_name": "Hubbell",
+    "married_names": [
+     "Hubbell"
+    ],
+    "maiden_name": "Thorp"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1801,
+    "date_precision": "year_only",
+    "city": "Hartford",
+    "county": "Hartford County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1869,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 6,
+    "city": "Trumbull",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H02077",
+     "children_ids": [
+      "HD17074",
+      "HD17075",
+      "HD17076",
+      "HD17077",
+      "HD17078"
+     ],
+     "date_year": 1821,
+     "date_precision": "approximate"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17074",
+   "bio": {
+    "display_name": "George Hubbell",
+    "first_name": "George",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "extra_names": "George Hubbel"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1824,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 6,
+    "city": "Trumbull",
+    "county": "Fairfield County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1854,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 23,
+    "city": "New Haven",
+    "county": "New Haven County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H02077",
+    "mother_id": "I06170"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06171",
+     "children_ids": [
+      "HD17079",
+      "HD17080",
+      "HD17081"
+     ],
+     "date_year": 1849,
+     "date_month": 9,
+     "date_day": 2,
+     "end_type": "death",
+     "end_year": 1854
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17075",
+   "bio": {
+    "display_name": "Frances Salina Hubbell",
+    "first_name": "Frances",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "middle_name": "Salina"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1832,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "H02077",
+    "mother_id": "I06170"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17076",
+   "bio": {
+    "display_name": "Elizabeth Virginia Hubbell",
+    "first_name": "Elizabeth",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "middle_name": "Virginia"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1834,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1903,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H02077",
+    "mother_id": "I06170"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17077",
+   "bio": {
+    "display_name": "John Watts Hubbell",
+    "first_name": "John",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "middle_name": "Watts"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1839,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1931,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H02077",
+    "mother_id": "I06170"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17078",
+   "bio": {
+    "display_name": "Mary Louisa Hubbell",
+    "first_name": "Mary",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "middle_name": "Louisa"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1840,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1899,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "H02077",
+    "mother_id": "I06170"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 8
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "I06171",
+   "bio": {
+    "display_name": "Elizabeth Maria Opdyke Hubbell",
+    "first_name": "Elizabeth",
+    "last_name": "Hubbell",
+    "married_names": [
+     "Hubbell"
+    ],
+    "middle_name": "Maria",
+    "maiden_name": "Opdyke"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1828,
+    "date_precision": "year_only",
+    "city": "Stillwater",
+    "county": "Sussex County",
+    "state": "New Jersey",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1857,
+    "date_precision": "year_only",
+    "city": "New Haven",
+    "county": "New Haven County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17074",
+     "children_ids": [
+      "HD17079",
+      "HD17080",
+      "HD17081"
+     ],
+     "date_year": 1849,
+     "date_month": 9,
+     "date_day": 2,
+     "end_type": "death",
+     "end_year": 1854
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17079",
+   "bio": {
+    "display_name": "George Hubbell",
+    "first_name": "George",
+    "last_name": "Hubbell",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1851,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1852,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17074",
+    "mother_id": "I06171"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17080",
+   "bio": {
+    "display_name": "Laura Amanda Hubbell",
+    "first_name": "Laura",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "middle_name": "Amanda"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1852,
+    "date_precision": "exact",
+    "month": 12,
+    "day": 4,
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "HD17074",
+    "mother_id": "I06171"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
+  },
+  {
+   "id": "HD17081",
+   "bio": {
+    "display_name": "George L. Hubbell",
+    "first_name": "George",
+    "last_name": "Hubbell",
+    "married_names": [],
+    "middle_name": "L."
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1855,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 29,
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1928,
+    "date_precision": "year_only",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD17074",
+    "mother_id": "I06171"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0,
+   "sources": [
+    {
+     "short": "EH 1909; FamilySearch"
+    }
+   ]
   }
  ],
  "landmarks": [
