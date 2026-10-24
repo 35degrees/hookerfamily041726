@@ -2206863,7 +2206863,14 @@
    "number_of_marriages": 1,
    "cross_connections": [],
    "tags": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "literature",
+     "header": "He wrote on Lincoln as an orator",
+     "body": "Ramsey, who also went by William Ramsey Probasco, published Why Abraham Lincoln Was Successful as an Orator around 1902. He married Clara Mary Tuttle at Richmond, Virginia, on 30 June 1908."
+    }
+   ],
    "last_updated": "2026-09-20",
    "burial": {
     "cemetery_id": "CEM083"
@@ -2533112,6 +2533119,12 @@
      "category": "family",
      "header": "His wife died the day their daughter arrived",
      "body": "Tyler married Mary Lois Bridwell at Walla Walla in May 1937. She died there on 21 April 1939, the day their daughter Mary Lois was born. In 1942 he married Emma Jane Johnson of Pendleton."
+    },
+    {
+     "number": 3,
+     "category": "arts",
+     "header": "A boy magician in the margins",
+     "body": "In his 1914 eighth-grade geography book, kept at the family's beach house, West Dunes, Tyler filled nine pages with drawings, among them a playbill for Seeley in his new and startling feat of magic, conjuring eggs from a top hat."
     }
    ],
    "tags": [],
