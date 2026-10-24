@@ -467936,7 +467936,9 @@
     "father_id": "X00910",
     "mother_id": "H00986"
    },
-   "tags": [],
+   "tags": [
+    "freemason"
+   ],
    "sources": [
     {
      "short": "EH 1909; FamilySearch"
@@ -467955,7 +467957,7 @@
    "death": {
     "year": 1823,
     "date_precision": "exact",
-    "month": 12,
+    "month": 3,
     "day": 8,
     "city": "Montpelier",
     "county": "Washington County",
@@ -467978,8 +467980,7 @@
      ],
      "marriage_number": 1,
      "date_year": 1799,
-     "date_month": 5,
-     "date_day": 2
+     "date_month": 6
     }
    ],
    "gender": "male",
@@ -468003,7 +468004,8 @@
     "first_name": "Wyllys",
     "last_name": "Cadwell",
     "middle_name": "Jay",
-    "married_names": []
+    "married_names": [],
+    "bio_blurb": "Early Montpelier merchant"
    },
    "residence": {},
    "baptism": {},
@@ -468018,7 +468020,17 @@
    "military_service": [],
    "burial": {
     "cemetery_id": "CEM180"
-   }
+   },
+   "career": [
+    {
+     "role": "Merchant",
+     "organization": "Montpelier, Vermont",
+     "location": null,
+     "start_year": 1799,
+     "end_year": 1823,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "HD2677",
@@ -468367,7 +468379,13 @@
    },
    "gender": "male",
    "research_notes": "b. 1791; d. 1872 age ~81. Named \"Hooker\" — preserving the Hooker surname as a middle name into the 6th generation. (FamilySearch)",
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06148",
+     "children_ids": []
+    }
+   ],
    "notable": {
     "is_notable": false,
     "notable_category": []
@@ -468391,7 +468409,7 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "number_of_marriages": 0
+   "number_of_marriages": 1
   },
   {
    "id": "X00911",
@@ -468414,7 +468432,7 @@
     "year": 1776,
     "date_precision": "exact",
     "month": 1,
-    "day": 27,
+    "day": 28,
     "city": "Hatfield",
     "county": "Hampshire County",
     "state": "Massachusetts",
@@ -468449,8 +468467,7 @@
       "HD17019"
      ],
      "date_year": 1799,
-     "date_month": 5,
-     "date_day": 2
+     "date_month": 6
     }
    ],
    "parents": {},
@@ -472844,7 +472861,7 @@
       "HD17020"
      ],
      "date_month": 12,
-     "date_day": 14,
+     "date_day": 4,
      "location_city": "Montpelier",
      "location_state": "Vermont",
      "location_country": "United States"
@@ -472926,7 +472943,7 @@
      "marriage_number": 1,
      "date_year": 1836,
      "date_month": 12,
-     "date_day": 14,
+     "date_day": 4,
      "location_city": "Montpelier",
      "location_state": "Vermont",
      "location_country": "United States"
@@ -545797,13 +545814,17 @@
    },
    "birth": {
     "year": 1830,
-    "month": 1,
-    "day": 1
+    "date_precision": "exact",
+    "month": 9,
+    "day": 22,
+    "country": "United States"
    },
    "death": {
     "year": 1831,
-    "month": 1,
-    "day": 1
+    "date_precision": "exact",
+    "month": 10,
+    "day": 5,
+    "country": "United States"
    },
    "parents": {
     "father_id": "X00912",
@@ -545863,14 +545884,21 @@
     "is_easter_egg": false
    },
    "birth": {
-    "year": 1837,
-    "month": 1,
-    "day": 1
+    "year": 1834,
+    "date_precision": "exact",
+    "month": 3,
+    "day": 31,
+    "country": "United States"
    },
    "death": {
     "year": 1837,
-    "month": 1,
-    "day": 1
+    "date_precision": "exact",
+    "month": 8,
+    "day": 5,
+    "city": "Kalamazoo",
+    "county": "Kalamazoo County",
+    "state": "Michigan",
+    "country": "United States"
    },
    "parents": {
     "father_id": "X00912",
@@ -2525090,12 +2525118,22 @@
    "gender": "female",
    "birth": {
     "year": 1801,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 3,
+    "day": 26,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
     "country": "United States"
    },
    "death": {
     "year": 1802,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 8,
+    "day": 26,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
     "country": "United States"
    },
    "parents": {
@@ -2525139,8 +2525177,8 @@
     "date_precision": "exact",
     "month": 2,
     "day": 14,
-    "city": "Royalton",
-    "county": "Windsor County",
+    "city": "Montpelier",
+    "county": "Washington County",
     "state": "Vermont",
     "country": "United States"
    },
@@ -2525204,12 +2525242,22 @@
    "gender": "female",
    "birth": {
     "year": 1806,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 11,
+    "day": 14,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
     "country": "United States"
    },
    "death": {
     "year": 1879,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 3,
+    "day": 29,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
     "country": "United States"
    },
    "parents": {
@@ -2525238,28 +2525286,60 @@
   {
    "id": "HD17017",
    "bio": {
-    "display_name": "Julia Ann Cadwell",
+    "display_name": "Julia Ann Cadwell Spalding",
     "first_name": "Julia",
-    "last_name": "Cadwell",
-    "married_names": [],
-    "middle_name": "Ann"
+    "last_name": "Spalding",
+    "married_names": [
+     "Spalding"
+    ],
+    "middle_name": "Ann",
+    "maiden_name": "Cadwell"
    },
    "gender": "female",
    "birth": {
     "year": 1809,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 1,
+    "day": 30,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
     "country": "United States"
    },
    "death": {
     "year": 1854,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 4,
+    "day": 17,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
     "country": "United States"
    },
    "parents": {
     "father_id": "HD2675",
     "mother_id": "X00911"
    },
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06138",
+     "children_ids": [
+      "H04742",
+      "H04743",
+      "H04744",
+      "H04745",
+      "H04746",
+      "H04747",
+      "H04748",
+      "H04749",
+      "H04750"
+     ],
+     "date_year": 1833,
+     "date_month": 10,
+     "date_day": 17
+    }
+   ],
    "narrative_blocks": [],
    "tags": [],
    "cross_connections": [],
@@ -2525276,7 +2525356,7 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0
+   "number_of_marriages": 1
   },
   {
    "id": "H03499",
@@ -2525352,16 +2525432,25 @@
   {
    "id": "HD17018",
    "bio": {
-    "display_name": "Eliza Ann Cadwell",
+    "display_name": "Eliza Ann Cadwell Palmer",
     "first_name": "Eliza",
-    "last_name": "Cadwell",
-    "married_names": [],
-    "middle_name": "Ann"
+    "last_name": "Palmer",
+    "married_names": [
+     "Hutchins",
+     "Palmer"
+    ],
+    "middle_name": "Ann",
+    "maiden_name": "Cadwell"
    },
    "gender": "female",
    "birth": {
-    "year": 1814,
-    "date_precision": "year_only",
+    "year": 1813,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 28,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
     "country": "United States"
    },
    "death": {},
@@ -2525369,7 +2525458,21 @@
     "father_id": "HD2675",
     "mother_id": "X00911"
    },
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06146",
+     "children_ids": [
+      "H04756"
+     ],
+     "end_type": "divorce"
+    },
+    {
+     "marriage_number": 2,
+     "spouse_id": "I06147",
+     "children_ids": []
+    }
+   ],
    "narrative_blocks": [],
    "tags": [],
    "cross_connections": [],
@@ -2525386,7 +2525489,7 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 0
+   "number_of_marriages": 2
   },
   {
    "id": "HD17019",
@@ -2525715,14 +2525818,30 @@
   {
    "id": "H04755",
    "bio": {
-    "display_name": "Eliza Riker",
+    "display_name": "Eliza White Riker",
     "first_name": "Eliza",
     "last_name": "Riker",
-    "married_names": []
+    "married_names": [],
+    "middle_name": "White"
    },
    "gender": "female",
-   "birth": {},
-   "death": {},
+   "birth": {
+    "year": 1851,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 29,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1886,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 12,
+    "country": "United States"
+   },
    "parents": {
     "father_id": "I06121",
     "mother_id": "H03499"
@@ -2525948,7 +2526067,8 @@
     "first_name": "Constant",
     "last_name": "Storrs",
     "married_names": [],
-    "middle_name": "William"
+    "middle_name": "William",
+    "bio_blurb": "Montpelier merchant"
    },
    "gender": "male",
    "birth": {
@@ -2526003,7 +2526123,17 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "career": [
+    {
+     "role": "Merchant",
+     "organization": "Montpelier, Vermont",
+     "location": null,
+     "start_year": 1825,
+     "end_year": 1872,
+     "notes": null
+    }
+   ]
   },
   {
    "id": "HD17022",
@@ -2526193,12 +2526323,22 @@
    "gender": "female",
    "birth": {
     "year": 1838,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 8,
+    "day": 5,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
     "country": "United States"
    },
    "death": {
     "year": 1841,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 4,
+    "day": 14,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
     "country": "United States"
    },
    "parents": {
@@ -2526236,12 +2526376,19 @@
    "gender": "female",
    "birth": {
     "year": 1841,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 7,
+    "day": 3,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
     "country": "United States"
    },
    "death": {
     "year": 1870,
-    "date_precision": "year_only",
+    "date_precision": "exact",
+    "month": 6,
+    "day": 29,
     "country": "United States"
    },
    "parents": {
@@ -2526277,7 +2526424,8 @@
      "Storrs"
     ],
     "middle_name": "Ann",
-    "maiden_name": "Roberts"
+    "maiden_name": "Roberts",
+    "nickname": "Lizzie"
    },
    "gender": "female",
    "birth": {
@@ -2528234,6 +2528382,1013 @@
     {
      "marriage_number": 1,
      "spouse_id": "HD17038",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06138",
+   "bio": {
+    "display_name": "Levi Spalding",
+    "first_name": "Levi",
+    "last_name": "Spalding",
+    "married_names": [],
+    "bio_blurb": "Merchant"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1805,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 9,
+    "city": "Sharon",
+    "county": "Windsor County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1871,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 3,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17017",
+     "children_ids": [
+      "H04742",
+      "H04743",
+      "H04744",
+      "H04745",
+      "H04746",
+      "H04747",
+      "H04748",
+      "H04749",
+      "H04750"
+     ],
+     "date_year": 1833,
+     "date_month": 10,
+     "date_day": 17
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "career": [
+    {
+     "role": "Merchant",
+     "organization": "Montpelier, Vermont",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    },
+    {
+     "role": "Merchant",
+     "organization": "Rock Island, Canada",
+     "location": null,
+     "start_year": null,
+     "end_year": 1845,
+     "notes": null
+    },
+    {
+     "role": "Merchant",
+     "organization": "Derby Line, Vermont",
+     "location": null,
+     "start_year": 1845,
+     "end_year": null,
+     "notes": null
+    }
+   ]
+  },
+  {
+   "id": "H04742",
+   "bio": {
+    "display_name": "William Spalding",
+    "first_name": "William",
+    "last_name": "Spalding",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1834,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 27,
+    "city": "Rock Island",
+    "county": "Stanstead",
+    "state": "Quebec",
+    "country": "Canada"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06138",
+    "mother_id": "HD17017"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06139",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06139",
+   "bio": {
+    "display_name": "Emma J. Bingham Spalding",
+    "first_name": "Emma",
+    "last_name": "Spalding",
+    "married_names": [
+     "Spalding"
+    ],
+    "middle_name": "J.",
+    "maiden_name": "Bingham"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04742",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H04743",
+   "bio": {
+    "display_name": "Levi Lincoln Spalding",
+    "first_name": "Levi",
+    "last_name": "Spalding",
+    "married_names": [],
+    "middle_name": "Lincoln"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1836,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1836,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06138",
+    "mother_id": "HD17017"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "H04744",
+   "bio": {
+    "display_name": "Julia Maria Spalding Ovitt",
+    "first_name": "Julia",
+    "last_name": "Ovitt",
+    "married_names": [
+     "Ovitt"
+    ],
+    "middle_name": "Maria",
+    "maiden_name": "Spalding"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1837,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 28,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06138",
+    "mother_id": "HD17017"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06140",
+     "children_ids": [],
+     "date_year": 1861,
+     "date_month": 12,
+     "date_day": 14
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06140",
+   "bio": {
+    "display_name": "Almyron W. Ovitt",
+    "first_name": "Almyron",
+    "last_name": "Ovitt",
+    "married_names": [],
+    "middle_name": "W."
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04744",
+     "children_ids": [],
+     "date_year": 1861,
+     "date_month": 12,
+     "date_day": 14
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H04745",
+   "bio": {
+    "display_name": "Stephen Foster Spalding",
+    "first_name": "Stephen",
+    "last_name": "Spalding",
+    "married_names": [],
+    "middle_name": "Foster"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1840,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 25,
+    "country": "United States"
+   },
+   "death": {
+    "year": 1863,
+    "date_precision": "exact",
+    "month": 6,
+    "day": 14,
+    "city": "Port Hudson",
+    "county": "East Baton Rouge Parish",
+    "state": "Louisiana",
+    "country": "United States",
+    "cause": "Killed at the battle of Port Hudson"
+   },
+   "parents": {
+    "father_id": "I06138",
+    "mother_id": "HD17017"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [
+    "civil_war",
+    "killed_in_action"
+   ],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "H04746",
+   "bio": {
+    "display_name": "Clara Augusta Spalding Bingham",
+    "first_name": "Clara",
+    "last_name": "Bingham",
+    "married_names": [
+     "Bingham"
+    ],
+    "middle_name": "Augusta",
+    "maiden_name": "Spalding"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1842,
+    "date_precision": "exact",
+    "month": 4,
+    "day": 4,
+    "city": "Rock Island",
+    "county": "Stanstead",
+    "state": "Quebec",
+    "country": "Canada"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06138",
+    "mother_id": "HD17017"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06141",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06141",
+   "bio": {
+    "display_name": "Charles O. Bingham",
+    "first_name": "Charles",
+    "last_name": "Bingham",
+    "married_names": [],
+    "middle_name": "O."
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04746",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H04747",
+   "bio": {
+    "display_name": "Sarah Jerusha Spalding Hall",
+    "first_name": "Sarah",
+    "last_name": "Hall",
+    "married_names": [
+     "Hall"
+    ],
+    "middle_name": "Jerusha",
+    "maiden_name": "Spalding"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1844,
+    "date_precision": "exact",
+    "month": 8,
+    "day": 26,
+    "city": "Rock Island",
+    "county": "Stanstead",
+    "state": "Quebec",
+    "country": "Canada"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06138",
+    "mother_id": "HD17017"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06142",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06142",
+   "bio": {
+    "display_name": "William S. Hall",
+    "first_name": "William",
+    "last_name": "Hall",
+    "married_names": [],
+    "middle_name": "S."
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04747",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H04748",
+   "bio": {
+    "display_name": "Lyman Spalding",
+    "first_name": "Lyman",
+    "last_name": "Spalding",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1846,
+    "date_precision": "exact",
+    "month": 11,
+    "day": 14,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06138",
+    "mother_id": "HD17017"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06143",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06143",
+   "bio": {
+    "display_name": "Juliet A. Long Spalding",
+    "first_name": "Juliet",
+    "last_name": "Spalding",
+    "married_names": [
+     "Spalding"
+    ],
+    "middle_name": "A.",
+    "maiden_name": "Long"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04748",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H04749",
+   "bio": {
+    "display_name": "Cornelia Cadwell Spalding Bixby",
+    "first_name": "Cornelia",
+    "last_name": "Bixby",
+    "married_names": [
+     "Bixby"
+    ],
+    "middle_name": "Cadwell",
+    "maiden_name": "Spalding"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1850,
+    "date_precision": "exact",
+    "month": 7,
+    "day": 21,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06138",
+    "mother_id": "HD17017"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06144",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06144",
+   "bio": {
+    "display_name": "George W. Bixby",
+    "first_name": "George",
+    "last_name": "Bixby",
+    "married_names": [],
+    "middle_name": "W."
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04749",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H04750",
+   "bio": {
+    "display_name": "Gertrude White Spalding Hayden",
+    "first_name": "Gertrude",
+    "last_name": "Hayden",
+    "married_names": [
+     "Hayden"
+    ],
+    "middle_name": "White",
+    "maiden_name": "Spalding"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1852,
+    "date_precision": "exact",
+    "month": 10,
+    "day": 30,
+    "city": "Derby Line",
+    "county": "Orleans County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1876,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 6,
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "I06138",
+    "mother_id": "HD17017"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06145",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06145",
+   "bio": {
+    "display_name": "Edward C. Hayden",
+    "first_name": "Edward",
+    "last_name": "Hayden",
+    "married_names": [],
+    "middle_name": "C."
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "H04750",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "I06146",
+   "bio": {
+    "display_name": "Joseph Hutchins",
+    "first_name": "Joseph",
+    "last_name": "Hutchins",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1809,
+    "date_precision": "year_only",
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17018",
+     "children_ids": [
+      "H04756"
+     ],
+     "end_type": "divorce"
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1
+  },
+  {
+   "id": "H04756",
+   "bio": {
+    "display_name": "James C. Hutchins",
+    "first_name": "James",
+    "last_name": "Hutchins",
+    "married_names": [],
+    "middle_name": "C."
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1835,
+    "date_precision": "exact",
+    "month": 9,
+    "day": 10,
+    "city": "Montpelier",
+    "county": "Washington County",
+    "state": "Vermont",
+    "country": "United States"
+   },
+   "death": {},
+   "parents": {
+    "father_id": "I06146",
+    "mother_id": "HD17018"
+   },
+   "marriages": [],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false,
+    "generation_from_thomas": 9
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 0
+  },
+  {
+   "id": "I06147",
+   "bio": {
+    "display_name": "John Palmer",
+    "first_name": "John",
+    "last_name": "Palmer",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17018",
+     "children_ids": []
+    }
+   ],
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "classification": {
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_easter_egg": false
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false,
+   "number_of_marriages": 1,
+   "career": [
+    {
+     "role": "Merchant",
+     "organization": "Chicago, Illinois",
+     "location": null,
+     "start_year": null,
+     "end_year": null,
+     "notes": null
+    }
+   ]
+  },
+  {
+   "id": "I06148",
+   "bio": {
+    "display_name": "Mary Sawyer Hutchins Cadwell",
+    "first_name": "Mary",
+    "last_name": "Cadwell",
+    "married_names": [
+     "Cadwell"
+    ],
+    "middle_name": "Sawyer",
+    "maiden_name": "Hutchins"
+   },
+   "gender": "female",
+   "birth": {},
+   "death": {},
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD2681",
      "children_ids": []
     }
    ],
