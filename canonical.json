@@ -716401,16 +716401,16 @@
      "organization": "Smokedown Farm, Sharon, Connecticut"
     },
     {
-     "role": "Tuberculosis advisor",
-     "organization": "Government of India (advisory role)",
-     "location": "India",
-     "notes": "Advised on national tuberculosis control."
-    },
-    {
      "role": "Director, TB-HIV Research Program",
      "organization": "U.S. Centers for Disease Control and Prevention (CDC)",
      "location": "Gaborone, Botswana",
      "notes": "Directed CDC's TB and HIV research program in Botswana for several years; family resident in Gaborone during this period."
+    },
+    {
+     "role": "Tuberculosis advisor",
+     "organization": "Government of India (advisory role)",
+     "location": "India",
+     "notes": "Advised on national tuberculosis control."
     },
     {
      "role": "Program assistance",
