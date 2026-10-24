@@ -2528565,7 +2528565,7 @@
      "number": 2,
      "category": "family",
      "header": "His father came to Sharon at eleven",
-     "body": "Levi's father, Deacon Reuben Spalding, came to Sharon, Vermont, in 1769 at eleven, when the town had seven families, and lived on the same farm eighty years. He was a sergeant in the Revolution and a deacon for forty-two years."
+     "body": "Levi's father, Deacon Reuben Spalding, born at Tyringham in 1758, came to Sharon, Vermont, in 1769 at eleven, when the town had seven families. He served as a Revolutionary sergeant and lived on that farm until he died in 1849."
     },
     {
      "number": 3,
@@ -2529014,8 +2529014,14 @@
     {
      "number": 4,
      "category": "military",
-     "header": "Acting adjutant on the siege's 24th day",
-     "body": "Stephen was acting adjutant of the 8th Vermont when it charged the Port Hudson works on 14 June 1863, the 24th day of the siege, eleven days short of his twenty-third birthday. His body was recovered and sent home to Vermont."
+     "header": "Killed in the second assault",
+     "body": "Stephen was adjutant of the 8th Vermont in the second assault on the Port Hudson works, on 14 June 1863, the 24th day of the siege and eleven days short of his twenty-third birthday. His body was recovered and sent home to Vermont."
+    },
+    {
+     "number": 5,
+     "category": "military",
+     "header": "In command of Company B at New Orleans",
+     "body": "When the 8th Vermont reached New Orleans, Company B's captain was put on detached service and Stephen took the company. In the spring of 1863 he was made adjutant of the regiment, still leading his company in action."
     }
    ],
    "tags": [
@@ -2529157,7 +2529163,14 @@
      "date_day": 14
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Two widowed sisters at Derby",
+     "body": "Clara married Charles O. Brigham, a lawyer and Civil War major, in February 1867; they had no children. Widowed in 1890, she shared a house at Derby with her widowed sister Sarah, and died there in 1914."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2529223,7 +2529236,14 @@
      "date_day": 14
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "military",
+     "header": "Captain, then major, of Connecticut artillery",
+     "body": "Charles was born at Fitchburg, Massachusetts, and served in the Civil War with the 1st Connecticut Heavy Artillery, as a captain and later a major. He practised law afterwards and died at Derby, Vermont, in 1890."
+    }
+   ],
    "tags": [
     "civil_war"
    ],
@@ -2529325,7 +2529345,14 @@
      "end_year": 1894
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Chicago, then a widow's last years",
+     "body": "Sarah married William S. Hall in June 1865 and lived with him for a time in Chicago. Widowed in 1894 and childless, she was living with her sister Clara at Derby by 1900. She took her own life at Newton, Massachusetts, in 1903."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2529514,7 +2529541,14 @@
      "date_year": 1878
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Fifty years in Dorchester",
+     "body": "Juliet grew up in Cambridge and moved to Dorchester when she married Lyman Spalding in 1878. She was a charter member of the Dorchester Women's Club and attended the First Parish Church there until her death in 1934."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2531442,7 +2531476,14 @@
     "mother_id": "I06143"
    },
    "marriages": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Nine months old",
+     "body": "Robby was born at Boston on 10 October 1881 and died there on 9 August 1882. He is buried at Cedar Grove in Dorchester, where his parents were later laid beside him."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
