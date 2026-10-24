@@ -474076,7 +474076,15 @@
    "landmarks": [],
    "artworks": [],
    "quotes": [],
-   "military_service": []
+   "military_service": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "death",
+     "header": "Died ten weeks after his eleventh child",
+     "body": "Roswell died at Leavenworth, Kansas, on 13 February 1867, at forty-two, ten weeks after his eleventh child, Laura Athalia, was born. His wife, Isabel Stevenson Crawford Seeley, stayed on in Leavenworth until her death in 1882."
+    }
+   ]
   },
   {
    "id": "X00941",
@@ -474265,6 +474273,14 @@
    "military_service": [],
    "former_ids": [
     "ann-seeley-1827"
+   ],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Two sets of twins, fourteen years apart",
+     "body": "Ann Eliza had eleven children with her husband, Eleazer Taylor. Of her twins born 25 June 1854, Alma Violet died that October at Miles Grove, Pennsylvania; of the pair born 6 January 1868, when she was forty, Anna Grace lived one day."
+    }
    ]
   },
   {
@@ -474479,6 +474495,14 @@
    ],
    "former_ids": [
     "freeman-seeley-1830"
+   ],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "marriage",
+     "header": "Five wives, from St. Louis to Tennessee",
+     "body": "Freeman, a carpenter like his father, married five times. His first wife, Mrs. Catherine Churchill of St. Louis, died at New Orleans; he and Mary Hood of Alton, Illinois, separated after their son was born; in 1879 he married Harriet Maria Blount at Jacks Creek, Tennessee."
+    }
    ]
   },
   {
@@ -474574,6 +474598,14 @@
    "military_service": [],
    "former_ids": [
     "julia-seeley-1832"
+   ],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "family",
+     "header": "Fifteen children on a Wisconsin farm",
+     "body": "Julia married William Simons, a farmer from Paris, Kentucky, at seventeen and had fifteen children between 1851 and 1878, the last when she was forty-five. A daughter born in 1874 carried her mother's full name, Eunice Hubbell Simons."
+    }
    ]
   },
   {
