@@ -726,13 +726,29 @@
 		cursor: pointer;
 		transition: opacity 160ms ease-out;
 	}
-	.row-wrap:hover .row-x,
 	.row-x:focus-visible {
 		opacity: 0.5;
 		outline: none;
 	}
-	.row-x:hover {
-		opacity: 1;
+	/* THE HOVER REVEAL ONLY WHERE THERE IS HOVER (Oct 24, Sam: on iPhone and iPad "I'll tap one, nothing happens,
+	   then i tap again… and then it opens"). iOS Safari treats a tap whose emulated hover would make content
+	   APPEAR as a hover, and only the second tap as the click — and `.row-wrap:hover` fading the × in from 0 is
+	   exactly that, on every row. Scoped to devices that really hover, the first tap is the click. */
+	@media (hover: hover) {
+		.row-wrap:hover .row-x {
+			opacity: 0.5;
+		}
+		.row-x:hover {
+			opacity: 1;
+		}
+	}
+	/* …and on a touch screen the × simply shows, quietly. It was otherwise unreachable there: no hover, no ×, no way
+	   to remove a bookmark short of the double tap that revealed it. */
+	@media (hover: none) {
+		.row-x {
+			opacity: 0.5;
+			transition: none;
+		}
 	}
 
 	@media (max-width: 620px) {

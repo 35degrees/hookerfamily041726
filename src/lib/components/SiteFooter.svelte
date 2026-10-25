@@ -19,12 +19,19 @@
 	import { featured } from '#lib/state/featured.svelte.js';
 	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
-	import { auth } from '#lib/state/auth.svelte.js';
 	import { openModal } from '#lib/state/modal.svelte.js';
 
 	/** HD3386's slug. Living, so the year is withheld from it; if his name ever changes, redirects.json maps
 	 *  the old slug and the warm path falls back to a real navigation that follows it. */
 	const ABOUT_SLUG = 'samuel-hooker';
+	/**
+	 * INLINE — the PHONE footer (Sam, Oct 24: "on a phone i want all footer items… all four items oriented
+	 * horizontally right aligned with 2026 at the right"). Not the fixed corner: on a phone the page scrolls, so the
+	 * footer is the last thing in the stage's own column, a fixed gap below the last child chip (+page.svelte
+	 * `.phone-footer`), and it moves with the content rather than floating over it. The two rows simply sit side
+	 * by side, which is exactly the order asked for: Privacy · Sources · About / Contact · © 2026.
+	 */
+	let { inline = false }: { inline?: boolean } = $props();
 	const YEAR = 2026;
 
 	const onDark = $derived(GROUNDS[groundState.idx]?.kind === 'dark');
@@ -40,13 +47,20 @@
      height with the children row, so the footer grows UP into empty paper rather than LEFT into the chips:
      the primary row (About / Contact and the year) at 11px, 8% under the corner chrome's 12, nearest the corner;
      the secondary links above it, smaller again. Narrower than the one-row footer was with half the links. -->
-<footer class="site-footer" class:on-dark={onDark} class:in-zone={inZone} class:stacked={stage.tabletLandscape}>
-	<!-- THE SMALL ROW ON TOP (Sam, Oct 9): Privacy then Sources, right-aligned, so Sources holds the corner's edge and
-	     Privacy appears beside it only for a signed-in reader (it is about what an account stores, and holds the delete). -->
+<footer
+	class="site-footer"
+	class:on-dark={onDark}
+	class:in-zone={inZone}
+	class:stacked={stage.tabletLandscape && !inline}
+	class:inline
+>
+	<!-- THE SMALL ROW ON TOP (Sam, Oct 9): Privacy then Sources, right-aligned, so Sources holds the corner's edge.
+	     PRIVACY IS FOR EVERYONE NOW (Oct 24). It was signed-in only, but the contact form collects a visitor's name and
+	     email whether or not they have an account, and a privacy statement is something Google's quality guidelines and
+	     California's CalOPPA both expect to be conspicuous. PrivacyModal already reads correctly signed out ("When you
+	     sign in, this site keeps…", and the contact form's note); its Delete button stays signed-in only. -->
 	<div class="row secondary">
-		{#if auth.signedIn}
-			<button type="button" class="about" onclick={() => openModal('privacy')}>Privacy</button>
-		{/if}
+		<button type="button" class="about" onclick={() => openModal('privacy')}>Privacy</button>
 		<button type="button" class="about" onclick={() => openModal('sources')}>Sources</button>
 	</div>
 	<div class="row primary">
@@ -113,6 +127,25 @@
 	.about:focus-visible {
 		color: rgba(43, 38, 32, 0.98);
 		outline: none;
+	}
+	/* THE PHONE ROW (Oct 24): in the page's flow, one line, right-aligned, © last. One size for all four — a phone
+	   reader taps these, so 12px with a taller hit area rather than the corner's 10/11 split. */
+	.site-footer.inline {
+		position: static;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 14px;
+		width: 100%;
+	}
+	.site-footer.inline .row,
+	.site-footer.inline .row.primary,
+	.site-footer.inline .row.secondary {
+		gap: 14px;
+		font-size: 12px;
+	}
+	.site-footer.inline .about {
+		padding: 10px 2px;
 	}
 	/* The copyright is information, not a control: a step further back than the link beside it. */
 	.copy {

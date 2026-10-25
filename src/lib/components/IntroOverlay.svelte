@@ -499,6 +499,16 @@
 		cursor: pointer;
 		pointer-events: auto;
 	}
+	/* A FINGER-SIZED FLOOR ON TOUCH SCREENS (Oct 24, Sam: on a phone the arrow is "quite small… there should be a min
+	   size… an easy finger press on both tablet ipad mini and phone"). The width above scales with the title, which is
+	   right for a mouse; on a 393px phone it left a ~20px ring, and the iPad mini keeps the desktop's ~30px. On a coarse
+	   pointer the button never drops below 64px (the ring ~37px, inside Apple's 44pt tap floor with room to spare).
+	   Desktop is untouched: a mouse has no floor to clear. */
+	@media (pointer: coarse) {
+		.enter {
+			width: max(calc(100% * 120 / 1600 + 20px), 64px);
+		}
+	}
 	.enter svg {
 		display: block;
 		width: 100%;

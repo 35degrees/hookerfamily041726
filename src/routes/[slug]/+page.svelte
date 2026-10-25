@@ -2536,6 +2536,14 @@
 			</div>
 		</div>
 	{/if}
+
+	<!-- THE PHONE FOOTER (Sam, Oct 24) — the last thing in the stage's column, so it sits a fixed gap below the last
+	     child chip whatever the family's size, and scrolls with the page. The desktop footer is fixed chrome in the
+	     corner (mounted with the other chrome, outside the stage); a phone has no corner to spare, which is why it was missing there until now. Held through the
+	     intro with the rest of the chrome. -->
+	{#if stage.phone}
+		<div class="phone-footer intro-chrome" class:held={introArrival} class:away={!familyLanded}><SiteFooter inline /></div>
+	{/if}
 </div>
 </div>
 
@@ -3254,6 +3262,23 @@
 	   Opacity only — a transform or filter here would re-base their position:fixed (design §33.1). */
 	.intro-chrome {
 		transition: opacity 600ms ease;
+	}
+	/* Stretched across the column so the row can right-align; the gap below the last chip is fixed (Sam: "fixed
+	   height down from final child chip"), and the stage's own bottom padding still follows it. */
+	.phone-footer {
+		align-self: stretch;
+		margin-top: 44px;
+		transition: opacity 220ms ease 120ms;
+	}
+	/* GONE FOR THE FLIGHT, BACK AT THE LANDING (Oct 24). The footer sits under the family, so it moves when the family
+	   does — measured, in one step ~0.12-0.16s after the tap, and going from a big family to a small one it jumped up
+	   into view while the new card was still flying. Same rule as the sibling trigger (design §21.3): nothing that
+	   belongs to the incoming person paints before they land. `familyLanded` flips false with the new data (design
+	   §49.5), so it vanishes on the tap with no transition and fades in once the card is down. */
+	.phone-footer.away {
+		opacity: 0;
+		transition: none;
+		pointer-events: none;
 	}
 	.intro-chrome.held {
 		opacity: 0;
