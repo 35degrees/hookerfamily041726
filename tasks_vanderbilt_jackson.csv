@@ -1,0 +1,5 @@
+person_id,field,value_or_angle,status,slug,proposed,decision
+X3162,cc,"related=HD7831 link=""James Vanderbilt"" label=""cast Michael Shannon as Jackson in his 2025 film Nuremberg""",OK cc->HD7831 added; FLAG needs reciprocal cc row on HD7831,/person/robert-jackson-1892,,
+HD7831,cc,"related=X3162 link=""Robert H. Jackson"" label=""was the chief American prosecutor at the Nuremberg trials""",OK cc->X3162 added (reciprocal present),/person/james-vanderbilt-1975,,
+HD7831,career,"role=""Writer and director"" organization=""Nuremberg, Sony Pictures Classics"" start_year=2025",OK career record appended,/person/james-vanderbilt-1975,,
+HD7831,nb_approved,"header=""He put Nuremberg on the screen"" body=""In 2025 James wrote and directed Nuremberg, from Jack El-Hai's book The Nazi and the Psychiatrist, with Russell Crowe as Hermann Göring, Rami Malek as the Army psychiatrist who studied him, and Michael Shannon as the chief prosecutor, Robert H. Jackson."" category=arts",OK nb_approved appended verbatim: 'He put Nuremberg on the screen',/person/james-vanderbilt-1975,,

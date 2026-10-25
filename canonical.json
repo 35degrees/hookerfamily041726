@@ -1266928,6 +1266928,12 @@
      "type": "connection",
      "link_text": "Elizabeth Merwin Page Harris",
      "display_label": "opposed the removal of Japanese Americans from California in 1942"
+    },
+    {
+     "related_id": "HD7831",
+     "type": "connection",
+     "link_text": "James Vanderbilt",
+     "display_label": "cast Michael Shannon as Jackson in his 2025 film Nuremberg"
     }
    ],
    "quotes": [],
@@ -1510620,7 +1510626,13 @@
      "notes": "Concord, New Hampshire"
     }
    ],
-   "career": [],
+   "career": [
+    {
+     "role": "Writer and director",
+     "organization": "Nuremberg, Sony Pictures Classics",
+     "start_year": "2025"
+    }
+   ],
    "military_service": [],
    "institutions": [],
    "landmarks": [],
@@ -1510634,6 +1510646,12 @@
      "type": "colleague",
      "link_text": "Evgenia Peretz",
      "display_label": "writes pictures too, and has written for Vanity Fair since 1999"
+    },
+    {
+     "related_id": "X3162",
+     "type": "connection",
+     "link_text": "Robert H. Jackson",
+     "display_label": "was the chief American prosecutor at the Nuremberg trials"
     }
    ],
    "narrative_blocks": [
@@ -1510648,6 +1510666,12 @@
      "category": "arts",
      "header": "He chased the Zodiac story since age fifteen",
      "body": "He fell for Robert Graysmith's book on the Zodiac killer at fifteen, and years later wrote the screenplay on spec to keep control of the story. The film became one of the defining thrillers of its decade."
+    },
+    {
+     "number": 3,
+     "category": "arts",
+     "header": "He put Nuremberg on the screen",
+     "body": "In 2025 James wrote and directed Nuremberg, from Jack El-Hai's book The Nazi and the Psychiatrist, with Russell Crowe as Hermann Göring, Rami Malek as the Army psychiatrist who studied him, and Michael Shannon as the chief prosecutor, Robert H. Jackson."
     }
    ],
    "quotes": [],
