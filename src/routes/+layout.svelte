@@ -35,12 +35,15 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { intro } from '#lib/state/intro.svelte.js';
+	import { startAnalytics } from '#lib/state/analytics.svelte.js';
 
 	let { children } = $props();
 	// WebKit-only workarounds are scoped to `html.webkit` (see engine.ts and layout.css's SAFARI section).
 	onMount(markEngine);
 	// The fonts in use get JavaScript twins so a URL change cannot flash them to Helvetica (pinFonts.ts).
 	onMount(pinFonts);
+	// Readers, not Sam: hookerverse.com only, never while he is signed in (analytics.svelte.ts).
+	onMount(startAnalytics);
 </script>
 
 <!-- THE SITE ICON (Oct 24): the H of HOOKER from the intro's raised gilt, on transparency. Built by

@@ -13,6 +13,21 @@
 			]
 		},
 		{
+			"source": "/(.*)",
+			"has": [
+				{
+					"type": "host",
+					"value": "hooker-test.vercel.app"
+				}
+			],
+			"headers": [
+				{
+					"key": "X-Robots-Tag",
+					"value": "noindex, nofollow"
+				}
+			]
+		},
+		{
 			"source": "/data/(.*)",
 			"headers": [
 				{

@@ -2767,6 +2767,17 @@
 	.page-container.phone .featured-slot {
 		transition: none;
 	}
+	/* The phone's floor is the screen Safari actually shows: `100vh` there is the tall viewport with the toolbars
+	   retracted, which put the floored footer under the bottom toolbar on a short card. `svh` is the screen with them
+	   showing — and a card short enough to need the floor never scrolls, so the toolbars never retract. Less the
+	   status-bar and home-bar pads the body already takes (layout.css, viewport-fit=cover), or the floor overshoots
+	   the screen by exactly those and a short card scrolls. */
+	.page-container.phone {
+		min-height: calc(100svh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+		/* The footer is the last thing in the column, so the stage's 80u tail sat under it as dead air and held the
+		   row 60px off the floor; on the phone the floor is the footer's. */
+		padding-bottom: 20px;
+	}
 	/* THE PHONE'S SPOUSE IS BACK IN THE NOTCH (Oct 20). From Oct 6 the phone moved its spouses into a row ABOVE
 	   the card (design §53.4/§53.6j); Sam: "I wanted the spouse notch to exist, not the random spouse card
 	   floating above it… you can see the ugly transition details and changes that all should happen in
@@ -3265,9 +3276,14 @@
 	}
 	/* Stretched across the column so the row can right-align; the gap below the last chip is fixed (Sam: "fixed
 	   height down from final child chip"), and the stage's own bottom padding still follows it. */
+	/* …AND IT SITS ON THE FLOOR WHEN THE FAMILY IS SHORT (Oct 24, Sam on a one-parent card: "it looks silly having
+	   footer so high"). The stage is a top-aligned column at least a screen tall, so `margin-top: auto` hands the
+	   footer every pixel the family leaves over and it lands at the bottom of the screen; the 44px rides in the
+	   padding instead, so a family taller than the screen still keeps the fixed gap. */
 	.phone-footer {
 		align-self: stretch;
-		margin-top: 44px;
+		margin-top: auto;
+		padding-top: 44px;
 		transition: opacity 220ms ease 120ms;
 	}
 	/* GONE FOR THE FLIGHT, BACK AT THE LANDING (Oct 24). The footer sits under the family, so it moves when the family

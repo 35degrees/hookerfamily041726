@@ -124,14 +124,18 @@ Two indexable copies would split every page's standing in half.
 
 **The plan — not deleting the Vercel project**, because hookerverse.com is a domain *on* that project:
 
-1. **`hooker-test.vercel.app` → 301 → `hookerverse.com`**, one host rule in `vercel.json`, the same shape as
-   the `www` rule already there. After it, there is one site.
+1. **`hooker-test.vercel.app` stays up, as Sam's testing host — and is `noindex` forever** (✅ Sam, Oct 25,
+   replacing the Oct 24 plan to 301 it to hookerverse.com). Every deploy updates both hosts at once — they are two
+   addresses for one build — so Sam does his bug-hunting clicking on hooker-test and hookerverse.com's analytics
+   count outside readers only (§10a). The host-scoped `X-Robots-Tag: noindex, nofollow` rule for it is already in
+   `vercel.json` (Oct 25), separate from today's site-wide one, so lifting the site-wide header at launch leaves
+   it in place. Not a secret: anyone with the address can open it; Google just never lists it. Its `robots.txt`
+   must NOT disallow crawling — a crawler has to fetch a page to read its `noindex`.
 2. **Per-deploy addresses keep `noindex` forever.** At launch the `X-Robots-Tag` header is lifted for
    `hookerverse.com` only, never globally.
-3. **Every page carries `<link rel="canonical" href="https://hookerverse.com/<slug>">`** — the belt to the two
-   braces above.
-4. Sign-in: Google and Microsoft OAuth are registered for both origins; hookerverse.com's registration is the
-   one that keeps working. Nothing else depends on the test host.
+3. **Every page carries `<link rel="canonical" href="https://hookerverse.com/<slug>">`** — on hooker-test too, so
+   anything Google does see there points home.
+4. Sign-in: Google and Microsoft OAuth are registered for both origins, and both keep working.
 
 ---
 
@@ -308,7 +312,7 @@ card-visible facts. Nothing from research notes, sources or canonical is ever pl
 
 All of it happens while the site is still `noindex`, so nothing here is public until §12.
 
-1. **One site** (§4): the `hooker-test.vercel.app` redirect; canonical tags.
+1. **One indexable site** (§4): canonical tags (hooker-test's own `noindex` rule is already in `vercel.json`).
 2. **Head tags** (§5.1–5.6): title with years, description, `og:`, alt text, JSON-LD — in
    `src/routes/[slug]/+page.svelte`, computed from data the payload already carries. A field missing from the
    payload is added in `regenerate-data.js`, never fetched at runtime.
@@ -338,6 +342,17 @@ months:
   the project will ever have (roadmap §4: "let observed traffic and GSC queries steer the worklist").
 - **Core Web Vitals.** Real-user speed.
 - **Vercel Firewall observability** for the `/data/` rules (DEPLOYMENT §13.3).
+
+### 10a. Readers — Vercel Web Analytics (✅ Sam, Oct 25)
+
+Cookieless and first-party: the script and its beacons come from hookerverse.com's own `/_vercel/insights/`, so
+there is no consent banner and no Google tag. Built in `src/lib/state/analytics.svelte.ts`, which counts **outside
+readers only**: it loads on hookerverse.com alone (never hooker-test, localhost or a deploy address); it sends
+nothing while Sam's account is signed in (matched by the SHA-256 of the email, so the address never ships); and
+once Sam has signed in on a device, that browser is flagged (`localStorage hv-owner`) and stays uncounted after
+sign-out. The first pageview waits for the session to resolve. Every person-to-person tap is a pageview (shallow
+routing is a `pushState`, which the script tracks). Headless browsers are ignored by the script itself. Enabled
+per project in the Vercel dashboard (Analytics tab); until then the script 404s harmlessly.
 
 **Trust signals — ✅ the site-wide apparatus is the plan (Sam, Oct 24).** The footer's Sources modal (the
 family genealogies and archives the tree is built from), Privacy, and About / Contact, on HTTPS, are what a
