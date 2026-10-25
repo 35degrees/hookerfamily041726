@@ -27,7 +27,6 @@
 	// Supports weights 100-900 — the TIMELINE RAIL's years and nothing else (TimelineRail .tick-year).
 	// Variable, so the 500 Sam asked for is a real weight rather than a synthesised one.
 	import '@fontsource-variable/fraunces/wght.css';
-	import favicon from '#lib/assets/favicon.svg';
 	import SettleVeil from '#lib/components/SettleVeil.svelte';
 	// The intro drawn on the GPU (Oct 19): ~12fps → 60 in Safari. It falls back to IntroOverlay itself without WebGL2.
 	import IntroGL from '#lib/components/IntroGL.svelte';
@@ -44,7 +43,14 @@
 	onMount(pinFonts);
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<!-- THE SITE ICON (Oct 24): the H of HOOKER from the intro's raised gilt, on transparency. Built by
+     scripts/intro/favicon.py from the same baked layer the intro shows. favicon.ico also answers the bare
+     /favicon.ico request that email clients and search engines make without reading this tag. -->
+<svelte:head>
+	<link rel="icon" href="/favicon.ico" sizes="48x48" />
+	<link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+</svelte:head>
 <!-- IN THE LAYOUT, NOT THE PAGE, and not negotiable: it has to be in the SSR'd HTML to cover the
      FIRST paint, and it has to outlive a client-side navigation between person pages without
      remounting. A page-level veil would arrive after hydration — which is the exact moment it exists

@@ -103,6 +103,7 @@
 	import { cardinalWord, cardinalWordLower, possessive } from '#lib/utils/dates.js';
 	import { fetchFeatured } from '#lib/data/buildFeatured.js';
 	import { personHref, slugFromPath } from '#lib/paths.js';
+	import { SITE_TITLE } from '#lib/site.js';
 	/** The line's root — the X's last resort when nothing else on the card leads home. */
 	const THOMAS_SLUG = 'thomas-hooker-1586';
 	import { featured } from '#lib/state/featured.svelte.js';
@@ -169,6 +170,17 @@
 	// we fall back to `data`. Client: $effect.pre re-syncs BEFORE the DOM update.
 	$effect.pre(() => featured.set(data));
 	const f = $derived(featured.current ?? data);
+
+	// THE TAB / LINK TITLE (Sam, 102426): the person's chip name in front of the site's name, so a
+	// shared link's subject says who it is — "Sam Hooker - The Descendants of Rev. Thomas Hooker".
+	// The name is the one their spouse/parent chip shows (`nk ?? sn ?? n`, PersonBox's rule), read off
+	// the focus compact so the title and the chips can never disagree. Derived from `f`, not `data`,
+	// so a warm navigation (shallow routing, no new load) re-titles the tab too.
+	const pageTitle = $derived.by(() => {
+		const c = f.neighborhood.focus;
+		const name = (c?.nk ?? c?.sn ?? c?.n ?? '').trim();
+		return name ? `${name} - ${SITE_TITLE}` : SITE_TITLE;
+	});
 
 	// THE INTRO HOLD (100226). Arriving from `/`, this page mounts UNDER the intro overlay and starts BLANK —
 	// no card, no roster, no rail or corner chrome — until the overlay has faded to paper. Then the card is
@@ -2001,6 +2013,8 @@
 	});
 
 </script>
+
+<svelte:head><title>{pageTitle}</title></svelte:head>
 
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
 <Field />

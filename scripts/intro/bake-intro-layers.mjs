@@ -25,7 +25,9 @@ import { execFileSync } from 'node:child_process';
 
 const PLATE_W = 1600;
 const PLATE_H = 660;
-const WIDTH = 960; // the plate shows at most 480 CSS px wide (min(480px, 82vw)); ×2 for Retina, ×3 phones ≈ 966
+// BAKE_WIDTH / BAKE_OUT / BAKE_ONLY override the defaults for a one-off render — the favicon (favicon.py) takes
+// deboss-1 at the plate's native 1600 into a scratch folder. Unset, this bakes the intro exactly as before.
+const WIDTH = Number(process.env.BAKE_WIDTH) || 960; // the plate shows at most 480 CSS px wide (min(480px, 82vw)); ×2 for Retina, ×3 phones ≈ 966
 const HEIGHT = Math.round((WIDTH * PLATE_H) / PLATE_W);
 // ── copied from IntroOverlay.svelte — keep in step ─────────────────────────────────────────────────────
 const SHADOW_BLUR = 14;
@@ -34,7 +36,8 @@ const EMBOSS_SHADE = 0.5;
 const YEAR_SHADOW_L = 0.55;
 const YEAR_SHADOW_R = 0.3;
 // ──────────────────────────────────────────────────────────────────────────────────────────────────────
-const OUT = 'static/intro/baked';
+const OUT = process.env.BAKE_OUT || 'static/intro/baked';
+const ONLY = process.env.BAKE_ONLY ? process.env.BAKE_ONLY.split(',') : null;
 
 const src = `data:image/webp;base64,${readFileSync('static/intro/title-plate-1600.webp').toString('base64')}`;
 
@@ -101,6 +104,7 @@ mkdirSync(OUT, { recursive: true });
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
 for (const [name, [defs, body]] of Object.entries(layers)) {
+	if (ONLY && !ONLY.includes(name)) continue;
 	await page.setContent(
 		`<html><body style="margin:0;background:transparent"><svg id="p" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${PLATE_W} ${PLATE_H}" style="display:block"><defs>${common}${defs}</defs>${body}</svg></body></html>`
 	);
