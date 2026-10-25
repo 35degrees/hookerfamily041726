@@ -207494,7 +207494,7 @@
    "death": {
     "year": 1795
    },
-   "gender": "male",
+   "gender": "female",
    "research_notes": "b. Aug 11, 1774; d. Southington CT Jul 11, 1795 age 20.",
    "marriages": [],
    "notable": {
@@ -207503,8 +207503,8 @@
    },
    "cross_connections": [],
    "bio": {
-    "display_name": "Percy Hart",
-    "first_name": "Percy",
+    "display_name": "Piercy Hart",
+    "first_name": "Piercy",
     "last_name": "Hart",
     "married_names": []
    },
@@ -207519,7 +207519,10 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "number_of_marriages": 0
+   "number_of_marriages": 0,
+   "former_ids": [
+    "percy-hart-1774"
+   ]
   },
   {
    "id": "H00567a",
