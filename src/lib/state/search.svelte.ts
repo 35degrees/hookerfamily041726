@@ -115,6 +115,7 @@ export type Prepared = SearchRow & {
 	wd: string[];
 	nd: string;
 	fl: string;
+	ns: string;
 	tg: string[];
 };
 
@@ -277,6 +278,8 @@ export function load(): Promise<void> {
 				// "rev. edward judson brockett jr." -> "edward brockett". See tier(): searching
 				// "edward brockett" means the man called Edward Brockett, middle name or not.
 				fl: firstLast(nm.split(', ')[0] ?? nm),
+				// THE DISPLAY NAME WITHOUT ITS LEADING TITLES — tier 2's "the name starts with the query".
+				ns: untitled(nm.split(', ')[0] ?? nm),
 				// The row's own tags, parsed once. Only 5,369 of 19,728 rows carry any, so most of these
 				// are the same empty array and cost nothing.
 				tg: (() => {
@@ -334,8 +337,37 @@ const NAME_TITLES = new Set([
 	'brig.',
 	'adm.',
 	'cmdr.',
-	'elder'
+	'elder',
+	// Added 102426 — leading words the corpus uses that the list had missed. "Major General George Veazey
+	// Strong" kept "general" as his first name, so "g" credited the title and "george strong" missed him.
+	'general',
+	'gen',
+	'gov',
+	'governor',
+	'col',
+	'colonel',
+	'capt',
+	'lieutenant',
+	'lieut.',
+	'brigadier',
+	'pvt.',
+	'private',
+	'reverend',
+	'honorable',
+	'doctor',
+	'professor',
+	'admiral',
+	'commodore',
+	'corporal',
+	'ensign'
 ]);
+/** The display name with leading titles removed — "maj. gen. george veazey strong" -> "george veazey
+ *  strong". What "the name STARTS with" means; see tier 2. Never empties a name: a one-word remainder stays. */
+function untitled(nd: string): string {
+	const w = nd.split(/\s+/).filter(Boolean);
+	while (w.length > 1 && NAME_TITLES.has(w[0])) w.shift();
+	return w.join(' ');
+}
 const NAME_SUFFIXES = new Set(['jr.', 'jr', 'sr.', 'sr', 'ii', 'iii', 'iv', 'v', 'vi', 'i']);
 /** "rev. edward judson brockett jr." -> "edward brockett" (empty when fewer than two name words). */
 function firstLast(nd: string): string {
@@ -385,8 +417,25 @@ function tier(r: Prepared, q: string, terms: string[]): number {
 		)
 			return 0;
 	}
-	if (terms.every((t) => r.wd.includes(t))) return 1; // every term is a whole name word
-	if (r.nd.startsWith(q)) return 2; // the display name starts with the query
+	/**
+	 * A LONE LETTER IS A NAME BEING TYPED, NOT AN INITIAL (Sam, 102426). "g" made every middle initial G a
+	 * WHOLE-WORD match — tier 1 — so Hiram G Bly, Albert G Bristol and ten more initials outranked every
+	 * George, whose names only START with g (tier 2). Nobody types one letter meaning "people with the
+	 * initial G"; they are on their way to "ge". So a single one-letter query skips tier 1 and ranks by
+	 * where names start, which puts the Georges and Gens ahead and leaves the notable/blood order inside
+	 * the tier to do the rest. Narrow on purpose: "n c butler" still finds N. C. Butler by his initials,
+	 * because only the one-letter, one-term query is exempted.
+	 */
+	const lone = terms.length === 1 && q.length === 1;
+	if (!lone && terms.every((t) => r.wd.includes(t))) return 1; // every term is a whole name word
+	/**
+	 * THE NAME STARTS WITH THE QUERY — the name, not its title (102426). Tested on `ns`, the display name
+	 * with leading titles removed, so "g" credits George rather than "Gov." and "Maj. Gen." no longer hides
+	 * a George. When the reader TYPES a title ("gen", "rev thomas"), the full display name is tested too,
+	 * so asking for generals still finds them at this tier.
+	 */
+	const typedTitle = NAME_TITLES.has(terms[0]) || NAME_TITLES.has(terms[0] + '.');
+	if (r.ns.startsWith(q) || (typedTitle && r.nd.startsWith(q))) return 2;
 	if (terms.every((t) => r.wd.some((w) => w.startsWith(t)))) return 3; // every term starts a word
 	if (r.nm.includes(q)) return 4; // the query appears in the name
 	return 5; // a fact field only
@@ -575,6 +624,15 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 			 * They are demoted, never dropped: they stay in `total` and reachable, just never leading.
 			 */
 			dyoung: diedYoungRow(r) ? 1 : 0,
+			/**
+			 * NO GIVEN NAME AND NO YEARS SINKS BELOW EVERYTHING (Sam, 102426). Searching "gillett" led with a
+			 * record called just "Gillett": a husband known only by his surname, whose whole display name WAS
+			 * the query, so tier 0 crowned him and no key inside a tier could reach him. 48 rows are like this
+			 * ("Pinkham", "Mr. Morse", "[Husband] Buckley"), each able to lead its own surname's search. They
+			 * stay findable, they are never first. `fn` is bio.first_name; a row with a real given name or any
+			 * year is untouched.
+			 */
+			ghost: !r.fn && r.by == null && r.dy == null ? 1 : 0,
 			t,
 			// Cohesion outranks notability on purpose: a notable whose terms are scattered across
 			// unrelated fields is still not what was asked for, and putting fame ahead of relevance is
@@ -599,13 +657,29 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 			 * never consulted. A VAGUE one — plain "hope" — puts a whole cohort in the same tier, and there
 			 * the tree's own people should lead: Walter drops behind the two Hooker notables he was ahead of.
 			 */
+			/**
+			 * NO YEARS SINKS (Sam, 102426: "doesn't even have years… not the kind of person search is for").
+			 * A row with neither a birth nor a death year is almost always a bare stub, so it follows every
+			 * dated row in its tier — after notability, ahead of blood, so a dated spouse leads an undated
+			 * descendant. The era estimate `eb` still orders the undated among themselves (`b` below); it
+			 * just no longer lets them sit among people we can actually date. Private-date rows (`pv`) keep
+			 * their years in the index, so the living are not mistaken for stubs.
+			 */
+			yr: r.by != null || r.dy != null ? 0 : 1,
 			hd: r.f & CAT.HD ? 0 : 1,
 			b: r.by ?? r.eb ?? 9999
 		};
 	});
 	dec.sort(
 		(a, b) =>
-			a.dyoung - b.dyoung || a.t - b.t || a.c - b.c || a.nb - b.nb || a.hd - b.hd || a.b - b.b
+			a.ghost - b.ghost ||
+			a.dyoung - b.dyoung ||
+			a.t - b.t ||
+			a.c - b.c ||
+			a.nb - b.nb ||
+			a.yr - b.yr ||
+			a.hd - b.hd ||
+			a.b - b.b
 	);
 	return { rows: dec.slice(0, RESULT_CAP).map((d) => d.r), total: dec.length };
 });

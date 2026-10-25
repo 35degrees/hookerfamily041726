@@ -45,6 +45,15 @@
 	import { linear, cubicOut } from 'svelte/easing';
 	import { tick } from 'svelte';
 
+	/**
+	 * THE PLACEHOLDER'S HEADCOUNT IS DELIBERATELY 5,000 UNDER THE INDEX (Sam, 102426): "under 25,000 seems more
+	 * human than the monster I've created." A presentation choice for the empty box, not a measurement — the
+	 * real count still comes from the loaded index and moves with it, so it keeps growing as the tree does.
+	 * Results and their "N matches" line are untouched.
+	 */
+	const PLACEHOLDER_UNDERCOUNT = 5000;
+	const placeholderCount = (n: number) => Math.max(0, n - PLACEHOLDER_UNDERCOUNT).toLocaleString();
+
 	const VEIL_IN_MS = 340;
 	const VEIL_BLUR = 10;
 	/**
@@ -459,7 +468,7 @@
 					onkeydown={onKey}
 					type="text"
 					placeholder={search.corpus
-						? `Search ${search.corpus.toLocaleString()} people — a name, a place, a war, a school`
+						? `Search ${placeholderCount(search.corpus)} people — a name, a place, a war, a school`
 						: 'Search the tree — a name, a place, a war, a school'}
 					autocomplete="off"
 					spellcheck="false"
