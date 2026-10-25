@@ -215,7 +215,14 @@ html[data-exhibit] {
 html[data-exhibit]:has(.page-container.in-orbit) {
 	background-color: var(--color-ascendmidnight);
 }
-html[data-exhibit]:has(.page-container.in-founder) {
+/* `.in-orbit.in-founder`, NOT `.in-founder` alone (Oct 24). `in-founder` is the founder FLAG — it is on for
+   a founder or a founder's spouse wherever they appear, including four ordinary tree cards that never enter
+   the zone (Susanna Garbrand, Dorothy Hooker Chester, John Chester, William Goodwin; design §43.4: the title
+   follows the tag, the ROOM follows tag AND orbit). Keyed on the flag alone, those cards painted the page
+   hunter green underneath the stage, which Chrome flashed through its classic scrollbar's gutter in
+   segments (Sam: "a strobe light dark green to white", on Thomas's neighbourhood), and Safari on a phone
+   would show behind its toolbar. `in-orbit` is `ascension.active`: the green room is on only in the zone. */
+html[data-exhibit]:has(.page-container.in-orbit.in-founder) {
 	background-color: var(--color-foundergreen);
 }
 html[data-exhibit] body {
