@@ -5093,7 +5093,9 @@
     "H05047",
     "I05061",
     "H03893",
-    "I06035"
+    "I06035",
+    "HD2672",
+    "I06208"
    ],
    "person_ids": [
     "HD3870",
@@ -463512,7 +463514,8 @@
     "married_names": [
      "Murdoch"
     ],
-    "last_name": "Bristol"
+    "last_name": "Bristol",
+    "chip_first_name": "Fanny"
    },
    "residence": {},
    "baptism": {},
@@ -463550,7 +463553,8 @@
      "body": "Widowed in 1861, she stayed at Canemount through the Civil War, her letters recording the household, the war news, and her dependence on the people the family held in slavery. In the fall of 1865 she sailed with her children for Europe and did not return south.",
      "number": 2
     }
-   ]
+   ],
+   "last_updated": "2026-10-24"
   },
   {
    "id": "X00896",
@@ -465556,19 +465560,44 @@
    "sources": [],
    "gender": "male",
    "research_notes": "b. uncertain; d. uncertain. Yale B.A. 1827. Son of Judge William Bristol × Sarah Edwards (HD2096). Lived at Canandaigua, New York. Children: Frances Bristol, Mary P. Bristol. SOURCE: Bristol Family Genealogy (Warren Edwin Bristol; vredenburgh.org digitization). NOTE: The Yale obit for John Wolcott Bristol calls him \"a nephew of Albert G. Bristol (B.A. 1827)\" — confirming he graduated Yale 1827, not his brother William Brooks (Yale 1825 per the same source). | [SOURCE MOVED] Bristol Family Genealogy (Warren Edwin Bristol); FindAGrave; Yale biog.",
-   "marriages": [],
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06208",
+     "children_ids": [
+      "HD17150",
+      "HD17151",
+      "HD17152",
+      "HD17153",
+      "HD17154"
+     ],
+     "date_year": 1832,
+     "date_month": 10,
+     "date_day": 2
+    }
+   ],
    "notable": {
     "is_notable": false,
     "notable_category": []
    },
-   "death": {},
+   "death": {
+    "year": 1873,
+    "month": 1,
+    "day": 9,
+    "date_precision": "exact",
+    "city": "Rochester",
+    "county": "Monroe County",
+    "state": "New York",
+    "country": "United States"
+   },
    "cross_connections": [],
    "bio": {
-    "display_name": "Albert G Bristol",
+    "display_name": "Dr. Albert G. Bristol",
     "first_name": "Albert",
     "last_name": "Bristol",
     "middle_name": "G",
-    "married_names": []
+    "married_names": [],
+    "title": "Doctor"
    },
    "residence": {},
    "baptism": {},
@@ -465585,8 +465614,24 @@
    "artworks": [],
    "quotes": [],
    "military_service": [],
-   "number_of_marriages": 0,
-   "birth": {}
+   "number_of_marriages": 1,
+   "birth": {
+    "year": 1808,
+    "month": 12,
+    "day": 21,
+    "date_precision": "exact",
+    "city": "New Haven",
+    "county": "New Haven County",
+    "state": "Connecticut",
+    "country": "United States"
+   },
+   "burial": {
+    "cemetery_id": "CEM153"
+   },
+   "last_updated": "2026-10-24",
+   "former_ids": [
+    "albert-bristol"
+   ]
   },
   {
    "id": "X00901",
@@ -2544861,6 +2544906,474 @@
      "short": "FamilySearch; Find a Grave; obituaries"
     }
    ]
+  },
+  {
+   "id": "I06208",
+   "former_ids": [],
+   "is_placeholder": false,
+   "bio": {
+    "display_name": "Mary Gorham Bristol",
+    "first_name": "Mary",
+    "middle_name": null,
+    "maiden_name": "Gorham",
+    "last_name": "Bristol",
+    "married_names": [
+     "Bristol"
+    ],
+    "photo_url": null,
+    "nickname": null
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1808,
+    "month": 10,
+    "day": 30,
+    "date_precision": "exact",
+    "city": "Canandaigua",
+    "county": "Ontario County",
+    "state": "New York",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1884,
+    "month": 8,
+    "day": 4,
+    "date_precision": "exact",
+    "city": "Canandaigua",
+    "county": "Ontario County",
+    "state": "New York",
+    "country": "United States"
+   },
+   "baptism": {},
+   "burial": {
+    "cemetery_id": "CEM153"
+   },
+   "residence": {},
+   "parents": {},
+   "number_of_marriages": 1,
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD2672",
+     "children_ids": [
+      "HD17150",
+      "HD17151",
+      "HD17152",
+      "HD17153",
+      "HD17154"
+     ],
+     "date_year": 1832,
+     "date_month": 10,
+     "date_day": 2
+    }
+   ],
+   "classification": {
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": true,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": null,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false,
+    "notable_category": [],
+    "notable_blurb": null,
+    "primary_url": null,
+    "primary_url_label": null,
+    "notable_url": null
+   },
+   "education": [],
+   "career": [],
+   "military_service": [],
+   "institutions": [],
+   "landmarks": [],
+   "naming_inspiration": [],
+   "artworks": [],
+   "tags": [],
+   "research_tags": [],
+   "cross_connections": [],
+   "narrative_blocks": [],
+   "quotes": [],
+   "sources": [],
+   "research_sources": [],
+   "documents": [],
+   "research_notes": null,
+   "is_living": false,
+   "last_updated": "2026-10-24"
+  },
+  {
+   "id": "HD17150",
+   "former_ids": [],
+   "is_placeholder": false,
+   "bio": {
+    "display_name": "Mary Gorham Bristol",
+    "first_name": "Mary",
+    "middle_name": "Gorham",
+    "maiden_name": null,
+    "last_name": "Bristol",
+    "married_names": [],
+    "photo_url": null,
+    "nickname": null
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1835,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1920,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "baptism": {},
+   "burial": {},
+   "residence": {},
+   "parents": {
+    "father_id": "HD2672",
+    "mother_id": "I06208"
+   },
+   "number_of_marriages": 0,
+   "marriages": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": 8,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false,
+    "notable_category": [],
+    "notable_blurb": null,
+    "primary_url": null,
+    "primary_url_label": null,
+    "notable_url": null
+   },
+   "education": [],
+   "career": [],
+   "military_service": [],
+   "institutions": [],
+   "landmarks": [],
+   "naming_inspiration": [],
+   "artworks": [],
+   "tags": [],
+   "research_tags": [],
+   "cross_connections": [],
+   "narrative_blocks": [],
+   "quotes": [],
+   "sources": [],
+   "research_sources": [],
+   "documents": [],
+   "research_notes": null,
+   "is_living": false,
+   "last_updated": "2026-10-24"
+  },
+  {
+   "id": "HD17151",
+   "former_ids": [],
+   "is_placeholder": false,
+   "bio": {
+    "display_name": "Capt. William E. Bristol",
+    "first_name": "William",
+    "middle_name": "E",
+    "maiden_name": null,
+    "last_name": "Bristol",
+    "married_names": [],
+    "photo_url": null,
+    "nickname": null,
+    "title": "Captain"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1837,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1863,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "baptism": {},
+   "burial": {},
+   "residence": {},
+   "parents": {
+    "father_id": "HD2672",
+    "mother_id": "I06208"
+   },
+   "number_of_marriages": 0,
+   "marriages": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": 8,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false,
+    "notable_category": [],
+    "notable_blurb": null,
+    "primary_url": null,
+    "primary_url_label": null,
+    "notable_url": null
+   },
+   "education": [],
+   "career": [],
+   "military_service": [],
+   "institutions": [],
+   "landmarks": [],
+   "naming_inspiration": [],
+   "artworks": [],
+   "tags": [],
+   "research_tags": [],
+   "cross_connections": [],
+   "narrative_blocks": [],
+   "quotes": [],
+   "sources": [],
+   "research_sources": [],
+   "documents": [],
+   "research_notes": null,
+   "is_living": false,
+   "last_updated": "2026-10-24"
+  },
+  {
+   "id": "HD17152",
+   "former_ids": [],
+   "is_placeholder": false,
+   "bio": {
+    "display_name": "Sarah Frances Bristol",
+    "first_name": "Sarah",
+    "middle_name": "Frances",
+    "maiden_name": null,
+    "last_name": "Bristol",
+    "married_names": [],
+    "photo_url": null,
+    "nickname": null,
+    "chip_first_name": "Fannie"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1840,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1913,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "baptism": {},
+   "burial": {},
+   "residence": {},
+   "parents": {
+    "father_id": "HD2672",
+    "mother_id": "I06208"
+   },
+   "number_of_marriages": 0,
+   "marriages": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": 8,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false,
+    "notable_category": [],
+    "notable_blurb": null,
+    "primary_url": null,
+    "primary_url_label": null,
+    "notable_url": null
+   },
+   "education": [],
+   "career": [],
+   "military_service": [],
+   "institutions": [],
+   "landmarks": [],
+   "naming_inspiration": [],
+   "artworks": [],
+   "tags": [],
+   "research_tags": [],
+   "cross_connections": [],
+   "narrative_blocks": [],
+   "quotes": [],
+   "sources": [],
+   "research_sources": [],
+   "documents": [],
+   "research_notes": null,
+   "is_living": false,
+   "last_updated": "2026-10-24"
+  },
+  {
+   "id": "HD17153",
+   "former_ids": [],
+   "is_placeholder": false,
+   "bio": {
+    "display_name": "Helen Louisa Bristol Thomas",
+    "first_name": "Helen",
+    "middle_name": "Louisa",
+    "maiden_name": "Bristol",
+    "last_name": "Thomas",
+    "married_names": [
+     "Thomas"
+    ],
+    "photo_url": null,
+    "nickname": null
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1845,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1920,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "baptism": {},
+   "burial": {},
+   "residence": {},
+   "parents": {
+    "father_id": "HD2672",
+    "mother_id": "I06208"
+   },
+   "number_of_marriages": 0,
+   "marriages": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": 8,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false,
+    "notable_category": [],
+    "notable_blurb": null,
+    "primary_url": null,
+    "primary_url_label": null,
+    "notable_url": null
+   },
+   "education": [],
+   "career": [],
+   "military_service": [],
+   "institutions": [],
+   "landmarks": [],
+   "naming_inspiration": [],
+   "artworks": [],
+   "tags": [],
+   "research_tags": [],
+   "cross_connections": [],
+   "narrative_blocks": [],
+   "quotes": [],
+   "sources": [],
+   "research_sources": [],
+   "documents": [],
+   "research_notes": null,
+   "is_living": false,
+   "last_updated": "2026-10-24"
+  },
+  {
+   "id": "HD17154",
+   "former_ids": [],
+   "is_placeholder": false,
+   "bio": {
+    "display_name": "Albert Murdock Bristol",
+    "first_name": "Albert",
+    "middle_name": "Murdock",
+    "maiden_name": null,
+    "last_name": "Bristol",
+    "married_names": [],
+    "photo_url": null,
+    "nickname": null
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1853,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1918,
+    "date_precision": "year_only",
+    "country": "United States"
+   },
+   "baptism": {},
+   "burial": {},
+   "residence": {},
+   "parents": {
+    "father_id": "HD2672",
+    "mother_id": "I06208"
+   },
+   "number_of_marriages": 0,
+   "marriages": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": 8,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false,
+    "notable_category": [],
+    "notable_blurb": null,
+    "primary_url": null,
+    "primary_url_label": null,
+    "notable_url": null
+   },
+   "education": [],
+   "career": [],
+   "military_service": [],
+   "institutions": [],
+   "landmarks": [],
+   "naming_inspiration": [],
+   "artworks": [],
+   "tags": [],
+   "research_tags": [],
+   "cross_connections": [],
+   "narrative_blocks": [],
+   "quotes": [],
+   "sources": [],
+   "research_sources": [],
+   "documents": [],
+   "research_notes": null,
+   "is_living": false,
+   "last_updated": "2026-10-24"
   }
  ],
  "landmarks": [
