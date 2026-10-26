@@ -11,6 +11,7 @@
 	const NB_HEAD_MIN = 11;
 	import { isWebKit } from '#lib/state/engine.js';
 	import { openModal, type ModalKind } from '#lib/state/modal.svelte.js';
+	import { isSurface, surfaceHref } from '#lib/surfaces.js';
 
 	/**
 	 * THE BLOCK'S SLIDE — Svelte's own `slide`, except in Safari/WebKit, where its opening opacity fade is
@@ -190,6 +191,14 @@
 	 * First (and so far only) use: "Click [here](contact)" on Samuel Talcott Hooker's NB 5.
 	 */
 	const ACTIONS: Record<string, ModalKind> = { contact: 'contact' };
+
+	/** A plain click opens the surface in place; a modified or middle click is the browser's (a new tab at
+	 *  the surface's own address — surfaces.ts). */
+	function openAction(e: MouseEvent, kind: ModalKind) {
+		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+		e.preventDefault();
+		openModal(kind);
+	}
 	const LINK_RE = /\[([^\]]+)\]\(([a-z-]+)\)/g;
 	type Seg = { text: string; action?: ModalKind };
 	function segments(body: string): Seg[] {
@@ -256,7 +265,14 @@
 						     collapses runs of spaces and wraps normally, it only honours an explicit \n. -->
 						<p
 							class="text-[calc(13.5px*var(--type-k,1)*var(--nb-body-k,1))] leading-[calc(1.625*var(--nb-lead-k,1))] whitespace-pre-line text-stone-700 select-none">
-							{#each segments(block.body) as seg, i (i)}{#if seg.action}<button
+							<!-- A surface with an address (Contact — surfaces.ts) is a REAL LINK since Oct 26, so the form
+							     has an address a crawler, a new tab and analytics can see; a plain click still opens it in
+							     place. Any other action stays a button. -->
+							{#each segments(block.body) as seg, i (i)}{#if seg.action && isSurface(seg.action)}<a
+										class="body-link"
+										href={surfaceHref(seg.action)}
+										onclick={(e) => openAction(e, seg.action!)}>{seg.text}</a
+									>{:else if seg.action}<button
 										type="button"
 										class="body-link"
 										onclick={() => openModal(seg.action!)}>{seg.text}</button

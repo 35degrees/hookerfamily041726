@@ -23,7 +23,11 @@
 	const VEIL_OUT_DELAY = 90;
 	const VEIL_OUT_MS = 430;
 
-	const open = $derived(modal.kind === 'privacy');
+	/** OPEN ON ARRIVAL at /privacy (surfaces.ts): the page renders it open from the request's own load data, so the
+	 *  server-rendered HTML carries the text — the modal store is module state, shared by every request on the
+	 *  server, and must never be set there. The page hands the slot to the store once mounted. */
+	let { forced = false }: { forced?: boolean } = $props();
+	const open = $derived(modal.kind === 'privacy' || forced);
 	let leaving = $state(false);
 	/** read → confirm → (deleting) → deleted | stale | failed */
 	let step = $state<'read' | 'confirm' | 'deleting' | 'deleted' | 'stale' | 'failed'>('read');

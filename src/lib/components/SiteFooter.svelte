@@ -20,6 +20,8 @@
 	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { openModal } from '#lib/state/modal.svelte.js';
+	import { personHref } from '#lib/paths.js';
+	import { surfaceHref, type SurfaceKind } from '#lib/surfaces.js';
 
 	/** HD3386's slug. Living, so the year is withheld from it; if his name ever changes, redirects.json maps
 	 *  the old slug and the warm path falls back to a real navigation that follows it. */
@@ -37,9 +39,21 @@
 	const onDark = $derived(GROUNDS[groundState.idx]?.kind === 'dark');
 	const inZone = $derived(ascension.active);
 
+	// REAL LINKS SINCE OCT 26 (SEO_PLAN §5.8): Google reads an <a href>, never a button, and these are the pages
+	// that say who made the site and what it keeps. A plain click is unchanged — the flight, or the pop-up in
+	// place; a modified or middle click is the browser's (a new tab at the real address).
+	const plainClick = (e: MouseEvent) =>
+		e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
 	function onAbout(e: MouseEvent) {
+		if (!plainClick(e)) return;
+		e.preventDefault(); // before the guards: a swallowed click must not fall through to a page load
 		if (isFlightLocked() || featured.current?.person.slug === ABOUT_SLUG) return;
 		void ccFlyTo(e.currentTarget as HTMLElement, { slug: ABOUT_SLUG, t: null });
+	}
+	function onSurface(e: MouseEvent, kind: SurfaceKind) {
+		if (!plainClick(e)) return;
+		e.preventDefault();
+		openModal(kind);
 	}
 </script>
 
@@ -60,11 +74,11 @@
 	     California's CalOPPA both expect to be conspicuous. PrivacyModal already reads correctly signed out ("When you
 	     sign in, this site keeps…", and the contact form's note); its Delete button stays signed-in only. -->
 	<div class="row secondary">
-		<button type="button" class="about" onclick={() => openModal('privacy')}>Privacy</button>
-		<button type="button" class="about" onclick={() => openModal('sources')}>Sources</button>
+		<a class="about" href={surfaceHref('privacy')} onclick={(e) => onSurface(e, 'privacy')}>Privacy</a>
+		<a class="about" href={surfaceHref('sources')} onclick={(e) => onSurface(e, 'sources')}>Sources</a>
 	</div>
 	<div class="row primary">
-		<button type="button" class="about" onclick={onAbout}>About / Contact</button>
+		<a class="about" href={personHref(ABOUT_SLUG)} onclick={onAbout}>About / Contact</a>
 		<span class="copy" aria-label="Copyright {YEAR}">© {YEAR}</span>
 	</div>
 </footer>
@@ -114,6 +128,8 @@
 		font-size: 10px;
 	}
 	.about {
+		display: inline-block;
+		text-decoration: none;
 		padding: 4px 1px;
 		border: 0;
 		background: none;

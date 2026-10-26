@@ -95,7 +95,10 @@
 		return tokens[0] || full;
 	}
 	import DeckRiffle from '#lib/components/DeckRiffle.svelte';
-	import { untrack, tick } from 'svelte';
+	import { untrack, tick, onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { modal, openModal, closeModal, takeNavClose } from '#lib/state/modal.svelte.js';
+	import { SURFACES, isSurface, surfaceFromPath, surfaceHref, type SurfaceKind } from '#lib/surfaces.js';
 	import { flip } from 'svelte/animate';
 	import { cubicOut } from 'svelte/easing';
 	import { motionOff, beginInstantSwap } from '#lib/state/motion.svelte.js';
@@ -185,9 +188,55 @@
 	// focus compact as the title — so a page reached by an old slug's redirect, or on hooker-test, still
 	// names its one real address, and a warm navigation re-points it with the tab title.
 	const canonicalUrl = $derived.by(() => {
+		if (openSurface) return SITE_ORIGIN + surfaceHref(openSurface);
 		const slug = f.neighborhood.focus?.slug;
 		return slug ? SITE_ORIGIN + personHref(slug) : null;
 	});
+
+	// ── THE POP-UPS' ADDRESSES (Oct 26, Sam; SEO_PLAN §5.8; surfaces.ts) ───────────────────────────────
+	// Privacy, Sources and the contact form open over the card as they always have, and the address bar
+	// follows them: /privacy while open, the card's own address once closed. A direct visit to /privacy
+	// arrives with the host card loaded and `data.surface` set, and the page renders that pop-up OPEN — from
+	// the request's own data, through the modal's `forced` prop, because the modal store is module state and
+	// on the server every request shares it. Once mounted, the store takes the slot over and `forced` lets go.
+	let surfaceMounted = $state(false);
+	onMount(() => {
+		if (data.surface) openModal(data.surface);
+		surfaceMounted = true;
+	});
+	/** The pop-up with an address that is open now: the store's, or — until mount — the request's. */
+	const openSurface = $derived<SurfaceKind | null>(
+		isSurface(modal.kind) ? modal.kind : !surfaceMounted ? (data.surface ?? null) : null
+	);
+	/** Did WE push the pop-up's history entry? Then a dismiss gives it back (Back), so the reader's history
+	 *  holds no dead "/privacy then the same card" step. A direct visit pushed nothing. */
+	let surfacePushed = false;
+	$effect(() => {
+		const kind = modal.kind;
+		if (!surfaceMounted) return;
+		untrack(() => syncSurfaceAddress(kind));
+	});
+	function syncSurfaceAddress(kind: typeof modal.kind) {
+		const at = surfaceFromPath(location.pathname);
+		if (isSurface(kind)) {
+			if (at === kind) return;
+			// One pop-up straight to another re-addresses the same entry; from a card it is a new one.
+			void goto(surfaceHref(kind), { shallow: true, replace: at != null });
+			if (!at) surfacePushed = true;
+			return;
+		}
+		const forNav = takeNavClose();
+		if (!at) return;
+		if (surfacePushed && !forNav) {
+			surfacePushed = false;
+			history.back(); // onHistoryStep sees the card's own address: nothing to swap
+			return;
+		}
+		// A direct visit, or a link inside the pop-up flying to a person: re-address this entry to the card.
+		surfacePushed = false;
+		const slug = featured.current?.person.slug;
+		if (slug) void goto(personHref(slug), { shallow: true, replace: true });
+	}
 
 	// THE INTRO HOLD (100226). Arriving from `/`, this page mounts UNDER the intro overlay and starts BLANK —
 	// no card, no roster, no rail or corner chrome — until the overlay has faded to paper. Then the card is
@@ -278,6 +327,17 @@
 	// card and its family are simply in their new places. Clicks are untouched.
 	let historySeq = 0;
 	async function onHistoryStep() {
+		// A pop-up's address (surfaces.ts): Forward onto one opens it over the card; Back off one closes it.
+		const surface = surfaceFromPath(location.pathname);
+		if (surface) {
+			surfacePushed = true;
+			openModal(surface);
+			return;
+		}
+		if (isSurface(modal.kind)) {
+			surfacePushed = false;
+			closeModal();
+		}
 		const slug = slugFromPath(location.pathname);
 		if (!slug || featured.current?.person.slug === slug) return;
 		const seq = ++historySeq;
@@ -2022,8 +2082,12 @@
 </script>
 
 <svelte:head>
-	<title>{pageTitle}</title>
+	<title>{openSurface ? `${SURFACES[openSurface].title} - ${SITE_TITLE}` : pageTitle}</title>
 	{#if canonicalUrl}<link rel="canonical" href={canonicalUrl} />{/if}
+	{#if openSurface && SURFACES[openSurface].description}
+		<meta name="description" content={SURFACES[openSurface].description} />
+	{/if}
+	{#if openSurface && !SURFACES[openSurface].index}<meta name="robots" content="noindex, follow" />{/if}
 </svelte:head>
 
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
@@ -2067,10 +2131,10 @@
 <BookmarksModal />
 <!-- SIX. Same rule again: the veil's values and the one slot, nothing that renders. Opened from an NB body
      link (`[here](contact)`, NarrativeBlocks), not from the chrome. -->
-<ContactModal />
+<ContactModal forced={!surfaceMounted && data.surface === 'contact'} />
 <!-- SEVEN and EIGHT, opened from SiteFooter. Same rule: the veil's values and the one slot, nothing that renders. -->
-<PrivacyModal />
-<SourcesModal />
+<PrivacyModal forced={!surfaceMounted && data.surface === 'privacy'} />
+<SourcesModal forced={!surfaceMounted && data.surface === 'sources'} />
 <!-- The passage layer — transient decade markers that rush past during a far CC arrival (flight-only). -->
 <DeckRiffle />
 <!-- The keep-alive test listens on the WINDOW, not on the stage. On .page-container it simply stopped

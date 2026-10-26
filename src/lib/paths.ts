@@ -37,7 +37,20 @@ export const dataUrl = (path: string): string => `${path}?v=${version}`;
  * ADD A NAME HERE WHEN A TOP-LEVEL ROUTE IS ADDED (an /about, a /sources). No slug can collide with
  * these today — slugs are `first-surname[-year]`, checked against all 27,790 payloads on 100226.
  */
-const RESERVED = new Set(['api', 'data', 'dev', 'institution', 'person', 'table', 'textures']);
+// privacy / sources / contact (Oct 26): the pop-ups' own addresses (surfaces.ts) — served by the [slug]
+// route, but never a person.
+const RESERVED = new Set([
+	'api',
+	'contact',
+	'data',
+	'dev',
+	'institution',
+	'person',
+	'privacy',
+	'sources',
+	'table',
+	'textures'
+]);
 
 /** Slugs are lowercase letters, digits and dashes (regenerate-data.js slugify), never anything else. */
 const PERSON_PATH = /^\/([a-z0-9][a-z0-9-]*)$/;

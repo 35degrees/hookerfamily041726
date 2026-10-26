@@ -201,6 +201,14 @@ penalised. The home page will not rank for much on its own; the person pages car
 
 ### 5.8 About, Contact, Sources, Privacy — keep the charm, give each an address (✅ Sam, Oct 25)
 
+**✅ BUILT Oct 26.** `src/lib/surfaces.ts` defines the three pop-ups with addresses; the `[slug]` route loads the host
+card for them (Rev. Thomas behind `/privacy` and `/sources` — Sam, Oct 26: "thomas is good" — and Sam's card behind
+`/contact`), and the page renders the pop-up open from the request's own data (the modal store is module state,
+shared by every request on the server, so it is never set there). In the app the address bar follows the pop-up:
+a dismiss gives the history entry back, Back closes and Forward reopens, an author link inside Sources re-addresses
+the entry instead of stepping back over the flight, and a modified click opens a real tab. The footer items and
+the NB 3 "here" are real `<a href>`s; the contact email reports the card behind the form, not `/contact`.
+
 The site is bespoke, and two of these four are deliberately not pages. Sam, Oct 25: *"about is really just my
 entry… the contact page is a link in one of my NBs. its cute, cuteness doesn't work with analytics and Google's
 process very well."* The rule that reconciles them: **the experience stays exactly as it is; underneath, every
@@ -374,14 +382,14 @@ steps are built.
      www and every path). Verifying does not index anything; it just opens the instrument.
    - **Bing Webmaster Tools** — imported from Search Console in one step. Bing's index also feeds DuckDuckGo and
      Yahoo and is one of the sources behind ChatGPT's search, so it is not a small second engine.
-1. **One indexable site** (§4): canonical tags (hooker-test's own `noindex` rule is already in `vercel.json`).
+1. ✅ **One indexable site** (§4): canonical tags — Oct 26 (hooker-test's own `noindex` rule is already in `vercel.json`).
    ✅ **Side doors closed** (§6.4) and ✅ **unread data files no longer published** (§8.3 item 0) — Oct 26.
 2. **Head tags** (§5.1–5.6): title with years, description, `og:` (and the site preview image), alt text,
    JSON-LD — in `src/routes/[slug]/+page.svelte`, computed from data the payload already carries. A field missing
    from the payload is added in `regenerate-data.js`, never fetched at runtime.
 3. **The gate** (§6.1): the `noindex, follow` tag on non-gated pages, decided in one shared predicate that the
    sitemap reads too, so the two can never disagree.
-4. **About, Contact, Sources, Privacy addresses** (§5.8): the two footer links and the NB link become real
+4. ✅ **About, Contact, Sources, Privacy addresses** (§5.8) — Oct 26: the two footer links and the NB link become real
    `<a href>`s with the same in-app behaviour; `/sources`, `/privacy`, `/contact` exist as server-rendered pages.
 5. **Sitemap** (§6.2) and **robots.txt** (§6.3), the latter drafted but not yet live.
 6. **Home page** (§5.7): invisible tags and the one real link.

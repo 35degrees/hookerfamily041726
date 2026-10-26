@@ -16,6 +16,8 @@
 	 * filled by bots, and a non-empty value will be dropped server-side.
 	 */
 	import { modal, closeModal } from '#lib/state/modal.svelte.js';
+	import { featured } from '#lib/state/featured.svelte.js';
+	import { personHref } from '#lib/paths.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { auth } from '#lib/state/auth.svelte.js';
 	import { linear, cubicOut } from 'svelte/easing';
@@ -37,7 +39,17 @@
 		'Share family information'
 	] as const;
 
-	const open = $derived(modal.kind === 'contact');
+	/** OPEN ON ARRIVAL at /contact (surfaces.ts): the page renders it open from the request's own load data, so the
+	 *  server-rendered HTML carries the text — the modal store is module state, shared by every request on the
+	 *  server, and must never be set there. The page hands the slot to the store once mounted. */
+	let { forced = false }: { forced?: boolean } = $props();
+	const open = $derived(modal.kind === 'contact' || forced);
+	// THE CARD THE WRITER WAS ON, not the address bar: since Oct 26 the bar reads /contact while the form is
+	// open (surfaces.ts), and "sent from /contact" tells Sam nothing.
+	function cardAddress(): string {
+		const slug = featured.current?.person.slug;
+		return slug ? location.origin + personHref(slug) : location.href;
+	}
 	let leaving = $state(false);
 
 	let reason = $state<string>(REASONS[0]);
@@ -100,7 +112,7 @@
 			const res = await fetch('/api/contact', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ reason, subject, name, email, message, website, page: location.href })
+				body: JSON.stringify({ reason, subject, name, email, message, website, page: cardAddress() })
 			});
 			if (res.ok) sent = true;
 			else failed = true;

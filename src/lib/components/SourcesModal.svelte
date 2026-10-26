@@ -10,7 +10,7 @@
 	 *
 	 * The shell is ContactModal's — the house veil and the cream sheet — copied per §46.2.
 	 */
-	import { modal, closeModal } from '#lib/state/modal.svelte.js';
+	import { modal, closeModal, closeModalForNav } from '#lib/state/modal.svelte.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { personHref } from '#lib/paths.js';
 	import { thomasVertical } from '#lib/state/thomasVertical.js';
@@ -22,7 +22,11 @@
 	const VEIL_OUT_DELAY = 90;
 	const VEIL_OUT_MS = 430;
 
-	const open = $derived(modal.kind === 'sources');
+	/** OPEN ON ARRIVAL at /sources (surfaces.ts): the page renders it open from the request's own load data, so the
+	 *  server-rendered HTML carries the text — the modal store is module state, shared by every request on the
+	 *  server, and must never be set there. The page hands the slot to the store once mounted. */
+	let { forced = false }: { forced?: boolean } = $props();
+	const open = $derived(modal.kind === 'sources' || forced);
 	let leaving = $state(false);
 	$effect(() => {
 		if (open) leaving = false;
@@ -53,7 +57,7 @@
 		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // let the browser have it
 		e.preventDefault();
 		leaving = true;
-		closeModal();
+		closeModalForNav(); // the flight below re-addresses the history entry; stepping Back would undo it
 		const stage = document.querySelector('.page-container') ?? document.body;
 		const card = document.querySelector('.featured-card');
 		const r = (card ?? stage).getBoundingClientRect();

@@ -51,3 +51,20 @@ export function openModal(kind: ModalKind): void {
 export function closeModal(): void {
 	openKind = null;
 }
+
+/**
+ * CLOSE BECAUSE THE READER IS GOING SOMEWHERE (Oct 26). A pop-up with an address (surfaces.ts) gives its
+ * history entry back when it is DISMISSED — the page steps Back — but when it closes because a link inside
+ * it is flying to a person (an author in Sources), stepping Back would undo that navigation. This close says
+ * so; the page reads it once, with `takeNavClose`, and quietly re-addresses the entry instead.
+ */
+let navClose = false;
+export function closeModalForNav(): void {
+	navClose = true;
+	openKind = null;
+}
+export function takeNavClose(): boolean {
+	const was = navClose;
+	navClose = false;
+	return was;
+}
