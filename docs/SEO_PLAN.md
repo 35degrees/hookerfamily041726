@@ -185,7 +185,12 @@ for the big names comes later, from links (§10).
 
 - the person's name as the page's one `<h1>`;
 - **every narrative block — header AND body** (Thomas 7/7, Jonathan Edwards 7/7, Noadiah Hart 2/2), even the
-  ones a visitor has to click open;
+  ones a visitor has to click open; **— CORRECTED Oct 26: this was FALSE when written.** The Oct 24 check searched
+  the raw HTML, which includes SvelteKit's hydration data (a `<script>` of JSON); the page text itself held only the
+  OPEN block's body, and a 7-block card lost its 7th block entirely (the server renders at an assumed 1440×900,
+  where `stage.nbCap` is 6). Measured Oct 26 with scripts stripped: Dexter Ferry 1 of 7 bodies, 6 of 7 headers.
+  **Fixed Oct 26** (`NarrativeBlocks.svelte`): a closed block keeps its body as `hidden` text, and blocks beyond the
+  cap stay in the page `hidden` — now 7/7 in the server HTML and the rendered page, with zero visible pixels changed;
 - every cross-connection sentence (Thomas 11/11, Edwards 10/10);
 - **18–22 real `<a href>` links** to relatives, so a crawler can walk the tree.
 

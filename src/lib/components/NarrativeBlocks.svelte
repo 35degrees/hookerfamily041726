@@ -130,6 +130,15 @@
 		});
 	});
 
+	// The blocks MAX_DISPLAYED folds away on a shorter window (stage.nbCap — 6 under 1000px tall, which is also
+	// what the server renders, at its assumed 1440×900). They stay in the page, `hidden`, for the same reason a
+	// closed block keeps its body (see the markup): a search engine reads the whole card, a reader sees the cap.
+	let foldedBlocks = $derived(
+		[...blocks]
+			.sort((a, b) => (a.number ?? Number.POSITIVE_INFINITY) - (b.number ?? Number.POSITIVE_INFINITY))
+			.slice(MAX_DISPLAYED)
+	);
+
 	let sortedBlocks = $derived(
 		[...blocks]
 			.sort((a, b) => {
@@ -279,10 +288,22 @@
 									>{:else}{seg.text}{/if}{/each}
 						</p>
 					</div>
+				{:else}
+					<!-- A CLOSED BLOCK STILL CARRIES ITS STORY (Oct 26, SEO_PLAN §2): the body as plain text, `hidden`, so it is
+					     in the page a search engine reads — the accordion pattern Google indexes — while nothing paints and
+					     nothing takes space. Without it only the open block's body existed outside the hydration data, and
+					     Google could read every header but one story per card. Opening the block replaces this with the
+					     animated body above; a different class name keeps it out of the `.nb-body` measurements. -->
+					<div class="nb-body-closed" hidden>{block.body.replace(LINK_RE, '$1')}</div>
 				{/if}
 			</div>
 		{/each}
 	</div>
+	<!-- OUTSIDE .narrative-blocks: its space-y-2 margins every child but the last, so a hidden child there would
+	     hand the last real block an 8px bottom margin it never had. -->
+	{#each foldedBlocks as block, i (i)}
+		<div class="nb-folded" hidden><h3>{block.header}</h3><p>{block.body.replace(LINK_RE, '$1')}</p></div>
+	{/each}
 {/if}
 
 <style>
