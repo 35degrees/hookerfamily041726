@@ -152,6 +152,9 @@ Two indexable copies would split every page's standing in half.
 
 ### 5.1 Title
 
+**✅ BUILT Oct 26 (Sam: "its ok to add years to title").** Measured on the 8,479 gated pages: titles shared by more
+than one page went from 2,168 to 8 — living namesakes (no years by design) and two Elizabeth Dwights, both 1831–1870.
+
 `<chip name> (<years>) - The Descendants of Rev. Thomas Hooker` — e.g. **Thomas Hooker (1586–1647) - The
 Descendants of Rev. Thomas Hooker**. The years break the 2,168 duplicate titles, and they are what a searcher
 types to tell two Mary Hookers apart. Rules: no years for living, private-date people; a single year where only

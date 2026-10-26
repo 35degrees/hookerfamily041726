@@ -109,7 +109,8 @@
 					</p>
 					<p>
 						They are used only to show you your own bookmarks and home card. They are never shared or sold, and
-						the site has no advertising and no tracking. One cookie keeps you signed in.
+						the site has no advertising. Visits are counted anonymously, without cookies, to see how many people
+						read the site. One cookie keeps you signed in.
 					</p>
 					<p>
 						Messages sent through the contact form are emailed to the site’s compiler and are not kept on the site.

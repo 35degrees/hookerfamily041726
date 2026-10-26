@@ -179,10 +179,24 @@
 	// The name is the one their spouse/parent chip shows (`nk ?? sn ?? n`, PersonBox's rule), read off
 	// the focus compact so the title and the chips can never disagree. Derived from `f`, not `data`,
 	// so a warm navigation (shallow routing, no new load) re-titles the tab too.
+	// …AND THE YEARS AFTER THE NAME (Sam, Oct 26; SEO_PLAN §5.1): "Thomas Hooker (1586–1647)". They are what a
+	// searcher types to tell two Mary Hookers apart, and they break the 2,168 titles that were shared by more
+	// than one page. A private person (`pv`) gets none — their years are not even in the payload — and a lone
+	// year says which end it is.
 	const pageTitle = $derived.by(() => {
 		const c = f.neighborhood.focus;
 		const name = (c?.nk ?? c?.sn ?? c?.n ?? '').trim();
-		return name ? `${name} - ${SITE_TITLE}` : SITE_TITLE;
+		if (!name) return SITE_TITLE;
+		const years = c?.pv
+			? ''
+			: c?.by != null && c?.dy != null
+				? `${c.by}–${c.dy}`
+				: c?.by != null
+					? `b. ${c.by}`
+					: c?.dy != null
+						? `d. ${c.dy}`
+						: '';
+		return `${name}${years ? ` (${years})` : ''} - ${SITE_TITLE}`;
 	});
 	// THE CANONICAL ADDRESS (SEO_PLAN §5.3): hookerverse.com + the person's CURRENT slug, read off the same
 	// focus compact as the title — so a page reached by an old slug's redirect, or on hooker-test, still

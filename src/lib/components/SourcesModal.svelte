@@ -257,16 +257,20 @@
 		line-height: 1.55;
 		color: var(--color-inkblue);
 	}
+	/* A VERY LIGHT UNDERLINE AT REST (Sam, Oct 26): bold alone did not say "this goes somewhere". The line is the
+	   text's own ink at a fifth of its strength, and comes up to full on hover. */
 	.body a.who {
 		color: inherit;
 		font-weight: 600;
-		text-decoration: none;
-		text-underline-offset: 2px;
+		text-decoration: underline;
+		text-decoration-color: color-mix(in srgb, currentColor 22%, transparent);
+		text-underline-offset: 3px;
 		text-decoration-thickness: 1px;
+		transition: text-decoration-color 160ms ease-out;
 	}
 	.body a.who:hover,
 	.body a.who:focus-visible {
-		text-decoration: underline;
+		text-decoration-color: currentColor;
 		outline: none;
 	}
 	.body li {
