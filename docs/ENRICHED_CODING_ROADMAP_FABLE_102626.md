@@ -1,6 +1,7 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: October 9, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_100626.md (the what/why for every item below).**
+**OCTOBER 26, 2026 (§64): PHOTOS THROUGH VERCEL'S EDGE CACHE.** Person photos and the timeline headshots load from `/cld/…` on the site's own host, edge-cached, because Cloudinary's free plan was at 22.8/25 credits; format fixed to `f_webp` (f_auto + a shared cache served one browser's format to another). `scripts/warm-photos.mjs` pre-builds the copies. **Open TODO in §64.5: the `--all` warm-up around Nov 9.** The SEO/deploy work of the same day is in `docs/SEO_PLAN.md` §0.
 **OCTOBER 9, 2026 (§60): THE FIRST DEPLOY (hooker-test.vercel.app) AND TWO GROUND-UP PROJECTS.** Sam's direction at close: no more Safari patches — a WebKit rebuild from the ground up, Chrome untouched (§60.1 A); and screen sizes designed per target rather than squeezed (§60.1 B). Both are their own future sessions; nothing in §60.1 is built. §60.2 is what shipped (contact form, payload privacy/diet, deploy setup, cache header, footer); §60.3 the deploy-only lessons; §60.4 what is open, including Privacy/Sources (shipped last).
 **OCTOBER 6, 2026 (§59): SHORT WINDOWS, THE PHONE, READABLE CHIPS — paused here by Sam's choice; written to be picked up cold.** A one-way HEIGHT ladder (1050 → 745) that buys room with content and air, never by shrinking type; a PHONE recomposition (≤600px wide, step 1 of 3); chip type that fills its chip. §59.5 is how to resume (`scripts/probe-heights.mjs`), §59.6 the open list in priority order. Design §53 holds Sam's ranked priorities and every approach that was tried and discarded — read it first.
 **OCTOBER 2, 2026, LATE (§58): SAFARI.** Everything before this was built and judged in Chrome only, so the first session in real Safari found the hero's shadow blinking and the chip flights skipping. Safari is now close to Chrome. §58.1 is how to measure real Safari from here; nothing on headless WebKit can show these bugs. §58.3 is the one you need if a promotion ever "jumps" again: the arriving card's clock now waits for its first paint (`holdUntilPainted`). §58.4 is what NOT to do: re-timing flights for Safari broke everything and was reverted. All of it is scoped to `html.webkit`, so Chrome is byte-identical.
@@ -7451,3 +7452,67 @@ override them; anything that must fill the REAL window (the timeline rail) reads
   both cut function invocations to almost nothing. Pairs with the SEO session.
 - Google sign-in is in TESTING (only listed users); publishing needs a public /privacy page.
 - noindex stays on until the SEO launch (vercel.json).
+
+---
+
+## 64. OCTOBER 26, 2026 — PHOTOS THROUGH VERCEL'S EDGE CACHE (session record; SEO_PLAN §0 has the rest of the day)
+
+Commits `01abe083` (the cache) and `0565cfd3` (the warm-up script), deployed to hookerverse.com and hooker-test.
+Sam on the live site: *"very snappy and photos load fine."*
+
+### 64.1 WHY — Cloudinary's free plan was at 22.78 of 25 credits
+
+Sam wants to avoid Cloudinary's ~$90/month tier. The 30-day split (Oct 26): **bandwidth 13.41 GB = 59%**,
+transformations 4,991 = 22%, storage 4.53 GB = 20%. Half the bandwidth was Oct 6–9 test runs (probe-heights,
+the 200-hop soak); since Oct 17 the site still used ~0.4 GB/day with almost no outside readers — the
+neighbourhood preload (§14, kept by Sam's rule) times every visitor. Real traffic would have broken the plan.
+
+### 64.2 WHAT SHIPPED
+
+- **`cldSize()` (src/lib/photo.ts) emits `/cld/<transform>/<v…/file>`** for our cloud (`dc5clrqtw`); `vercel.json`
+  rewrites `/cld/:path*` to `res.cloudinary.com/dc5clrqtw/image/upload/:path*` and sets
+  `CDN-Cache-Control: public, max-age=31536000, immutable` + `x-vercel-enable-rewrite-caching: 1` — Cloudinary
+  answers `Cache-Control: private`, which a shared cache must otherwise refuse. Each image now leaves Cloudinary
+  about once per Vercel region; Vercel serves it from Pro's 1 TB. Still ONE derivative per person (§14).
+- **`PHOTO_TRANSFORM` is `f_webp`, not `f_auto`.** Measured on a preview deploy: f_auto sends JPEG XL to Safari,
+  WebP to Chrome, JPEG to vague clients, with `Vary: Accept, User-Agent` — and Vercel's cache served a bot's JPEG
+  to Chrome. A Safari-first JPEG XL would have reached Chrome, which cannot draw it. f_webp varies only on
+  Save-Data. Cost: every portrait got a new address (browsers re-download once; Cloudinary builds the WebP copy).
+- **The timeline rail's 30 headshots** go through `cldProxy()` (same `/cld/`, no transform — original bytes, no
+  new derivative). They were 2.1 MB per visitor straight from Cloudinary.
+- `vite.config.ts` proxies `/cld` for `vite dev` and `vite preview`; `cld` added to `RESERVED` (paths.ts).
+- **`scripts/warm-photos.mjs`** — §14's queued warm-up, built. Requests each portrait once through `/cld/` so the
+  copy exists before a reader asks. Ran for notables: 1,144 warmed, 0 failed, ~1.2 credits.
+
+**Not moved:** RightColumn media thumbnails (landmark/art/statue) still load direct from Cloudinary — per-card,
+low volume. ~160 hotlinked photos (Wikimedia, Find a Grave, WikiTree; §45.4, §63.7) cannot use this cache.
+
+### 64.3 MEASURED (live, Oct 26)
+
+| one portrait, time to first byte | |
+|---|---|
+| before, direct from Cloudinary | 0.31–0.50 s |
+| `/cld/`, first view anywhere (Cloudinary builds the copy) | 0.53–0.55 s |
+| `/cld/`, every later view (edge HIT) | **0.09–0.10 s** |
+
+Thomas's card in a real browser: 77 images via `/cld/`, 76 edge HITs, 0 failed, 0 broken; reload 64/64 HIT. Clicks
+did not change (a click waits for the payload JSON, 0.10–0.15 s); what Sam felt as "a hair slower" right after
+deploy was first views of the new WebP copies, gone once the notables were warmed.
+
+### 64.4 GOTCHAS FOR NEXT TIME
+
+- **Preview deploys cannot render person pages**: Vercel's login wall stops the server-side load fetching its own
+  `/data/` files, so it 404s. Test edge behaviour there with `vercel curl <path> --deployment <url>`; judge pages
+  on localhost or production. Preview builds also need placeholder env (`-e`/`-b` flags) — every variable is
+  Production-only.
+- **A HEAD request is cached separately from a GET** — `curl -I` reads MISS on a URL a GET just HIT.
+- **Tests must stub `/cld/` as well as `res.cloudinary.com`** — locally `/cld/` reaches Cloudinary through the
+  Vite proxy (memory `stub-cloudinary-in-tests`).
+- Each image is now one Vercel edge request (10M/month included) — DEPLOYMENT §11.1 corrected the same day.
+
+### 64.5 TODO
+
+- [ ] **Around Nov 9**, after the Oct 6–9 burst leaves Cloudinary's 30-day window: run
+  `node scripts/warm-photos.mjs --all` for the remaining 3,267 portraits, about 3.3 credits.
+- [ ] **Re-run `node scripts/warm-photos.mjs`** (no flag) after any big batch of new photo uploads.
+- [ ] Check Cloudinary's Usage a few days after Oct 26: bandwidth should flatten; transformations bump as copies build.

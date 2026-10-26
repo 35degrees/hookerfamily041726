@@ -15,7 +15,7 @@ anything in it from the Kennedy session.**
 Sam has built the Hooker Genealogy over eight months: a family tree of ~28,600 people where each person is a
 featured "baseball card" and moving between relatives is a choreographed flight. In **Chrome it is what he wants**
 ("chrome is perfection"). Two things are not, and he decided they need rebuilding from the ground up rather than
-patching (the Hooker record of that is its roadmap §60, `docs/ENRICHED_CODING_ROADMAP_FABLE_102126.md`):
+patching (the Hooker record of that is its roadmap §60, `docs/ENRICHED_CODING_ROADMAP_FABLE_102626.md`):
 
 1. **Safari.** Transitions feel quivery, weak and slower; ghost drop shadows linger where chips have left; the
    card's distressed edge flickers in flight; the parent-chip promotion jumps. None of this happens in Chrome.

@@ -1,7 +1,8 @@
 # SEO PLAN — getting hookerverse.com found, without giving the tree away
 
-**Opened October 24, 2026. Last updated October 26, 2026 — after the last deploy at 07:26 PT (end of session — Sam restarting; §0 is the
-handoff, §13 is the dated record of the discussion behind every decision).**
+**Opened October 24, 2026. Last updated October 26, 2026 (afternoon) — step 0 done: firewall logging, Search Console
+and Bing, spend cap, and the photo edge cache (§0.1). §0 is the handoff, §13 is the dated record of the discussion
+behind every decision.**
 A living document in the house convention: decisions Sam has made are marked ✅ and dated; open choices stay in
 §11 until he closes them; every measured number carries its date and is re-run before it is trusted.
 
@@ -35,24 +36,27 @@ nofollow` on every response + `Disallow: /` in `static/robots.txt`) — nothing 
 | Vercel Web Analytics on hookerverse.com only; never counts Sam (signed in as his account, matched by SHA-256 of the email; or any browser he has signed in on, `localStorage hv-owner`); first pageview waits for the session | `src/lib/state/analytics.svelte.ts`, `+layout.svelte` | 127da498 |
 | Privacy text now says visits are counted anonymously without cookies; Sources author names lightly underlined | `PrivacyModal.svelte`, `SourcesModal.svelte` | e903ff14 |
 | Phone: footer row on the floor of short cards, 44px under the last chip on tall ones; shuffle button reads "Notables"; intro arrow ≥64px tap target; bookmarks open on one tap on touch | `[slug]/+page.svelte` `.phone-footer`, `SiteFooter.svelte`, `ShuffleNotables.svelte`, `TopRightChrome.svelte`, `IntroGL/IntroOverlay.svelte`, `BookmarksModal.svelte` | f11a3e7a, 127da498, d1b82464 |
+| **Step 0 (Oct 26 afternoon).** **Firewall, LOG ONLY**, published via `vercel firewall` (CLI 63): `LOG data rate` (`/data/`, 120/min per IP), `LOG page rate` (page HTML only — regex excludes `/data`, `/_app`, `/_vercel`, `/api`, `/intro`, `/textures`, `/icons` and any path with a file extension; 60/min), `LOG geo deny-list` (CN RU VN SG KP IR), `LOG geo challenge-list` (outside US CA GB IE FR DE NL BE LU CH AT LI MC IT ES PT DK NO SE FI IS AU NZ). **Read the log ~Nov 2**, then tune and move to challenge/deny. **Search Console** Domain property verified (the existing TXT record). **Bing** imported from Search Console. **Vercel spend budget $50 on-demand, pause ON** (team-wide, on top of the $20 included credit) | Vercel dashboard / CLI; DNS unchanged | — |
+| **Photos through Vercel's edge cache** (Cloudinary was at 22.78/25 credits, 59% bandwidth): person photos and the rail headshots load from `/cld/…`, rewritten to Cloudinary and edge-cached; `f_webp` replaces `f_auto`; notables pre-built with `scripts/warm-photos.mjs`. First view 0.55 s → cached 0.09 s. Full record: roadmap §64 | `src/lib/photo.ts`, `vercel.json`, `vite.config.ts`, `TimelineRail.svelte`, `paths.ts`, `scripts/warm-photos.mjs` | 01abe083, 0565cfd3 |
 
 ### 0.2 Next, in order (§9 is the full build list; this is what remains of it)
 
-**Step 0 — start the clocks (needs Sam for two clicks).**
-1. **Google Search Console — PROBABLY ALREADY VERIFIED; check first.** The domain was bought at **Whois.com** and all
-   of its DNS was moved to **Sam's Vercel account** (Sam, Oct 26) — records are managed with `vercel dns ls|add
-   hookerverse.com`, nothing at Whois.com. `vercel dns ls hookerverse.com` on Oct 26 already shows a TXT record
-   `google-site-verification=p-_qnFe7iuGHBxpXNOhh4ktsL3al-QMfeQKjjTvoX-g`, created ~Oct 21 — almost certainly from
-   setting up Google sign-in, whose domain verification IS a Search Console verification. So: Sam opens
-   search.google.com/search-console signed in as samhooker@gmail.com and looks for a `hookerverse.com` property. If it
-   is there (Domain type), step 0.1 is done. If not: Add property → **Domain** → `hookerverse.com`, copy the new TXT
-   value to Code, `vercel dns add hookerverse.com @ TXT "google-site-verification=…"`, `dig TXT hookerverse.com`
-   until it shows, Sam presses Verify. **Never delete the existing TXT record** — Google sign-in's verification
-   depends on it. Verifying indexes nothing; it only opens the instrument.
-2. **Bing Webmaster Tools**: bing.com/webmasters → import from Search Console (one step once GSC is verified).
-3. **Firewall in `log` mode** (Vercel dashboard → the hooker-test project → Firewall): the `/data/` rate limit, a
-   rate limit on PAGE requests too (§8.3 — the page HTML carries the same payload as the data file), and the country
-   rules (§8.3 item 5). DEPLOYMENT_STRATEGY §9 has the shapes. **Needs a week of logs before launch.**
+**Step 0 — ✅ DONE Oct 26** (details in §0.1). Search Console verified, Bing imported, firewall logging, spend capped.
+DNS lives at **Sam's Vercel account** (bought at Whois.com; `vercel dns ls|add hookerverse.com`). **Never delete the
+TXT record `google-site-verification=p-_q…`** — Search Console and Google sign-in both rest on it.
+What step 0 left open:
+- **Safe Browsing review pending.** Search Console → Security issues showed **"Deceptive pages"**, no sample URLs; no
+  warning in Chrome, Safari or Firefox. Domain registered Oct 19, no web-archive history, so not inherited. Nothing
+  deceptive found (the server HTML has no login form; sign-in is OAuth buttons to Google/Microsoft; the only form is
+  contact). Likely trigger: a week-old domain + Google/Microsoft sign-in + deliberately hidden from search. Review
+  requested Oct 26 as a false positive; Google answers by email to samhooker@gmail.com. **Launch waits on it
+  clearing.** If Google names a URL, look at exactly that.
+- **Firewall log read ~Nov 2**: `vercel firewall overview` / `vercel firewall traffic`, then tune the two rate limits
+  and move rules log → challenge → deny (deny only for the deny list). The `/cld/` photo path is excluded from the
+  page rule by its file extension.
+- **Search Console Indexing** shows 2 "Blocked by robots.txt" and 1 "Indexed, though blocked by robots.txt" (a bare
+  URL Google learned but never fetched). Both are the deliberate `Disallow: /`; do not "Validate fix". They resolve
+  at launch (§6.3).
 
 **Step 2 — the rest of the head tags** (titles done). In `[slug]/+page.svelte`'s `<svelte:head>`, from data the
 payload already carries; anything missing is added in `regenerate-data.js`, never fetched at runtime.
@@ -114,12 +118,13 @@ pages, wait out the firewall's log week, and launch (§12).
 
 - **Vercel deployment retention** (Sam, dashboard → Project Settings → Deployment Retention, ~30 days): stored
   deployments were 55 GB on Oct 25 and grow ~0.5 GB per deploy (the 29k payloads). Cheap, but forever.
-- **Cloudinary** (cloud `dc5clrqtw`, free plan, "nearly reached monthly credits" email Oct 25): Sam to read the
-  dashboard's Usage split (bandwidth vs transformations vs storage) — that picks the lever. Turn on **Strict
-  Transformations** (allow `w_600,c_limit,q_auto,f_auto` + the og transform once built). A hub landing preloads ~98
-  photos / 3.6 MB (preloadNeighborhood + warmCrossConnections) — trimming that is a UX trade-off, Sam's call. Code's
-  own tests stub `res.cloudinary.com` (memory: stub-cloudinary-in-tests). If bandwidth dominates, the bigger move is
-  serving the w_600 derivatives from Vercel (Pro bandwidth is barely used: 0.71 GB of the month on Oct 25).
+- **Cloudinary** (cloud `dc5clrqtw`, free plan): ✅ **lever pulled Oct 26** — the split was bandwidth 59% /
+  transformations 22% / storage 20% (22.78 of 25 credits), so photos now go through Vercel's edge cache (§0.1,
+  roadmap §64). Sam's aim: never need the ~$90/month tier unless the site takes off. **Open:** the `--all` warm-up
+  around Nov 9 (roadmap §64.5); a look at Cloudinary's Usage a few days on. If **Strict Transformations** is ever
+  turned on, the allowed list must carry `w_600,c_limit,q_auto,f_webp` (not f_auto), the RightColumn media thumbnail
+  transforms, and the og transform once built. Tests stub `res.cloudinary.com` AND `/cld/` (memory
+  stub-cloudinary-in-tests).
 - **Vercel usage**: $0.30 of the month on Oct 25 (inside Pro's $20 credit) — not a concern until bots arrive; the
   firewall + edge cache are the protection.
 - **iPad brightness** (Sam's 2025 iPad Pro, matte drawing film): discussed, nothing built. Sam to try Settings →
@@ -134,8 +139,9 @@ pages, wait out the firewall's log week, and launch (§12).
 - **Analytics hygiene**: Sam signs in once per device on hookerverse.com so each browser is flagged and never
   counted; he tests on hooker-test.vercel.app, which never loads the counter.
 - `canonical.json` is 67.8 MB (GitHub warns over 50 MB) — known; memory canonical-size-options.
-- The ENRICHED design/roadmap pair was NOT updated this session (Sam did not ask); the frontend changes above are
-  recorded here and in their code comments.
+- The ENRICHED design doc was NOT updated Oct 24–26 (Sam did not ask); the frontend changes above are recorded here
+  and in their code comments. The roadmap gained **§64** on Oct 26 (the photo edge cache, at Sam's request) and is
+  now `ENRICHED_CODING_ROADMAP_FABLE_102626.md`.
 
 
 ---
@@ -516,7 +522,7 @@ clock on them go first** (reordered Oct 25): the firewall needs a week of `log` 
 search-console verifications take a DNS change that can sit for days. Both run in the background while the code
 steps are built.
 
-0. **Start the clocks.** (Not started as of Oct 26 — see §0.2 step 0 for the how-to and the existing verification record.)
+0. **Start the clocks.** ✅ Done Oct 26 (§0.1, §0.2). Firewall log review ~Nov 2.
    - **The firewall** (§8.3): the `/data/` rate limit, a page-request rate limit, and the country rules, in `log` mode.
    - **Google Search Console** — a *Domain* property for hookerverse.com, verified by a DNS TXT record (covers
      www and every path). Verifying does not index anything; it just opens the instrument.
@@ -722,3 +728,16 @@ and the commits; this is the *why*.
   exists (§0.2 step 0).
 - **Session end**: Sam restarting the computer; this document is the handoff. Final review (this pass) found the
   replaceState analytics gap (§0.2 step 8) and corrected the stale history-behaviour text in §5.8.
+
+### Oct 26 (Mon, afternoon) — step 0
+
+- **Firewall** staged as drafts and published on Sam's "ok proceed", log only (§0.1). Sam asked that everything be
+  surgical: *"the project is in great shape right now and you shouldn't be making wholesale changes just targeted work."*
+- **Search Console** was already verified. It also showed the **"Deceptive pages"** flag (§0.2) — no sample URLs, no
+  browser warning; review requested as a false positive. Sam had just said he is about to start sharing the link.
+- **Bing** imported; **spend budget** $50 with pause on.
+- **Cloudinary** at 91% of its free plan. Sam: *"i'm trying to avoid paying cloudinary $90 a month for a year if my
+  site isn't a big hit… keeping costs down is important but speed also important."* Photos moved behind Vercel's edge
+  cache (roadmap §64). After deploy Sam felt clicks *"maybe slowed down a hair… as a picky person i want things to be
+  very snappy"* — measured: first views of the new WebP copies (0.55 s); pre-building the notables fixed it. Sam:
+  *"very snappy and photos load fine."*

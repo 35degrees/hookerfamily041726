@@ -976,6 +976,16 @@ Two facts do most of the work in the analysis below:
   each count. But **Cloudinary images do not** — they are served from
   Cloudinary's CDN and never touch Vercel's meters. That is a meaningful
   accidental advantage of the existing architecture.
+  *(**REVISED October 26, 2026 — no longer true for person photos.** They now
+  load from `/cld/…` on the site's own host, rewritten to Cloudinary and cached
+  at Vercel's edge (roadmap §64), because Cloudinary's free plan was the binding
+  cost: 22.78 of 25 credits, 59% bandwidth. Each photo is therefore one Edge
+  Request and its bytes count as Fast Data Transfer. A heavy session (~100
+  photos plus ~30 other requests) is ~130 Edge Requests, so the 10M included
+  covers ~75,000 such sessions a month, and transfer stays far inside 1 TB. The
+  trade is deliberate: Vercel's allowance is ~40× roomier than Cloudinary's 25
+  credits, and blocked bots are not billed (§9.2). RightColumn media thumbnails
+  still load from Cloudinary directly.)*
 - **Compute has no free tier on Pro.** This is the entire argument of §3
   expressed as a rate sheet. Static delivery draws on two generous free
   allowances; every function invocation draws on the $20 credit from the first
