@@ -1,0 +1,31 @@
+# robots.txt FOR LAUNCH DAY — a DRAFT (SEO_PLAN §6.3, §12). On launch day copy this over static/robots.txt, in the
+# same commit that narrows vercel.json's site-wide X-Robots-Tag to "every host except hookerverse.com". Until then
+# static/robots.txt stays `Disallow: /`. Delete these comment lines when copying if you like; crawlers ignore them.
+#
+# ONE FILE SERVES BOTH HOSTS. hooker-test.vercel.app must NOT be disallowed here — a crawler has to fetch a page to
+# read its `noindex`, and hooker-test is kept out of every index by its own X-Robots-Tag rule in vercel.json.
+#
+# Sam's rulings (Oct 24): search engines welcome everywhere but the data files; AI TRAINING crawlers kept out; AI
+# SEARCH crawlers allowed ("a cited link in an AI answer is a visitor"); user-triggered fetchers never blocked.
+# robots.txt is a request, not a lock — the firewall (SEO_PLAN §8.3) is what stops the ones that ignore it.
+
+# AI training crawlers — take the corpus, send no readers.
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: CCBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Bytespider
+User-agent: meta-externalagent
+Disallow: /
+
+# Everyone else: search engines (Googlebot, Bingbot, …), AI search crawlers (OAI-SearchBot, PerplexityBot,
+# Claude-SearchBot), and user-triggered fetchers (ChatGPT-User, Claude-User) all read this group. The pages are
+# server-rendered, so nothing is lost by keeping crawlers off the raw data files and the API. The richness gate is a
+# `noindex` tag on each thin page, never a Disallow here — Google must be able to fetch a page to see its noindex.
+User-agent: *
+Disallow: /data/
+Disallow: /api/
+
+Sitemap: https://hookerverse.com/sitemap.xml

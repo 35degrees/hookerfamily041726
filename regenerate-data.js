@@ -2690,6 +2690,27 @@ function main() {
 		pgCount++;
 	}
 
+	// THE SITEMAP (SEO_PLAN §6.2): every page Google may index, and nothing else — the same isIndexable() that
+	// stamps `ix` on the payloads, so the sitemap and the pages' robots tags cannot disagree. Current slugs only
+	// (a renamed person's old address lives in redirects.json, never here). Plus the three addresses that are
+	// pages in their own right: `/` and the two indexable pop-ups (src/lib/surfaces.ts — /contact is noindex).
+	// No <lastmod>: nothing here records when a person's card last changed, and Google stops trusting a
+	// sitemap's dates once they prove wrong — no date beats a wrong one. Written into static/ so the site serves
+	// it at /sitemap.xml; generated, so gitignored. Submitted to Search Console only at launch (§12).
+	let sitemapCount = 0;
+	if (!only) {
+		const SITE = 'https://hookerverse.com';
+		const xmlEscape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		const urls = ['/', '/privacy', '/sources'];
+		for (const p of visible) if (isIndexable(p)) urls.push('/' + slugMap.get(p.id));
+		sitemapCount = urls.length;
+		const xml =
+			'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+			urls.map((u) => `<url><loc>${xmlEscape(SITE + u)}</loc></url>`).join('\n') +
+			'\n</urlset>\n';
+		writeFileSync(join(CONFIG.repoRoot, 'static/sitemap.xml'), xml);
+	}
+
 	log('Done.');
 	if (only) {
 		log(`  --only: ${pgCount} page payload(s) rebuilt; aggregates untouched`);
@@ -2698,6 +2719,7 @@ function main() {
 		log(`  search-index.json      ${searchIndex.length} rows`);
 		log(`  person/                ${pgCount} page payloads`);
 		log(`  redirects.json         ${Object.keys(redirects).length} entries`);
+		log(`  sitemap.xml            ${sitemapCount} URLs (the indexable pages + /, /privacy, /sources)`);
 		log(`  stats.json             thomas ${thomasDescendants} / talcott ${talcottDescendants}`);
 	}
 }

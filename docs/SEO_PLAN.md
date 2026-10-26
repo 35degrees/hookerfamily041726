@@ -66,10 +66,15 @@ card's cream (`w_1200,h_630,c_pad,b_rgb:f4ecdd,q_auto,f_jpg`), not face-cropped 
 newspaper portraits; and the site image is a screenshot of the live intro at rest, not a layer bake. **If Strict
 Transformations is ever turned on, that pad transform must be on the allowed list or every preview breaks.**
 
-**Step 5 — sitemap + robots.txt** (§6.2, §6.3): `regenerate-data.js` writes `static/sitemap.xml` (gated slugs +
-`/`, `/privacy`, `/sources`; `lastmod` only where trustworthy). Draft the two-policy robots.txt as a separate file —
-**`static/robots.txt` stays `Disallow: /` until launch day.** After launch, robots.txt must not disallow hooker-test
-(it is the same file for both hosts; hooker-test is kept out by its header).
+**Step 5 — ✅ DONE Oct 26.** `regenerate-data.js` writes `static/sitemap.xml` (gitignored, served at `/sitemap.xml`)
+from the SAME `isIndexable()` as the gate: **8,482 URLs** = 8,479 storied pages + `/`, `/privacy`, `/sources`; current
+slugs only; no `<lastmod>` (nothing trustworthy to date it by); 557 KB. Verified: valid XML, every person URL has a
+payload carrying `ix`, none points at `/data/` or another host. **The launch robots.txt is drafted at
+`docs/robots-launch.txt`** (never deployed — `docs/` is outside the upload) and checked with Python's robots parser:
+search engines, AI-search crawlers and user-triggered fetchers may read pages, portraits (`/cld/`, for Google Images)
+and the sitemap but not `/data/` or `/api/`; the AI-training crawlers get `Disallow: /`. **`static/robots.txt` stays
+`Disallow: /` until launch day (§12), when the draft replaces it.** Submit the sitemap in Search Console and Bing
+then, not before.
 
 **Step 6 — home page** (§5.7): `/` already has title + canonical. Add description, og image (the baked site image),
 `WebSite` JSON-LD with `author` → Sam (`https://hookerverse.com/samuel-hooker`), and ONE real

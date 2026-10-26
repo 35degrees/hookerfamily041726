@@ -20,6 +20,8 @@ static/data/institutions.json
 static/data/notables.json
 # the 14,792 per-person page payloads — pure build output
 static/data/person/
+# the sitemap (SEO_PLAN §6.2) — written by regenerate-data.js from isIndexable(), served at /sitemap.xml
+static/sitemap.xml
 
 # Keep canonical.json itself TRACKED (it's the source). Do NOT ignore it.
 # Keep src/, scripts, docs, package.json TRACKED.
