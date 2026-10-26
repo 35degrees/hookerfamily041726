@@ -91,9 +91,13 @@ no-WebGL fallback) is unchanged — the server always renders the GL branch.
 starts, so a crawler that RUNS the page ends on Thomas, whose canonical is Thomas — Google may fold `/` into
 Thomas's result. The server HTML is right either way. Revisit only if Search Console shows the home page missing.
 
-**Step 7 — edge cache** (§7 A): `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400` on person
-pages (and the three pop-up addresses); verify `x-vercel-cache: HIT` on a second fetch. Safe only because no person
-page reads the session — re-run `scripts/probe-static-contract.mjs` before and after.
+**Step 7 — ✅ DONE Oct 26.** `[slug]/+page.ts` sets `Cache-Control: public, s-maxage=3600,
+stale-while-revalidate=86400` once the payload is in hand (person pages and the /privacy, /sources, /contact
+addresses; never a 404 or a 301). Measured live on hooker-test, Dexter Ferry: first fetch MISS 2.0 s (cold start
+after deploy), then HIT 0.21 s / 0.19 s; a session cookie gets the same HIT (pages are identical for every reader).
+`scripts/probe-static-contract.mjs` 5/5 before and after — its allow-list gained `/api/contact`, which had kept
+check 4 red since Oct 9. Each deploy starts a fresh cache; data only changes with a deploy. In-site navigation is
+unaffected (it fetches `/data/` JSON, not page HTML).
 
 **Step 8 — the contact count** (§10b): `track('Contact sent')` from `@vercel/analytics` on a successful send —
 routed through `analytics.svelte.ts` so the same three fences apply (hookerverse only, never Sam). And add the
