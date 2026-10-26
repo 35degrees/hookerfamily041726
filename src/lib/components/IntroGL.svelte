@@ -33,6 +33,7 @@
 		releaseIntroGutter,
 		releaseIntroScroll
 	} from '#lib/state/intro.svelte.js';
+	import { personHref } from '#lib/paths.js';
 
 	let { test = false, ondone }: { test?: boolean; ondone?: () => void } = $props();
 
@@ -403,19 +404,31 @@
 	<canvas class="painting" bind:this={paintCanvas}></canvas>
 	<div class="title" bind:this={titleEl}>
 		<canvas class="plate" bind:this={plateCanvas}></canvas>
-		{#if arrowShown}
-			<button
-				class="enter"
-				type="button"
-				aria-label="Enter"
-				style:opacity={arrow}
-				style:--gold={gold}
-				onclick={() => enter()}
-				onpointerenter={() => (hover = true)}
-				onpointerleave={() => (hover = false)}
-				onfocus={() => (hover = true)}
-				onblur={() => (hover = false)}
-			>
+		<!-- ENTER IS A REAL LINK, AND IT IS THERE FROM THE FIRST BYTE (Oct 26, SEO_PLAN §5.7): `/` sends no other link,
+		     so without this a crawler arriving at the home page had no way into the tree. The anchor exists in the
+		     server HTML, inert (no pointer, out of the tab order, hidden from screen readers) until the arrow shows;
+		     only its DRAWING waits for `arrowShown`, as before, so nothing extra paints while the intro plays. A plain
+		     click runs the intro's own exit exactly as the button did; a modified click opens Thomas in a new tab. -->
+		<a
+			class="enter"
+			href={personHref('thomas-hooker-1586')}
+			aria-label="Enter"
+			aria-hidden={arrowShown ? undefined : 'true'}
+			tabindex={arrowShown ? undefined : -1}
+			style:pointer-events={arrowShown ? undefined : 'none'}
+			style:opacity={arrow}
+			style:--gold={gold}
+			onclick={(e) => {
+				if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+				e.preventDefault();
+				enter();
+			}}
+			onpointerenter={() => (hover = true)}
+			onpointerleave={() => (hover = false)}
+			onfocus={() => (hover = true)}
+			onblur={() => (hover = false)}
+		>
+			{#if arrowShown}
 				<svg viewBox="-60 -60 120 120" aria-hidden="true">
 					<defs>
 						<filter id="introgl-shadow" x="-6%" y="-20%" width="112%" height="140%" color-interpolation-filters="sRGB">
@@ -478,8 +491,8 @@
 						</g>
 					</g>
 				</svg>
-			</button>
-		{/if}
+			{/if}
+		</a>
 	</div>
 </div>
 {/if}

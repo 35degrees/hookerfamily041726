@@ -22,12 +22,32 @@
 	import { goto } from '$app/navigation';
 	import { personHref } from '#lib/paths.js';
 	import { SITE_ORIGIN, SITE_TITLE } from '#lib/site.js';
+	import { DEFAULT_PREVIEW, PREVIEW_W, PREVIEW_H } from '#lib/seo.js';
 	import { startIntro } from '#lib/state/intro.svelte.js';
 	import { auth, refreshSession } from '#lib/state/auth.svelte.js';
 	import { load, personById } from '#lib/state/search.svelte.js';
 
 	const THOMAS_SLUG = 'thomas-hooker-1586';
 	const RESOLVE_MS = 3500;
+
+	// The one sentence under the site's name in a search result or a shared link (SEO_PLAN §5.7).
+	const HOME_DESCRIPTION =
+		'The descendants of Rev. Thomas Hooker, who founded Hartford, Connecticut, in 1636: four centuries of American history told through one family.';
+	const websiteJsonLd = JSON.stringify({
+		'@context': 'https://schema.org',
+		'@type': 'WebSite',
+		'@id': `${SITE_ORIGIN}/#website`,
+		url: `${SITE_ORIGIN}/`,
+		name: SITE_TITLE,
+		description: HOME_DESCRIPTION,
+		inLanguage: 'en-US',
+		author: {
+			'@type': 'Person',
+			'@id': `${SITE_ORIGIN}${personHref('samuel-hooker')}#person`,
+			name: 'Samuel Talcott Hooker',
+			url: `${SITE_ORIGIN}${personHref('samuel-hooker')}`
+		}
+	}).replace(/</g, '\\u003c');
 
 	async function homeSlug(): Promise<string> {
 		while (auth.isPending) await new Promise((r) => setTimeout(r, 40));
@@ -54,4 +74,20 @@
 <svelte:head>
 	<title>{SITE_TITLE}</title>
 	<link rel="canonical" href="{SITE_ORIGIN}/" />
+	<!-- THE HOME PAGE'S TAGS (SEO_PLAN §5.7, step 6): invisible, the intro unchanged (Sam, Oct 24: "it all speaks for
+	     itself"). The WebSite node is the one every person page's ProfilePage points at (`isPartOf` #website), and it
+	     names Sam's own card as the author — how a search engine learns there is a real compiler behind the site. -->
+	<meta name="description" content={HOME_DESCRIPTION} />
+	<meta property="og:site_name" content={SITE_TITLE} />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content={SITE_TITLE} />
+	<meta property="og:description" content={HOME_DESCRIPTION} />
+	<meta property="og:url" content="{SITE_ORIGIN}/" />
+	<meta property="og:image" content={DEFAULT_PREVIEW} />
+	<meta property="og:image:width" content={String(PREVIEW_W)} />
+	<meta property="og:image:height" content={String(PREVIEW_H)} />
+	<meta property="og:image:alt" content={SITE_TITLE} />
+	<meta name="twitter:card" content="summary_large_image" />
+	{@html `<script type="application/ld+json">${websiteJsonLd}</script>`}
 </svelte:head>

@@ -76,14 +76,20 @@ and the sitemap but not `/data/` or `/api/`; the AI-training crawlers get `Disal
 `Disallow: /` until launch day (§12), when the draft replaces it.** Submit the sitemap in Search Console and Bing
 then, not before.
 
-**Step 6 — home page** (§5.7): `/` already has title + canonical. Add description, og image (the baked site image),
-`WebSite` JSON-LD with `author` → Sam (`https://hookerverse.com/samuel-hooker`), and ONE real
-`<a href="/thomas-hooker-1586">` — the intro's Enter control is a `<button class="enter">` today (both
-`IntroGL.svelte` ~l.407 and `IntroOverlay.svelte` ~l.420, the GL and fallback intros); make it an `<a>` that keeps
-its click behaviour (preventDefault on a plain click, as the footer links do), so a crawler sees the link and a
-reader sees no change. Never hidden text. Note the arrow only renders after the intro plays (`arrowShown`) — the
-link must be in the SERVER HTML, so it may need to exist (invisible-until-shown is fine; it is a real control) from
-first render.
+**Step 6 — ✅ DONE Oct 26.** `/` keeps its title and canonical and gains a description ("The descendants of Rev.
+Thomas Hooker, who founded Hartford, Connecticut, in 1636: four centuries of American history told through one
+family." — Sam may reword), link-preview tags with `og-default.jpg`, and the `WebSite` JSON-LD node
+(`@id https://hookerverse.com/#website`, the one every ProfilePage's `isPartOf` names) with `author` = Samuel Talcott
+Hooker → `/samuel-hooker`. **The intro's Enter is now an `<a href="/thomas-hooker-1586">` present in the server
+HTML from the first byte** (`IntroGL.svelte`): inert — `pointer-events: none`, `tabindex -1`, `aria-hidden` — until
+the arrow shows; only its SVG drawing still waits for `arrowShown`, so nothing extra paints during the intro. A plain
+click / Enter key runs the intro's exit as before; a modified click opens Thomas in a new tab. Verified: `/` sends
+exactly 1 link; same 56×56 box at 692,582; the intro at rest is pixel-identical (arrow region 0/255 difference); click
+and Enter both land on Thomas; a click on the arrow's spot before it appears does nothing. `IntroOverlay` (the
+no-WebGL fallback) is unchanged — the server always renders the GL branch.
+**Known, not changed:** `/` replaces itself with Thomas's page (or a signed-in reader's home card) as the intro
+starts, so a crawler that RUNS the page ends on Thomas, whose canonical is Thomas — Google may fold `/` into
+Thomas's result. The server HTML is right either way. Revisit only if Search Console shows the home page missing.
 
 **Step 7 — edge cache** (§7 A): `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400` on person
 pages (and the three pop-up addresses); verify `x-vercel-cache: HIT` on a second fetch. Safe only because no person
