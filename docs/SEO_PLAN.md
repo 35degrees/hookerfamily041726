@@ -99,16 +99,20 @@ after deploy), then HIT 0.21 s / 0.19 s; a session cookie gets the same HIT (pag
 check 4 red since Oct 9. Each deploy starts a fresh cache; data only changes with a deploy. In-site navigation is
 unaffected (it fetches `/data/` JSON, not page HTML).
 
-**Step 8 — the contact count** (§10b): `track('Contact sent')` from `@vercel/analytics` on a successful send —
-routed through `analytics.svelte.ts` so the same three fences apply (hookerverse only, never Sam). And add the
-visit's landing page + referrer to the email body: remember them for the tab on the first page of the visit
-(sessionStorage, try/catch), send them in `/api/contact`'s body.
-**Also in step 8 — a gap found at the end of the Oct 26 review:** the Vercel script counts `pushState` and
-`popstate` only (checked in `va.vercel-scripts.com/v1/script.js`), and since 3fe7a436 the pop-up addresses use
-`replaceState`. So opening Privacy / Sources / Contact INSIDE the app is not counted any more (a direct visit to
-`/privacy` still is). Fix: when a surface opens in the app, call `pageview({ path: '/contact' })` (exported by
-`@vercel/analytics`) through `analytics.svelte.ts`'s fences — never by switching back to pushState, which is the
-Safari hazard §0.1 records.
+**Step 8 — ✅ DONE Oct 26.** In `analytics.svelte.ts`, behind the same three fences (hookerverse.com only, never Sam
+signed in, never a device Sam has signed in on): `trackEvent('Contact sent', { reason })` from ContactModal on a
+successful send, and `trackPageview('/privacy' | '/sources' | '/contact')` from `syncSurfaceAddress` when a pop-up
+opens in-site (a replaced history entry is invisible to the script; a direct visit is still counted by the script's
+own first view, never twice). `rememberArrival()` keeps the tab's first page and the referrer's HOSTNAME in
+sessionStorage (every host, try/catch); the form sends them and `/api/contact` adds one line to the email —
+"Arrived: from www.google.com, landing on /william-bristol-1779". Verified locally with `/api/contact` intercepted (no
+email sent): arrival remembered across in-site clicks, both fields in the payload, Privacy opens at `/privacy` and
+closes back to the card, no page errors. **Not verifiable by Code:** the two analytics calls themselves — the script
+ignores headless browsers and fences out Sam; they will show in Vercel → Analytics (Events tab, and the /contact
+etc. pages) once outside readers use them. **Sam's end-to-end check:** send one real test message from hooker-test
+(sign out first, or use a private window) and look for the "Arrived:" line.
+**Open, Sam's call:** the Privacy text says visits are counted anonymously; it does not yet say the contact form
+includes the landing page and referring site. One sentence if wanted.
 
 **Then** write the verification probe (§9 last paragraph: Googlebot desktop AND smartphone; rich page, stub,
 renamed slug, hidden person, `/`, `/privacy`; red first), run Google's Rich Results Test and PageSpeed on three

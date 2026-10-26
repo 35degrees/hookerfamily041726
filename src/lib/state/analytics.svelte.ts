@@ -22,7 +22,7 @@
  * Person-to-person navigation is shallow routing (navigate.ts: goto(…, { shallow: true }) →
  * history.pushState), which the script's own pushState tracking reports as a pageview per person.
  */
-import { inject } from '@vercel/analytics';
+import { inject, pageview, track } from '@vercel/analytics';
 import { auth } from '#lib/state/auth.svelte.js';
 
 const HOST = 'hookerverse.com';
@@ -64,8 +64,58 @@ function start(): void {
 	inject({ mode: 'production', beforeSend: (event) => (ownerDevice ? null : event) });
 }
 
+/**
+ * TWO THINGS THE SCRIPT CANNOT SEE ON ITS OWN (SEO_PLAN §10b, step 8), behind the same three fences: nothing is sent
+ * unless the script was started (hookerverse.com only) and this is not Sam's device.
+ *
+ *   trackEvent — a custom event; today only "Contact sent", the number that matters (§10b).
+ *   trackPageview — a view the script would miss: the pop-ups (Privacy, Sources, Contact) take their address by
+ *     REPLACING the history entry (+page.svelte syncSurfaceAddress, the Safari fix of Oct 26), and the script only
+ *     counts pushState and popstate.
+ */
+export function trackEvent(name: string, props?: Record<string, string>): void {
+	if (!injected || ownerDevice) return;
+	track(name, props);
+}
+export function trackPageview(path: string): void {
+	if (!injected || ownerDevice) return;
+	pageview({ path, route: path });
+}
+
+/**
+ * WHERE THIS VISIT CAME FROM — for the contact email only, not analytics (SEO_PLAN §10b): the first page of the
+ * visit and the referring site's HOSTNAME (never its full address — the same detail the analytics keeps), remembered
+ * for the tab so a message sent ten cards later still says "arrived from google.com, landing on …". Only an outside
+ * referrer counts; a reload or an in-site hop keeps the first one. Every host, so it can be tried on hooker-test.
+ */
+const ARRIVAL_KEY = 'hv-arrival';
+export function rememberArrival(): void {
+	try {
+		if (sessionStorage.getItem(ARRIVAL_KEY)) return;
+		let referrer = '';
+		try {
+			const r = document.referrer ? new URL(document.referrer).hostname : '';
+			if (r && r !== location.hostname) referrer = r;
+		} catch {
+			/* an unparseable referrer is no referrer */
+		}
+		sessionStorage.setItem(ARRIVAL_KEY, JSON.stringify({ landing: location.pathname, referrer }));
+	} catch {
+		// storage blocked (a private window, a locked-down browser): the email simply goes without it
+	}
+}
+export function arrival(): { landing: string; referrer: string } | null {
+	try {
+		const a = JSON.parse(sessionStorage.getItem(ARRIVAL_KEY) ?? 'null');
+		return a && typeof a.landing === 'string' ? { landing: a.landing, referrer: String(a.referrer ?? '') } : null;
+	} catch {
+		return null;
+	}
+}
+
 /** Called once from the root layout's onMount. Returns the cleanup. */
 export function startAnalytics(): () => void {
+	rememberArrival();
 	if (location.hostname !== HOST) return () => {};
 	ownerDevice = readOwnerFlag();
 	const timer = setTimeout(start, SESSION_WAIT_MS);

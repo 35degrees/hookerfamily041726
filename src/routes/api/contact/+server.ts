@@ -50,6 +50,10 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	const email = oneLine(str('email', 200));
 	const message = str('message', 5000).trim();
 	const page = oneLine(str('page', 300));
+	// Where the visit began (ContactModal → analytics.svelte.ts arrival()): the first page and the referring
+	// site's hostname. Context for Sam, never required; anything malformed is simply left out.
+	const landing = oneLine(str('landing', 300));
+	const referrer = oneLine(str('referrer', 200)).replace(/[^a-z0-9.-]/gi, '');
 
 	if (str('website', 200)) return Response.json({ ok: true }); // the honeypot
 	if (!EMAIL_RE.test(email) || !message) throw error(400, 'An email address and a message are required');
@@ -70,15 +74,18 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		credentials: { accessKeyId: keyId, secretAccessKey: secret }
 	});
 
+	const arrived =
+		referrer || landing
+			? `Arrived: ${referrer ? `from ${referrer}` : 'directly'}${landing ? `, landing on ${landing}` : ''}`
+			: '';
 	const text = [
 		`Reason:  ${reason || '(none)'}`,
 		`From:    ${name || '(no name)'} <${email}>`,
 		page ? `Page:    ${page}` : '',
-		'',
-		message
+		arrived
 	]
-		.filter((l, i) => l !== '' || i === 3)
-		.join('\n');
+		.filter(Boolean)
+		.join('\n') + `\n\n${message}`;
 
 	try {
 		await client.send(

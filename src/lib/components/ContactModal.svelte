@@ -20,6 +20,7 @@
 	import { personHref } from '#lib/paths.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { auth } from '#lib/state/auth.svelte.js';
+	import { arrival, trackEvent } from '#lib/state/analytics.svelte.js';
 	import { linear, cubicOut } from 'svelte/easing';
 	import { tick } from 'svelte';
 
@@ -109,13 +110,29 @@
 		sending = true;
 		failed = false;
 		try {
+			// …plus where the visit began (SEO_PLAN §10b): the first page and the referring site's hostname, so the
+			// email reads "arrived from google.com, landing on …" — context on a message the reader chose to send.
+			const from = arrival();
 			const res = await fetch('/api/contact', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ reason, subject, name, email, message, website, page: cardAddress() })
+				body: JSON.stringify({
+					reason,
+					subject,
+					name,
+					email,
+					message,
+					website,
+					page: cardAddress(),
+					landing: from?.landing ?? '',
+					referrer: from?.referrer ?? ''
+				})
 			});
-			if (res.ok) sent = true;
-			else failed = true;
+			if (res.ok) {
+				sent = true;
+				// THE NUMBER THAT MATTERS (SEO_PLAN §10b) — fenced like every other count: hookerverse.com, never Sam.
+				trackEvent('Contact sent', reason ? { reason } : undefined);
+			} else failed = true;
 		} catch {
 			failed = true;
 		} finally {

@@ -107,6 +107,7 @@
 	import { fetchFeatured } from '#lib/data/buildFeatured.js';
 	import { personHref, slugFromPath } from '#lib/paths.js';
 	import { SITE_ORIGIN, SITE_TITLE } from '#lib/site.js';
+	import { trackPageview } from '#lib/state/analytics.svelte.js';
 	import { personDescription, personJsonLd, previewImage, DEFAULT_PREVIEW, PREVIEW_W, PREVIEW_H } from '#lib/seo.js';
 	/** The line's root — the X's last resort when nothing else on the card leads home. */
 	const THOMAS_SLUG = 'thomas-hooker-1586';
@@ -255,7 +256,13 @@
 	function syncSurfaceAddress(kind: typeof modal.kind) {
 		const at = surfaceFromPath(location.pathname);
 		if (isSurface(kind)) {
-			if (at !== kind) void goto(surfaceHref(kind), { shallow: true, replace: true });
+			if (at !== kind) {
+				void goto(surfaceHref(kind), { shallow: true, replace: true });
+				// A replaced entry is invisible to the analytics script (it counts pushState and popstate only), so the
+				// pop-up's view is reported here — the Contact step of SEO_PLAN §10b's funnel. A direct visit to the
+				// address never reaches this line (`at === kind`), and is counted by the script's own first view.
+				trackPageview(surfaceHref(kind));
+			}
 			return;
 		}
 		if (!at) return;
