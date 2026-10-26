@@ -114,6 +114,11 @@ etc. pages) once outside readers use them. **Sam's end-to-end check:** send one 
 **Open, Sam's call:** the Privacy text says visits are counted anonymously; it does not yet say the contact form
 includes the landing page and referring site. One sentence if wanted.
 
+**The verification probe — ✅ BUILT Oct 26: `node scripts/probe-seo.mjs`** (default base hooker-test; `--base
+https://hookerverse.com --launched` on launch day). Googlebot desktop AND smartphone; a storied page, a stub, a private
+person, an old slug (one 301), a severed person (404, uncached), `/`, `/privacy`, `/contact`; the sitemap (incl. 15 random
+URLs fetched — gate and sitemap agree); robots.txt; the host header. Proven red first (three deliberate breaks, each
+caught), then **42/42** on localhost and hooker-test.
 **Then** write the verification probe (§9 last paragraph: Googlebot desktop AND smartphone; rich page, stub,
 renamed slug, hidden person, `/`, `/privacy`; red first), run Google's Rich Results Test and PageSpeed on three
 pages, wait out the firewall's log week, and launch (§12).
