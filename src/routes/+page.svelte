@@ -21,7 +21,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { personHref } from '#lib/paths.js';
-	import { SITE_TITLE } from '#lib/site.js';
+	import { SITE_ORIGIN, SITE_TITLE } from '#lib/site.js';
 	import { startIntro } from '#lib/state/intro.svelte.js';
 	import { auth, refreshSession } from '#lib/state/auth.svelte.js';
 	import { load, personById } from '#lib/state/search.svelte.js';
@@ -51,4 +51,7 @@
 	});
 </script>
 
-<svelte:head><title>{SITE_TITLE}</title></svelte:head>
+<svelte:head>
+	<title>{SITE_TITLE}</title>
+	<link rel="canonical" href="{SITE_ORIGIN}/" />
+</svelte:head>

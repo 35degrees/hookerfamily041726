@@ -112,9 +112,16 @@
 		/>
 	</svg>
 	<span class="nav-label">Notable People</span>
+	<!-- …and ONE WORD ON A PHONE (Sam, Oct 26: "add the word 'Notables' after the icon"). The phone corner
+	     drops every label (TopRightChrome), and this was the one glyph that did not say what it does on its
+	     own — the house, the ribbon and the magnifier do. Shown only by TopRightChrome's phone rule. -->
+	<span class="nav-label-phone">Notables</span>
 </button>
 
 <style>
+	.nav-label-phone {
+		display: none;
+	}
 	/* Takes .ground-toggle's shell (Field.svelte) — same type, same blur, same 16px inset — so the two
 	   pieces of chrome read as siblings. It diverges on three things, all Sam: top-right rather than
 	   bottom-right, SQUARED rather than a pill, and GOLD ink rather than off-white.

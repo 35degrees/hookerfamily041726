@@ -103,7 +103,7 @@
 	import { cardinalWord, cardinalWordLower, possessive } from '#lib/utils/dates.js';
 	import { fetchFeatured } from '#lib/data/buildFeatured.js';
 	import { personHref, slugFromPath } from '#lib/paths.js';
-	import { SITE_TITLE } from '#lib/site.js';
+	import { SITE_ORIGIN, SITE_TITLE } from '#lib/site.js';
 	/** The line's root — the X's last resort when nothing else on the card leads home. */
 	const THOMAS_SLUG = 'thomas-hooker-1586';
 	import { featured } from '#lib/state/featured.svelte.js';
@@ -180,6 +180,13 @@
 		const c = f.neighborhood.focus;
 		const name = (c?.nk ?? c?.sn ?? c?.n ?? '').trim();
 		return name ? `${name} - ${SITE_TITLE}` : SITE_TITLE;
+	});
+	// THE CANONICAL ADDRESS (SEO_PLAN §5.3): hookerverse.com + the person's CURRENT slug, read off the same
+	// focus compact as the title — so a page reached by an old slug's redirect, or on hooker-test, still
+	// names its one real address, and a warm navigation re-points it with the tab title.
+	const canonicalUrl = $derived.by(() => {
+		const slug = f.neighborhood.focus?.slug;
+		return slug ? SITE_ORIGIN + personHref(slug) : null;
 	});
 
 	// THE INTRO HOLD (100226). Arriving from `/`, this page mounts UNDER the intro overlay and starts BLANK —
@@ -2014,7 +2021,10 @@
 
 </script>
 
-<svelte:head><title>{pageTitle}</title></svelte:head>
+<svelte:head>
+	<title>{pageTitle}</title>
+	{#if canonicalUrl}<link rel="canonical" href={canonicalUrl} />{/if}
+</svelte:head>
 
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
 <Field />

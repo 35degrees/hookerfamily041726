@@ -102,6 +102,10 @@
 	.top-right-chrome.phone :global(.nav-label) {
 		display: none;
 	}
+	/* …except the shuffle's one phone word (ShuffleNotables .nav-label-phone). */
+	.top-right-chrome.phone :global(.nav-label-phone) {
+		display: inline;
+	}
 	.top-right-chrome.phone :global(.shuffle-notables) {
 		padding: 6px 9px;
 	}
