@@ -1,14 +1,135 @@
 # SEO PLAN — getting hookerverse.com found, without giving the tree away
 
-**Opened October 24, 2026.** A living document in the house convention: decisions Sam has made are marked
-✅ and dated; open choices stay in §11 until he closes them; every measured number carries its date and is
-re-run before it is trusted.
+**Opened October 24, 2026. Last updated October 26, 2026 (end of session — Sam restarting; §0 is the handoff).**
+A living document in the house convention: decisions Sam has made are marked ✅ and dated; open choices stay in
+§11 until he closes them; every measured number carries its date and is re-run before it is trusted.
 
 **This supersedes `DEPLOYMENT_STRATEGY.md` §7 (the SEO surface).** That section was written on August 13,
 before people moved to the root (`/thomas-hooker-1586`), before sign-in, and before the site was deployed.
 Its reasoning still holds and is not repeated here; where the two disagree, this document wins.
 DEPLOYMENT_STRATEGY remains the owner of the firewall (§9), the cost model (§11) and the launch-day
 checklist (§15), and this plan points into them rather than copying them.
+
+---
+
+## §0. STATUS AND NEXT STEPS — the handoff (October 26, 2026)
+
+**Read this section first in a new session.** Everything below §0 is the reasoning; this is where the work stands.
+Live deploy at the end of the session: commit **3fe7a436**, pushed to GitHub, deployed to hookerverse.com and
+hooker-test.vercel.app (one build, two addresses). The site is still hidden from search (`X-Robots-Tag: noindex,
+nofollow` on every response + `Disallow: /` in `static/robots.txt`) — nothing below is public to Google until §12.
+
+### 0.1 Done (Oct 24–26), each verified on the live site
+
+| what | where it lives | commit |
+|---|---|---|
+| Page titles `"<chip name> (<years>) - The Descendants of Rev. Thomas Hooker"`; private-date people get no years; Thomas's own: "Rev. Thomas Hooker (1586–1647)". Shared titles on the 8,479 gated pages: 2,168 → 8 | `src/routes/[slug]/+page.svelte` `pageTitle`; `src/lib/site.ts` `SITE_TITLE` | e903ff14 |
+| Canonical tag on every person page (`https://hookerverse.com/<current slug>`, also on hooker-test, also after an old-slug redirect) and on `/` | `src/lib/site.ts` `SITE_ORIGIN`; `[slug]/+page.svelte` `canonicalUrl`; `src/routes/+page.svelte` | d1b82464 |
+| **Privacy, Sources, Contact have real addresses** (§5.8): `/privacy`, `/sources` open over Rev. Thomas's card, `/contact` over Sam's; server-rendered with title, description, canonical (`/contact` noindex); in the app the address bar follows the pop-up; footer items + Sam's NB 3 "here" are real `<a href>`s | `src/lib/surfaces.ts` (the one definition), `[slug]/+page.ts` (loads the host), `[slug]/+page.svelte` (`openSurface`, `syncSurfaceAddress`, `forced` props), `SiteFooter.svelte`, `NarrativeBlocks.svelte` | 4754af78 |
+| **Safari fix** for the above: a CC-style flight (Sources author link, search pick, CC link) started from a pop-up's address abandoned its arrival — old card gone, new one never in (Sam's Ketchum screenshot). The early-exit "has the reader moved?" check now reads `readerAddress()` (a pop-up's address = the card under it); pop-up addresses REPLACE the history entry instead of pushing one and stepping Back on close | `src/lib/state/navigate.ts` `readerAddress`, `focusAfterEarlyExit` | 3fe7a436 |
+| Side doors closed: `/dev/*`, `/table`, `/institution/*` answer 404 in production (still work in `npm run dev`) | `src/routes/dev/+layout.ts`, `table/+page.ts`, `institution/[slug]/+page.ts` | acbce375 |
+| Unread data files no longer published: `cemeteries.json`, `institutions.json`, `table-index.json`, `stats.json` are written locally only (`WLocal`, skipped when `VERCEL=1`) | `regenerate-data.js` | acbce375 |
+| **Living people's private dates stripped from everything downloadable** — 653 people; before: 497 birth years in `search-index.json`, 261 full birthdays in payloads/HTML, every seat `t.y` = true birth year. Rows sort on `bo` (per-row birth-order rank); search sorts private rows as dated-youngest by generation; card wear treats private as recent; rail direction uses the seat estimate | `regenerate-data.js` (`datesPrivate`, `privateDateless`, `stampBirthOrder`, `chipDateParts`), `table-coords.mjs` (`isPrivate`), `roster.ts` `birthKey`, `siblingLayout.ts`, `search.svelte.ts` `PRIVATE_SORT_YEAR`, `FeaturedCard.svelte`, `TimelineRail.svelte` | cbf7206e |
+| hooker-test.vercel.app = Sam's testing host, `noindex` forever (host-scoped header, survives launch) | `vercel.json` | 127da498 |
+| Vercel Web Analytics on hookerverse.com only; never counts Sam (signed in as his account, matched by SHA-256 of the email; or any browser he has signed in on, `localStorage hv-owner`); first pageview waits for the session | `src/lib/state/analytics.svelte.ts`, `+layout.svelte` | 127da498 |
+| Privacy text now says visits are counted anonymously without cookies; Sources author names lightly underlined | `PrivacyModal.svelte`, `SourcesModal.svelte` | e903ff14 |
+| Phone: footer row on the floor of short cards, 44px under the last chip on tall ones; shuffle button reads "Notables"; intro arrow ≥64px tap target; bookmarks open on one tap on touch | `[slug]/+page.svelte` `.phone-footer`, `SiteFooter.svelte`, `ShuffleNotables.svelte`, `TopRightChrome.svelte`, `IntroGL/IntroOverlay.svelte`, `BookmarksModal.svelte` | f11a3e7a, 127da498, d1b82464 |
+
+### 0.2 Next, in order (§9 is the full build list; this is what remains of it)
+
+**Step 0 — start the clocks (needs Sam for two clicks).**
+1. **Google Search Console — PROBABLY ALREADY VERIFIED; check first.** The domain was bought at **Whois.com** and all
+   of its DNS was moved to **Sam's Vercel account** (Sam, Oct 26) — records are managed with `vercel dns ls|add
+   hookerverse.com`, nothing at Whois.com. `vercel dns ls hookerverse.com` on Oct 26 already shows a TXT record
+   `google-site-verification=p-_qnFe7iuGHBxpXNOhh4ktsL3al-QMfeQKjjTvoX-g`, created ~Oct 21 — almost certainly from
+   setting up Google sign-in, whose domain verification IS a Search Console verification. So: Sam opens
+   search.google.com/search-console signed in as samhooker@gmail.com and looks for a `hookerverse.com` property. If it
+   is there (Domain type), step 0.1 is done. If not: Add property → **Domain** → `hookerverse.com`, copy the new TXT
+   value to Code, `vercel dns add hookerverse.com @ TXT "google-site-verification=…"`, `dig TXT hookerverse.com`
+   until it shows, Sam presses Verify. **Never delete the existing TXT record** — Google sign-in's verification
+   depends on it. Verifying indexes nothing; it only opens the instrument.
+2. **Bing Webmaster Tools**: bing.com/webmasters → import from Search Console (one step once GSC is verified).
+3. **Firewall in `log` mode** (Vercel dashboard → the hooker-test project → Firewall): the `/data/` rate limit, a
+   rate limit on PAGE requests too (§8.3 — the page HTML carries the same payload as the data file), and the country
+   rules (§8.3 item 5). DEPLOYMENT_STRATEGY §9 has the shapes. **Needs a week of logs before launch.**
+
+**Step 2 — the rest of the head tags** (titles done). In `[slug]/+page.svelte`'s `<svelte:head>`, from data the
+payload already carries; anything missing is added in `regenerate-data.js`, never fetched at runtime.
+- **Description** (§5.2): `notable_blurb ?? bio_blurb` → else the first sentence of NB 1 (✅ §11.5) → else a factual
+  line ("Son of … and …; born <place> <year>"). ~155 chars. Never for `pv` dates. Mind "initials break sentence
+  trims" (a first sentence cut at "F. D.").
+- **Link previews** (§5.5): `og:title`, `og:description`, `og:url` (= canonical), `og:image`, `twitter:card`. Portrait
+  through ONE Cloudinary transform (e.g. `w_1200,h_630,c_fill,g_face,q_auto,f_jpg`) — **if Strict Transformations is
+  on by then (§0.3), that transform must be added to Cloudinary's allowed list or every preview breaks.** People with
+  no photo get a site image that does not exist yet: bake the intro painting + gilt title at 1200×630 with
+  `scripts/intro/bake-intro-layers.mjs` (it takes `BAKE_WIDTH`/`BAKE_OUT`) into `static/`.
+- **Alt text** (§5.6): `alt="<display name>"` on every portrait (FeaturedCard, PersonBox chips, search/connect rows);
+  media rows get their title. Check where `alt=""` is set today.
+- **JSON-LD `Person`** (§5.4): name, birth/death date + place at the record's precision, parent/spouse/children as
+  `{name, url}`, image, description, `sameAs` = `notable.notable_url`. **Never** for `pv` people's dates (they are not
+  in the payload anyway). Only card-visible facts — nothing from research_notes/sources.
+- The three pop-up addresses already have title/description/canonical (`SURFACES` in `surfaces.ts`); they get no
+  JSON-LD.
+
+**Step 3 — the gate** (§6.1): `<meta name="robots" content="noindex, follow">` on every person page with zero
+narrative blocks. Compute the flag ONCE in `regenerate-data.js` (e.g. an `ix` boolean on the payload) so the page
+and the sitemap read the same predicate. Sam's card (3 NBs), `/privacy`, `/sources` are indexable; `/contact` is
+already noindex.
+
+**Step 5 — sitemap + robots.txt** (§6.2, §6.3): `regenerate-data.js` writes `static/sitemap.xml` (gated slugs +
+`/`, `/privacy`, `/sources`; `lastmod` only where trustworthy). Draft the two-policy robots.txt as a separate file —
+**`static/robots.txt` stays `Disallow: /` until launch day.** After launch, robots.txt must not disallow hooker-test
+(it is the same file for both hosts; hooker-test is kept out by its header).
+
+**Step 6 — home page** (§5.7): `/` already has title + canonical. Add description, og image (the baked site image),
+`WebSite` JSON-LD with `author` → Sam (`https://hookerverse.com/samuel-hooker`), and ONE real
+`<a href="/thomas-hooker-1586">` — the intro's Enter control is a `<button class="enter">` today (both
+`IntroGL.svelte` ~l.407 and `IntroOverlay.svelte` ~l.420, the GL and fallback intros); make it an `<a>` that keeps
+its click behaviour (preventDefault on a plain click, as the footer links do), so a crawler sees the link and a
+reader sees no change. Never hidden text. Note the arrow only renders after the intro plays (`arrowShown`) — the
+link must be in the SERVER HTML, so it may need to exist (invisible-until-shown is fine; it is a real control) from
+first render.
+
+**Step 7 — edge cache** (§7 A): `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400` on person
+pages (and the three pop-up addresses); verify `x-vercel-cache: HIT` on a second fetch. Safe only because no person
+page reads the session — re-run `scripts/probe-static-contract.mjs` before and after.
+
+**Step 8 — the contact count** (§10b): `track('Contact sent')` from `@vercel/analytics` on a successful send —
+routed through `analytics.svelte.ts` so the same three fences apply (hookerverse only, never Sam). And add the
+visit's landing page + referrer to the email body: remember them for the tab on the first page of the visit
+(sessionStorage, try/catch), send them in `/api/contact`'s body.
+
+**Then** write the verification probe (§9 last paragraph: Googlebot desktop AND smartphone; rich page, stub,
+renamed slug, hidden person, `/`, `/privacy`; red first), run Google's Rich Results Test and PageSpeed on three
+pages, wait out the firewall's log week, and launch (§12).
+
+### 0.3 Open items outside the build (from the Oct 24–26 session)
+
+- **Vercel deployment retention** (Sam, dashboard → Project Settings → Deployment Retention, ~30 days): stored
+  deployments were 55 GB on Oct 25 and grow ~0.5 GB per deploy (the 29k payloads). Cheap, but forever.
+- **Cloudinary** (cloud `dc5clrqtw`, free plan, "nearly reached monthly credits" email Oct 25): Sam to read the
+  dashboard's Usage split (bandwidth vs transformations vs storage) — that picks the lever. Turn on **Strict
+  Transformations** (allow `w_600,c_limit,q_auto,f_auto` + the og transform once built). A hub landing preloads ~98
+  photos / 3.6 MB (preloadNeighborhood + warmCrossConnections) — trimming that is a UX trade-off, Sam's call. Code's
+  own tests stub `res.cloudinary.com` (memory: stub-cloudinary-in-tests). If bandwidth dominates, the bigger move is
+  serving the w_600 derivatives from Vercel (Pro bandwidth is barely used: 0.71 GB of the month on Oct 25).
+- **Vercel usage**: $0.30 of the month on Oct 25 (inside Pro's $20 credit) — not a concern until bots arrive; the
+  firewall + edge cache are the protection.
+- **iPad brightness** (Sam's 2025 iPad Pro, matte drawing film): discussed, nothing built. Sam to try Settings →
+  Accessibility → Display & Text Size → Reduce White Point / Increase Contrast. Site-side options if wanted: darken
+  the faint greys and light blues site-wide (BIRTH/DEATH labels, IDs, "(Age 19)", footer); optionally deepen the
+  cream ground on tablets; respond to `prefers-contrast: more`.
+- **Unconfirmed on Sam's devices**: one-tap bookmarks on iPhone/iPad (fixed Oct 24 by scoping the × hover reveal to
+  `(hover: hover)`); the Safari CC fix (reproduced and fixed in WebKit; if a card ever fails to arrive again, ask what
+  was clicked just before).
+- **Behaviour change Sam may revisit**: Back while a pop-up is open now closes it AND steps to the previous card
+  (3fe7a436). If he wants Back to only close it, do it without `history.back()` (that async traversal was the hazard).
+- **Analytics hygiene**: Sam signs in once per device on hookerverse.com so each browser is flagged and never
+  counted; he tests on hooker-test.vercel.app, which never loads the counter.
+- `canonical.json` is 67.8 MB (GitHub warns over 50 MB) — known; memory canonical-size-options.
+- The ENRICHED design/roadmap pair was NOT updated this session (Sam did not ask); the frontend changes above are
+  recorded here and in their code comments.
+
 
 ---
 
@@ -79,16 +200,16 @@ phone layout is decided in the browser, so nothing a phone collapses is missing 
 
 | | today | consequence |
 |---|---|---|
-| `<title>` | ✅ `"<chip name> - The Descendants of Rev. Thomas Hooker"` (shipped Oct 24) | but **2,168 of the 8,479 share their title** with another page (13 "Thomas Hooker", 21 "Mary Hooker") — §5.1 |
+| `<title>` | ✅ `"<chip name> (<years>) - The Descendants of Rev. Thomas Hooker"` (Oct 24; years Oct 26) | shared titles 2,168 → 8 — §5.1 |
 | meta description | none | Google writes its own snippet, often from the relatives list |
-| canonical link | none | nothing tells Google which host is the real one — §4 |
+| canonical link | ✅ every person page, `/`, and the pop-up addresses (Oct 26) | §4, §5.3 |
 | link-preview tags (`og:`) | none | a shared link unfurls as a bare URL |
 | structured data (JSON-LD) | none | Google can't tell this is a person with dates, parents and a spouse |
 | sitemap | **none** | **and the home page has zero links** (it is the intro), so Google has no way in — §6 |
 | image alt text | Thomas 6/36, Edwards 12/42, Noadiah 0/30 | invisible to Google Images, where historical portraits are found |
-| Privacy / Sources | **modals with no URL of their own** | the trust pages (§10) exist for readers but not for Google — §5.8 |
-| About / Contact | a `<button>` that flies to Sam's card; the form opens from a `<button>` in his NB 3 | Google never learns the site has an author, and the form has no address — §5.8 |
-| side doors | `/dev/*` (4 test pages), `/table` (the Zoom 2 prototype), `/institution/<anything>` (a stub reading "Sam") all answer **200** on hookerverse.com | thin and test pages on the domain; `/table` also needs a 6 MB data file — §6.4, §8.1 |
+| Privacy / Sources | ✅ real addresses `/privacy`, `/sources` (Oct 26) | §5.8 |
+| About / Contact | ✅ real links: About → `/samuel-hooker`, Contact → `/contact` (Oct 26) | §5.8 |
+| side doors | ✅ `/dev/*`, `/table`, `/institution/*` 404 in production (Oct 26) | §6.4 |
 | speed | 386–554 ms per page, `max-age=0`, `x-vercel-cache: MISS` | every page is built per request by a server function — §7 |
 | page weight | 117–236 KB of HTML, 22 script modules | acceptable; to be checked with PageSpeed at launch |
 
@@ -320,6 +441,7 @@ build, never raw anywhere on the web."*
 | **`/data/institutions.json`** | **200, 207 KB — never read by the app** | every school and firm with its `hooker_connected_people` roster |
 | **`/data/table-index.json`** | 200, **6 MB** — read only by the `/table` prototype | every person's name, years and descent flags |
 | `/data/stats.json` | 200, 66 B — read only by a `/dev` page | corpus counts |
+| **living people's private dates** (found Oct 25) | in `search-index.json` (497 birth years), the payloads and so the page HTML (261 full birthdays), and every seat's `t.y` | **✅ STRIPPED Oct 25 (cbf7206e)** — see §0.1. The four files above: **✅ no longer published (Oct 26, acbce375)** |
 
 ### 8.2 The honest limit
 
