@@ -14,6 +14,7 @@
 import { floatPause } from '#lib/state/slabFloat.svelte.js';
 import { goto } from '$app/navigation';
 import { personHref, slugFromPath } from '#lib/paths.js';
+import { surfaceFromPath } from '#lib/surfaces.js';
 import { prefersReducedMotion } from 'svelte/motion';
 import { featured } from './featured.svelte';
 import { publishCameraMove, type CameraMove } from './camera';
@@ -59,6 +60,21 @@ export async function loadFeatured(slug: string): Promise<boolean> {
 	return true;
 }
 
+/**
+ * WHERE THE READER IS, AS AN ADDRESS (Oct 26). The address bar, except that a pop-up's own address (/privacy,
+ * /sources, /contact — surfaces.ts) stands for the card it is open over. Sam in Safari: "the previous card exits
+ * but the new one never enters". A Safari CC sends the old card out FIRST and checks, before letting the new
+ * one in, that the address has not changed under it (focusAfterEarlyExit: "Back or forward during the exit took
+ * the page somewhere else") — and an author link in Sources starts that flight at /sources, which closing the
+ * pop-up then re-addresses to the card. Read raw, that looked like a Back: the arrival was abandoned with the
+ * old card already gone. Every "has the reader moved?" test reads this instead.
+ */
+export function readerAddress(): string {
+	const path = window.location.pathname;
+	const slug = surfaceFromPath(path) ? featured.current?.person.slug : null;
+	return slug ? personHref(slug) : path;
+}
+
 /** Warm-path re-focus: set featured state, then pushState the URL (no document nav). */
 export async function focusPerson(slug: string): Promise<void> {
 	const data = await fetchFeatured(slug);
@@ -84,18 +100,19 @@ export async function focusPerson(slug: string): Promise<void> {
 export function focusAfterEarlyExit(slug: string): Promise<void> {
 	const wait = earlyExitRemaining();
 	if (wait === null) return focusPerson(slug);
-	const from = window.location.pathname;
+	const from = readerAddress();
 	const ready = fetchFeatured(slug).catch(() => null);
 	// The rail moves at the payload, as it did when the board was built then (featured.svelte.ts forRail).
 	void ready.then((data) => {
-		if (data && window.location.pathname === from) featured.setAhead(data);
+		if (data && readerAddress() === from) featured.setAhead(data);
 	});
 	return new Promise((resolve) =>
 		setTimeout(() => {
-			// Back or forward during the exit took the page somewhere else: that navigation wins.
-			if (window.location.pathname !== from) return resolve();
+			// Back or forward during the exit took the page somewhere else: that navigation wins. (A pop-up's
+			// address closing back to its card is not somewhere else — readerAddress.)
+			if (readerAddress() !== from) return resolve();
 			void ready.then(async (data) => {
-				if (window.location.pathname !== from) return;
+				if (readerAddress() !== from) return;
 				if (data) focusWith(data, slug);
 				else await focusPerson(slug); // its not-found path (a real navigation)
 			}).then(resolve);
@@ -415,7 +432,7 @@ export function warmPersonLinks(node: HTMLElement) {
 		// ascension.svelte.ts). Going up again (founder → orbit) must NOT overwrite it: the X still means
 		// "back to the line card I started from", in one descent, not two (Sam, 100526).
 		if (ascend === 1 && fromZone === 'line') {
-			markAscent(slugFromPath(window.location.pathname) ?? '');
+			markAscent(slugFromPath(readerAddress()) ?? '');
 		} else if (ascend === -1) {
 			clearAscent();
 		}
@@ -433,7 +450,7 @@ export function warmPersonLinks(node: HTMLElement) {
 		// Fresh lateral CC → exit left; clicking the reciprocal link straight back → flip; anything else resets.
 		// (Vertical CCs self-skip inside — they use the gen sign, not this memory.)
 		if (isCC) {
-			const source = slugFromPath(window.location.pathname) ?? '';
+			const source = slugFromPath(readerAddress()) ?? '';
 			resolveLateralDir(provisional, source, targetSlug);
 		}
 		publishCameraMove({ from, to, screenVector, distance, duration, easing: 'cubicOut', kind, relationClass, genDelta, kinDistance, ascend, scaleMin });

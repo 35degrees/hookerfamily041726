@@ -97,7 +97,7 @@
 	import DeckRiffle from '#lib/components/DeckRiffle.svelte';
 	import { untrack, tick, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { modal, openModal, closeModal, takeNavClose } from '#lib/state/modal.svelte.js';
+	import { modal, openModal, closeModal } from '#lib/state/modal.svelte.js';
 	import { SURFACES, isSurface, surfaceFromPath, surfaceHref, type SurfaceKind } from '#lib/surfaces.js';
 	import { flip } from 'svelte/animate';
 	import { cubicOut } from 'svelte/easing';
@@ -222,9 +222,12 @@
 	const openSurface = $derived<SurfaceKind | null>(
 		isSurface(modal.kind) ? modal.kind : !surfaceMounted ? (data.surface ?? null) : null
 	);
-	/** Did WE push the pop-up's history entry? Then a dismiss gives it back (Back), so the reader's history
-	 *  holds no dead "/privacy then the same card" step. A direct visit pushed nothing. */
-	let surfacePushed = false;
+	// THE ADDRESS IS REPLACED, NEVER PUSHED (Oct 26, Sam in Safari: "the previous card exits but the new one
+	// never enters"). It first pushed a history entry and gave it back on dismiss with history.back() — and that
+	// Back is ASYNCHRONOUS: in WebKit its popstate landed 60-300ms+ later, inside the flight of the person tapped
+	// right after closing, and onHistoryStep swapped the card back from under it (measured in WebKit: 9 of 24
+	// tap-after-close runs never arrived). Replacing the entry has no traversal to arrive late. The cost is
+	// named: Back while a pop-up is open closes it AND steps to the previous card, as though it had never opened.
 	$effect(() => {
 		const kind = modal.kind;
 		if (!surfaceMounted) return;
@@ -233,21 +236,11 @@
 	function syncSurfaceAddress(kind: typeof modal.kind) {
 		const at = surfaceFromPath(location.pathname);
 		if (isSurface(kind)) {
-			if (at === kind) return;
-			// One pop-up straight to another re-addresses the same entry; from a card it is a new one.
-			void goto(surfaceHref(kind), { shallow: true, replace: at != null });
-			if (!at) surfacePushed = true;
+			if (at !== kind) void goto(surfaceHref(kind), { shallow: true, replace: true });
 			return;
 		}
-		const forNav = takeNavClose();
 		if (!at) return;
-		if (surfacePushed && !forNav) {
-			surfacePushed = false;
-			history.back(); // onHistoryStep sees the card's own address: nothing to swap
-			return;
-		}
-		// A direct visit, or a link inside the pop-up flying to a person: re-address this entry to the card.
-		surfacePushed = false;
+		// Closed (or a link inside it is flying to a person): the entry goes back to the card's own address.
 		const slug = featured.current?.person.slug;
 		if (slug) void goto(personHref(slug), { shallow: true, replace: true });
 	}
@@ -341,17 +334,14 @@
 	// card and its family are simply in their new places. Clicks are untouched.
 	let historySeq = 0;
 	async function onHistoryStep() {
-		// A pop-up's address (surfaces.ts): Forward onto one opens it over the card; Back off one closes it.
+		// A pop-up's address (surfaces.ts) — reached by history only from a direct visit's entry: open it over
+		// the card. Any other step closes an open one first (see the address note above: Back leaves it).
 		const surface = surfaceFromPath(location.pathname);
 		if (surface) {
-			surfacePushed = true;
 			openModal(surface);
 			return;
 		}
-		if (isSurface(modal.kind)) {
-			surfacePushed = false;
-			closeModal();
-		}
+		if (isSurface(modal.kind)) closeModal();
 		const slug = slugFromPath(location.pathname);
 		if (!slug || featured.current?.person.slug === slug) return;
 		const seq = ++historySeq;

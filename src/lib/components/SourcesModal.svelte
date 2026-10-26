@@ -10,7 +10,7 @@
 	 *
 	 * The shell is ContactModal's — the house veil and the cream sheet — copied per §46.2.
 	 */
-	import { modal, closeModal, closeModalForNav } from '#lib/state/modal.svelte.js';
+	import { modal, closeModal } from '#lib/state/modal.svelte.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { personHref } from '#lib/paths.js';
 	import { thomasVertical } from '#lib/state/thomasVertical.js';
@@ -57,7 +57,7 @@
 		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // let the browser have it
 		e.preventDefault();
 		leaving = true;
-		closeModalForNav(); // the flight below re-addresses the history entry; stepping Back would undo it
+		closeModal();
 		const stage = document.querySelector('.page-container') ?? document.body;
 		const card = document.querySelector('.featured-card');
 		const r = (card ?? stage).getBoundingClientRect();
