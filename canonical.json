@@ -714668,7 +714668,9 @@
     "month": 9,
     "day": 6,
     "date_precision": "exact",
-    "country": "United States"
+    "country": "United States",
+    "city": "San Francisco",
+    "state": "California"
    },
    "death": {
     "country": "United States"
