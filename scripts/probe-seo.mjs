@@ -19,7 +19,7 @@
  *   /privacy          indexable · /contact noindex
  *   the sitemap       valid, hookerverse.com only, never /data/, contains the storied page and not the stub, and a
  *                     random sample of its URLs answers 200 without noindex
- *   robots.txt        before launch: Disallow: / ; with --launched: exactly docs/robots-launch.txt's rules
+ *   robots.txt        before launch: only link-preview bots let in (never /data/); with --launched: exactly docs/robots-launch.txt
  *   the host header   hooker-test: noindex ALWAYS; hookerverse.com: noindex until --launched, then none
  *
  * PROVEN RED FIRST (Oct 26): against a local build with the description removed, the stub gate inverted and the
@@ -183,7 +183,25 @@ console.log(`\nSEO PROBE  base=${BASE}${LAUNCHED ? '  (LAUNCHED)' : ''}\n`);
 	const rules = (t) => t.split('\n').map((l) => l.replace(/#.*/, '').trim()).filter(Boolean).join('\n');
 	const live = rules(await (await get('/robots.txt')).text());
 	if (LAUNCHED) check('robots.txt: exactly docs/robots-launch.txt', live === rules(readFileSync(new URL('../docs/robots-launch.txt', import.meta.url), 'utf8')), live);
-	else check('robots.txt: Disallow: / (not launched)', live === 'User-agent: *\nDisallow: /', live);
+	else {
+		// Before launch the file lets ONLY link-preview bots in (Oct 26). Asked as behaviour, not text: who may fetch what.
+		const groups = [];
+		for (const line of live.split('\n')) {
+			const [k, ...v] = line.split(':'); const val = v.join(':').trim(); const key = k.trim().toLowerCase();
+			if (key === 'user-agent') { if (!groups.length || groups.at(-1).rules.length) groups.push({ agents: [], rules: [] }); groups.at(-1).agents.push(val.toLowerCase()); }
+			else if ((key === 'allow' || key === 'disallow') && groups.length) groups.at(-1).rules.push([key, val]);
+		}
+		const can = (ua, path) => {
+			const g = groups.find((x) => x.agents.includes(ua.toLowerCase())) ?? groups.find((x) => x.agents.includes('*'));
+			const hit = (g?.rules ?? []).filter(([, p]) => p && path.startsWith(p)).sort((a, b) => b[1].length - a[1].length)[0];
+			return !hit || hit[0] === 'allow';
+		};
+		const shut = ['Googlebot', 'Bingbot', 'GPTBot', 'ClaudeBot', 'OAI-SearchBot'].filter((ua) => can(ua, `/${RICH}`));
+		check('robots.txt: search engines and AI crawlers kept out (not launched)', shut.length === 0, `let in: ${shut.join(', ')}`);
+		const previews = ['Twitterbot', 'Slackbot', 'LinkedInBot', 'Discordbot', 'facebookexternalhit'];
+		const blocked = previews.filter((ua) => !can(ua, `/${RICH}`) || !can(ua, '/cld/x.jpg') || can(ua, '/data/x.json'));
+		check('robots.txt: link-preview bots may read cards and portraits, never /data/', blocked.length === 0, `wrong for: ${blocked.join(', ')}`);
+	}
 }
 
 console.log(`\n${fail ? '\x1b[31m' : '\x1b[32m'}${pass}/${pass + fail} passed\x1b[0m\n`);

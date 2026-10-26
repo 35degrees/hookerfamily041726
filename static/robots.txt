@@ -1,4 +1,19 @@
-# TEST DEPLOYMENT (Oct 9, 2026) — nothing here is meant to be indexed. vercel.json also sends
-# `X-Robots-Tag: noindex, nofollow` on every response. Both come off together at launch (DEPLOYMENT §7, §15).
+# BEFORE LAUNCH — nothing here is meant to be indexed. vercel.json also sends `X-Robots-Tag: noindex, nofollow` on
+# every response, so even a bot let in below is told not to list anything. On launch day docs/robots-launch.txt
+# replaces this file (SEO_PLAN §12).
+#
+# LINK PREVIEWS ONLY (Oct 26, Sam sharing links before launch): these bots fetch one page to draw the preview card a
+# shared link unfurls into, and index nothing. iMessage and WhatsApp ignore robots.txt; these obey it, so without this
+# group a hookerverse.com link shared on X, Slack, LinkedIn, Discord or Facebook showed as a bare address.
+User-agent: Twitterbot
+User-agent: Slackbot-LinkExpanding
+User-agent: Slackbot
+User-agent: LinkedInBot
+User-agent: Discordbot
+User-agent: facebookexternalhit
+Disallow: /data/
+Disallow: /api/
+
+# Everyone else — search engines, AI crawlers, scrapers — stays out until launch.
 User-agent: *
 Disallow: /
