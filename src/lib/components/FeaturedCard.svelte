@@ -940,7 +940,7 @@
 		     it never sits on a word. Never on a zone card (layout.css .card-wear). -->
 		{#if !orbit}<div
 				class="card-wear"
-				class:recent={(person.birth?.year ?? 0) >= 1900}
+				class:recent={datesPrivate || (person.birth?.year ?? 0) >= 1900}
 				aria-hidden="true"
 				use:bakeWear
 				style="{wearOffset} --notch-w: {notchChipCount > 0 ? chipZoneWidth : 0}px; --notch-h: {notchChipCount > 0

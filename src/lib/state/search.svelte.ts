@@ -145,6 +145,10 @@ export const CAT = { HD: 1, SPOUSE: 2, INLAW: 4, INFLUENCE: 8, FOUNDER: 16 } as 
  * buildFeatured's diedYoung(), which is year subtraction too. This is the same arithmetic, not a looser
  * approximation of it.
  */
+/** Where a private row (`pv`, year withheld) sorts on birth: after every real year, before the undated —
+ *  plus its generation, so the living still read oldest generation first. */
+const PRIVATE_SORT_YEAR = 9000;
+
 export function diedYoungRow(r: SearchRow): boolean {
 	return r.by != null && r.dy != null && r.dy - r.by <= 15;
 }
@@ -632,7 +636,7 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 			 * stay findable, they are never first. `fn` is bio.first_name; a row with a real given name or any
 			 * year is untouched.
 			 */
-			ghost: !r.fn && r.by == null && r.dy == null ? 1 : 0,
+			ghost: !r.fn && r.by == null && r.dy == null && !r.pv ? 1 : 0,
 			t,
 			// Cohesion outranks notability on purpose: a notable whose terms are scattered across
 			// unrelated fields is still not what was asked for, and putting fame ahead of relevance is
@@ -662,12 +666,20 @@ const result = $derived.by((): { rows: Prepared[]; total: number } => {
 			 * A row with neither a birth nor a death year is almost always a bare stub, so it follows every
 			 * dated row in its tier — after notability, ahead of blood, so a dated spouse leads an undated
 			 * descendant. The era estimate `eb` still orders the undated among themselves (`b` below); it
-			 * just no longer lets them sit among people we can actually date. Private-date rows (`pv`) keep
-			 * their years in the index, so the living are not mistaken for stubs.
+			 * just no longer lets them sit among people we can actually date.
+			 *
+			 * PRIVATE ROWS COUNT AS DATED, AND YOUNGEST (Oct 25). A living person's year is withheld from the
+			 * index now (`pv`, regenerate-data.js datesPrivate), so `by` is null by design, not for want of a
+			 * date: `yr` keeps them among the dated, `ghost` never sinks them, and `b` puts them after every
+			 * real year — where a living person's year sorted anyway — and ahead of the era-guessed undated.
+			 * Among themselves they sort by GENERATION, older first, which the row already carries: the
+			 * Rockefellers born 1969-1983 lead those born 2000-2007, as they did by year. Within one
+			 * generation the order is neutral on purpose — an age order there would itself be bracketable
+			 * against the few living people whose years are public elsewhere.
 			 */
-			yr: r.by != null || r.dy != null ? 0 : 1,
+			yr: r.by != null || r.dy != null || r.pv ? 0 : 1,
 			hd: r.f & CAT.HD ? 0 : 1,
-			b: r.by ?? r.eb ?? 9999
+			b: r.by ?? (r.pv ? PRIVATE_SORT_YEAR + (r.g ?? 99) : (r.eb ?? 9999))
 		};
 	});
 	dec.sort(

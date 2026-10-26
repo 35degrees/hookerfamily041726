@@ -180,10 +180,14 @@ function presumedLiving(p) {
 	return by != null && by >= BUILD_YEAR - MAX_LIFESPAN;
 }
 
-// The single gate every render site reads, emitted as `pv`. NOTE what this does NOT do: it does
-// not strip `by`/`dy` from the payload. roster.ts and SiblingPanel sort children and siblings on
-// `by`, and a null sorts into a DIFFERENT group — so nulling it would shunt every living person
-// to the end of their row, which is itself a tell. Emit the dates, suppress the display.
+// The single gate every render site reads, emitted as `pv`. SINCE OCT 25 IT ALSO STRIPS: a private
+// person's dates are no longer in anything a browser can download — not the chip (`by`, month, day),
+// not the full record (privateDateless), not the search or table rows, not the seat's `y`
+// (table-coords). They used to ship and only the DISPLAY was suppressed, because roster.ts and
+// SiblingPanel sort on `by` and a null would shunt a living person to the end of their row. The rows
+// now sort on `bo` (stampBirthOrder), a rank that says no more than the row's own order already does.
+// Measured before the change: 497 living people's birth years in search-index.json, 261 full birthdays
+// in their payloads (and so in their pages' HTML).
 function datesPrivate(p) {
 	return presumedLiving(p) && !(p.notable && p.notable.is_notable);
 }
@@ -365,8 +369,8 @@ function compact(p, slugMap) {
 		// Relationship CHIPS use chip_name when set (a shorter form, e.g. "Lent Hooker"); the FEATURED
 		// card renders the full bio.display_name from the person payload, so the two can differ by design.
 		n: bioOf(p).chip_name || bioOf(p).display_name || p.id,
-		by: birthYear(p),
-		dy: deathYear(p),
+		by: datesPrivate(p) ? null : birthYear(p),
+		dy: datesPrivate(p) ? null : deathYear(p),
 		// bm/bd/dm/dd — BIRTH AND DEATH MONTH/DAY, and they exist for exactly one reason: an AGE cannot
 		// be computed from years. Edith Olivia Gwynne was born 30 Nov 1853 and died 9 Jan 1899, so
 		// `dy - by` says 46 and she was 45 — her birthday had not come round. The timeline rail printed
@@ -385,14 +389,9 @@ function compact(p, slugMap) {
 		// 1 January reads as the month:1/day:1 placeholder and the rail prints a tilde on a birthday
 		// we actually know. Kept as a flag rather than a baked age so ageAtDeath stays the ONE
 		// implementation of the precision rules, per the note above.
-		...(p.birth?.date_precision === 'exact' ? { bx: 1 } : {}),
-		...(p.death?.date_precision === 'exact' ? { dx: 1 } : {}),
-		...(p.birth?.month != null ? { bm: p.birth.month } : {}),
-		...(p.birth?.day != null ? { bd: p.birth.day } : {}),
-		...(p.death?.month != null ? { dm: p.death.month } : {}),
-		...(p.death?.day != null ? { dd: p.death.day } : {}),
-		// pv — dates are in the payload (sorting needs them) but must not be DISPLAYED.
-		// Absent on everyone else; consumers test `person.pv`.
+		...(datesPrivate(p) ? {} : chipDateParts(p)),
+		// pv — dates private: withheld from the payload (above) AND from display. Absent on everyone
+		// else; consumers test `person.pv`.
 		...(datesPrivate(p) ? { pv: true } : {}),
 		// lv — PRESUMED LIVING, on its own, independent of whether the dates are private. `pv` above is
 		// `presumedLiving && !notable`, so a living NOTABLE — Anderson Cooper, Loudon Wainwright III —
@@ -540,7 +539,9 @@ function placeUndatedByEra(rows) {
 	let byDeath = 0;
 	let unplaceable = 0;
 	for (const r of rows) {
-		if (r.by != null) continue;
+		// A private row has no `by` by design, not for want of a date: no era guess either, or a year
+		// filter would place them by it (search.svelte.ts sorts them as dated-youngest instead).
+		if (r.by != null || r.pv) continue;
 		// Generation is the better signal; a death year minus a typical lifespan is the fallback.
 		const g = r.g != null ? median.get(r.g) : undefined;
 		if (g != null) {
@@ -805,6 +806,47 @@ function childrenOf(p) {
 	return out;
 }
 
+// bx/dx/bm/bd/dm/dd for a chip — see the note in compact(). Never called for a private person.
+function chipDateParts(p) {
+	return {
+		...(p.birth?.date_precision === 'exact' ? { bx: 1 } : {}),
+		...(p.death?.date_precision === 'exact' ? { dx: 1 } : {}),
+		...(p.birth?.month != null ? { bm: p.birth.month } : {}),
+		...(p.birth?.day != null ? { bd: p.birth.day } : {}),
+		...(p.death?.month != null ? { dm: p.death.month } : {}),
+		...(p.death?.day != null ? { dd: p.death.day } : {})
+	};
+}
+
+// THE PLACE HALF OF A PRIVATE PERSON'S BIRTH/DEATH/BAPTISM (Oct 25). The full record a card reads keeps
+// where — the card prints it — and loses when: year, month, day, precision, qualifiers, and the free-text
+// notes, which can carry a date. An allow-list, so a date key added to canonical later stays private.
+const PLACE_KEYS = ['city', 'county', 'state', 'country', 'place', 'parish', 'region'];
+function privateDateless(d) {
+	if (!d || typeof d !== 'object') return d;
+	const out = {};
+	for (const k of PLACE_KEYS) if (k in d) out[k] = d[k];
+	return out;
+}
+
+// BIRTH ORDER WITHOUT THE BIRTH YEAR (Oct 25). The client sorts a children row, the grandchildren tier
+// and each sibling tier by birth (roster.ts rosterOrder, siblingLayout.ts tier). A private person's `by`
+// is gone, so every DATED member of the group gets `bo` — the dense rank of their birth year within that
+// group, from the true year — and the client sorts on it. Equal years share a rank, so a tie keeps its
+// input order exactly as a year tie did. Ranked per group, never across the payload: within one row the
+// rank says only what the row's own left-to-right order already shows. Undated members get none and
+// sort last, as before. Returns the list.
+function stampBirthOrder(list, byId) {
+	const yearOf = (c) => birthYear(byId[c.id]);
+	const years = [...new Set(list.map(yearOf).filter((y) => y != null))].sort((a, b) => a - b);
+	const rank = new Map(years.map((y, i) => [y, i + 1]));
+	for (const c of list) {
+		const y = yearOf(c);
+		if (y != null) c.bo = rank.get(y);
+	}
+	return list;
+}
+
 function neighborhood(p, byId, slugMap) {
 	const cm = (id) => (id && byId[id] ? compact(byId[id], slugMap) : null);
 
@@ -822,6 +864,8 @@ function neighborhood(p, byId, slugMap) {
 			rel: m.relationship_type ?? null,
 			children: (m.children_ids || []).map(cm).filter(Boolean)
 		}));
+	// The hero's children row is ONE row across every marriage (roster.ts), so it is ranked as one.
+	stampBirthOrder(spouses.flatMap((s) => s.children), byId);
 
 	const par = p.parents || {};
 	const parents = {};
@@ -847,6 +891,7 @@ function neighborhood(p, byId, slugMap) {
 			if (gc) grandchildren.push({ ...gc, via_parent_id: childId });
 		}
 	}
+	stampBirthOrder(grandchildren, byId);
 
 	// siblings_count: union of both parents' children, minus focus [UNCHANGED — full+half, NOT step]
 	const sibs = new Set();
@@ -910,7 +955,11 @@ function neighborhood(p, byId, slugMap) {
 		parents,
 		grandparents,
 		grandchildren,
-		siblings: { full: toCompact(full), half: toCompact(half), step: toCompact(step) },
+		siblings: {
+			full: stampBirthOrder(toCompact(full), byId),
+			half: stampBirthOrder(toCompact(half), byId),
+			step: stampBirthOrder(toCompact(step), byId)
+		},
 		siblings_count: sibs.size
 	};
 }
@@ -2313,7 +2362,7 @@ function main() {
 	// Table coordinates (Phase 3a Block 1) — derived at emit time, one seat per person. Set the
 	// module-level map so compact() emits `t` on every payload; the aggregates (table-index +
 	// anomaly worklist) are written below in the !only block.
-	const coordResult = computeTableCoords(people);
+	const coordResult = computeTableCoords(people, { isPrivate: datesPrivate });
 	tableCoords = coordResult.coords;
 	log(
 		`  table coords: ${coordResult.stats.yDated} dated / ${coordResult.stats.yEstimated} estimated / ${coordResult.stats.yNull} null-y | ` +
@@ -2408,7 +2457,12 @@ function main() {
 		const out = { ...p, slug: slugMap.get(p.id), t: tableCoords.get(p.id) ?? null };
 		// FeaturedCard reads person.birth / person.death off the FULL record, not the compact,
 		// so the gate has to ride here too.
-		if (datesPrivate(p)) out.pv = true;
+		if (datesPrivate(p)) {
+			out.pv = true;
+			out.birth = privateDateless(p.birth);
+			out.death = privateDateless(p.death);
+			out.baptism = privateDateless(p.baptism);
+		}
 		return clientPerson(out); // src/lib/data/clientStrip.js
 	});
 
@@ -2532,8 +2586,8 @@ function main() {
 				id: p.id,
 				slug: slugMap.get(p.id) ?? null,
 				n: bioOf(p).display_name || p.id,
-				by: birthYear(p),
-				dy: deathYear(p),
+				by: datesPrivate(p) ? null : birthYear(p),
+				dy: datesPrivate(p) ? null : deathYear(p),
 				hd: Boolean(c.is_thomas_descendant), // Hooker (Thomas) descendant
 				td: Boolean(c.is_talcott_descendant), // Talcott descendant
 				ee: Boolean(c.is_easter_egg),

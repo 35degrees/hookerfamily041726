@@ -28,7 +28,7 @@ const SPOUSE_FAN = 0.1; // each further spouse of the same partner fans by this 
 const REGION_GUTTER = 40; // empty seats between the Hooker spine and the Talcott grove
 const BAND_GUTTER = 20; // between grove → archipelago → gutter
 
-export function computeTableCoords(people) {
+export function computeTableCoords(people, { isPrivate = () => false } = {}) {
 	const byId = Object.fromEntries(people.map((p) => [p.id, p]));
 	const C = (p) => p.classification || {};
 	const isTd = (p) => C(p).is_thomas_descendant === true;
@@ -67,12 +67,16 @@ export function computeTableCoords(people) {
 	}
 
 	// ── Y (time) : dated seed → BFS estimate over child(+28) / parent(-28) / spouse(0) ──
+	// A LIVING, PRIVATE PERSON'S OWN YEAR NEVER SEEDS (Oct 25). y ships on every chip, payload and
+	// data-ty attribute, so a seat at their true birth year published the year the card withholds (Sam's
+	// own seat read 1979). They are seated like the undated instead — estimated from the nearest dated
+	// relative, a parent's PUBLIC year + 28 — which is all the camera and the rail ever needed from them.
 	const yById = new Map();
 	const yEst = new Set();
 	const q = [];
 	for (const p of people) {
 		const b = p.birth && p.birth.year;
-		if (b != null) {
+		if (b != null && !isPrivate(p)) {
 			yById.set(p.id, b);
 			q.push(p.id);
 		}

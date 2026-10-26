@@ -29,10 +29,12 @@ So the goal is **not** to rank for every name in the tree. It is:
 
 **What a "conversion" is here.** Sam, Oct 24: *"the only thing I'm 'selling' is the UX itself but in a way that
 they have to reach out to me."* Success is not traffic for its own sake; it is a reader who explores, is
-impressed by the experience, and **gets in touch** — the "Get in Touch" form (roadmap §60.2, opened from the
-footer's About / Contact and from Sam's own card). So the contact path is part of SEO: a visitor who arrives
-from Google on any card must be able to find it. (Open item: `SiteFooter` is not rendered on a phone yet —
-roadmap §63.2 — so a phone visitor's only route to the form is Sam's card. Worth a phone seat before launch.)
+impressed by the experience, and **gets in touch** — the contact form (roadmap §60.2). The path is bespoke on
+purpose: the footer's About / Contact flies to **Sam's own card**, and the form opens from "Click here" in its
+NB 3 (§5.8). So the contact path is part of SEO: a visitor who arrives
+from Google on any card must be able to find it. (The phone footer shipped Oct 24–25: all four items in one row
+under the family, on the floor of a short card — so the form is one tap from every page on every device.) **The
+number to watch is messages received** (§10b), not visitors.
 
 Realistic expectations, stated once so they are not rediscovered as disappointment: ranking is decided mostly
 by *authority* (other respected sites linking here), which a new domain does not have. The famous names —
@@ -69,6 +71,10 @@ for the big names comes later, from links (§10).
 Many JavaScript sites fail exactly here — content that only exists after scripts run, links that are click
 handlers. This one does not, and it is the thing that would be expensive to change.
 
+**Google indexes the phone version** (mobile-first indexing: its crawler fetches as a smartphone). Checked Oct 25:
+the server sends the smartphone Googlebot the identical HTML (same bytes, same 22 links, same `<h1>`) — the
+phone layout is decided in the browser, so nothing a phone collapses is missing from what Google reads.
+
 **What is missing or weak:**
 
 | | today | consequence |
@@ -80,6 +86,9 @@ handlers. This one does not, and it is the thing that would be expensive to chan
 | structured data (JSON-LD) | none | Google can't tell this is a person with dates, parents and a spouse |
 | sitemap | **none** | **and the home page has zero links** (it is the intro), so Google has no way in — §6 |
 | image alt text | Thomas 6/36, Edwards 12/42, Noadiah 0/30 | invisible to Google Images, where historical portraits are found |
+| Privacy / Sources | **modals with no URL of their own** | the trust pages (§10) exist for readers but not for Google — §5.8 |
+| About / Contact | a `<button>` that flies to Sam's card; the form opens from a `<button>` in his NB 3 | Google never learns the site has an author, and the form has no address — §5.8 |
+| side doors | `/dev/*` (4 test pages), `/table` (the Zoom 2 prototype), `/institution/<anything>` (a stub reading "Sam") all answer **200** on hookerverse.com | thin and test pages on the domain; `/table` also needs a 6 MB data file — §6.4, §8.1 |
 | speed | 386–554 ms per page, `max-age=0`, `x-vercel-cache: MISS` | every page is built per request by a server function — §7 |
 | page weight | 117–236 KB of HTML, 22 script modules | acceptable; to be checked with PageSpeed at launch |
 
@@ -171,7 +180,8 @@ research fields (§8).
 ### 5.5 Link previews (`og:` and `twitter:` tags)
 
 Title, description, and the portrait (through the Cloudinary transform, ~1200×630 crop) for the 3,571 indexable
-people with a photo; a site image for the rest. This is what makes a link shared by email or text unfurl as a
+people with a photo; a site image for the rest — **which has to be made**: the intro painting with the gilt title,
+baked once at 1200×630 by the existing intro bake (`scripts/intro/`). This is what makes a link shared by email or text unfurl as a
 card. Design §8 also proposed *designed* preview images for notables (portrait, name, years, "Descendant of
 Thomas Hooker · Generation N") — a later, optional step.
 
@@ -189,7 +199,21 @@ at `/` can enter the tree (it can sit inside the intro's existing Enter control;
 `<a href>`). **No hidden text**: text a visitor cannot see but Google can is against Google's rules and is
 penalised. The home page will not rank for much on its own; the person pages carry the site.
 
----
+### 5.8 About, Contact, Sources, Privacy — keep the charm, give each an address (✅ Sam, Oct 25)
+
+The site is bespoke, and two of these four are deliberately not pages. Sam, Oct 25: *"about is really just my
+entry… the contact page is a link in one of my NBs. its cute, cuteness doesn't work with analytics and Google's
+process very well."* The rule that reconciles them: **the experience stays exactly as it is; underneath, every
+surface gets a real address**, so Google can read it and analytics can count it.
+
+| | what a reader gets (unchanged) | what changes underneath |
+|---|---|---|
+| **About** | the footer's About / Contact flies to **Sam's own card**, `/samuel-hooker` (HD3386 — blurb "Developer and compiler of this family history", NB 1 "Why build this project?", NB 2 "How are you connected to the founders?") | the footer item becomes `<a href="/samuel-hooker">`, and a click still runs the flight (the person chips already work this way). Sam's card **is** the about page: it is gated in (3 blocks), and the home page's `WebSite` JSON-LD names him as its `author` with that URL — how Google learns the site has a real compiler behind it |
+| **Contact** | "Click here" in Sam's NB 3 opens the contact form over his card | the link becomes `<a href="/contact">`; in the app it opens the modal as now and shallow-routes to `/contact`, so **opening the form counts as a pageview**. A direct load of `/contact` (a link in an email signature, a Find a Grave bio) renders Sam's card with the form open. `/contact` itself is `noindex` — it is a form, not content |
+| **Sources** | the footer opens the Sources modal | `/sources` is a real server-rendered page with the same text; in the app, the modal and a shallow URL change |
+| **Privacy** | the footer opens the Privacy modal | `/privacy` the same way — and that address goes into Google's and Microsoft's sign-in consent screens |
+
+Each real page gets a title, description and canonical; `/sources` and `/privacy` are in the sitemap.
 
 ## §6. WHO GETS INDEXED, AND HOW GOOGLE FINDS THEM
 
@@ -213,8 +237,9 @@ page blocked in robots.txt can still appear in results as a bare, description-le
 
 ### 6.2 The sitemap
 
-`regenerate-data.js` writes `sitemap.xml` from the gated set — current slugs only, with `lastmod` from the
-record's `last_updated` where present. 8,479 URLs fits one file (the limit is 50,000). Submitted in Google
+`regenerate-data.js` writes `sitemap.xml` from the gated set — current slugs only (Sam's card among them), plus
+`/`, `/sources`, `/privacy` — with `lastmod` from the record's `last_updated` **only where it is trustworthy** (Google
+ignores a sitemap's dates for good once they prove inaccurate; no date beats a wrong one). 8,479 URLs fits one file (the limit is 50,000). Submitted in Google
 Search Console at launch and named in robots.txt.
 
 ### 6.3 robots.txt — two policies in one file
@@ -228,6 +253,18 @@ Search Console at launch and named in robots.txt.
   blocked; that is a visitor.
 
 robots.txt is a request, not a lock. Compliant crawlers obey it; scrapers do not, which is what §8 is for.
+
+### 6.4 Side doors — everything on the domain that is not a card (found Oct 25)
+
+Google judges a site partly by *all* of it, and thin or test pages count against it. Today these answer 200 on
+hookerverse.com:
+
+- **`/dev/intro-gl`, `/dev/intro-sweep`, `/dev/intro-title`, `/dev/tweened-count`** — development test pages. →
+  **404 in production** (they stay for `npm run dev`). No decision needed; they are tools.
+- **`/institution/<anything>`** — a placeholder whose whole page is `<h1>Sam</h1>`, for any slug. → **404** until
+  institution pages are a real feature (§11.8).
+- **`/table`** — the Zoom 2 hand-panned table prototype. Unlinked, but public, and it loads the 6 MB
+  `table-index.json` (§8.1). → §11.8.
 
 ---
 
@@ -264,6 +301,10 @@ build, never raw anywhere on the web."*
 | `/data/person/<slug>.json` | 200, ~25 KB each | one person's card — already stripped to the fields the card shows (`clientStrip.js`, Oct 9) |
 | **`/data/search-index.json`** | **200, 9.7 MB** | **every person in one file**: names, years, blurbs, places, careers, schools, tags, and every cross-connection sentence |
 | `/data/redirects.json` | 200, 150 KB | old slug → new slug |
+| **`/data/cemeteries.json`** | **200, 627 KB — and the app never reads it** (found Oct 25) | every cemetery with GPS, street address, notes and its full roster of Hooker people — a research file the build writes into the public folder |
+| **`/data/institutions.json`** | **200, 207 KB — never read by the app** | every school and firm with its `hooker_connected_people` roster |
+| **`/data/table-index.json`** | 200, **6 MB** — read only by the `/table` prototype | every person's name, years and descent flags |
+| `/data/stats.json` | 200, 66 B — read only by a `/dev` page | corpus counts |
 
 ### 8.2 The honest limit
 
@@ -273,6 +314,11 @@ bulk harvesting slow, visible and expensive**, while a reader never notices.
 
 ### 8.3 The measures, cheapest first
 
+0. **Stop publishing what the app never reads** (Oct 25). `cemeteries.json` and `institutions.json` are written by
+   `regenerate-data.js` into `static/data/`, so they are served to anyone, though no page fetches them. They move
+   out of the public folder (to wherever the scripts that do read them expect); `table-index.json` follows `/table`
+   (§11.8). Nothing is deleted from canonical — the files simply stop being published. The cheapest measure on the
+   list, and the largest exposure after `search-index.json`.
 1. **`/data/` is closed to crawlers** — `Disallow: /data/` and the `noindex` header stay on it permanently.
    Costs SEO nothing.
 2. **Firewall rate limit on `/data/`** (Vercel WAF, DEPLOYMENT §9): a reader fetches a handful of person files a
@@ -310,22 +356,34 @@ card-visible facts. Nothing from research notes, sources or canonical is ever pl
 
 ## §9. THE BUILD — in order, each step verifiable on its own
 
-All of it happens while the site is still `noindex`, so nothing here is public until §12.
+All of it happens while the site is still `noindex`, so nothing here is public until §12. **The two items with a
+clock on them go first** (reordered Oct 25): the firewall needs a week of `log` data before launch, and the
+search-console verifications take a DNS change that can sit for days. Both run in the background while the code
+steps are built.
 
+0. **Start the clocks.**
+   - **The firewall** (§8.3): the `/data/` rate limit and the country rules, in `log` mode.
+   - **Google Search Console** — a *Domain* property for hookerverse.com, verified by a DNS TXT record (covers
+     www and every path). Verifying does not index anything; it just opens the instrument.
+   - **Bing Webmaster Tools** — imported from Search Console in one step. Bing's index also feeds DuckDuckGo and
+     Yahoo and is one of the sources behind ChatGPT's search, so it is not a small second engine.
 1. **One indexable site** (§4): canonical tags (hooker-test's own `noindex` rule is already in `vercel.json`).
-2. **Head tags** (§5.1–5.6): title with years, description, `og:`, alt text, JSON-LD — in
-   `src/routes/[slug]/+page.svelte`, computed from data the payload already carries. A field missing from the
-   payload is added in `regenerate-data.js`, never fetched at runtime.
+   **Close the side doors** (§6.4) and **stop publishing the unread data files** (§8.3 item 0).
+2. **Head tags** (§5.1–5.6): title with years, description, `og:` (and the site preview image), alt text,
+   JSON-LD — in `src/routes/[slug]/+page.svelte`, computed from data the payload already carries. A field missing
+   from the payload is added in `regenerate-data.js`, never fetched at runtime.
 3. **The gate** (§6.1): the `noindex, follow` tag on non-gated pages, decided in one shared predicate that the
    sitemap reads too, so the two can never disagree.
-4. **Sitemap** (§6.2) and **robots.txt** (§6.3), the latter drafted but not yet live.
-5. **Home page** (§5.7): invisible tags and the one real link.
-6. **Edge cache** (§7 option A), verified with `x-vercel-cache: HIT` on a second fetch.
-7. **The firewall** (§8.3): the `/data/` rate limit and the country rules, all in `log` mode first, a week
-   before anything is opened.
+4. **About, Contact, Sources, Privacy addresses** (§5.8): the two footer links and the NB link become real
+   `<a href>`s with the same in-app behaviour; `/sources`, `/privacy`, `/contact` exist as server-rendered pages.
+5. **Sitemap** (§6.2) and **robots.txt** (§6.3), the latter drafted but not yet live.
+6. **Home page** (§5.7): invisible tags and the one real link.
+7. **Edge cache** (§7 option A), verified with `x-vercel-cache: HIT` on a second fetch.
+8. **The contact count** (§10b): one custom analytics event when a message is sent, and the visit's referrer and
+   landing page added to the email itself.
 
-**Verification, proven red first as the house rule requires** — a probe that fetches as Googlebot, for one rich
-page, one stub, one renamed slug, one hidden person and `/`, and asserts: title, description, canonical, robots
+**Verification, proven red first as the house rule requires** — a probe that fetches as Googlebot (desktop AND
+smartphone), for one rich page, one stub, one renamed slug, one hidden person, `/` and `/about`, and asserts: title, description, canonical, robots
 meta (index vs noindex by the gate), JSON-LD parses, the 301, the 404, no `/data/` URL in any sitemap. Then
 Google's own **Rich Results Test** and **PageSpeed Insights** on three pages, by eye.
 
@@ -343,7 +401,7 @@ months:
 - **Core Web Vitals.** Real-user speed.
 - **Vercel Firewall observability** for the `/data/` rules (DEPLOYMENT §13.3).
 
-### 10a. Readers — Vercel Web Analytics (✅ Sam, Oct 25)
+### 10a. Readers — Vercel Web Analytics (✅ Sam, Oct 25; live Oct 25)
 
 Cookieless and first-party: the script and its beacons come from hookerverse.com's own `/_vercel/insights/`, so
 there is no consent banner and no Google tag. Built in `src/lib/state/analytics.svelte.ts`, which counts **outside
@@ -351,8 +409,37 @@ readers only**: it loads on hookerverse.com alone (never hooker-test, localhost 
 nothing while Sam's account is signed in (matched by the SHA-256 of the email, so the address never ships); and
 once Sam has signed in on a device, that browser is flagged (`localStorage hv-owner`) and stays uncounted after
 sign-out. The first pageview waits for the session to resolve. Every person-to-person tap is a pageview (shallow
-routing is a `pushState`, which the script tracks). Headless browsers are ignored by the script itself. Enabled
-per project in the Vercel dashboard (Analytics tab); until then the script 404s harmlessly.
+routing is a `pushState`, which the script tracks). Headless browsers are ignored by the script itself.
+
+**What it records, per pageview:** the page; a daily-rotating anonymous visitor hash (so *visitors* as well as
+*views*, but no visitor can be followed across days); country; device type, OS and browser; any `utm_` tags on the
+link; and, **on the first page of a visit only, the referring site's hostname** — `google.com`, `wikipedia.org`,
+`facebook.com`, `findagrave.com`. Hostname only: never the full referring URL.
+
+**What it cannot record:**
+- **Search terms.** Google stopped passing them to sites years ago; every analytics tool sees `google.com` and no
+  more. The words people typed live only in **Search Console → Performance → Queries** (§10) — totals per query
+  and per page, never tied to a visitor. Bing Webmaster Tools gives the same for Bing.
+- **One reader's path** through the tree. Only totals per page.
+- **Clicks that are not page changes** (opening a narrative block, the deck, search) — unless a custom event is
+  added for them. None is planned except the one below.
+
+### 10b. The number that matters — messages received
+
+Sam is not selling traffic; success is a reader who gets in touch (§1). The path is short and every step will be
+countable once §5.8 is built: **a card → Sam's card** (a pageview of `/samuel-hooker`) **→ the form**
+(a pageview of `/contact`) **→ sent** (a custom event, `Contact sent` — the project is on Vercel's **Pro plan**,
+which includes custom events). Sam's own visits are not counted, by the same three fences.
+
+**And the message itself says where the writer came from.** The form already sends the page it was opened on
+(`/api/contact`, the `page` field). It will also send the visit's **landing page and referrer** — remembered for
+the tab from the first page of the visit — so each email in Sam's inbox reads "arrived from google.com on William
+Bristol's card". Not analytics: just context on a message the visitor chose to send.
+
+### 10c. The weekly read
+
+Search Console (what people searched, what is indexed), Vercel Analytics (who came, from where, to which pages),
+and the contact count. The three answer different questions and do not need joining.
 
 **Trust signals — ✅ the site-wide apparatus is the plan (Sam, Oct 24).** The footer's Sources modal (the
 family genealogies and archives the tree is built from), Privacy, and About / Contact, on HTTPS, are what a
@@ -379,6 +466,8 @@ it is outreach, and it is what eventually moves the famous names.
 | ~~**11.3**~~ | ~~`search-index.json`~~ | **✅ CLOSED Oct 24 — rate-limit it first and measure;** trim or split only if the logs show it being taken |
 | ~~**11.4**~~ | ~~Cache or pre-build~~ | **✅ CLOSED Oct 24 — edge cache at launch;** pre-build later, after measuring build time |
 | ~~**11.5**~~ | ~~Description fallback~~ | **✅ CLOSED Oct 24 — first sentence of block 1** where there is no blurb |
+| ~~**11.7**~~ | ~~About / Sources / Privacy as real pages~~ | **✅ CLOSED Oct 25 — every surface gets an address, the experience is unchanged** (§5.8): About stays Sam's card (now a real link), Contact stays the NB link (now `/contact`), Sources and Privacy become pages that the app still opens as modals |
+| **11.8** | **`/table` and `/institution/…`** — prototypes on the public domain (§6.4) | **404 both in production until each is a real feature**, and stop publishing `table-index.json` with it. Both stay in the code and in `npm run dev`; nothing is deleted |
 | **11.6** | **Launch date** — when robots.txt opens | After §9 is complete and verified, the firewall has run in `log` mode for a week, and DEPLOYMENT §15's checklist is ticked |
 
 ---
@@ -392,8 +481,12 @@ prevent). Everything else — tags, gate, sitemap, robots rules — can be chang
 In order:
 
 1. DEPLOYMENT §15 checklist ticked (firewall live and observed, spend limit $50, Cloudinary transforms, privacy).
-2. Lift `X-Robots-Tag` **for hookerverse.com only**; publish the two-policy robots.txt.
-3. Verify the site in Search Console; submit the sitemap; inspect three URLs (one rich, one stub, `/`).
+2. Lift `X-Robots-Tag` **for hookerverse.com only**; publish the two-policy robots.txt. Mechanically, in
+   `vercel.json`: the site-wide rule gains `"missing": [{ "type": "host", "value": "hookerverse.com" }]`, so every
+   other host — hooker-test and every per-deploy address — keeps `noindex`; hooker-test also keeps its own rule;
+   and a `/data/(.*)` rule keeps `noindex` on the data files on every host, permanently (§8.3 item 1).
+3. Submit the sitemap in Search Console and Bing (both verified back in §9 step 0); inspect three URLs (one rich,
+   one stub, `/`) and request indexing for a handful of the richest pages.
 4. Fetch-as-Googlebot probe green against production.
 
 **Rolling back**, if something is badly wrong: put the `noindex` header back and redeploy. Google drops pages

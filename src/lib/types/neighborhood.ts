@@ -4,8 +4,14 @@ export interface PersonCompact {
 	n: string;
 	by: number | null;
 	dy: number | null;
-	/** dates are PRIVATE (living, non-notable): present in the payload for sorting, never rendered. */
+	/** dates are PRIVATE (living, non-notable): withheld from the payload (`by`/`dy` null, no month or
+	    day) as well as from display, since Oct 25. Rows sort on `bo` instead. */
 	pv?: boolean;
+	/** BIRTH ORDER within the one row this compact was emitted in (children across all marriages, the
+	    grandchildren tier, a sibling tier): the dense rank of the true birth year, on every DATED member.
+	    The sort key in place of `by`, which a private person no longer carries (regenerate-data.js
+	    stampBirthOrder). Absent on the undated, who sort last as before. */
+	bo?: number;
 	/** PRESUMED LIVING — independent of `pv`, which additionally requires non-notability. Every `pv`
 	    person is `lv`; a living notable is `lv` and not `pv`. */
 	lv?: boolean;

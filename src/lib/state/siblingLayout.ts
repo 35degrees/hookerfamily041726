@@ -14,6 +14,7 @@
  */
 import type { Neighborhood, PersonCompact } from '#lib/types/neighborhood.js';
 import { stage } from './stage.svelte';
+import { birthKey } from '#lib/data/roster.js';
 
 export type SiblingTiers = {
 	full: PersonCompact[];
@@ -188,7 +189,10 @@ export function anchorOffsetFor(_spouseCount: number): number {
 // died-young chips grouped at the bottom (dimmed, by design) — birth-sorted within each group. Unknown
 // birth years sort last but hold their relative order (stable sort).
 function tier(list: PersonCompact[]): PersonCompact[] {
-	const byBirth = (a: PersonCompact, b: PersonCompact) => (a.by ?? Infinity) - (b.by ?? Infinity);
+	// `birthKey` = the build's birth-order rank (`bo`), so a living sibling whose year is withheld keeps
+	// their place (roster.ts).
+	const byBirth = (a: PersonCompact, b: PersonCompact) =>
+		(birthKey(a) ?? Infinity) - (birthKey(b) ?? Infinity);
 	return [
 		...list.filter((s) => !s.dy_young).sort(byBirth),
 		...list.filter((s) => s.dy_young).sort(byBirth)

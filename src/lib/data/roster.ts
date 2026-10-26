@@ -29,13 +29,23 @@ import type { PersonCompact } from '#lib/types/neighborhood.js';
  * different rules is the kind of difference nobody can see the reason for, so there is one rule.
  */
 export const rosterOrder = (a: PersonCompact, b: PersonCompact): number => {
-	const groupRank = (c: PersonCompact) => (c.dy_young ? 2 : 0) + (c.by == null ? 1 : 0);
+	const groupRank = (c: PersonCompact) => (c.dy_young ? 2 : 0) + (birthKey(c) == null ? 1 : 0);
 	const ra = groupRank(a);
 	const rb = groupRank(b);
 	if (ra !== rb) return ra - rb;
-	if (a.by == null || b.by == null) return 0; // same group, both undated → keep stable order
-	return a.by - b.by; // birth year ascending
+	const ka = birthKey(a);
+	const kb = birthKey(b);
+	if (ka == null || kb == null) return 0; // same group, both undated → keep stable order
+	return ka - kb; // birth order ascending
 };
+
+/**
+ * THE BIRTH SORT KEY: `bo`, the row's birth-order rank, which the build stamps on every dated member of a
+ * row — so a living person whose year is withheld (`pv`, Oct 25) still takes their place in it. `by` is
+ * the fallback for a compact from anywhere that stamps no rank. One payload stamps a whole row, so a row
+ * never mixes the two.
+ */
+export const birthKey = (c: PersonCompact): number | null => c.bo ?? c.by ?? null;
 
 export type SpouseChip = { spouse: PersonCompact; year: number | null; rel: string | null };
 

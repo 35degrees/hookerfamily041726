@@ -498,7 +498,9 @@
 			slug: p.slug ?? null,
 			tx: p.t?.x ?? null,
 			ty: p.t?.y ?? null,
-			yr: p.by ?? from
+			// A private person's `by` is withheld (Oct 25): their seat's estimated year stands in for the
+			// direction test below — a parent's public year + 28, so still a generation down.
+			yr: p.by ?? (p.pv ? (p.t?.y ?? from) : from)
 		};
 	}
 
@@ -610,7 +612,8 @@
 				.filter((id): id is string => !!id)
 		)
 	);
-	const focusYear = $derived(focus?.by ?? null);
+	// …and the same stand-in on a living person's own card, or every rail link from it would read lateral.
+	const focusYear = $derived(focus?.by ?? (focus?.pv ? (focus?.t?.y ?? null) : null));
 
 	/**
 	 * A SPOUSE BAR HANDS ITS CLICK TO THE REAL SPOUSE CHIP.
