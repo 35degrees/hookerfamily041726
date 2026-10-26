@@ -114,6 +114,8 @@
 					</p>
 					<p>
 						Messages sent through the contact form are emailed to the site’s compiler and are not kept on the site.
+						Each message also includes the page your visit began on and the name of the site that linked you here,
+						if any.
 					</p>
 				</div>
 				{#if auth.signedIn}
