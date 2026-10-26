@@ -11,9 +11,9 @@
  *   static/data/tag-vocab.json          canonical tag names, parsed from the schema's §6
  *   static/data/search-index.json       search rows: {id,slug,n,by,dy,g,sx,pv?,f,x,bl?,eb?,nb?,ph?}
  *                                       bitfield, x=field-tagged folded fact blob (segment 0 = names)
- *   static/data/cemeteries.json         passthrough
- *   static/data/institutions.json       passthrough
- *   static/data/stats.json              corpus tallies (total, thomas/talcott descendants)
+ *   static/data/cemeteries.json         passthrough        — LOCAL ONLY, never built on Vercel (WLocal)
+ *   static/data/institutions.json       passthrough        — LOCAL ONLY
+ *   static/data/stats.json              corpus tallies (total, thomas/talcott descendants) — LOCAL ONLY
  *   static/data/person/<slug>.json      self-contained page payload per person
  *                                       (focus record + family graph + bounded
  *                                       relative context + resolved cemetery/
@@ -2514,6 +2514,19 @@ function main() {
 			writeFileSync(full, JSON.stringify(obj)); // minified
 			return full;
 		};
+		// LOCAL-ONLY FILES (Oct 26, SEO_PLAN §8.3 item 0). Everything in static/ is served to anyone, and four
+		// of these files are read by no page a reader can reach: cemeteries.json (every cemetery with GPS,
+		// street address, notes and its roster of the tree's people) and institutions.json (every school and
+		// firm with its roster) by nothing at all; table-index.json (every person, 6 MB) only by the /table
+		// prototype; stats.json only by a /dev page. They keep being written on Sam's machine — /table, the
+		// /dev pages, probe-camera.mjs and batch.py's review read them there — and a Vercel build (VERCEL=1)
+		// neither writes them nor leaves a stale copy behind. Returns the path, or null when skipped.
+		const ON_VERCEL = process.env.VERCEL === '1';
+		const WLocal = (rel, obj) => {
+			if (!ON_VERCEL) return W(rel, obj);
+			rmSync(join(CONFIG.repoRoot, rel), { force: true });
+			return null;
+		};
 		// people.json is NO LONGER WRITTEN (Oct 9). Nothing has read it since the per-person payloads landed
 		// (DEPLOYMENT §5.2, §16-I), and in static/ it was the whole corpus as one public download — 47 MB.
 		// The stale copy is removed so a deploy cannot ship it.
@@ -2521,8 +2534,8 @@ function main() {
 		W(join(CONFIG.dataDir, 'search-index.json'), searchIndex);
 		W(join(CONFIG.dataDir, 'tag-vocab.json'), tagVocab);
 		log(`  tag-vocab.json: ${tagVocab.length} canonical tags from ${schemaFile} §6`);
-		if (data.cemeteries) W(join(CONFIG.dataDir, 'cemeteries.json'), data.cemeteries);
-		if (data.institutions) W(join(CONFIG.dataDir, 'institutions.json'), data.institutions);
+		if (data.cemeteries) WLocal(join(CONFIG.dataDir, 'cemeteries.json'), data.cemeteries);
+		if (data.institutions) WLocal(join(CONFIG.dataDir, 'institutions.json'), data.institutions);
 		W(CONFIG.redirectsFile, redirects);
 
 		// 5b) stats.json — corpus tallies computed at build time so the client ships
@@ -2532,7 +2545,7 @@ function main() {
 			if (c.is_thomas_descendant === true) thomasDescendants++;
 			if (c.is_talcott_descendant === true) talcottDescendants++;
 		}
-		W(join(CONFIG.dataDir, 'stats.json'), {
+		WLocal(join(CONFIG.dataDir, 'stats.json'), {
 			total: visible.length,
 			thomasDescendants,
 			talcottDescendants
@@ -2602,9 +2615,11 @@ function main() {
 			if (datesPrivate(p)) row.pv = true;
 			return row;
 		});
-		const tiFull = W(join(CONFIG.dataDir, 'table-index.json'), tableIndex);
-		const tiGz = gzipSync(readFileSync(tiFull)).length;
-		log(`  table-index.json: ${tableIndex.length} rows, ${(tiGz / 1024).toFixed(0)} KB gzipped`);
+		const tiFull = WLocal(join(CONFIG.dataDir, 'table-index.json'), tableIndex);
+		if (tiFull) {
+			const tiGz = gzipSync(readFileSync(tiFull)).length;
+			log(`  table-index.json: ${tableIndex.length} rows, ${(tiGz / 1024).toFixed(0)} KB gzipped`);
+		} else log(`  table-index.json: local-only, not written on Vercel`);
 
 		// 5d) seating-anomalies.tsv — the worklist Sam routes to the DATA stream. Detached-td linkage
 		// gaps, orbit archipelago, true orphans, and no-y-basis people, so they never evaporate and the

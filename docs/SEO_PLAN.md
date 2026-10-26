@@ -254,7 +254,11 @@ Search Console at launch and named in robots.txt.
 
 robots.txt is a request, not a lock. Compliant crawlers obey it; scrapers do not, which is what §8 is for.
 
-### 6.4 Side doors — everything on the domain that is not a card (found Oct 25)
+### 6.4 Side doors — everything on the domain that is not a card (found Oct 25; ✅ CLOSED Oct 26)
+
+**Done Oct 26:** a production build answers 404 on all of them (a `load` that throws when `!dev` —
+`src/routes/dev/+layout.ts`, `src/routes/table/+page.ts`, `src/routes/institution/[slug]/+page.ts`); every one
+still works under `npm run dev`. Verified on a local production preview before deploying. As found:
 
 Google judges a site partly by *all* of it, and thin or test pages count against it. Today these answer 200 on
 hookerverse.com:
@@ -314,7 +318,10 @@ bulk harvesting slow, visible and expensive**, while a reader never notices.
 
 ### 8.3 The measures, cheapest first
 
-0. **Stop publishing what the app never reads** (Oct 25). `cemeteries.json` and `institutions.json` are written by
+0. **Stop publishing what the app never reads** (Oct 25; ✅ DONE Oct 26 — `WLocal` in `regenerate-data.js`: a Vercel
+   build, `VERCEL=1`, neither writes `cemeteries.json`, `institutions.json`, `table-index.json` nor `stats.json`
+   nor leaves a stale copy; Sam's machine still gets all four, for `/table`, `/dev`, `probe-camera.mjs` and
+   `batch.py`). `cemeteries.json` and `institutions.json` are written by
    `regenerate-data.js` into `static/data/`, so they are served to anyone, though no page fetches them. They move
    out of the public folder (to wherever the scripts that do read them expect); `table-index.json` follows `/table`
    (§11.8). Nothing is deleted from canonical — the files simply stop being published. The cheapest measure on the
@@ -368,7 +375,7 @@ steps are built.
    - **Bing Webmaster Tools** — imported from Search Console in one step. Bing's index also feeds DuckDuckGo and
      Yahoo and is one of the sources behind ChatGPT's search, so it is not a small second engine.
 1. **One indexable site** (§4): canonical tags (hooker-test's own `noindex` rule is already in `vercel.json`).
-   **Close the side doors** (§6.4) and **stop publishing the unread data files** (§8.3 item 0).
+   ✅ **Side doors closed** (§6.4) and ✅ **unread data files no longer published** (§8.3 item 0) — Oct 26.
 2. **Head tags** (§5.1–5.6): title with years, description, `og:` (and the site preview image), alt text,
    JSON-LD — in `src/routes/[slug]/+page.svelte`, computed from data the payload already carries. A field missing
    from the payload is added in `regenerate-data.js`, never fetched at runtime.
@@ -467,7 +474,7 @@ it is outreach, and it is what eventually moves the famous names.
 | ~~**11.4**~~ | ~~Cache or pre-build~~ | **✅ CLOSED Oct 24 — edge cache at launch;** pre-build later, after measuring build time |
 | ~~**11.5**~~ | ~~Description fallback~~ | **✅ CLOSED Oct 24 — first sentence of block 1** where there is no blurb |
 | ~~**11.7**~~ | ~~About / Sources / Privacy as real pages~~ | **✅ CLOSED Oct 25 — every surface gets an address, the experience is unchanged** (§5.8): About stays Sam's card (now a real link), Contact stays the NB link (now `/contact`), Sources and Privacy become pages that the app still opens as modals |
-| **11.8** | **`/table` and `/institution/…`** — prototypes on the public domain (§6.4) | **404 both in production until each is a real feature**, and stop publishing `table-index.json` with it. Both stay in the code and in `npm run dev`; nothing is deleted |
+| ~~**11.8**~~ | ~~`/table` and `/institution/…`~~ | **✅ CLOSED Oct 25 (Sam), built Oct 26 — 404 in production until each is a real feature**, `table-index.json` no longer published. Both stay in the code and in `npm run dev`; nothing is deleted |
 | **11.6** | **Launch date** — when robots.txt opens | After §9 is complete and verified, the firewall has run in `log` mode for a week, and DEPLOYMENT §15's checklist is ticked |
 
 ---
