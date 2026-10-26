@@ -135,7 +135,9 @@ async function checkDynamicSurfaceIsSmall() {
 	 * every new server route has to be argued for and written down here, so the dynamic surface can
 	 * never grow by accident.
 	 */
-	const allowed = ['/', '/api/auth', '/api/bookmarks', '/api/hero', '/api/lists'];
+	// '/api/contact' argued for Oct 26: the contact form's send (roadmap §60.2, Oct 9) — a POST that emails Sam, reached
+	// only by a reader pressing Send. It reads no session and renders no page; it had simply never been written here.
+	const allowed = ['/', '/api/auth', '/api/bookmarks', '/api/hero', '/api/lists', '/api/contact'];
 	const serverRoutes = [];
 	const walk = (dir) => {
 		for (const e of readdirSync(dir, { withFileTypes: true })) {
