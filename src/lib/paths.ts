@@ -41,6 +41,7 @@ export const dataUrl = (path: string): string => `${path}?v=${version}`;
 // route, but never a person.
 const RESERVED = new Set([
 	'api',
+	'cld',
 	'contact',
 	'data',
 	'dev',

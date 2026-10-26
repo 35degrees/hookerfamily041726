@@ -38,6 +38,7 @@
 	 * two-clock desync as THE failure mode of this layer. One clock, many subscribers.
 	 */
 	import { personHref } from '#lib/paths.js';
+	import { cldProxy } from '#lib/photo.js';
 	import { featured } from '#lib/state/featured.svelte.js';
 	// THE SAME FUNCTION THE CARD AND THE CHIP ASK. `isPynchonKin` is the RAINBOW set — the direct line to
 	// Thomas Ruggles Pynchon Jr. plus Jackson and the mother at each step — and it is derived from the
@@ -1739,7 +1740,7 @@
 				/* tainted canvas — the anchor keeps the shared default ink, and the face still renders */
 			}
 		};
-		im.src = src;
+		im.src = cldProxy(src);
 	}
 	onMount(() => {
 		for (const a of ANCHORS) sampleInk(a.slug, a.src);
@@ -2113,7 +2114,7 @@
 			     tooltip's containing block and its counter-scale are unchanged. -->
 			<span class="anchor-vis">
 				<!-- THE FRAME CLIPS, THE PHOTO DOESN'T (Oct 9) — see .anchor-photo. -->
-				<span class="anchor-photo"><img src={a.src} alt="" draggable="false" /></span>
+				<span class="anchor-photo"><img src={cldProxy(a.src)} alt="" draggable="false" /></span>
 				<!-- Three lines, in Sam's order: who, what, when. No `title` attribute alongside it — the
 				     browser's own tooltip would appear a second later on top of this one. -->
 				<span class="anchor-tip">

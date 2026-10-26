@@ -14,9 +14,24 @@
  */
 export function cldSize(url: string | null | undefined, transform: string): string | null {
 	if (!url) return null;
+	if (url.startsWith(CLD_ORIGIN)) return `${CLD_PROXY}${transform}/${url.slice(CLD_ORIGIN.length)}`;
 	return url.includes('res.cloudinary.com') && url.includes('/upload/')
 		? url.replace('/upload/', `/upload/${transform}/`)
 		: url;
+}
+
+// OUR Cloudinary account's photos are served through hookerverse.com's own address, `/cld/…`, which
+// vercel.json rewrites to this origin and caches at Vercel's edge (Oct 26, SEO_PLAN §0.3): Cloudinary's free
+// plan counts every byte it serves (13.4 of its 25 monthly credits were bandwidth), while Vercel's CDN serves
+// a cached copy out of Pro's 1 TB. Same derivative, same bytes — only the address changes. The dev and
+// preview servers proxy `/cld` the same way (vite.config.ts). Any other host passes through untouched.
+const CLD_ORIGIN = 'https://res.cloudinary.com/dc5clrqtw/image/upload/';
+const CLD_PROXY = '/cld/';
+
+/** The same `/cld/` address with NO transform — for images used at their original bytes (the timeline rail's
+ *  anchor portraits, which load on every card for every visitor). Requests no new Cloudinary derivative. */
+export function cldProxy(url: string): string {
+	return url.startsWith(CLD_ORIGIN) ? CLD_PROXY + url.slice(CLD_ORIGIN.length) : url;
 }
 
 import type { Neighborhood, PersonCompact } from '#lib/types/neighborhood.js';
@@ -107,5 +122,10 @@ export function warmCrossConnections(
 // first-time Cloudinary generation. w_600 covers the ~200px featured display AND the ~2× (≈400px) zoom with
 // margin, and downscales cleanly into the ~60px chip (aspect preserved; the chip's object-cover object-top
 // does the square top-crop client-side). ~40–60 KB vs the ~450 KB original — c_limit never upscales a small
-// source; q_auto/f_auto pick smart quality + webp/avif.
-export const PHOTO_TRANSFORM = 'w_600,c_limit,q_auto,f_auto';
+// source; q_auto picks smart quality.
+// f_webp, NOT f_auto (Oct 26): f_auto answers each browser with a different format (JPEG XL to Safari, WebP to
+// Chrome, JPEG to anything vague) and marks the response `Vary: Accept, User-Agent`. Measured on a preview
+// deploy, Vercel's edge cache (the `/cld/` proxy above) does not keep those apart — Chrome was served a bot's
+// cached JPEG — so a Safari-first JPEG XL could reach Chrome, which cannot draw it. One fixed format every
+// browser displays makes the cached copy correct for everyone.
+export const PHOTO_TRANSFORM = 'w_600,c_limit,q_auto,f_webp';
