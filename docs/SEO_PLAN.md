@@ -120,8 +120,10 @@ pages, wait out the firewall's log week, and launch (§12).
   deployments were 55 GB on Oct 25 and grow ~0.5 GB per deploy (the 29k payloads). Cheap, but forever.
 - **Cloudinary** (cloud `dc5clrqtw`, free plan): ✅ **lever pulled Oct 26** — the split was bandwidth 59% /
   transformations 22% / storage 20% (22.78 of 25 credits), so photos now go through Vercel's edge cache (§0.1,
-  roadmap §64). Sam's aim: never need the ~$90/month tier unless the site takes off. **Open:** the `--all` warm-up
-  around Nov 9 (roadmap §64.5); a look at Cloudinary's Usage a few days on. If **Strict Transformations** is ever
+  roadmap §64). Sam's aim: never need the ~$90/month tier unless the site takes off. **Open (Oct 26, 10:22 PDT):**
+  the `--all` warm-up for the 3,267 non-notable portraits, run once Cloudinary's Plan Details shows ~21/25 or lower —
+  likely Nov 2–4 (roadmap §64.5 has the trigger and why it waits); until then a non-notable portrait's first view is
+  ~0.55 s. If **Strict Transformations** is ever
   turned on, the allowed list must carry `w_600,c_limit,q_auto,f_webp` (not f_auto), the RightColumn media thumbnail
   transforms, and the og transform once built. Tests stub `res.cloudinary.com` AND `/cld/` (memory
   stub-cloudinary-in-tests).

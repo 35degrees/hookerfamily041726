@@ -7514,5 +7514,14 @@ deploy was first views of the new WebP copies, gone once the notables were warme
 
 - [ ] **Around Nov 9**, after the Oct 6–9 burst leaves Cloudinary's 30-day window: run
   `node scripts/warm-photos.mjs --all` for the remaining 3,267 portraits, about 3.3 credits.
+  **Added Oct 26, 2026 10:22 PDT — what waits on this, and when it can run earlier.** Until it runs, each
+  NON-notable portrait's first view anywhere is ~0.55 s (Cloudinary building its new WebP copy) against 0.31–0.50 s
+  before today; every later view is 0.09 s. Sam saw it once on Charles Gay Hooker (H02703, not notable) — that one is
+  now cached. Not run today because Cloudinary sits at ~24 of 25 credits after the notables warm-up, and `--all` is
+  ~3.4 more; going over the free plan risks restricted delivery. Sam: *"lets wait a few days its not urgent."*
+  **Trigger: Sam checks Cloudinary → Billing → Plan Details; once it shows ~21 of 25 or lower (room for ~3.4 credits),
+  run `--all` that day.** Room returns about a credit a day as early-October days age out, so likely Nov 2–4, not
+  Nov 9. (A two-part option was offered and declined: ~1,000 portraits for people with narrative blocks or a notable
+  parent, spouse or child now, the rest later.)
 - [ ] **Re-run `node scripts/warm-photos.mjs`** (no flag) after any big batch of new photo uploads.
 - [ ] Check Cloudinary's Usage a few days after Oct 26: bandwidth should flatten; transformations bump as copies build.
