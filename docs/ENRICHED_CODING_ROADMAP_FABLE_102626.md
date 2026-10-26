@@ -1,6 +1,7 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: October 9, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
 **Companion: ENRICHED_DESIGN_FABLE_100626.md (the what/why for every item below).**
+**OCTOBER 26, 2026 (§65, written 13:00 PDT): THE SEO BUILD, END TO END** — head tags, the richness gate (8,479 indexable), every narrative block's text now in the page Google reads (§65.3: it was 1 of 7), sitemap, launch robots draft, the home page's link and WebSite data, the page edge cache, contact analytics, and `scripts/probe-seo.mjs` (42/42). §65.5 records the hidden-people audit and Sam's decision to leave narrative blocks as they are. SEO_PLAN.md §0 is the launch checklist.
 **OCTOBER 26, 2026 (§64): PHOTOS THROUGH VERCEL'S EDGE CACHE.** Person photos and the timeline headshots load from `/cld/…` on the site's own host, edge-cached, because Cloudinary's free plan was at 22.8/25 credits; format fixed to `f_webp` (f_auto + a shared cache served one browser's format to another). `scripts/warm-photos.mjs` pre-builds the copies. **Open TODO in §64.5: the `--all` warm-up around Nov 9.** The SEO/deploy work of the same day is in `docs/SEO_PLAN.md` §0.
 **OCTOBER 9, 2026 (§60): THE FIRST DEPLOY (hooker-test.vercel.app) AND TWO GROUND-UP PROJECTS.** Sam's direction at close: no more Safari patches — a WebKit rebuild from the ground up, Chrome untouched (§60.1 A); and screen sizes designed per target rather than squeezed (§60.1 B). Both are their own future sessions; nothing in §60.1 is built. §60.2 is what shipped (contact form, payload privacy/diet, deploy setup, cache header, footer); §60.3 the deploy-only lessons; §60.4 what is open, including Privacy/Sources (shipped last).
 **OCTOBER 6, 2026 (§59): SHORT WINDOWS, THE PHONE, READABLE CHIPS — paused here by Sam's choice; written to be picked up cold.** A one-way HEIGHT ladder (1050 → 745) that buys room with content and air, never by shrinking type; a PHONE recomposition (≤600px wide, step 1 of 3); chip type that fills its chip. §59.5 is how to resume (`scripts/probe-heights.mjs`), §59.6 the open list in priority order. Design §53 holds Sam's ranked priorities and every approach that was tried and discarded — read it first.
@@ -7525,3 +7526,137 @@ deploy was first views of the new WebP copies, gone once the notables were warme
   parent, spouse or child now, the rest later.)
 - [ ] **Re-run `node scripts/warm-photos.mjs`** (no flag) after any big batch of new photo uploads.
 - [ ] Check Cloudinary's Usage a few days after Oct 26: bandwidth should flatten; transformations bump as copies build.
+
+---
+
+## 65. OCTOBER 26, 2026 (08:30–13:00 PDT) — THE SEO BUILD, END TO END (session record; written 13:00 PDT)
+
+Stream B, one session, 16 commits (`01abe083` → `576fffef`), every one deployed to hookerverse.com and hooker-test the
+same hour. SEO_PLAN.md §0 is the operational handoff (what is live, what is left, launch-day steps) and §13 has the
+afternoon's discussion; this section is the engineering record. Photos through the edge cache are §64. Sam's frame at
+the start: *"everything is surgical, since the project is in great shape right now and you shouldn't be making
+wholesale changes just targeted work"* — and, mid-session, *"keeping costs down is important but speed also
+important… as a picky person i want things to be very snappy."* The site stays hidden from search (X-Robots-Tag
+noindex + `Disallow: /`) until launch day; nothing below is public to Google yet.
+
+### 65.1 WHAT SHIPPED, IN ORDER (times PDT)
+
+| time | commit | what |
+|---|---|---|
+| ~09:00 | — | **Step 0, the clocks.** Four firewall rules published **log-only** with `vercel firewall` (CLI 63 has full rule management, staged as drafts until `publish`): `/data/` rate 120/min, page-HTML rate 60/min (regex excludes data, app assets, API and any path with an extension), would-be-deny countries, would-be-challenge countries. Search Console was already verified (the Google sign-in TXT record); Bing imported from it; Vercel on-demand budget $200 → **$50, pause on** (Sam, dashboard) |
+| 09:55 | `01abe083` | **Photos through Vercel's edge cache** — §64 |
+| 10:11 | `0565cfd3` | `scripts/warm-photos.mjs`; 1,144 notable portraits pre-built |
+| 10:49 | `78f7c314` | **Step 2, head tags** (`src/lib/seo.ts`): description = the card's blurb + the first sentence of NB 1 (~155 chars; else "Son/Daughter of …; born in …, in YYYY"; none when there is nothing honest to say); Open Graph + Twitter; `ProfilePage` → `Person` JSON-LD from card-visible facts only; private (`pv`) people get no dates or places anywhere |
+| 11:10 | `875a98fa` | **Step 3, the richness gate**: `isIndexable()` in regenerate-data.js (≥1 NB with words) stamps `ix` on **8,479 of 29,025** payloads; the page writes `noindex, follow` without it — fails closed. **The default link-preview image** `static/og-default.jpg`: the live intro at rest, Enter arrow hidden, 1200×630 |
+| 11:22 | `448a0dc3` | **Every NB's text in the page** (`NarrativeBlocks.svelte`) — see 65.3, the session's most important find |
+| 11:36 | `60bb1625` | **Step 5**: `static/sitemap.xml` from the same `isIndexable()` (8,482 URLs, no lastmod, gitignored, built on Vercel); launch robots.txt drafted at `docs/robots-launch.txt` (never deployed) |
+| 11:46 | `b3eaffc0` | **Step 6, `/`**: description, preview tags, `WebSite` JSON-LD (`#website`, author = Sam's card); the intro's Enter becomes a real `<a href="/thomas-hooker-1586">` present in the server HTML, inert until the arrow shows |
+| 12:04 | `53f45385` | **Step 7, the edge cache**: `[slug]/+page.ts` sets `s-maxage=3600, stale-while-revalidate=86400` once the payload is in hand (never on a 404/301). The static-contract probe's allow-list gained `/api/contact` (red since Oct 9) |
+| 12:15 | `c1ae98e3` | **Step 8**: `trackEvent('Contact sent')`, `trackPageview()` for pop-ups opened in-site (a replaced history entry is invisible to the Vercel script), and the visit's landing page + referrer hostname in the contact email ("Arrived: from www.google.com, landing on /william-bristol-1779") — all through `analytics.svelte.ts`'s three fences |
+| 12:23 | `01ac18ac` | Privacy: one sentence saying the contact message includes that arrival line (Sam asked) |
+| 12:29 | `576fffef` | `scripts/probe-seo.mjs`, the launch verification probe — 42/42 |
+
+### 65.2 WHAT SAM DECIDED, IN HIS WORDS
+
+- **Link previews padded, not face-cropped:** *"padded photos are better because often they are not standard size and
+  even have differing alignments."* A `g_face` crop cut Charles Gay Hooker's face off a newspaper portrait.
+- **The default preview image:** *"C site photo is perfect."*
+- **The description** = what a search result shows as grey text: *"i'm fine with that."*
+- **Best practice, but light:** *"ensure that your approach follows most modern best practices for SEO while keeping my
+  site nimble and searchable"* → ProfilePage/WebSite JSON-LD, og:locale, ~2.5 KB of JSON-LD on the richest card.
+- **hooker-test must never be indexed, and only cards with text** — already structural (host-scoped header rule;
+  the gate); proven in the probe.
+- **The home card:** *"if a user is signed in and goes through the intro, the first card that will appear is the home
+  card they chose not thomas but more typically it will be thomas."* The crawler link in Enter always names Thomas.
+- **Cloudinary:** *"i'm trying to avoid paying cloudinary $90 a month for a year if my site isn't a big hit"*; the
+  `--all` warm-up waits for room (§64.5).
+- **Hidden people (65.5):** *"Leave the narrative blocks as they are."*
+
+### 65.3 THE FIND OF THE SESSION — the cards' stories were invisible to Google
+
+SEO_PLAN §2 (Oct 24) said every NB header AND body was in the server HTML, "even the ones a visitor has to click
+open." **It was false.** The check had searched the raw HTML, which includes SvelteKit's hydration data — a `<script>`
+holding the payload as JSON. With scripts stripped, Dexter Ferry's page held **1 of 7 bodies and 6 of 7 headers**:
+`{#if openKey === key}` creates a body only when its block opens (Google never clicks), and the server renders at an
+assumed 1440×900, where `stage.nbCap` is 6, so a 7th block did not exist at all. Sam pasted the page source, which is
+how it was seen.
+
+The fix stays inside `NarrativeBlocks.svelte`: a closed block keeps its body as `hidden` plain text (`.nb-body-closed`,
+a different class so the `.nb-body` measurements never see it), and blocks beyond the cap stay in the page `hidden`
+(`.nb-folded`), placed OUTSIDE `.narrative-blocks` because its `space-y-2` would otherwise hand the last real block an
+8px margin. Verified: 7/7 in the server HTML (scripts stripped) and in Googlebot's rendered page; visible block counts
+unchanged (6 at 1440×900, 7 at 1440×1100, 5 on an iPad 820×1180); 18 before/after card screenshots at rest, opened and
+closed → 0 pixels changed beyond a 1–5/255 hover-fade shimmer.
+
+**Lesson, in the family of §36.4/§37.3/§39.4: a text search of raw HTML is not "what Google reads."** Strip `<script>`
+(and, on the dev server, `<style>` — see 65.4) before counting anything.
+
+### 65.4 WHAT WENT WRONG, IN ORDER
+
+1. **`f_auto` behind a shared cache** — a preview deploy served a bot's JPEG to Chrome; a Safari JPEG XL would have
+   reached Chrome next. Moved to `f_webp` (§64). Found by testing on a preview before production, as intended.
+2. **Preview deploys cannot render person pages** (Vercel's login wall stops the server load fetching `/data/`) — test
+   edge behaviour with `vercel curl --deployment`; judge pages on localhost or production.
+3. **`git add` with a renamed doc's old path committed nothing** (memory `git-add-aborts-on-missing-path`, again) —
+   caught from the output, redone.
+4. **"A hair slower" after the photo change** — not clicks: first views of the new WebP copies (0.55 s). Pre-building
+   the notables fixed it; Sam: *"very snappy and photos load fine."*
+5. **Description trims ending "Hooker &…" / "…in half…"** — the trim now refuses to end on a joining word; 1 January
+   dates follow `formatDate`'s placeholder rule in the JSON-LD.
+6. **`$derived(expr)` reading `openSurface` before its declaration** — svelte-check TDZ errors; `$derived.by` closures,
+   as `canonicalUrl` already was.
+7. **The probe's own `<h1>` check went red on the dev server** — inlined component CSS contains comments mentioning
+   "<h1>". The probe strips `<style>` as well as `<script>` now. Found while proving the probe red.
+8. **zsh does not word-split `$VAR`** — two shell commands failed on it; inline the flags or use arrays.
+
+### 65.5 THE HIDDEN PEOPLE — what is covered, and what Sam chose to leave (12:35–12:55)
+
+Sam: *"don't forget there are hidden entries that i don't want to be anywhere in SEO … no searches for a hidden
+Talcott will show my site."* (He then corrected his examples: Col. Matthew Talcott and Delphine Pumpelly Read are
+visible on purpose; "there are other pumpellys and talcotts that are hidden".) **1,402 people** carry
+`classification.hidden` (1,278 `talcott_2026`, 122 `true`, 2 `leete_branch_2026`); 30,427 − 1,402 = the 29,025 pages.
+
+**Covered, measured across all 29,025 payloads and the live sitemap:** no hidden person has a payload or a page (their
+addresses 404; `probe-seo` checks `dakota-edmund-burr`); 0 in the sitemap; 0 rows in the search index; no chip, so
+nothing in any JSON-LD; **no cross-connection reaches one** (all 20 name matches in CC text are visible namesakes, e.g.
+"J. Frederick Talcott" = visible T01463). What remains of them in the data is bare ID codes (`T00068`) inside
+institution/cemetery rosters and `children_ids` — not rendered, not searchable by name.
+
+**Not covered, and accepted:** 56 NB sentences on 46 visible, indexable cards name someone whose name matches one of 27
+hidden people (e.g. Abigail Hooker 1770: "In 1795 she married Samuel Talcott, a West Hartford clothier" = hidden
+T00394). Some are only namesakes (John Howland the Pilgrim). 20 are in block 1 (readable by Google before today), 36 in
+blocks 2+ (readable since 65.3). After launch a search for such a name could surface the visible card that mentions
+them — never an entry of their own. **Sam, 12:55: "Leave the narrative blocks as they are."** The list is
+`_review/hidden-names-in-visible-stories.tsv` (untracked) if it is ever wanted.
+
+### 65.5b TESTS RUN — how to re-run them
+
+```bash
+node scripts/probe-seo.mjs                                   # hooker-test, 42/42 (desktop + smartphone Googlebot)
+node scripts/probe-seo.mjs --base https://hookerverse.com --launched   # LAUNCH DAY — robots + header expectations flip
+node scripts/probe-static-contract.mjs --base <url>          # 5/5 — required before touching anything cacheable
+node scripts/warm-photos.mjs [--all]                         # §64.5
+npx svelte-check --tsconfig ./tsconfig.json                  # 2 standing @fontsource errors, nothing else
+```
+
+Proven red: `probe-seo` against a local build with the description removed, the gate inverted and the closed bodies
+emptied — it failed exactly those checks. Also run this session: Playwright crawls of hooker-test (77 images via
+`/cld/`, 0 broken), before/after screenshot pixel diffs for the NB change and the intro's Enter link (arrow region 0/255),
+the intro's click / Enter-key / early-click behaviour, warm-navigation head-tag and robots-tag switching, the contact
+payload with `/api/contact` intercepted, and Sam's own end-to-end test email from hooker-test ("Arrived: directly,
+landing on /").
+
+### 65.6 OPEN (also in SEO_PLAN §0)
+
+- **Safe Browsing review** — Search Console flagged "Deceptive pages" (no sample URLs, no browser warning, domain
+  registered Oct 19, no web history); requested as a false positive. **Launch waits on it.**
+- **~Nov 2:** read the firewall log (`vercel firewall overview|traffic`), tune, then challenge/deny.
+- **~Nov 2–4:** `warm-photos.mjs --all` when Cloudinary shows ~21/25 (§64.5).
+- **Launch day (SEO_PLAN §12):** narrow the site-wide X-Robots-Tag to every host but hookerverse.com (+ a `/data/`
+  noindex rule), copy `docs/robots-launch.txt` over `static/robots.txt`, deploy, run `probe-seo --launched`, submit the
+  sitemap to Search Console and Bing.
+- **Known, not changed:** `/` replaces itself with Thomas (or the home card) as the intro starts, so a crawler that runs
+  JS ends on Thomas's canonical — Google may fold `/` into Thomas. Revisit only if Search Console shows it.
+- The ENRICHED design doc was not updated (Sam asked for the roadmap); the durable rules of this session — head tags
+  only from card-visible facts, accordion text `hidden` not absent, one shared isIndexable(), fixed-format images behind
+  a shared cache — are recorded here and in the code.

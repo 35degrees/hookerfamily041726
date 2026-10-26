@@ -1,8 +1,9 @@
 # SEO PLAN — getting hookerverse.com found, without giving the tree away
 
-**Opened October 24, 2026. Last updated October 26, 2026 (afternoon) — step 0 done: firewall logging, Search Console
-and Bing, spend cap, and the photo edge cache (§0.1). §0 is the handoff, §13 is the dated record of the discussion
-behind every decision.**
+**Opened October 24, 2026. Last updated October 26, 2026, 13:00 PDT — THE BUILD (§9 steps 0–8) IS COMPLETE AND LIVE
+(still hidden from search), the launch probe `scripts/probe-seo.mjs` is 42/42, and what is left is waiting or
+launch-day work (§0.2–§0.3). §0 is the handoff; §13 is the dated record of the discussion behind every decision;
+roadmap §64–§65 (ENRICHED_CODING_ROADMAP_FABLE_102626.md) is the engineering record of Oct 26.**
 A living document in the house convention: decisions Sam has made are marked ✅ and dated; open choices stay in
 §11 until he closes them; every measured number carries its date and is re-run before it is trusted.
 
@@ -124,6 +125,20 @@ renamed slug, hidden person, `/`, `/privacy`; red first), run Google's Rich Resu
 pages, wait out the firewall's log week, and launch (§12).
 
 ### 0.3 Open items outside the build (from the Oct 24–26 session)
+
+- **WHAT LAUNCH WAITS ON (Oct 26, 13:00 PDT):** (1) Google's answer on the Safe Browsing review (§0.2 step 0; email to
+  samhooker@gmail.com); (2) the firewall log read ~Nov 2 and the rules moved toward challenge/deny; (3) Sam's go. Then
+  §12: narrow vercel.json's site-wide X-Robots-Tag to every host but hookerverse.com (plus a `/data/(.*)` noindex rule
+  on every host), copy `docs/robots-launch.txt` over `static/robots.txt`, deploy, run `node scripts/probe-seo.mjs
+  --base https://hookerverse.com --launched` (it must pass), submit `https://hookerverse.com/sitemap.xml` in Search
+  Console and Bing, request indexing for a handful of the richest cards.
+- **HIDDEN PEOPLE — ✅ DECIDED Oct 26, 12:55 PDT (Sam: "Leave the narrative blocks as they are").** The 1,402
+  `classification.hidden` people (1,278 talcott_2026, 122 true, 2 leete_branch_2026 — all the hidden Talcotts and
+  Pumpellys; Col. Matthew Talcott and Delphine Pumpelly Read are visible on purpose) have no page (404), no sitemap
+  entry, no search-index row, no chip, no JSON-LD mention and no cross-connection — measured across all 29,025 payloads.
+  Accepted: 56 narrative-block sentences on 46 visible, indexable cards name someone matching one of 27 hidden people
+  (some only namesakes); once indexed, a search for such a name could surface the visible card, never an entry of
+  their own. List: `_review/hidden-names-in-visible-stories.tsv` (untracked). Roadmap §65.5.
 
 - **Vercel deployment retention** (Sam, dashboard → Project Settings → Deployment Retention, ~30 days): stored
   deployments were 55 GB on Oct 25 and grow ~0.5 GB per deploy (the 29k payloads). Cheap, but forever.
@@ -757,3 +772,27 @@ and the commits; this is the *why*.
   cache (roadmap §64). After deploy Sam felt clicks *"maybe slowed down a hair… as a picky person i want things to be
   very snappy"* — measured: first views of the new WebP copies (0.55 s); pre-building the notables fixed it. Sam:
   *"very snappy and photos load fine."*
+- **10:22** — the `--all` photo warm-up deferred until Cloudinary has room. Sam: *"lets wait a few days its not urgent."*
+
+### Oct 26 (Mon, 10:30–13:00 PDT) — steps 2–8, the probe, and the hidden people
+
+- **Steps 2–8 built and deployed in order, each verified on hooker-test** (commits and measurements in §0.1–§0.2,
+  roadmap §65.1). Sam's frame: *"ensure that your approach follows most modern best practices for SEO while keeping my
+  site nimble and searchable"*, and the standing *"everything is surgical."*
+- **Descriptions:** Sam asked what a description is — the grey line under a search result — *"i'm fine with that."*
+- **Link previews:** two treatments shown as images on Sam's Desktop (`~/Desktop/hookerverse-link-previews/`); a
+  face-crop cut Charles Gay Hooker's face off. Sam: *"padded photos are better because often they are not standard size
+  and even have differing alignments. C site photo is perfect."*
+- **The cards' stories were not in the page Google reads** (§2 corrected; roadmap §65.3). Seen when Sam pasted Dexter
+  Ferry's page source; fixed with hidden text inside closed blocks, pixel-identical. Sam pasted the source again after
+  the fix: *"checks out."*
+- **The home page:** Sam, on the intro: *"if a user is signed in and goes through the intro, the first card that will
+  appear is the home card they chose not thomas but more typically it will be thomas."* Enter now carries a real link
+  to Thomas for crawlers.
+- **The contact email** now says where a visit began. Sam sent a real test from hooker-test, signed out: received,
+  with "Arrived: directly, landing on /". Sam: *"add the one sentence to privacy"* — done (`01ac18ac`).
+- **The launch probe** built and proven red first; 42/42 (§0.2).
+- **Hidden people** — Sam: *"don't forget there are hidden entries that i don't want to be anywhere in SEO … no
+  searches for a hidden Talcott will show my site."* Audited (§0.3); the only exposure is names inside visible cards'
+  narrative blocks. Sam: *"Leave the narrative blocks as they are."*
+
