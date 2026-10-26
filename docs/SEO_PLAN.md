@@ -37,6 +37,8 @@ nofollow` on every response + `Disallow: /` in `static/robots.txt`) — nothing 
 | Privacy text now says visits are counted anonymously without cookies; Sources author names lightly underlined | `PrivacyModal.svelte`, `SourcesModal.svelte` | e903ff14 |
 | Phone: footer row on the floor of short cards, 44px under the last chip on tall ones; shuffle button reads "Notables"; intro arrow ≥64px tap target; bookmarks open on one tap on touch | `[slug]/+page.svelte` `.phone-footer`, `SiteFooter.svelte`, `ShuffleNotables.svelte`, `TopRightChrome.svelte`, `IntroGL/IntroOverlay.svelte`, `BookmarksModal.svelte` | f11a3e7a, 127da498, d1b82464 |
 | **Step 0 (Oct 26 afternoon).** **Firewall, LOG ONLY**, published via `vercel firewall` (CLI 63): `LOG data rate` (`/data/`, 120/min per IP), `LOG page rate` (page HTML only — regex excludes `/data`, `/_app`, `/_vercel`, `/api`, `/intro`, `/textures`, `/icons` and any path with a file extension; 60/min), `LOG geo deny-list` (CN RU VN SG KP IR), `LOG geo challenge-list` (outside US CA GB IE FR DE NL BE LU CH AT LI MC IT ES PT DK NO SE FI IS AU NZ). **Read the log ~Nov 2**, then tune and move to challenge/deny. **Search Console** Domain property verified (the existing TXT record). **Bing** imported from Search Console. **Vercel spend budget $50 on-demand, pause ON** (team-wide, on top of the $20 included credit) | Vercel dashboard / CLI; DNS unchanged | — |
+| **Step 2 — head tags (Oct 26).** Meta description = the card's blurb + the first sentence of NB 1, ~155 chars (else "Son/Daughter of …; born in …, in YYYY"; none for a private person with nothing to say). Open Graph + Twitter tags, `og:locale en_US`. Preview image = the portrait PADDED on the card's cream at 1200×630 via `/cld/` (Sam: "padded photos are better because often they are not standard size and even have differing alignments"); everyone else and the pop-up addresses get `static/og-default.jpg`, the intro at rest (Sam: "C site photo is perfect"; how to re-shoot is in seo.ts). JSON-LD `ProfilePage` → `mainEntity` `Person` (@id `url#person`, `isPartOf` `https://hookerverse.com/#website` — step 6 must define that node): dates at the card's precision incl. the 1-January placeholder rule, places, parents/spouses/children as links, portrait, `sameAs` notable_url. `pv` people: no dates, no places. Alt text was already on chips and the featured portrait; the rail headshots and modal photos stay `alt=""` on purpose | `src/lib/seo.ts`, `[slug]/+page.svelte`, `static/og-default.jpg` | 78f7c314, 875a98fa |
+| **Step 3 — the richness gate (Oct 26).** `isIndexable()` in `regenerate-data.js` (≥1 narrative block with words) stamps `ix` on **8,479 of 29,025** payloads; the page writes `noindex, follow` without it, failing closed. **The sitemap (step 5) must call `isIndexable()`.** Verified live: Thomas/privacy/sources indexable; Albert Bristol, Molly Powell, /contact noindex; switches correctly on warm navigation and Back | `regenerate-data.js`, `buildFeatured.ts`, `featured.svelte.ts`, `[slug]/+page.svelte` | 875a98fa |
 | **Photos through Vercel's edge cache** (Cloudinary was at 22.78/25 credits, 59% bandwidth): person photos and the rail headshots load from `/cld/…`, rewritten to Cloudinary and edge-cached; `f_webp` replaces `f_auto`; notables pre-built with `scripts/warm-photos.mjs`. First view 0.55 s → cached 0.09 s. Full record: roadmap §64 | `src/lib/photo.ts`, `vercel.json`, `vite.config.ts`, `TimelineRail.svelte`, `paths.ts`, `scripts/warm-photos.mjs` | 01abe083, 0565cfd3 |
 
 ### 0.2 Next, in order (§9 is the full build list; this is what remains of it)
@@ -58,28 +60,11 @@ What step 0 left open:
   URL Google learned but never fetched). Both are the deliberate `Disallow: /`; do not "Validate fix". They resolve
   at launch (§6.3).
 
-**Step 2 — the rest of the head tags** (titles done). In `[slug]/+page.svelte`'s `<svelte:head>`, from data the
-payload already carries; anything missing is added in `regenerate-data.js`, never fetched at runtime.
-- **Description** (§5.2): `notable_blurb ?? bio_blurb` → else the first sentence of NB 1 (✅ §11.5) → else a factual
-  line ("Son of … and …; born <place> <year>"). ~155 chars. Never for `pv` dates. Mind "initials break sentence
-  trims" (a first sentence cut at "F. D.").
-- **Link previews** (§5.5): `og:title`, `og:description`, `og:url` (= canonical), `og:image`, `twitter:card`. Portrait
-  through ONE Cloudinary transform (e.g. `w_1200,h_630,c_fill,g_face,q_auto,f_jpg`) — **if Strict Transformations is
-  on by then (§0.3), that transform must be added to Cloudinary's allowed list or every preview breaks.** People with
-  no photo get a site image that does not exist yet: bake the intro painting + gilt title at 1200×630 with
-  `scripts/intro/bake-intro-layers.mjs` (it takes `BAKE_WIDTH`/`BAKE_OUT`) into `static/`.
-- **Alt text** (§5.6): `alt="<display name>"` on every portrait (FeaturedCard, PersonBox chips, search/connect rows);
-  media rows get their title. Check where `alt=""` is set today.
-- **JSON-LD `Person`** (§5.4): name, birth/death date + place at the record's precision, parent/spouse/children as
-  `{name, url}`, image, description, `sameAs` = `notable.notable_url`. **Never** for `pv` people's dates (they are not
-  in the payload anyway). Only card-visible facts — nothing from research_notes/sources.
-- The three pop-up addresses already have title/description/canonical (`SURFACES` in `surfaces.ts`); they get no
-  JSON-LD.
-
-**Step 3 — the gate** (§6.1): `<meta name="robots" content="noindex, follow">` on every person page with zero
-narrative blocks. Compute the flag ONCE in `regenerate-data.js` (e.g. an `ix` boolean on the payload) so the page
-and the sitemap read the same predicate. Sam's card (3 NBs), `/privacy`, `/sources` are indexable; `/contact` is
-already noindex.
+**Steps 2 and 3 — ✅ DONE Oct 26** (head tags, the richness gate, the default preview image; details and commits
+in §0.1). As built, two choices differ from the plan text that stood here: the preview portrait is PADDED on the
+card's cream (`w_1200,h_630,c_pad,b_rgb:f4ecdd,q_auto,f_jpg`), not face-cropped — a face crop cut faces off
+newspaper portraits; and the site image is a screenshot of the live intro at rest, not a layer bake. **If Strict
+Transformations is ever turned on, that pad transform must be on the allowed list or every preview breaks.**
 
 **Step 5 — sitemap + robots.txt** (§6.2, §6.3): `regenerate-data.js` writes `static/sitemap.xml` (gated slugs +
 `/`, `/privacy`, `/sources`; `lastmod` only where trustworthy). Draft the two-policy robots.txt as a separate file —
