@@ -107,6 +107,7 @@
 	import { fetchFeatured } from '#lib/data/buildFeatured.js';
 	import { personHref, slugFromPath } from '#lib/paths.js';
 	import { SITE_ORIGIN, SITE_TITLE } from '#lib/site.js';
+	import { personDescription, personJsonLd, previewImage, PREVIEW_W, PREVIEW_H } from '#lib/seo.js';
 	/** The line's root — the X's last resort when nothing else on the card leads home. */
 	const THOMAS_SLUG = 'thomas-hooker-1586';
 	import { featured } from '#lib/state/featured.svelte.js';
@@ -206,6 +207,20 @@
 		const slug = f.neighborhood.focus?.slug;
 		return slug ? SITE_ORIGIN + personHref(slug) : null;
 	});
+	// THE REST OF THE HEAD (SEO_PLAN §5.2, §5.4, §5.5; seo.ts): the description under a search result, the
+	// link-preview tags, and the structured data. Off the same `f` as the title, so a warm navigation re-points
+	// them too. A pop-up's address speaks for the pop-up (its own title and description, no person data).
+	// (Written as $derived.by closures, like canonicalUrl above, because `openSurface` is declared further down.)
+	const metaDescription = $derived.by(() =>
+		openSurface ? (SURFACES[openSurface].description ?? null) : personDescription(f.person, f.neighborhood)
+	);
+	const metaTitle = $derived.by(() =>
+		openSurface ? `${SURFACES[openSurface].title} - ${SITE_TITLE}` : pageTitle
+	);
+	const metaImage = $derived.by(() => (openSurface ? null : previewImage(f.person)));
+	const jsonLd = $derived.by(() =>
+		!openSurface && canonicalUrl ? personJsonLd(f.person, f.neighborhood, canonicalUrl, metaDescription) : null
+	);
 
 	// ── THE POP-UPS' ADDRESSES (Oct 26, Sam; SEO_PLAN §5.8; surfaces.ts) ───────────────────────────────
 	// Privacy, Sources and the contact form open over the card as they always have, and the address bar
@@ -2086,11 +2101,22 @@
 </script>
 
 <svelte:head>
-	<title>{openSurface ? `${SURFACES[openSurface].title} - ${SITE_TITLE}` : pageTitle}</title>
+	<title>{metaTitle}</title>
 	{#if canonicalUrl}<link rel="canonical" href={canonicalUrl} />{/if}
-	{#if openSurface && SURFACES[openSurface].description}
-		<meta name="description" content={SURFACES[openSurface].description} />
+	{#if metaDescription}<meta name="description" content={metaDescription} />{/if}
+	<meta property="og:site_name" content={SITE_TITLE} />
+	<meta property="og:type" content={openSurface ? 'website' : 'profile'} />
+	<meta property="og:title" content={metaTitle} />
+	{#if metaDescription}<meta property="og:description" content={metaDescription} />{/if}
+	{#if canonicalUrl}<meta property="og:url" content={canonicalUrl} />{/if}
+	{#if metaImage}
+		<meta property="og:image" content={metaImage} />
+		<meta property="og:image:width" content={String(PREVIEW_W)} />
+		<meta property="og:image:height" content={String(PREVIEW_H)} />
+		<meta property="og:image:alt" content={f.person.bio?.display_name ?? f.person.name?.display_name ?? ''} />
 	{/if}
+	<meta name="twitter:card" content={metaImage ? 'summary_large_image' : 'summary'} />
+	{#if jsonLd}{@html `<script type="application/ld+json">${jsonLd}</script>`}{/if}
 	{#if openSurface && !SURFACES[openSurface].index}<meta name="robots" content="noindex, follow" />{/if}
 </svelte:head>
 
