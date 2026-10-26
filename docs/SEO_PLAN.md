@@ -74,7 +74,10 @@ payload carrying `ix`, none points at `/data/` or another host. **The launch rob
 `docs/robots-launch.txt`** (never deployed — `docs/` is outside the upload) and checked with Python's robots parser:
 search engines, AI-search crawlers and user-triggered fetchers may read pages, portraits (`/cld/`, for Google Images)
 and the sitemap but not `/data/` or `/api/`; the AI-training crawlers get `Disallow: /`. **`static/robots.txt` stays
-`Disallow: /` until launch day (§12), when the draft replaces it.** Submit the sitemap in Search Console and Bing
+closed until launch day (§12), when the draft replaces it** — closed to everyone but the link-preview bots
+(Twitterbot, Slackbot, LinkedInBot, Discordbot, facebookexternalhit; never `/data/` or `/api/`), let in Oct 26 ~13:30 PDT
+so links Sam shares unfurl on X, Slack, LinkedIn, Discord and Facebook as they already did in iMessage; the noindex
+header still stands on every response, so nothing is indexed. `probe-seo` checks both halves (43/43). Submit the sitemap in Search Console and Bing
 then, not before.
 
 **Step 6 — ✅ DONE Oct 26.** `/` keeps its title and canonical and gains a description ("The descendants of Rev.
