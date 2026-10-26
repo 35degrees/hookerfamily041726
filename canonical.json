@@ -713998,7 +713998,8 @@
     "married_names": [],
     "suffix": "Jr.",
     "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1785123176/daust_xjf0na.png",
-    "bio_blurb": "Electrical engineer and pianist"
+    "bio_blurb": "Electrical engineer and pianist",
+    "chip_first_name": "Dave"
    },
    "birth": {
     "year": 1939,
