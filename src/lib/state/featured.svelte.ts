@@ -59,6 +59,8 @@ export type FeaturedData = {
 	/** Married to a Hartford founder — computed in buildFeatured, where the payload's `context` (and so
 	 *  the spouse's tags) is still in scope. See the note there. */
 	founderSpouse?: boolean;
+	/** THE RICHNESS GATE (SEO_PLAN §6.1) — this page may be indexed (≥1 narrative block). Absent = noindex. */
+	ix?: boolean;
 };
 
 class FeaturedManager {

@@ -99,6 +99,11 @@ export const PREVIEW_H = 630;
 export function previewImage(person: Person): string | null {
 	return portrait(person, `w_${PREVIEW_W},h_${PREVIEW_H},c_pad,b_rgb:f4ecdd,q_auto,f_jpg`);
 }
+/** …and for everyone without a Cloudinary portrait, and the pop-up addresses: the intro at rest — the painting
+ *  with the gilt title and years, the Enter arrow hidden — shot from the live intro at 1200×630 (Oct 26, Sam to
+ *  sign off). To re-shoot: Playwright at a 1200×630 viewport, deviceScaleFactor 2, ~12 s after `/` loads, with
+ *  `.enter` hidden; then `sips -z 630 1200`. */
+export const DEFAULT_PREVIEW = `${SITE_ORIGIN}/og-default.jpg`;
 
 /** A date at the precision the record has: "1586", "1586-03", "1586-03-07". Approximate dates give the year only,
  *  and so does 1 January unless the record says it is exact — formatDate's placeholder rule (dates.ts), so the
@@ -129,8 +134,8 @@ export function personJsonLd(person: Person, n: Neighborhood, url: string, descr
 	const showVitals = !person.pv;
 	const children = (n.spouses ?? []).flatMap((s) => s.children ?? []);
 	const doc: Record<string, unknown> = {
-		'@context': 'https://schema.org',
 		'@type': 'Person',
+		'@id': `${url}#person`,
 		name: person.bio?.display_name ?? person.name?.display_name ?? n.focus?.n,
 		url,
 		description: description ?? undefined,
@@ -145,5 +150,15 @@ export function personJsonLd(person: Person, n: Neighborhood, url: string, descr
 		sameAs: (person.notable as { notable_url?: string | null })?.notable_url ?? person.notable?.primary_url ?? undefined
 	};
 	for (const k of ['parent', 'spouse', 'children'] as const) if (!(doc[k] as unknown[]).length) delete doc[k];
-	return JSON.stringify(doc).replace(/</g, '\\u003c');
+	// A ProfilePage whose main entity is the Person — schema.org's (and Google's) type for a page about one
+	// person. `isPartOf` names the site; the home page defines that WebSite node with the same @id (step 6).
+	const page = {
+		'@context': 'https://schema.org',
+		'@type': 'ProfilePage',
+		'@id': url,
+		url,
+		isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+		mainEntity: doc
+	};
+	return JSON.stringify(page).replace(/</g, '\\u003c');
 }

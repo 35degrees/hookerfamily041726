@@ -86,6 +86,16 @@ let orbitIds = new Set();
  * (warmPersonLinks), so the target's zone has to ride the CC row beside `orbit`, exactly as orbit does.
  */
 let founderZoneIds = new Set();
+/**
+ * THE RICHNESS GATE (SEO_PLAN §6.1, Sam Oct 24: "I am not familysearch.com"): a person's page may be indexed
+ * only if it tells a story — at least one narrative block with words in it. 8,479 of 29,025 on Oct 26.
+ * Decided HERE, once: the payload carries the answer as `ix` (the page writes `noindex, follow` without it),
+ * and the sitemap (SEO_PLAN step 5) must call this same function, so the two can never disagree. Fails
+ * CLOSED: a payload missing the flag is a hidden page, never an indexed stub.
+ */
+function isIndexable(p) {
+	return (p.narrative_blocks ?? []).some((b) => typeof b?.body === 'string' && b.body.trim() !== '');
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -2229,7 +2239,10 @@ function personPayload(p, byId, clientById, slugMap, cemById, instById, reg) {
 		// ORBIT (roadmap §40) — the single predicate the whole ascension reads: the ground darkens on it,
 		// the X appears on it, and the flight axis keys off whether it CHANGED across the navigation.
 		// Sparse: emitted only for the ~94 who are, so 18,000 payloads are byte-identical to before.
-		...(orbitIds.has(p.id) ? { orbit: true } : {})
+		...(orbitIds.has(p.id) ? { orbit: true } : {}),
+		// THE RICHNESS GATE (isIndexable above). Sparse like orbit: present only on the pages that may be
+		// indexed, so a missing key means noindex — the safe direction.
+		...(isIndexable(p) ? { ix: true } : {})
 	};
 }
 

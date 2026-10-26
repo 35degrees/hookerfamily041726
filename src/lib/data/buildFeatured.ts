@@ -40,6 +40,9 @@ export type PersonPayload = {
 	/** The chain belongs to a married-in person's HOOKER PARTNER, so its last rung is that partner and
 	 *  the focus stands BESIDE them rather than below. Absent on a descendant's own ladder. */
 	pathsSpouse?: boolean;
+	/** THE RICHNESS GATE (SEO_PLAN §6.1; regenerate-data.js isIndexable): present, true, only on the pages that
+	 *  may be indexed. Absent = the page writes `noindex, follow`. */
+	ix?: boolean;
 };
 
 const TITLE_ABBREVIATIONS: Record<string, string> = {
@@ -224,6 +227,8 @@ export function buildFeatured(payload: PersonPayload): FeaturedData {
 		// Passed straight through, untouched. Absent on Thomas, his children, and everyone off the line.
 		pathsToThomas: payload.pathsToThomas,
 		pathsSpouse: payload.pathsSpouse,
+		// The richness gate — named here or it never reaches the page (the explicit-map rule above).
+		ix: payload.ix,
 		/**
 		 * MARRIED TO A HARTFORD FOUNDER — computed HERE, and that is the whole point.
 		 *

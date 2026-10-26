@@ -107,7 +107,7 @@
 	import { fetchFeatured } from '#lib/data/buildFeatured.js';
 	import { personHref, slugFromPath } from '#lib/paths.js';
 	import { SITE_ORIGIN, SITE_TITLE } from '#lib/site.js';
-	import { personDescription, personJsonLd, previewImage, PREVIEW_W, PREVIEW_H } from '#lib/seo.js';
+	import { personDescription, personJsonLd, previewImage, DEFAULT_PREVIEW, PREVIEW_W, PREVIEW_H } from '#lib/seo.js';
 	/** The line's root — the X's last resort when nothing else on the card leads home. */
 	const THOMAS_SLUG = 'thomas-hooker-1586';
 	import { featured } from '#lib/state/featured.svelte.js';
@@ -217,7 +217,11 @@
 	const metaTitle = $derived.by(() =>
 		openSurface ? `${SURFACES[openSurface].title} - ${SITE_TITLE}` : pageTitle
 	);
-	const metaImage = $derived.by(() => (openSurface ? null : previewImage(f.person)));
+	const portraitPreview = $derived.by(() => (openSurface ? null : previewImage(f.person)));
+	const metaImage = $derived(portraitPreview ?? DEFAULT_PREVIEW);
+	const metaImageAlt = $derived.by(() =>
+		portraitPreview ? (f.person.bio?.display_name ?? f.person.name?.display_name ?? SITE_TITLE) : SITE_TITLE
+	);
 	const jsonLd = $derived.by(() =>
 		!openSurface && canonicalUrl ? personJsonLd(f.person, f.neighborhood, canonicalUrl, metaDescription) : null
 	);
@@ -2105,19 +2109,21 @@
 	{#if canonicalUrl}<link rel="canonical" href={canonicalUrl} />{/if}
 	{#if metaDescription}<meta name="description" content={metaDescription} />{/if}
 	<meta property="og:site_name" content={SITE_TITLE} />
+	<meta property="og:locale" content="en_US" />
 	<meta property="og:type" content={openSurface ? 'website' : 'profile'} />
 	<meta property="og:title" content={metaTitle} />
 	{#if metaDescription}<meta property="og:description" content={metaDescription} />{/if}
 	{#if canonicalUrl}<meta property="og:url" content={canonicalUrl} />{/if}
-	{#if metaImage}
-		<meta property="og:image" content={metaImage} />
-		<meta property="og:image:width" content={String(PREVIEW_W)} />
-		<meta property="og:image:height" content={String(PREVIEW_H)} />
-		<meta property="og:image:alt" content={f.person.bio?.display_name ?? f.person.name?.display_name ?? ''} />
-	{/if}
-	<meta name="twitter:card" content={metaImage ? 'summary_large_image' : 'summary'} />
+	<meta property="og:image" content={metaImage} />
+	<meta property="og:image:width" content={String(PREVIEW_W)} />
+	<meta property="og:image:height" content={String(PREVIEW_H)} />
+	<meta property="og:image:alt" content={metaImageAlt} />
+	<meta name="twitter:card" content="summary_large_image" />
 	{#if jsonLd}{@html `<script type="application/ld+json">${jsonLd}</script>`}{/if}
-	{#if openSurface && !SURFACES[openSurface].index}<meta name="robots" content="noindex, follow" />{/if}
+	<!-- THE RICHNESS GATE (SEO_PLAN §6.1): a person page is indexable only with ≥1 narrative block (`ix`, decided
+	     once in regenerate-data.js isIndexable); a pop-up's address follows its own `index`. "follow" so a crawler
+	     still walks through a stub to the storied pages around it. -->
+	{#if openSurface ? !SURFACES[openSurface].index : !f.ix}<meta name="robots" content="noindex, follow" />{/if}
 </svelte:head>
 
 <!-- Phase 3b: the midnight field behind the STAGE (person page only; fixed, z:0). Cards float above it. -->
