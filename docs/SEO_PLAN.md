@@ -1,6 +1,7 @@
 # SEO PLAN — getting hookerverse.com found, without giving the tree away
 
-**Opened October 24, 2026. Last updated October 26, 2026 (end of session — Sam restarting; §0 is the handoff).**
+**Opened October 24, 2026. Last updated October 26, 2026 — after the last deploy at 07:26 PT (end of session — Sam restarting; §0 is the
+handoff, §13 is the dated record of the discussion behind every decision).**
 A living document in the house convention: decisions Sam has made are marked ✅ and dated; open choices stay in
 §11 until he closes them; every measured number carries its date and is re-run before it is trusted.
 
@@ -98,6 +99,12 @@ page reads the session — re-run `scripts/probe-static-contract.mjs` before and
 routed through `analytics.svelte.ts` so the same three fences apply (hookerverse only, never Sam). And add the
 visit's landing page + referrer to the email body: remember them for the tab on the first page of the visit
 (sessionStorage, try/catch), send them in `/api/contact`'s body.
+**Also in step 8 — a gap found at the end of the Oct 26 review:** the Vercel script counts `pushState` and
+`popstate` only (checked in `va.vercel-scripts.com/v1/script.js`), and since 3fe7a436 the pop-up addresses use
+`replaceState`. So opening Privacy / Sources / Contact INSIDE the app is not counted any more (a direct visit to
+`/privacy` still is). Fix: when a surface opens in the app, call `pageview({ path: '/contact' })` (exported by
+`@vercel/analytics`) through `analytics.svelte.ts`'s fences — never by switching back to pushState, which is the
+Safari hazard §0.1 records.
 
 **Then** write the verification probe (§9 last paragraph: Googlebot desktop AND smartphone; rich page, stub,
 renamed slug, hidden person, `/`, `/privacy`; red first), run Google's Rich Results Test and PageSpeed on three
@@ -166,7 +173,7 @@ for the big names comes later, from links (§10).
 
 ---
 
-## §2. WHERE THINGS STAND — measured October 24, 2026, against the live site
+## §2. WHERE THINGS STAND — measured October 24, 2026, against the live site (✅ rows updated Oct 26)
 
 | | |
 |---|---|
@@ -328,10 +335,17 @@ penalised. The home page will not rank for much on its own; the person pages car
 **✅ BUILT Oct 26.** `src/lib/surfaces.ts` defines the three pop-ups with addresses; the `[slug]` route loads the host
 card for them (Rev. Thomas behind `/privacy` and `/sources` — Sam, Oct 26: "thomas is good" — and Sam's card behind
 `/contact`), and the page renders the pop-up open from the request's own data (the modal store is module state,
-shared by every request on the server, so it is never set there). In the app the address bar follows the pop-up:
-a dismiss gives the history entry back, Back closes and Forward reopens, an author link inside Sources re-addresses
-the entry instead of stepping back over the flight, and a modified click opens a real tab. The footer items and
-the NB 3 "here" are real `<a href>`s; the contact email reports the card behind the form, not `/contact`.
+shared by every request on the server, so it is never set there). In the app the address bar follows the pop-up
+by REPLACING the current history entry (open → `/privacy`, close → the card's address), and a modified click
+opens a real tab. The footer items and the NB 3 "here" are real `<a href>`s; the contact email reports the card
+behind the form, not `/contact`.
+
+**Revised the same day (3fe7a436), after Sam's Safari report — see §13, Oct 26.** The first version PUSHED a history
+entry on open and gave it back with `history.back()` on close, and `navigate.ts`'s Safari early-exit compared raw
+addresses, so a CC-style flight started at `/sources` (every author link) read the close as a Back and abandoned the
+arrival. Now: replace, never push; and every "has the reader moved?" check reads `readerAddress()`, which treats a
+pop-up's address as the card under it. Cost, named: Back while a pop-up is open closes it AND steps to the previous
+card. Side effect found in the final review: replaced entries are not counted by analytics (§0.2 step 8).
 
 The site is bespoke, and two of these four are deliberately not pages. Sam, Oct 25: *"about is really just my
 entry… the contact page is a link in one of my NBs. its cute, cuteness doesn't work with analytics and Google's
@@ -341,7 +355,7 @@ surface gets a real address**, so Google can read it and analytics can count it.
 | | what a reader gets (unchanged) | what changes underneath |
 |---|---|---|
 | **About** | the footer's About / Contact flies to **Sam's own card**, `/samuel-hooker` (HD3386 — blurb "Developer and compiler of this family history", NB 1 "Why build this project?", NB 2 "How are you connected to the founders?") | the footer item becomes `<a href="/samuel-hooker">`, and a click still runs the flight (the person chips already work this way). Sam's card **is** the about page: it is gated in (3 blocks), and the home page's `WebSite` JSON-LD names him as its `author` with that URL — how Google learns the site has a real compiler behind it |
-| **Contact** | "Click here" in Sam's NB 3 opens the contact form over his card | the link becomes `<a href="/contact">`; in the app it opens the modal as now and shallow-routes to `/contact`, so **opening the form counts as a pageview**. A direct load of `/contact` (a link in an email signature, a Find a Grave bio) renders Sam's card with the form open. `/contact` itself is `noindex` — it is a form, not content |
+| **Contact** | "Click here" in Sam's NB 3 opens the contact form over his card | the link becomes `<a href="/contact">`; in the app it opens the modal as now and re-addresses the entry to `/contact` (counted as a pageview once §0.2 step 8's `pageview()` call is in — replaced entries are not tracked on their own). A direct load of `/contact` (a link in an email signature, a Find a Grave bio) renders Sam's card with the form open. `/contact` itself is `noindex` — it is a form, not content |
 | **Sources** | the footer opens the Sources modal | `/sources` is a real server-rendered page with the same text; in the app, the modal and a shallow URL change |
 | **Privacy** | the footer opens the Privacy modal | `/privacy` the same way — and that address goes into Google's and Microsoft's sign-in consent screens |
 
@@ -429,7 +443,7 @@ same page.
 Sam: *"I 100% need to keep my JSON private. that's the gold mine… users only see the data in the UX that I
 build, never raw anywhere on the web."*
 
-### 8.1 What is exposed today (measured on hookerverse.com, Oct 24)
+### 8.1 What was exposed (measured on hookerverse.com Oct 24–25; the last row records what was fixed Oct 25–26)
 
 | | live | contents |
 |---|---|---|
@@ -454,11 +468,12 @@ bulk harvesting slow, visible and expensive**, while a reader never notices.
 0. **Stop publishing what the app never reads** (Oct 25; ✅ DONE Oct 26 — `WLocal` in `regenerate-data.js`: a Vercel
    build, `VERCEL=1`, neither writes `cemeteries.json`, `institutions.json`, `table-index.json` nor `stats.json`
    nor leaves a stale copy; Sam's machine still gets all four, for `/table`, `/dev`, `probe-camera.mjs` and
-   `batch.py`). `cemeteries.json` and `institutions.json` are written by
-   `regenerate-data.js` into `static/data/`, so they are served to anyone, though no page fetches them. They move
-   out of the public folder (to wherever the scripts that do read them expect); `table-index.json` follows `/table`
-   (§11.8). Nothing is deleted from canonical — the files simply stop being published. The cheapest measure on the
-   list, and the largest exposure after `search-index.json`.
+   `batch.py`). They had been written by `regenerate-data.js` into `static/data/` and so served to anyone, though no
+   page reachable by a reader fetches them; `table-index.json` went with `/table` (§11.8). Nothing is deleted from
+   canonical — the files simply stop being published. The cheapest measure on the list, and the largest exposure
+   after `search-index.json`.
+0b. **Living people's private dates out of every download** (✅ DONE Oct 25, cbf7206e — §0.1). Found during Sam's Oct 25
+   "look for other data leaks" request: the card hid them, the data did not.
 1. **`/data/` is closed to crawlers** — `Disallow: /data/` and the `noindex` header stay on it permanently.
    Costs SEO nothing.
 2. **Firewall rate limit on `/data/`** (Vercel WAF, DEPLOYMENT §9): a reader fetches a handful of person files a
@@ -501,15 +516,15 @@ clock on them go first** (reordered Oct 25): the firewall needs a week of `log` 
 search-console verifications take a DNS change that can sit for days. Both run in the background while the code
 steps are built.
 
-0. **Start the clocks.**
-   - **The firewall** (§8.3): the `/data/` rate limit and the country rules, in `log` mode.
+0. **Start the clocks.** (Not started as of Oct 26 — see §0.2 step 0 for the how-to and the existing verification record.)
+   - **The firewall** (§8.3): the `/data/` rate limit, a page-request rate limit, and the country rules, in `log` mode.
    - **Google Search Console** — a *Domain* property for hookerverse.com, verified by a DNS TXT record (covers
      www and every path). Verifying does not index anything; it just opens the instrument.
    - **Bing Webmaster Tools** — imported from Search Console in one step. Bing's index also feeds DuckDuckGo and
      Yahoo and is one of the sources behind ChatGPT's search, so it is not a small second engine.
 1. ✅ **One indexable site** (§4): canonical tags — Oct 26 (hooker-test's own `noindex` rule is already in `vercel.json`).
    ✅ **Side doors closed** (§6.4) and ✅ **unread data files no longer published** (§8.3 item 0) — Oct 26.
-2. **Head tags** (§5.1–5.6): title with years, description, `og:` (and the site preview image), alt text,
+2. **Head tags** (§5.1–5.6): ✅ title with years (Oct 26); still to do: description, `og:` (and the site preview image), alt text,
    JSON-LD — in `src/routes/[slug]/+page.svelte`, computed from data the payload already carries. A field missing
    from the payload is added in `regenerate-data.js`, never fetched at runtime.
 3. **The gate** (§6.1): the `noindex, follow` tag on non-gated pages, decided in one shared predicate that the
@@ -523,7 +538,7 @@ steps are built.
    landing page added to the email itself.
 
 **Verification, proven red first as the house rule requires** — a probe that fetches as Googlebot (desktop AND
-smartphone), for one rich page, one stub, one renamed slug, one hidden person, `/` and `/about`, and asserts: title, description, canonical, robots
+smartphone), for one rich page, one stub, one renamed slug, one hidden person, `/`, `/privacy` and `/contact` (must be noindex), and asserts: title, description, canonical, robots
 meta (index vs noindex by the gate), JSON-LD parses, the 301, the 404, no `/data/` URL in any sitemap. Then
 Google's own **Rich Results Test** and **PageSpeed Insights** on three pages, by eye.
 
@@ -567,7 +582,7 @@ link; and, **on the first page of a visit only, the referring site's hostname** 
 ### 10b. The number that matters — messages received
 
 Sam is not selling traffic; success is a reader who gets in touch (§1). The path is short and every step will be
-countable once §5.8 is built: **a card → Sam's card** (a pageview of `/samuel-hooker`) **→ the form**
+countable once §0.2 step 8 is built (§5.8's addresses exist since Oct 26): **a card → Sam's card** (a pageview of `/samuel-hooker`) **→ the form**
 (a pageview of `/contact`) **→ sent** (a custom event, `Contact sent` — the project is on Vercel's **Pro plan**,
 which includes custom events). Sam's own visits are not counted, by the same three fences.
 
@@ -632,3 +647,78 @@ In order:
 **Rolling back**, if something is badly wrong: put the `noindex` header back and redeploy. Google drops pages
 from results as it re-crawls them (days to weeks); Search Console's removal tool hides a URL within a day.
 Nothing about launch locks the project in.
+
+---
+
+## §13. SESSION RECORD — the discussion behind the decisions (Oct 24–26, 2026)
+
+In the order it happened, with Sam's words where they set a rule. Times are Pacific. Code-level detail is in §0.1
+and the commits; this is the *why*.
+
+### Oct 24 (Sat)
+
+- **Scope set.** Sam: Stream B is "feature complete outside SEO"; SEO is "the most important part of this chat".
+  Before SEO: tab titles, favicon, scrollbar, search, small data fixes.
+- **Titles.** `"<chip name> - The Descendants of Rev. Thomas Hooker"`; Sam on Thomas's: *"Rev. Thomas Hooker - The
+  Descendants of Rev. Thomas Hooker is perfect."* (`SITE_TITLE` in `src/lib/site.ts`.)
+- **Favicon** = the H of the embossed HOOKER from the intro, transparent, deeper gold then "a little lighter"
+  (`scripts/intro/favicon.py`).
+- **Search**: a lone letter ranks names starting with it, notables first; nameless + dateless rows sink; the
+  placeholder count shows the corpus minus 5,000 (Sam's request).
+- **SEO discussion → §1–§12 written.** Sam's five answers, each now a ✅ in this doc:
+  1. URLs — *"can't we just start with the current url"* (§3);
+  2. *"i only want one site up"* (§4);
+  3. index only the storied pages — *"I am not familysearch.com… this is more of an art project"*; all 8,479 with
+     ≥1 block, living included — *"i want those 8,479 all to be crawled"* (§6.1, §11.1);
+  4. the intro stays minimal — *"it all speaks for itself"* (§5.7);
+  5. the walled garden — *"i 100% need to keep my JSON private. that's the gold mine… users only see the data in
+     the UX that I build, never raw anywhere on the web"* (§8).
+  Also: geography fenced (*"we can safely prevent the riskiest countries from trolling and spamming with bots"*,
+  §8.3 item 5); AI search crawlers allowed, training crawlers blocked, after Sam pasted an AI Overview and a video
+  transcript and asked what being open to AI bots buys (§11.2); trust signals = the site-wide Sources / Privacy /
+  About, not per-person citations (*"no way i can go back in time and add sources to each entry"*, §10); the
+  conversion is contact — *"the only thing I'm 'selling' is the UX itself but in a way that they have to reach out
+  to me"* (§1).
+- **Phone footer**: all four items in one right-aligned row, a fixed gap under the last chip; Privacy shown to
+  everyone (Sam asked whether signed-in-only hurt — yes: the contact form collects email signed out, and a privacy
+  statement is expected to be conspicuous).
+
+### Oct 25 (Sun)
+
+- **Mobile**: intro arrow ≥64px tap target on touch; bookmarks needed a double tap on iPhone/iPad — iOS turned the
+  first tap into a hover because the × faded in on `:hover`; scoped to `(hover: hover)`.
+- **Analytics.** Sam: *"how many people are using the site and importantly are NOT ME"*. Chose **Vercel Web
+  Analytics** over Google Analytics (cookieless, first-party, no consent banner, no Google tag; GA4's "exclude my
+  visits" is IP-based and fails on phones). Sam: *"maybe I can start exclusively using hooker-test.vercel.app"* →
+  hooker-test became his testing host, permanently `noindex`, never loads the counter (this REPLACED §4's Oct 24 plan
+  to 301 it away). Sam's login email excluded by hash. Sam asked whether Vercel gets search terms (no tool does since
+  Google stopped passing them — Search Console has them) and referrers (yes, hostname only, first page of a visit)
+  — §10a.
+- **iPad brightness** (Sam's 2025 iPad Pro + matte drawing film: *"the background is so bright it overwhelms the
+  content"*): discussed only — veiling glare from the film over a near-white ground; Sam to try Reduce White Point
+  first (§0.3).
+- **Second review of this plan** (Sam: *"cuteness doesn't work with analytics and Google's process very well"*):
+  About is Sam's own card, Contact is a link in his NB 3 — kept, but every surface gets a real address (§5.8,
+  §11.7). Same review found the side doors (§6.4) and the unread data files (§8.1).
+- **Costs and leaks** (Sam forwarded Cloudinary's *"nearly reached your monthly credits"* email: *"i want to keep my
+  costs down"*): Vercel was $0.30 for the month; Cloudinary is the cost (a hub landing preloads ~98 photos);
+  stored deployments 55 GB. Leak audit found **living people's hidden dates in the public data** (653 people; Sam's
+  own birthday among them). Sam: *"yes that was my first thought Birth order of living but 2 and 3 are important too"*
+  → stripped, with replacements for birth order, search ranking and card wear (cbf7206e). Sam: *"I'm San Francisco
+  CA for birth that's fine to show"* (HD3386 birthplace added, 67691fbe).
+
+### Oct 26 (Mon)
+
+- **Cleanup shipped** (Sam: *"lets proceed clean up"*): side doors 404, four data files local-only (acbce375).
+- **Phone**: the shuffle button reads "Notables" after the icon (Sam's request). **Canonical tags** shipped.
+- **Privacy URL.** Sam noticed the address stayed on the card with Privacy open — *"doesn't SEO require that?"* —
+  yes; built §5.8. Sam on the direct-visit card: *"thomas is good"* (Rev. Thomas behind /privacy and /sources).
+- **Years in titles** — Sam: *"i think its ok to add years to title"* (2,168 shared titles → 8). **Privacy wording**
+  now says visits are counted anonymously without cookies (Sam: yes). **Sources** authors lightly underlined.
+- **Safari bug.** Sam (screenshot on William Ketchum): *"the previous card exits but the new one never enters…
+  doesn't happen every time"*. Reproduced deterministically in WebKit: every Sources author link. Cause and fix in
+  §5.8's revision note; shipped 3fe7a436 and verified on the live site (3/3 author links land).
+- **DNS**: bought at Whois.com, all DNS moved to Sam's Vercel account; a Google verification TXT record already
+  exists (§0.2 step 0).
+- **Session end**: Sam restarting the computer; this document is the handoff. Final review (this pass) found the
+  replaceState analytics gap (§0.2 step 8) and corrected the stale history-behaviour text in §5.8.
