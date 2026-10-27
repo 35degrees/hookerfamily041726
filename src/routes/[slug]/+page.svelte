@@ -2086,7 +2086,10 @@
 	// "Parents" while every other card says "<name>'s parents" — a silent downgrade nobody would think to
 	// look for. The DISPLAY NAME's first token is the last resort: it is what the card itself is already
 	// showing, so a label derived from it can never disagree with the heading above it.
+	// The CHIP name leads (Sam, Oct 27: "Tony's parents", not "William's") — the order parentFirstName and the card's
+	// Thread buttons already use, so the label above a card and the buttons on it call the person one thing.
 	const focalFirstName = $derived(
+		f.neighborhood.focus?.cf ??
 		f.person.bio?.first_name ??
 			f.person.name?.first_name ??
 			f.neighborhood.focus?.fn ??

@@ -807,4 +807,5 @@ and the commits; this is the *why*.
 
 - **21:18 PDT** — Google's "Review successful for hookerverse.com" email: the "Deceptive pages" flag is lifted and the
   warnings are being removed. One of the three launch gates is now cleared (§0.3); the firewall log read (~Nov 2) and
-  Sam's go remain. Check Search Console → Security issues shows "No issues detected" before launch day.
+  Sam's go remain.
+- **Oct 27, ~09:40 PDT** — Search Console → Security issues: **"No issues detected"** (Sam's screenshot). Confirmed.
