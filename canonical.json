@@ -2525922,7 +2525922,14 @@
      "children_ids": []
     }
    ],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "arts",
+     "header": "Sponsors of a play about the First Folio",
+     "body": "In 2018 Pamela and her husband, Tom Castle, sponsored the Oregon Shakespeare Festival's production of The Book of Will, a play about the actors who saved Shakespeare's plays by printing the First Folio. They also give to ACCESS, a southern Oregon food and housing charity."
+    }
+   ],
    "tags": [],
    "cross_connections": [],
    "classification": {
@@ -2525985,7 +2525992,8 @@
     "married_names": [
      "Pullen"
     ],
-    "maiden_name": "Howard"
+    "maiden_name": "Howard",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1793119590/Screenshot_2026-10-27_at_9.46.26_AM_snggbp.png"
    },
    "gender": "female",
    "birth": {},
@@ -2526025,7 +2526033,9 @@
     "display_name": "Jerry Pullen",
     "first_name": "Jerry",
     "last_name": "Pullen",
-    "married_names": []
+    "married_names": [],
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1793119549/Screenshot_2026-10-27_at_9.41.13_AM_pbgkc9.png",
+    "bio_blurb": "Carmel police sergeant"
    },
    "gender": "male",
    "birth": {},
@@ -2526053,7 +2526063,13 @@
     "is_notable": false
    },
    "is_placeholder": false,
-   "number_of_marriages": 1
+   "number_of_marriages": 1,
+   "career": [
+    {
+     "role": "Police sergeant",
+     "organization": "Carmel Police Department"
+    }
+   ]
   },
   {
    "id": "T02323",
