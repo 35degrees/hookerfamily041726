@@ -115,6 +115,33 @@ export function warmCrossConnections(
 	}
 }
 
+// Warm the photos on this card's PATHS TO THOMAS ladder the moment the reader reaches for the button — pointer
+// over it, a finger down on it, or keyboard focus (Oct 27, Sam: non-notable rungs "flash into view after the
+// holding element is on the screen"). The rungs are ancestors back to Thomas, outside the neighborhood, so
+// nothing had fetched them; since the f_webp switch (Oct 26) an unseen one is also a first-time Cloudinary
+// derivative (~0.5 s). Starting them on intent rather than on the click gives that fetch the reach-and-click
+// time as a head start, and only for readers who are about to open the ladder — no Cloudinary cost on a card
+// whose button is never touched. HIGH priority: this is what the reader asked for next. Same derivative the
+// rungs render (PHOTO_TRANSFORM); once per session per photo, like warmCrossConnections.
+const warmedLadder = new Set<string>();
+export function warmLadder(paths: { p?: string | null }[][] | null | undefined): void {
+	if (!paths || typeof Image === 'undefined') return;
+	for (const path of paths) {
+		for (const person of path) {
+			const url = cldSize(person?.p, PHOTO_TRANSFORM);
+			if (!url || warmedLadder.has(url)) continue;
+			warmedLadder.add(url);
+			const img = new Image();
+			try {
+				(img as unknown as { fetchPriority: string }).fetchPriority = 'high';
+			} catch {
+				/* no fetchPriority — still a cache warm */
+			}
+			img.src = url;
+		}
+	}
+}
+
 // ONE derivative for a person's photo everywhere it appears — chip, featured display, and hover-zoom —
 // so it loads EXACTLY ONCE and every later use is a cache hit (no second fetch when a chip promotes to
 // featured; no third when you hover-zoom). Using different sizes per surface was the regression: the chip's

@@ -40,7 +40,7 @@
 	import NarrativeBlocks from './NarrativeBlocks.svelte';
 	import { formatDate, formatLocationShort, buildMapUrl, ageAtDeath, possessive } from '#lib/utils/dates.js';
 	import { shrinkToFit } from '#lib/actions/shrinkToFit.js';
-	import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
+	import { cldSize, PHOTO_TRANSFORM, warmLadder } from '#lib/photo.js';
 	import CrossConnectionsBlade, { BLADE_TANG } from './CrossConnectionsBlade.svelte';
 	import { unsheathBlade } from '#lib/transitions/flight.js';
 	import { bakeWear } from '#lib/actions/bakeWear.js';
@@ -1297,6 +1297,9 @@
 							<button
 								type="button"
 								class="connect-btn connect-thomas"
+								onpointerenter={() => warmLadder(pathsToThomas)}
+								onpointerdown={() => warmLadder(pathsToThomas)}
+								onfocus={() => warmLadder(pathsToThomas)}
 								onclick={() => settled && openModal('connect-thomas')}
 								use:shrinkToFit={{ max: tl(10), min: tl(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
 							>
