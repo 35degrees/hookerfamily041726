@@ -38,7 +38,7 @@
 	import type { Institution } from '#lib/types/institution.js';
 	import RightColumn from './RightColumn.svelte';
 	import NarrativeBlocks from './NarrativeBlocks.svelte';
-	import { formatDate, formatLocationShort, buildMapUrl, ageAtDeath } from '#lib/utils/dates.js';
+	import { formatDate, formatLocationShort, buildMapUrl, ageAtDeath, possessive } from '#lib/utils/dates.js';
 	import { shrinkToFit } from '#lib/actions/shrinkToFit.js';
 	import { cldSize, PHOTO_TRANSFORM } from '#lib/photo.js';
 	import CrossConnectionsBlade, { BLADE_TANG } from './CrossConnectionsBlade.svelte';
@@ -1300,8 +1300,10 @@
 								onclick={() => settled && openModal('connect-thomas')}
 								use:shrinkToFit={{ max: tl(10), min: tl(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
 							>
+								<!-- "TONY'S THREAD TO THOMAS" (Sam, Oct 26) — was "Connect Tony to Thomas". A name ending in s
+								     takes the bare apostrophe: "Charles' Thread to Thomas" (possessive(), the parents label's rule). -->
 								<span data-fit class="inline-block whitespace-nowrap"
-									>Connect {firstName && !stage.shortH ? `${firstName} ` : ''}to Thomas</span
+									>{firstName && !stage.shortH ? `${possessive(firstName)} ` : ''}Thread to Thomas</span
 								>
 							</button>
 							<!-- Not on a short window (Sam, 100626) — "to Thomas" stays; it is the line's own question. -->
@@ -1313,7 +1315,7 @@
 								use:shrinkToFit={{ max: tl(10), min: tl(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
 							>
 								<span data-fit class="inline-block whitespace-nowrap"
-									>Connect {firstName ? `${firstName} ` : ''}to family</span
+									>{firstName ? `${possessive(firstName)} ` : ''}Threads to Family</span
 								>
 							</button>
 							{/if}

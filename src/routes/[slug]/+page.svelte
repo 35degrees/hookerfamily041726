@@ -2146,7 +2146,7 @@
      card and connector use, so the button can never disagree with the flight lock about whether a flight
      is in progress. -->
 <div class="intro-chrome" class:held={introArrival}><TopRightChrome settled={familyLanded} /></div>
-<!-- The bottom-right corner: About / Contact and the copyright (SiteFooter). Held through the intro with the top
+<!-- The bottom-right corner: About, Contact and the copyright (SiteFooter). Held through the intro with the top
      corner, and not on a phone yet — the phone composition has not given this corner a seat. -->
 {#if !stage.phone}<div class="intro-chrome" class:held={introArrival}><SiteFooter /></div>{/if}
 

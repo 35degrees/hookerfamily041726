@@ -394,6 +394,13 @@
 		display: flex;
 		gap: 10px;
 	}
+	/* Name two fifths, email three fifths (Sam, Oct 26): an address runs longer than a name. */
+	.pair > .field:first-child {
+		flex: 2;
+	}
+	.pair > .field:last-child {
+		flex: 3;
+	}
 	@media (max-width: 480px) {
 		.pair {
 			flex-direction: column;

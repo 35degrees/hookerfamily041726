@@ -1,16 +1,18 @@
 <script lang="ts">
 	import { stage } from '#lib/state/stage.svelte.js';
 	/**
-	 * SiteFooter — the bottom-right corner (Sam, Oct 9): "About / Contact", "Sources", "Privacy" (signed in only)
-	 * and "© 2026".
+	 * SiteFooter — the bottom-right corner (Sam, Oct 9): "About", "Contact", "Sources", "Privacy" and "© 2026".
+	 * About and Contact were one link, "About / Contact", until Oct 26 (Sam: "separate the two items, About goes to my
+	 * card, Contact opens the Contact modal from whatever page the person is on").
 	 *
 	 * It took the seat of the Manuscript ground toggle (removed Oct 9, see Field.svelte), and it takes
 	 * the corner chrome's type rather than inventing its own: 500 12px Inter in the house ink, one step back at
 	 * rest, full on hover, cream in the zone — SearchTrigger's rules, so the two corners read as one family.
 	 *
-	 * ABOUT / CONTACT IS A PERSON, not a page. It flies to Samuel Talcott Hooker's card — the compiler's own
+	 * ABOUT IS A PERSON, not a page. It flies to Samuel Talcott Hooker's card — the compiler's own
 	 * entry, whose blocks say who built this and why, with the contact form one click away in its NB 3 — on
-	 * the standard lateral CC flight. ccFlyTo is the shared "fly to a named person from something that is not
+	 * the standard lateral CC flight. CONTACT is a pop-up like Privacy and Sources: it opens over the card the reader
+	 * is on, and its address is /contact (surfaces.ts). The link in Sam's NB 3 stays. ccFlyTo is the shared "fly to a named person from something that is not
 	 * a chip" path (the Notable People button and the timeline portraits use it), and the two guards are the
 	 * portraits' own: nothing while a flight is running, nothing when that card is already the one on screen.
 	 */
@@ -31,7 +33,7 @@
 	 * horizontally right aligned with 2026 at the right"). Not the fixed corner: on a phone the page scrolls, so the
 	 * footer is the last thing in the stage's own column, a fixed gap below the last child chip (+page.svelte
 	 * `.phone-footer`), and it moves with the content rather than floating over it. The two rows simply sit side
-	 * by side, which is exactly the order asked for: Privacy · Sources · About / Contact · © 2026.
+	 * by side, which is exactly the order asked for: Privacy · Sources · About · Contact · © 2026.
 	 */
 	let { inline = false }: { inline?: boolean } = $props();
 	const YEAR = 2026;
@@ -59,7 +61,7 @@
 
 <!-- TWO SHORT ROWS, RIGHT-ALIGNED (Sam, Oct 9: "we can't just build out to the left"). The corner shares its
      height with the children row, so the footer grows UP into empty paper rather than LEFT into the chips:
-     the primary row (About / Contact and the year) at 11px, 8% under the corner chrome's 12, nearest the corner;
+     the primary row (About, Contact and the year) at 11px, 8% under the corner chrome's 12, nearest the corner;
      the secondary links above it, smaller again. Narrower than the one-row footer was with half the links. -->
 <footer
 	class="site-footer"
@@ -78,7 +80,8 @@
 		<a class="about" href={surfaceHref('sources')} onclick={(e) => onSurface(e, 'sources')}>Sources</a>
 	</div>
 	<div class="row primary">
-		<a class="about" href={personHref(ABOUT_SLUG)} onclick={onAbout}>About / Contact</a>
+		<a class="about" href={personHref(ABOUT_SLUG)} onclick={onAbout}>About</a>
+		<a class="about" href={surfaceHref('contact')} onclick={(e) => onSurface(e, 'contact')}>Contact</a>
 		<span class="copy" aria-label="Copyright {YEAR}">© {YEAR}</span>
 	</div>
 </footer>
@@ -103,13 +106,14 @@
 		align-items: center;
 	}
 	/* STACKED, one item to a line, on an iPad mini or Air in landscape (Oct 21, Sam): the corner beside the blade is
-	   narrow there. Privacy, Sources, About / Contact, © — right-aligned as before. */
+	   narrow there. Privacy, Sources, About, Contact, © — right-aligned as before; five lines since About and Contact
+	   split (Oct 26). */
 	.site-footer.stacked .row {
 		flex-direction: column;
 		align-items: flex-end;
 		gap: 0;
 	}
-	/* …all four lines one size, evenly spaced, About / Contact a step smaller so it clears the blade (Oct 21, Sam). */
+	/* …all five lines one size, evenly spaced, the primary row a step smaller so it clears the blade (Oct 21, Sam). */
 	.site-footer.stacked {
 		gap: 0;
 	}
@@ -144,7 +148,7 @@
 		color: rgba(43, 38, 32, 0.98);
 		outline: none;
 	}
-	/* THE PHONE ROW (Oct 24): in the page's flow, one line, right-aligned, © last. One size for all four — a phone
+	/* THE PHONE ROW (Oct 24): in the page's flow, one line, right-aligned, © last. One size for all five — a phone
 	   reader taps these, so 12px with a taller hit area rather than the corner's 10/11 split. */
 	.site-footer.inline {
 		position: static;
