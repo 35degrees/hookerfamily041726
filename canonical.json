@@ -713653,7 +713653,14 @@
     "country": "United States"
    },
    "death": {
-    "country": "United States"
+    "country": "United States",
+    "year": 1981,
+    "month": 5,
+    "date_precision": "exact",
+    "day": 3,
+    "city": "Stonington",
+    "county": "New London",
+    "state": "Connecticut"
    },
    "baptism": {},
    "residence": {
