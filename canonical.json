@@ -707825,7 +707825,14 @@
     "korean_war"
    ],
    "research_tags": [],
-   "cross_connections": [],
+   "cross_connections": [
+    {
+     "related_id": "I04957",
+     "type": "connection",
+     "link_text": "Albert Nickerson",
+     "display_label": "started at a Socony pump and was his chairman at Mobil"
+    }
+   ],
    "narrative_blocks": [
     {
      "number": 1,
@@ -2254833,6 +2254840,12 @@
      "type": "connection",
      "link_text": "Benjamin Strong",
      "display_label": "was the first governor of the New York Fed, whose board he chaired"
+    },
+    {
+     "related_id": "HD3351",
+     "type": "connection",
+     "link_text": "Fan Adams",
+     "display_label": "joined Mobil under him in 1956 and later ran its Japan affiliate"
     }
    ],
    "narrative_blocks": [
