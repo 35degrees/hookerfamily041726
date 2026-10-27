@@ -1301,12 +1301,17 @@
 								onpointerdown={() => warmLadder(pathsToThomas)}
 								onfocus={() => warmLadder(pathsToThomas)}
 								onclick={() => settled && openModal('connect-thomas')}
-								use:shrinkToFit={{ max: tl(10), min: tl(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
+								use:shrinkToFit={{ max: tl(10), min: tl(7.2), key: `${firstName ?? ''}|${pathsToThomas.length}|${u}|${k}` }}
 							>
-								<!-- "TONY'S THREAD TO THOMAS" (Sam, Oct 26) — was "Connect Tony to Thomas". A name ending in s
-								     takes the bare apostrophe: "Charles' Thread to Thomas" (possessive(), the parents label's rule). -->
+								<!-- "TONY'S PATH TO THOMAS" (Sam, Oct 27; "Connect Tony to Thomas" until Oct 26, then briefly
+								     "Thread"). PLURAL when the ladder has more than one line — "Jason's Paths to Thomas" — the
+								     same count ConnectModal's own "Path/Paths to Thomas" title reads, so the button and the
+								     ladder it opens agree. A name ending in s takes the bare apostrophe: "Charles' Path to Thomas"
+								     (possessive(), the parents label's rule). -->
 								<span data-fit class="inline-block whitespace-nowrap"
-									>{firstName && !stage.shortH ? `${possessive(firstName)} ` : ''}Thread to Thomas</span
+									>{firstName && !stage.shortH ? `${possessive(firstName)} ` : ''}{pathsToThomas.length > 1
+										? 'Paths'
+										: 'Path'} to Thomas</span
 								>
 							</button>
 							<!-- Not on a short window (Sam, 100626) — "to Thomas" stays; it is the line's own question. -->
@@ -1318,7 +1323,7 @@
 								use:shrinkToFit={{ max: tl(10), min: tl(7.2), key: `${firstName ?? ''}|${u}|${k}` }}
 							>
 								<span data-fit class="inline-block whitespace-nowrap"
-									>{firstName ? `${possessive(firstName)} ` : ''}Threads to Family</span
+									>{firstName ? `${possessive(firstName)} ` : ''}Paths to Family</span
 								>
 							</button>
 							{/if}
