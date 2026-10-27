@@ -48,7 +48,10 @@ nofollow` on every response + `Disallow: /` in `static/robots.txt`) — nothing 
 DNS lives at **Sam's Vercel account** (bought at Whois.com; `vercel dns ls|add hookerverse.com`). **Never delete the
 TXT record `google-site-verification=p-_q…`** — Search Console and Google sign-in both rest on it.
 What step 0 left open:
-- **Safe Browsing review pending.** Search Console → Security issues showed **"Deceptive pages"**, no sample URLs; no
+- **Safe Browsing review — ✅ CLEARED Oct 26, 21:18 PDT** (Search Console email "Review successful for
+  hookerverse.com", message type WNC-608000: *"no longer contains links to harmful sites or downloads. The warnings
+  visible to users are being removed"*). Google named no URL and nothing was changed to get it. The record below is
+  kept for history. Search Console showed **"Deceptive pages"** → Security issues showed **"Deceptive pages"**, no sample URLs; no
   warning in Chrome, Safari or Firefox. Domain registered Oct 19, no web-archive history, so not inherited. Nothing
   deceptive found (the server HTML has no login form; sign-in is OAuth buttons to Google/Microsoft; the only form is
   contact). Likely trigger: a week-old domain + Google/Microsoft sign-in + deliberately hidden from search. Review
@@ -129,8 +132,9 @@ pages, wait out the firewall's log week, and launch (§12).
 
 ### 0.3 Open items outside the build (from the Oct 24–26 session)
 
-- **WHAT LAUNCH WAITS ON (Oct 26, 13:00 PDT):** (1) Google's answer on the Safe Browsing review (§0.2 step 0; email to
-  samhooker@gmail.com); (2) the firewall log read ~Nov 2 and the rules moved toward challenge/deny; (3) Sam's go. Then
+- **WHAT LAUNCH WAITS ON (Oct 26, 13:00 PDT; updated 23:30):** ~~(1) Google's answer on the Safe Browsing review~~
+  ✅ cleared Oct 26 21:18 PDT (§0.2 step 0); (2) the firewall log read ~Nov 2 and the rules moved toward
+  challenge/deny; (3) Sam's go. Then
   §12: narrow vercel.json's site-wide X-Robots-Tag to every host but hookerverse.com (plus a `/data/(.*)` noindex rule
   on every host), copy `docs/robots-launch.txt` over `static/robots.txt`, deploy, run `node scripts/probe-seo.mjs
   --base https://hookerverse.com --launched` (it must pass), submit `https://hookerverse.com/sitemap.xml` in Search
@@ -799,3 +803,8 @@ and the commits; this is the *why*.
   searches for a hidden Talcott will show my site."* Audited (§0.3); the only exposure is names inside visible cards'
   narrative blocks. Sam: *"Leave the narrative blocks as they are."*
 
+### Oct 26 (Mon, evening) — Safe Browsing cleared
+
+- **21:18 PDT** — Google's "Review successful for hookerverse.com" email: the "Deceptive pages" flag is lifted and the
+  warnings are being removed. One of the three launch gates is now cleared (§0.3); the firewall log read (~Nov 2) and
+  Sam's go remain. Check Search Console → Security issues shows "No issues detected" before launch day.
