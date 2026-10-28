@@ -322983,7 +322983,8 @@
     "middle_name": "Maria",
     "maiden_name": "Constable",
     "married_names": [],
-    "photo_url": "https://americanaristocracy.com/storage/11475/Screen-Shot-2021-07-26-at-12.20.20.png"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1793157115/Constable-646_r7dpb7.jpg",
+    "photo_notes": "Superseded 2026-10-27 (dead link, 404): https://americanaristocracy.com/storage/11475/Screen-Shot-2021-07-26-at-12.20.20.png"
    },
    "residence": {},
    "baptism": {},
@@ -573097,8 +573098,9 @@
     "married_names": [
      "Hooker"
     ],
-    "photo_url": "https://americanaristocracy.com/storage/11785/Screen-Shot-2021-09-04-at-18.24.57.png",
-    "bio_blurb": "Hooker matriarch who lived at Nook Farm"
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1793157491/Screen-Shot-2021-09-04-at-18.24.57-medium_qibcg6.jpg",
+    "bio_blurb": "Hooker matriarch who lived at Nook Farm",
+    "photo_notes": "Superseded 2026-10-27 (dead link, 404): https://americanaristocracy.com/storage/11785/Screen-Shot-2021-09-04-at-18.24.57.png"
    },
    "residence": {},
    "baptism": {},
@@ -573421,7 +573423,8 @@
     "maiden_name": "Hooker",
     "married_names": [
      "Gillette"
-    ]
+    ],
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1793157452/Hooker-723_bhlznc.png"
    },
    "residence": {},
    "baptism": {},
