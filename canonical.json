@@ -1899025,6 +1899025,13 @@
      "related_id": "HD1174",
      "link_text": "Anne Tracy Morgan",
      "display_label": "founded the club she belonged to, and rebuilt France as she did"
+    },
+    {
+     "related_id": "X04049",
+     "type": "connection",
+     "link_text": "William Chauvenet",
+     "display_label": ", her grandfather, was the father of the Naval Academy",
+     "lineal_gap": -2
     }
    ],
    "bio": {
@@ -1900903,6 +1900910,13 @@
      "related_id": "I03786",
      "link_text": "Richard Wall Lyman",
      "display_label": "taught at his St. Louis university, then presided over Stanford"
+    },
+    {
+     "related_id": "HD11061",
+     "type": "connection",
+     "link_text": "Mabel Holden",
+     "display_label": ", his granddaughter, led the American music school at Fontainebleau",
+     "lineal_gap": 2
     }
    ],
    "bio": {
