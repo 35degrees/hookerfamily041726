@@ -235,7 +235,7 @@
 	// on the server every request shares it. Once mounted, the store takes the slot over and `forced` lets go.
 	let surfaceMounted = $state(false);
 	onMount(() => {
-		if (data.surface) openModal(data.surface);
+		if (data.surface) openModal(data.surface, { quiet: true }); // a page view already, not a click
 		surfaceMounted = true;
 	});
 	/** The pop-up with an address that is open now: the store's, or — until mount — the request's. */
@@ -364,7 +364,7 @@
 		// the card. Any other step closes an open one first (see the address note above: Back leaves it).
 		const surface = surfaceFromPath(location.pathname);
 		if (surface) {
-			openModal(surface);
+			openModal(surface, { quiet: true }); // Back onto a pop-up's address: a page view already, not a click
 			return;
 		}
 		if (isSurface(modal.kind)) closeModal();

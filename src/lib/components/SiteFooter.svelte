@@ -22,6 +22,7 @@
 	import { GROUNDS, groundState } from '#lib/state/ground.svelte.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { openModal } from '#lib/state/modal.svelte.js';
+	import { trackEvent } from '#lib/state/analytics.svelte.js';
 	import { personHref } from '#lib/paths.js';
 	import { surfaceHref, type SurfaceKind } from '#lib/surfaces.js';
 
@@ -50,6 +51,7 @@
 		if (!plainClick(e)) return;
 		e.preventDefault(); // before the guards: a swallowed click must not fall through to a page load
 		if (isFlightLocked() || featured.current?.person.slug === ABOUT_SLUG) return;
+		trackEvent('About', { card: featured.current?.person.slug ?? '' }); // a custom event, like the pop-ups (modal.svelte.ts)
 		void ccFlyTo(e.currentTarget as HTMLElement, { slug: ABOUT_SLUG, t: null });
 	}
 	function onSurface(e: MouseEvent, kind: SurfaceKind) {

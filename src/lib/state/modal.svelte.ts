@@ -29,6 +29,9 @@ export type ModalKind =
 	| 'privacy'
 	| 'sources';
 
+import { trackEvent } from '#lib/state/analytics.svelte.js';
+import { featured } from '#lib/state/featured.svelte.js';
+
 let openKind = $state<ModalKind | null>(null);
 
 export const modal = {
@@ -41,7 +44,29 @@ export const modal = {
 	}
 };
 
-export function openModal(kind: ModalKind): void {
+/**
+ * WHAT READERS OPEN (Oct 28, Sam: "i'd love to see events like clicking the Paths to Thomas and Paths to family
+ * buttons. also clicking sources, contact, privacy etc."). Every overlay opens through here, so this is the one
+ * place to count them: a Vercel custom event per opening, named for what the reader sees, carrying the card it
+ * was opened from. Behind analytics.svelte.ts's fences (hookerverse.com only, never Sam). `quiet` is for the two
+ * openings no reader clicked — a direct visit to /privacy, and Back onto it — which are already page views.
+ */
+const EVENT_NAME: Record<ModalKind, string> = {
+	'connect-thomas': 'Path to Thomas',
+	'connect-anyone': 'Paths to Family',
+	search: 'Search',
+	auth: 'Sign in',
+	bookmarks: 'Bookmarks',
+	contact: 'Contact',
+	privacy: 'Privacy',
+	sources: 'Sources'
+};
+
+export function openModal(kind: ModalKind, opts?: { quiet?: boolean }): void {
+	if (!opts?.quiet && openKind !== kind) {
+		const card = featured.current?.person.slug;
+		trackEvent(EVENT_NAME[kind], card ? { card } : undefined);
+	}
 	openKind = kind;
 }
 

@@ -30,6 +30,7 @@
 	 * the fetch takes — which on the 3G profile is exactly when it is least forgivable.
 	 */
 	import { shuffleToNotable, warmShuffle, prepareNextShuffle } from '#lib/state/shuffle.svelte.js';
+	import { trackEvent } from '#lib/state/analytics.svelte.js';
 	import { ascension } from '#lib/state/ascension.svelte.js';
 	import { onMount } from 'svelte';
 
@@ -81,6 +82,7 @@
 
 	function go() {
 		if (!el || !settled) return; // covers the keyboard, which pointer-events cannot
+		trackEvent('Notable People'); // a custom event, like the pop-ups (modal.svelte.ts); the card it lands on is a page view
 		void shuffleToNotable(el);
 	}
 </script>

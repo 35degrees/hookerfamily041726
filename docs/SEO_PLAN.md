@@ -821,3 +821,8 @@ and the commits; this is the *why*.
   sets this one view's address in `beforeSend`. Verified by serving the local build under https://hookerverse.com in a
   test browser (beacons aborted, nothing counted): `/` → /thomas-hooker-1586 → /susannah-hooker-1564 → /privacy →
   /thomas-hooker-i-1553, each correct (`scripts/probe-out/intro-pageview.mjs`).
+- **Oct 28** — **custom events** for what readers open (Sam: *"clicking the Paths to Thomas and Paths to family buttons.
+  also clicking sources, contact, privacy etc."*): every overlay is counted in `openModal()` (modal.svelte.ts) — Path to
+  Thomas, Paths to Family, Search, Sign in, Bookmarks, Contact, Privacy, Sources — with the card it was opened from
+  (`card`); plus About (SiteFooter) and Notable People (ShuffleNotables). A direct visit or Back onto /privacy is
+  `quiet` (already a page view). Probed under https://hookerverse.com, beacons aborted (`scripts/probe-out/events-probe.mjs`).
