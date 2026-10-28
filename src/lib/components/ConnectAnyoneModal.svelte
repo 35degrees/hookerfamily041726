@@ -2589,21 +2589,20 @@
 	}
 	/* Small, right-aligned, the title's ink blue at rest — read only by someone looking for it. Pulled into the
 	   column's 10px gaps so the box moves as little as it can. */
-	/* NOT A ROW OF ITS OWN (Sam, Oct 28: "its not supposed to be three rows the promo text needs to be smaller and
-	   closer to the search bar"). The element is zero-height and gives back the gap it would add, so the column is
-	   title then box exactly as before; the sentence hangs from it, right-aligned, its foot 3px above the box. */
+	/* A CAPTION ON THE BOX, NOT A ROW BETWEEN (Sam, Oct 28). First it sat midway as a row of its own ("its not
+	   supposed to be three rows… smaller and closer to the search bar"); then, folded to zero height, it crowded
+	   the title ("add some margin below Connect"). So: the title keeps ~8px of air, and the line sits 3px over the
+	   box it belongs to — the column's 10px gaps, trimmed by these margins. */
+	/* Readable, and clear of the box's corner (Sam: "so small… goes over the top right curve… so light no one can
+	   see it"): 11px at 75% ink; its right end 12px inside the box, where the box's own text sits, never over the
+	   10px radius; 10px of air under the title, 6px over the box. */
 	.picker-invite {
-		position: relative;
-		height: 0;
-		margin: -10px 0 0;
-		font: 400 9.5px/1.2 var(--font-inter, sans-serif);
-		color: rgba(30, 42, 71, 0.55);
-	}
-	.picker-invite > span {
-		position: absolute;
-		right: 2px;
-		bottom: -7px;
+		margin: 0 0 -4px;
+		padding-right: 12px;
+		text-align: right;
 		white-space: nowrap;
+		font: 400 11px/1.3 var(--font-inter, sans-serif);
+		color: rgba(30, 42, 71, 0.75);
 	}
 	/* THE SENTENCE'S OWN INK, NOT A DARKER ONE (Sam, Oct 28: "it looks bad… don't make the words bold"). At the
 	   same 400 weight, full-strength ink blue beside the sentence's 55% read as bold. Now only the underline says
@@ -2615,7 +2614,7 @@
 		font: inherit;
 		color: inherit;
 		text-decoration: underline;
-		text-decoration-color: rgba(30, 42, 71, 0.25);
+		text-decoration-color: rgba(30, 42, 71, 0.4);
 		text-underline-offset: 2px;
 		cursor: pointer;
 		transition: color 160ms ease-out;
