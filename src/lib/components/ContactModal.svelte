@@ -15,6 +15,7 @@
 	 * CONTACT_TO, visitor as Reply-To). `website` is a honeypot for that route: hidden from people,
 	 * filled by bots, and a non-empty value will be dropped server-side.
 	 */
+	import { CONTACT_REASONS, takeContactPreset } from '#lib/state/contact.js';
 	import { modal, closeModal } from '#lib/state/modal.svelte.js';
 	import { featured } from '#lib/state/featured.svelte.js';
 	import { personHref } from '#lib/paths.js';
@@ -32,13 +33,9 @@
 	const VEIL_OUT_MS = 430;
 
 	/** Sam's list (100926): his "technical questions" and "report an error or bug" merged into one, plus the
-	 *  two a genealogy site actually gets — a record to correct, and a relative with material to share (no "or photos": it would promise an upload, Sam 100926). */
-	const REASONS = [
-		'General questions and feedback',
-		'Technical questions or bugs',
-		'Correct a family record',
-		'Share family information'
-	] as const;
+	 *  two a genealogy site actually gets — a record to correct, and a relative with material to share (no "or photos": it would promise an upload, Sam 100926).
+	 *  Since Oct 28 it lives in contact.ts, which the quiet invitations use to open this form with a reason chosen. */
+	const REASONS = CONTACT_REASONS;
 
 	/** OPEN ON ARRIVAL at /contact (surfaces.ts): the page renders it open from the request's own load data, so the
 	 *  server-rendered HTML carries the text — the modal store is module state, shared by every request on the
@@ -75,7 +72,7 @@
 		sent = false;
 		tried = false;
 		failed = false;
-		reason = REASONS[0];
+		reason = takeContactPreset() ?? REASONS[0];
 		subject = '';
 		message = '';
 		website = '';

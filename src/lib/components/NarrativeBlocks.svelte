@@ -11,6 +11,7 @@
 	const NB_HEAD_MIN = 11;
 	import { isWebKit } from '#lib/state/engine.js';
 	import { openModal, type ModalKind } from '#lib/state/modal.svelte.js';
+	import { openContact, type ContactReason } from '#lib/state/contact.js';
 	import { isSurface, surfaceHref } from '#lib/surfaces.js';
 
 	/**
@@ -199,23 +200,30 @@
 	 * can open one of the app's own surfaces and nothing else. An unknown key renders as its plain words.
 	 * First (and so far only) use: "Click [here](contact)" on Samuel Talcott Hooker's NB 5.
 	 */
-	const ACTIONS: Record<string, ModalKind> = { contact: 'contact' };
+	const ACTIONS: Record<string, ModalKind> = { contact: 'contact', 'add-line': 'contact', 'build-site': 'contact' };
+	/** Keys that open the contact form with a REASON already chosen (Oct 28, contact.ts): Sam's About card offers to
+	 *  build a site like this one, and the link should land on that reason, not on "General questions". */
+	const PRESETS: Record<string, ContactReason> = {
+		'add-line': 'Add my family line',
+		'build-site': 'Build a site like this for my family'
+	};
 
 	/** A plain click opens the surface in place; a modified or middle click is the browser's (a new tab at
 	 *  the surface's own address — surfaces.ts). */
-	function openAction(e: MouseEvent, kind: ModalKind) {
+	function openAction(e: MouseEvent, kind: ModalKind, preset?: ContactReason) {
 		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 		e.preventDefault();
-		openModal(kind);
+		if (preset) openContact(preset, 'card');
+		else openModal(kind);
 	}
 	const LINK_RE = /\[([^\]]+)\]\(([a-z-]+)\)/g;
-	type Seg = { text: string; action?: ModalKind };
+	type Seg = { text: string; action?: ModalKind; preset?: ContactReason };
 	function segments(body: string): Seg[] {
 		const out: Seg[] = [];
 		let last = 0;
 		for (const m of body.matchAll(LINK_RE)) {
 			if (m.index > last) out.push({ text: body.slice(last, m.index) });
-			out.push({ text: m[1], action: ACTIONS[m[2]] });
+			out.push({ text: m[1], action: ACTIONS[m[2]], preset: PRESETS[m[2]] });
 			last = m.index + m[0].length;
 		}
 		if (last < body.length) out.push({ text: body.slice(last) });
@@ -280,7 +288,7 @@
 							{#each segments(block.body) as seg, i (i)}{#if seg.action && isSurface(seg.action)}<a
 										class="body-link"
 										href={surfaceHref(seg.action)}
-										onclick={(e) => openAction(e, seg.action!)}>{seg.text}</a
+										onclick={(e) => openAction(e, seg.action!, seg.preset)}>{seg.text}</a
 									>{:else if seg.action}<button
 										type="button"
 										class="body-link"

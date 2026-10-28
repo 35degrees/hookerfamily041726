@@ -714744,6 +714744,12 @@
      "category": "character",
      "header": "How can you reach me?",
      "body": "Click [here](contact) to give feedback, ask questions, correct any genealogical or technical errors, or just to say hello!"
+    },
+    {
+     "number": 4,
+     "category": "career",
+     "header": "Want a site like this for your family?",
+     "body": "If your family has a story of its own, I'd be glad to talk about building something like this for them. Tell me a little about them [here](build-site)."
     }
    ],
    "cross_connections": [

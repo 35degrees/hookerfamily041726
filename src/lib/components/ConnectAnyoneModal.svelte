@@ -27,6 +27,7 @@
   feature alone and may be changed without reading another file.
 -->
 <script lang="ts">
+	import { openContact } from '#lib/state/contact.js';
 	import { personHref } from '#lib/paths.js';
 	import { tick } from 'svelte';
 	import { hoverIntent } from '#lib/state/hoverIntent.js';
@@ -1574,6 +1575,16 @@
 							</span></button
 						>
 					{/each}
+					<!-- THE QUIET INVITATION (Oct 28; contact.ts): the reader looked for someone to connect to and found no one —
+					     often their own branch. Same words as search's empty line, in the picker's small grey. -->
+					{#if !search.idle && search.total === 0}
+						<p class="picker-none">
+							No one matches.
+							<button type="button" class="invite" onclick={() => openContact('Add my family line', 'family')}
+								>Not in the tree? Add your line</button
+							>
+						</p>
+					{/if}
 				</div>
 			</div>
 		{:else}
@@ -2773,6 +2784,31 @@
 	   one piece of information the paper carries. */
 	.pick.on {
 		box-shadow: var(--chip-shadow-hover);
+	}
+	.picker-none {
+		margin: 14px 2px 4px;
+		text-align: center;
+		font: 400 10.8px/1.4 var(--font-inter, sans-serif);
+		color: rgba(48, 42, 34, 0.5);
+	}
+	/* SearchModal's .invite, repeated: the two empty lines must read as one sentence in one voice. */
+	.invite {
+		padding: 0;
+		margin-left: 4px;
+		border: 0;
+		background: none;
+		font: inherit;
+		color: rgba(48, 42, 34, 0.7);
+		text-decoration: underline;
+		text-decoration-color: rgba(48, 42, 34, 0.3);
+		text-underline-offset: 2px;
+		cursor: pointer;
+		transition: color 160ms ease-out;
+	}
+	.invite:hover,
+	.invite:focus-visible {
+		color: rgba(48, 42, 34, 0.95);
+		outline: none;
 	}
 	.picker-x {
 		flex: none;

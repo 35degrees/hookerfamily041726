@@ -62,10 +62,11 @@ const EVENT_NAME: Record<ModalKind, string> = {
 	sources: 'Sources'
 };
 
-export function openModal(kind: ModalKind, opts?: { quiet?: boolean }): void {
+export function openModal(kind: ModalKind, opts?: { quiet?: boolean; from?: string }): void {
 	if (!opts?.quiet && openKind !== kind) {
 		const card = featured.current?.person.slug;
-		trackEvent(EVENT_NAME[kind], card ? { card } : undefined);
+		// `from`: which invitation opened it (contact.ts) — the event's second and last property
+		trackEvent(EVENT_NAME[kind], { ...(card ? { card } : {}), ...(opts?.from ? { from: opts.from } : {}) });
 	}
 	openKind = kind;
 }

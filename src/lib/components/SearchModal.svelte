@@ -17,6 +17,7 @@
 	 * list that re-sorts six times while you type "thomas" has no time to have any. The motion budget
 	 * goes where it still means something — the veil coming in, and the exit into the card's flight.
 	 */
+	import { openContact } from '#lib/state/contact.js';
 	import { personHref } from '#lib/paths.js';
 	import { thomasVertical } from '#lib/state/thomasVertical.js';
 	import { listYears as years } from '#lib/utils/dates.js';
@@ -548,6 +549,12 @@
 				<p class="count">
 					{#if search.total === 0}
 						No one matches.
+						<!-- THE QUIET INVITATION (Oct 28, Sam: "very very subtly"): a search that finds no one is the likeliest
+						     moment a reader's own branch is missing, so the line offers the contact form with "Add my family
+						     line" already chosen (contact.ts). In the count's own small grey type; underlined, and nothing more. -->
+						<button type="button" class="invite" onclick={() => openContact('Add my family line', 'search')}
+							>Not in the tree? Add your line</button
+						>
 					{:else if search.capped}
 						{search.total.toLocaleString()} matches — showing the first {RESULT_CAP}. Narrow with a
 						category.
@@ -1128,6 +1135,25 @@
 		text-align: center;
 		font: 400 10.8px/1.4 var(--font-inter, sans-serif);
 		color: rgba(48, 42, 34, 0.5);
+	}
+	/* The invitation after "No one matches." — the count's type, a hair darker, underlined; a link, not a button. */
+	.invite {
+		padding: 0;
+		margin-left: 4px;
+		border: 0;
+		background: none;
+		font: inherit;
+		color: rgba(48, 42, 34, 0.7);
+		text-decoration: underline;
+		text-decoration-color: rgba(48, 42, 34, 0.3);
+		text-underline-offset: 2px;
+		cursor: pointer;
+		transition: color 160ms ease-out;
+	}
+	.invite:hover,
+	.invite:focus-visible {
+		color: rgba(48, 42, 34, 0.95);
+		outline: none;
 	}
 
 	/**
