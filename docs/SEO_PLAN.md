@@ -809,3 +809,7 @@ and the commits; this is the *why*.
   warnings are being removed. One of the three launch gates is now cleared (§0.3); the firewall log read (~Nov 2) and
   Sam's go remain.
 - **Oct 27, ~09:40 PDT** — Search Console → Security issues: **"No issues detected"** (Sam's screenshot). Confirmed.
+- **Oct 28, ~13:00 PDT** — **Vercel Web Analytics enabled** (plain Web Analytics, included in Pro). It had never been switched
+  on: the site has sent its beacons since Oct 25 (§10a, verified Oct 28 — a fresh hookerverse.com visit POSTs
+  `/_vercel/insights/view`), but Vercel stored nothing until now, so the numbers start Oct 28. Redeployed after enabling.
+  Read from the terminal with `vercel metrics vercel.analytics.page_view.count --since <ISO> --group-by requestPath`.
