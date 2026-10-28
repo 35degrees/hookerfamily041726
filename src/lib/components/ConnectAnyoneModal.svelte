@@ -1503,20 +1503,6 @@
 					</button>
 				</div>
 
-				<!-- THE STANDING INVITATION (Oct 28, Sam: "a link always above the search about Want to connect your line or
-				     have your own family site? very small letters off to the right but always visible maybe in blue"). Two
-				     links, each opening Contact on its own reason (contact.ts), so the one sentence serves both goals. It
-				     paints above the box's forgiveness halo (a z-index -1 pseudo-element), so its clicks are its own. -->
-				<p class="picker-invite"><span>
-					Want to <button type="button" onclick={() => openContact('Add my family line', 'family-invite')}
-						>connect your line</button
-					>
-					or <button
-						type="button"
-						onclick={() => openContact('Build a site like this for my family', 'family-invite')}
-						>have your own family site</button
-					>?</span>
-				</p>
 
 				<!-- THE WHOLE BOX IS THE TARGET, and a near miss must not be punished. Sam: "you can't just
 			     click inside the text box, you have to click on a narrow band in the middle of the
@@ -1567,6 +1553,20 @@
 			     second line names the FIELD that matched, which is right when you asked a question and the
 			     row owes you an answer. Here you are choosing a person, so the row says who they are, the
 			     way a rung does two beats later. -->
+				<!-- THE STANDING INVITATION (Oct 28, Sam: "a link always above the search about Want to connect your line or
+				     have your own family site? very small letters off to the right but always visible maybe in blue"). Two
+				     links, each opening Contact on its own reason (contact.ts), so the one sentence serves both goals. It
+				     paints above the box's forgiveness halo (a z-index -1 pseudo-element), so its clicks are its own. -->
+				<p class="picker-invite"><span>
+					Want to <button type="button" onclick={() => openContact('Add my family line', 'family-invite')}
+						>connect your line</button
+					>
+					or <button
+						type="button"
+						onclick={() => openContact('Build a site like this for my family', 'family-invite')}
+						>have your own family site</button
+					>?</span>
+				</p>
 				<div class="picker-list" bind:this={pickerList}>
 					{#each search.rows as r, i (r.id)}
 						<button
@@ -2594,11 +2594,11 @@
 	   the title ("add some margin below Connect"). So: the title keeps ~8px of air, and the line sits 3px over the
 	   box it belongs to — the column's 10px gaps, trimmed by these margins. */
 	/* Readable, and clear of the box's corner (Sam: "so small… goes over the top right curve… so light no one can
-	   see it"): 11px at 75% ink; its right end 12px inside the box, where the box's own text sits, never over the
-	   10px radius; 10px of air under the title, 6px over the box. */
+	   see it"): 11px at 75% ink. UNDER the box since Oct 28 evening (Sam: above it, it "breaks the narrative" from
+	   the title to the search), 6px below it, its right end 7px inside the box's edge ("5px further right"). */
 	.picker-invite {
-		margin: 0 0 -4px;
-		padding-right: 12px;
+		margin: -4px 0 0;
+		padding-right: 7px;
 		text-align: right;
 		white-space: nowrap;
 		font: 400 11px/1.3 var(--font-inter, sans-serif);

@@ -455,18 +455,6 @@
 					</svg>
 				</button>
 			</div>
-			<!-- THE STANDING INVITATION (Oct 28, Sam: "i think we can add it to main search") — the Paths to Family
-			     picker's line, word for word and in the same small blue (ConnectAnyoneModal .picker-invite). -->
-			<p class="invite-line"><span>
-				Want to <button type="button" onclick={() => openContact('Add my family line', 'search-invite')}
-					>connect your line</button
-				>
-				or <button
-					type="button"
-					onclick={() => openContact('Build a site like this for my family', 'search-invite')}
-					>have your own family site</button
-				>?</span>
-			</p>
 			<div class="box">
 				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
 					<path
@@ -500,6 +488,18 @@
 				{/if}
 			</div>
 
+			<!-- THE STANDING INVITATION (Oct 28, Sam: "i think we can add it to main search") — the Paths to Family
+			     picker's line, word for word and in the same small blue (ConnectAnyoneModal .picker-invite). -->
+			<p class="invite-line"><span>
+				Want to <button type="button" onclick={() => openContact('Add my family line', 'search-invite')}
+					>connect your line</button
+				>
+				or <button
+					type="button"
+					onclick={() => openContact('Build a site like this for my family', 'search-invite')}
+					>have your own family site</button
+				>?</span>
+			</p>
 			<div class="chips">
 				<button class="chip" class:on={search.cats === 0} onclick={selectAll}>All</button>
 				{#each CATEGORIES as c (c.mask)}
@@ -1088,11 +1088,11 @@
 	   the title ("add some margin below Connect"). So: the title keeps ~8px of air, and the line sits 3px over the
 	   box it belongs to — the column's 10px gaps, trimmed by these margins. */
 	/* Readable, and clear of the box's corner (Sam: "so small… goes over the top right curve… so light no one can
-	   see it"): 11px at 75% ink; its right end 12px inside the box, where the box's own text sits, never over the
-	   10px radius; 10px of air under the title, 6px over the box. */
+	   see it"): 11px at 75% ink. UNDER the box since Oct 28 evening (Sam: above it, it "breaks the narrative" from
+	   the title to the search), 6px below it, its right end 7px inside the box's edge ("5px further right"). */
 	.invite-line {
-		margin: 0 0 -4px;
-		padding-right: 12px;
+		margin: -4px 0 0;
+		padding-right: 7px;
 		text-align: right;
 		white-space: nowrap;
 		font: 400 11px/1.3 var(--font-inter, sans-serif);
