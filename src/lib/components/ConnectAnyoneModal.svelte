@@ -1503,6 +1503,21 @@
 					</button>
 				</div>
 
+				<!-- THE STANDING INVITATION (Oct 28, Sam: "a link always above the search about Want to connect your line or
+				     have your own family site? very small letters off to the right but always visible maybe in blue"). Two
+				     links, each opening Contact on its own reason (contact.ts), so the one sentence serves both goals. It
+				     paints above the box's forgiveness halo (a z-index -1 pseudo-element), so its clicks are its own. -->
+				<p class="picker-invite">
+					Want to <button type="button" onclick={() => openContact('Add my family line', 'family-invite')}
+						>connect your line</button
+					>
+					or <button
+						type="button"
+						onclick={() => openContact('Build a site like this for my family', 'family-invite')}
+						>have your own family site</button
+					>?
+				</p>
+
 				<!-- THE WHOLE BOX IS THE TARGET, and a near miss must not be punished. Sam: "you can't just
 			     click inside the text box, you have to click on a narrow band in the middle of the
 			     placeholder text, otherwise the cursor doesn't take... if you miss, it exits the
@@ -1890,6 +1905,7 @@
 	.ladder-head,
 	.ladder-v,
 	.picker-head,
+	.picker-invite,
 	.picker-box,
 	.picker-list {
 		pointer-events: auto;
@@ -2565,10 +2581,35 @@
 	 * thing the reader is looking at.
 	 */
 	.picker-head,
+	.picker-invite,
 	.picker-box,
 	.picker-list {
 		pointer-events: auto;
 		width: var(--pick-w);
+	}
+	/* Small, right-aligned, the title's ink blue at rest — read only by someone looking for it. Pulled into the
+	   column's 10px gaps so the box moves as little as it can. */
+	.picker-invite {
+		margin: -6px 0 -2px;
+		text-align: right;
+		font: 400 10.5px/1.35 var(--font-inter, sans-serif);
+		color: rgba(30, 42, 71, 0.55);
+	}
+	.picker-invite button {
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		color: var(--color-inkblue);
+		text-decoration: underline;
+		text-decoration-color: rgba(30, 42, 71, 0.3);
+		text-underline-offset: 2px;
+		cursor: pointer;
+	}
+	.picker-invite button:hover,
+	.picker-invite button:focus-visible {
+		text-decoration-color: currentColor;
+		outline: none;
 	}
 	.picker {
 		--pick-w: calc(min(520px, 92vw) * 2 / 3);
