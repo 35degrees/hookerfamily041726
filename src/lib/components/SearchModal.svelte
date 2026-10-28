@@ -457,7 +457,7 @@
 			</div>
 			<!-- THE STANDING INVITATION (Oct 28, Sam: "i think we can add it to main search") — the Paths to Family
 			     picker's line, word for word and in the same small blue (ConnectAnyoneModal .picker-invite). -->
-			<p class="invite-line">
+			<p class="invite-line"><span>
 				Want to <button type="button" onclick={() => openContact('Add my family line', 'search-invite')}
 					>connect your line</button
 				>
@@ -465,7 +465,7 @@
 					type="button"
 					onclick={() => openContact('Build a site like this for my family', 'search-invite')}
 					>have your own family site</button
-				>?
+				>?</span>
 			</p>
 			<div class="box">
 				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -1083,25 +1083,40 @@
 	}
 	/* The picker's .picker-invite, repeated (ConnectAnyoneModal): small, right-aligned, ink blue, pulled into the
 	   panel's 10px gaps so the box moves as little as it can. */
+	/* NOT A ROW OF ITS OWN (Sam, Oct 28: "its not supposed to be three rows the promo text needs to be smaller and
+	   closer to the search bar"). The element is zero-height and gives back the gap it would add, so the column is
+	   title then box exactly as before; the sentence hangs from it, right-aligned, its foot 3px above the box. */
 	.invite-line {
-		margin: -6px 0 -2px;
-		text-align: right;
-		font: 400 10.5px/1.35 var(--font-inter, sans-serif);
+		position: relative;
+		height: 0;
+		margin: -10px 0 0;
+		font: 400 9.5px/1.2 var(--font-inter, sans-serif);
 		color: rgba(30, 42, 71, 0.55);
 	}
+	.invite-line > span {
+		position: absolute;
+		right: 2px;
+		bottom: -7px;
+		white-space: nowrap;
+	}
+	/* THE SENTENCE'S OWN INK, NOT A DARKER ONE (Sam, Oct 28: "it looks bad… don't make the words bold"). At the
+	   same 400 weight, full-strength ink blue beside the sentence's 55% read as bold. Now only the underline says
+	   "link"; the words darken on hover. */
 	.invite-line button {
 		padding: 0;
 		border: 0;
 		background: none;
 		font: inherit;
-		color: var(--color-inkblue);
+		color: inherit;
 		text-decoration: underline;
-		text-decoration-color: rgba(30, 42, 71, 0.3);
+		text-decoration-color: rgba(30, 42, 71, 0.25);
 		text-underline-offset: 2px;
 		cursor: pointer;
+		transition: color 160ms ease-out;
 	}
 	.invite-line button:hover,
 	.invite-line button:focus-visible {
+		color: var(--color-inkblue);
 		text-decoration-color: currentColor;
 		outline: none;
 	}

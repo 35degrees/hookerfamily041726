@@ -1507,7 +1507,7 @@
 				     have your own family site? very small letters off to the right but always visible maybe in blue"). Two
 				     links, each opening Contact on its own reason (contact.ts), so the one sentence serves both goals. It
 				     paints above the box's forgiveness halo (a z-index -1 pseudo-element), so its clicks are its own. -->
-				<p class="picker-invite">
+				<p class="picker-invite"><span>
 					Want to <button type="button" onclick={() => openContact('Add my family line', 'family-invite')}
 						>connect your line</button
 					>
@@ -1515,7 +1515,7 @@
 						type="button"
 						onclick={() => openContact('Build a site like this for my family', 'family-invite')}
 						>have your own family site</button
-					>?
+					>?</span>
 				</p>
 
 				<!-- THE WHOLE BOX IS THE TARGET, and a near miss must not be punished. Sam: "you can't just
@@ -2589,25 +2589,40 @@
 	}
 	/* Small, right-aligned, the title's ink blue at rest — read only by someone looking for it. Pulled into the
 	   column's 10px gaps so the box moves as little as it can. */
+	/* NOT A ROW OF ITS OWN (Sam, Oct 28: "its not supposed to be three rows the promo text needs to be smaller and
+	   closer to the search bar"). The element is zero-height and gives back the gap it would add, so the column is
+	   title then box exactly as before; the sentence hangs from it, right-aligned, its foot 3px above the box. */
 	.picker-invite {
-		margin: -6px 0 -2px;
-		text-align: right;
-		font: 400 10.5px/1.35 var(--font-inter, sans-serif);
+		position: relative;
+		height: 0;
+		margin: -10px 0 0;
+		font: 400 9.5px/1.2 var(--font-inter, sans-serif);
 		color: rgba(30, 42, 71, 0.55);
 	}
+	.picker-invite > span {
+		position: absolute;
+		right: 2px;
+		bottom: -7px;
+		white-space: nowrap;
+	}
+	/* THE SENTENCE'S OWN INK, NOT A DARKER ONE (Sam, Oct 28: "it looks bad… don't make the words bold"). At the
+	   same 400 weight, full-strength ink blue beside the sentence's 55% read as bold. Now only the underline says
+	   "link"; the words darken on hover. */
 	.picker-invite button {
 		padding: 0;
 		border: 0;
 		background: none;
 		font: inherit;
-		color: var(--color-inkblue);
+		color: inherit;
 		text-decoration: underline;
-		text-decoration-color: rgba(30, 42, 71, 0.3);
+		text-decoration-color: rgba(30, 42, 71, 0.25);
 		text-underline-offset: 2px;
 		cursor: pointer;
+		transition: color 160ms ease-out;
 	}
 	.picker-invite button:hover,
 	.picker-invite button:focus-visible {
+		color: var(--color-inkblue);
 		text-decoration-color: currentColor;
 		outline: none;
 	}
