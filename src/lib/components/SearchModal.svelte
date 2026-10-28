@@ -455,6 +455,18 @@
 					</svg>
 				</button>
 			</div>
+			<!-- THE STANDING INVITATION (Oct 28, Sam: "i think we can add it to main search") — the Paths to Family
+			     picker's line, word for word and in the same small blue (ConnectAnyoneModal .picker-invite). -->
+			<p class="invite-line">
+				Want to <button type="button" onclick={() => openContact('Add my family line', 'search-invite')}
+					>connect your line</button
+				>
+				or <button
+					type="button"
+					onclick={() => openContact('Build a site like this for my family', 'search-invite')}
+					>have your own family site</button
+				>?
+			</p>
 			<div class="box">
 				<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
 					<path
@@ -1068,6 +1080,30 @@
 		display: flex;
 		align-items: center;
 		gap: 14px;
+	}
+	/* The picker's .picker-invite, repeated (ConnectAnyoneModal): small, right-aligned, ink blue, pulled into the
+	   panel's 10px gaps so the box moves as little as it can. */
+	.invite-line {
+		margin: -6px 0 -2px;
+		text-align: right;
+		font: 400 10.5px/1.35 var(--font-inter, sans-serif);
+		color: rgba(30, 42, 71, 0.55);
+	}
+	.invite-line button {
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		color: var(--color-inkblue);
+		text-decoration: underline;
+		text-decoration-color: rgba(30, 42, 71, 0.3);
+		text-underline-offset: 2px;
+		cursor: pointer;
+	}
+	.invite-line button:hover,
+	.invite-line button:focus-visible {
+		text-decoration-color: currentColor;
+		outline: none;
 	}
 	/**
 	 * PULLED IN OFF THE EDGE (Sam: "the 'SEARCH' text title on left side above search input box too far
