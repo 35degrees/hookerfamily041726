@@ -58,10 +58,26 @@ async function recognise(email: string | null | undefined): Promise<void> {
 	}
 }
 
+/** The address for the ONE view trackPageview is sending — read and cleared by beforeSend (see trackPageview). */
+let oneShotPath: string | null = null;
+
 function start(): void {
 	if (injected) return;
 	injected = true;
-	inject({ mode: 'production', beforeSend: (event) => (ownerDevice ? null : event) });
+	inject({
+		mode: 'production',
+		beforeSend: (event) => {
+			if (ownerDevice) return null;
+			if (oneShotPath && event.type === 'pageview') {
+				const url = new URL(event.url);
+				url.pathname = oneShotPath;
+				url.search = '';
+				oneShotPath = null;
+				return { ...event, url: url.href };
+			}
+			return event;
+		}
+	});
 }
 
 /**
@@ -79,7 +95,15 @@ export function trackEvent(name: string, props?: Record<string, string>): void {
 }
 export function trackPageview(path: string): void {
 	if (!injected || ownerDevice) return;
-	pageview({ path, route: path });
+	// THE ADDRESS RIDES beforeSend, NOT pageview({ path }) (Oct 28). The script KEEPS a path it is handed and stamps
+	// it on every later view, its own pushState ones included — read in /_vercel/insights/script.js, and measured:
+	// after the intro counted Thomas, a click to Susannah was reported as Thomas. The same stuck address would have
+	// filed every card after an opened Privacy as /privacy. So the view goes out with no path, and beforeSend writes
+	// this one view's address and then forgets it. (The pop-ups call this before their shallow goto has moved the
+	// address bar, which is why the path is passed rather than read from location.)
+	oneShotPath = path;
+	pageview({} as { route?: string; path?: string });
+	oneShotPath = null; // already consumed if the view went out; never left armed for the next one
 }
 
 /**

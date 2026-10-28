@@ -813,3 +813,11 @@ and the commits; this is the *why*.
   on: the site has sent its beacons since Oct 25 (§10a, verified Oct 28 — a fresh hookerverse.com visit POSTs
   `/_vercel/insights/view`), but Vercel stored nothing until now, so the numbers start Oct 28. Redeployed after enabling.
   Read from the terminal with `vercel metrics vercel.analytics.page_view.count --since <ISO> --group-by requestPath`.
+- **Oct 28, afternoon** — Sam's first real test (a private window: Thomas → Susanna → Burr) logged "/", Susanna, Burr: **the
+  intro's first card was never counted** (`/` swaps to the card with replaceState; the script counts only pushState).
+  Now counted in `releaseIntro()` (intro.svelte.ts), once, when the painting lets the card in. Testing that exposed an
+  older bug: `pageview({ path })` makes the script **keep** that path and stamp it on every later view, so after any
+  Privacy/Sources/Contact pop-up every card would have been logged as /privacy. `trackPageview` now sends no path and
+  sets this one view's address in `beforeSend`. Verified by serving the local build under https://hookerverse.com in a
+  test browser (beacons aborted, nothing counted): `/` → /thomas-hooker-1586 → /susannah-hooker-1564 → /privacy →
+  /thomas-hooker-i-1553, each correct (`scripts/probe-out/intro-pageview.mjs`).

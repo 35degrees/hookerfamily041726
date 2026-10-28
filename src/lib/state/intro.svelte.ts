@@ -10,6 +10,8 @@
  *
  * Module singleton, client-only in practice: `startIntro` is only ever called from an onMount.
  */
+import { trackPageview } from '#lib/state/analytics.svelte.js';
+
 export const intro = $state({
 	active: false, // the overlay is up (it also renders on SSR of `/`, before this is set)
 	ready: false, // the person page underneath has mounted and taken its hold
@@ -34,6 +36,13 @@ export function takeIntroHold(): boolean {
 }
 
 export function releaseIntro(): void {
+	// COUNT THE CARD THE INTRO HANDS YOU (Oct 28, Sam's first analytics test: Thomas → Susanna → Burr showed as
+	// "/", Susanna, Burr). `/` swaps its address for the card's with replaceState (no Back entry, no replay), and
+	// the analytics script counts only pushState and popstate, so every intro visitor's first card went uncounted.
+	// Counted HERE, the moment the painting lets the card in — not at the swap, which happens under the painting
+	// within the first second: a reader who leaves during the intro saw no card and stays "/" alone. ONCE per
+	// intro: IntroOverlay calls this on every frame of its fade. Same fences as every view (analytics.svelte.ts).
+	if (!intro.released) trackPageview(location.pathname);
 	intro.released = true;
 }
 
