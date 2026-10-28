@@ -1557,16 +1557,20 @@
 				     have your own family site? very small letters off to the right but always visible maybe in blue"). Two
 				     links, each opening Contact on its own reason (contact.ts), so the one sentence serves both goals. It
 				     paints above the box's forgiveness halo (a z-index -1 pseudo-element), so its clicks are its own. -->
-				<p class="picker-invite"><span>
-					Want to <button type="button" onclick={() => openContact('Add my family line', 'family-invite')}
-						>connect your line</button
-					>
-					or <button
-						type="button"
-						onclick={() => openContact('Build a site like this for my family', 'family-invite')}
-						>have your own family site</button
-					>?</span>
-				</p>
+				<!-- Gone once a search runs (Sam: "it can go away on search… on submit"): it invites a reader who has not looked
+				     yet; once results are on screen it would only stand between the box and them. -->
+				{#if search.idle}
+					<p class="picker-invite"><span>
+						Want to <button type="button" onclick={() => openContact('Add my family line', 'family-invite')}
+							>connect your line</button
+						>
+						or <button
+							type="button"
+							onclick={() => openContact('Build a site like this for my family', 'family-invite')}
+							>have your own family site</button
+						>?</span>
+					</p>
+				{/if}
 				<div class="picker-list" bind:this={pickerList}>
 					{#each search.rows as r, i (r.id)}
 						<button
@@ -2601,7 +2605,7 @@
 		padding-right: 7px;
 		text-align: right;
 		white-space: nowrap;
-		font: 400 11px/1.3 var(--font-inter, sans-serif);
+		font: 400 10.1px/1.3 var(--font-inter, sans-serif); /* 11px less 8% (Sam) */
 		color: rgba(30, 42, 71, 0.75);
 	}
 	/* THE SENTENCE'S OWN INK, NOT A DARKER ONE (Sam, Oct 28: "it looks bad… don't make the words bold"). At the

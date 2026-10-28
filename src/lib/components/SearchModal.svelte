@@ -1090,12 +1090,14 @@
 	/* Readable, and clear of the box's corner (Sam: "so small… goes over the top right curve… so light no one can
 	   see it"): 11px at 75% ink. UNDER the box since Oct 28 evening (Sam: above it, it "breaks the narrative" from
 	   the title to the search), 6px below it, its right end 7px inside the box's edge ("5px further right"). */
+	/* ALWAYS HERE in Search (Sam: "in search it can ALWAYS stay there") — only the Paths to Family copy steps aside
+	   once a search runs. 6px more under it than the column's gap, so it does not crowd the category chips. */
 	.invite-line {
-		margin: -4px 0 0;
+		margin: -4px 0 6px;
 		padding-right: 7px;
 		text-align: right;
 		white-space: nowrap;
-		font: 400 11px/1.3 var(--font-inter, sans-serif);
+		font: 400 10.1px/1.3 var(--font-inter, sans-serif); /* 11px less 8% (Sam) */
 		color: rgba(30, 42, 71, 0.75);
 	}
 	/* THE SENTENCE'S OWN INK, NOT A DARKER ONE (Sam, Oct 28: "it looks bad… don't make the words bold"). At the
