@@ -1436013,15 +1436013,33 @@
    "narrative_blocks": [
     {
      "number": 1,
-     "category": "politics",
-     "header": "Her uncle sold the King's stamps",
-     "body": "Jared Ingersoll took Connecticut's stamp distributorship, and five hundred horsemen on the Wethersfield road made him give it up. Her father, a chaplain, swore the Freeman's Oath for the American side. Her husband stayed neutral between them, and Farmington never trusted him again."
+     "category": "marriage",
+     "header": "Two Hooker lines in one marriage",
+     "body": "Mary Ingersoll married Joseph Hooker Jr. in 1771 and raised eight children with him. Both descended from Thomas Hooker: Mary through his daughter Mary Newton, and Joseph through his son Samuel."
     },
     {
      "number": 2,
      "category": "politics",
+     "header": "Split by the Stamp Act and the war",
+     "body": "Her uncle Jared held the King's stamp office until five hundred horsemen on the Wethersfield road ran him off. Her father, a chaplain, swore the Freeman's Oath for the patriots; her husband stayed neutral, and Farmington never trusted him."
+    },
+    {
+     "number": 3,
+     "category": "family",
      "header": "Her brother became lieutenant governor",
-     "body": "Her uncle Jared took the King's stamp distributorship and five hundred horsemen ran him off the Wethersfield road for it; his son signed the Constitution at Philadelphia. Her brother Jonathan sat as lieutenant governor of Connecticut. His son went to Congress and on to Russia as minister, and his grandson took the governorship."
+     "body": "Her brother Jonathan Ingersoll sat as lieutenant governor of Connecticut; his son went to Congress and on to Russia as minister, and his grandson became governor. Her uncle Jared's son signed the Constitution at Philadelphia."
+    },
+    {
+     "number": 4,
+     "category": "religion",
+     "header": "John Ingersoll woke his father-in-law to pray",
+     "body": "Her great-grandfather John Ingersoll, at work in a meadow, was seized by such a longing to take his own life after hearing of a suicide that he could not sleep. He woke his father-in-law, Thomas Bascom, who prayed with him until it passed."
+    },
+    {
+     "number": 5,
+     "category": "legacy",
+     "header": "Her great-aunt Hester, carried off in 1704",
+     "body": "Her great-aunt Hester was in the fortified Jones house at Pascommuck when it was attacked on 13 May 1704. Her husband Benoni Jones and two sons were killed, eight-year-old Benjamin was scalped and lived, and Hester died a captive in Canada."
     }
    ],
    "tags": [
@@ -1469733,7 +1469751,14 @@
    "tags": [],
    "research_tags": [],
    "cross_connections": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "legacy",
+     "header": "He traced Charles Joseph Hooker's father",
+     "body": "Neal traced his father's line back to Thomas Hooker. Its blind spot was Charles Joseph Hooker, born in New York without a birth record among several Charles Hookers his age; Neal tied him to Joseph Hooker through Charles's son Charles J."
+    }
+   ],
    "quotes": [],
    "sources": [],
    "research_sources": [],
