@@ -1468838,8 +1468838,21 @@
     "mother_id": "I02302",
     "mother_name": "Grace Lodema Tucker"
    },
-   "number_of_marriages": 0,
-   "marriages": [],
+   "number_of_marriages": 1,
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06210",
+     "date_year": 1923,
+     "date_month": 2,
+     "date_day": 21,
+     "children_ids": [
+      "HD17155",
+      "HD17156",
+      "HD17157"
+     ]
+    }
+   ],
    "classification": {
     "is_thomas_descendant": true,
     "is_talcott_descendant": false,
@@ -2545418,6 +2545431,313 @@
      "location_county": "Oakland County",
      "location_state": "Michigan",
      "location_country": "United States",
+     "children_ids": []
+    }
+   ],
+   "number_of_marriages": 1,
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "career": [],
+   "education": [],
+   "classification": {
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": true,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": null,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false
+  },
+  {
+   "id": "I06210",
+   "bio": {
+    "display_name": "Lillie Gail Salisbury Hooker",
+    "first_name": "Lillie",
+    "middle_name": "Gail",
+    "last_name": "Hooker",
+    "married_names": [
+     "Hooker"
+    ],
+    "maiden_name": "Salisbury"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1891,
+    "month": 7,
+    "day": 2,
+    "date_precision": "exact",
+    "city": "Toledo",
+    "county": "Lucas County",
+    "state": "Ohio",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1975,
+    "month": 2,
+    "day": 22,
+    "date_precision": "exact",
+    "city": "Detroit",
+    "county": "Wayne County",
+    "state": "Michigan",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD7610",
+     "date_year": 1923,
+     "date_month": 2,
+     "date_day": 21,
+     "children_ids": [
+      "HD17155",
+      "HD17156",
+      "HD17157"
+     ]
+    }
+   ],
+   "number_of_marriages": 1,
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "career": [],
+   "education": [],
+   "classification": {
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": true,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": null,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false
+  },
+  {
+   "id": "HD17155",
+   "bio": {
+    "display_name": "Marion Ruth Hooker",
+    "first_name": "Marion",
+    "middle_name": "Ruth",
+    "last_name": "Hooker",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1923,
+    "month": 10,
+    "day": 13,
+    "date_precision": "exact",
+    "city": "Ferndale",
+    "county": "Oakland County",
+    "state": "Michigan",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1945,
+    "month": 8,
+    "day": 2,
+    "date_precision": "exact",
+    "city": "Detroit",
+    "county": "Wayne County",
+    "state": "Michigan",
+    "country": "United States"
+   },
+   "parents": {
+    "father_id": "HD7610",
+    "mother_id": "I06210"
+   },
+   "marriages": [],
+   "number_of_marriages": 0,
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "career": [],
+   "education": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": 10,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false
+  },
+  {
+   "id": "HD17156",
+   "bio": {
+    "display_name": "Grace Virginia Hooker",
+    "first_name": "Grace",
+    "middle_name": "Virginia",
+    "last_name": "Hooker",
+    "married_names": []
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1925,
+    "month": 7,
+    "day": 3,
+    "date_precision": "exact",
+    "city": "Berkley",
+    "county": "Oakland County",
+    "state": "Michigan",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2000,
+    "month": 9,
+    "day": 19,
+    "date_precision": "exact"
+   },
+   "parents": {
+    "father_id": "HD7610",
+    "mother_id": "I06210"
+   },
+   "marriages": [],
+   "number_of_marriages": 0,
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "career": [],
+   "education": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": 10,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false
+  },
+  {
+   "id": "HD17157",
+   "bio": {
+    "display_name": "Marie Gail Hooker Rideout",
+    "first_name": "Marie",
+    "middle_name": "Gail",
+    "last_name": "Rideout",
+    "married_names": [
+     "Rideout"
+    ],
+    "maiden_name": "Hooker"
+   },
+   "gender": "female",
+   "birth": {
+    "year": 1931,
+    "month": 7,
+    "day": 25,
+    "date_precision": "exact",
+    "city": "Berkley",
+    "county": "Oakland County",
+    "state": "Michigan",
+    "country": "United States"
+   },
+   "death": {
+    "year": 2021,
+    "month": 6,
+    "day": 29,
+    "date_precision": "exact"
+   },
+   "parents": {
+    "father_id": "HD7610",
+    "mother_id": "I06210"
+   },
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06211",
+     "children_ids": []
+    }
+   ],
+   "number_of_marriages": 1,
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "career": [],
+   "education": [],
+   "classification": {
+    "is_thomas_descendant": true,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": false,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": true,
+    "descent_from_thomas_hooker": true,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": 10,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false
+  },
+  {
+   "id": "I06211",
+   "bio": {
+    "display_name": "Millard John Rideout",
+    "first_name": "Millard",
+    "middle_name": "John",
+    "last_name": "Rideout",
+    "married_names": []
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1925,
+    "month": 11,
+    "day": 23,
+    "date_precision": "exact",
+    "city": "Greenville",
+    "county": "Piscataquis County",
+    "state": "Maine",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1997,
+    "month": 3,
+    "day": 23,
+    "date_precision": "exact",
+    "city": "Ann Arbor",
+    "county": "Washtenaw County",
+    "state": "Michigan",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD17157",
      "children_ids": []
     }
    ],
