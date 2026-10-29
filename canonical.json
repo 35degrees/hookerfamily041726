@@ -1468522,7 +1468522,8 @@
       "HD7609",
       "HD7610",
       "HD7611"
-     ]
+     ],
+     "end_type": "divorce"
     }
    ],
    "classification": {
@@ -1468574,7 +1468575,7 @@
     "married_names": [
      "Hooker"
     ],
-    "photo_url": null
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1793312583/grace-tucker-1888-1_xoujv6.jpg"
    },
    "gender": "female",
    "birth": {
@@ -1468612,7 +1468613,8 @@
       "HD7609",
       "HD7610",
       "HD7611"
-     ]
+     ],
+     "end_type": "divorce"
     }
    ],
    "classification": {
@@ -1468644,7 +1468646,26 @@
    "tags": [],
    "research_tags": [],
    "cross_connections": [],
-   "narrative_blocks": [],
+   "narrative_blocks": [
+    {
+     "number": 1,
+     "category": "marriage",
+     "header": "She divorced Herbert for extreme cruelty",
+     "body": "Grace married Herbert Hooker in 1889 and raised three children with him: Zulah, Ralph and Howard. Some time before 1920 a court granted her a divorce on the grounds of extreme cruelty."
+    },
+    {
+     "number": 2,
+     "category": "family",
+     "header": "Remarried at Niagara Falls, as a widow",
+     "body": "In 1920 she married Morten Fox, a widower, on the Canadian side of Niagara Falls and gave herself as a widow, though Herbert lived until 1932. The censuses of 1920 and 1940 find her living with her daughter Zulah, under the name Grace Hooker."
+    },
+    {
+     "number": 3,
+     "category": "legacy",
+     "header": "Her Tuckers came over around 1630",
+     "body": "Grace descended from Robert Tucker, born in Essex in 1604, who crossed about 1630 with his wife Elizabeth Allen and settled in Plymouth Colony. Her father, Daniel Tucker, came of a branch that moved on through New York to Michigan."
+    }
+   ],
    "quotes": [],
    "sources": [],
    "research_sources": [],
@@ -1468653,16 +1468674,20 @@
   },
   {
    "id": "HD7609",
-   "former_ids": [],
+   "former_ids": [
+    "zulah-hooker-1892"
+   ],
    "is_placeholder": false,
    "bio": {
-    "display_name": "Zulah Melita Hooker",
+    "display_name": "Zulah Melita Hooker Wright",
     "first_name": "Zulah",
     "middle_name": "Melita",
-    "maiden_name": null,
-    "last_name": "Hooker",
-    "married_names": [],
-    "photo_url": null
+    "maiden_name": "Hooker",
+    "last_name": "Wright",
+    "married_names": [
+     "Wright"
+    ],
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1793312696/Screenshot_2026-10-29_at_3.24.41_PM_cew4sp.png"
    },
    "gender": "female",
    "birth": {
@@ -1468692,8 +1468717,21 @@
     "mother_id": "I02302",
     "mother_name": "Grace Lodema Tucker"
    },
-   "number_of_marriages": 0,
-   "marriages": [],
+   "number_of_marriages": 1,
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "I06209",
+     "date_year": 1916,
+     "date_month": 6,
+     "date_day": 20,
+     "location_city": "Pontiac",
+     "location_county": "Oakland County",
+     "location_state": "Michigan",
+     "location_country": "United States",
+     "children_ids": []
+    }
+   ],
    "classification": {
     "is_thomas_descendant": true,
     "is_talcott_descendant": false,
@@ -1469307,7 +1469345,18 @@
     "primary_url_label": null
    },
    "education": [],
-   "career": [],
+   "career": [
+    {
+     "role": "District salesman",
+     "organization": "Sewing machine agency, McMinnville, Oregon",
+     "start_year": 1940
+    },
+    {
+     "role": "Real estate broker",
+     "organization": "His own office, Glendale, California",
+     "start_year": 1950
+    }
+   ],
    "military_service": [],
    "institutions": [],
    "landmarks": [],
@@ -1469452,7 +1469501,10 @@
     "chip_first_name": "Joy"
    },
    "gender": "female",
-   "death": {},
+   "death": {
+    "year": 2025,
+    "date_precision": "year_only"
+   },
    "baptism": {},
    "burial": {},
    "residence": {},
@@ -1469514,7 +1469566,8 @@
     "married_names": [],
     "photo_url": null,
     "nickname": "Larry",
-    "suffix": "Jr."
+    "suffix": "Jr.",
+    "chip_first_name": "Larry"
    },
    "gender": "male",
    "birth": {
@@ -1469598,7 +1469651,8 @@
     "married_names": [],
     "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1784335684/neal2-1-799x1024_qyjkxu.jpg",
     "nickname": "Neal",
-    "chip_first_name": "Neal"
+    "chip_first_name": "Neal",
+    "bio_blurb": "Genealogist"
    },
    "gender": "male",
    "birth": {
@@ -2545294,6 +2545348,74 @@
    "research_notes": null,
    "is_living": false,
    "last_updated": "2026-10-24"
+  },
+  {
+   "id": "I06209",
+   "bio": {
+    "display_name": "James Gilbert Wright",
+    "first_name": "James",
+    "middle_name": "Gilbert",
+    "last_name": "Wright",
+    "married_names": [],
+    "chip_first_name": "Gilbert",
+    "nickname": "Gilbert",
+    "photo_url": "https://res.cloudinary.com/dc5clrqtw/image/upload/v1793312732/Screenshot_2026-10-29_at_3.25.19_PM_e4qutd.png"
+   },
+   "gender": "male",
+   "birth": {
+    "year": 1884,
+    "month": 8,
+    "day": 20,
+    "date_precision": "exact",
+    "city": "Vernon Township",
+    "county": "Isabella County",
+    "state": "Michigan",
+    "country": "United States"
+   },
+   "death": {
+    "year": 1970,
+    "month": 8,
+    "date_precision": "month_year",
+    "state": "Michigan",
+    "country": "United States"
+   },
+   "parents": {},
+   "marriages": [
+    {
+     "marriage_number": 1,
+     "spouse_id": "HD7609",
+     "date_year": 1916,
+     "date_month": 6,
+     "date_day": 20,
+     "location_city": "Pontiac",
+     "location_county": "Oakland County",
+     "location_state": "Michigan",
+     "location_country": "United States",
+     "children_ids": []
+    }
+   ],
+   "number_of_marriages": 1,
+   "narrative_blocks": [],
+   "tags": [],
+   "cross_connections": [],
+   "career": [],
+   "education": [],
+   "classification": {
+    "is_thomas_descendant": false,
+    "is_talcott_descendant": false,
+    "is_thomas_spouse": true,
+    "is_talcott_spouse": false,
+    "is_easter_egg": false,
+    "include_in_path_calculation": false,
+    "descent_from_thomas_hooker": false,
+    "descent_from_john_talcott": false,
+    "generation_from_thomas": null,
+    "generation_from_john_talcott": null
+   },
+   "notable": {
+    "is_notable": false
+   },
+   "is_placeholder": false
   }
  ],
  "landmarks": [
