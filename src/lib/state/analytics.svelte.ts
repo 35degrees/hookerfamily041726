@@ -93,6 +93,25 @@ export function trackEvent(name: string, props?: Record<string, string>): void {
 	if (!injected || ownerDevice) return;
 	track(name, props);
 }
+/**
+ * HOW A CARD WAS OPENED (Oct 28, Sam: "are you not able to instantly tell if someone hovered over the headshot in the
+ * timeline vs opening the card? … we should note events like headshot clicks"). One "Card opened" event per real
+ * navigation (a hover's quiet pre-load never sends one), with `via` (timeline photo, cross-connection, parent,
+ * search, Path to Thomas…) and `card` (where it went). Sent from the two places every opening passes through:
+ * navigate.ts warmPersonLinks (every clicked link) and shuffle.svelte.ts ccFlyTo (timeline photos, Notable People,
+ * About). `noteVia` is for a hand-off that clicks someone else's link — the timeline photo of a spouse clicks the
+ * spouse chip, a ladder clicks a chip already on stage — so the opening is credited to where the reader clicked.
+ */
+let nextVia: string | null = null;
+export function noteVia(via: string): void {
+	nextVia = via;
+}
+export function trackOpen(via: string, card: string): void {
+	const v = nextVia ?? via;
+	nextVia = null;
+	trackEvent('Card opened', { via: v, card });
+}
+
 export function trackPageview(path: string): void {
 	if (!injected || ownerDevice) return;
 	// THE ADDRESS RIDES beforeSend, NOT pageview({ path }) (Oct 28). The script KEEPS a path it is handed and stamps

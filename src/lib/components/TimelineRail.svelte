@@ -50,6 +50,7 @@
 	import { ccFlyTo, warmPerson } from '#lib/state/shuffle.svelte.js';
 	import { thomasVertical } from '#lib/state/thomasVertical.js';
 	import { warmPersonLinks } from '#lib/state/navigate.js';
+	import { noteVia } from '#lib/state/analytics.svelte.js';
 	import { isFlightLocked, subscribeFlightLock } from '#lib/state/flightLock.js';
 	import { stage } from '#lib/state/stage.svelte.js';
 	import type { PersonCompact } from '#lib/types/neighborhood.js';
@@ -654,6 +655,7 @@
 		if (!chip) return;
 		// Stops the rail's own delegation (it checks defaultPrevented first) so only ONE flight starts.
 		e.preventDefault();
+		noteVia('timeline bar'); // the spouse chip flies it, but the reader clicked the bar
 		chip.click();
 	}
 
@@ -1982,11 +1984,12 @@
 		const chip = visibleSpouseChip(a.slug);
 		if (chip) {
 			e.preventDefault();
+			noteVia('timeline photo'); // the spouse chip flies it, but the reader clicked the photo
 			chip.click();
 			return;
 		}
 		const dir = thomasVertical(a.slug, !!a.line); // the Thomas exception only — see thomasVertical.ts
-		void ccFlyTo(el, { slug: a.slug, t: a.t }, dir ? { vertical: dir } : undefined);
+		void ccFlyTo(el, { slug: a.slug, t: a.t }, { ...(dir ? { vertical: dir } : {}), via: 'timeline photo' });
 	}
 
 	// ── ERA MARKS ───────────────────────────────────────────────────────────────────────────────────
@@ -2058,6 +2061,7 @@
      the real navigation path rather than by a second one written for the rail. See barLink. -->
 <div
 	use:warmPersonLinks
+	data-via="timeline bar"
 	class="rail"
 	class:ascended={ascension.active}
 	class:founder={ascension.founder}

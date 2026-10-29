@@ -33,6 +33,7 @@
   Building downward from Thomas would be the same rows in the same places telling the opposite story.
 -->
 <script lang="ts">
+	import { noteVia } from '#lib/state/analytics.svelte.js';
 	import { personHref } from '#lib/paths.js';
 	import { fade } from 'svelte/transition';
 	import { hoverIntent } from '#lib/state/hoverIntent.js';
@@ -857,6 +858,7 @@
 			if (isPartner || delta === -1 || delta === 1) {
 				const onStage = stage.querySelector<HTMLElement>(`a[href="${personHref(slug)}"]`);
 				if (onStage) {
+					noteVia('Path to Thomas'); // the chip on stage flies it; the reader picked it here
 					onStage.click();
 					return;
 				}
@@ -869,6 +871,7 @@
 			const a = document.createElement('a');
 			a.href = personHref(slug);
 			a.dataset.cc = 'true';
+			a.dataset.via = 'Path to Thomas'; // how the card was opened (analytics.svelte.ts trackOpen)
 			a.dataset.relationClass = 'direct';
 			// `if (delta)` EXCLUDES 0 AS WELL AS NULL, and that is deliberate. A chain should never hold two
 			// people at one generation, but 53 of 2165 do — every one of them downstream of the canonical

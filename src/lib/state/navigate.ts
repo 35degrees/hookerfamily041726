@@ -51,6 +51,7 @@ import { stage } from './stage.svelte';
 import { unlockFlight } from './flightLock';
 import type { FeaturedData } from './featured.svelte';
 import { captureFlight, abandonFlight, launch, releaseHeld } from '#lib/transitions/webkit/flight.js';
+import { trackOpen } from './analytics.svelte';
 
 /** Fetch a person and set them as featured. No history change. False if not found. */
 export async function loadFeatured(slug: string): Promise<boolean> {
@@ -307,7 +308,15 @@ export function warmPersonLinks(node: HTMLElement) {
 		// tier a chip is in, so nothing is re-derived from the graph and nothing can disagree. Absent → 1,
 		// which is every ordinary parent/child/spouse/sibling/CC click. MUST run after captureFlightKind,
 		// which resets the span for the new navigation.
-		captureTierSpan(Number(anchor.closest('[data-tier-span]')?.getAttribute('data-tier-span')) || 1);
+		const tierSpan = Number(anchor.closest('[data-tier-span]')?.getAttribute('data-tier-span')) || 1;
+		captureTierSpan(tierSpan);
+		// HOW THIS CARD WAS OPENED (analytics.svelte.ts trackOpen): a pop-up's or the rail's own label if it has one
+		// (`data-via` on the link or a container), else a cross-connection, else the chip's family relation.
+		trackOpen(
+			(anchor.closest('[data-via]') as HTMLElement | null)?.dataset.via ??
+				(ccNav ? 'cross-connection' : relation ? (tierSpan === 2 ? `grand${relation}` : relation) : 'link'),
+			targetSlug
+		);
 		// AND WHETHER THE TIER IS ON SCREEN AT ALL, which is a different question: it closes on ANY
 		// navigation made while it is open, so a parent or child click gets the same 145px layout shift
 		// while crossing only one tier. Every FLIP measured this frame is therefore one pitch off where it

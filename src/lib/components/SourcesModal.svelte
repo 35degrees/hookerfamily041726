@@ -64,6 +64,7 @@
 		const a = document.createElement('a');
 		a.href = personHref(slug);
 		a.dataset.cc = 'true';
+		a.dataset.via = 'Sources'; // how the card was opened (analytics.svelte.ts trackOpen)
 		// The Thomas exception, as in SearchModal: every author here is on the line or married into it.
 		const dir = thomasVertical(slug, true);
 		if (dir) {

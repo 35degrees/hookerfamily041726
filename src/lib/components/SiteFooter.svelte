@@ -52,7 +52,7 @@
 		e.preventDefault(); // before the guards: a swallowed click must not fall through to a page load
 		if (isFlightLocked() || featured.current?.person.slug === ABOUT_SLUG) return;
 		trackEvent('About', { card: featured.current?.person.slug ?? '' }); // a custom event, like the pop-ups (modal.svelte.ts)
-		void ccFlyTo(e.currentTarget as HTMLElement, { slug: ABOUT_SLUG, t: null });
+		void ccFlyTo(e.currentTarget as HTMLElement, { slug: ABOUT_SLUG, t: null }, { via: 'About' });
 	}
 	function onSurface(e: MouseEvent, kind: SurfaceKind) {
 		if (!plainClick(e)) return;

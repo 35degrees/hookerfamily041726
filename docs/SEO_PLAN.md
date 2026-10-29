@@ -826,3 +826,11 @@ and the commits; this is the *why*.
   Thomas, Paths to Family, Search, Sign in, Bookmarks, Contact, Privacy, Sources — with the card it was opened from
   (`card`); plus About (SiteFooter) and Notable People (ShuffleNotables). A direct visit or Back onto /privacy is
   `quiet` (already a page view). Probed under https://hookerverse.com, beacons aborted (`scripts/probe-out/events-probe.mjs`).
+- **Oct 28, evening** — **"Card opened" event with `via`** (Sam: *"are you not able to instantly tell if someone hovered
+  over the headshot in the timeline vs opening the card? … we should note events like headshot clicks"*). The request
+  log cannot tell a hover's pre-load from an opening; Analytics can. Sent from the two funnels every navigation passes
+  through — navigate.ts `warmPersonLinks` and shuffle.svelte.ts `ccFlyTo` — with `via` = timeline photo, timeline bar,
+  cross-connection, parent/child/spouse/sibling (grandparent/grandchild), search, Path to Thomas, Paths to Family,
+  Sources, bookmarks, Notable People, About, and `card` = where it went. Pop-ups' synthetic links carry `data-via`;
+  hand-offs that click another link (a spouse's timeline photo or bar, a ladder rung already on stage) use `noteVia`.
+  Probed under https://hookerverse.com with beacons aborted (`scripts/probe-out/opened-probe.mjs`); a hover sends nothing.

@@ -39,6 +39,7 @@ export function arriveAtPerson(slug: string, orbit: boolean): void {
 	const a = document.createElement('a');
 	a.href = personHref(slug);
 	a.dataset.cc = 'true';
+	a.dataset.via = 'bookmarks'; // how the card was opened (analytics.svelte.ts trackOpen)
 	/**
 	 * SET ONLY WHEN TRUE, NEVER `'false'`. `navigate.ts` carries a scar about exactly this: an absent
 	 * attribute read as a meaningful false once killed the core transition. `warmPersonLinks` derives

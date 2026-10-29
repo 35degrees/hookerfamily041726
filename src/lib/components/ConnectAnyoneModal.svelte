@@ -27,6 +27,7 @@
   feature alone and may be changed without reading another file.
 -->
 <script lang="ts">
+	import { noteVia } from '#lib/state/analytics.svelte.js';
 	import { openContact } from '#lib/state/contact.js';
 	import { personHref } from '#lib/paths.js';
 	import { tick } from 'svelte';
@@ -1134,6 +1135,7 @@
 			if (isPartner || delta === -1 || delta === 1) {
 				const onStage = stage.querySelector<HTMLElement>(`a[href="${personHref(slug)}"]`);
 				if (onStage) {
+					noteVia('Paths to Family'); // the chip on stage flies it; the reader picked it here
 					onStage.click();
 					return;
 				}
@@ -1146,6 +1148,7 @@
 			const a = document.createElement('a');
 			a.href = personHref(slug);
 			a.dataset.cc = 'true';
+			a.dataset.via = 'Paths to Family'; // how the card was opened (analytics.svelte.ts trackOpen)
 			a.dataset.relationClass = 'direct';
 			// `if (delta)` EXCLUDES 0 AS WELL AS NULL, and that is deliberate. A chain should never hold two
 			// people at one generation, but 53 of 2165 do — every one of them downstream of the canonical

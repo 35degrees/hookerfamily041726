@@ -35,6 +35,7 @@
 import { featured } from './featured.svelte';
 import { dataUrl } from '#lib/paths.js';
 import { focusPerson, focusAfterEarlyExit } from './navigate';
+import { trackOpen } from './analytics.svelte';
 import { hideCcRoster, showCcRoster } from './ccRoster.svelte';
 import { publishCameraMove, type CameraMove } from './camera';
 import { lockFlight } from './flightLock';
@@ -199,7 +200,7 @@ export async function shuffleToNotable(node: HTMLElement): Promise<void> {
 	if (!target) return;
 	markSeen(current);
 	markSeen(target.slug);
-	await ccFlyTo(node, target, { carousel: true });
+	await ccFlyTo(node, target, { carousel: true, via: 'Notable People' });
 }
 
 /**
@@ -216,7 +217,7 @@ export async function shuffleToNotable(node: HTMLElement): Promise<void> {
 export async function ccFlyTo(
 	node: HTMLElement,
 	target: { slug: string; t: { x: number; y: number | null } | null },
-	opts?: { vertical?: 'up' | 'down'; carousel?: boolean }
+	opts?: { vertical?: 'up' | 'down'; carousel?: boolean; via?: string }
 ): Promise<void> {
 	// VERTICAL, for the timeline's THOMAS exception only (see TimelineRail's thomasVertical): 'up' when the
 	// rail sends a line person to Thomas, 'down' when it sends Thomas to one. Built from the same inputs the
@@ -236,6 +237,7 @@ export async function ccFlyTo(
 	if (!prefersReducedMotion.current) lockFlight();
 	captureFlightOrigin(node.getBoundingClientRect());
 	captureFlightKind('cc');
+	trackOpen(opts?.via ?? 'link', target.slug); // how it was opened — analytics.svelte.ts
 	captureClicked(null); // no chip is becoming the card — nothing to keep hidden
 	capturePivot(featured.current?.person.id ?? null);
 	capturePanDir('lateral');

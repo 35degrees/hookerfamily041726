@@ -380,6 +380,7 @@
 		const a = document.createElement('a');
 		a.href = personHref(slug);
 		a.dataset.cc = 'true';
+		a.dataset.via = 'search'; // how the card was opened (analytics.svelte.ts trackOpen)
 		/**
 		 * ORBIT FIGURES AND HARTFORD FOUNDERS DESCEND INTO THE ZONE (Sam) — Abraham Lincoln and
 		 * William Pantry should arrive the way they arrive from a CC blade, foreground to background,
