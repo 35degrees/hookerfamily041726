@@ -3,7 +3,7 @@
 **Opened October 24, 2026. Last updated October 29, 2026, 14:45 PDT — THE BUILD (§9 steps 0–8) IS COMPLETE AND LIVE
 (still hidden from search), the launch probe `scripts/probe-seo.mjs` is 43/43, Safe Browsing is cleared, Analytics is
 on (since Oct 28), and what is left is the firewall read, a Cloudinary check, and launch-day work (§0.3, §0.4, §12). §0 is the handoff; §13 is the dated record of the discussion behind every decision;
-roadmap §64–§65 (ENRICHED_CODING_ROADMAP_FABLE_102626.md) is the engineering record of Oct 26.**
+roadmap §64–§65 (ENRICHED_CODING_ROADMAP_FABLE_102926.md) is the engineering record of Oct 26.**
 A living document in the house convention: decisions Sam has made are marked ✅ and dated; open choices stay in
 §11 until he closes them; every measured number carries its date and is re-run before it is trusted.
 
@@ -178,7 +178,7 @@ pages, wait out the firewall's log week, and launch (§12).
 - `canonical.json` is 67.8 MB (GitHub warns over 50 MB) — known; memory canonical-size-options.
 - The ENRICHED design doc was NOT updated Oct 24–26 (Sam did not ask); the frontend changes above are recorded here
   and in their code comments. The roadmap gained **§64** on Oct 26 (the photo edge cache, at Sam's request) and is
-  now `ENRICHED_CODING_ROADMAP_FABLE_102626.md`.
+  now `ENRICHED_CODING_ROADMAP_FABLE_102926.md`.
 
 
 ---

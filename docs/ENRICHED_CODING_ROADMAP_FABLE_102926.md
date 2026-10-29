@@ -1,6 +1,7 @@
 # HOOKER GENEALOGY — ENRICHED CODING ROADMAP (FABLE PASS)
 **Date: October 9, 2026 (originated August 3, 2026; the filename tracks the latest edition) — overlay on UX_ROADMAP_063026.md. PROPOSED sequencing; Sam approves before anything moves.**
-**Companion: ENRICHED_DESIGN_FABLE_100626.md (the what/why for every item below).**
+**Companion: ENRICHED_DESIGN_FABLE_102926.md (the what/why for every item below).**
+**OCTOBER 27–29, 2026 (§66): CARD BUTTONS, FOOTER, QUIET INVITATIONS, ANALYTICS THAT TELL HOW A CARD WAS OPENED.** "Tony's Path to Thomas" / "Paths to Family"; About and Contact split; contact reasons and the standing "connect your line or have your own family site" line; ladder photos warmed on intent; Analytics switched on (Oct 28) with Card opened `via`. Record in §66; SEO side in SEO_PLAN §0.4.
 **OCTOBER 26, 2026 (§65, written 13:00 PDT): THE SEO BUILD, END TO END** — head tags, the richness gate (8,479 indexable), every narrative block's text now in the page Google reads (§65.3: it was 1 of 7), sitemap, launch robots draft, the home page's link and WebSite data, the page edge cache, contact analytics, and `scripts/probe-seo.mjs` (42/42). §65.5 records the hidden-people audit and Sam's decision to leave narrative blocks as they are. SEO_PLAN.md §0 is the launch checklist.
 **OCTOBER 26, 2026 (§64): PHOTOS THROUGH VERCEL'S EDGE CACHE.** Person photos and the timeline headshots load from `/cld/…` on the site's own host, edge-cached, because Cloudinary's free plan was at 22.8/25 credits; format fixed to `f_webp` (f_auto + a shared cache served one browser's format to another). `scripts/warm-photos.mjs` pre-builds the copies. **Open TODO in §64.5: the `--all` warm-up around Nov 9.** The SEO/deploy work of the same day is in `docs/SEO_PLAN.md` §0.
 **OCTOBER 9, 2026 (§60): THE FIRST DEPLOY (hooker-test.vercel.app) AND TWO GROUND-UP PROJECTS.** Sam's direction at close: no more Safari patches — a WebKit rebuild from the ground up, Chrome untouched (§60.1 A); and screen sizes designed per target rather than squeezed (§60.1 B). Both are their own future sessions; nothing in §60.1 is built. §60.2 is what shipped (contact form, payload privacy/diet, deploy setup, cache header, footer); §60.3 the deploy-only lessons; §60.4 what is open, including Privacy/Sources (shipped last).
@@ -7660,3 +7661,65 @@ landing on /").
 - The ENRICHED design doc was not updated (Sam asked for the roadmap); the durable rules of this session — head tags
   only from card-visible facts, accordion text `hidden` not absent, one shared isIndexable(), fixed-format images behind
   a shared cache — are recorded here and in the code.
+
+---
+
+## 66. OCTOBER 27–29, 2026 — CARD BUTTONS, FOOTER, QUIET INVITATIONS, ANALYTICS (session record; written Oct 29, 14:50 PDT)
+
+Everything here is live on hookerverse.com; commits are on main. Chrome and Safari layouts were measured with Playwright
+at desktop (1440×900), iPad landscape (1180×820, touch) and phone (390×844) unless noted; type-check clean apart from the
+two standing `@fontsource` import errors.
+
+### 66.1 What shipped, in order
+1. **Card buttons renamed** (FeaturedCard). "Connect Tony to Thomas" → **"Tony's Path to Thomas"**, plural **"Paths"** when
+   `pathsToThomas.length > 1` (the count ConnectModal's own title reads); "Connect Tony to family" → **"Tony's Paths to
+   Family"**. Bare apostrophe after s via `possessive()` ("Charles' Path to Thomas"). Went through "Thread/Threads" for a
+   day. Sam declined adding "SHOW" (measured: long names would drop to ~7.5px on iPad, near shrinkToFit's floor).
+2. **Parents label uses the chip name first** (+page `focalFirstName`: `focus.cf` leads) — "Tony's parents", matching
+   the buttons and parentFirstName.
+3. **Footer: About and Contact split** (SiteFooter). About flies to Sam's card (ccFlyTo, unchanged); Contact opens the
+   contact form over the current card (/contact surface). iPad-landscape stack is five lines; phones keep one row.
+4. **Contact form**: name 2/5, email 3/5 on its row.
+5. **Ladder photos warmed on intent** (photo.ts `warmLadder`, FeaturedCard): pointer over / finger down / focus on the
+   Path to Thomas button starts every rung's photo at high priority, once per session. Cause: since the f_webp switch
+   (§64) a non-notable ancestor is a first-time Cloudinary derivative (~0.5 s) and the ladder fetched it only after the
+   click. Measured on real photos: 5 of 6 rungs fetched on hover, 0 after the click (was 0 / 5). Not yet done: the
+   ~1,420 non-notable ladder people pre-built (`warm-photos` subset, ~1.4 credits) — waits for Cloudinary room.
+6. **Quiet invitations** (Sam: "very very subtly"): `src/lib/state/contact.ts` holds the reasons — now ending "Add my
+   family line" (was "Share family information") and "Build a site like this for my family" — and `openContact(reason,
+   from)` with a one-shot preset (modal.svelte.ts stays payload-free). Story-block links take `[words](add-line)` /
+   `[words](build-site)`. Empty results in Search and the Paths to Family picker: "No one matches. Not in the tree? Add
+   your line". A **standing line under the search box**, right-aligned, 10.1px at 75% ink, right end 7px inside the box,
+   6px below it: *"Want to connect your line or have your own family site?"* — always in Search (17px before the
+   category chips), in Paths to Family until a search runs. Sam's card gained NB4 "Want a site like this for your family?"
+7. **Analytics** — see 66.2.
+
+### 66.2 Analytics — what it counts now
+- **Switched on Oct 28 ~13:00 PDT.** The code had sent beacons since Oct 25 but Web Analytics was never enabled in the
+  dashboard, so nothing before then exists.
+- **The intro's first card is counted** in `releaseIntro()` (once per intro): `/` swaps to the card with replaceState,
+  which the script never sees.
+- **Hand-counted views no longer stick.** `pageview({ path })` makes Vercel's script keep that path for every later view
+  (read in script.js; measured: a click to Susannah reported as Thomas). `trackPageview` sends no path and sets the one
+  view's address in `beforeSend`.
+- **Custom events:** every `openModal()` (Path to Thomas, Paths to Family, Search, Sign in, Bookmarks, Contact, Privacy,
+  Sources) with `card`; About; Notable People; Contact sent (with `reason`); the Contact event's `from` names the
+  invitation used; and **Card opened** (`via`, `card`) for every real navigation, from the two funnels —
+  `warmPersonLinks` and `ccFlyTo`. Pop-ups' synthetic links carry `data-via`; hand-offs that click another link (a
+  spouse's timeline photo or bar, a ladder rung already on stage) use `noteVia`. A hover sends nothing.
+- **Verification method:** serve the local build under https://hookerverse.com in Playwright (route the host to the dev
+  server), hide `navigator.webdriver`, abort every `/_vercel/insights/*` beacon and read its body — nothing is counted.
+  Scripts in `scripts/probe-out/` (`intro-pageview`, `events-probe`, `opened-probe`, `invite-probe`).
+
+### 66.3 What went wrong
+- The invite line took four rounds: a mid-column row ("not supposed to be three rows"), then zero-height crowding the
+  title, then too small/light and over the box's corner, then under the box. Lesson: show Sam a local preview before
+  deploying a layout change.
+- A "Card opened" spouse bar first logged `via: spouse` — the rail hands spouse bars to the spouse chip; fixed with
+  `noteVia`.
+- The links in the invite looked bold: same weight, but full ink beside 55% ink. Fixed by giving them the sentence's ink.
+
+### 66.4 Open
+- The ENRICHED design doc carries the doctrine in §54 (new); nothing else outstanding from this run besides the
+  Cloudinary-gated warm-ups (66.1.5 and SEO_PLAN §0.3).
+

@@ -7475,3 +7475,22 @@ o. **The Paths to Thomas ladder at a fixed 440px wide.** Its rows shrink in heig
 3. Phone step 3 — transitions on the phone layout (taps, promotions, CC flights, the deck's offscreen reach on a
    393px window), tuned on a phone.
 4. iPad portrait: the probe shows something 17px past Jared's card bottom (2px on Taft) — check what.
+
+---
+
+## 54. ASKING, COUNTING, AND THE BUTTONS THAT NAME A PERSON (written October 29, 2026)
+
+- **The card's two buttons are possessive questions with the person's chip name:** "Tony's Path to Thomas" (plural when
+  the ladder has more than one line) and "Tony's Paths to Family". They name what the reader gets, not an instruction;
+  no verb ("SHOW" declined — it costs type size on long names and the buttons already read as buttons). The label
+  above a card uses the same chip name ("Tony's parents"): one person, one name everywhere.
+- **Invitations are quiet and in context, never a sales surface.** The site sells itself as history; the two goals (a
+  descendant adding their line, a family wanting a site like this) are offered where the intent already is — under the
+  search boxes, on a search that finds no one, in Sam's own first-person About card — in the surrounding type's own
+  size and ink, marked only by an underline, and each lands on its reason already chosen. No banner, no top-bar
+  button. Layout lesson: such a line is a caption on the box it belongs to (under it, tight), not a row between the
+  title and the box.
+- **Counting readers never counts Sam, and never fights a blocker.** Analytics loads on hookerverse.com only, stays
+  silent for a signed-in Sam and for any browser he has signed in on, and records how each card was opened (`via`) so
+  the site's features can be judged by use. Readers who block analytics are left uncounted on purpose.
+
