@@ -675895,7 +675895,12 @@
     "historical_notes": "Per Sam family knowledge: only child of Bessie Augusta Hooker (H04268) and George H. Lent. Born 1914 — likely SF given parents' SF residence."
    },
    "death": {
-    "note": "Deceased by November 2012: her son George Lent Howard's obituary calls both his parents deceased. Year not yet documented."
+    "note": "Deceased by November 2012: her son George Lent Howard's obituary calls both his parents deceased. Year not yet documented.",
+    "year": 1997,
+    "date_precision": "year_only",
+    "city": "San Francisco",
+    "state": "California",
+    "country": "United States"
    },
    "parents": {
     "father_id": "X02298",
