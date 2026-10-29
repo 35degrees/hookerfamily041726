@@ -103063,7 +103063,10 @@
    },
    "birth": {
     "year": 1914,
-    "country": "United States"
+    "country": "United States",
+    "month": 7,
+    "date_precision": "exact",
+    "day": 10
    },
    "death": {
     "year": 2000,
@@ -714881,10 +714884,17 @@
     }
    ],
    "naming_inspiration": [],
-   "education": [],
+   "education": [
+    {
+     "school_name": "California College of the Arts",
+     "location": "San Francisco"
+    }
+   ],
    "career": [
     {
-     "role": "Painter"
+     "role": "Painter",
+     "organization": "Gallery Mar, Carmel",
+     "notes": "Represented by numerous galleries, including Gallery Mar in Carmel, California."
     }
    ],
    "military_service": [],
