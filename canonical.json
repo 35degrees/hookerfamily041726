@@ -150158,16 +150158,40 @@
    },
    "narrative_blocks": [
     {
-     "category": "legacy",
-     "header": "Her great-grandfather scouted Hartford before Thomas Hooker",
-     "body": "Her great-grandfather William Lewis sailed to New England aboard the Lyon in 1632 and, three years later, joined the Adventurers' Party of twenty-five who scouted the site that became Hartford — setting out in October 1635, months ahead of Rev. Thomas Hooker's own company. He served the new town as selectman and constable before helping to settle Farmington, where he died in 1683.",
+     "category": "marriage",
+     "header": "Six children with Joseph Hooker at Farmington",
+     "body": "Sarah Lewis married Joseph Hooker on 23 January 1735, at twenty-two, and raised six children at Farmington: Abigail, Noadiah, Mercy, Ruth, Anna and Joseph. Both were great-grandchildren of men who had helped found Hartford.",
      "number": 1
     },
     {
-     "category": "marriage",
-     "header": "She wed into the other founding family",
-     "body": "In January 1735 she married Joseph Hooker, himself a great-grandson of Rev. Thomas Hooker — so the match quietly joined the great-grandchildren of two men who had founded Hartford a century earlier. Both the Lewises and the Hookers had crossed to Connecticut in the 1630s and later settled Farmington, where the couple lie today in the same Memento Mori burying ground.",
+     "category": "family",
+     "header": "Her mother died when she was fifteen",
+     "body": "Sarah was born at Farmington in May 1712 to Nathaniel Lewis and Abigail Ashley, whose family came from Westfield. Abigail died in 1727, when Sarah was fifteen; Nathaniel lived on until 1752.",
      "number": 2
+    },
+    {
+     "number": 3,
+     "category": "death",
+     "header": "Thirty-three years a widow, to Christmas Day",
+     "body": "Joseph died in December 1764, and Sarah outlived him by thirty-three years. She died at Farmington on Christmas Day 1797, eighty-five years old, and lies beside him in the Memento Mori burying ground."
+    },
+    {
+     "number": 4,
+     "category": "legacy",
+     "header": "Her great-grandfather scouted Hartford first",
+     "body": "William Lewis, her great-grandfather, came over on the Lyon in 1632 and in October 1635 scouted Hartford with a party of twenty-five, months ahead of Thomas Hooker. He was selectman and constable, and died at Farmington in 1683."
+    },
+    {
+     "number": 5,
+     "category": "family",
+     "header": "David Ashley's grant at Woronoco, 1664",
+     "body": "Her grandfather David Ashley took a thirty-acre grant at Woronoco, now Westfield, in 1664, on condition that the grantees pay the Indians for the land within three years and go there to live. His gravestone is among Westfield's oldest."
+    },
+    {
+     "number": 6,
+     "category": "education",
+     "header": "Ezekiel Cheever kept school seventy years",
+     "body": "Her great-grandfather Ezekiel Cheever kept school for some seventy years, in England and then New England. Nathaniel Hawthorne wondered “how many birch rods he had worn out, during all that time, in his fatherly tenderness for his pupils.”"
     }
    ]
   },
@@ -1469193,7 +1469217,9 @@
   },
   {
    "id": "HD7614",
-   "former_ids": [],
+   "former_ids": [
+    "paul-hooker"
+   ],
    "is_placeholder": false,
    "bio": {
     "display_name": "Paul Duane Hooker",
@@ -1469261,7 +1469287,8 @@
    "sources": [],
    "research_sources": [],
    "documents": [],
-   "research_notes": null
+   "research_notes": null,
+   "is_living": false
   },
   {
    "id": "HD7615",
