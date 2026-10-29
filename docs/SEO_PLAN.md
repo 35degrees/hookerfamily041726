@@ -1,8 +1,8 @@
 # SEO PLAN — getting hookerverse.com found, without giving the tree away
 
-**Opened October 24, 2026. Last updated October 26, 2026, 13:00 PDT — THE BUILD (§9 steps 0–8) IS COMPLETE AND LIVE
-(still hidden from search), the launch probe `scripts/probe-seo.mjs` is 42/42, and what is left is waiting or
-launch-day work (§0.2–§0.3). §0 is the handoff; §13 is the dated record of the discussion behind every decision;
+**Opened October 24, 2026. Last updated October 29, 2026, 14:45 PDT — THE BUILD (§9 steps 0–8) IS COMPLETE AND LIVE
+(still hidden from search), the launch probe `scripts/probe-seo.mjs` is 43/43, Safe Browsing is cleared, Analytics is
+on (since Oct 28), and what is left is the firewall read, a Cloudinary check, and launch-day work (§0.3, §0.4, §12). §0 is the handoff; §13 is the dated record of the discussion behind every decision;
 roadmap §64–§65 (ENRICHED_CODING_ROADMAP_FABLE_102626.md) is the engineering record of Oct 26.**
 A living document in the house convention: decisions Sam has made are marked ✅ and dated; open choices stay in
 §11 until he closes them; every measured number carries its date and is re-run before it is trusted.
@@ -132,9 +132,13 @@ pages, wait out the firewall's log week, and launch (§12).
 
 ### 0.3 Open items outside the build (from the Oct 24–26 session)
 
-- **WHAT LAUNCH WAITS ON (Oct 26, 13:00 PDT; updated 23:30):** ~~(1) Google's answer on the Safe Browsing review~~
-  ✅ cleared Oct 26 21:18 PDT (§0.2 step 0); (2) the firewall log read ~Nov 2 and the rules moved toward
-  challenge/deny; (3) Sam's go. Then
+- **WHAT LAUNCH WAITS ON (Oct 26, 13:00 PDT; updated Oct 29, 14:45):** ~~(1) Google's answer on the Safe Browsing
+  review~~ ✅ cleared Oct 26 21:18 PDT (§0.2 step 0); (2) the firewall log read ~Nov 2 and the rules moved toward
+  challenge/deny; **(3) Cloudinary has room (added Oct 29):** Google will crawl ~8,500 cards and their portraits, and
+  every portrait no one has viewed is a first-time derivative billed to Cloudinary — read Plan Details first; at ~21/25
+  or lower, run `node scripts/warm-photos.mjs --all` (≈3.3 credits) BEFORE opening the gate, so the crawl hits Vercel's
+  edge cache instead; if Cloudinary is near 25 the photos stop loading mid-crawl; (4) Sam's go (Oct 29: *"when are we
+  doing Google launch?"* — target Mon Nov 2, sooner only if Cloudinary has room). Then
   §12: narrow vercel.json's site-wide X-Robots-Tag to every host but hookerverse.com (plus a `/data/(.*)` noindex rule
   on every host), copy `docs/robots-launch.txt` over `static/robots.txt`, deploy, run `node scripts/probe-seo.mjs
   --base https://hookerverse.com --launched` (it must pass), submit `https://hookerverse.com/sitemap.xml` in Search
@@ -178,6 +182,41 @@ pages, wait out the firewall's log week, and launch (§12).
 
 
 ---
+
+### 0.4 Since Oct 28 — analytics, invitations, first readers, outreach (the handoff for the next session)
+
+- **Analytics is storing** (enabled Oct 28 ~13:00 PDT; before that, beacons were sent and discarded — Lyman Howard's
+  12:20 PM visit and Monday's Colfax visitor are not in it). Read it from the terminal:
+  `vercel metrics vercel.analytics.page_view.count --since <ISO> --group-by requestPath --group-by country --group-by osName --group-by referrerHostname`
+  and `vercel metrics vercel.analytics.event.count --since <ISO> --group-by eventName`. Fixes made the same day: the
+  intro's first card is counted (`releaseIntro`), and hand-counted views no longer stick their path on later views
+  (`trackPageview` → `beforeSend`). Sam's devices are fenced out once he has signed in on them (memory
+  who-visited-method lists them: home on Wave Broadband, iPhone on AT&T, a Mac on Frontier).
+- **The request log** (`vercel metrics vercel.request.count`) sees everyone, including Sam and bots, but the free tier
+  allows a window of at most about one day, no `-f` filters, and 500 rows per bucket (use `-g 15m --order asc` to
+  recover single loads); the paid add-on is not needed. It cannot tell a hover's pre-load from an opening — Analytics
+  can (Card opened). A missing `/_vercel/insights/script.js` request proves nothing (the browser caches it).
+- **Blockers:** readers with uBlock/Brave/strict Firefox send no beacons; Reddit-type audiences undercount. Sam's
+  call (Oct 28): leave it — do not proxy the script past blocklists.
+- **Quiet invitations (Oct 28):** contact reasons now include "Add my family line" and "Build a site like this for my
+  family" (`src/lib/state/contact.ts`); a standing line under the search box in Search (always) and Paths to Family
+  (until a search runs): *"Want to connect your line or have your own family site?"*; "No one matches. Not in the
+  tree? Add your line" on empty results; Sam's card NB4 "Want a site like this for your family?". The Contact event's
+  `from` says which line was used (card, search, family, search-invite, family-invite).
+- **First readers (Oct 28–29):** Sam's r/ClaudeAI comment (~9:45 PM PT Oct 28, linking /alfred-terry-1827 and the
+  Sophie Mousseau story) brought ~14 visitors from 8 countries overnight (US, UK, CA, DE, IT, AU, IN, PK), ~55 views,
+  19 Card opened; most went through the intro into Thomas; a UK reader went nine cards deep. Family links: Lyman Howard
+  (before Analytics), and a Windows reader (likely Sam's mother) on Oct 29 — ~40 cards in two visits, the ladder,
+  Search, the shuffle and Sam's card.
+- **Outreach (Oct 29):** canonical holds `outreach` (31 entries: person_id + url, 5 added Oct 29 from Sam's earlier
+  chats — Osborne-6111, Melissa Craven Fowler, Oxaal-2, R Adams/Waldo-489, David Coffin) and `outreach_contacts`
+  (10 records). Git history (15 samples, Jun 24 → Oct 28) shows the lists only ever grew, so the ~200 names Sam
+  remembers asking for were never written in; the claude.ai chat history is where to recover more. Any future
+  outreach request: append, read back, show Sam the new total. `_review/outreach-candidates.tsv` (untracked) is a
+  sheet of the saved contacts plus living people with cards — Sam was clear it is NOT his outreach list.
+- **Not yet in the ENRICHED design/roadmap docs:** this week's UI changes (Path/Paths buttons, footer split, contact
+  invitations, the ladder photo warm-up, analytics events). Write them up next Hooker UX session.
+- **Committed, not deployed (Oct 29 14:45):** John Rodman Hooker's blurb "Founding partner of Hooker & Fay".
 
 ## §1. WHAT WE ARE TRYING TO DO
 
@@ -600,7 +639,7 @@ months:
 - **Core Web Vitals.** Real-user speed.
 - **Vercel Firewall observability** for the `/data/` rules (DEPLOYMENT §13.3).
 
-### 10a. Readers — Vercel Web Analytics (✅ Sam, Oct 25; live Oct 25)
+### 10a. Readers — Vercel Web Analytics (✅ Sam, Oct 25; code live Oct 25; **storing only since Oct 28 ~13:00 PDT**, when Web Analytics was switched on in the dashboard — §0.4)
 
 Cookieless and first-party: the script and its beacons come from hookerverse.com's own `/_vercel/insights/`, so
 there is no consent banner and no Google tag. Built in `src/lib/state/analytics.svelte.ts`, which counts **outside
@@ -621,7 +660,9 @@ link; and, **on the first page of a visit only, the referring site's hostname** 
   and per page, never tied to a visitor. Bing Webmaster Tools gives the same for Bing.
 - **One reader's path** through the tree. Only totals per page.
 - **Clicks that are not page changes** (opening a narrative block, the deck, search) — unless a custom event is
-  added for them. None is planned except the one below.
+  added for them. **Since Oct 28 there are custom events** (§0.4): every pop-up opening (Path to Thomas, Paths to
+  Family, Search, Sign in, Bookmarks, Contact, Privacy, Sources), About, Notable People, Contact sent, and
+  **Card opened** with `via` (how) and `card` (which) for every real navigation.
 
 ### 10b. The number that matters — messages received
 
@@ -834,3 +875,14 @@ and the commits; this is the *why*.
   Sources, bookmarks, Notable People, About, and `card` = where it went. Pop-ups' synthetic links carry `data-via`;
   hand-offs that click another link (a spouse's timeline photo or bar, a ladder rung already on stage) use `noteVia`.
   Probed under https://hookerverse.com with beacons aborted (`scripts/probe-out/opened-probe.mjs`); a hover sends nothing.
+
+### Oct 29 (Thu) — first readers, outreach, launch timing
+
+- **Overnight:** the Reddit comment's readers arrived with the time zones (§0.4). Sam's own late-night Frontier visit
+  was first misread as a blocker user; corrected (memory who-visited-method).
+- **Outreach:** Sam: *"i should have 200 names to reach out to."* Checked every outreach store, the 92 old JSON files and
+  canonical's git history — the list never exceeded today's; five more were recovered from his earlier chats and saved
+  with read-back (§0.4). I wrongly offered living-people cards as his outreach list first; he rejected it.
+- **Launch:** Sam asked when. Target Mon Nov 2 after the firewall read, gated also on Cloudinary room for the crawl
+  (§0.3, added today).
+
