@@ -55,7 +55,9 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	const landing = oneLine(str('landing', 300));
 	const referrer = oneLine(str('referrer', 200)).replace(/[^a-z0-9.-]/gi, '');
 
-	if (str('website', 200)) return Response.json({ ok: true }); // the honeypot
+	// the honeypot: a bot is told it worked (so it does not retry), and the page is told it was not SENT, so the
+	// "Contact sent" event counts only real messages (Oct 29: a crawler on /contact was counted as a message)
+	if (str('website', 200)) return Response.json({ ok: true, sent: false });
 	if (!EMAIL_RE.test(email) || !message) throw error(400, 'An email address and a message are required');
 	if (limited(getClientAddress())) throw error(429, 'Too many messages; please try again later');
 
@@ -108,5 +110,5 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		console.error('[contact] SES send failed:', e);
 		throw error(502, 'The message could not be sent');
 	}
-	return Response.json({ ok: true });
+	return Response.json({ ok: true, sent: true });
 };

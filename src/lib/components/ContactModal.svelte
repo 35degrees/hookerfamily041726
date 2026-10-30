@@ -128,7 +128,9 @@
 			if (res.ok) {
 				sent = true;
 				// THE NUMBER THAT MATTERS (SEO_PLAN §10b) — fenced like every other count: hookerverse.com, never Sam.
-				trackEvent('Contact sent', reason ? { reason } : undefined);
+				// Only a message that actually went out: the honeypot answers ok with `sent: false` (api/contact).
+				const out = (await res.json().catch(() => null)) as { sent?: boolean } | null;
+				if (out?.sent !== false) trackEvent('Contact sent', reason ? { reason } : undefined);
 			} else failed = true;
 		} catch {
 			failed = true;
