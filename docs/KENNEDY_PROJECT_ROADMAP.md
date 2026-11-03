@@ -1,3 +1,5 @@
+> **SUPERSEDED November 3, 2026** by `docs/KENNEDY_FORK_HANDOFF.md`: the Kennedy site is now a copy of Hookerverse with new content, not a ground-up rebuild. Kept for its history.
+
 # THE KENNEDY PROJECT — ROADMAP AND HANDOFF
 
 **Written October 13, 2026, at the end of a Hooker Genealogy session, for the first Claude Code session in the new
