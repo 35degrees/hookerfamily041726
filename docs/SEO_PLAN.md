@@ -134,7 +134,7 @@ pages, wait out the firewall's log week, and launch (§12).
 
 - **WHAT LAUNCH WAITS ON (Oct 26, 13:00 PDT; updated Oct 29, 14:45):** ~~(1) Google's answer on the Safe Browsing
   review~~ ✅ cleared Oct 26 21:18 PDT (§0.2 step 0); (2) the firewall log read ~Nov 2 and the rules moved toward
-  challenge/deny; **(3) Cloudinary has room (added Oct 29):** Google will crawl ~8,500 cards and their portraits, and
+  challenge/deny — ✅ DONE Nov 3 (below); **(3) Cloudinary has room (added Oct 29):** Google will crawl ~8,500 cards and their portraits, and
   every portrait no one has viewed is a first-time derivative billed to Cloudinary — read Plan Details first; at ~21/25
   or lower, run `node scripts/warm-photos.mjs --all` (≈3.3 credits) BEFORE opening the gate, so the crawl hits Vercel's
   edge cache instead; if Cloudinary is near 25 the photos stop loading mid-crawl; (4) Sam's go (Oct 29: *"when are we
@@ -885,4 +885,19 @@ and the commits; this is the *why*.
   with read-back (§0.4). I wrongly offered living-people cards as his outreach list first; he rejected it.
 - **Launch:** Sam asked when. Target Mon Nov 2 after the firewall read, gated also on Cloudinary room for the crawl
   (§0.3, added today).
+
+### Nov 3 (Tue) — the firewall read, and what went live
+
+- **Read** (`vercel firewall overview` / `traffic list`; the free tier shows one day): Vercel's own DDoS mitigation
+  handled ~1.2k junk requests with no alerts; the two rate limits never fired (the heaviest real session, 92 views on
+  Nov 1, stayed far below); the geo **challenge** list's biggest catch was a Polish home ISP (Netia) — a real reader
+  — beside OVH/Tencent bots, and earlier real Reddit readers came from EE, IN, PK, CO; the geo **deny** list caught
+  only server networks.
+- **Published** (Sam: proceed; his core audience is the US, Canada, England and France): Data rate limit (/data/,
+  120/min/IP) and Page rate limit (60/min/IP) now **deny**; Geo deny-list (CN RU VN SG KP IR) **denies**; the geo
+  challenge-list is **kept, disabled**. Bot Protection was set to **Challenge**, then put back to **Log** the same
+  hour: Sam wants no "verify you're human" page, and an iMessage-style preview fetch got 429 under it (link previews
+  build on the sender's phone and are not verified bots). With Log, that fetch is 200 again. Note for any later
+  re-enable: a bypass rule for link-preview user agents was tried and left to Sam (it weakens a security setting).
+- **Launch now waits on:** Cloudinary room (§0.3 gate 3) and Sam's go.
 
