@@ -47,7 +47,9 @@ Recommend zipping the folder somewhere (or onto the X9 Pro drive) before deletin
 
 ## 4. Services — every one separate from Hooker's
 
-- **Vercel**: a new project (or the old `kennedyclan`), never `hooker-test`. Keep it out of search until Sam says
+- **Domain and Vercel (Sam, Nov 3):** the site will be **kennedyverse.org** (Sam believes it is available; he buys
+  it). It is a **completely separate Vercel project** — not piggybacking on Hookerverse's — never `hooker-test`. Use
+  `kennedyverse.org` wherever Hooker has `hookerverse.com` (analytics HOST, SITE_ORIGIN, SEO, the noindex host rules). Keep it out of search until Sam says
   otherwise: Hooker sends `X-Robots-Tag: noindex` on every response (vercel.json) and `static/robots.txt` disallows
   all crawlers except link previewers — copy that posture.
 - **Cloudinary — CRITICAL.** Hooker's photos live in Cloudinary cloud `dc5clrqtw` on a FREE plan that was at
