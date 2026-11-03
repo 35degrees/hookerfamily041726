@@ -900,4 +900,10 @@ and the commits; this is the *why*.
   build on the sender's phone and are not verified bots). With Log, that fetch is 200 again. Note for any later
   re-enable: a bypass rule for link-preview user agents was tried and left to Sam (it weakens a security setting).
 - **Launch now waits on:** Cloudinary room (§0.3 gate 3) and Sam's go.
+- **Cloudinary, Nov 3:** Plan Details 23.81/25 (rolling 30-day window; the Oct 6–9 upload burst rolls off ~Nov 5–9,
+  and pre-Oct-26 bandwidth — 59% of usage then — is gone by ~Nov 25, leaving roughly storage ~4.5 plus a little).
+  Re-check ~Nov 9–10; launch after `warm-photos --all` once ≤~21. **Backup to the X9 Pro drive waits for late
+  November** (downloading originals is ~4.5 GB of Cloudinary bandwidth): a script with the Admin API keys in `.env`,
+  run when usage is ~10. Cloudinary's own Settings → Backup cannot target a local drive and its copies count toward
+  storage — do not enable "Back Up Existing Assets" while credits are tight (Sam, Nov 3: "we'll wait").
 
